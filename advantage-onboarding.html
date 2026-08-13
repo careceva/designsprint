@@ -401,9 +401,40 @@ body.in-app .flow{display:none}
   border:1.5px solid var(--sentiment-positive);opacity:.45;animation:pip 2.4s ease-out infinite}
 @keyframes pip{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.5);opacity:0}}
 .erp .et{display:flex;flex-direction:column;line-height:1.25}
+.erp{padding-right:var(--s1)}
 .erp .et b{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
+/* sync — lives inside the pill, degrades to icon-only when the header tightens */
+.syncbtn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;
+  flex:0 0 auto;cursor:pointer;border:none;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--sidebar-foreground);
+  font-size:11px;font-weight:600;white-space:nowrap;transition:var(--t-fast)}
+.syncbtn:hover:not([disabled]):not(.done){background:var(--general-secondary);color:var(--general-primary)}
+.syncbtn[disabled]{cursor:default;color:var(--general-muted-foreground)}
+.syncbtn svg{width:14px;height:14px;flex:0 0 auto}
+.syncbtn.busy svg{animation:spin 900ms linear infinite}
+.syncbtn.done{background:#d9f2ef;color:var(--sentiment-positive)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:1080px){.syncbtn span{display:none}.syncbtn{padding:0 7px}}
+@media (prefers-reduced-motion:reduce){.syncbtn.busy svg{animation:none}}
 .erp .et span{font-size:10px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
 @media(max-width:1080px){.erp .et span{display:none}}
+/* account menu */
+.userwrap{position:relative;flex:0 0 auto}
+.upop{position:absolute;top:calc(100% + 8px);right:0;z-index:35;width:250px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.upop.on{opacity:1;transform:none;pointer-events:auto}
+.up-h{padding:var(--s4);border-bottom:1px solid var(--hairline)}
+.up-h b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.up-h span{display:block;font-size:11px;color:var(--general-muted-foreground);margin-top:1px}
+.up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
+  background:none;border:none;cursor:pointer;text-align:left;font-size:var(--text-sm);
+  color:var(--general-foreground);transition:var(--t-fast)}
+.up-i:hover{background:var(--general-muted)}
+.up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.up-f{padding:0 var(--s4) var(--s4);font-size:10px;color:#a3a3a3}
+
 /* notifications */
 .notif{position:relative;flex:0 0 auto}
 .bell{position:relative;width:38px;height:38px;display:grid;place-items:center;background:none;
@@ -491,8 +522,9 @@ body.in-app .flow{display:none}
 .rail.mini .ni{justify-content:center;padding:0}
 .rail.mini .ni .nt{opacity:0;width:0;flex:0 0 0}
 .rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:9px}
-/* highlighted first entry */
-.ni.hero{height:auto;padding:var(--s3);margin-bottom:var(--s2);align-items:flex-start;
+/* highlighted first entry — last of the two cards at the top of the rail, so its bottom
+   margin is what separates that pair from the plain menu items below (holds when mini) */
+.ni.hero{height:auto;padding:var(--s3);margin-bottom:var(--s6);align-items:flex-start;
   background:linear-gradient(160deg,#edf5ff,#f7fbff);border:1px solid var(--general-border);
   color:var(--general-foreground)}
 .ni.hero:hover{border-color:var(--brand-cornflower);background:linear-gradient(160deg,#e4efff,#f2f8ff)}
@@ -619,17 +651,29 @@ body.in-app .flow{display:none}
 @media(max-width:760px){.page{padding:var(--s8) var(--s4) var(--s12)}}
 
 /* 1 · greeting */
+.hello{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4)}
 .hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
-.hello p{margin-top:var(--s3);max-width:62ch;font-size:var(--text-base);line-height:1.6;
-  color:var(--general-muted-foreground)}
+/* one size, one weight — only the counts are emphasised, in the savings green */
+.hello-p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground)}
+.hello-p b{font-weight:600;color:var(--sentiment-positive)}
+/* the CTA flows with the sentence rather than sitting under it */
+.hello-p .btn{margin-left:var(--s3);vertical-align:middle;transform:translateY(-1px)}
 
 /* 2 · current situation — subtle blue gradient rising from the bottom */
-.sit{border:1px solid var(--general-border);border-radius:var(--rounded-2xl);overflow:hidden;
-  background:linear-gradient(to top,#e4eeff 0%,#f2f7ff 38%,var(--surface) 78%);
-  box-shadow:var(--shadow-xs)}
+/* Bottom-anchored wash, only the lower third of the card, with a blurred top edge. It
+   bleeds past left/right/bottom so the blur only ever softens the edge that shows. */
+.sit{position:relative;border:1px solid var(--general-border);border-radius:var(--rounded-2xl);
+  overflow:hidden;background:var(--surface);box-shadow:var(--shadow-xs)}
+.sit::after{content:"";position:absolute;left:-40px;right:-40px;bottom:-40px;
+  height:calc(34% + 40px);z-index:0;pointer-events:none;
+  background:linear-gradient(to top,#dceaff,#eef4ff 48%,transparent);
+  filter:blur(22px);opacity:.95}
+.sit-head,.sit-body{position:relative;z-index:1}
 .sit-head{display:flex;align-items:center;gap:var(--s3);padding:var(--s6) var(--s8) 0}
 .sit-head h2{font-size:var(--text-lg);letter-spacing:-.4px}
 .sit-head .spacer{flex:1}
+
+
 /* horizontal split: headline + facts on the left, category breakdown on the right */
 .sit-body{padding:var(--s6) var(--s8) var(--s8);display:grid;gap:var(--s8);
   grid-template-columns:minmax(260px,.85fr) minmax(340px,1.15fr);align-items:start}
@@ -656,28 +700,80 @@ body.in-app .flow{display:none}
   color:var(--general-muted-foreground)}
 .figure.save{color:var(--sentiment-positive)}
 .figure.save small{color:#4a8f89}
-/* the saving as a rate of total spend — same shape as the per-category label */
-.fig-rate{margin-top:var(--s2);font-family:var(--font-mono);font-size:var(--text-xs);
+/* the saving as a rate of total spend — same shape as the per-category label. This is now
+   the only place the spend total appears, so it carries the info affordance. */
+.fig-rate{position:relative;display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s3);
+  font-family:var(--font-mono);font-size:var(--text-l);
   font-variant-numeric:tabular-nums;color:var(--general-muted-foreground)}
 .fig-rate b{color:var(--general-foreground);font-weight:600}
 .figure-sub{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.55;
   color:var(--general-muted-foreground)}
 .figure-sub b{color:var(--general-foreground);font-weight:600}
-/* spend: the secondary metric — deliberately quieter than the hero */
-.secstat{display:flex;align-items:baseline;flex-wrap:wrap;gap:var(--s1) var(--s3);margin-top:var(--s6);
-  padding-top:var(--s6);border-top:1px solid #1b64dc1f}
-.secstat .sl{font-size:var(--text-xs);color:var(--general-muted-foreground)}
-.secstat .sv{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;
-  letter-spacing:-.8px;font-variant-numeric:tabular-nums}
-.secstat .sm{flex:1 0 100%;font-size:var(--text-xs);color:var(--general-muted-foreground)}
-.secstat .sm b{color:var(--sentiment-positive);font-weight:600}
 /* supporting facts */
-.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-top:var(--s8);
-  background:#ffffff8f;border:1px solid #ffffffe6;border-radius:var(--rounded-lg);overflow:hidden}
-.fact{padding:var(--s4);background:#ffffffb8}
-.fact b{display:block;font-family:var(--font-sans);font-size:var(--text-xl);font-weight:600;
-  letter-spacing:-.6px;font-variant-numeric:tabular-nums}
-.fact span{display:block;margin-top:2px;font-size:11px;color:var(--general-muted-foreground)}
+/* the four supporting facts now live behind the info icon on the total */
+.ihold{display:inline-flex;flex:0 0 auto}
+.ibtn{width:22px;height:22px;display:grid;place-items:center;background:none;border:none;
+  cursor:pointer;border-radius:var(--rounded-full);color:var(--general-muted-foreground);
+  transition:var(--t-fast)}
+.ibtn:hover{background:#1b64dc1f;color:var(--general-primary)}
+.ibtn[aria-expanded="true"]{background:var(--general-primary);color:#fff}
+.ibtn svg{width:16px;height:16px}
+/* opens downward: the button now sits near the top of the card */
+.ipop{position:absolute;top:calc(100% + 10px);left:0;transform:translateY(-4px);
+  z-index:12;width:min(320px,100%);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);box-shadow:var(--shadow-xl);opacity:0;pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.ipop.on{opacity:1;pointer-events:auto;transform:none}
+.ip-h{padding:var(--s4) var(--s4) var(--s2);font-family:var(--font-sans);font-size:var(--text-xs);
+  font-weight:600}
+.ip-f{padding:var(--s3) var(--s4) var(--s4);font-size:11px;line-height:1.5;
+  color:var(--general-muted-foreground)}
+.ip-f b{color:var(--general-foreground);font-weight:600}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--hairline)}
+.fact{padding:var(--s3) var(--s4);background:var(--surface)}
+.fact b{display:block;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
+  letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.fact span{display:block;margin-top:1px;font-size:11px;color:var(--general-muted-foreground)}
+
+/* ---------- spend through the year ---------- */
+.spark{margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid #1b64dc1f}
+.sp-head{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+/* legend on its own line — three entries plus the title never fit one row in this column */
+.sp-lgs{flex:1 0 100%;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+.sp-lg{display:inline-flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;
+  font-family:var(--font-body);font-size:11px}
+.sp-lg i{width:14px;height:0;border-top:2px solid var(--general-primary);flex:0 0 auto}
+.sp-lg i.l2{border-top-style:dashed}
+.sp-lg i.l3{border-top-color:var(--sentiment-positive)}
+.sp-wrap{position:relative}
+.sp-wrap svg{display:block;width:100%;height:auto;overflow:visible}
+.sp-grid{stroke:#1b64dc1f;stroke-width:1}
+.sp-ax{font-family:var(--font-mono);font-size:8.5px;fill:#8f9bab}
+.sp-ax.now{fill:#5f6b7c;font-weight:600}
+.sp-stop{stroke:#98a6b8;stroke-width:1;stroke-dasharray:3 3}
+.sp-l1{fill:none;stroke:var(--general-primary);stroke-width:2.2;stroke-linecap:round;
+  stroke-linejoin:round}
+.sp-l2{fill:none;stroke:var(--general-primary);stroke-width:2.2;stroke-dasharray:5 4;
+  stroke-linecap:round}
+.sp-l3{fill:none;stroke:var(--sentiment-positive);stroke-width:2.2;stroke-linecap:round;
+  stroke-linejoin:round}
+.sp-area{fill:var(--general-primary);opacity:.09}
+.sp-band{fill:var(--sentiment-positive);opacity:.1}
+.sp-dot{fill:#fff;stroke-width:2.4}
+.sp-hit{fill:transparent;cursor:crosshair}
+.sp-cross{stroke:#98a6b8;stroke-width:1;opacity:0}
+.sp-cross.on{opacity:1}
+.sp-tip{position:absolute;z-index:6;padding:6px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:11px;line-height:1.45;
+  white-space:nowrap;pointer-events:none;opacity:0;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast)}
+.sp-tip.on{opacity:1}
+.sp-tip b{font-weight:600}
+.sp-tip .t3{color:#6fe3c8}
+.sp-note{margin-top:var(--s4);font-size:11px;line-height:1.55;color:var(--general-muted-foreground)}
+.sp-note b{color:var(--sentiment-positive);font-weight:600}
 /* category split */
 .split-head{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s4);
   font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
@@ -714,7 +810,10 @@ body.in-app .flow{display:none}
 .b2 i{display:block;height:10px;min-width:2px;border-radius:0 5px 5px 0;
   background:var(--sentiment-positive);transition:width var(--t-slow)}
 .cbar .amt2{grid-area:amt;text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);
-  font-weight:600;font-variant-numeric:tabular-nums;color:var(--sentiment-positive)}
+  font-weight:600;font-variant-numeric:tabular-nums;color:var(--sentiment-positive);
+  white-space:nowrap}
+/* unit sits quieter than the figure, same tint as the hero's unit */
+.cbar .amt2 .u{font-style:normal;font-size:10px;font-weight:500;color:#4a8f89}
 /* secondary: the rate it comes from, and the spend it sits on */
 .cbar .pc2{grid-area:pc;text-align:right;font-family:var(--font-mono);font-size:11px;
   font-variant-numeric:tabular-nums;color:var(--general-muted-foreground);white-space:nowrap}
@@ -736,6 +835,90 @@ body.in-app .flow{display:none}
 .cbar:hover::after{opacity:1;transform:none}
 /* the top row has no headroom — drop its tooltip below instead of over the column header */
 .cbar:first-child::after{bottom:auto;top:calc(100% - 4px);transform:translateY(-3px)}
+
+/* ==========================================================================
+   SUPPLIERS — shelves of supplier recommendations
+   Each shelf is a horizontal, snap-scrolling row of cards. Card width responds to the
+   CANVAS (container query), not the window: opening a side panel shrinks the canvas.
+   ========================================================================== */
+/* the two canvas views — one at a time, each keeping the page's own vertical rhythm */
+#viewDash,#viewSup{min-width:0;display:flex;flex-direction:column;gap:var(--s8)}
+#viewDash[hidden],#viewSup[hidden]{display:none}
+.shelf{min-width:0}
+.sh-head{display:flex;align-items:flex-end;gap:var(--s4);margin-bottom:var(--s3)}
+.sh-head>div{flex:1;min-width:0}
+.sh-eyebrow{display:flex;align-items:center;gap:6px;margin-bottom:var(--s1);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.sh-eyebrow svg{width:12px;height:12px;flex:0 0 auto;color:var(--general-primary)}
+.sh-head h2{font-size:var(--text-xl);letter-spacing:-.6px}
+.sh-note{margin-top:var(--s1);font-size:var(--text-sm);line-height:1.5;
+  color:var(--general-muted-foreground)}
+/* prev / next */
+.sh-nav{flex:0 0 auto;display:flex;gap:var(--s2);padding-bottom:2px}
+.snav{width:34px;height:34px;display:grid;place-items:center;cursor:pointer;
+  background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  box-shadow:var(--shadow-xs);color:var(--general-foreground);transition:var(--t-fast)}
+.snav:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border);
+  color:var(--general-primary)}
+.snav[disabled]{cursor:not-allowed;opacity:.35;box-shadow:none}
+.snav svg{width:16px;height:16px}
+/* the row: wheel, trackpad and touch all still scroll it — only the bar is hidden */
+.suprow{--supw:250px;display:flex;align-items:stretch;gap:var(--s4);
+  padding:var(--s2) 3px var(--s3);margin:0 -3px;
+  overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-left:3px;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.suprow::-webkit-scrollbar{display:none}
+@container page (max-width:860px){.suprow{--supw:222px}}
+@container page (max-width:600px){.suprow{--supw:196px;gap:var(--s3)}}
+@container page (max-width:420px){.suprow{--supw:80%}}
+/* card — one focusable target, no nested controls */
+.sup{position:relative;flex:0 0 auto;width:var(--supw);scroll-snap-align:start;
+  display:flex;flex-direction:column;text-align:left;cursor:pointer;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xs);
+  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.sup:hover{border-color:var(--general-border);box-shadow:var(--shadow-md)}
+/* image area — no photography available, so: a tinted gradient plus one big quiet
+   category watermark. Deliberately low contrast; the numbers have to win. */
+.sup-img{position:relative;flex:0 0 auto;aspect-ratio:16/10}
+.sup-ph{position:absolute;inset:0;overflow:hidden;
+  border-radius:calc(var(--rounded-lg) - 1px) calc(var(--rounded-lg) - 1px) 0 0;
+  background:linear-gradient(150deg,var(--g1),var(--g2))}
+.sup-ph svg{position:absolute;right:-7%;bottom:-16%;width:58%;height:auto;color:var(--wm)}
+.sup[data-tone="blue"]{--g1:#1b64dc24;--g2:#1b64dc08;--wm:#1b64dc47}
+.sup[data-tone="teal"]{--g1:#00968924;--g2:#00968908;--wm:#00968947}
+.sup[data-tone="amber"]{--g1:#ff9b3d30;--g2:#ff9b3d0a;--wm:#ff9b3d5c}
+.sup[data-tone="corn"]{--g1:#73abff38;--g2:#73abff0a;--wm:#73abff7a}
+.sup[data-tone="ink"]{--g1:#000a4517;--g2:#000a4505;--wm:#000a4533}
+.sup-leaf{position:absolute;top:var(--s2);left:var(--s2);z-index:2;
+  display:inline-flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;
+  border-radius:var(--rounded-full);background:#ffffffe6;box-shadow:var(--shadow-2xs);
+  color:var(--sentiment-positive);font-size:10px;font-weight:600;line-height:1.3;white-space:nowrap}
+.sup-leaf svg{width:11px;height:11px;flex:0 0 auto}
+/* wordmark, not a logo file — a white tile overlapping the bottom edge of the image */
+.sup-logo{position:absolute;left:var(--s3);bottom:-18px;z-index:2;width:52px;height:52px;
+  display:grid;place-items:center;padding:0 3px;overflow:hidden;text-align:center;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  box-shadow:var(--shadow-sm);font-family:var(--font-sans);font-weight:600;letter-spacing:-.2px;
+  line-height:1.15;color:var(--brand-midnight);overflow-wrap:anywhere}
+/* shelf 3 (per the sketch): no category label, badge sits on the image */
+.sup.inimg .sup-logo{bottom:var(--s2)}
+.sup.inimg .sup-b{padding-top:var(--s4)}
+.sup-b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;
+  padding:calc(var(--s6) + var(--s2)) var(--s4) var(--s4)}
+.sup-cat{font-size:11px;color:var(--general-muted-foreground);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sup-n{margin-top:2px;font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+  letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sup-save{margin-top:var(--s2);min-height:calc(1.5em * 2);font-size:var(--text-xs);line-height:1.5;
+  color:var(--general-muted-foreground);text-wrap:pretty}
+.sup-save b{color:var(--sentiment-positive);font-weight:600}
+.sup-more{display:flex;align-items:center;gap:5px;margin-top:auto;padding-top:var(--s3);
+  border-top:1px solid var(--hairline);font-size:var(--text-xs);font-weight:600;
+  color:var(--general-primary)}
+.sup-more svg{width:14px;height:14px;transition:transform var(--t-fast)}
+.sup:hover .sup-more svg{transform:translateX(3px)}
 
 @media(max-width:760px){
   /* the rail floats over the canvas here; JS keeps it collapsed unless the user opens it */
@@ -840,6 +1023,96 @@ body.in-app .flow{display:none}
   .dw-b,.dw-h{padding:var(--s4)}
 }
 
+/* ---------- reports pair ---------- */
+:root{--green:#3f9142;--green-soft:#eaf5ea}
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6)}
+@container page (max-width:820px){.cards2{grid-template-columns:1fr}}
+.rcard{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s6);text-align:left;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-2xl);
+  box-shadow:var(--shadow-xs)}
+.rcard.sus{cursor:pointer;
+  transition:border-color var(--t-fast),box-shadow var(--t-fast),transform var(--t-fast)}
+.rcard.sus:hover{border-color:#3f914247;box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.rc-h{display:flex;align-items:center;gap:var(--s3)}
+.rc-eyebrow{display:inline-flex;align-items:center;gap:6px;flex:1;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--green)}
+.rdot{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--green);flex:0 0 auto;
+  box-shadow:0 0 0 3px #3f914226}
+.rc-exp{flex:0 0 auto;width:28px;height:28px;display:grid;place-items:center;border-radius:var(--rounded-sm);
+  color:var(--general-muted-foreground);background:var(--general-muted);transition:var(--t-fast)}
+.rcard.sus:hover .rc-exp{background:var(--green);color:#fff}
+.rc-exp svg{width:14px;height:14px}
+/* leaf as the chart: filled from the base in proportion to what was avoided */
+.sus-top{display:flex;align-items:center;gap:var(--s5,20px)}
+.leaf-w{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:var(--s2)}
+.leaf-cap{font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;color:var(--green);
+  white-space:nowrap}
+.leaf-c{flex:0 0 auto;width:96px;height:96px}
+.leaf-c svg{width:100%;height:100%;display:block}
+.sus-fig b{display:block;font-family:var(--font-sans);font-size:var(--text-4xl);font-weight:600;
+  letter-spacing:-1.4px;line-height:1;color:var(--green)}
+.sus-fig b em{font-style:normal;font-size:var(--text-lg);font-weight:500;letter-spacing:-.4px}
+.sus-fig>span{display:block;margin-top:var(--s2);font-size:var(--text-sm);
+  color:var(--general-muted-foreground)}
+.sus-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hairline);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);overflow:hidden}
+.sstat{padding:var(--s3) var(--s4);background:var(--surface)}
+.sstat b{display:block;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
+  letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.sstat span{display:block;margin-top:1px;font-size:10px;line-height:1.35;
+  color:var(--general-muted-foreground)}
+/* placeholder */
+.rcard.ph{align-items:center;justify-content:center;min-height:220px;
+  border:1.5px dashed #dcdcdc;box-shadow:none;background:#fcfcfd}
+.ph-b{text-align:center;color:#a3a3a3}
+.ph-b b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;
+  color:#8f8f8f}
+.ph-b span{display:block;margin-top:2px;font-size:var(--text-xs)}
+
+/* ---------- expanded sustainability report ---------- */
+.rep-sub{margin-top:var(--s2);font-size:var(--text-sm);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:56ch}
+.rep .bc-eyebrow{gap:var(--s4)}
+.rband{display:flex;align-items:center;gap:var(--s8);flex-wrap:wrap;padding:var(--s6);
+  border-radius:var(--rounded-xl);background:linear-gradient(150deg,#1d3f22,#16321a)}
+.rband .leaf-c{width:104px;height:104px}
+.rband-figs{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s6);min-width:260px}
+.rfig b{display:block;font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;
+  letter-spacing:-.8px;color:#fff;font-variant-numeric:tabular-nums}
+.rfig span{display:block;margin-bottom:var(--s1);font-size:11px;color:#a8d3ab}
+.rsec{margin-top:var(--s8)}
+.rsec-h{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s4)}
+.rsec-h h4{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.rsec-h .spacer{flex:1}
+.rsec-h .tot{font-family:var(--font-mono);font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.sbar{display:grid;grid-template-columns:96px 1fr 62px;align-items:center;gap:var(--s4);
+  padding:var(--s2) 0}
+.sbar .sn{font-size:var(--text-sm);font-weight:500}
+.sbar .strk{height:12px;border-radius:0 6px 6px 0;background:var(--general-muted);overflow:hidden}
+.sbar .strk i{display:block;height:100%;border-radius:0 6px 6px 0;min-width:3px}
+.sbar .sv{text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;
+  font-variant-numeric:tabular-nums}
+.sbar .sd{grid-column:2/-1;font-size:11px;color:var(--general-muted-foreground);margin-top:-2px}
+.cbar2{display:grid;grid-template-columns:1fr auto;gap:var(--s2) var(--s4);padding:var(--s2) 0}
+.cbar2 .cn3{font-size:var(--text-sm)}
+.cbar2 .cv3{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;
+  font-variant-numeric:tabular-nums}
+.cbar2 .ct3{grid-column:1/-1;height:10px;border-radius:0 5px 5px 0;background:var(--general-muted);
+  overflow:hidden}
+.cbar2 .ct3 i{display:block;height:100%;background:var(--green);border-radius:0 5px 5px 0;min-width:3px}
+.cbar2 .cs3{grid-column:1/-1;font-size:10px;font-family:var(--font-mono);
+  color:var(--general-muted-foreground);margin-top:-4px}
+.gact{display:flex;gap:var(--s4);padding:var(--s4);border:1px solid var(--hairline);
+  border-radius:var(--rounded-md);background:var(--green-soft)}
+.gact+.gact{margin-top:var(--s2)}
+.gact .gv{flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700;
+  color:var(--green);min-width:52px}
+.gact .gb b{display:block;font-size:var(--text-sm);font-weight:600}
+.gact .gb span{display:block;margin-top:2px;font-size:var(--text-xs);line-height:1.5;
+  color:var(--general-muted-foreground)}
+
 /* ---------- business case dialog ---------- */
 .note.bcnote .nb b{color:var(--general-foreground)}
 .ncta{display:inline-flex!important;align-items:center;gap:5px;margin-top:var(--s2);
@@ -862,6 +1135,18 @@ body.in-app .flow{display:none}
   font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 .bc-h h2{font-size:var(--text-2xl);letter-spacing:-.8px}
+/* stepper: progress plus random access across the eight cases */
+.bc-steps{flex:0 0 auto;display:flex;align-items:center;gap:var(--s2);
+  padding:var(--s4) var(--s8);border-bottom:1px solid var(--hairline);background:#fcfcfd}
+.bc-steps .segs{flex:1;display:flex;gap:4px;min-width:0}
+.bseg{flex:1;height:4px;padding:0;border:none;cursor:pointer;border-radius:2px;
+  background:var(--general-muted);transition:var(--t-fast)}
+.bseg:hover{background:#c9cdd3}
+.bseg.on{background:var(--general-primary)}
+.bseg.done{background:var(--sentiment-positive)}
+.bseg.skip{background:#d8dce2}
+.bc-steps .cnt{flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-xs);
+  color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
 .bc-b{flex:1 1 auto;min-height:0;overflow-y:auto;padding:var(--s6) var(--s8)}
 .bc-f{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;
   padding:var(--s4) var(--s8);border-top:1px solid var(--hairline);background:#fcfcfd;
@@ -886,7 +1171,7 @@ body.in-app .flow{display:none}
   margin-bottom:var(--s3)}
 .cmp-c .ct svg{width:12px;height:12px;flex:0 0 auto}
 .cmp-c.win .ct{color:var(--sentiment-positive)}
-.cmp-c .sup{font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+.cmp-c .cmp-sup{font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
   margin-bottom:var(--s3)}
 .cmp-c .price{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:600;
   letter-spacing:-1.2px;line-height:1;font-variant-numeric:tabular-nums}
@@ -1212,6 +1497,10 @@ body.in-app .flow{display:none}
       <div class="erp" id="erpPill" title="Read-only connection · last sync today 06:14">
         <span class="live" aria-hidden="true"></span>
         <span class="et"><b id="erpName">Visma.net connected</b><span id="erpMeta">1 284 invoices · 06:14</span></span>
+        <button class="syncbtn" id="syncBtn" aria-label="Sync now">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 10-2.6 5.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M20 6.5V12h-5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="syncLbl">Sync now</span>
+        </button>
       </div>
       <div class="notif">
         <button class="bell" id="bellBtn" aria-label="Notifications" aria-expanded="false">
@@ -1227,11 +1516,20 @@ body.in-app .flow{display:none}
           <div class="np-b" id="npBody"></div>
         </div>
       </div>
-      <button class="user" id="userBtn" aria-label="Account menu">
+      <div class="userwrap">
+      <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
         <span class="uav" id="userAv">MH</span>
         <span class="un"><span id="userName">Mette Hansen</span><span id="userCo">Nordvik Byg A/S</span></span>
         <svg class="uc" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
+      <div class="upop" id="userPop" role="region" aria-label="Account">
+        <div class="up-h"><b id="upName">Mette Hansen</b><span id="upCo">Nordvik Byg A/S</span></div>
+        <button class="up-i" id="restartBtn">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Start the prototype over</button>
+        <p class="up-f">Progress is kept per browser tab.</p>
+      </div>
+      </div>
     </header>
 
     <div class="appbody">
@@ -1307,10 +1605,16 @@ body.in-app .flow{display:none}
       <main class="canvas" id="canvas">
         <div class="page">
 
+        <section id="viewDash">
+
           <!-- 1 · greeting -->
           <header class="hello">
             <h1 id="greet">Good morning, Mette</h1>
-            <p id="greetSub"></p>
+            <p class="hello-p">We found <b id="fAgr">0</b> agreements across <b id="fCat">0</b>
+              categories, ready for you to activate.<button class="btn btn-primary btn-sm"
+                id="foundCard">See the agreements
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button></p>
           </header>
 
           <!-- 2 · current situation -->
@@ -1323,16 +1627,39 @@ body.in-app .flow{display:none}
             <div class="sit-body">
               <div class="sit-left">
                 <div class="figure save"><span id="sitSave">0</span> <small>kr./year</small></div>
-                <p class="fig-rate" id="sitRate"></p>
+                <div class="fig-rate">
+                  <span id="sitRate"></span>
+                  <span class="ihold">
+                    <button class="ibtn" id="factsBtn" aria-expanded="false"
+                      aria-label="What this spend total is made of">
+                      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.6" r="1.15" fill="currentColor"/></svg>
+                    </button>
+                    <div class="ipop" id="factsPop" role="region" aria-label="What this spend total is made of">
+                      <div class="ip-h">What that spend is made of</div>
+                      <div class="facts" id="sitFacts"></div>
+                      <p class="ip-f" id="sitProv"></p>
+                    </div>
+                  </span>
+                </div>
                 <p class="figure-sub" id="sitSaveSub"></p>
 
-                <div class="secstat">
-                  <span class="sl">Total spend read</span>
-                  <b class="sv"><span id="sitTotal">0</span> kr.</b>
-                  <span class="sm" id="sitProv"></span>
+                <!-- 3 · the year so far, and where it lands -->
+                <div class="spark">
+                  <div class="sp-head">
+                    <span>Spend through <span id="spYear">2026</span></span>
+                    <span class="sp-lgs">
+                      <span class="sp-lg"><i class="l1"></i>Actual</span>
+                      <span class="sp-lg"><i class="l2"></i>Projected</span>
+                      <span class="sp-lg"><i class="l3"></i>If you act now</span>
+                    </span>
+                  </div>
+                  <div class="sp-wrap">
+                    <svg id="spSvg" viewBox="0 0 460 236" role="img"
+                      aria-labelledby="spDesc"><desc id="spDesc"></desc></svg>
+                    <div class="sp-tip" id="spTip" aria-hidden="true"></div>
+                  </div>
+                  <p class="sp-note" id="spNote"></p>
                 </div>
-
-                <div class="facts" id="sitFacts"></div>
               </div>
               <div class="sit-right">
                 <div class="split-head">
@@ -1343,6 +1670,41 @@ body.in-app .flow{display:none}
               </div>
             </div>
           </section>
+
+          <!-- 4 · reports pair: sustainability + a placeholder -->
+          <div class="cards2">
+            <button class="rcard sus" id="susCard">
+              <span class="rc-h">
+                <span class="rc-eyebrow"><i class="rdot"></i>Sustainability</span>
+                <span class="rc-exp" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M14 4h6v6M10 20H4v-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4l-7 7M4 20l7-7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+                </span>
+              </span>
+              <span class="sus-top">
+                <span class="leaf-w">
+                  <span class="leaf-c" id="leafChart"></span>
+                  <span class="leaf-cap" id="leafCap"></span>
+                </span>
+                <span class="sus-fig">
+                  <b><span id="susTotal">0</span> <em>tCO₂e</em></b>
+                  <span>total footprint this year</span>
+                </span>
+              </span>
+              <span class="sus-stats" id="susStats"></span>
+            </button>
+
+            <div class="rcard ph">
+              <span class="ph-b">
+                <b>Coming next</b>
+                <span>Second report, to be designed</span>
+              </span>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- SUPPLIERS — three shelves of recommendations, rendered from SUPPLIERS -->
+        <section id="viewSup" hidden></section>
 
         </div>
       </main>
@@ -1381,8 +1743,33 @@ body.in-app .flow{display:none}
         <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
     </header>
+    <div class="bc-steps" id="bcSteps" hidden></div>
     <div class="bc-b" id="bcBody"></div>
     <footer class="bc-f" id="bcFoot"></footer>
+  </div>
+
+  <!-- expanded report: same dialog shell, separate state -->
+  <div class="bcs" id="repScrim"></div>
+  <div class="bc rep" id="rep" role="dialog" aria-modal="true" aria-labelledby="repT" aria-hidden="true">
+    <header class="bc-h">
+      <div>
+        <div class="bc-eyebrow"><span class="rc-eyebrow"><i class="rdot"></i>Sustainability agent</span>
+          <span>CSRD / ESRS</span></div>
+        <h2 id="repT" tabindex="-1">Sustainability — from the same data</h2>
+        <p class="rep-sub">No separate data collection — the reporting follows from the invoices
+          we already read.</p>
+      </div>
+      <button class="dwx" id="repX" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="bc-b" id="repBody"></div>
+    <footer class="bc-f">
+      <span class="fnote">Figures follow the GHG Protocol. Every line traces to an invoice.</span>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary btn-sm" id="repExport">Export for CSRD</button>
+      <button class="btn btn-primary btn-sm" id="repDone">Done</button>
+    </footer>
   </div>
 </div>
 
@@ -1409,6 +1796,7 @@ const SCREENS = ['s-login','s-source','s-load','s-data','s-ceo'];
 const STEP_OF = {'s-source':1,'s-load':1,'s-data':2,'s-ceo':3};
 
 function show(id){
+  curScr = id;
   SCREENS.forEach(s => $('#'+s).classList.toggle('on', s === id));
   const step = STEP_OF[id] || 0;
   $('#topbar').classList.toggle('on', step > 0);
@@ -1417,6 +1805,7 @@ function show(id){
   window.scrollTo({top:0, behavior:'instant'});
   const h = $('#'+id).querySelector('h1,h2');
   if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:true}); }
+  persist();
 }
 
 /* ---------------- 1 · login ---------------- */
@@ -1558,6 +1947,7 @@ function renderData(){
   $$('#dBody [data-hide]').forEach(b => b.addEventListener('click', () => {
     const r = ROWS.find(x => x.id === b.dataset.hide);
     r.hidden = !r.hidden;
+    persist();
     renderData();
   }));
   totals();
@@ -1586,6 +1976,11 @@ $('#finish').addEventListener('click', enterApp);
 const NAV = [
   {id:'discover', n:'Weekly discovery', hero:true, sub:'4 new findings since Monday',
    icon:'<path d="M12 3l2.1 4.7 4.9.6-3.6 3.4.9 5-4.3-2.5-4.3 2.5.9-5L5 8.3l4.9-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  /* same glyph as the Dashboard entry in advantage-autopilot.html */
+  {id:'dashboard', n:'Dashboard',
+   icon:'<rect x="3" y="3" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/>'},
+  {id:'suppliers', n:'Suppliers',
+   icon:'<path d="M4 10v9a1 1 0 001 1h14a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 6.5L4.6 3.6A1 1 0 015.5 3h13a1 1 0 01.9.6L21 6.5c0 1.7-1.3 3-3 3a3 3 0 01-3-3 3 3 0 01-3 3 3 3 0 01-3-3 3 3 0 01-3 3c-1.7 0-3-1.3-3-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 20v-5h4v5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
   {id:'reports', n:'Reports',
    icon:'<rect x="4" y="3" width="16" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h8M8 16h4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'},
   {id:'categories', n:'Categories',
@@ -1593,7 +1988,9 @@ const NAV = [
   {id:'agreements', n:'Agreements', badge:'3',
    icon:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 16c1.5-2.5 2.5-2.5 3 0s1.5 1 3-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
 ];
-let navAt = 'discover';
+/* the rail reads as two groups: the two highlighted cards (AI procurator + Weekly
+   discovery), then the plain menu starting at Dashboard, which is where we land. */
+let navAt = 'dashboard';
 
 function renderNav(){
   $('#nav').innerHTML = NAV.map(i => i.hero
@@ -1608,8 +2005,18 @@ function renderNav(){
        </button>`
   ).join('');
   $$('#nav [data-nav]').forEach(b => b.addEventListener('click', () => {
-    navAt = b.dataset.nav; renderNav();
+    navAt = b.dataset.nav; persist(); renderNav(); setView();
   }));
+}
+
+/* Only two views exist so far: the suppliers catalogue and the dashboard. Reports,
+   Categories and Agreements keep showing the dashboard, as they did before. */
+function setView(){
+  const sup = navAt === 'suppliers';
+  $('#viewSup').hidden = !sup;
+  $('#viewDash').hidden = sup;
+  $('#canvas').scrollTop = 0;
+  if(sup) syncRows();               /* rows measure 0 while hidden */
 }
 
 function setRail(mini){
@@ -1685,7 +2092,7 @@ let bcStep = 1;
 const TICK = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function openCase(){
-  bcStep = 1; renderCase();
+  bcStep = 1; $('#bcSteps').hidden = true; renderCase();
   $('#bcs').classList.add('on');
   $('#bc').classList.add('on');
   $('#bc').setAttribute('aria-hidden','false');
@@ -1717,7 +2124,7 @@ function renderCase(){
       <div class="cmp">
         <div class="cmp-c">
           <div class="ct">Today</div>
-          <div class="sup">${c.todaySup}</div>
+          <div class="cmp-sup">${c.todaySup}</div>
           <div class="price">${c.todayPrice}</div>
           <div class="unit">kr. per litre, averaged over ${c.inv} invoices</div>
           <div class="bonus">${c.todayBonus}</div>
@@ -1728,7 +2135,7 @@ function renderCase(){
         </div>
         <div class="cmp-c win">
           <div class="ct">${TICK} Advantage agreement</div>
-          <div class="sup">${c.newSup}</div>
+          <div class="cmp-sup">${c.newSup}</div>
           <div class="price">${c.newPrice}</div>
           <div class="unit">kr. per litre, fixed for 12 months</div>
           <div class="bonus">${c.newBonus}</div>
@@ -1823,6 +2230,7 @@ function renderCase(){
     /* mark the fuel agreements requested so the category panel agrees with this decision */
     const r = ROWS.find(x => x.id === CASE.cat);
     if(r) r.agr.forEach(a => a.req = true);
+    persist();
     bcStep = 3; renderCase(); $('#bcBody').scrollTop = 0;
     if(catAt) renderCat();
   });
@@ -1892,12 +2300,41 @@ $('#bellBtn').addEventListener('click', e => {
   $('#bellBtn').setAttribute('aria-expanded', String(on));
 });
 $('#npop').addEventListener('click', e => e.stopPropagation());
-$('#npAll').addEventListener('click', () => { NOTES.forEach(n => n.unread = false); renderNotes(); });
+$('#npAll').addEventListener('click', () => {
+  NOTES.forEach(n => n.unread = false); persist(); renderNotes(); });
 document.addEventListener('click', closeNotes);
 addEventListener('keydown', e => { if(e.key === 'Escape') closeNotes(); });
 
+/* ---------- sync now ----------
+   Only the timestamp moves. The invoice count stays at 1 284 because every figure in the
+   prototype — the data set, the facts, the category spend, the savings — reconciles to it. */
+let syncing = false;
+const hhmm = d => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+$('#syncBtn').addEventListener('click', () => {
+  if(syncing) return;
+  syncing = true;
+  const btn = $('#syncBtn'), lbl = $('#syncLbl');
+  btn.disabled = true;
+  btn.classList.add('busy');
+  lbl.textContent = 'Syncing…';
+  setTimeout(() => {
+    const t = hhmm(new Date());
+    $('#erpMeta').textContent = fmt(state.invoices) + ' invoices · ' + t;
+    $('#erpPill').title = 'Read-only connection · last sync today ' + t;
+    const n = NOTES.find(x => x.t.indexOf('sync completed') > -1);
+    if(n){ n.s = fmt(state.invoices) + ' invoices read · today ' + t; n.unread = true; renderNotes(); }
+    btn.classList.remove('busy');
+    btn.classList.add('done');
+    lbl.textContent = 'Synced just now';
+    btn.disabled = false;
+    syncing = false;
+    persist();
+    setTimeout(() => { btn.classList.remove('done'); lbl.textContent = 'Sync now'; }, 2500);
+  }, RM ? 300 : 1800);
+});
+
 $('#bannerX').addEventListener('click', () => $('#bannerwrap').style.display = 'none');
-$('#bannerGo').addEventListener('click', () => { navAt = 'agreements'; renderNav(); });
+$('#bannerGo').addEventListener('click', () => { navAt = 'agreements'; renderNav(); setView(); });
 
 function enterApp(){
   $('#erpName').textContent = state.source + ' connected';
@@ -1905,12 +2342,18 @@ function enterApp(){
   $('#userCo').textContent = state.company;
   $('#userName').textContent = state.user;
   $('#userAv').textContent = initials(state.user);
+  $('#upName').textContent = state.user;
+  $('#upCo').textContent = state.company;
   renderNav();
   syncRail();
   renderNotes();
   renderDash();
+  renderSup();
+  setView();
   document.body.classList.add('in-app');
   $('#app').classList.add('on');
+  inApp = true;
+  persist();
 }
 
 /* ---------------- dashboard ---------------- */
@@ -1919,10 +2362,6 @@ function renderDash(){
   const h = new Date().getHours();
   const part = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
   $('#greet').textContent = `${part}, ${state.user.split(' ')[0]}`;
-  $('#greetSub').textContent =
-    `We finished reading your invoices at 06:14. Here's what you could be saving on the `
-    + `spending you already do — every figure is your own invoice price against the agreement rate.`;
-
   /* savings lead; spend is the context they sit on */
   const rows  = live().slice().sort((a,b) => potOf(b) - potOf(a));
   const total = rows.reduce((s,r) => s + r.amt, 0);
@@ -1930,13 +2369,16 @@ function renderDash(){
   const inv   = rows.reduce((s,r) => s + r.inv, 0);
   const sup   = rows.reduce((s,r) => s + r.sup, 0);
 
+  /* the shortlist, derived — never hardcoded, so it can't disagree with the walk-through */
+  $('#fAgr').textContent = SHORT.length;
+  $('#fCat').textContent = shortCats();
+
   $('#sitSave').textContent = fmt(save);
   $('#sitRate').innerHTML = `<b>${(save / total * 100).toFixed(1)}%</b> of ${fmt(total)} kr.`;
   $('#sitSaveSub').innerHTML =
     `Available on the spending you already do, if these categories moved onto an Advantage `
     + `agreement. Nothing here asks you to change supplier.`;
 
-  $('#sitTotal').textContent = fmt(total);
   $('#sitProv').innerHTML = `Read from <b style="color:inherit">${state.source}</b> · `
     + `1 Aug 2025 to today · every figure traces to an invoice line`;
 
@@ -1946,6 +2388,9 @@ function renderDash(){
     [rows.length, rows.length === 1 ? 'category' : 'categories'],
     [fmt(total / (inv || 1)), 'average invoice, kr.']
   ].map(([v,l]) => `<div class="fact"><b>${v}</b><span>${l}</span></div>`).join('');
+
+  renderSpark();
+  renderSus();
 
   /* One measure, one hue: the saving potential per category, on a shared scale
      (the largest potential), with the spend it comes off as the label beneath. */
@@ -1958,7 +2403,7 @@ function renderDash(){
       <span class="cn2">${r.n}${r.quick ? `<span class="qtag">
         <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
         Quick win</span>` : ''}</span>
-      <span class="amt2">+${fmt(pot)}</span>
+      <span class="amt2">+${fmt(pot)} <em class="u">kr./year</em></span>
       <span class="b2"><i class="s2" style="width:${(pot / maxSave * 100).toFixed(1)}%"></i></span>
       <span class="pc2"><b>${r.rate}%</b> of ${fmt(r.amt)} kr.</span>
       <button class="rowgo" data-open="${r.id}" aria-label="How we found the ${r.n} saving">
@@ -1968,6 +2413,594 @@ function renderDash(){
   }).join('');
   $$('#sitBars [data-open]').forEach(b => b.addEventListener('click', () => openCat(b.dataset.open)));
 }
+
+/* ---------------- suppliers ----------------
+   A catalogue, not a report: three shelves of cards the user can browse sideways.
+   No photography is available and the file has to stay self-contained, so each card gets
+   a tinted gradient plus one big low-opacity category watermark instead of an image, and
+   the logo tile is the supplier name set as a wordmark. */
+const SUP_ICON = {
+  travel:'<path d="M10.5 13.4L3 11V8.6l7.5 1.1V5a1.5 1.5 0 013 0v4.7L21 8.6V11l-7.5 2.4v4.3l3 1.6V21L12 19.7 7.5 21v-1.7l3-1.6v-4.3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  office:'<path d="M9 7.5v8.8a3 3 0 006 0V6.4a2.5 2.5 0 00-5 0v9.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  hotel:'<path d="M3 19v-8M3 14.5h12a4.5 4.5 0 014.5 4.5M21 19v-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10" r="2.2" stroke="currentColor" stroke-width="1.7"/>',
+  coffee:'<path d="M4 8h12v6a4 4 0 01-4 4H8a4 4 0 01-4-4V8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9.5h1.8a2.5 2.5 0 010 5H16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.5 3c.9 1 .9 1.8 0 2.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  truck:'<rect x="2" y="7" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M14 10h3.6l3.4 3.4V16h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/>',
+  it:'<rect x="3" y="4" width="18" height="12" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M9 20h6M12 16v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  bricks:'<rect x="3" y="5" width="18" height="6" rx="1.4" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13" width="18" height="6" rx="1.4" stroke="currentColor" stroke-width="1.7"/><path d="M9.5 5v6M14.5 13v6" stroke="currentColor" stroke-width="1.7"/>',
+  tools:'<circle cx="16.6" cy="7.4" r="4.4" stroke="currentColor" stroke-width="1.7"/><circle cx="16.6" cy="7.4" r="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M13.5 10.5L4.8 19.2a2.2 2.2 0 003.1 3.1l8.7-8.7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  fuel:'<rect x="4" y="3" width="9.5" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M7 7.5h3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.5 9.5H17a2 2 0 012 2v6a1.6 1.6 0 003.2 0v-6.8l-2.4-3.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  waste:'<path d="M4 7h16M9.5 7V4.8h5V7M6 7l1 13.2h10L18 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.5 11v5.5M13.5 11v5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  wear:'<path d="M9 3l3 2 3-2 5 3-2 4-1.6-.9V21H6.6V9.1L5 10 3 7l6-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  gift:'<rect x="3" y="8.5" width="18" height="12.5" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M3 13h18M12 8.5V21" stroke="currentColor" stroke-width="1.7"/><path d="M12 8.5H8.6a2.3 2.3 0 010-4.6c2.2 0 3.4 4.6 3.4 4.6zm0 0h3.4a2.3 2.3 0 000-4.6C13.2 3.9 12 8.5 12 8.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  flower:'<circle cx="12" cy="9.5" r="2.4" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.1a2.6 2.6 0 110-5.2 2.6 2.6 0 010 5.2zM14.4 9.5a2.6 2.6 0 115.2 0 2.6 2.6 0 01-5.2 0zM9.6 9.5a2.6 2.6 0 10-5.2 0 2.6 2.6 0 005.2 0z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 11.9V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  bolt:'<path d="M13.5 2.5L4.5 14.2h5.8L9 21.5l9.5-12h-6l1-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  people:'<circle cx="9.5" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 5.4a3.2 3.2 0 010 5.8M18 20a6.5 6.5 0 00-1.7-4.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
+};
+const LEAF = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 4c0 9-5.5 13-11 13-2 0-3.5-.6-3.5-.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M20 4C9 4 4 8.5 4 14.5c0 2.5 1 4 1 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+const SPARK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l1.9 4.3 4.6.6-3.4 3.2.9 4.7-4-2.3-4 2.3.9-4.7L5.5 7.9l4.6-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+
+/* pct is printed verbatim, so 7 reads as "7%" */
+const SUPPLIERS = [
+  {id:'own', eye:'Made specific for your company', title:() => state.company,
+   note:'Matched to the categories we found in your invoices.', cards:[
+    {n:'Norwegian', cat:'Travel',       pct:23, leaf:true, ic:'travel', tone:'corn'},
+    {n:'Lyreco',    cat:'Office',       pct:14, leaf:true, ic:'office', tone:'blue',
+     w:'Group rate and free delivery'},
+    {n:'Scandic',   cat:'Hotel',        pct:7,  leaf:true, ic:'hotel',  tone:'ink'},
+    {n:'Costa',     cat:'Coffee',       pct:75, leaf:true, ic:'coffee', tone:'amber',
+     w:'Fixed price and a volume bonus'},
+    {n:'Profrakt',  cat:'Shipping',     pct:32, leaf:true, ic:'truck',  tone:'teal'},
+    {n:'Advania',   cat:'IT & telecom', pct:14, ic:'it', tone:'blue',
+     w:'Group rate and free delivery'}
+  ]},
+  {id:'new', eye:'New this quarter', title:() => 'Recently negotiated',
+   note:'Agreements the group renegotiated in the last three months.', cards:[
+    {n:'Stark Byggecenter', cat:'Building materials', pct:9,  ic:'bricks', tone:'amber'},
+    {n:'Hilti',             cat:'Tools',              pct:11, ic:'tools',  tone:'ink',
+     w:'Group rate and free delivery'},
+    {n:'Circle K',          cat:'Fuel',               pct:8,  leaf:true, ic:'fuel', tone:'blue',
+     w:'Fixed price and a volume bonus'},
+    {n:'DSV',               cat:'Freight',            pct:8,  ic:'truck',  tone:'corn'},
+    {n:'Ragn-Sells',        cat:'Waste',              pct:12, leaf:true, ic:'waste', tone:'teal'},
+    {n:'Engelbert Strauss', cat:'Workwear',           pct:11, ic:'wear',   tone:'ink'}
+  ]},
+  /* per the sketch: no category label here, and the logo tile sits on the image */
+  {id:'pop', eye:'Popular', spark:true, title:() => 'Popular', inimg:true,
+   note:'Most activated by companies of your size and trade.', cards:[
+    {n:'Lyreco',          pct:12, ic:'office', tone:'blue'},
+    {n:'Gifted',          pct:23, ic:'gift',   tone:'amber',
+     w:'Group rate and free delivery'},
+    {n:'Make',            pct:12, ic:'tools',  tone:'corn'},
+    {n:'Euroflorist',     pct:75, leaf:true, ic:'flower', tone:'teal'},
+    {n:'Exide',           pct:45, ic:'bolt',   tone:'ink',
+     w:'Fixed price and a volume bonus'},
+    {n:'VikingWorkforce', pct:12, ic:'people', tone:'blue'}
+  ]}
+];
+
+/* no logo files exist — set the name as a wordmark and size it to the tile */
+function wordmark(name){
+  const spaced = name.replace(/([a-z])([A-Z])/g, '$1 $2');
+  const mark = spaced.length > 12 ? spaced.split(' ')[0] : spaced;
+  const longest = Math.max(...mark.split(' ').map(w => w.length));
+  return {mark, size:Math.max(7.5, Math.min(11, 44 / (longest * 0.56))).toFixed(1)};
+}
+
+const SUP_ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function renderSup(){
+  $('#viewSup').innerHTML = SUPPLIERS.map(sh => {
+    const t = sh.title();
+    return `
+    <section class="shelf" aria-labelledby="sh-${sh.id}">
+      <div class="sh-head">
+        <div>
+          <div class="sh-eyebrow">${sh.spark ? SPARK : ''}${sh.eye}</div>
+          <h2 id="sh-${sh.id}">${t}</h2>
+          ${sh.note ? `<p class="sh-note">${sh.note}</p>` : ''}
+        </div>
+        <div class="sh-nav">
+          <button class="snav" data-scroll="-1" aria-controls="row-${sh.id}"
+            aria-label="Previous suppliers in ${t}" disabled>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="snav" data-scroll="1" aria-controls="row-${sh.id}"
+            aria-label="More suppliers in ${t}">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="suprow" id="row-${sh.id}">
+        ${sh.cards.map(c => {
+          const wm = wordmark(c.n);
+          return `
+          <button type="button" class="sup${sh.inimg ? ' inimg' : ''}" data-tone="${c.tone}"
+            data-sup="${c.n}">
+            <span class="sup-img">
+              <span class="sup-ph" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">${SUP_ICON[c.ic]}</svg>
+              </span>
+              ${c.leaf ? `<span class="sup-leaf">${LEAF}Sustainable supplier</span>` : ''}
+              <span class="sup-logo" style="font-size:${wm.size}px" aria-hidden="true">${wm.mark}</span>
+            </span>
+            <span class="sup-b">
+              ${c.cat ? `<span class="sup-cat">${c.cat}</span>` : ''}
+              <span class="sup-n">${c.n}</span>
+              <span class="sup-save"><b>${c.pct}%</b> average saving ·
+                ${c.w || 'Reduced unit price and fixed price'}</span>
+              <span class="sup-more">Read more ${SUP_ARROW}</span>
+            </span>
+          </button>`;
+        }).join('')}
+      </div>
+    </section>`;
+  }).join('');
+
+  SUPPLIERS.forEach(sh => wireRow($('#row-' + sh.id)));
+}
+
+/* one shelf: the arrows move roughly one visible page, and they disable at the ends */
+const rowSyncs = [];
+function wireRow(row){
+  const head = row.previousElementSibling;
+  const prev = head.querySelector('[data-scroll="-1"]');
+  const next = head.querySelector('[data-scroll="1"]');
+  const sync = () => {
+    const max = row.scrollWidth - row.clientWidth;
+    prev.disabled = row.scrollLeft <= 1;
+    next.disabled = max <= 1 || row.scrollLeft >= max - 1;
+  };
+  const step = d => row.scrollBy({
+    left:d * Math.max(160, row.clientWidth - 48),
+    behavior:RM ? 'auto' : 'smooth'
+  });
+  prev.addEventListener('click', () => step(-1));
+  next.addEventListener('click', () => step(1));
+  row.addEventListener('scroll', sync, {passive:true});
+  if(window.ResizeObserver) new ResizeObserver(sync).observe(row);
+  rowSyncs.push(sync);
+  sync();
+}
+const syncRows = () => rowSyncs.forEach(f => f());
+
+/* ---------- sustainability ----------
+   Reconciles three ways: scopes sum to the total, categories sum to the total, and each
+   category belongs to exactly one scope. Per-employee is the total over the staff count. */
+const SUS = {
+  total:512, avoided:41, staff:34, readiness:82,
+  scopes:[
+    {n:'Scope 1', v:58,  c:'#f54a00', d:'Fuel burned in vans you own'},
+    {n:'Scope 2', v:74,  c:'#1b64dc', d:'Electricity and heat you buy'},
+    {n:'Scope 3', v:380, c:'#3f9142', d:'Everything you purchase, and moving it'}
+  ],
+  cats:[
+    {n:'Purchased goods & materials', v:268, s:'Scope 3'},
+    {n:'Freight & delivery',         v:96,  s:'Scope 3'},
+    {n:'Electricity & heat',         v:74,  s:'Scope 2'},
+    {n:'Fuel, own vehicles',         v:58,  s:'Scope 1'},
+    {n:'Business travel',            v:16,  s:'Scope 3'}
+  ],
+  actions:[
+    {n:'Move building materials onto the Advantage agreement', v:24,
+     w:'Lower-carbon concrete and board sit inside the same agreement you are already being offered — the saving and the reduction are the same decision.'},
+    {n:'Consolidate freight onto one carrier', v:18,
+     w:'149 shipments last year across three carriers. Fewer part-loads is the single largest reduction available to you.'},
+    {n:'Switch site power to certified renewable', v:12,
+     w:'Same supplier, different tariff — covered by the group energy agreement.'}
+  ]
+};
+const susWouldBe = () => SUS.total + SUS.avoided;   /* the footprint without this year's work */
+/* The leaf fills to CSRD readiness: a figure already on the card, high enough to read at a
+   glance, and one where a fuller leaf genuinely means better. */
+const susFill = () => SUS.readiness / 100;
+
+/* A leaf, filled from the base in proportion to what was avoided. The body stays hollow so
+   a small fill still reads, the base is broad rather than pointed so a few per cent has
+   somewhere to show, and a waterline marks the level. */
+function leafSVG(pct, id){
+  const LEAF = 'M32 3C47 17 55 33 50 44C45 55 39 59 32 59C25 59 19 55 14 44C9 33 17 17 32 3Z';
+  const y = 59 - 56 * pct;    /* the leaf spans y 3..59, so 59 is the base */
+  return `<svg viewBox="0 0 64 64" role="img"
+    aria-label="${Math.round(pct*100)}% CSRD reporting readiness">
+    <defs><clipPath id="${id}"><path d="${LEAF}"/></clipPath></defs>
+    <path d="${LEAF}" fill="#fff"/>
+    <g clip-path="url(#${id})">
+      <rect x="0" y="${y.toFixed(1)}" width="64" height="64" fill="var(--green)"/>
+      <rect x="0" y="${y.toFixed(1)}" width="64" height="1.1" fill="#2b6b2e"/>
+    </g>
+    <path d="${LEAF}" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M32 9V57" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+    <path d="M32 24L21 18M32 24l11-6M32 36l-12-7M32 36l12-7" stroke="var(--green)" stroke-width="1.3"
+      stroke-linecap="round" opacity=".32"/>
+  </svg>`;
+}
+
+function renderSus(){
+  const pct = susFill();
+  $('#leafChart').innerHTML = leafSVG(pct, 'leafCard');
+  $('#leafCap').textContent = SUS.readiness + '% CSRD ready';
+  $('#susTotal').textContent = fmt(SUS.total);
+  $('#susStats').innerHTML = [
+    [fmt(SUS.avoided) + ' t', 'avoided this year'],
+    [nf.format(+(SUS.total / SUS.staff).toFixed(1)) + ' t', 'per employee, across ' + SUS.staff + ' staff'],
+    [SUS.readiness + '%', 'CSRD readiness']
+  ].map(([v,l]) => `<span class="sstat"><b>${v}</b><span>${l}</span></span>`).join('');
+}
+
+function openRep(){
+  const pct = susFill();
+  const maxScope = Math.max(...SUS.scopes.map(s => s.v));
+  const maxCat = Math.max(...SUS.cats.map(c => c.v));
+  const gTot = SUS.actions.reduce((s,a) => s + a.v, 0);
+
+  $('#repBody').innerHTML = `
+    <div class="rband">
+      <span class="leaf-c">${leafSVG(pct, 'leafRep')}</span>
+      <div class="rband-figs">
+        <div class="rfig"><span>Avoided this year</span><b>${fmt(SUS.avoided)} tCO₂e</b></div>
+        <div class="rfig"><span>Per employee</span><b>${nf.format(+(SUS.total/SUS.staff).toFixed(1))} t</b></div>
+        <div class="rfig"><span>CSRD readiness</span><b>${SUS.readiness}%</b></div>
+      </div>
+    </div>
+
+    <div class="rsec">
+      <div class="rsec-h"><h4>Footprint per scope</h4><span class="spacer"></span>
+        <span class="tot">GHG Protocol · ${fmt(SUS.total)} tCO₂e total</span></div>
+      ${SUS.scopes.map(s => `
+        <div class="sbar">
+          <span class="sn">${s.n}</span>
+          <span class="strk"><i style="width:${(s.v/maxScope*100).toFixed(1)}%;background:${s.c}"></i></span>
+          <span class="sv">${s.v} t</span>
+          <span class="sd">${s.d}</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="rsec">
+      <div class="rsec-h"><h4>Footprint per category</h4><span class="spacer"></span>
+        <span class="tot">sums to ${fmt(SUS.total)} t</span></div>
+      ${SUS.cats.map(c => `
+        <div class="cbar2">
+          <span class="cn3">${c.n}</span>
+          <span class="cv3">${c.v} t</span>
+          <span class="ct3"><i style="width:${(c.v/maxCat*100).toFixed(1)}%"></i></span>
+          <span class="cs3">${c.s} · ${Math.round(c.v/SUS.total*100)}% of your footprint</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="rsec">
+      <div class="rsec-h"><h4>Green actions the agent recommends</h4><span class="spacer"></span>
+        <span class="tot" style="color:var(--green);font-weight:600">Potential: ${gTot} tCO₂e/yr</span></div>
+      ${SUS.actions.map(a => `
+        <div class="gact">
+          <span class="gv">−${a.v} t</span>
+          <span class="gb"><b>${a.n}</b><span>${a.w}</span></span>
+        </div>`).join('')}
+    </div>`;
+
+  $('#repScrim').classList.add('on');
+  $('#rep').classList.add('on');
+  $('#rep').setAttribute('aria-hidden','false');
+  $('#rep').inert = false;
+  setTimeout(() => $('#repT').focus(), 100);
+}
+function closeRep(){
+  $('#repScrim').classList.remove('on');
+  $('#rep').classList.remove('on');
+  $('#rep').setAttribute('aria-hidden','true');
+  $('#rep').inert = true;
+}
+$('#susCard').addEventListener('click', openRep);
+$('#repX').addEventListener('click', closeRep);
+$('#repDone').addEventListener('click', closeRep);
+$('#repScrim').addEventListener('click', closeRep);
+$('#repExport').addEventListener('click', () => {
+  const b = $('#repExport');
+  b.textContent = 'Exported ✓';
+  setTimeout(() => b.textContent = 'Export for CSRD', 2200);
+});
+addEventListener('keydown', e => {
+  if(e.key === 'Escape' && $('#rep').classList.contains('on')) closeRep();
+});
+
+/* ---------- the shortlist: 8 agreements worth doing first, across 3 categories ----------
+   A genuine subset of the 21 — the highest-value agreement in each of the top three
+   categories' lists. Amounts are read from ROWS so they can never drift from the chart. */
+const SHORT = [
+  {cat:'mat',  ai:1}, {cat:'mat',  ai:2}, {cat:'mat',  ai:3},
+  {cat:'tool', ai:0}, {cat:'tool', ai:1}, {cat:'tool', ai:2},
+  {cat:'fuel', ai:0}, {cat:'fuel', ai:1}
+];
+/* per-agreement colour: the unit its price is quoted in, and why it's worth doing */
+const CDET = {
+  'Stark Byggecenter':{ulabel:'price index · your basket = 100', a:'100', b:'91',
+    bonus:'+1.5% volume bonus, paid annually',
+    why:['Your single biggest supplier. The agreement covers the same timber, board and insulation lines you already order.',
+         'Nothing changes operationally — same account, same branch, same delivery slots.']},
+  'Bygma Framework':{ulabel:'price index · your basket = 100', a:'100', b:'91', bonus:'No bonus',
+    why:['Second-largest materials supplier, and the one with the widest price spread against the group rate.',
+         'Your last three months of invoices show list price on every line.']},
+  'Ahlsell Nordic':{ulabel:'price index · your basket = 100', a:'100', b:'91',
+    bonus:'+2% on annual volume',
+    why:['Covers both materials and technical installation lines, so one switch touches two categories.',
+         'The bonus is paid on volume you already put through them.']},
+  'Hilti Erhverv':{ulabel:'price index · your basket = 100', a:'100', b:'89',
+    bonus:'Tool service and repair included',
+    why:['The widest rate gap in your set at 11% — tools are rarely bought on agreement.',
+         'Repairs and calibration come inside the agreement instead of per-invoice.']},
+  'Würth Nordic':{ulabel:'price index · your basket = 100', a:'100', b:'89',
+    bonus:'Free delivery over 1 500 kr.',
+    why:['Consumables ordered in small, frequent batches — where list price hurts most.',
+         'Free delivery removes a charge you paid on 41 of last year’s orders.']},
+  'Engelbert Strauss':{ulabel:'price index · your basket = 100', a:'100', b:'89',
+    bonus:'No bonus',
+    why:['Workwear is reordered on a predictable cycle, so the saving is stable month to month.',
+         'Same catalogue and sizing — only the price changes.']},
+  'Q8 Fuel Card':{ulabel:'kr. per litre', a:'12,40', b:'11,41',
+    bonus:'+2% volume bonus, paid annually',
+    why:['Your largest fuel supplier. 11 vans on your CVR, all currently at pump prices.',
+         'The agreement price is fixed for 12 months, so announced increases don’t reach you.']},
+  'Circle K Business':{ulabel:'kr. per litre', a:'12,40', b:'11,41', bonus:'No bonus',
+    why:['Already a supplier you use — this moves the existing account onto group terms.',
+         'Removes the remaining pump-price share of your fuel spend.']}
+};
+
+function caseAt(i){
+  const s = SHORT[i], r = ROWS.find(x => x.id === s.cat), a = r.agr[s.ai];
+  const d = CDET[a.n] || {ulabel:'price index · your basket = 100', a:'100', b:'91',
+    bonus:'No bonus', why:[]};
+  return {row:r, agr:a, name:a.n, cat:r.n, save:a.save, covers:a.covers,
+    rate:Math.round(a.save / a.covers * 100), ...d};
+}
+const shortTotal = () => SHORT.reduce((s,_,i) => s + caseAt(i).save, 0);
+const shortCats  = () => new Set(SHORT.map(s => s.cat)).size;
+
+let wi = 0, wSkipped = new Set();
+
+function openWalk(){
+  wi = 0; wSkipped = new Set();
+  $('#bcSteps').hidden = false;
+  renderWalk();
+  $('#bcs').classList.add('on');
+  $('#bc').classList.add('on');
+  $('#bc').setAttribute('aria-hidden','false');
+  setTimeout(() => $('#bcT').focus(), 100);
+}
+
+function renderWalk(){
+  /* the summary state sits one past the last case */
+  if(wi >= SHORT.length){ renderWalkDone(); return; }
+  const c = caseAt(wi);
+  $('#bcStep').textContent = c.cat;
+  $('#bcT').textContent = c.name;
+
+  $('#bcSteps').innerHTML = `
+    <span class="segs">${SHORT.map((_,i) => {
+      const done = caseAt(i).agr.req, skip = wSkipped.has(i);
+      return `<button class="bseg${i === wi ? ' on' : done ? ' done' : skip ? ' skip' : ''}"
+        data-seg="${i}" aria-label="Agreement ${i+1}: ${caseAt(i).name}"></button>`;
+    }).join('')}</span>
+    <span class="cnt">${wi + 1} / ${SHORT.length}</span>`;
+
+  $('#bcBody').innerHTML = `
+    <div class="bc-hero">
+      <div class="big">${fmt(c.save)} <small>kr./year</small></div>
+      <div class="sub">${c.rate}% below what you pay today, on the
+        ${fmt(c.covers)} kr. you already spend with them</div>
+    </div>
+
+    <div class="cmp">
+      <div class="cmp-c">
+        <div class="ct">Today</div>
+        <div class="cmp-sup">${c.name}</div>
+        <div class="price">${c.a}</div>
+        <div class="unit">${c.ulabel}</div>
+        <div class="bonus">No agreement</div>
+      </div>
+      <div class="cmp-arrow">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <b>−${c.rate}%</b>
+      </div>
+      <div class="cmp-c win">
+        <div class="ct">${TICK} Advantage agreement</div>
+        <div class="cmp-sup">${c.name}</div>
+        <div class="price">${c.b}</div>
+        <div class="unit">${c.ulabel}</div>
+        <div class="bonus">${c.bonus}</div>
+      </div>
+    </div>
+
+    <div class="bc-why">
+      <h4>Why this one</h4>
+      <ul>${c.why.map(w => `<li><span class="tick">${TICK}</span><span>${w}</span></li>`).join('')}</ul>
+    </div>
+
+    <div class="bc-meta">
+      <span class="mchip">Category <b>${c.cat}</b></span>
+      <span class="mchip">Effort <b>low</b></span>
+      <span class="mchip">Switch time <b>~2 weeks</b></span>
+      <span class="mchip">Cancel <b>any time before it's confirmed</b></span>
+    </div>`;
+
+  const activated = SHORT.filter((_,i) => caseAt(i).agr.req).length;
+  $('#bcFoot').innerHTML = `
+    <button class="btn btn-ghost" id="wBack"${wi === 0 ? ' disabled' : ''}>← Previous</button>
+    <span class="spacer"></span>
+    <span class="fnote">${activated} of ${SHORT.length} activated</span>
+    <button class="btn btn-secondary" id="wSkip">Not this one</button>
+    <button class="btn btn-primary" id="wGo">${c.agr.req ? 'Activated ✓ — next' : 'Activate'}</button>`;
+
+  $$('#bcSteps [data-seg]').forEach(b => b.addEventListener('click', () => {
+    wi = +b.dataset.seg; renderWalk(); $('#bcBody').scrollTop = 0;
+  }));
+  const on = (id, fn) => { const el = $(id); if(el) el.addEventListener('click', fn); };
+  on('#wBack', () => { wi = Math.max(0, wi - 1); renderWalk(); $('#bcBody').scrollTop = 0; });
+  on('#wSkip', () => { wSkipped.add(wi); wi++; renderWalk(); $('#bcBody').scrollTop = 0; });
+  on('#wGo', () => {
+    c.agr.req = true;
+    wSkipped.delete(wi);
+    persist();
+    renderData();
+    if(catAt) renderCat();
+    wi++; renderWalk(); $('#bcBody').scrollTop = 0;
+  });
+}
+
+function renderWalkDone(){
+  const done = SHORT.map((_,i) => caseAt(i)).filter(c => c.agr.req);
+  const worth = done.reduce((s,c) => s + c.save, 0);
+  $('#bcSteps').hidden = true;
+  $('#bcStep').textContent = 'Done';
+  $('#bcT').textContent = done.length ? 'Requests on their way' : 'Nothing activated';
+
+  $('#bcBody').innerHTML = done.length ? `
+    <div class="bc-done">
+      <div class="ring">${TICK}</div>
+      <h3>${done.length} of ${SHORT.length} agreements requested</h3>
+      <p>Worth <b style="color:var(--sentiment-positive)">${fmt(worth)} kr./year</b> once the
+        suppliers confirm. You don't need to chase anyone — we do that, and tell you we did.</p>
+      <ol class="tline">
+        <li><span class="tn">1</span><span><b>Today</b> — ${done.length} requests sent with your
+          volumes and CVR<br><span>${done.map(c => c.name).join(' · ')}</span></span></li>
+        <li><span class="tn">2</span><span><b>Within 5 working days</b> — each supplier confirms
+          your account is on group terms</span></li>
+        <li><span class="tn">3</span><span><b>~2 weeks</b> — the new prices land on an invoice and
+          we check each one matches</span></li>
+      </ol>
+    </div>` : `
+    <div class="bc-done">
+      <div class="ring" style="background:var(--general-muted);color:var(--general-muted-foreground)">${TICK}</div>
+      <h3>Nothing activated</h3>
+      <p>All ${SHORT.length} stay on the list. They'll still be here — and still worth
+        ${fmt(shortTotal())} kr./year — whenever you want to come back to them.</p>
+    </div>`;
+
+  $('#bcFoot').innerHTML = `
+    <button class="btn btn-ghost" id="wBack2">← Back to the last one</button>
+    <span class="spacer"></span>
+    <button class="btn btn-primary" id="wDone">Done</button>`;
+  $('#wBack2').addEventListener('click', () => { wi = SHORT.length - 1; renderWalk(); });
+  $('#wDone').addEventListener('click', closeCase);
+}
+
+/* the greeting CTA walks the shortlist */
+$('#foundCard').addEventListener('click', openWalk);
+
+/* ---------- spend through the year ----------
+   Actuals stop hard at July (this is August). The projection continues the same series
+   dashed — same hue, broken stroke, the standard "this hasn't happened yet" signal. The
+   third line only appears on request: it is a claim about the future, so it shouldn't sit
+   there looking like data. */
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+/* real months don't rise in a straight line — winter low, spring ramp, a June dip */
+const ACT  = [380000,389000,419000,436000,452000,446000,471000];        /* Jan–Jul, real */
+const PROJ = [486000,498000,512000,523000,534000];                     /* Aug–Dec, if nothing changes */
+const POT  = [470000,464000,458000,453000,449000];                     /* Aug–Dec, if they act now */
+const CUT  = ACT.length - 1;                                           /* July index */
+
+const SP = {w:460, h:236, l:42, r:10, t:14, b:26};
+const spX = i => SP.l + i * (SP.w - SP.l - SP.r) / (MON.length - 1);
+const spY = v => {
+  const lo = 350000, hi = 555000;   /* framed to the data, which now starts at 380k */
+  return SP.t + (1 - (v - lo) / (hi - lo)) * (SP.h - SP.t - SP.b);
+};
+const spPath = pts => pts.map((p,i) => (i ? 'L' : 'M') + spX(p[0]).toFixed(1) + ' ' + spY(p[1]).toFixed(1)).join(' ');
+
+function renderSpark(){
+  $('#spYear').textContent = new Date().getFullYear();
+  const actPts  = ACT.map((v,i) => [i, v]);
+  const projPts = [[CUT, ACT[CUT]], ...PROJ.map((v,i) => [CUT + 1 + i, v])];
+  const potPts  = [[CUT, ACT[CUT]], ...POT.map((v,i) => [CUT + 1 + i, v])];
+  const ticks = [380000, 440000, 500000, 540000];
+  const yTop = SP.t, yBot = SP.h - SP.b;
+
+  const band = projPts.map(p => `${spX(p[0]).toFixed(1)} ${spY(p[1]).toFixed(1)}`).join(' L')
+    + ' L' + [...potPts].reverse().map(p => `${spX(p[0]).toFixed(1)} ${spY(p[1]).toFixed(1)}`).join(' L');
+
+  $('#spSvg').innerHTML = `
+    <desc id="spDesc">Monthly spend January to July actual, rising from 318 000 to 471 000 kr.,
+      then projected to 534 000 kr. by December.</desc>
+    ${ticks.map(t => `<line class="sp-grid" x1="${SP.l}" y1="${spY(t).toFixed(1)}"
+        x2="${SP.w - SP.r}" y2="${spY(t).toFixed(1)}"/>
+      <text class="sp-ax" x="${SP.l - 7}" y="${(spY(t) + 3).toFixed(1)}" text-anchor="end">${Math.round(t/1000)}k</text>`).join('')}
+    ${MON.map((m,i) => `<text class="sp-ax${i === CUT ? ' now' : ''}" x="${spX(i).toFixed(1)}"
+        y="${SP.h - 12}" text-anchor="middle">${m}</text>`).join('')}
+    <text class="sp-ax now" x="${spX(CUT).toFixed(1)}" y="${SP.h - 2}" text-anchor="middle">today</text>
+
+    <line class="sp-stop" x1="${spX(CUT).toFixed(1)}" y1="${yTop}" x2="${spX(CUT).toFixed(1)}" y2="${yBot}"/>
+
+    <path class="sp-area" d="${spPath(actPts)} L${spX(CUT).toFixed(1)} ${yBot} L${spX(0).toFixed(1)} ${yBot} Z"/>
+    <g>
+      <path class="sp-band" d="M${band} Z"/>
+      <path class="sp-l3" d="${spPath(potPts)}"/>
+      <circle class="sp-dot" cx="${spX(11).toFixed(1)}" cy="${spY(POT[4]).toFixed(1)}" r="4"
+        stroke="var(--sentiment-positive)"/>
+    </g>
+    <path class="sp-l2" d="${spPath(projPts)}"/>
+    <path class="sp-l1" d="${spPath(actPts)}"/>
+    <circle class="sp-dot" cx="${spX(CUT).toFixed(1)}" cy="${spY(ACT[CUT]).toFixed(1)}" r="4.2"
+      stroke="var(--general-primary)"/>
+    <circle class="sp-dot" cx="${spX(11).toFixed(1)}" cy="${spY(PROJ[4]).toFixed(1)}" r="4"
+      stroke="var(--general-primary)"/>
+
+    <line class="sp-cross" id="spCross" y1="${yTop}" y2="${yBot}"/>
+    ${MON.map((m,i) => `<rect class="sp-hit" data-mi="${i}"
+        x="${(spX(i) - (SP.w - SP.l - SP.r) / 22).toFixed(1)}" y="${yTop}"
+        width="${((SP.w - SP.l - SP.r) / 11).toFixed(1)}" height="${yBot - yTop}"/>`).join('')}`;
+
+  spNote();
+  spHover();
+}
+
+function spNote(){
+  const gap = PROJ.reduce((s,v) => s + v, 0) - POT.reduce((s,v) => s + v, 0);
+  $('#spNote').innerHTML =
+    `Jan–Jul is read from your invoices. Aug–Dec assumes your current suppliers and the increases
+     already announced — acting now keeps about <b>${fmt(gap)} kr.</b> of that out of the line
+     before December.`;
+}
+
+function spHover(){
+  const tip = $('#spTip'), cross = $('#spCross'), wrap = $('.sp-wrap');
+  $$('#spSvg .sp-hit').forEach(hit => {
+    const i = +hit.dataset.mi;
+    const show = () => {
+      const proj = i > CUT;
+      const val = proj ? PROJ[i - CUT - 1] : ACT[i];
+      cross.setAttribute('x1', spX(i).toFixed(1));
+      cross.setAttribute('x2', spX(i).toFixed(1));
+      cross.classList.add('on');
+      tip.innerHTML = `<b>${MON[i]}</b> · ${fmt(val)} kr.${proj ? ' <span style="opacity:.7">projected</span>' : ''}`
+        + (proj ? `<br><span class="t3">${fmt(POT[i - CUT - 1])} kr. if you act now</span>` : '');
+      tip.classList.add('on');
+      const px = spX(i) / SP.w * 100, py = spY(val);
+      /* flip below the point when there's no headroom, so it never covers the legend */
+      const below = py < SP.t + (SP.h - SP.t - SP.b) * 0.34;
+      tip.style.left = px + '%';
+      tip.style.top = (py / SP.h * 100) + '%';
+      tip.style.transform =
+        `translate(${px > 70 ? '-92%' : px < 18 ? '-8%' : '-50%'},${below ? '35%' : '-140%'})`;
+    };
+    hit.addEventListener('mouseenter', show);
+    hit.addEventListener('mousemove', show);
+    hit.addEventListener('mouseleave', () => { tip.classList.remove('on'); cross.classList.remove('on'); });
+  });
+}
+
+/* ---------- facts popover ---------- */
+$('#factsBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#factsPop').classList.toggle('on');
+  $('#factsPop').inert = !on;
+  $('#factsBtn').setAttribute('aria-expanded', String(on));
+});
+$('#factsPop').addEventListener('click', e => e.stopPropagation());
+function closeFacts(){
+  $('#factsPop').classList.remove('on');
+  $('#factsPop').inert = true;
+  $('#factsBtn').setAttribute('aria-expanded','false');
+}
+document.addEventListener('click', closeFacts);
+addEventListener('keydown', e => { if(e.key === 'Escape') closeFacts(); });
 
 /* ---------- category explainer ---------- */
 let catAt = null;
@@ -2059,23 +3092,99 @@ function renderCat(){
 
   $$('#dwB [data-act]').forEach(b => b.addEventListener('click', () => {
     r.agr[+b.dataset.act].req = true;
+    persist();
     renderCat();
   }));
   const all = $('#dwAll');
   if(all) all.addEventListener('click', () => {
     r.agr.forEach(a => a.req = true);
+    persist();
     renderCat();
   });
 }
 
+/* ---------------- persistence ----------------
+   A reload used to dump you back at the login screen. Progress now lives in
+   sessionStorage, so reloading — or editing the file while it's open — keeps you where
+   you were. It is per-tab: closing the tab, opening a new one, ?step=N, or "Start over"
+   in the account menu all give a clean slate. */
+const SKEY = 'advantage-proto-1';
+let curScr = SCREENS[0], inApp = false;
+
+function persist(){
+  try{
+    sessionStorage.setItem(SKEY, JSON.stringify({
+      scr: inApp ? 'app' : curScr,
+      navAt,
+      company: state.company, user: state.user, source: state.source, invoices: state.invoices,
+      hidden: ROWS.filter(r => r.hidden).map(r => r.id),
+      req: ROWS.flatMap(r => r.agr.map((a,i) => a.req ? r.id + ':' + i : null)).filter(Boolean),
+      unread: NOTES.map(n => n.unread ? 1 : 0),
+      erpMeta: $('#erpMeta') ? $('#erpMeta').textContent : null
+    }));
+  }catch(e){ /* private mode / quota — the prototype just won't remember */ }
+}
+
+function readSaved(){
+  try{ return JSON.parse(sessionStorage.getItem(SKEY) || 'null'); }catch(e){ return null; }
+}
+
+/* rehydrate the data model before anything renders */
+function applySaved(d){
+  if(d.company) state.company = d.company;
+  if(d.user) state.user = d.user;
+  if(d.source) state.source = d.source;
+  if(d.invoices) state.invoices = d.invoices;
+  const hid = new Set(d.hidden || []);
+  ROWS.forEach(r => r.hidden = hid.has(r.id));
+  const req = new Set(d.req || []);
+  ROWS.forEach(r => r.agr.forEach((a,i) => a.req = req.has(r.id + ':' + i)));
+  if(Array.isArray(d.unread) && d.unread.length === NOTES.length)
+    NOTES.forEach((n,i) => n.unread = !!d.unread[i]);
+  if(d.navAt) navAt = d.navAt;
+}
+
+function startOver(){
+  try{ sessionStorage.removeItem(SKEY); }catch(e){}
+  location.href = location.pathname;
+}
+$('#userBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#userPop').classList.toggle('on');
+  $('#userPop').inert = !on;
+  $('#userBtn').setAttribute('aria-expanded', String(on));
+});
+$('#userPop').addEventListener('click', e => e.stopPropagation());
+$('#restartBtn').addEventListener('click', startOver);
+function closeUser(){
+  $('#userPop').classList.remove('on');
+  $('#userPop').inert = true;
+  $('#userBtn').setAttribute('aria-expanded','false');
+}
+document.addEventListener('click', closeUser);
+addEventListener('keydown', e => { if(e.key === 'Escape') closeUser(); });
+
 /* ---------------- boot ---------------- */
 /* closed panels start inert so keyboard users don't tab into invisible controls */
-['#ap','#dw','#npop'].forEach(s => $(s).inert = true);
+['#ap','#dw','#npop','#userPop','#rep'].forEach(s => $(s).inert = true);
+
+const jumpRaw = new URLSearchParams(location.search).get('step');
+const saved = jumpRaw ? null : readSaved();     /* an explicit ?step= always wins */
+if(saved) applySaved(saved);
+
 renderWho();
 renderData();
-const jump = parseInt(new URLSearchParams(location.search).get('step'), 10) || 1;
-if(jump > SCREENS.length) enterApp();                 /* ?step=6 lands on the app shell */
-else show(SCREENS[Math.max(0, Math.min(SCREENS.length - 1, jump - 1))]);
+
+if(saved && saved.scr === 'app'){
+  enterApp();
+  if(saved.erpMeta) $('#erpMeta').textContent = saved.erpMeta;
+} else if(saved && SCREENS.indexOf(saved.scr) > -1){
+  show(saved.scr);
+} else {
+  const jump = parseInt(jumpRaw, 10) || 1;
+  if(jump > SCREENS.length) enterApp();          /* ?step=6 lands on the app shell */
+  else show(SCREENS[Math.max(0, Math.min(SCREENS.length - 1, jump - 1))]);
+}
 </script>
 </body>
 </html>
