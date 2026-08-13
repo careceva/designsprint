@@ -1,0 +1,3198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — Onboarding</title>
+<style>
+/* ==========================================================================
+   Advantage Design System — tokens shared with advantage-autopilot.html
+   Semantic tokens only. No raw hex in components.
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+
+  --sidebar-border:#e0e0e0;
+
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  /* 8pt spacing scale */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+
+  --hairline:#ececec;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  --t-slow:.5s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+/* overflow-x:clip, not hidden — clips the off-screen drawer without making html a
+   scroll container (which would break vertical scrolling) */
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{
+  font-family:var(--font-body);background:var(--surface);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-5xl);letter-spacing:-1.2px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+::selection{background:var(--general-secondary)}
+
+/* ---------- buttons (shared scale with the app) ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active:not([disabled]){transform:translateY(1px)}
+.btn[disabled]{cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover:not([disabled]){background:#1553bb}
+.btn-primary[disabled]{background:var(--general-muted);color:#a3a3a3;box-shadow:none}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border)}
+.btn-secondary[disabled]{background:var(--general-muted);border-color:transparent;color:#8f8f8f;box-shadow:none}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3);height:36px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs)}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.4}
+.chip svg{width:12px;height:12px}
+.chip-rec{background:var(--general-primary);color:var(--general-primary-foreground)}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-warn{background:#fff2e0;color:#a35c00}
+.chip-good{background:#d9f2ef;color:var(--sentiment-positive)}
+
+/* ---------- shell ---------- */
+.flow{min-height:100vh;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:20;height:64px;flex:0 0 auto;display:flex;align-items:center;
+  gap:var(--s4);padding:0 var(--s8);background:#ffffffd9;backdrop-filter:blur(14px) saturate(180%);
+  border-bottom:1px solid var(--hairline);opacity:0;transform:translateY(-6px);
+  transition:opacity var(--t),transform var(--t)}
+.topbar.on{opacity:1;transform:none}
+.topbar img{height:30px;width:auto;display:block}
+.topbar .spacer{flex:1}
+.prog{display:none;align-items:center;gap:var(--s2)}
+.prog i{width:26px;height:3px;border-radius:2px;background:var(--general-muted);transition:background-color var(--t)}
+.prog i.on{background:var(--general-primary)}
+.prog span{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-left:var(--s2);
+  font-variant-numeric:tabular-nums}
+.who{display:flex;align-items:center;gap:var(--s2);font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.who b{color:var(--general-foreground);font-weight:600}
+.av{width:28px;height:28px;border-radius:var(--rounded-full);flex:0 0 auto;display:grid;place-items:center;
+  background:var(--brand-ice);color:var(--general-primary);font-family:var(--font-sans);
+  font-size:13px;font-weight:600;letter-spacing:.02em}
+
+.stage{flex:1 1 auto;display:flex;flex-direction:column}
+.scr{display:none;flex:1 1 auto}
+.scr.on{display:flex;flex-direction:column}
+/* minmax(0,1fr) so children can shrink below their max-content width on small screens */
+.scr.on.mid{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;align-content:center;
+  padding:var(--s12) var(--s6)}
+.scr.on>*{animation:rise var(--t-slow) both;min-width:0}
+/* headings take focus on screen change for screen readers — never show a ring for it */
+.scr h1[tabindex],.scr h2[tabindex],.dw h3[tabindex]{outline:none}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pad{width:100%;min-width:0;max-width:1200px;margin:0 auto;padding:var(--s16) var(--s8) var(--s12)}
+@media(max-width:700px){
+  .pad{padding:var(--s12) var(--s4) var(--s8)}
+  .topbar{padding:0 var(--s4)}
+  .who{display:none}
+}
+.lead{font-size:var(--text-lg);color:var(--general-muted-foreground);line-height:1.55;
+  max-width:52ch;margin-top:var(--s3)}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:var(--text-xs);font-weight:600;
+  letter-spacing:.02em;color:var(--general-primary);margin-bottom:var(--s3)}
+.eyebrow i{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--general-primary)}
+.foot{margin-top:var(--s8);font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.6}
+
+/* ==========================================================================
+   1 · LOGIN
+   ========================================================================== */
+.login{width:400px;max-width:100%;text-align:center}
+.login .mark{height:40px;width:auto;margin:0 auto var(--s8)}
+.login h1{font-size:var(--text-5xl);letter-spacing:-2px}
+.login .lead{font-size:var(--text-base);margin:var(--s3) auto 0;max-width:34ch;text-align:center}
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-sm)}
+.login .card{margin-top:var(--s12);padding:var(--s8);text-align:left}
+.flabel{display:block;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);
+  letter-spacing:.01em;margin-bottom:6px}
+.field{position:relative;display:flex;align-items:center;height:48px;padding:0 var(--s4);
+  background:var(--general-input);border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);
+  box-shadow:inset 0 1px 2px #0000000a;transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.field:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.field input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:var(--text-base)}
+.field input::placeholder{color:#a3a3a3}
+.field .peek{background:none;border:none;cursor:pointer;color:var(--general-muted-foreground);
+  padding:var(--s1);display:grid;place-items:center;border-radius:var(--rounded-xs)}
+.field .peek:hover{color:var(--general-foreground)}
+.field .peek svg{width:18px;height:18px}
+.fgroup+.fgroup{margin-top:var(--s6)}
+.frow{display:flex;align-items:center;justify-content:space-between;margin-top:var(--s6)}
+.login .btn-primary{margin-top:var(--s8)}
+.tinyfoot{margin-top:var(--s6);font-size:var(--text-xs);color:#8f8f8f;text-align:center}
+
+/* ==========================================================================
+   2 · SOURCES
+   ========================================================================== */
+/* the h1 and lead are centred over the pair of cards */
+#s-source h1{font-size:var(--text-5xl);letter-spacing:-2px;line-height:1.05;text-align:center}
+#s-source .lead{margin-left:auto;margin-right:auto;text-align:center}
+.srcs{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s6);margin-top:var(--s12)}
+@media(max-width:900px){.srcs{grid-template-columns:1fr}}
+.src{position:relative;display:flex;flex-direction:column;padding:var(--s8);text-align:left;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);transition:transform var(--t),box-shadow var(--t),border-color var(--t)}
+/* reserved on every card so the titles line up whether or not there's a badge */
+.src .top{display:flex;align-items:center;min-height:24px;margin-bottom:var(--s4)}
+.src h3{font-size:var(--text-4xl);letter-spacing:-1.4px;line-height:1.12;margin-bottom:var(--s4)}
+.src .why{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.6}
+.src .why b{color:var(--general-foreground);font-weight:600}
+.src .act{margin-top:auto;padding-top:var(--s8)}
+/* the one connectable option — stronger frame */
+.src.live{border-color:var(--general-border);box-shadow:var(--shadow-md)}
+.src.live:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--brand-cornflower)}
+/* rendered at full fidelity but inert for this round of testing */
+.src.inert{pointer-events:none}
+
+/* ==========================================================================
+   3 · LOADING
+   ========================================================================== */
+.load{width:440px;max-width:100%;text-align:center}
+.loader{position:relative;width:132px;height:96px;margin:0 auto var(--s12)}
+.loader .glow{position:absolute;inset:-40%;border-radius:var(--rounded-full);
+  background:radial-gradient(circle,#1b64dc1f,transparent 68%);animation:breathe 2.6s ease-in-out infinite}
+.loader svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.loader .ghost{opacity:.14}
+/* fill level is driven from the progress value in runIngest(), so the logo pours
+   in lockstep with the bar; a short transition smooths each rAF step */
+.loader .fill{clip-path:inset(100% 0 0 0);transition:clip-path .12s linear}
+/* once synced to 100% the mark settles: full fill, glow stops breathing */
+.loader.done .fill{clip-path:inset(0 0 0 0)}
+.loader.done .glow{animation:none;opacity:.65}
+@keyframes pour{
+  0%{clip-path:inset(100% 0 0 0)}
+  55%{clip-path:inset(0 0 0 0)}
+  100%{clip-path:inset(0 0 0 0);opacity:1}
+}
+@keyframes breathe{0%,100%{transform:scale(.9);opacity:.55}50%{transform:scale(1.06);opacity:1}}
+.load h2{margin-bottom:var(--s3)}
+.load .lead{margin:0 auto;text-align:center;font-size:var(--text-base)}
+.track{position:relative;height:6px;margin:var(--s12) 0 var(--s4);border-radius:var(--rounded-full);
+  background:var(--general-muted);overflow:hidden}
+.track i{position:absolute;inset:0 auto 0 0;width:0;border-radius:var(--rounded-full);
+  background:linear-gradient(90deg,var(--brand-cornflower),var(--general-primary))}
+.pctrow{display:flex;align-items:baseline;justify-content:space-between;font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.pctrow b{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;
+  color:var(--general-foreground);font-variant-numeric:tabular-nums}
+/* live read counters — same compact pill as the "synchronization complete" state */
+.reads{display:inline-flex;flex-wrap:wrap;align-items:baseline;justify-content:center;
+  gap:4px 7px;margin-top:var(--s8);padding:7px 14px;border-radius:var(--rounded-xl);
+  background:var(--general-muted);font-size:12px;color:var(--general-muted-foreground)}
+.read{display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap;padding:0;background:none}
+.read b{font-family:var(--font-sans);font-size:13px;font-weight:600;
+  letter-spacing:-.2px;color:var(--general-foreground)}
+.read span{font-size:12px;line-height:1.35;color:var(--general-muted-foreground)}
+.read + .read::before{content:'·';margin-right:2px;color:var(--general-border);user-select:none}
+@media(max-width:480px){.reads .read + .read::before{display:none}.reads{gap:2px 12px}}
+.steps{margin-top:var(--s10,40px);text-align:left;display:flex;flex-direction:column;gap:var(--s3)}
+.step{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-sm);
+  color:#b3b3b3;transition:color var(--t)}
+.step .dot{width:18px;height:18px;flex:0 0 auto;border-radius:var(--rounded-full);
+  border:1.6px solid var(--general-muted);display:grid;place-items:center;transition:var(--t)}
+.step .dot svg{width:11px;height:11px;opacity:0;transition:opacity var(--t-fast)}
+.step.now{color:var(--general-foreground);font-weight:500}
+.step.now .dot{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
+.step.done{color:var(--general-muted-foreground)}
+.step.done .dot{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
+.step.done .dot svg{opacity:1}
+
+/* import complete — quick-activate carousel */
+/* Apple-like reveal: soft spring easing, slight lift, scale + de-blur */
+@keyframes doneIn{
+  from{opacity:0;transform:translateY(22px) scale(.97);filter:blur(4px)}
+  to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes titleIn{
+  from{opacity:0;transform:translateY(12px) scale(.98)}
+  to{opacity:1;transform:none}}
+/* progress UI easing out on completion */
+.load .is-gone{opacity:0;transform:translateY(-12px);pointer-events:none;
+  transition:opacity .32s ease,transform .32s cubic-bezier(.4,0,.2,1)}
+#h-load{transition:opacity .18s ease,transform .18s ease}
+#h-load.swap{opacity:0;transform:translateY(-8px)}
+#h-load.swap-in{animation:titleIn .55s cubic-bezier(.16,1,.3,1) both}
+#loadDone.reveal .reads-mini{animation:doneIn .5s  cubic-bezier(.16,1,.3,1) both}
+#loadDone.reveal .done-intro{animation:doneIn .55s cubic-bezier(.16,1,.3,1) .07s both}
+#loadDone.reveal .qa{animation:doneIn .6s cubic-bezier(.16,1,.3,1) .15s both}
+#loadDone.reveal .done-skip{animation:doneIn .5s cubic-bezier(.16,1,.3,1) .24s both}
+@media(prefers-reduced-motion:reduce){
+  .load .is-gone,#h-load,#h-load.swap-in,
+  #loadDone.reveal .reads-mini,#loadDone.reveal .done-intro,
+  #loadDone.reveal .qa,#loadDone.reveal .done-skip{animation:none;transition:none}
+}
+/* compact summary pill that replaces the big 3-tile block */
+.reads-mini{display:inline-flex;flex-wrap:wrap;align-items:baseline;justify-content:center;
+  gap:4px 7px;margin-bottom:var(--s6);padding:7px 14px;border-radius:var(--rounded-xl);
+  background:var(--general-muted);font-size:12px;color:var(--general-muted-foreground)}
+.reads-mini .rm-item{display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap}
+.reads-mini b{font-family:var(--font-sans);font-size:13px;font-weight:600;
+  letter-spacing:-.2px;color:var(--general-foreground)}
+.reads-mini .rm-sep{color:var(--general-border);user-select:none}
+/* on narrow screens the pill wraps — drop the middots so none dangle at a line break */
+@media(max-width:480px){.reads-mini .rm-sep{display:none}.reads-mini{gap:2px 12px}}
+#loadDone{margin-top:var(--s10,40px)}
+.done-intro{text-align:center;font-size:var(--text-base);line-height:1.55;
+  color:var(--general-muted-foreground);margin-bottom:var(--s6)}
+.done-intro b{color:var(--general-foreground);font-weight:600}
+.qa{position:relative}
+/* no horizontal padding — each card fills the track exactly so the next one sits fully
+   off-screen (no peeking border). scroll math is offset-based via qaStep. */
+.qa-track{position:relative;display:flex;gap:var(--s4);overflow-x:auto;scroll-snap-type:x proximity;
+  padding-bottom:var(--s2);scrollbar-width:none}
+.qa-track::-webkit-scrollbar{display:none}
+.qa-track:focus-visible{outline-offset:4px}
+.qa-card{flex:0 0 100%;scroll-snap-align:start;text-align:left;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-sm);padding:var(--s6)}
+.qa-top{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);margin-bottom:var(--s6)}
+.qa-top h3{margin:0}
+.qa-top .chip{flex:0 0 auto;margin-top:2px}
+.qa-lbl{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-bottom:4px}
+.qa-save{display:flex;align-items:baseline;gap:6px}
+.qa-save b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:600;
+  letter-spacing:-.8px;color:var(--general-primary)}
+.qa-save small{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.qa-cov{margin-top:var(--s2);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.qa-why{margin-top:var(--s6);padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.qa-why h4{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;margin-bottom:var(--s3)}
+.qa-why ul{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+.qa-why li{display:flex;gap:var(--s3);font-size:var(--text-sm);line-height:1.55;
+  color:var(--general-muted-foreground)}
+.qa-why li b{color:var(--general-foreground);font-weight:600}
+.qa-why .tick{flex:0 0 auto;width:18px;height:18px;margin-top:2px;border-radius:var(--rounded-full);
+  background:#d9f2ef;color:var(--sentiment-positive);display:grid;place-items:center}
+.qa-why .tick svg{width:11px;height:11px}
+.qa-actions{display:flex;gap:var(--s2);margin-top:var(--s6)}
+.qa-actions .btn{flex:1}
+/* activate → loading → done */
+.spinner{width:15px;height:15px;flex:0 0 auto;border-radius:var(--rounded-full);
+  border:2px solid #ffffff59;border-top-color:#fff;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn.is-loading,.btn.is-loading[disabled]{background:var(--general-primary);
+  color:var(--general-primary-foreground);box-shadow:none;opacity:1;cursor:progress}
+.btn.is-done,.btn.is-done[disabled]{background:var(--general-secondary);color:var(--general-primary);
+  box-shadow:none;border-color:transparent;opacity:1;cursor:default}
+.btn.is-done svg{width:15px;height:15px}
+/* card after activation: no change to the card itself (button + toast carry the feedback) */
+
+/* centered success toast */
+.toastc{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:var(--s6);
+  pointer-events:none;background:#0f0f0f00;transition:background .3s ease}
+.toastc.show{background:#0f0f0f14;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.toastc-card{pointer-events:auto;display:flex;align-items:center;gap:var(--s6);
+  max-width:min(560px,94vw);padding:var(--s8);border-radius:var(--rounded-2xl);text-align:left;
+  background:var(--surface);border:1px solid var(--hairline);
+  box-shadow:var(--shadow-xl),0 0 0 6px #00968914;
+  opacity:0;transform:translateY(12px) scale(.9);
+  transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
+.toastc.show .toastc-card{opacity:1;transform:none}
+.toastc-ic{flex:0 0 auto;width:60px;height:60px;border-radius:var(--rounded-full);
+  background:#d9f2ef;color:var(--sentiment-positive);display:grid;place-items:center;
+  box-shadow:0 0 0 8px #00968912}
+.toastc-ic svg{width:32px;height:32px}
+.toastc-tx b{font-family:var(--font-sans);font-size:var(--text-xl);letter-spacing:-.3px}
+.toastc-tx p{margin-top:5px;font-size:var(--text-base);line-height:1.5;color:var(--general-muted-foreground)}
+.toastc-tx p b{font-size:inherit;color:var(--general-foreground)}
+@media(prefers-reduced-motion:reduce){
+  .toastc-card{transition:opacity .2s ease}.toastc-card{transform:none}}
+.qa-ctl{display:flex;align-items:center;justify-content:center;gap:var(--s4);margin-top:var(--s4)}
+.qa-arrow{width:36px;height:36px;flex:0 0 auto;display:grid;place-items:center;cursor:pointer;
+  border-radius:var(--rounded-full);border:1px solid var(--sidebar-border);background:var(--surface);
+  box-shadow:var(--shadow-xs);color:var(--general-foreground);transition:var(--t-fast)}
+.qa-arrow:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border)}
+.qa-arrow[disabled]{opacity:.4;cursor:not-allowed}
+.qa-arrow svg{width:18px;height:18px}
+.qa-dots{display:flex;align-items:center;gap:6px}
+.qa-dot{width:7px;height:7px;border-radius:var(--rounded-full);border:none;padding:0;cursor:pointer;
+  background:var(--general-muted);transition:width var(--t-fast),background-color var(--t-fast)}
+.qa-dot.on{width:20px;background:var(--general-primary)}
+.done-skip{margin-top:var(--s8);text-align:center}
+.done-skip .linkbtn{color:var(--general-muted-foreground);font-weight:500}
+.done-skip .linkbtn:hover{color:var(--general-primary)}
+
+/* ==========================================================================
+   4 · DATA SET
+   ========================================================================== */
+.dhead{display:flex;align-items:flex-end;gap:var(--s6);flex-wrap:wrap}
+.dhead .spacer{flex:1}
+.tbl-card{min-width:0;margin-top:var(--s8);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-xl);box-shadow:var(--shadow-sm);overflow:hidden}
+.tbl-top{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s6);
+  border-bottom:1px solid var(--hairline);background:#fcfcfd}
+.tbl-top .h{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.tbl-top .spacer{flex:1}
+/* position:relative contains the absolutely-positioned .sr labels, which would otherwise
+   escape this scroller's clip and give the whole page a horizontal scrollbar */
+.tbl-scroll{position:relative;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+caption{text-align:left;padding:0 var(--s6) var(--s3);font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+th{text-align:left;padding:var(--s3) var(--s4);font-size:13px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--general-muted-foreground);font-family:var(--font-mono);
+  border-bottom:1px solid var(--hairline);white-space:nowrap;background:var(--surface)}
+th.r,td.r{text-align:right}
+th:first-child,td:first-child{padding-left:var(--s6)}
+th:last-child,td:last-child{padding-right:var(--s6)}
+td{padding:var(--s3) var(--s4);border-bottom:1px solid #f5f5f5;font-size:var(--text-sm);
+  vertical-align:middle}
+tbody tr{transition:background-color var(--t-fast)}
+tbody tr:hover{background:#fcfcfd}
+tbody tr.needs{background:#fffbf5}
+tbody tr.needs:hover{background:#fff7ec}
+tbody tr.gone{color:#b3b3b3}
+tbody tr.gone .cn b{text-decoration:line-through}
+.nmrow{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.nmrow b{font-weight:600;font-size:var(--text-sm)}
+.cn>span,.sub2{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:3px}
+.amt{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.share{display:flex;align-items:center;gap:var(--s2);justify-content:flex-end}
+.share i{display:block;height:6px;border-radius:var(--rounded-full);background:var(--general-primary);
+  min-width:3px;transition:width var(--t)}
+.share .trk{width:88px;height:6px;border-radius:var(--rounded-full);background:var(--general-muted);
+  overflow:hidden;flex:0 0 auto}
+.share em{font-style:normal;font-family:var(--font-mono);font-size:var(--text-xs);
+  color:var(--general-muted-foreground);width:30px;text-align:right}
+/* per-row hide / restore */
+.rowx{width:32px;height:32px;display:grid;place-items:center;background:none;border:none;cursor:pointer;
+  color:#b3b3b3;border-radius:var(--rounded-sm);transition:var(--t-fast)}
+tbody tr:hover .rowx{color:#707070}
+.rowx:hover{background:var(--general-muted);color:var(--general-destructive)}
+.rowx.back,.rowx.back:hover{color:var(--general-primary)}
+.rowx.back:hover{background:var(--brand-ice)}
+.rowx svg{width:17px;height:17px}
+tfoot td{border-bottom:none;border-top:1px solid var(--hairline);background:#fcfcfd;
+  font-weight:600;padding-top:var(--s4);padding-bottom:var(--s4)}
+tfoot .lbl{font-size:var(--text-xs);color:var(--general-muted-foreground);font-weight:400}
+.dbar{display:flex;align-items:center;gap:var(--s4);margin-top:var(--s8);flex-wrap:wrap}
+.dbar .spacer{flex:1}
+.hint{display:flex;align-items:center;gap:var(--s2);font-size:var(--text-xs);color:#a35c00}
+.hint svg{width:15px;height:15px;flex:0 0 auto}
+
+/* ==========================================================================
+   5 · CEO WELCOME
+   ========================================================================== */
+.ceo{width:620px;max-width:100%}
+.ceo .card{padding:var(--s12) var(--s12) var(--s8)}
+@media(max-width:600px){.ceo .card{padding:var(--s8) var(--s6)}}
+/* letterhead */
+.lhead{display:flex;align-items:center;gap:var(--s4);padding-bottom:var(--s6);
+  border-bottom:1px solid var(--hairline);margin-bottom:var(--s8)}
+.lhead img{height:26px;width:auto;display:block}
+.lhead .spacer{flex:1}
+.ldate{font-size:var(--text-xs);color:var(--general-muted-foreground);letter-spacing:.01em}
+.salut{font-size:var(--text-2xl);letter-spacing:-.7px;margin-bottom:var(--s6)}
+.letter{font-size:var(--text-base);line-height:1.68;color:#3d3d3d}
+.letter p+p{margin-top:var(--s4)}
+.letter b{color:var(--general-foreground);font-weight:600}
+.letter .valed{margin-top:var(--s6)}
+/* signature — real script face on macOS, graceful fallback elsewhere */
+.sig{margin-top:var(--s2)}
+.sigmark{display:block;font-family:"Snell Roundhand","Apple Chancery","Brush Script MT",cursive;
+  font-size:40px;line-height:1.25;color:var(--brand-midnight);padding-left:2px}
+.sigid{display:flex;align-items:center;gap:var(--s3);margin-top:var(--s6);
+  padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.portrait{width:44px;height:44px;border-radius:var(--rounded-full);flex:0 0 auto;display:grid;
+  place-items:center;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;color:#fff;
+  letter-spacing:.02em;background:linear-gradient(135deg,#2170ed,#0b00ab);box-shadow:var(--shadow-sm)}
+.ceo-id b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.ceo-id span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:1px}
+.ceo-act{display:flex;flex-direction:column;align-items:center;gap:var(--s4);margin-top:var(--s8)}
+.endnote.on{display:flex;animation:rise var(--t) both}
+.endnote svg{width:15px;height:15px;flex:0 0 auto}
+
+/* ==========================================================================
+   6 · APP SHELL — banner, rounded white wrapper, icon rail, header
+   Content canvas is deliberately empty.
+   ========================================================================== */
+body.in-app{background:var(--brand-midnight);overflow:hidden}
+body.in-app .flow{display:none}
+.app{display:none;flex-direction:column;height:100vh;height:100dvh}
+.app.on{display:flex;animation:rise var(--t-slow) both}
+
+/* --- announcement banner (sits on the page, above the wrapper) --- */
+.banner{flex:0 1 auto;min-width:0;max-width:100%;display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:var(--s2) var(--s3);
+  min-height:46px;padding:var(--s2) var(--s6);color:#dce6fb;font-size:var(--text-sm)}
+.banner b{color:var(--surface);font-weight:600}
+.banner .bdot{width:7px;height:7px;border-radius:var(--rounded-full);flex:0 0 auto;
+  background:var(--general-accent);box-shadow:0 0 0 4px #ff9b3d33}
+.banner .blink{display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;
+  color:var(--surface);font-size:var(--text-sm);font-weight:500;text-decoration:underline;
+  text-underline-offset:3px;border-radius:var(--rounded-xs)}
+.banner .blink svg{width:13px;height:13px}
+.bannerwrap{position:relative;display:flex;justify-content:center;flex:0 0 auto}
+.bannerwrap .bx{position:absolute;top:50%;right:var(--s6);transform:translateY(-50%);
+  width:28px;height:28px;display:grid;place-items:center;
+  background:none;border:none;cursor:pointer;color:#8fa3c9;border-radius:var(--rounded-full);
+  transition:var(--t-fast)}
+.bannerwrap .bx:hover{background:#ffffff1f;color:var(--surface)}
+.bannerwrap .bx svg{width:14px;height:14px}
+
+/* --- white wrapper with rounded top corners --- */
+.wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--surface);
+  border-radius:var(--rounded-2xl) var(--rounded-2xl) 0 0;overflow:hidden;
+  box-shadow:0 -1px 0 #ffffff1a,var(--shadow-xl)}
+
+/* --- header --- */
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:68px;padding:0 var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.appbar .brand{display:flex;align-items:center;flex:0 0 auto}
+.appbar .brand img{height:28px;width:auto;display:block}
+.appbar .spacer{flex:1}
+.search{position:relative;display:flex;align-items:center;gap:var(--s2);min-width:0;width:min(460px,42vw);
+  height:42px;padding:0 var(--s3) 0 var(--s4);background:#f7f8fa;border:1px solid transparent;
+  border-radius:var(--rounded-full);transition:var(--t-fast)}
+.search:hover{background:var(--general-muted)}
+.search:focus-within{background:var(--surface);border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
+.search svg{width:17px;height:17px;color:var(--general-muted-foreground);flex:0 0 auto}
+.search input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:var(--text-sm)}
+.search input::placeholder{color:#8f8f8f}
+.search kbd{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
+  padding:0 5px;border-radius:var(--rounded-xs);background:var(--surface);border:1px solid var(--sidebar-border);
+  box-shadow:var(--shadow-2xs);font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground)}
+/* connected ERP status */
+.erp{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s3) 0 var(--s3);
+  background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  box-shadow:var(--shadow-2xs);cursor:default;transition:var(--t-fast)}
+.erp:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.erp .live{position:relative;width:8px;height:8px;flex:0 0 auto;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive)}
+.erp .live::after{content:"";position:absolute;inset:-4px;border-radius:var(--rounded-full);
+  border:1.5px solid var(--sentiment-positive);opacity:.45;animation:pip 2.4s ease-out infinite}
+@keyframes pip{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.5);opacity:0}}
+.erp .et{display:flex;flex-direction:column;line-height:1.25}
+.erp{padding-right:var(--s1)}
+.erp .et b{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
+/* sync — lives inside the pill, degrades to icon-only when the header tightens */
+.syncbtn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;
+  flex:0 0 auto;cursor:pointer;border:none;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--sidebar-foreground);
+  font-size:13px;font-weight:600;white-space:nowrap;transition:var(--t-fast)}
+.syncbtn:hover:not([disabled]):not(.done){background:var(--general-secondary);color:var(--general-primary)}
+.syncbtn[disabled]{cursor:default;color:var(--general-muted-foreground)}
+.syncbtn svg{width:14px;height:14px;flex:0 0 auto}
+.syncbtn.busy svg{animation:spin 900ms linear infinite}
+.syncbtn.done{background:#d9f2ef;color:var(--sentiment-positive)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:1080px){.syncbtn span{display:none}.syncbtn{padding:0 7px}}
+@media (prefers-reduced-motion:reduce){.syncbtn.busy svg{animation:none}}
+.erp .et span{font-size:13px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
+@media(max-width:1080px){.erp .et span{display:none}}
+/* account menu */
+.userwrap{position:relative;flex:0 0 auto}
+.upop{position:absolute;top:calc(100% + 8px);right:0;z-index:35;width:250px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.upop.on{opacity:1;transform:none;pointer-events:auto}
+.up-h{padding:var(--s4);border-bottom:1px solid var(--hairline)}
+.up-h b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.up-h span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:1px}
+.up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
+  background:none;border:none;cursor:pointer;text-align:left;font-size:var(--text-sm);
+  color:var(--general-foreground);transition:var(--t-fast)}
+.up-i:hover{background:var(--general-muted)}
+.up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.up-f{padding:0 var(--s4) var(--s4);font-size:13px;color:#a3a3a3}
+
+/* notifications */
+.notif{position:relative;flex:0 0 auto}
+.bell{position:relative;width:38px;height:38px;display:grid;place-items:center;background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);color:var(--sidebar-foreground);
+  transition:var(--t-fast)}
+.bell:hover{background:var(--general-muted)}
+.bell.on{background:var(--brand-ice);color:var(--general-primary)}
+.bell svg{width:20px;height:20px}
+.bell .bdg{position:absolute;top:2px;right:1px;min-width:17px;height:17px;padding:0 4px;
+  border-radius:var(--rounded-full);background:var(--general-destructive);color:#fff;
+  font-size:13px;font-weight:700;line-height:17px;font-variant-numeric:tabular-nums;
+  box-shadow:0 0 0 2px var(--surface)}
+.bell .bdg[hidden]{display:none}
+/* popover: height wraps the items, never the full column */
+.npop{position:absolute;top:calc(100% + 10px);right:0;z-index:35;width:min(400px,calc(100vw - 32px));
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px) scale(.98);transform-origin:100% 0;
+  pointer-events:none;transition:opacity var(--t-fast),transform var(--t-fast)}
+.npop.on{opacity:1;transform:none;pointer-events:auto}
+.np-h{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s4) var(--s3)}
+.np-h b{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.np-h .spacer{flex:1}
+.np-h .linkbtn{font-size:var(--text-xs)}
+.np-b{max-height:min(440px,60vh);overflow-y:auto;padding-bottom:var(--s2)}
+.ngrp+.ngrp{border-top:1px solid var(--hairline);margin-top:var(--s2);padding-top:var(--s2)}
+.ngrp .gh{display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s4);
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.ngrp .gh .spacer{flex:1}
+.ngrp .gh em{font-style:normal;font-variant-numeric:tabular-nums}
+.note{display:grid;grid-template-columns:8px 1fr auto;align-items:start;gap:var(--s3);width:100%;
+  padding:var(--s3) var(--s4);background:none;border:none;text-align:left;cursor:pointer;
+  transition:var(--t-fast)}
+.note:hover{background:#fafbfd}
+.note .dot{width:8px;height:8px;margin-top:5px;border-radius:var(--rounded-full);
+  background:var(--general-primary)}
+.note.read .dot{background:transparent}
+.note .nb{min-width:0}
+.note .nb b{display:block;font-size:var(--text-sm);font-weight:600;line-height:1.4}
+.note .nb span{display:block;margin-top:2px;font-size:13px;color:var(--general-muted-foreground)}
+.note.read .nb b{font-weight:400;color:var(--general-muted-foreground)}
+.note .nv{flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-xs);font-weight:600;
+  white-space:nowrap;color:var(--sentiment-positive)}
+.note .nv.dn{color:var(--sentiment-negative)}
+.note.read .nv{color:var(--general-muted-foreground);font-weight:500}
+.np-empty{padding:var(--s8) var(--s4);text-align:center;font-size:var(--text-sm);
+  color:var(--general-muted-foreground)}
+
+/* user */
+.user{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s2);background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);transition:var(--t-fast)}
+.user:hover{background:var(--general-muted)}
+.user .uav{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;color:#fff;font-family:var(--font-sans);font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,#2170ed,#0b00ab)}
+.user .un{font-size:var(--text-xs);font-weight:600;text-align:left;line-height:1.25;
+  white-space:nowrap}
+.user .un span{display:block;font-weight:400;color:var(--general-muted-foreground);
+  white-space:nowrap}
+.user .uc{width:14px;height:14px;color:var(--general-muted-foreground)}
+@media(max-width:1000px){.user .un{display:none}}
+
+/* --- body: rail + canvas --- */
+.appbody{flex:1 1 auto;min-height:0;display:flex}
+.rail{flex:0 0 auto;width:248px;display:flex;flex-direction:column;padding:var(--s4) var(--s3);
+  border-right:1px solid var(--hairline);transition:width var(--t)}
+.rail.mini{width:76px}
+/* no overflow here — it would clip the collapsed-state tooltips horizontally */
+.nav{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-height:0}
+.ni{position:relative;display:flex;align-items:center;gap:var(--s3);width:100%;height:44px;
+  padding:0 var(--s3);background:none;border:none;cursor:pointer;border-radius:var(--rounded-md);
+  color:var(--sidebar-foreground);font-size:var(--text-sm);font-weight:500;text-align:left;
+  transition:background-color var(--t-fast),color var(--t-fast)}
+.ni:hover{background:var(--general-muted)}
+.ni.on{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
+.ni .nic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center}
+.ni .nic svg{width:20px;height:20px}
+/* the discovery mark matches the SDA mark's optical size */
+.ni.hero .nic,.ni.hero .nic svg{width:22px;height:22px}
+.ni .nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:opacity var(--t-fast)}
+.ni .nb{flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--general-accent);color:var(--general-accent-foreground);
+  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.rail.mini .ni{justify-content:center;padding:0}
+.rail.mini .ni .nt{opacity:0;width:0;flex:0 0 0}
+.rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:13px}
+/* highlighted first entry — last of the two cards at the top of the rail, so its bottom
+   margin is what separates that pair from the plain menu items below (holds when mini) */
+.ni.hero{height:auto;padding:var(--s3);margin-bottom:var(--s6);align-items:flex-start;
+  background:linear-gradient(160deg,#edf5ff,#f7fbff);border:1px solid var(--general-border);
+  color:var(--general-foreground)}
+.ni.hero:hover{border-color:var(--brand-cornflower);background:linear-gradient(160deg,#e4efff,#f2f8ff)}
+.ni.hero .nic{color:var(--general-primary)}
+.ni.hero .hb{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ni.hero .hb b{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
+.ni.hero .hb span{font-size:13px;color:var(--general-muted-foreground);line-height:1.4}
+.rail.mini .ni.hero{padding:0;height:44px;align-items:center;justify-content:center;
+  border-color:transparent;background:var(--brand-ice)}
+.rail.mini .ni.hero .hb{display:none}
+/* tooltip when collapsed */
+.rail.mini .ni::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
+  transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
+  white-space:nowrap;pointer-events:none;opacity:0;z-index:5;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.rail.mini .ni:hover::after,.rail.mini .ni:focus-visible::after{opacity:1;transform:translateY(-50%)}
+/* collapse toggle */
+.railtog{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;height:40px;margin-top:var(--s3);
+  padding:0 var(--s3);background:none;border:none;border-top:1px solid var(--hairline);cursor:pointer;
+  color:var(--general-muted-foreground);font-size:var(--text-xs);font-weight:500;
+  border-radius:0 0 var(--rounded-md) var(--rounded-md);transition:color var(--t-fast)}
+.railtog:hover{color:var(--general-foreground)}
+.railtog svg{width:20px;height:20px;flex:0 0 auto;transition:transform var(--t)}
+.rail.mini .railtog{justify-content:center;padding:0}
+.rail.mini .railtog svg{transform:rotate(180deg)}
+.rail.mini .railtog span{display:none}
+
+/* --- AI agent: rail entry, always present, above the nav --- */
+.agent-btn{position:relative;flex:0 0 auto;display:flex;align-items:center;gap:var(--s3);width:100%;
+  padding:var(--s3);margin-bottom:var(--s3);cursor:pointer;text-align:left;
+  border:1px solid var(--general-border);border-radius:var(--rounded-md);
+  background:linear-gradient(140deg,#eef4ff,#f6fbf7 55%,#fff8f0);
+  transition:box-shadow var(--t-fast),border-color var(--t-fast),transform .1s ease}
+.agent-btn:hover{border-color:var(--brand-cornflower);box-shadow:var(--shadow-sm)}
+.agent-btn:active{transform:translateY(1px)}
+.agent-btn[aria-expanded="true"]{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1a}
+.sda{width:22px;height:22px;flex:0 0 auto;display:block}
+.agent-btn .ab{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.agent-btn .ab b{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
+.agent-btn .ab span{font-size:13px;color:var(--general-muted-foreground);white-space:nowrap}
+.rail.mini .agent-btn{justify-content:center;padding:0;height:44px}
+.rail.mini .agent-btn .ab{display:none}
+.rail.mini .agent-btn::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
+  transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
+  white-space:nowrap;pointer-events:none;opacity:0;z-index:5;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.rail.mini .agent-btn:hover::after{opacity:1;transform:translateY(-50%)}
+
+/* --- AI agent panel (left of the canvas) --- */
+.ap{flex:0 0 auto;width:0;overflow:hidden;transition:width var(--t)}
+.ap.on{width:var(--apw)}
+.ap.wide.on{width:var(--apw-wide)}
+.app-p{width:var(--apw);height:100%;display:flex;flex-direction:column;
+  background:var(--surface);border-right:1px solid var(--hairline)}
+.ap.wide .app-p{width:var(--apw-wide)}
+.ap-h{flex:0 0 auto;display:flex;align-items:flex-start;gap:var(--s2);padding:var(--s6) var(--s5,20px) var(--s4)}
+.ap-h>div{flex:1;min-width:0}
+.ap-eyebrow{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-bottom:2px}
+.ap-h h3{display:flex;align-items:center;gap:var(--s2);font-size:var(--text-xl);letter-spacing:-.6px}
+.apx{flex:0 0 auto;width:30px;height:30px;display:grid;place-items:center;background:none;border:none;
+  cursor:pointer;border-radius:var(--rounded-sm);color:var(--general-muted-foreground);
+  transition:var(--t-fast)}
+.apx:hover{background:var(--general-muted);color:var(--general-foreground)}
+.apx svg{width:16px;height:16px}
+.ap-b{flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 20px}
+.ap-card{padding:var(--s4);background:#f6f7f9;border-radius:var(--rounded-lg)}
+.ap-lbl{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);
+  margin-bottom:var(--s4)}
+.ap-grp{display:flex;align-items:center;gap:var(--s2);width:100%;padding:0;margin-bottom:var(--s3);
+  background:none;border:none;cursor:pointer;text-align:left}
+.ap-grp .gi{width:17px;height:17px;flex:0 0 auto;color:var(--general-foreground)}
+.ap-grp b{font-size:var(--text-sm);font-weight:600}
+.ap-grp .spacer{flex:1}
+.ap-grp .ch{width:17px;height:17px;flex:0 0 auto;color:var(--general-muted-foreground);
+  transition:transform var(--t-fast)}
+.ap-grp[aria-expanded="false"] .ch{transform:rotate(-90deg)}
+.ap-prompts{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s2);
+  overflow:hidden;transition:max-height var(--t),opacity var(--t)}
+.ap-prompts.shut{max-height:0;opacity:0}
+.pchip{max-width:100%;padding:var(--s3) var(--s4);cursor:pointer;text-align:left;
+  background:var(--general-muted);border:1px solid transparent;border-radius:var(--rounded-md);
+  font-size:var(--text-sm);line-height:1.45;color:var(--general-foreground);transition:var(--t-fast)}
+.pchip:hover{background:var(--surface);border-color:var(--general-border);box-shadow:var(--shadow-xs)}
+.ap-sug{margin-top:var(--s6);padding:var(--s4);background:var(--surface);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);box-shadow:var(--shadow-xs)}
+.ap-sug p{font-size:var(--text-sm);line-height:1.5;margin-bottom:var(--s4)}
+.btn-dark{background:var(--general-foreground);color:var(--surface);border-radius:var(--rounded-sm)}
+.btn-dark:hover{background:#2e2e2e}
+.ap-f{flex:0 0 auto;padding:var(--s4) 20px var(--s5,20px)}
+.ap-in{padding:var(--s3);background:#f6f7f9;border:1px solid var(--sidebar-border);
+  border-radius:var(--rounded-md);transition:var(--t-fast)}
+.ap-in:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
+.ap-in textarea{width:100%;max-height:120px;border:none;outline:none;background:none;resize:none;
+  font-size:var(--text-sm);line-height:1.5}
+.ap-in-r{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s2)}
+.ap-in-r .spacer{flex:1}
+.apattach{display:inline-flex;align-items:center;gap:5px;padding:4px 8px 4px 4px;background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-sm);color:var(--general-muted-foreground);
+  font-size:var(--text-xs);transition:var(--t-fast)}
+.apattach:hover{background:var(--general-muted);color:var(--general-foreground)}
+.apattach svg{width:15px;height:15px}
+.apsend{width:32px;height:32px;display:grid;place-items:center;cursor:pointer;border:none;
+  border-radius:var(--rounded-sm);background:var(--general-foreground);color:var(--surface);
+  transition:var(--t-fast)}
+.apsend:hover{background:var(--general-primary)}
+.apsend svg{width:15px;height:15px}
+:root{--apw:min(380px,34vw);--apw-wide:min(560px,48vw)}
+@media(max-width:1100px){
+  .ap{position:fixed;top:0;left:0;bottom:0;z-index:31;width:auto;
+    transform:translateX(-101%);transition:transform var(--t)}
+  .ap.on,.ap.wide.on{width:auto;transform:none}
+  .app-p,.ap.wide .app-p{width:min(360px,100vw);box-shadow:var(--shadow-xl)}
+}
+
+/* --- canvas --- */
+.canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--general-background)}
+/* container, not viewport: opening a side panel shrinks the canvas without changing the
+   window, so the card's breakpoints have to respond to the space it actually has */
+.page{container-type:inline-size;container-name:page;
+  width:100%;max-width:1200px;margin:0 auto;padding:var(--s12) var(--s8) var(--s16);
+  display:flex;flex-direction:column;gap:var(--s8)}
+@media(max-width:760px){.page{padding:var(--s8) var(--s4) var(--s12)}}
+
+/* 1 · greeting */
+.hello{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4)}
+.hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+/* welcoming status line — one size, one weight; only the counts are emphasised in savings green */
+.hello-row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s6);
+  flex-wrap:wrap;width:100%}
+.hello-p{flex:1 1 340px;font-size:var(--text-lg);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:60ch}
+.hello-p b{font-weight:600;color:var(--sentiment-positive)}
+.hello-p .linkbtn{font-size:inherit;vertical-align:baseline}
+/* status widgets: a wide "Currently saving" card on top, two half-width cards below */
+.hello-widgets{flex:0 1 440px;display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);align-content:start}
+.hw{position:relative}
+.hw-wide{grid-column:1 / -1}
+.hw-t{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md);background:var(--surface);
+  box-shadow:var(--shadow-xs);cursor:pointer;text-align:left;
+  transition:border-color var(--t-fast),box-shadow var(--t-fast),background var(--t-fast)}
+.hw-t:hover{border-color:var(--general-border);box-shadow:var(--shadow-sm)}
+/* three evenly-spaced rows: label / number / unit */
+.hw-txt{display:flex;flex-direction:column;gap:var(--s2);min-width:0}
+.hw-l{font-size:13px;line-height:1.2;color:var(--general-muted-foreground)}
+.hw-v{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;letter-spacing:-.6px;
+  line-height:1;color:var(--general-foreground);font-variant-numeric:tabular-nums}
+.hw-u{font-size:13px;line-height:1.2;color:var(--general-muted-foreground);white-space:nowrap}
+.hw-arrow{flex:0 0 auto;width:18px;height:18px;margin-left:auto;color:var(--general-primary)}
+/* bigger explainer popover, listing the agreements behind each number */
+.hw-pop{position:absolute;top:calc(100% + 8px);right:0;z-index:25;width:min(340px,86vw);
+  padding:var(--s4);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-md);box-shadow:var(--shadow-xl);
+  opacity:0;transform:translateY(-4px) scale(.98);transform-origin:top right;pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.hw.open .hw-pop{opacity:1;transform:none;pointer-events:auto}
+.hw-pop-h{font-family:var(--font-sans);font-size:13px;font-weight:600;
+  color:var(--general-foreground);margin-bottom:var(--s3)}
+.hw-pop-list{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.hw-pop-list li{display:flex;justify-content:space-between;gap:var(--s4);font-size:13px;
+  line-height:1.4;color:var(--general-muted-foreground)}
+.hw-pop-list li b{color:var(--general-foreground);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hw-pop-list li.tot{border-top:1px solid var(--hairline);margin-top:2px;padding-top:var(--s2)}
+.hw-pop-list li.tot span,.hw-pop-list li.tot b{color:var(--general-foreground);font-weight:600}
+.hw-pop-f{margin-top:var(--s3);font-size:12px;line-height:1.45;color:var(--general-muted-foreground)}
+@media(max-width:640px){.hello-widgets{flex-basis:100%}}
+
+/* 2 · current situation — subtle blue gradient rising from the bottom */
+/* Bottom-anchored wash, only the lower third of the card, with a blurred top edge. It
+   bleeds past left/right/bottom so the blur only ever softens the edge that shows. */
+.sit{position:relative;border:1px solid var(--general-border);border-radius:var(--rounded-2xl);
+  overflow:hidden;background:var(--surface);box-shadow:var(--shadow-xs)}
+.sit::after{content:"";position:absolute;left:-40px;right:-40px;bottom:-40px;
+  height:calc(34% + 40px);z-index:0;pointer-events:none;
+  background:linear-gradient(to top,#dceaff,#eef4ff 48%,transparent);
+  filter:blur(22px);opacity:.95}
+.sit-head,.sit-body{position:relative;z-index:1}
+.sit-head{display:flex;align-items:center;gap:var(--s3);padding:var(--s6) var(--s8) 0}
+.sit-head h2{font-size:var(--text-lg);letter-spacing:-.4px}
+.sit-head .spacer{flex:1}
+
+
+/* horizontal split: headline + facts on the left, category breakdown on the right */
+.sit-body{padding:var(--s6) var(--s8) var(--s8);display:grid;gap:var(--s8);
+  grid-template-columns:minmax(260px,.85fr) minmax(340px,1.15fr);align-items:start}
+.sit-left{min-width:0}
+.sit-right{min-width:0;padding-left:var(--s8);border-left:1px solid #1b64dc1f}
+@container page (max-width:940px){
+  .sit-body{grid-template-columns:1fr;gap:var(--s6)}
+  .sit-right{padding-left:0;border-left:none;padding-top:var(--s6);border-top:1px solid #1b64dc1f}
+}
+@container page (max-width:560px){
+  /* stack the row: label, figures, bar — the arrow keeps its column on the right */
+  .cbar{grid-template-columns:1fr auto;grid-template-areas:"name go" "amt go" "bar go"}
+  .cbar .amt2{text-align:left}
+  .cbar .pc2{display:none}          /* the figures carry it; the label needs the room */
+}
+@container page (max-width:440px){
+  .sit-head{padding:var(--s4) var(--s4) 0}
+  .sit-body{padding:var(--s4)}
+}
+/* hero figure — proportional figures, not tabular: tabular looks loose at display size */
+.figure{display:flex;align-items:baseline;gap:var(--s2);font-family:var(--font-sans);
+  font-size:var(--text-5xl);font-weight:600;letter-spacing:-2.2px;line-height:1.05}
+.figure small{font-size:var(--text-xl);font-weight:500;letter-spacing:-.5px;
+  color:var(--general-muted-foreground)}
+.figure.save{color:var(--sentiment-positive)}
+.figure.save small{color:#4a8f89}
+/* the saving as a rate of total spend — same shape as the per-category label. This is now
+   the only place the spend total appears, so it carries the info affordance. */
+.fig-rate{position:relative;display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s3);
+  font-family:var(--font-mono);font-size:var(--text-l);
+  font-variant-numeric:tabular-nums;color:var(--general-muted-foreground)}
+.fig-rate b{color:var(--general-foreground);font-weight:600}
+.figure-sub{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.55;
+  color:var(--general-muted-foreground)}
+.figure-sub b{color:var(--general-foreground);font-weight:600}
+/* supporting facts */
+/* the four supporting facts now live behind the info icon on the total */
+.ihold{display:inline-flex;flex:0 0 auto}
+.ibtn{width:22px;height:22px;display:grid;place-items:center;background:none;border:none;
+  cursor:pointer;border-radius:var(--rounded-full);color:var(--general-muted-foreground);
+  transition:var(--t-fast)}
+.ibtn:hover{background:#1b64dc1f;color:var(--general-primary)}
+.ibtn[aria-expanded="true"]{background:var(--general-primary);color:#fff}
+.ibtn svg{width:16px;height:16px}
+/* opens downward: the button now sits near the top of the card */
+.ipop{position:absolute;top:calc(100% + 10px);left:0;transform:translateY(-4px);
+  z-index:12;width:min(320px,100%);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);box-shadow:var(--shadow-xl);opacity:0;pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.ipop.on{opacity:1;pointer-events:auto;transform:none}
+.ip-h{padding:var(--s4) var(--s4) var(--s2);font-family:var(--font-sans);font-size:var(--text-xs);
+  font-weight:600}
+.ip-f{padding:var(--s3) var(--s4) var(--s4);font-size:13px;line-height:1.5;
+  color:var(--general-muted-foreground)}
+.ip-f b{color:var(--general-foreground);font-weight:600}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--hairline)}
+.fact{padding:var(--s3) var(--s4);background:var(--surface)}
+.fact b{display:block;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
+  letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.fact span{display:block;margin-top:1px;font-size:13px;color:var(--general-muted-foreground)}
+
+/* ---------- spend through the year ---------- */
+.spark{margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid #1b64dc1f}
+.sp-head{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4);
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+/* legend on its own line — three entries plus the title never fit one row in this column */
+.sp-lgs{flex:1 0 100%;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+.sp-lg{display:inline-flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;
+  font-family:var(--font-body);font-size:13px}
+.sp-lg i{width:14px;height:0;border-top:2px solid var(--general-primary);flex:0 0 auto}
+.sp-lg i.l2{border-top-style:dashed}
+.sp-lg i.l3{border-top-color:var(--sentiment-positive)}
+.sp-wrap{position:relative}
+.sp-wrap svg{display:block;width:100%;height:auto;overflow:visible}
+.sp-grid{stroke:#1b64dc1f;stroke-width:1}
+.sp-ax{font-family:var(--font-mono);font-size:var(--axfs,11px);fill:#8f9bab}
+.sp-ax.hide{display:none}
+.sp-ax.now{fill:#5f6b7c;font-weight:600}
+.sp-stop{stroke:#98a6b8;stroke-width:1;stroke-dasharray:3 3}
+.sp-l1{fill:none;stroke:var(--general-primary);stroke-width:2.2;stroke-linecap:round;
+  stroke-linejoin:round}
+.sp-l2{fill:none;stroke:var(--general-primary);stroke-width:2.2;stroke-dasharray:5 4;
+  stroke-linecap:round}
+.sp-l3{fill:none;stroke:var(--sentiment-positive);stroke-width:2.2;stroke-linecap:round;
+  stroke-linejoin:round}
+.sp-area{fill:var(--general-primary);opacity:.09}
+.sp-band{fill:var(--sentiment-positive);opacity:.1}
+.sp-dot{fill:#fff;stroke-width:2.4}
+.sp-hit{fill:transparent;cursor:crosshair}
+.sp-cross{stroke:#98a6b8;stroke-width:1;opacity:0}
+.sp-cross.on{opacity:1}
+.sp-tip{position:absolute;z-index:6;padding:6px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:13px;line-height:1.45;
+  white-space:nowrap;pointer-events:none;opacity:0;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast)}
+.sp-tip.on{opacity:1}
+.sp-tip b{font-weight:600}
+.sp-tip .t3{color:#6fe3c8}
+.sp-note{margin-top:var(--s4);font-size:13px;line-height:1.55;color:var(--general-muted-foreground)}
+.sp-note b{color:var(--sentiment-positive);font-weight:600}
+/* category split */
+.split-head{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s4);
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.split-head .spacer{flex:1}
+.cbars{list-style:none;display:flex;flex-direction:column;gap:var(--s1)}
+/* label row over a full-width track, so the small categories still get enough track
+   to be visible */
+.cbar{position:relative;display:grid;align-items:center;gap:var(--s2) var(--s4);
+  grid-template-columns:1fr auto auto;
+  grid-template-areas:"name amt go" "bar pc go";
+  padding:var(--s2) var(--s2);border-radius:var(--rounded-sm)}
+.cbar:hover{background:#ffffff8f}
+/* which row the side panel is showing */
+.cbar.sel{background:#ffffffd9}
+.cbar.sel .rowgo{color:#fff;background:var(--sentiment-positive)}
+/* the quick win — the one row that should catch the eye */
+.cbar.quick{background:#ffffffd9;border:1px solid #00968947;padding:var(--s3);
+  box-shadow:0 1px 2px #0096891a}
+.cbar.quick:hover{background:#fff;border-color:#00968980}
+.cbar.quick .cn2{font-weight:600}
+.qtag{display:inline-flex;align-items:center;gap:4px;margin-left:var(--s2);padding:2px 7px;
+  border-radius:var(--rounded-full);background:var(--sentiment-positive);color:#fff;
+  font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:.01em;
+  vertical-align:1px}
+.qtag svg{width:10px;height:10px}
+/* wraps rather than ellipsizes: a clipped label loses the category AND the Quick win
+   badge, and there is no tooltip to recover them */
+.cbar .cn2{grid-area:name;font-size:var(--text-sm);font-weight:500;min-width:0;
+  line-height:1.35;text-wrap:pretty}
+/* One measure: the saving potential. Square at the baseline, 4px rounded data-end. */
+.b2{display:block}
+.cbar .b2{grid-area:bar}
+.b2 i{display:block;height:10px;min-width:2px;border-radius:0 5px 5px 0;
+  background:var(--sentiment-positive);transition:width var(--t-slow)}
+.cbar .amt2{grid-area:amt;text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);
+  font-weight:600;font-variant-numeric:tabular-nums;color:var(--sentiment-positive);
+  white-space:nowrap}
+/* unit sits quieter than the figure, same tint as the hero's unit */
+.cbar .amt2 .u{font-style:normal;font-size:13px;font-weight:500;color:#4a8f89}
+/* secondary: the rate it comes from, and the spend it sits on */
+.cbar .pc2{grid-area:pc;text-align:right;font-family:var(--font-mono);font-size:13px;
+  font-variant-numeric:tabular-nums;color:var(--general-muted-foreground);white-space:nowrap}
+.cbar .pc2 b{color:var(--general-foreground);font-weight:600}
+/* row CTA — spans both lines on the right */
+.rowgo{grid-area:go;align-self:center;width:30px;height:30px;display:grid;place-items:center;
+  background:none;border:none;cursor:pointer;border-radius:var(--rounded-full);
+  color:#a3a3a3;transition:var(--t-fast)}
+.cbar:hover .rowgo{color:var(--sentiment-positive);background:#0096891a}
+.rowgo:hover{background:var(--sentiment-positive)!important;color:#fff!important}
+.rowgo svg{width:16px;height:16px}
+
+/* per-mark hover detail */
+.cbar::after{content:attr(data-tip);position:absolute;left:0;bottom:calc(100% - 4px);
+  padding:5px 10px;border-radius:var(--rounded-sm);background:var(--brand-midnight);
+  color:var(--surface);font-size:13px;white-space:nowrap;pointer-events:none;opacity:0;z-index:4;
+  box-shadow:0 0 0 2px var(--surface),var(--shadow-md);transform:translateY(3px);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.cbar:hover::after{opacity:1;transform:none}
+/* the top row has no headroom — drop its tooltip below instead of over the column header */
+.cbar:first-child::after{bottom:auto;top:calc(100% - 4px);transform:translateY(-3px)}
+
+/* ==========================================================================
+   SUPPLIERS — shelves of supplier recommendations
+   Each shelf is a horizontal, snap-scrolling row of cards. Card width responds to the
+   CANVAS (container query), not the window: opening a side panel shrinks the canvas.
+   ========================================================================== */
+/* the two canvas views — one at a time, each keeping the page's own vertical rhythm */
+#viewDash,#viewSup{min-width:0;display:flex;flex-direction:column;gap:var(--s8)}
+#viewDash[hidden],#viewSup[hidden]{display:none}
+.shelf{min-width:0}
+.sh-head{display:flex;align-items:flex-end;gap:var(--s4);margin-bottom:var(--s3)}
+.sh-head>div{flex:1;min-width:0}
+.sh-eyebrow{display:flex;align-items:center;gap:6px;margin-bottom:var(--s1);
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.sh-eyebrow svg{width:12px;height:12px;flex:0 0 auto;color:var(--general-primary)}
+.sh-head h2{font-size:var(--text-xl);letter-spacing:-.6px}
+.sh-note{margin-top:var(--s1);font-size:var(--text-sm);line-height:1.5;
+  color:var(--general-muted-foreground)}
+/* prev / next */
+.sh-nav{flex:0 0 auto;display:flex;gap:var(--s2);padding-bottom:2px}
+.snav{width:34px;height:34px;display:grid;place-items:center;cursor:pointer;
+  background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  box-shadow:var(--shadow-xs);color:var(--general-foreground);transition:var(--t-fast)}
+.snav:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border);
+  color:var(--general-primary)}
+.snav[disabled]{cursor:not-allowed;opacity:.35;box-shadow:none}
+.snav svg{width:16px;height:16px}
+/* the row: wheel, trackpad and touch all still scroll it — only the bar is hidden */
+.suprow{--supw:250px;display:flex;align-items:stretch;gap:var(--s4);
+  padding:var(--s2) 3px var(--s3);margin:0 -3px;
+  overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-left:3px;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.suprow::-webkit-scrollbar{display:none}
+@container page (max-width:860px){.suprow{--supw:222px}}
+@container page (max-width:600px){.suprow{--supw:196px;gap:var(--s3)}}
+@container page (max-width:420px){.suprow{--supw:80%}}
+/* card — one focusable target, no nested controls */
+.sup{position:relative;flex:0 0 auto;width:var(--supw);scroll-snap-align:start;
+  display:flex;flex-direction:column;text-align:left;cursor:pointer;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xs);
+  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.sup:hover{border-color:var(--general-border);box-shadow:var(--shadow-md)}
+/* image area — no photography available, so: a tinted gradient plus one big quiet
+   category watermark. Deliberately low contrast; the numbers have to win. */
+.sup-img{position:relative;flex:0 0 auto;aspect-ratio:16/10}
+.sup-ph{position:absolute;inset:0;overflow:hidden;
+  border-radius:calc(var(--rounded-lg) - 1px) calc(var(--rounded-lg) - 1px) 0 0;
+  background:linear-gradient(150deg,var(--g1),var(--g2))}
+.sup-ph svg{position:absolute;right:-7%;bottom:-16%;width:58%;height:auto;color:var(--wm)}
+.sup[data-tone="blue"]{--g1:#1b64dc24;--g2:#1b64dc08;--wm:#1b64dc47}
+.sup[data-tone="teal"]{--g1:#00968924;--g2:#00968908;--wm:#00968947}
+.sup[data-tone="amber"]{--g1:#ff9b3d30;--g2:#ff9b3d0a;--wm:#ff9b3d5c}
+.sup[data-tone="corn"]{--g1:#73abff38;--g2:#73abff0a;--wm:#73abff7a}
+.sup[data-tone="ink"]{--g1:#000a4517;--g2:#000a4505;--wm:#000a4533}
+.sup-leaf{position:absolute;top:var(--s2);left:var(--s2);z-index:2;
+  display:inline-flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;
+  border-radius:var(--rounded-full);background:#ffffffe6;box-shadow:var(--shadow-2xs);
+  color:var(--sentiment-positive);font-size:13px;font-weight:600;line-height:1.3;white-space:nowrap}
+.sup-leaf svg{width:11px;height:11px;flex:0 0 auto}
+/* wordmark, not a logo file — a white tile overlapping the bottom edge of the image */
+.sup-logo{position:absolute;left:var(--s3);bottom:-18px;z-index:2;width:52px;height:52px;
+  display:grid;place-items:center;padding:0 3px;overflow:hidden;text-align:center;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  box-shadow:var(--shadow-sm);font-family:var(--font-sans);font-weight:700;font-size:16px;
+  letter-spacing:.02em;line-height:1.15;color:var(--brand-midnight)}
+/* shelf 3 (per the sketch): no category label, badge sits on the image */
+.sup.inimg .sup-logo{bottom:var(--s2)}
+.sup.inimg .sup-b{padding-top:var(--s4)}
+.sup-b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;
+  padding:calc(var(--s6) + var(--s2)) var(--s4) var(--s4)}
+.sup-cat{font-size:13px;color:var(--general-muted-foreground);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sup-n{margin-top:2px;font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+  letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sup-save{margin-top:var(--s2);min-height:calc(1.5em * 2);font-size:var(--text-xs);line-height:1.5;
+  color:var(--general-muted-foreground);text-wrap:pretty}
+.sup-save b{color:var(--sentiment-positive);font-weight:600}
+.sup-more{display:flex;align-items:center;gap:5px;margin-top:auto;padding-top:var(--s3);
+  border-top:1px solid var(--hairline);font-size:var(--text-xs);font-weight:600;
+  color:var(--general-primary)}
+.sup-more svg{width:14px;height:14px;transition:transform var(--t-fast)}
+.sup:hover .sup-more svg{transform:translateX(3px)}
+
+@media(max-width:760px){
+  /* the rail floats over the canvas here; JS keeps it collapsed unless the user opens it */
+  .rail{position:absolute;z-index:10;height:100%;background:var(--surface);box-shadow:var(--shadow-lg)}
+  .appbar{padding:0 var(--s4);gap:var(--s3)}
+  .appbar .brand img{height:24px}
+  .search{width:auto;flex:1}
+  .search kbd{display:none}
+  .erp .et{display:none}
+  .banner{flex-wrap:wrap;justify-content:center;padding:var(--s2) 44px;text-align:center}
+}
+@media(max-width:620px){
+  .appbar{padding:0 var(--s3)}
+  .appbar .brand img{height:22px}
+  .appbar .spacer{display:none}
+  .erp{display:none}
+  .canvas{padding:var(--s4)}
+}
+
+/* ---------- category explainer panel ---------- */
+/* No scrim, no blur, no focus trap — the dashboard stays live behind it. The panel is a
+   flex sibling of the canvas, so opening it reflows the content rather than covering it. */
+.dw{flex:0 0 auto;width:0;overflow:hidden;transition:width var(--t)}
+.dw.on{width:var(--dww)}
+.dwp{width:var(--dww);height:100%;display:flex;flex-direction:column;
+  background:var(--surface);border-left:1px solid var(--hairline)}
+:root{--dww:min(460px,42vw)}
+.dw-h{flex:0 0 auto;display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.dw-eyebrow{font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:var(--s1)}
+.dw-h h3{font-size:var(--text-xl);letter-spacing:-.6px}
+.dw-h>div{flex:1;min-width:0}
+.dwx{flex:0 0 auto;width:34px;height:34px;display:grid;place-items:center;background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);color:var(--general-muted-foreground);
+  transition:var(--t-fast)}
+.dwx:hover{background:var(--general-muted);color:var(--general-foreground)}
+.dwx svg{width:17px;height:17px}
+.dw-b{flex:1 1 auto;min-height:0;overflow-y:auto;padding:var(--s6);
+  display:flex;flex-direction:column;gap:var(--s8)}
+.dw-f{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);padding:var(--s4) var(--s6);
+  border-top:1px solid var(--hairline);background:#fcfcfd}
+.dw-f .fl{flex:1;min-width:0;font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.45}
+.dw-f .fl b{color:var(--sentiment-positive);font-weight:600}
+/* summary block */
+.dw-sum{padding:var(--s6);border-radius:var(--rounded-lg);
+  background:linear-gradient(to top,#e2f4f2,#f7fdfc)}
+.dw-sum .big{display:flex;align-items:baseline;gap:var(--s2);font-family:var(--font-sans);
+  font-size:var(--text-4xl);font-weight:600;letter-spacing:-1.4px;color:var(--sentiment-positive)}
+.dw-sum .big small{font-size:var(--text-base);font-weight:500;color:#4a8f89;letter-spacing:0}
+.dw-sum .rate{margin-top:var(--s2);font-family:var(--font-mono);font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.dw-sum .rate b{color:var(--general-foreground);font-weight:600}
+.agr-note{margin-top:var(--s4);font-size:var(--text-xs);line-height:1.55;
+  color:var(--general-muted-foreground)}
+/* sections */
+.dw-b h4{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;
+  margin-bottom:var(--s4)}
+.dw-b h4 .n{display:inline-grid;place-items:center;width:18px;height:18px;margin-right:7px;
+  border-radius:var(--rounded-xs);background:var(--general-muted);
+  font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground);vertical-align:1px}
+.steps2{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+.steps2 li{display:flex;gap:var(--s3);font-size:var(--text-sm);line-height:1.55;
+  color:var(--general-muted-foreground)}
+.steps2 .sn{flex:0 0 auto;width:20px;height:20px;margin-top:1px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-mono);font-size:13px;font-weight:600}
+.steps2 li:last-child .sn{background:#d9f2ef;color:var(--sentiment-positive)}
+.steps2 b{color:var(--general-foreground);font-weight:600}
+.steps2 code{font-family:var(--font-mono);font-size:var(--text-xs);padding:1px 5px;
+  border-radius:var(--rounded-xs);background:var(--general-muted);color:var(--general-foreground)}
+/* agreements */
+.agrs{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.agr{display:grid;align-items:center;gap:var(--s2) var(--s4);
+  grid-template-columns:1fr auto auto;grid-template-areas:"an sv act" "am sv act";
+  padding:var(--s3) var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  transition:var(--t-fast)}
+.agr:hover{border-color:var(--general-border);background:#fcfdff}
+.agr.on{border-color:#00968947;background:#f4fcfb}
+.agr .an{grid-area:an;font-size:var(--text-sm);font-weight:600}
+.agr .am{grid-area:am;font-size:13px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
+.agr .sv{grid-area:sv;text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);
+  font-weight:600;color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.agr .act{grid-area:act}
+.agr .btn-act{height:32px;padding:0 var(--s4);border:1px solid var(--sentiment-positive);
+  background:var(--surface);color:var(--sentiment-positive);border-radius:var(--rounded-full);
+  font-size:var(--text-xs);font-weight:600;cursor:pointer;transition:var(--t-fast)}
+.agr .btn-act:hover{background:var(--sentiment-positive);color:#fff}
+.agr .inuse{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;
+  color:var(--sentiment-positive)}
+.agr .inuse svg{width:13px;height:13px}
+/* below this there isn't room to sit beside the content without squeezing it, so it
+   floats over instead — still with no scrim, rail and canvas reachable behind */
+@media(max-width:1100px){
+  .dw{position:fixed;top:0;right:0;bottom:0;z-index:30;width:auto;
+    transform:translateX(101%);transition:transform var(--t)}
+  .dw.on{width:auto;transform:none}
+  .dwp{width:min(420px,100vw);box-shadow:var(--shadow-xl)}
+}
+@media(max-width:560px){
+  .dwp{width:100vw}
+  .dw-b,.dw-h{padding:var(--s4)}
+}
+
+/* ---------- business case dialog ---------- */
+.note.bcnote .nb b{color:var(--general-foreground)}
+.ncta{display:inline-flex!important;align-items:center;gap:5px;margin-top:var(--s2);
+  padding:3px 9px;border-radius:var(--rounded-full);background:#d9f2ef;
+  color:var(--sentiment-positive)!important;font-size:13px;font-weight:600}
+.ncta svg{width:12px;height:12px}
+.bcs{position:fixed;inset:0;z-index:50;background:#000a4552;opacity:0;pointer-events:none;
+  transition:opacity var(--t)}
+.bcs.on{opacity:1;pointer-events:auto}
+.bc{position:fixed;z-index:51;left:50%;top:50%;width:min(760px,calc(100vw - 32px));
+  max-height:min(88vh,900px);display:flex;flex-direction:column;
+  background:var(--surface);border-radius:var(--rounded-2xl);box-shadow:var(--shadow-xl);
+  opacity:0;pointer-events:none;transform:translate(-50%,-46%) scale(.98);
+  transition:opacity var(--t),transform var(--t)}
+.bc.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.bc-h{flex:0 0 auto;display:flex;align-items:flex-start;gap:var(--s4);
+  padding:var(--s6) var(--s8) var(--s4);border-bottom:1px solid var(--hairline)}
+.bc-h>div{flex:1;min-width:0}
+.bc-eyebrow{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s2);
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.bc-h h2{font-size:var(--text-2xl);letter-spacing:-.8px}
+/* stepper: progress plus random access across the eight cases */
+.bc-steps{flex:0 0 auto;display:flex;align-items:center;gap:var(--s2);
+  padding:var(--s4) var(--s8);border-bottom:1px solid var(--hairline);background:#fcfcfd}
+.bc-steps .segs{flex:1;display:flex;gap:4px;min-width:0}
+.bseg{flex:1;height:4px;padding:0;border:none;cursor:pointer;border-radius:2px;
+  background:var(--general-muted);transition:var(--t-fast)}
+.bseg:hover{background:#c9cdd3}
+.bseg.on{background:var(--general-primary)}
+.bseg.done{background:var(--sentiment-positive)}
+.bseg.skip{background:#d8dce2}
+.bc-steps .cnt{flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-xs);
+  color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.bc-b{flex:1 1 auto;min-height:0;overflow-y:auto;padding:var(--s6) var(--s8)}
+.bc-f{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;
+  padding:var(--s4) var(--s8);border-top:1px solid var(--hairline);background:#fcfcfd;
+  border-radius:0 0 var(--rounded-2xl) var(--rounded-2xl)}
+.bc-f .spacer{flex:1}
+.bc-f .fnote{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+/* hero */
+.bc-hero{text-align:center;padding:var(--s4) 0 var(--s6)}
+.bc-hero .big{font-family:var(--font-sans);font-size:var(--text-5xl);font-weight:600;
+  letter-spacing:-2px;line-height:1.05;color:var(--sentiment-positive)}
+.bc-hero .big small{font-size:var(--text-xl);font-weight:500;letter-spacing:-.5px;color:#4a8f89}
+.bc-hero .sub{margin-top:var(--s2);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+/* today vs advantage */
+.cmp{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:var(--s3)}
+@media(max-width:680px){.cmp{grid-template-columns:1fr;gap:var(--s2)}}
+.cmp-c{display:flex;flex-direction:column;padding:var(--s5,20px);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-lg);background:var(--surface)}
+.cmp-c.win{border-color:var(--sentiment-positive);background:#f4fcfb;
+  box-shadow:0 0 0 3px #0096891a}
+.cmp-c .ct{display:flex;align-items:center;gap:var(--s2);font-family:var(--font-mono);font-size:13px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--general-muted-foreground);
+  margin-bottom:var(--s3)}
+.cmp-c .ct svg{width:12px;height:12px;flex:0 0 auto}
+.cmp-c.win .ct{color:var(--sentiment-positive)}
+.cmp-c .cmp-sup{font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+  margin-bottom:var(--s3)}
+.cmp-c .price{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:600;
+  letter-spacing:-1.2px;line-height:1;font-variant-numeric:tabular-nums}
+.cmp-c.win .price{color:var(--sentiment-positive)}
+.cmp-c .unit{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:var(--s1)}
+/* margin-top:auto so "No bonus" and "+2% volume bonus" sit on the same line */
+.cmp-c .bonus{margin-top:auto;padding-top:var(--s4);font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.cmp-c .bonus::before{content:"";display:block;height:1px;margin-bottom:var(--s3);
+  background:var(--hairline)}
+.cmp-c.win .bonus{color:var(--sentiment-positive);font-weight:600}
+.cmp-arrow{display:grid;place-items:center;gap:var(--s1);align-self:center;padding:0 var(--s1)}
+.cmp-arrow svg{width:20px;height:20px;color:var(--sentiment-positive)}
+.cmp-arrow b{font-family:var(--font-mono);font-size:13px;font-weight:600;
+  color:var(--sentiment-positive);white-space:nowrap}
+@media(max-width:680px){.cmp-arrow{transform:rotate(90deg);padding:var(--s1) 0}}
+/* why */
+.bc-why{margin-top:var(--s8)}
+.bc-why h4{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;
+  margin-bottom:var(--s3)}
+.bc-why ul{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+.bc-why li{display:flex;gap:var(--s3);font-size:var(--text-sm);line-height:1.6;
+  color:var(--general-muted-foreground)}
+.bc-why li b{color:var(--general-foreground);font-weight:600}
+.bc-why .tick{flex:0 0 auto;width:18px;height:18px;margin-top:3px;border-radius:var(--rounded-full);
+  background:#d9f2ef;color:var(--sentiment-positive);display:grid;place-items:center}
+.bc-why .tick svg{width:11px;height:11px}
+/* meta chips */
+.bc-meta{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s6);padding-top:var(--s6);
+  border-top:1px solid var(--hairline)}
+.mchip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:var(--rounded-full);
+  background:var(--general-muted);font-size:13px;font-weight:500}
+.mchip b{font-weight:700}
+.mchip svg{width:12px;height:12px;color:var(--general-muted-foreground)}
+/* decide table */
+.dtable{border:1px solid var(--hairline);border-radius:var(--rounded-lg);overflow:hidden}
+.drow{display:flex;align-items:baseline;gap:var(--s4);padding:var(--s4) var(--s5,20px)}
+.drow+.drow{border-top:1px solid var(--hairline)}
+.drow .dk{flex:0 0 34%;font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.drow .dv{flex:1;font-size:var(--text-base);font-weight:600}
+.drow .dv small{display:block;margin-top:2px;font-size:var(--text-xs);font-weight:400;
+  color:var(--general-muted-foreground)}
+.drow.hi .dv{color:var(--sentiment-positive)}
+.bc-ask{margin-top:var(--s6);text-align:center;font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+/* done state */
+.bc-done{text-align:center;padding:var(--s6) 0}
+.bc-done .ring{width:60px;height:60px;margin:0 auto var(--s6);border-radius:var(--rounded-full);
+  background:#d9f2ef;color:var(--sentiment-positive);display:grid;place-items:center}
+.bc-done .ring svg{width:30px;height:30px}
+.bc-done h3{font-size:var(--text-xl);letter-spacing:-.5px;margin-bottom:var(--s3)}
+.bc-done p{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.6;
+  max-width:46ch;margin:0 auto}
+.tline{list-style:none;text-align:left;max-width:420px;margin:var(--s8) auto 0;
+  display:flex;flex-direction:column;gap:var(--s4)}
+.tline li{display:flex;gap:var(--s3);font-size:var(--text-sm);line-height:1.5}
+.tline .tn{flex:0 0 auto;width:22px;height:22px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground);display:grid;place-items:center;
+  font-family:var(--font-mono);font-size:13px;font-weight:600}
+.tline li:first-child .tn{background:var(--sentiment-positive);color:#fff}
+.tline b{font-weight:600}
+.tline span{color:var(--general-muted-foreground)}
+@media(max-width:600px){
+  .bc-h,.bc-b,.bc-f{padding-left:var(--s4);padding-right:var(--s4)}
+  .bc-f .btn{width:100%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.05s!important}
+  .loader .fill{clip-path:inset(0 0 0 0)}
+}
+</style>
+</head>
+<body>
+
+<div class="flow">
+
+  <header class="topbar" id="topbar">
+    <img src="assets/advantage-logo.svg" alt="Advantage">
+    <span class="spacer"></span>
+    <div class="prog" id="prog" role="group" aria-label="Setup progress">
+      <i></i><i></i><i></i><span id="progTxt">1 of 3</span>
+    </div>
+    <span class="spacer"></span>
+    <div class="who" id="who"></div>
+  </header>
+
+  <main class="stage">
+
+  <!-- ==================== 1 · LOGIN ==================== -->
+  <section class="scr on mid" id="s-login" aria-labelledby="h-login">
+    <div class="login">
+      <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+      <h1 id="h-login">Welcome</h1>
+      <p class="lead">Your invoices already know where the money is going. Sign in and we'll read them.</p>
+
+      <form class="card" id="loginForm" novalidate>
+        <div class="fgroup">
+          <label class="flabel" for="user">User name</label>
+          <div class="field">
+            <input id="user" name="user" type="text" autocomplete="username" spellcheck="false"
+              placeholder="Start by typing your company name" value="Nordvik Byg A/S">
+          </div>
+        </div>
+        <div class="fgroup">
+          <label class="flabel" for="pass">Password</label>
+          <div class="field">
+            <input id="pass" name="pass" type="password" autocomplete="current-password" value="demo1234">
+            <button class="peek" id="peek" type="button" aria-label="Show password" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/></svg>
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="doLogin" type="submit">Log in</button>
+        <div class="frow">
+          <button class="linkbtn" type="button" id="forgot">Forgot password?</button>
+          <span class="muted" style="font-size:var(--text-xs)">No account? <button class="linkbtn" type="button" id="signup">Get access</button></span>
+        </div>
+      </form>
+      <p class="tinyfoot">Prototype — the credentials are already filled in. Just press Log in.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 2 · SOURCES ==================== -->
+  <section class="scr" id="s-source" aria-labelledby="h-source">
+    <div class="pad">
+      <h1 id="h-source">Only one step to start saving!</h1>
+      <p class="lead">Deeper insights lead to better savings. Pick one to begin.</p>
+
+      <div class="srcs">
+        <!-- live -->
+        <div class="src live">
+          <div class="top">
+            <span class="chip chip-rec">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l2.4 5.3L20 9l-4 3.9.9 5.8-4.9-2.9-4.9 2.9.9-5.8L4 9l5.6-.7L12 3z" fill="currentColor"/></svg>
+              Recommended</span>
+          </div>
+          <h3>Connect your ERP</h3>
+          <p class="why">Connecting your ERP ensures your savings are calculated using your actual
+            invoice data, providing you with highly accurate, personalized insights. You can connect
+            with complete peace of mind: <b>the integration is strictly read-only</b>, your data is
+            securely stored within the EU, and you retain full control to disconnect at any time.</p>
+          <div class="act"><button class="btn btn-primary btn-block" id="goErp">Connect ERP</button></div>
+        </div>
+
+        <!-- rendered fully, but inert for this round of testing -->
+        <div class="src inert">
+          <div class="top"></div>
+          <h3>Let the assistant find it</h3>
+          <p class="why">We build a picture from public registry data, your website and tender records, with no access to your systems at all — <b>useful on day one, but an estimate</b> rather than your invoices.</p>
+          <div class="act"><button class="btn btn-secondary btn-block" tabindex="-1" aria-disabled="true">Start with an estimate</button></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 3 · LOADING ==================== -->
+  <section class="scr mid" id="s-load" aria-labelledby="h-load">
+    <div class="load">
+      <div class="loader" aria-hidden="true">
+        <span class="glow"></span>
+        <svg class="ghost" viewBox="-8 -8 508 364" fill="none">
+          <path d="M58.6307 222.617C52.587 221.01 47.4629 217.828 42.9958 213.367L6.63479 177.057C-0.0658846 170.366 -1.97098 159.869 2.20052 150.62L41.4192 53.1367C48.4483 37.2285 68.8459 32.7348 80.6707 44.543L191.035 150.948L147.02 196.508C110.331 230.587 75.5795 227.406 58.9592 222.617H58.6307Z" fill="#1b64dc"/>
+          <path d="M481.956 84.0348L251.636 318.164C222.6 347.16 175.4 347.16 146.692 317.836L140.32 311.145L103.63 274.179L96.3056 266.865L66.6453 237.246L66.0212 236.623C70.8168 238.853 109.707 253.515 158.221 208.283L202.235 162.723L349.256 6.65849C355.957 -0.0328057 366.468 -1.93523 375.402 2.19763L473.021 45.527C474.302 46.1502 475.583 46.8063 476.864 47.7575C489.642 56.0232 492.171 74.1946 481.66 85.0188L481.988 84.0676L481.956 84.0348Z" fill="#000a45"/>
+        </svg>
+        <svg class="fill" viewBox="-8 -8 508 364" fill="none">
+          <path d="M58.6307 222.617C52.587 221.01 47.4629 217.828 42.9958 213.367L6.63479 177.057C-0.0658846 170.366 -1.97098 159.869 2.20052 150.62L41.4192 53.1367C48.4483 37.2285 68.8459 32.7348 80.6707 44.543L191.035 150.948L147.02 196.508C110.331 230.587 75.5795 227.406 58.9592 222.617H58.6307Z" fill="url(#lg1)"/>
+          <path d="M481.956 84.0348L251.636 318.164C222.6 347.16 175.4 347.16 146.692 317.836L140.32 311.145L103.63 274.179L96.3056 266.865L66.6453 237.246L66.0212 236.623C70.8168 238.853 109.707 253.515 158.221 208.283L202.235 162.723L349.256 6.65849C355.957 -0.0328057 366.468 -1.93523 375.402 2.19763L473.021 45.527C474.302 46.1502 475.583 46.8063 476.864 47.7575C489.642 56.0232 492.171 74.1946 481.66 85.0188L481.988 84.0676L481.956 84.0348Z" fill="url(#lg2)"/>
+          <defs>
+            <linearGradient id="lg1" x1="-55.872" y1="9.512" x2="141.291" y2="206.952" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#92BEFF"/><stop offset="1" stop-color="#2170ED"/></linearGradient>
+            <linearGradient id="lg2" x1="65.955" y1="169.939" x2="488.623" y2="169.939" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#0B00AB"/><stop offset=".53" stop-color="#051BD5"/><stop offset="1" stop-color="#0037FF"/></linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <h2 id="h-load">We're preparing your data set</h2>
+      <p class="lead" id="loadLead">Reading twelve months of invoices. This usually takes under a minute — you don't have to wait here.</p>
+
+      <div class="track" id="loadTrack"><i id="bar"></i></div>
+      <div class="pctrow" id="loadPct"><span id="loadNow" role="status" aria-live="polite">Connecting…</span><b class="num" id="pct">0%</b></div>
+
+      <!-- what's actually coming back, counting up with the progress -->
+      <div class="reads">
+        <div class="read"><b class="num" id="rInv">0</b><span>invoices read</span></div>
+        <div class="read"><b class="num" id="rSup">0</b><span>suppliers found</span></div>
+        <div class="read"><b class="num" id="rAgr">0</b><span>agreements matched</span></div>
+      </div>
+
+      <div class="steps" id="steps"></div>
+
+      <!-- shown once the import hits 100% -->
+      <div id="loadDone" hidden>
+        <div class="reads-mini">
+          <span class="rm-item"><b class="num" id="rInvMini">0</b> invoices read</span>
+          <span class="rm-sep" aria-hidden="true">·</span>
+          <span class="rm-item"><b class="num" id="rSupMini">0</b> suppliers found</span>
+          <span class="rm-sep" aria-hidden="true">·</span>
+          <span class="rm-item"><b class="num" id="rAgrMini">0</b> agreements matched</span>
+        </div>
+        <p class="done-intro">We found <b>8 agreements</b> across <b>3 categories</b>.<br>
+          Here are the <b>top 3</b> that are ready to be <b>quickly activated</b>:</p>
+        <div class="qa">
+          <div class="qa-track" id="qaTrack" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Agreements ready to activate"></div>
+          <div class="qa-ctl">
+            <button class="qa-arrow" id="qaPrev" aria-label="Previous agreement">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="qa-dots" id="qaDots" role="tablist" aria-label="Choose agreement"></div>
+            <button class="qa-arrow" id="qaNext" aria-label="Next agreement">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <p class="done-skip"><button class="linkbtn" id="skipDash">I want to skip this, take me to the dashboard</button></p>
+      </div>
+    </div>
+  </section>
+
+
+
+  </main>
+</div>
+
+<!-- ==================== 6 · APP SHELL ==================== -->
+<div class="app" id="app">
+
+  <div class="bannerwrap" id="bannerwrap">
+    <div class="banner" role="status">
+      <span class="bdot" aria-hidden="true"></span>
+      <span><b>3 agreements</b> still need your attention</span>
+      <button class="blink" id="bannerGo">Review them
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <button class="bx" id="bannerX" aria-label="Dismiss">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="wrap">
+
+    <header class="appbar">
+      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="spacer"></span>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <input id="appSearch" type="search" placeholder="Search suppliers, agreements, invoices…" aria-label="Search">
+        <kbd>⌘</kbd><kbd>K</kbd>
+      </div>
+      <span class="spacer"></span>
+      <div class="erp" id="erpPill" title="Read-only connection · last sync today 06:14">
+        <span class="live" aria-hidden="true"></span>
+        <span class="et"><b id="erpName">Visma.net connected</b><span id="erpMeta">1 284 invoices · 06:14</span></span>
+        <button class="syncbtn" id="syncBtn" aria-label="Sync now">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 10-2.6 5.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M20 6.5V12h-5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="syncLbl">Sync now</span>
+        </button>
+      </div>
+      <div class="notif">
+        <button class="bell" id="bellBtn" aria-label="Notifications" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5a6 6 0 1112 0c0 4.7 1.9 5.7 1.9 5.7H4.1S6 14.2 6 9.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 004 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <span class="bdg" id="bellBadge">0</span>
+        </button>
+        <div class="npop" id="npop" role="region" aria-label="Notifications">
+          <div class="np-h">
+            <b>Notifications</b>
+            <span class="spacer"></span>
+            <button class="linkbtn" id="npAll">Mark all read</button>
+          </div>
+          <div class="np-b" id="npBody"></div>
+        </div>
+      </div>
+      <div class="userwrap">
+      <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
+        <span class="uav" id="userAv">MH</span>
+        <span class="un"><span id="userName">Mette Hansen</span><span id="userCo">Nordvik Byg A/S</span></span>
+        <svg class="uc" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="upop" id="userPop" role="region" aria-label="Account">
+        <div class="up-h"><b id="upName">Mette Hansen</b><span id="upCo">Nordvik Byg A/S</span></div>
+        <button class="up-i" id="restartBtn">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Start the prototype over</button>
+        <p class="up-f">Progress is kept per browser tab.</p>
+      </div>
+      </div>
+    </header>
+
+    <div class="appbody">
+      <nav class="rail" id="rail" aria-label="Main">
+        <button class="agent-btn" id="agentBtn" data-tip="Saving assistant" aria-expanded="false">
+          <img class="sda" src="assets/sda-mark.svg" alt="">
+          <span class="ab"><b>Saving assistant</b><span>Ask it anything</span></span>
+        </button>
+        <div class="nav" id="nav"></div>
+        <button class="railtog" id="railTog" aria-label="Collapse navigation" aria-expanded="true">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-6 7 6 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Collapse</span>
+        </button>
+      </nav>
+
+      <!-- AI agent — opens on the left, beside the rail, pushing the canvas over -->
+      <aside class="ap" id="ap" aria-labelledby="apT">
+        <div class="app-p">
+          <header class="ap-h">
+            <div>
+              <div class="ap-eyebrow">Made to make your procurement easier</div>
+              <h3 id="apT" tabindex="-1">Saving assistant <img class="sda" src="assets/sda-mark.svg" alt=""></h3>
+            </div>
+            <button class="apx" id="apWide" aria-label="Expand panel">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 20h5v-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4l6 6M20 20l-6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+            </button>
+            <button class="apx" id="apX" aria-label="Close panel">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </header>
+
+          <div class="ap-b">
+            <div class="ap-card">
+              <div class="ap-lbl">Ask</div>
+
+              <button class="ap-grp" id="apGrp" aria-expanded="true">
+                <svg class="gi" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.4" stroke="currentColor" stroke-width="1.7"/><path d="M8 12h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                <b>Procurement Manager Prompt</b>
+                <span class="spacer"></span>
+                <svg class="ch" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="ap-prompts" id="apPrompts">
+                <button class="pchip">Show me relevant suppliers for office supplies</button>
+                <button class="pchip">Help me compare freight deals by region</button>
+                <button class="pchip">What agreements are best for a company with 50–100 employees?</button>
+              </div>
+
+              <div class="ap-sug">
+                <p>Create a price request for a better deal on <b>car rental</b>?</p>
+                <button class="btn btn-dark btn-sm" id="apSug">Send request</button>
+              </div>
+            </div>
+          </div>
+
+          <footer class="ap-f">
+            <div class="ap-in">
+              <textarea id="apInput" rows="1" placeholder="Ask the saving assistant…"></textarea>
+              <div class="ap-in-r">
+                <button class="apattach" aria-label="Attach a file">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <span>attach</span>
+                </button>
+                <span class="spacer"></span>
+                <button class="apsend" id="apSend" aria-label="Send">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M3 20.5L21 12 3 3.5l3.4 8.5L3 20.5z" fill="currentColor"/></svg>
+                </button>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </aside>
+
+      <main class="canvas" id="canvas">
+        <div class="page">
+
+        <section id="viewDash">
+
+          <!-- 1 · greeting -->
+          <header class="hello">
+            <h1 id="greet">Good morning, Mette</h1>
+            <div class="hello-row">
+              <p class="hello-p" id="helloP"><!-- filled by renderHello() --></p>
+              <div class="hello-widgets" id="helloWidgets"></div>
+            </div>
+          </header>
+
+          <!-- 2 · current situation -->
+          <section class="sit" aria-labelledby="sit-h">
+            <div class="sit-head">
+              <h2 id="sit-h">Potential savings</h2>
+              <span class="spacer"></span>
+              <span class="chip chip-soft">Based on the last 12 months</span>
+            </div>
+            <div class="sit-body">
+              <div class="sit-left">
+                <div class="figure save"><span id="sitSave">0</span> <small>kr./year</small></div>
+                <div class="fig-rate">
+                  <span id="sitRate"></span>
+                  <span class="ihold">
+                    <button class="ibtn" id="factsBtn" aria-expanded="false"
+                      aria-label="What this spend total is made of">
+                      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.6" r="1.15" fill="currentColor"/></svg>
+                    </button>
+                    <div class="ipop" id="factsPop" role="region" aria-label="What this spend total is made of">
+                      <div class="ip-h">What that spend is made of</div>
+                      <div class="facts" id="sitFacts"></div>
+                      <p class="ip-f" id="sitProv"></p>
+                    </div>
+                  </span>
+                </div>
+                <p class="figure-sub" id="sitSaveSub"></p>
+
+                <!-- 3 · the year so far, and where it lands -->
+                <div class="spark">
+                  <div class="sp-head">
+                    <span>Spend through <span id="spYear">2026</span></span>
+                    <span class="sp-lgs">
+                      <span class="sp-lg"><i class="l1"></i>Actual</span>
+                      <span class="sp-lg"><i class="l2"></i>Projected</span>
+                      <span class="sp-lg"><i class="l3"></i>If you act now</span>
+                    </span>
+                  </div>
+                  <div class="sp-wrap">
+                    <svg id="spSvg" viewBox="0 0 460 236" role="img"
+                      aria-labelledby="spDesc"><desc id="spDesc"></desc></svg>
+                    <div class="sp-tip" id="spTip" aria-hidden="true"></div>
+                  </div>
+                  <p class="sp-note" id="spNote"></p>
+                </div>
+              </div>
+              <div class="sit-right">
+                <div class="split-head">
+                  <span>Saving potential by category</span><span class="spacer"></span>
+                  <span>Rate · category spend</span>
+                </div>
+                <ol class="cbars" id="sitBars"></ol>
+              </div>
+            </div>
+          </section>
+
+
+        </section>
+
+        <!-- SUPPLIERS — three shelves of recommendations, rendered from SUPPLIERS -->
+        <section id="viewSup" hidden></section>
+
+        </div>
+      </main>
+
+      <!-- category explainer — a side panel, not a modal: it takes space in the layout
+           so the category list stays visible and clickable while it's open -->
+      <aside class="dw" id="dw" aria-labelledby="dwT">
+        <div class="dwp">
+          <header class="dw-h">
+            <div>
+              <div class="dw-eyebrow">Purchasing category</div>
+              <h3 id="dwT" tabindex="-1"></h3>
+            </div>
+            <button class="dwx" id="dwX" aria-label="Close panel">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </header>
+          <div class="dw-b" id="dwB"></div>
+          <footer class="dw-f" id="dwF"></footer>
+        </div>
+      </aside>
+    </div>
+
+  </div>
+
+  <!-- business case: a decision, so this one IS focused — dim scrim, no blur -->
+  <div class="bcs" id="bcs"></div>
+  <div class="bc" id="bc" role="dialog" aria-modal="true" aria-labelledby="bcT" aria-hidden="true">
+    <header class="bc-h">
+      <div>
+        <div class="bc-eyebrow"><span class="chip chip-good">Business case</span>
+          <span id="bcStep">Step 1 of 2</span></div>
+        <h2 id="bcT" tabindex="-1">Fuel agreement</h2>
+      </div>
+      <button class="dwx" id="bcX" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="bc-steps" id="bcSteps" hidden></div>
+    <div class="bc-b" id="bcBody"></div>
+    <footer class="bc-f" id="bcFoot"></footer>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+const state = { company:'Nordvik Byg A/S', user:'Mette Hansen', source:'Visma.net', invoices:1284 };
+
+/* "Nordvik Byg A/S" -> "NB"; skips legal-form suffixes so the avatar reads as the company */
+const SUFFIX = /^(a\/s|aps|as|ab|ivs|k\/s|p\/s|oy|ltd|gmbh|inc)$/i;
+function initials(name){
+  const w = name.trim().split(/\s+/).filter(s => !SUFFIX.test(s));
+  return ((w[0] || name)[0] + (w[1] ? w[1][0] : '')).toUpperCase();
+}
+
+/* ---------------- screens ---------------- */
+const SCREENS = ['s-login','s-source','s-load'];
+/* three user-facing steps; the loading screen is still part of "connect" */
+const STEP_OF = {'s-source':1,'s-load':1};
+
+function show(id){
+  curScr = id;
+  SCREENS.forEach(s => $('#'+s).classList.toggle('on', s === id));
+  const step = STEP_OF[id] || 0;
+  $('#topbar').classList.toggle('on', step > 0);
+  $$('#prog i').forEach((el,i) => el.classList.toggle('on', i < step));
+  $('#progTxt').textContent = step ? step + ' of 3' : '';
+  window.scrollTo({top:0, behavior:'instant'});
+  const h = $('#'+id).querySelector('h1,h2');
+  if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:true}); }
+  persist();
+}
+
+/* ---------------- 1 · login ---------------- */
+$('#peek').addEventListener('click', () => {
+  const i = $('#pass'), on = i.type === 'password';
+  i.type = on ? 'text' : 'password';
+  $('#peek').setAttribute('aria-pressed', String(on));
+  $('#peek').setAttribute('aria-label', on ? 'Hide password' : 'Show password');
+});
+function renderWho(){
+  $('#who').innerHTML = `<span class="av">${initials(state.company)}</span>
+    <span><b>${state.company}</b></span>`;
+}
+$('#loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('#user').value.trim();
+  if(v) state.company = v;
+  renderWho();
+  show('s-source');
+});
+$('#forgot').addEventListener('click', () => alert('Not part of this prototype.'));
+$('#signup').addEventListener('click', () => alert('Not part of this prototype.'));
+
+/* ---------------- 2 · source ---------------- */
+$('#goErp').addEventListener('click', () => { show('s-load'); runIngest(); });
+
+/* ---------------- 3 · loading ---------------- */
+const STEPS = [
+  'Connecting to ' + state.source,
+  'Reading supplier invoices',
+  'Grouping spend into categories',
+  'Matching suppliers to agreements',
+  'Comparing prices with 340 similar companies'
+];
+$('#steps').innerHTML = STEPS.map(s => `
+  <div class="step"><span class="dot">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </span>${s}</div>`).join('');
+
+function runIngest(){
+  const rows = $$('#steps .step'), dur = RM ? 600 : 7600, t0 = performance.now();
+  const fill = $('.loader .fill'), loader = $('.loader');
+  /* the totals the counters climb to — the same figures the data set and dashboard use,
+     so nothing the user sees here gets contradicted two screens later */
+  const tInv = state.invoices;
+  const tSup = ROWS.reduce((s,r) => s + r.sup, 0);
+  const tAgr = ROWS.reduce((s,r) => s + r.agr.length, 0);
+  const tick = now => {
+    const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 2);
+    $('#bar').style.width = (e * 100) + '%';
+    /* logo fill pours in lockstep with the bar (bottom → top) */
+    fill.style.clipPath = 'inset(' + ((1 - e) * 100) + '% 0 0 0)';
+    $('#pct').textContent = Math.round(e * 100) + '%';
+    $('#rInv').textContent = fmt(tInv * e);
+    $('#rSup').textContent = fmt(tSup * e);
+    $('#rAgr').textContent = fmt(tAgr * e);
+    const at = Math.min(rows.length - 1, Math.floor(p * rows.length));
+    rows.forEach((r,i) => {
+      r.classList.toggle('done', i < at || p === 1);
+      r.classList.toggle('now', i === at && p < 1);
+    });
+    $('#loadNow').textContent = p < 1 ? STEPS[at] + '…' : 'Done';
+    if(p < 1) requestAnimationFrame(tick);
+    else { loader.classList.add('done'); setTimeout(finishIngest, 500); }   /* freeze the mark full, then hand off */
+  };
+  requestAnimationFrame(tick);
+}
+
+/* 100% reached: swap the progress state for the import summary + quick-activate carousel.
+   Sequenced like an iOS state change — the progress UI eases out, the title crossfades,
+   then the summary springs in with a light stagger. */
+function finishIngest(){
+  const OUT = ['#loadTrack','#loadPct','#steps','#loadLead','.reads'];
+  const h = $('#h-load');
+
+  /* 1 · ease the progress UI out; crossfade the heading */
+  OUT.forEach(s => { const el = $(s); if(el) el.classList.add('is-gone'); });
+  h.classList.add('swap');
+  setTimeout(() => {
+    h.textContent = 'Synchronization complete';
+    h.classList.remove('swap');
+    h.classList.add('swap-in');
+    setTimeout(() => h.classList.remove('swap-in'), 600);
+  }, RM ? 0 : 170);
+
+  /* 2 · once faded, drop them from layout and spring the summary in */
+  setTimeout(() => {
+    OUT.forEach(s => { const el = $(s); if(el) el.style.display = 'none'; });  /* inline beats class display rules */
+    $('#rInvMini').textContent = fmt(state.invoices);
+    $('#rSupMini').textContent = fmt(ROWS.reduce((s,r) => s + r.sup, 0));
+    $('#rAgrMini').textContent = fmt(ROWS.reduce((s,r) => s + r.agr.length, 0));
+    renderQuickActivate();
+    const done = $('#loadDone');
+    done.hidden = false;
+    requestAnimationFrame(() => done.classList.add('reveal'));
+  }, RM ? 0 : 340);
+}
+
+/* the top agreement in each of the three highest-value categories */
+function quickAgreements(){
+  return live().map(r => {
+    const best = r.agr.slice().sort((a,b) => b.save - a.save)[0];
+    return { cat:r.n, name:best.n, save:best.save, covers:best.covers,
+             why:(CDET[best.n] || {}).why || [] };
+  }).sort((a,b) => b.save - a.save).slice(0,3);
+}
+
+let qaIdx = 0, qaN = 0, qaRaf = 0;
+/* measured distance between two cards — robust to the track's padding */
+const qaStep = () => {
+  const c = $('#qaTrack').children;
+  return c.length >= 2 ? (c[1].offsetLeft - c[0].offsetLeft) : $('#qaTrack').clientWidth;
+};
+
+function renderQuickActivate(){
+  const items = quickAgreements();
+  qaN = items.length; qaIdx = 0;
+  $('#qaTrack').innerHTML = items.map((a,i) => `
+    <article class="qa-card" role="group" aria-roledescription="slide" aria-label="${i+1} of ${qaN}: ${a.name}">
+      <header class="qa-top">
+        <h3>${a.name}</h3>
+        <span class="chip chip-soft">${a.cat}</span>
+      </header>
+      <p class="qa-lbl">Potential yearly saving</p>
+      <div class="qa-save"><b class="num">${fmt(a.save)}</b> <small>kr./year</small></div>
+      <p class="qa-cov">Applies to ${fmt(a.covers)} kr. of your annual spend</p>
+      ${a.why.length ? `<div class="qa-why">
+        <h4>Why this one</h4>
+        <ul>${a.why.map(w => `<li><span class="tick">${TICK}</span><span>${w}</span></li>`).join('')}</ul>
+      </div>` : ''}
+      <div class="qa-actions">
+        <button class="btn btn-primary btn-sm qa-activate" data-amt="${fmt(a.save)} kr./year"
+          data-name="${a.name}" data-save="${a.save}" data-covers="${a.covers}">Activate</button>
+        <button class="btn btn-secondary btn-sm qa-details">View details</button>
+      </div>
+    </article>`).join('');
+  $('#qaDots').innerHTML = items.map((_,i) =>
+    `<button class="qa-dot${i===0?' on':''}" role="tab" aria-label="Agreement ${i+1}" data-i="${i}"></button>`).join('');
+  $('#qaTrack').scrollLeft = 0;   /* always start on the first card (defeats scroll restoration) */
+  syncQaUi();
+}
+
+let qaAnim = 0;
+/* animate scrollLeft ourselves — the property setter is honoured everywhere,
+   whereas scrollTo() is a no-op in the static-preview renderer */
+function qaScrollTo(to){
+  const el = $('#qaTrack');
+  cancelAnimationFrame(qaAnim);
+  if(RM){ el.scrollLeft = to; return; }
+  const from = el.scrollLeft, dist = to - from, t0 = performance.now(), dur = 380;
+  const step = now => {
+    const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);  /* easeOutCubic */
+    el.scrollLeft = from + dist * e;
+    if(p < 1) qaAnim = requestAnimationFrame(step);
+  };
+  qaAnim = requestAnimationFrame(step);
+}
+function qaGo(i){
+  qaIdx = Math.max(0, Math.min(qaN - 1, i));
+  qaScrollTo(qaIdx * qaStep());
+  syncQaUi();
+}
+function syncQaUi(){
+  $$('#qaDots .qa-dot').forEach((d,i) => {
+    const on = i === qaIdx;
+    d.classList.toggle('on', on);
+    d.setAttribute('aria-selected', String(on));
+  });
+  $('#qaPrev').disabled = qaIdx === 0;
+  $('#qaNext').disabled = qaIdx === qaN - 1;
+}
+
+$('#qaPrev').addEventListener('click', () => qaGo(qaIdx - 1));
+$('#qaNext').addEventListener('click', () => qaGo(qaIdx + 1));
+$('#qaDots').addEventListener('click', e => {
+  const b = e.target.closest('.qa-dot'); if(b) qaGo(+b.dataset.i);
+});
+$('#qaTrack').addEventListener('scroll', () => {
+  if(qaRaf) return;
+  qaRaf = requestAnimationFrame(() => {
+    qaRaf = 0;
+    const t = $('#qaTrack');
+    qaIdx = Math.max(0, Math.min(qaN - 1, Math.round(t.scrollLeft / qaStep())));
+    syncQaUi();
+  });
+});
+/* View details / skip land in the app; Activate runs the activation flow in place */
+$('#qaTrack').addEventListener('click', e => {
+  if(e.target.closest('.qa-details')){ enterApp(); return; }
+  const act = e.target.closest('.qa-activate');
+  if(act) activateCard(act);
+});
+$('#skipDash').addEventListener('click', enterApp);
+
+function activateCard(btn){
+  if(btn.dataset.done) return;              /* guard against double-clicks */
+  btn.dataset.done = '1';
+  btn.disabled = true;
+  btn.classList.add('is-loading');
+  btn.setAttribute('aria-busy', 'true');
+  btn.innerHTML = '<span class="spinner" aria-hidden="true"></span>Activating…';
+  setTimeout(() => {
+    btn.classList.replace('is-loading', 'is-done');
+    btn.removeAttribute('aria-busy');
+    btn.innerHTML = TICK + 'Activated';
+    btn.closest('.qa-card').classList.add('activated');
+    ACTIVATED.set(btn.dataset.name, {save:+btn.dataset.save, covers:+btn.dataset.covers});   /* feeds the dashboard status widgets */
+  }, RM ? 300 : 3000);
+}
+
+function showToast(amount){
+  const wrap = document.createElement('div');
+  wrap.className = 'toastc';
+  wrap.setAttribute('role', 'status');
+  wrap.setAttribute('aria-live', 'polite');
+  wrap.innerHTML = `<div class="toastc-card">
+      <span class="toastc-ic" aria-hidden="true">${TICK}</span>
+      <div class="toastc-tx"><b>Congratulations! 🎉</b>
+        <p>You're saving <b>${amount}</b> — starting from now on.</p></div>
+    </div>`;
+  const dismiss = () => { wrap.classList.remove('show'); setTimeout(() => wrap.remove(), 450); };
+  document.body.appendChild(wrap);
+  requestAnimationFrame(() => wrap.classList.add('show'));
+  wrap.addEventListener('click', dismiss);
+  setTimeout(dismiss, 4000);
+}
+
+/* ---------------- 4 · data set (read-only; rows can be hidden) ---------------- */
+/* Dummy but reconciling: invoices sum to 1 284 and spend to 4 820 000 kr. */
+/* save  = the full annual saving available = amt × rate (your invoice price against
+           the Advantage agreement rate)
+/* We know two things per category: what was spent (amt, from the invoices) and what could
+   be saved (the agreements below). agr = the agreements that would deliver it, so the
+   potential is DERIVED from them (potOf) and the drawer can never disagree with the chart.
+   covers = the category spend that agreement applies to; save = the saving it unlocks. */
+const ROWS = [
+  {id:'mat', n:'Building materials', sup:18, inv:424, amt:2132300, rate:9,
+   top:'Stark Byggecenter · Bygma · Ahlsell', agr:[
+     {n:'Optimera Erhverv',   covers:155000, save:12400},
+     {n:'Stark Byggecenter',  covers:870000, save:78400},
+     {n:'Bygma Framework',    covers:680000, save:61300},
+     {n:'Ahlsell Nordic',     covers:427300, save:39800}]},
+  {id:'tool', n:'Tools & workwear', sup:11, inv:178, amt:664800, rate:11,
+   top:'Hilti · Würth · Engelbert Strauss', agr:[
+     {n:'Hilti Erhverv',      covers:284000, save:31200},
+     {n:'Würth Nordic',       covers:223800, save:24600},
+     {n:'Engelbert Strauss',  covers:157000, save:17300}]},
+  {id:'fuel', n:'Fuel & transport', sup:5, inv:223, amt:530700, rate:8,
+   top:'Q8 · Circle K · OK', agr:[
+     {n:'Q8 Fuel Card',       covers:423700, save:33900},
+     {n:'Circle K Business',  covers:107000, save:8600}]},
+  /* the quick win: highest rate gap in the set, on the smallest spend — least to
+     renegotiate, fastest to switch */
+  {id:'off', n:'Office supplies', sup:5, inv:62, amt:205000, rate:19, quick:true,
+   top:'Lyreco · Contorland · Staples', agr:[
+     {n:'Lyreco Erhverv',     covers:132000, save:24800},
+     {n:'Contorland',         covers:73000,  save:14100}]},
+  {id:'rent', n:'Machine & equipment rental', sup:6, inv:112, amt:500000, rate:6,
+   top:'Cramo · GSV Materieludlejning', agr:[
+     {n:'GSV Materieludlejning', covers:62000, save:3700},
+     {n:'Cramo Danmark',      covers:285000, save:17100},
+     {n:'Riwal Lifting',      covers:153000, save:9200}]},
+  {id:'frg', n:'Freight & delivery', sup:6, inv:122, amt:328800, rate:8,
+   top:'DSV · GLS · Danske Fragtmænd', agr:[
+     {n:'DSV Road',           covers:191000, save:15300},
+     {n:'GLS Erhverv',        covers:81300,  save:6500},
+     {n:'Danske Fragtmænd',   covers:56500,  save:4500}]},
+  {id:'tel', n:'Telecom & IT', sup:4, inv:100, amt:290400, rate:5,
+   top:'Telenor Erhverv · Dustin', agr:[
+     {n:'Telenor Erhverv',    covers:266500, save:13300},
+     {n:'Dustin IT',          covers:23900,  save:1200}]},
+  {id:'site', n:'Site services & waste', sup:4, inv:63, amt:168000, rate:4,
+   top:'Marius Pedersen · Ragn-Sells', agr:[
+     {n:'Ragn-Sells',         covers:40000,  save:1600},
+     {n:'Marius Pedersen',    covers:128000, save:5100}]}
+];
+const potOf = r => r.agr.reduce((s,a) => s + a.save, 0);
+const live = () => ROWS.filter(r => !r.hidden);
+const tot  = k => live().reduce((s,r) => s + r[k], 0);
+
+
+
+
+/* ---------------- 6 · app shell ---------------- */
+const NAV = [
+  {id:'discover', n:'Weekly discovery', hero:true, sub:'4 new findings since Monday',
+   icon:'<path d="M12 3l2.1 4.7 4.9.6-3.6 3.4.9 5-4.3-2.5-4.3 2.5.9-5L5 8.3l4.9-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  /* same glyph as the Dashboard entry in advantage-autopilot.html */
+  {id:'dashboard', n:'Dashboard',
+   icon:'<rect x="3" y="3" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/>'},
+  {id:'suppliers', n:'Suppliers',
+   icon:'<path d="M4 10v9a1 1 0 001 1h14a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 6.5L4.6 3.6A1 1 0 015.5 3h13a1 1 0 01.9.6L21 6.5c0 1.7-1.3 3-3 3a3 3 0 01-3-3 3 3 0 01-3 3 3 3 0 01-3-3 3 3 0 01-3 3c-1.7 0-3-1.3-3-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 20v-5h4v5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {id:'reports', n:'Reports',
+   icon:'<rect x="4" y="3" width="16" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h8M8 16h4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'},
+  {id:'categories', n:'Categories',
+   icon:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/>'},
+  {id:'agreements', n:'Agreements', badge:'3',
+   icon:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 16c1.5-2.5 2.5-2.5 3 0s1.5 1 3-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
+];
+/* the rail reads as two groups: the two highlighted cards (Saving assistant + Weekly
+   discovery), then the plain menu starting at Dashboard, which is where we land. */
+let navAt = 'dashboard';
+
+function renderNav(){
+  $('#nav').innerHTML = NAV.map(i => i.hero
+    ? `<button class="ni hero${navAt===i.id?' on':''}" data-nav="${i.id}" data-tip="${i.n}">
+         <span class="nic"><svg viewBox="0 0 24 24" fill="none">${i.icon}</svg></span>
+         <span class="hb"><b>${i.n}</b><span>${i.sub}</span></span>
+       </button>`
+    : `<button class="ni${navAt===i.id?' on':''}" data-nav="${i.id}" data-tip="${i.n}">
+         <span class="nic"><svg viewBox="0 0 24 24" fill="none">${i.icon}</svg></span>
+         <span class="nt">${i.n}</span>
+         ${i.badge ? `<span class="nb">${i.badge}</span>` : ''}
+       </button>`
+  ).join('');
+  $$('#nav [data-nav]').forEach(b => b.addEventListener('click', () => {
+    navAt = b.dataset.nav; persist(); renderNav(); setView();
+  }));
+}
+
+/* Only two views exist so far: the suppliers catalogue and the dashboard. Reports,
+   Categories and Agreements keep showing the dashboard, as they did before. */
+function setView(){
+  const sup = navAt === 'suppliers';
+  $('#viewSup').hidden = !sup;
+  $('#viewDash').hidden = sup;
+  $('#canvas').scrollTop = 0;
+  if(sup) syncRows();               /* rows measure 0 while hidden */
+}
+
+function setRail(mini){
+  $('#rail').classList.toggle('mini', mini);
+  const t = $('#railTog');
+  t.setAttribute('aria-expanded', String(!mini));
+  t.setAttribute('aria-label', mini ? 'Expand navigation' : 'Collapse navigation');
+}
+let railTouched = false;
+$('#railTog').addEventListener('click', () => {
+  railTouched = true;
+  setRail(!$('#rail').classList.contains('mini'));
+});
+/* below 760px the rail overlays the canvas, so start collapsed unless the user says otherwise */
+const NARROW = matchMedia('(max-width:760px)');
+const syncRail = () => { if(!railTouched) setRail(NARROW.matches); };
+NARROW.addEventListener('change', syncRail);
+/* ---------- AI agent panel ---------- */
+/* Both panels plus the rail plus a usable canvas need this much room. Below it they are
+   mutually exclusive — otherwise opening the second one squeezes the dashboard to nothing. */
+const BOTH_MIN = 1500;
+const roomForBoth = () => innerWidth >= BOTH_MIN;
+
+function toggleAgent(on){
+  const ap = $('#ap');
+  const open = on === undefined ? !ap.classList.contains('on') : on;
+  if(open && !roomForBoth() && $('#dw').classList.contains('on')) closeCat();
+  ap.classList.toggle('on', open);
+  ap.inert = !open;
+  $('#agentBtn').setAttribute('aria-expanded', String(open));
+  if(open) setTimeout(() => $('#apT').focus(), 320);
+}
+$('#agentBtn').addEventListener('click', () => toggleAgent());
+$('#apX').addEventListener('click', () => toggleAgent(false));
+$('#apWide').addEventListener('click', () => {
+  const wide = $('#ap').classList.toggle('wide');
+  $('#apWide').setAttribute('aria-label', wide ? 'Shrink panel' : 'Expand panel');
+});
+$('#apGrp').addEventListener('click', () => {
+  const b = $('#apGrp'), open = b.getAttribute('aria-expanded') === 'true';
+  b.setAttribute('aria-expanded', String(!open));
+  $('#apPrompts').classList.toggle('shut', open);
+});
+/* the entry state only — a prompt or the suggestion drops the text into the composer,
+   which is where the conversation state will pick up later */
+function agentAsk(text){
+  const i = $('#apInput');
+  i.value = text;
+  i.focus();
+  i.style.height = 'auto';
+  i.style.height = Math.min(120, i.scrollHeight) + 'px';
+}
+$$('#apPrompts .pchip').forEach(c => c.addEventListener('click', () => agentAsk(c.textContent.trim())));
+$('#apSug').addEventListener('click', () =>
+  agentAsk('Create a price request for a better deal on car rental'));
+$('#apInput').addEventListener('input', e => {
+  e.target.style.height = 'auto';
+  e.target.style.height = Math.min(120, e.target.scrollHeight) + 'px';
+});
+
+/* ---------- business case ----------
+   Three steps on purpose: read the case → decide → know what happens next. The third
+   step exists because "Switch agreement" is the moment a real person gets nervous; it
+   answers who does what, by when, and how to back out. */
+const CASE = {
+  cat:'fuel', title:'Fuel agreement',
+  save:42500, spend:530700, litres:'42 800', inv:223,
+  todaySup:'Q8 · Circle K · OK (no agreement)', todayPrice:'12,40', todayBonus:'No bonus',
+  newSup:'Circle K Business', newPrice:'11,41', newBonus:'+2% volume bonus, paid annually',
+  delta:'−0,99', deltaPct:'−8%'
+};
+let bcStep = 1;
+const TICK = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+/* agreements the user activated in the onboarding carousel: name → yearly saving */
+const ACTIVATED = new Map();
+
+function openCase(){
+  bcStep = 1; $('#bcSteps').hidden = true; renderCase();
+  $('#bcs').classList.add('on');
+  $('#bc').classList.add('on');
+  $('#bc').setAttribute('aria-hidden','false');
+  setTimeout(() => $('#bcT').focus(), 100);
+}
+function closeCase(){
+  $('#bcs').classList.remove('on');
+  $('#bc').classList.remove('on');
+  $('#bc').setAttribute('aria-hidden','true');
+}
+$('#bcX').addEventListener('click', closeCase);
+$('#bcs').addEventListener('click', closeCase);
+addEventListener('keydown', e => {
+  if(e.key === 'Escape' && $('#bc').classList.contains('on')) closeCase();
+});
+
+function renderCase(){
+  const c = CASE;
+  $('#bcStep').textContent = bcStep === 3 ? 'Done' : `Step ${bcStep} of 2`;
+
+  if(bcStep === 1){
+    $('#bcBody').innerHTML = `
+      <div class="bc-hero">
+        <div class="big">${fmt(c.save)} <small>kr./year</small></div>
+        <div class="sub">Estimated saving on the diesel you already buy —
+          ${c.litres} litres over the last 12 months</div>
+      </div>
+
+      <div class="cmp">
+        <div class="cmp-c">
+          <div class="ct">Today</div>
+          <div class="cmp-sup">${c.todaySup}</div>
+          <div class="price">${c.todayPrice}</div>
+          <div class="unit">kr. per litre, averaged over ${c.inv} invoices</div>
+          <div class="bonus">${c.todayBonus}</div>
+        </div>
+        <div class="cmp-arrow">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>${c.delta} kr.</b><b>${c.deltaPct}</b>
+        </div>
+        <div class="cmp-c win">
+          <div class="ct">${TICK} Advantage agreement</div>
+          <div class="cmp-sup">${c.newSup}</div>
+          <div class="price">${c.newPrice}</div>
+          <div class="unit">kr. per litre, fixed for 12 months</div>
+          <div class="bonus">${c.newBonus}</div>
+        </div>
+      </div>
+
+      <div class="bc-why">
+        <h4>Why this is relevant for you</h4>
+        <ul>
+          <li><span class="tick">${TICK}</span><span>You already buy from Circle K — this moves your
+            existing account onto group terms. <b>No new supplier, no new account, no tender.</b></span></li>
+          <li><span class="tick">${TICK}</span><span>Your ${c.inv} fuel invoices are all at pump prices.
+            The agreement price is <b>fixed for 12 months</b>, so a market rise doesn't reach you.</span></li>
+          <li><span class="tick">${TICK}</span><span>The volume bonus is paid on top of the saving, in
+            February. On your volumes that's roughly <b>10 600 kr.</b> back.</span></li>
+          <li><span class="tick">${TICK}</span><span>Fuel is your third-largest category at
+            <b>${fmt(c.spend)} kr.</b> a year, and the one with the fewest people to consult.</span></li>
+        </ul>
+      </div>
+
+      <div class="bc-meta">
+        <span class="mchip"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>Effort <b>low</b></span>
+        <span class="mchip"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21c5-2 7-6 7-11V5l-7-2-7 2v5c0 5 2 9 7 11z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Risk <b>low</b></span>
+        <span class="mchip"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Switch time <b>~2 weeks</b></span>
+        <span class="mchip"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Cancel <b>any time before it's confirmed</b></span>
+      </div>`;
+
+    $('#bcFoot').innerHTML = `
+      <span class="fnote">Every figure comes from your own invoices.</span>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary" id="bcClose2">Close</button>
+      <button class="btn btn-primary" id="bcNext">Continue to decide →</button>`;
+
+  } else if(bcStep === 2){
+    $('#bcBody').innerHTML = `
+      <div class="bc-hero" style="padding-bottom:var(--s6)">
+        <div class="big" style="font-size:var(--text-3xl);letter-spacing:-1px;color:var(--general-foreground)">Ready to decide?</div>
+        <div class="sub">Nothing is sent until you press switch.</div>
+      </div>
+      <div class="dtable">
+        <div class="drow hi"><span class="dk">Saving</span>
+          <span class="dv">${fmt(c.save)} kr./year<small>plus a 2% volume bonus paid in February</small></span></div>
+        <div class="drow"><span class="dk">Terms</span>
+          <span class="dv">Improved<small>Price fixed for 12 months · 30-day payment · same delivery</small></span></div>
+        <div class="drow"><span class="dk">Risk</span>
+          <span class="dv">Low<small>Supplier you already use · cancel any time before they confirm</small></span></div>
+        <div class="drow"><span class="dk">Effort</span>
+          <span class="dv">~2 weeks, almost none of it yours<small>We send the request and chase it · you approve nothing else</small></span></div>
+      </div>
+      <p class="bc-ask">or <button class="linkbtn" id="bcAsk">ask the saving assistant to compare more options</button></p>`;
+
+    $('#bcFoot').innerHTML = `
+      <button class="btn btn-ghost" id="bcBack">← Back to the case</button>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary" id="bcLater">Not now</button>
+      <button class="btn btn-primary" id="bcGo">Switch agreement</button>`;
+
+  } else {
+    $('#bcBody').innerHTML = `
+      <div class="bc-done">
+        <div class="ring">${TICK}</div>
+        <h3>Request sent to Circle K</h3>
+        <p>You don't need to do anything else. We'll tell you the moment the new price is live —
+          and if they go quiet for five days, we chase them, and tell you we did.</p>
+        <ol class="tline">
+          <li><span class="tn">1</span><span><b>Today</b> — request sent with your volumes and CVR<br>
+            <span>Nothing changes on your side yet</span></span></li>
+          <li><span class="tn">2</span><span><b>Within 5 working days</b> — Circle K confirms your account
+            is on group terms</span></li>
+          <li><span class="tn">3</span><span><b>~2 weeks</b> — the new price appears on an invoice.
+            We check it matches ${c.newPrice} kr./litre and confirm the saving is real</span></li>
+        </ol>
+      </div>`;
+
+    $('#bcFoot').innerHTML = `
+      <span class="fnote">You can cancel from Agreements any time before Circle K confirms.</span>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="bcDone">Done</button>`;
+  }
+
+  const on = (id, fn) => { const el = $(id); if(el) el.addEventListener('click', fn); };
+  on('#bcClose2', closeCase);
+  on('#bcNext', () => { bcStep = 2; renderCase(); $('#bcBody').scrollTop = 0; });
+  on('#bcBack', () => { bcStep = 1; renderCase(); $('#bcBody').scrollTop = 0; });
+  on('#bcLater', closeCase);
+  on('#bcDone', closeCase);
+  on('#bcAsk', () => {
+    closeCase(); toggleAgent(true);
+    agentAsk('Compare alternatives to the Circle K fuel agreement');
+  });
+  on('#bcGo', () => {
+    /* mark the fuel agreements requested so the category panel agrees with this decision */
+    const r = ROWS.find(x => x.id === CASE.cat);
+    if(r) r.agr.forEach(a => a.req = true);
+    persist();
+    bcStep = 3; renderCase(); $('#bcBody').scrollTop = 0;
+    if(catAt) renderCat();
+  });
+}
+
+/* ---------- notifications ---------- */
+const NGRP = [{k:'save', n:'Savings'}, {k:'sys', n:'System'}];
+const NOTES = [
+  {g:'save', unread:true,  case:true, t:'Fuel agreement — business case ready',
+   s:'Circle K · 42 800 litres a year · today 06:14', v:'+42 500'},
+  {g:'save', unread:true,  t:'Stark Byggecenter raised prices 4%',
+   s:'Building materials · 2 days ago', v:'−18 400', dn:true},
+  {g:'save', unread:true,  t:'New quick win found in Office supplies',
+   s:'19% gap on 205 000 kr. · today 06:14', v:'+38 900'},
+  {g:'save', unread:false, t:'Q8 fuel rate confirmed on your latest invoice',
+   s:'Fuel & transport · 5 days ago', v:'+33 900'},
+  {g:'sys',  unread:true,  t:'Visma.net sync completed',
+   s:'1 284 invoices read · today 06:14'},
+  {g:'sys',  unread:false, t:'Read-only connection renewed',
+   s:'Valid until 12 Aug 2027 · 3 days ago'},
+  {g:'sys',  unread:false, t:'August spend report exported',
+   s:'PDF · 6 days ago'}
+];
+
+function renderNotes(){
+  const un = NOTES.filter(n => n.unread).length;
+  const bdg = $('#bellBadge');
+  bdg.textContent = un;
+  bdg.hidden = un === 0;
+  $('#npBody').innerHTML = NGRP.map(g => {
+    const items = NOTES.filter(n => n.g === g.k);
+    if(!items.length) return '';
+    const gu = items.filter(n => n.unread).length;
+    return `<div class="ngrp">
+      <div class="gh"><span>${g.n}</span><span class="spacer"></span>
+        <em>${gu ? gu + ' new' : 'all read'}</em></div>
+      ${items.map(n => `
+        <button class="note${n.unread ? '' : ' read'}${n.case ? ' bcnote' : ''}"
+          data-note="${NOTES.indexOf(n)}">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="nb"><b>${n.t}</b><span>${n.s}</span>
+            ${n.case ? `<span class="ncta">Open business case
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>` : ''}</span>
+          ${n.v ? `<span class="nv${n.dn ? ' dn' : ''}">${n.v}</span>` : '<span></span>'}
+        </button>`).join('')}
+    </div>`;
+  }).join('');
+  $$('#npBody [data-note]').forEach(b => b.addEventListener('click', () => {
+    const n = NOTES[+b.dataset.note];
+    n.unread = false;
+    renderNotes();
+    if(n.case){ closeNotes(); openCase(); }
+  }));
+}
+function closeNotes(){
+  $('#npop').classList.remove('on');
+  $('#npop').inert = true;
+  $('#bellBtn').classList.remove('on');
+  $('#bellBtn').setAttribute('aria-expanded','false');
+}
+$('#bellBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#npop').classList.toggle('on');
+  $('#npop').inert = !on;
+  $('#bellBtn').classList.toggle('on', on);
+  $('#bellBtn').setAttribute('aria-expanded', String(on));
+});
+$('#npop').addEventListener('click', e => e.stopPropagation());
+$('#npAll').addEventListener('click', () => {
+  NOTES.forEach(n => n.unread = false); persist(); renderNotes(); });
+document.addEventListener('click', closeNotes);
+addEventListener('keydown', e => { if(e.key === 'Escape') closeNotes(); });
+
+/* ---------- sync now ----------
+   Only the timestamp moves. The invoice count stays at 1 284 because every figure in the
+   prototype — the data set, the facts, the category spend, the savings — reconciles to it. */
+let syncing = false;
+const hhmm = d => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+$('#syncBtn').addEventListener('click', () => {
+  if(syncing) return;
+  syncing = true;
+  const btn = $('#syncBtn'), lbl = $('#syncLbl');
+  btn.disabled = true;
+  btn.classList.add('busy');
+  lbl.textContent = 'Syncing…';
+  setTimeout(() => {
+    const t = hhmm(new Date());
+    $('#erpMeta').textContent = fmt(state.invoices) + ' invoices · ' + t;
+    $('#erpPill').title = 'Read-only connection · last sync today ' + t;
+    const n = NOTES.find(x => x.t.indexOf('sync completed') > -1);
+    if(n){ n.s = fmt(state.invoices) + ' invoices read · today ' + t; n.unread = true; renderNotes(); }
+    btn.classList.remove('busy');
+    btn.classList.add('done');
+    lbl.textContent = 'Synced just now';
+    btn.disabled = false;
+    syncing = false;
+    persist();
+    setTimeout(() => { btn.classList.remove('done'); lbl.textContent = 'Sync now'; }, 2500);
+  }, RM ? 300 : 1800);
+});
+
+$('#bannerX').addEventListener('click', () => $('#bannerwrap').style.display = 'none');
+$('#bannerGo').addEventListener('click', () => { navAt = 'agreements'; renderNav(); setView(); });
+
+function enterApp(){
+  $('#erpName').textContent = state.source + ' connected';
+  $('#erpMeta').textContent = fmt(state.invoices) + ' invoices · 06:14';
+  $('#userCo').textContent = state.company;
+  $('#userName').textContent = state.user;
+  $('#userAv').textContent = initials(state.user);
+  $('#upName').textContent = state.user;
+  $('#upCo').textContent = state.company;
+  renderNav();
+  syncRail();
+  renderNotes();
+  renderDash();
+  renderSup();
+  setView();
+  document.body.classList.add('in-app');
+  $('#app').classList.add('on');
+  inApp = true;
+  persist();
+}
+
+/* ---------------- dashboard ---------------- */
+/* Reads the same ROWS the user confirmed in step 2, so hidden categories stay hidden. */
+function renderDash(){
+  const h = new Date().getHours();
+  const part = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  $('#greet').textContent = `${part}, ${state.user.split(' ')[0]}`;
+  /* savings lead; spend is the context they sit on */
+  const rows  = live().slice().sort((a,b) => potOf(b) - potOf(a));
+  const total = rows.reduce((s,r) => s + r.amt, 0);
+  const save  = rows.reduce((s,r) => s + potOf(r), 0);
+  const inv   = rows.reduce((s,r) => s + r.inv, 0);
+  const sup   = rows.reduce((s,r) => s + r.sup, 0);
+
+  /* welcome + status line — reflects what the user activated in onboarding */
+  renderHello();
+
+  $('#sitSave').textContent = fmt(save);
+  $('#sitRate').innerHTML = `<b>${(save / total * 100).toFixed(1)}%</b> of ${fmt(total)} kr.`;
+  $('#sitSaveSub').innerHTML =
+    `Available on the spending you already do, if these categories moved onto an Advantage `
+    + `agreement. Nothing here asks you to change supplier.`;
+
+  $('#sitProv').innerHTML = `Read from <b style="color:inherit">${state.source}</b> · `
+    + `1 Aug 2025 to today · every figure traces to an invoice line`;
+
+  $('#sitFacts').innerHTML = [
+    [fmt(inv), 'invoices read'],
+    [fmt(sup), 'suppliers'],
+    [rows.length, rows.length === 1 ? 'category' : 'categories'],
+    [fmt(total / (inv || 1)), 'average invoice, kr.']
+  ].map(([v,l]) => `<div class="fact"><b>${v}</b><span>${l}</span></div>`).join('');
+
+  renderSpark();
+
+  /* One measure, one hue: the saving potential per category, on a shared scale
+     (the largest potential), with the spend it comes off as the label beneath. */
+  const maxSave = rows.length ? potOf(rows[0]) : 1;
+  $('#sitBars').innerHTML = rows.map(r => {
+    const pot = potOf(r);
+    return `
+    <li class="cbar${catAt === r.id ? ' sel' : ''}${r.quick ? ' quick' : ''}" data-row="${r.id}"
+      data-tip="${fmt(r.inv)} invoices · ${r.sup} suppliers · ${r.top}">
+      <span class="cn2">${r.n}${r.quick ? `<span class="qtag">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
+        Quick win</span>` : ''}</span>
+      <span class="amt2">+${fmt(pot)} <em class="u">kr./year</em></span>
+      <span class="b2"><i class="s2" style="width:${(pot / maxSave * 100).toFixed(1)}%"></i></span>
+      <span class="pc2"><b>${r.rate}%</b> of ${fmt(r.amt)} kr.</span>
+      <button class="rowgo" data-open="${r.id}" aria-label="How we found the ${r.n} saving">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </li>`;
+  }).join('');
+  $$('#sitBars [data-open]').forEach(b => b.addEventListener('click', () => openCat(b.dataset.open)));
+}
+
+/* ---------------- suppliers ----------------
+   A catalogue, not a report: three shelves of cards the user can browse sideways.
+   No photography is available and the file has to stay self-contained, so each card gets
+   a tinted gradient plus one big low-opacity category watermark instead of an image, and
+   the logo tile is the supplier name set as a wordmark. */
+const SUP_ICON = {
+  travel:'<path d="M10.5 13.4L3 11V8.6l7.5 1.1V5a1.5 1.5 0 013 0v4.7L21 8.6V11l-7.5 2.4v4.3l3 1.6V21L12 19.7 7.5 21v-1.7l3-1.6v-4.3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  office:'<path d="M9 7.5v8.8a3 3 0 006 0V6.4a2.5 2.5 0 00-5 0v9.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  hotel:'<path d="M3 19v-8M3 14.5h12a4.5 4.5 0 014.5 4.5M21 19v-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10" r="2.2" stroke="currentColor" stroke-width="1.7"/>',
+  coffee:'<path d="M4 8h12v6a4 4 0 01-4 4H8a4 4 0 01-4-4V8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9.5h1.8a2.5 2.5 0 010 5H16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.5 3c.9 1 .9 1.8 0 2.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  truck:'<rect x="2" y="7" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M14 10h3.6l3.4 3.4V16h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/>',
+  it:'<rect x="3" y="4" width="18" height="12" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M9 20h6M12 16v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  bricks:'<rect x="3" y="5" width="18" height="6" rx="1.4" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13" width="18" height="6" rx="1.4" stroke="currentColor" stroke-width="1.7"/><path d="M9.5 5v6M14.5 13v6" stroke="currentColor" stroke-width="1.7"/>',
+  tools:'<circle cx="16.6" cy="7.4" r="4.4" stroke="currentColor" stroke-width="1.7"/><circle cx="16.6" cy="7.4" r="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M13.5 10.5L4.8 19.2a2.2 2.2 0 003.1 3.1l8.7-8.7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  fuel:'<rect x="4" y="3" width="9.5" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M7 7.5h3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.5 9.5H17a2 2 0 012 2v6a1.6 1.6 0 003.2 0v-6.8l-2.4-3.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  waste:'<path d="M4 7h16M9.5 7V4.8h5V7M6 7l1 13.2h10L18 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.5 11v5.5M13.5 11v5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  wear:'<path d="M9 3l3 2 3-2 5 3-2 4-1.6-.9V21H6.6V9.1L5 10 3 7l6-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  gift:'<rect x="3" y="8.5" width="18" height="12.5" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M3 13h18M12 8.5V21" stroke="currentColor" stroke-width="1.7"/><path d="M12 8.5H8.6a2.3 2.3 0 010-4.6c2.2 0 3.4 4.6 3.4 4.6zm0 0h3.4a2.3 2.3 0 000-4.6C13.2 3.9 12 8.5 12 8.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  flower:'<circle cx="12" cy="9.5" r="2.4" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.1a2.6 2.6 0 110-5.2 2.6 2.6 0 010 5.2zM14.4 9.5a2.6 2.6 0 115.2 0 2.6 2.6 0 01-5.2 0zM9.6 9.5a2.6 2.6 0 10-5.2 0 2.6 2.6 0 005.2 0z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 11.9V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  bolt:'<path d="M13.5 2.5L4.5 14.2h5.8L9 21.5l9.5-12h-6l1-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  people:'<circle cx="9.5" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 5.4a3.2 3.2 0 010 5.8M18 20a6.5 6.5 0 00-1.7-4.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
+};
+const LEAF = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 4c0 9-5.5 13-11 13-2 0-3.5-.6-3.5-.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M20 4C9 4 4 8.5 4 14.5c0 2.5 1 4 1 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+const SPARK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l1.9 4.3 4.6.6-3.4 3.2.9 4.7-4-2.3-4 2.3.9-4.7L5.5 7.9l4.6-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+
+/* pct is printed verbatim, so 7 reads as "7%" */
+const SUPPLIERS = [
+  {id:'own', eye:'Made specific for your company', title:() => state.company,
+   note:'Matched to the categories we found in your invoices.', cards:[
+    {n:'Norwegian', cat:'Travel',       pct:23, leaf:true, ic:'travel', tone:'corn'},
+    {n:'Lyreco',    cat:'Office',       pct:14, leaf:true, ic:'office', tone:'blue',
+     w:'Group rate and free delivery'},
+    {n:'Scandic',   cat:'Hotel',        pct:7,  leaf:true, ic:'hotel',  tone:'ink'},
+    {n:'Costa',     cat:'Coffee',       pct:75, leaf:true, ic:'coffee', tone:'amber',
+     w:'Fixed price and a volume bonus'},
+    {n:'Profrakt',  cat:'Shipping',     pct:32, leaf:true, ic:'truck',  tone:'teal'},
+    {n:'Advania',   cat:'IT & telecom', pct:14, ic:'it', tone:'blue',
+     w:'Group rate and free delivery'}
+  ]},
+  {id:'new', eye:'New this quarter', title:() => 'Recently negotiated',
+   note:'Agreements the group renegotiated in the last three months.', cards:[
+    {n:'Stark Byggecenter', cat:'Building materials', pct:9,  ic:'bricks', tone:'amber'},
+    {n:'Hilti',             cat:'Tools',              pct:11, ic:'tools',  tone:'ink',
+     w:'Group rate and free delivery'},
+    {n:'Circle K',          cat:'Fuel',               pct:8,  leaf:true, ic:'fuel', tone:'blue',
+     w:'Fixed price and a volume bonus'},
+    {n:'DSV',               cat:'Freight',            pct:8,  ic:'truck',  tone:'corn'},
+    {n:'Ragn-Sells',        cat:'Waste',              pct:12, leaf:true, ic:'waste', tone:'teal'},
+    {n:'Engelbert Strauss', cat:'Workwear',           pct:11, ic:'wear',   tone:'ink'}
+  ]},
+  /* per the sketch: no category label here, and the logo tile sits on the image */
+  {id:'pop', eye:'Popular', spark:true, title:() => 'Popular', inimg:true,
+   note:'Most activated by companies of your size and trade.', cards:[
+    {n:'Lyreco',          pct:12, ic:'office', tone:'blue'},
+    {n:'Gifted',          pct:23, ic:'gift',   tone:'amber',
+     w:'Group rate and free delivery'},
+    {n:'Make',            pct:12, ic:'tools',  tone:'corn'},
+    {n:'Euroflorist',     pct:75, leaf:true, ic:'flower', tone:'teal'},
+    {n:'Exide',           pct:45, ic:'bolt',   tone:'ink',
+     w:'Fixed price and a volume bonus'},
+    {n:'VikingWorkforce', pct:12, ic:'people', tone:'blue'}
+  ]}
+];
+
+/* no logo files exist — set the name as a wordmark and size it to the tile */
+function wordmark(name){
+  const w = name.replace(/([a-z])([A-Z])/g, '$1 $2').split(/[\s-]+/).filter(Boolean);
+  if(w.length === 1) return {mark: w[0].length <= 3 ? w[0].toUpperCase() : w[0].slice(0,2).toUpperCase()};
+  return {mark: (w[0][0] + w[1][0]).toUpperCase()};
+}
+
+const SUP_ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function renderSup(){
+  $('#viewSup').innerHTML = SUPPLIERS.map(sh => {
+    const t = sh.title();
+    return `
+    <section class="shelf" aria-labelledby="sh-${sh.id}">
+      <div class="sh-head">
+        <div>
+          <div class="sh-eyebrow">${sh.spark ? SPARK : ''}${sh.eye}</div>
+          <h2 id="sh-${sh.id}">${t}</h2>
+          ${sh.note ? `<p class="sh-note">${sh.note}</p>` : ''}
+        </div>
+        <div class="sh-nav">
+          <button class="snav" data-scroll="-1" aria-controls="row-${sh.id}"
+            aria-label="Previous suppliers in ${t}" disabled>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="snav" data-scroll="1" aria-controls="row-${sh.id}"
+            aria-label="More suppliers in ${t}">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="suprow" id="row-${sh.id}">
+        ${sh.cards.map(c => {
+          const wm = wordmark(c.n);
+          return `
+          <button type="button" class="sup${sh.inimg ? ' inimg' : ''}" data-tone="${c.tone}"
+            data-sup="${c.n}">
+            <span class="sup-img">
+              <span class="sup-ph" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">${SUP_ICON[c.ic]}</svg>
+              </span>
+              ${c.leaf ? `<span class="sup-leaf">${LEAF}Sustainable supplier</span>` : ''}
+              <span class="sup-logo" aria-hidden="true">${wm.mark}</span>
+            </span>
+            <span class="sup-b">
+              ${c.cat ? `<span class="sup-cat">${c.cat}</span>` : ''}
+              <span class="sup-n">${c.n}</span>
+              <span class="sup-save"><b>${c.pct}%</b> average saving ·
+                ${c.w || 'Reduced unit price and fixed price'}</span>
+              <span class="sup-more">Read more ${SUP_ARROW}</span>
+            </span>
+          </button>`;
+        }).join('')}
+      </div>
+    </section>`;
+  }).join('');
+
+  SUPPLIERS.forEach(sh => wireRow($('#row-' + sh.id)));
+}
+
+/* one shelf: the arrows move roughly one visible page, and they disable at the ends */
+const rowSyncs = [];
+function wireRow(row){
+  const head = row.previousElementSibling;
+  const prev = head.querySelector('[data-scroll="-1"]');
+  const next = head.querySelector('[data-scroll="1"]');
+  const sync = () => {
+    const max = row.scrollWidth - row.clientWidth;
+    prev.disabled = row.scrollLeft <= 1;
+    next.disabled = max <= 1 || row.scrollLeft >= max - 1;
+  };
+  const step = d => row.scrollBy({
+    left:d * Math.max(160, row.clientWidth - 48),
+    behavior:RM ? 'auto' : 'smooth'
+  });
+  prev.addEventListener('click', () => step(-1));
+  next.addEventListener('click', () => step(1));
+  row.addEventListener('scroll', sync, {passive:true});
+  if(window.ResizeObserver) new ResizeObserver(sync).observe(row);
+  rowSyncs.push(sync);
+  sync();
+}
+const syncRows = () => rowSyncs.forEach(f => f());
+
+/* ---------- the shortlist: 8 agreements worth doing first, across 3 categories ----------
+   A genuine subset of the 21 — the highest-value agreement in each of the top three
+   categories' lists. Amounts are read from ROWS so they can never drift from the chart. */
+const SHORT = [
+  {cat:'mat',  ai:1}, {cat:'mat',  ai:2}, {cat:'mat',  ai:3},
+  {cat:'tool', ai:0}, {cat:'tool', ai:1}, {cat:'tool', ai:2},
+  {cat:'fuel', ai:0}, {cat:'fuel', ai:1}
+];
+/* per-agreement colour: the unit its price is quoted in, and why it's worth doing */
+const CDET = {
+  'Stark Byggecenter':{ulabel:'price index · your basket = 100', a:'100', b:'91',
+    bonus:'+1.5% volume bonus, paid annually',
+    why:['Your single biggest supplier. The agreement covers the same timber, board and insulation lines you already order.',
+         'Nothing changes operationally — same account, same branch, same delivery slots.']},
+  'Bygma Framework':{ulabel:'price index · your basket = 100', a:'100', b:'91', bonus:'No bonus',
+    why:['Second-largest materials supplier, and the one with the widest price spread against the group rate.',
+         'Your last three months of invoices show list price on every line.']},
+  'Ahlsell Nordic':{ulabel:'price index · your basket = 100', a:'100', b:'91',
+    bonus:'+2% on annual volume',
+    why:['Covers both materials and technical installation lines, so one switch touches two categories.',
+         'The bonus is paid on volume you already put through them.']},
+  'Hilti Erhverv':{ulabel:'price index · your basket = 100', a:'100', b:'89',
+    bonus:'Tool service and repair included',
+    why:['The widest rate gap in your set at 11% — tools are rarely bought on agreement.',
+         'Repairs and calibration come inside the agreement instead of per-invoice.']},
+  'Würth Nordic':{ulabel:'price index · your basket = 100', a:'100', b:'89',
+    bonus:'Free delivery over 1 500 kr.',
+    why:['Consumables ordered in small, frequent batches — where list price hurts most.',
+         'Free delivery removes a charge you paid on 41 of last year’s orders.']},
+  'Engelbert Strauss':{ulabel:'price index · your basket = 100', a:'100', b:'89',
+    bonus:'No bonus',
+    why:['Workwear is reordered on a predictable cycle, so the saving is stable month to month.',
+         'Same catalogue and sizing — only the price changes.']},
+  'Q8 Fuel Card':{ulabel:'kr. per litre', a:'12,40', b:'11,41',
+    bonus:'+2% volume bonus, paid annually',
+    why:['Your largest fuel supplier. 11 vans on your CVR, all currently at pump prices.',
+         'The agreement price is fixed for 12 months, so announced increases don’t reach you.']},
+  'Circle K Business':{ulabel:'kr. per litre', a:'12,40', b:'11,41', bonus:'No bonus',
+    why:['Already a supplier you use — this moves the existing account onto group terms.',
+         'Removes the remaining pump-price share of your fuel spend.']}
+};
+
+function caseAt(i){
+  const s = SHORT[i], r = ROWS.find(x => x.id === s.cat), a = r.agr[s.ai];
+  const d = CDET[a.n] || {ulabel:'price index · your basket = 100', a:'100', b:'91',
+    bonus:'No bonus', why:[]};
+  return {row:r, agr:a, name:a.n, cat:r.n, save:a.save, covers:a.covers,
+    rate:Math.round(a.save / a.covers * 100), ...d};
+}
+const shortTotal = () => SHORT.reduce((s,_,i) => s + caseAt(i).save, 0);
+const shortCats  = () => new Set(SHORT.map(s => s.cat)).size;
+
+let wi = 0, wSkipped = new Set();
+
+function openWalk(){
+  wi = 0; wSkipped = new Set();
+  $('#bcSteps').hidden = false;
+  renderWalk();
+  $('#bcs').classList.add('on');
+  $('#bc').classList.add('on');
+  $('#bc').setAttribute('aria-hidden','false');
+  setTimeout(() => $('#bcT').focus(), 100);
+}
+
+function renderWalk(){
+  /* the summary state sits one past the last case */
+  if(wi >= SHORT.length){ renderWalkDone(); return; }
+  const c = caseAt(wi);
+  $('#bcStep').textContent = c.cat;
+  $('#bcT').textContent = c.name;
+
+  $('#bcSteps').innerHTML = `
+    <span class="segs">${SHORT.map((_,i) => {
+      const done = caseAt(i).agr.req, skip = wSkipped.has(i);
+      return `<button class="bseg${i === wi ? ' on' : done ? ' done' : skip ? ' skip' : ''}"
+        data-seg="${i}" aria-label="Agreement ${i+1}: ${caseAt(i).name}"></button>`;
+    }).join('')}</span>
+    <span class="cnt">${wi + 1} / ${SHORT.length}</span>`;
+
+  $('#bcBody').innerHTML = `
+    <div class="bc-hero">
+      <div class="big">${fmt(c.save)} <small>kr./year</small></div>
+      <div class="sub">${c.rate}% below what you pay today, on the
+        ${fmt(c.covers)} kr. you already spend with them</div>
+    </div>
+
+    <div class="cmp">
+      <div class="cmp-c">
+        <div class="ct">Today</div>
+        <div class="cmp-sup">${c.name}</div>
+        <div class="price">${c.a}</div>
+        <div class="unit">${c.ulabel}</div>
+        <div class="bonus">No agreement</div>
+      </div>
+      <div class="cmp-arrow">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <b>−${c.rate}%</b>
+      </div>
+      <div class="cmp-c win">
+        <div class="ct">${TICK} Advantage agreement</div>
+        <div class="cmp-sup">${c.name}</div>
+        <div class="price">${c.b}</div>
+        <div class="unit">${c.ulabel}</div>
+        <div class="bonus">${c.bonus}</div>
+      </div>
+    </div>
+
+    <div class="bc-why">
+      <h4>Why this one</h4>
+      <ul>${c.why.map(w => `<li><span class="tick">${TICK}</span><span>${w}</span></li>`).join('')}</ul>
+    </div>
+
+    <div class="bc-meta">
+      <span class="mchip">Category <b>${c.cat}</b></span>
+      <span class="mchip">Effort <b>low</b></span>
+      <span class="mchip">Switch time <b>~2 weeks</b></span>
+      <span class="mchip">Cancel <b>any time before it's confirmed</b></span>
+    </div>`;
+
+  const activated = SHORT.filter((_,i) => caseAt(i).agr.req).length;
+  $('#bcFoot').innerHTML = `
+    <button class="btn btn-ghost" id="wBack"${wi === 0 ? ' disabled' : ''}>← Previous</button>
+    <span class="spacer"></span>
+    <span class="fnote">${activated} of ${SHORT.length} activated</span>
+    <button class="btn btn-secondary" id="wSkip">Not this one</button>
+    <button class="btn btn-primary" id="wGo">${c.agr.req ? 'Activated ✓ — next' : 'Activate'}</button>`;
+
+  $$('#bcSteps [data-seg]').forEach(b => b.addEventListener('click', () => {
+    wi = +b.dataset.seg; renderWalk(); $('#bcBody').scrollTop = 0;
+  }));
+  const on = (id, fn) => { const el = $(id); if(el) el.addEventListener('click', fn); };
+  on('#wBack', () => { wi = Math.max(0, wi - 1); renderWalk(); $('#bcBody').scrollTop = 0; });
+  on('#wSkip', () => { wSkipped.add(wi); wi++; renderWalk(); $('#bcBody').scrollTop = 0; });
+  on('#wGo', () => {
+    c.agr.req = true;
+    wSkipped.delete(wi);
+    persist();
+    renderDash();
+    if(catAt) renderCat();
+    wi++; renderWalk(); $('#bcBody').scrollTop = 0;
+  });
+}
+
+function renderWalkDone(){
+  const done = SHORT.map((_,i) => caseAt(i)).filter(c => c.agr.req);
+  const worth = done.reduce((s,c) => s + c.save, 0);
+  $('#bcSteps').hidden = true;
+  $('#bcStep').textContent = 'Done';
+  $('#bcT').textContent = done.length ? 'Requests on their way' : 'Nothing activated';
+
+  $('#bcBody').innerHTML = done.length ? `
+    <div class="bc-done">
+      <div class="ring">${TICK}</div>
+      <h3>${done.length} of ${SHORT.length} agreements requested</h3>
+      <p>Worth <b style="color:var(--sentiment-positive)">${fmt(worth)} kr./year</b> once the
+        suppliers confirm. You don't need to chase anyone — we do that, and tell you we did.</p>
+      <ol class="tline">
+        <li><span class="tn">1</span><span><b>Today</b> — ${done.length} requests sent with your
+          volumes and CVR<br><span>${done.map(c => c.name).join(' · ')}</span></span></li>
+        <li><span class="tn">2</span><span><b>Within 5 working days</b> — each supplier confirms
+          your account is on group terms</span></li>
+        <li><span class="tn">3</span><span><b>~2 weeks</b> — the new prices land on an invoice and
+          we check each one matches</span></li>
+      </ol>
+    </div>` : `
+    <div class="bc-done">
+      <div class="ring" style="background:var(--general-muted);color:var(--general-muted-foreground)">${TICK}</div>
+      <h3>Nothing activated</h3>
+      <p>All ${SHORT.length} stay on the list. They'll still be here — and still worth
+        ${fmt(shortTotal())} kr./year — whenever you want to come back to them.</p>
+    </div>`;
+
+  $('#bcFoot').innerHTML = `
+    <button class="btn btn-ghost" id="wBack2">← Back to the last one</button>
+    <span class="spacer"></span>
+    <button class="btn btn-primary" id="wDone">Done</button>`;
+  $('#wBack2').addEventListener('click', () => { wi = SHORT.length - 1; renderWalk(); });
+  $('#wDone').addEventListener('click', closeCase);
+}
+
+/* the dashboard's welcome line — orients the user and sums up where they stand today */
+function renderHello(){
+  const total = SHORT.length;                                    /* the 8 shortlisted agreements */
+  const actN  = ACTIVATED.size;
+  const vals  = [...ACTIVATED.values()];
+  const saved = vals.reduce((s,v) => s + v.save, 0);
+  const bonus = Math.round(vals.reduce((s,v) => s + v.covers, 0) * 0.015);  /* ~1.5% volume bonus */
+  const left  = Math.max(0, total - actN);
+  const p = $('#helloP'), w = $('#helloWidgets');
+  if(actN === 0){
+    p.innerHTML = `Thanks for choosing Advantage — we're glad to have you on board. `
+      + `${total} agreements are ready to activate whenever you are; explore your potential savings below to see where they come from.`;
+    w.innerHTML = '';
+  } else {
+    /* plain first-time summary — no bold, no colour */
+    p.textContent = `Thanks for choosing Advantage — we're glad to have you on board. `
+      + `You've just activated ${actN} agreement${actN === 1 ? '' : 's'}, and ${left} more `
+      + `${left === 1 ? 'is' : 'are'} still available to explore. `
+      + `Take a look at your potential savings below to see where the rest could come from.`;
+    const items = [...ACTIVATED.entries()].map(([name,d]) =>
+      ({name, save:d.save, bonus:Math.round(d.covers * 0.015)}));
+    const CHEV = '<svg class="hw-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const list = (rows, tot) => `<ul class="hw-pop-list">${rows}${tot || ''}</ul>`;
+
+    const savePop = `<p class="hw-pop-h">Where your savings come from</p>`
+      + list(items.map(x => `<li><span>${x.name}</span><b>${fmt(x.save)} kr.</b></li>`).join(''),
+             `<li class="tot"><span>Total per year</span><b>${fmt(saved)} kr.</b></li>`);
+    const bonusPop = `<p class="hw-pop-h">Volume bonus by agreement</p>`
+      + list(items.map(x => `<li><span>${x.name}</span><b>+${fmt(x.bonus)} kr.</b></li>`).join(''),
+             `<li class="tot"><span>Total per year</span><b>+${fmt(bonus)} kr.</b></li>`)
+      + `<p class="hw-pop-f">A volume bonus of about 1.5% on the spend routed through these agreements, paid annually on top of your savings.</p>`;
+
+    const card = (i, label, number, unit, aria, pop) => `
+      <div class="hw">
+        <button class="hw-t" data-i="${i}" aria-expanded="false" aria-label="${aria}">
+          <span class="hw-txt">
+            <span class="hw-l">${label}</span>
+            <b class="hw-v">${number}</b>
+            <span class="hw-u">${unit}</span>
+          </span>
+          ${CHEV}
+        </button>
+        <div class="hw-pop" role="tooltip">${pop}</div>
+      </div>`;
+
+    w.innerHTML =
+        card(0, 'Currently saving', fmt(saved),        `kr./year / ${actN} agreements`, 'Currently saving — where it comes from', savePop)
+      + card(1, 'Volume bonus',    `+${fmt(bonus)}`,   'kr./year',                      'Volume bonus — by agreement', bonusPop);
+  }
+}
+
+/* status-widget explainer popovers (delegated — #helloWidgets persists across renders) */
+const closeWidgets = () => $$('#helloWidgets .hw.open').forEach(el => {
+  el.classList.remove('open');
+  el.querySelector('.hw-t').setAttribute('aria-expanded', 'false');
+});
+$('#helloWidgets').addEventListener('click', e => {
+  const btn = e.target.closest('.hw-t'); if(!btn) return;
+  const hw = btn.parentElement, wasOpen = hw.classList.contains('open');
+  closeWidgets();
+  if(!wasOpen){ hw.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+});
+document.addEventListener('click', e => { if(!e.target.closest('#helloWidgets')) closeWidgets(); });
+
+/* ---------- spend through the year ----------
+   Actuals stop hard at July (this is August). The projection continues the same series
+   dashed — same hue, broken stroke, the standard "this hasn't happened yet" signal. The
+   third line only appears on request: it is a claim about the future, so it shouldn't sit
+   there looking like data. */
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+/* real months don't rise in a straight line — winter low, spring ramp, a June dip */
+const ACT  = [380000,389000,419000,436000,452000,446000,471000];        /* Jan–Jul, real */
+const PROJ = [486000,498000,512000,523000,534000];                     /* Aug–Dec, if nothing changes */
+const POT  = [470000,464000,458000,453000,449000];                     /* Aug–Dec, if they act now */
+const CUT  = ACT.length - 1;                                           /* July index */
+
+const SP = {w:460, h:236, l:44, r:26, t:16, b:28};
+const spX = i => SP.l + i * (SP.w - SP.l - SP.r) / (MON.length - 1);
+const spY = v => {
+  const lo = 350000, hi = 575000;   /* framed so the even 60k ticks land clear of both edges */
+  return SP.t + (1 - (v - lo) / (hi - lo)) * (SP.h - SP.t - SP.b);
+};
+const spPath = pts => pts.map((p,i) => (i ? 'L' : 'M') + spX(p[0]).toFixed(1) + ' ' + spY(p[1]).toFixed(1)).join(' ');
+
+function renderSpark(){
+  $('#spYear').textContent = new Date().getFullYear();
+  const actPts  = ACT.map((v,i) => [i, v]);
+  const projPts = [[CUT, ACT[CUT]], ...PROJ.map((v,i) => [CUT + 1 + i, v])];
+  const potPts  = [[CUT, ACT[CUT]], ...POT.map((v,i) => [CUT + 1 + i, v])];
+  const ticks = [380000, 440000, 500000, 560000];   /* even 60k spacing */
+  const yTop = SP.t, yBot = SP.h - SP.b;
+
+  const band = projPts.map(p => `${spX(p[0]).toFixed(1)} ${spY(p[1]).toFixed(1)}`).join(' L')
+    + ' L' + [...potPts].reverse().map(p => `${spX(p[0]).toFixed(1)} ${spY(p[1]).toFixed(1)}`).join(' L');
+
+  $('#spSvg').innerHTML = `
+    <desc id="spDesc">Monthly spend January to July actual, rising from 318 000 to 471 000 kr.,
+      then projected to 534 000 kr. by December.</desc>
+    ${ticks.map(t => `<line class="sp-grid" x1="${SP.l}" y1="${spY(t).toFixed(1)}"
+        x2="${SP.w - SP.r}" y2="${spY(t).toFixed(1)}"/>
+      <text class="sp-ax" x="${SP.l - 7}" y="${(spY(t) + 3).toFixed(1)}" text-anchor="end">${Math.round(t/1000)}k</text>`).join('')}
+    ${MON.map((m,i) => `<text class="sp-ax${i === CUT ? ' now' : ''}" data-mi="${i}"
+        x="${spX(i).toFixed(1)}" y="${SP.h - 12}" text-anchor="middle">${m}</text>`).join('')}
+    <text class="sp-ax now" x="${spX(CUT).toFixed(1)}" y="${SP.h - 2}" text-anchor="middle">today</text>
+
+    <line class="sp-stop" x1="${spX(CUT).toFixed(1)}" y1="${yTop}" x2="${spX(CUT).toFixed(1)}" y2="${yBot}"/>
+
+    <path class="sp-area" d="${spPath(actPts)} L${spX(CUT).toFixed(1)} ${yBot} L${spX(0).toFixed(1)} ${yBot} Z"/>
+    <g>
+      <path class="sp-band" d="M${band} Z"/>
+      <path class="sp-l3" d="${spPath(potPts)}"/>
+      <circle class="sp-dot" cx="${spX(11).toFixed(1)}" cy="${spY(POT[4]).toFixed(1)}" r="4"
+        stroke="var(--sentiment-positive)"/>
+    </g>
+    <path class="sp-l2" d="${spPath(projPts)}"/>
+    <path class="sp-l1" d="${spPath(actPts)}"/>
+    <circle class="sp-dot" cx="${spX(CUT).toFixed(1)}" cy="${spY(ACT[CUT]).toFixed(1)}" r="4.2"
+      stroke="var(--general-primary)"/>
+    <circle class="sp-dot" cx="${spX(11).toFixed(1)}" cy="${spY(PROJ[4]).toFixed(1)}" r="4"
+      stroke="var(--general-primary)"/>
+
+    <line class="sp-cross" id="spCross" y1="${yTop}" y2="${yBot}"/>
+    ${MON.map((m,i) => `<rect class="sp-hit" data-mi="${i}"
+        x="${(spX(i) - (SP.w - SP.l - SP.r) / 22).toFixed(1)}" y="${yTop}"
+        width="${((SP.w - SP.l - SP.r) / 11).toFixed(1)}" height="${yBot - yTop}"/>`).join('')}`;
+
+  spNote();
+  spHover();
+  spScaleText();
+  if(!spRO){
+    spRO = new ResizeObserver(spScaleText);
+    spRO.observe($('#spSvg'));
+  }
+}
+
+/* SVG text scales with the viewBox, so a fixed unit size renders at wildly different
+   pixel sizes. Size it from the measured width so it always lands on 13px. */
+let spRO = null;
+function spScaleText(){
+  const svg = $('#spSvg'); if(!svg) return;
+  const w = svg.getBoundingClientRect().width; if(!w) return;
+  const units = 11.5 * (SP.w / w);   /* target ~11.5px on screen — a touch smaller than before */
+  svg.style.setProperty('--axfs', units.toFixed(2) + 'px');
+  /* below ~330px the twelve month labels would overlap at this size — show every other */
+  const thin = units > 18;
+  $$('#spSvg .sp-ax').forEach(t => {
+    const i = t.dataset.mi;
+    if(i !== undefined) t.classList.toggle('hide', thin && (+i % 2 === 1));
+  });
+}
+
+function spNote(){
+  const gap = PROJ.reduce((s,v) => s + v, 0) - POT.reduce((s,v) => s + v, 0);
+  $('#spNote').innerHTML =
+    `Jan–Jul is read from your invoices. Aug–Dec assumes your current suppliers and the increases
+     already announced — acting now keeps about <b>${fmt(gap)} kr.</b> of that out of the line
+     before December.`;
+}
+
+function spHover(){
+  const tip = $('#spTip'), cross = $('#spCross'), wrap = $('.sp-wrap');
+  $$('#spSvg .sp-hit').forEach(hit => {
+    const i = +hit.dataset.mi;
+    const show = () => {
+      const proj = i > CUT;
+      const val = proj ? PROJ[i - CUT - 1] : ACT[i];
+      cross.setAttribute('x1', spX(i).toFixed(1));
+      cross.setAttribute('x2', spX(i).toFixed(1));
+      cross.classList.add('on');
+      tip.innerHTML = `<b>${MON[i]}</b> · ${fmt(val)} kr.${proj ? ' <span style="opacity:.7">projected</span>' : ''}`
+        + (proj ? `<br><span class="t3">${fmt(POT[i - CUT - 1])} kr. if you act now</span>` : '');
+      tip.classList.add('on');
+      const px = spX(i) / SP.w * 100, py = spY(val);
+      /* flip below the point when there's no headroom, so it never covers the legend */
+      const below = py < SP.t + (SP.h - SP.t - SP.b) * 0.34;
+      tip.style.left = px + '%';
+      tip.style.top = (py / SP.h * 100) + '%';
+      tip.style.transform =
+        `translate(${px > 70 ? '-92%' : px < 18 ? '-8%' : '-50%'},${below ? '35%' : '-140%'})`;
+    };
+    hit.addEventListener('mouseenter', show);
+    hit.addEventListener('mousemove', show);
+    hit.addEventListener('mouseleave', () => { tip.classList.remove('on'); cross.classList.remove('on'); });
+  });
+}
+
+/* ---------- facts popover ---------- */
+$('#factsBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#factsPop').classList.toggle('on');
+  $('#factsPop').inert = !on;
+  $('#factsBtn').setAttribute('aria-expanded', String(on));
+});
+$('#factsPop').addEventListener('click', e => e.stopPropagation());
+function closeFacts(){
+  $('#factsPop').classList.remove('on');
+  $('#factsPop').inert = true;
+  $('#factsBtn').setAttribute('aria-expanded','false');
+}
+document.addEventListener('click', closeFacts);
+addEventListener('keydown', e => { if(e.key === 'Escape') closeFacts(); });
+
+/* ---------- category explainer ---------- */
+let catAt = null;
+const CHECK = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function openCat(id){
+  const first = !$('#dw').classList.contains('on');
+  if(first && !roomForBoth() && $('#ap').classList.contains('on')) toggleAgent(false);
+  catAt = id;
+  renderCat();
+  $('#dw').classList.add('on');
+  $('#dw').inert = false;
+  markRow();
+  /* focus the panel heading the first time only — swapping categories shouldn't
+     yank focus away from the list the user is clicking through */
+  if(first) setTimeout(() => $('#dwT').focus(), 320);
+}
+function closeCat(){
+  catAt = null;
+  $('#dw').classList.remove('on');
+  $('#dw').inert = true;
+  markRow();
+}
+/* a resize can take away the room that let both be open */
+addEventListener('resize', () => {
+  if(!roomForBoth() && $('#ap').classList.contains('on') && $('#dw').classList.contains('on'))
+    closeCat();
+});
+function markRow(){
+  $$('#sitBars .cbar').forEach(el => el.classList.toggle('sel', el.dataset.row === catAt));
+}
+$('#dwX').addEventListener('click', closeCat);
+addEventListener('keydown', e => {
+  if(e.key === 'Escape' && $('#dw').classList.contains('on')) closeCat();
+});
+
+function renderCat(){
+  const r = ROWS.find(x => x.id === catAt);
+  const pot = potOf(r), open = r.agr.filter(a => !a.req);
+  const rem = open.reduce((s,a) => s + a.save, 0);
+  $('#dwT').textContent = r.n;
+
+  $('#dwB').innerHTML = `
+    <div class="dw-sum">
+      <div class="big">${fmt(pot)} <small>kr./year saving potential</small></div>
+      <div class="rate"><b>${r.rate}%</b> of ${fmt(r.amt)} kr. spent in this category</div>
+    </div>
+
+    <section>
+      <h4><span class="n">1</span>How we found this number</h4>
+      <ol class="steps2">
+        <li><span class="sn">1</span><span>Read <b>${fmt(r.inv)} invoices</b> from
+          <b>${state.source}</b> across <b>${r.sup} suppliers</b> in this category, over 12 months.</span></li>
+        <li><span class="sn">2</span><span>Summed the line items, not the invoice totals:
+          <code>${fmt(r.amt)} kr.</code> — all of it at the prices you're paying today.</span></li>
+        <li><span class="sn">3</span><span>Matched each supplier to an Advantage framework agreement
+          covering the same goods and delivery terms.</span></li>
+        <li><span class="sn">4</span><span>Compared your invoice prices with the agreement rate.
+          The gap is <b>${r.rate}%</b> on average, weighted by what you actually buy.</span></li>
+        <li><span class="sn">✓</span><span><code>${r.rate}%</code> of <code>${fmt(r.amt)} kr.</code>
+          = <b>${fmt(pot)} kr./year</b>. Cross-checked against 3 sample invoices per supplier —
+          variance under 2%.</span></li>
+      </ol>
+    </section>
+
+    <section>
+      <h4><span class="n">2</span>Agreements that would deliver it</h4>
+      <ul class="agrs">
+        ${r.agr.map((a,i) => `
+          <li class="agr${a.req ? ' on' : ''}">
+            <span class="an">${a.n}</span>
+            <span class="am">covers ${fmt(a.covers)} kr. of your spend</span>
+            <span class="sv">+${fmt(a.save)}</span>
+            <span class="act">${a.req
+              ? `<span class="inuse">${CHECK} Requested</span>`
+              : `<button class="btn-act" data-act="${i}">Activate</button>`}</span>
+          </li>`).join('')}
+      </ul>
+      <p class="agr-note">We send the request and chase it. Your prices change once the supplier
+        confirms — you'll see it on the next invoice we read.</p>
+    </section>`;
+
+  $('#dwF').innerHTML = open.length
+    ? `<span class="fl">${open.length} agreement${open.length > 1 ? 's' : ''} to activate —
+         worth <b>${fmt(rem)} kr./year</b></span>
+       <button class="btn btn-primary btn-sm" id="dwAll">Activate all ${open.length}</button>`
+    : `<span class="fl">All ${r.agr.length} requests sent. We'll confirm each one as the
+         supplier comes back.</span>`;
+
+  $$('#dwB [data-act]').forEach(b => b.addEventListener('click', () => {
+    r.agr[+b.dataset.act].req = true;
+    persist();
+    renderCat();
+  }));
+  const all = $('#dwAll');
+  if(all) all.addEventListener('click', () => {
+    r.agr.forEach(a => a.req = true);
+    persist();
+    renderCat();
+  });
+}
+
+/* ---------------- persistence ----------------
+   A reload used to dump you back at the login screen. Progress now lives in
+   sessionStorage, so reloading — or editing the file while it's open — keeps you where
+   you were. It is per-tab: closing the tab, opening a new one, ?step=N, or "Start over"
+   in the account menu all give a clean slate. */
+const SKEY = 'advantage-proto-1';
+let curScr = SCREENS[0], inApp = false;
+
+function persist(){
+  try{
+    sessionStorage.setItem(SKEY, JSON.stringify({
+      scr: inApp ? 'app' : curScr,
+      navAt,
+      company: state.company, user: state.user, source: state.source, invoices: state.invoices,
+      hidden: ROWS.filter(r => r.hidden).map(r => r.id),
+      req: ROWS.flatMap(r => r.agr.map((a,i) => a.req ? r.id + ':' + i : null)).filter(Boolean),
+      unread: NOTES.map(n => n.unread ? 1 : 0),
+      erpMeta: $('#erpMeta') ? $('#erpMeta').textContent : null
+    }));
+  }catch(e){ /* private mode / quota — the prototype just won't remember */ }
+}
+
+function readSaved(){
+  try{ return JSON.parse(sessionStorage.getItem(SKEY) || 'null'); }catch(e){ return null; }
+}
+
+/* rehydrate the data model before anything renders */
+function applySaved(d){
+  if(d.company) state.company = d.company;
+  if(d.user) state.user = d.user;
+  if(d.source) state.source = d.source;
+  if(d.invoices) state.invoices = d.invoices;
+  const hid = new Set(d.hidden || []);
+  ROWS.forEach(r => r.hidden = hid.has(r.id));
+  const req = new Set(d.req || []);
+  ROWS.forEach(r => r.agr.forEach((a,i) => a.req = req.has(r.id + ':' + i)));
+  if(Array.isArray(d.unread) && d.unread.length === NOTES.length)
+    NOTES.forEach((n,i) => n.unread = !!d.unread[i]);
+  if(d.navAt) navAt = d.navAt;
+}
+
+function startOver(){
+  try{ sessionStorage.removeItem(SKEY); }catch(e){}
+  location.href = location.pathname;
+}
+$('#userBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#userPop').classList.toggle('on');
+  $('#userPop').inert = !on;
+  $('#userBtn').setAttribute('aria-expanded', String(on));
+});
+$('#userPop').addEventListener('click', e => e.stopPropagation());
+$('#restartBtn').addEventListener('click', startOver);
+function closeUser(){
+  $('#userPop').classList.remove('on');
+  $('#userPop').inert = true;
+  $('#userBtn').setAttribute('aria-expanded','false');
+}
+document.addEventListener('click', closeUser);
+addEventListener('keydown', e => { if(e.key === 'Escape') closeUser(); });
+
+/* ---------------- boot ---------------- */
+/* closed panels start inert so keyboard users don't tab into invisible controls */
+['#ap','#dw','#npop','#userPop'].forEach(s => $(s).inert = true);
+
+const jumpRaw = new URLSearchParams(location.search).get('step');
+const saved = jumpRaw ? null : readSaved();     /* an explicit ?step= always wins */
+if(saved) applySaved(saved);
+
+renderWho();
+
+if(saved && saved.scr === 'app'){
+  enterApp();
+  if(saved.erpMeta) $('#erpMeta').textContent = saved.erpMeta;
+} else if(saved && SCREENS.indexOf(saved.scr) > -1){
+  show(saved.scr);
+} else {
+  const jump = parseInt(jumpRaw, 10) || 1;
+  if(jump > SCREENS.length) enterApp();          /* ?step=6 lands on the app shell */
+  else show(SCREENS[Math.max(0, Math.min(SCREENS.length - 1, jump - 1))]);
+}
+</script>
+</body>
+</html>
