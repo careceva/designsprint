@@ -71,7 +71,7 @@ body{
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
 h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
-h1{font-size:var(--text-4xl);letter-spacing:-1.2px;line-height:1.1}
+h1{font-size:var(--text-5xl);letter-spacing:-1.2px;line-height:1.1}
 h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
 h3{font-size:var(--text-lg);letter-spacing:-.3px}
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
@@ -188,7 +188,6 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 /* ==========================================================================
    2 · SOURCES
    ========================================================================== */
-#s-source h1{font-size:var(--text-5xl);letter-spacing:-2px;line-height:1.05}
 .srcs{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s6);margin-top:var(--s12)}
 @media(max-width:900px){.srcs{grid-template-columns:1fr}}
 .src{position:relative;display:flex;flex-direction:column;padding:var(--s8);text-align:left;
@@ -196,7 +195,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
   box-shadow:var(--shadow-xs);transition:transform var(--t),box-shadow var(--t),border-color var(--t)}
 /* reserved on every card so the titles line up whether or not there's a badge */
 .src .top{display:flex;align-items:center;min-height:24px;margin-bottom:var(--s4)}
-.src h3{font-size:var(--text-4xl);letter-spacing:-1.4px;line-height:1.12;margin-bottom:var(--s4)}
+.src h3{font-size:var(--text-3xl);letter-spacing:-1.1px;line-height:1.15;margin-bottom:var(--s4)}
 .src .why{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.6}
 .src .why b{color:var(--general-foreground);font-weight:600}
 .src .act{margin-top:auto;padding-top:var(--s8)}
@@ -250,7 +249,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .step.now{color:var(--general-foreground);font-weight:500}
 .step.now .dot{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
 .step.done{color:var(--general-muted-foreground)}
-.step.done .dot{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
+.step.done .dot{background:var(--sentiment-positive);border-color:var(--sentiment-positive);color:#fff}
 .step.done .dot svg{opacity:1}
 
 /* ==========================================================================
@@ -1846,7 +1845,7 @@ $('#steps').innerHTML = STEPS.map(s => `
   </span>${s}</div>`).join('');
 
 function runIngest(){
-  const rows = $$('#steps .step'), dur = RM ? 600 : 7600, t0 = performance.now();
+  const rows = $$('#steps .step'), dur = RM ? 600 : 4600, t0 = performance.now();
   /* the totals the counters climb to — the same figures the data set and dashboard use,
      so nothing the user sees here gets contradicted two screens later */
   const tInv = state.invoices;
