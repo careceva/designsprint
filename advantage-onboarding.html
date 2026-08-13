@@ -370,9 +370,8 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .qa-dot{width:7px;height:7px;border-radius:var(--rounded-full);border:none;padding:0;cursor:pointer;
   background:var(--general-muted);transition:width var(--t-fast),background-color var(--t-fast)}
 .qa-dot.on{width:20px;background:var(--general-primary)}
-.done-skip{margin-top:var(--s8);text-align:center}
-.done-skip .linkbtn{color:var(--general-muted-foreground);font-weight:500}
-.done-skip .linkbtn:hover{color:var(--general-primary)}
+.done-skip{margin-top:var(--s8);text-align:center;display:flex;align-items:center;justify-content:center;gap:var(--s3)}
+.done-skip #qaCount{color:var(--general-muted-foreground);font-size:var(--text-sm);font-weight:500}
 
 /* ==========================================================================
    4 · DATA SET
@@ -806,7 +805,7 @@ body.in-app .flow{display:none}
   border-radius:var(--rounded-md);box-shadow:var(--shadow-xl);
   opacity:0;transform:translateY(-4px) scale(.98);transform-origin:top right;pointer-events:none;
   transition:opacity var(--t-fast),transform var(--t-fast)}
-.hw.open .hw-pop{opacity:1;transform:none;pointer-events:auto}
+.hw:hover .hw-pop,.hw:focus-within .hw-pop{opacity:1;transform:none;pointer-events:auto}
 .hw-pop-h{font-family:var(--font-sans);font-size:13px;font-weight:600;
   color:var(--general-foreground);margin-bottom:var(--s3)}
 .hw-pop-list{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
@@ -943,7 +942,7 @@ body.in-app .flow{display:none}
 /* label row over a full-width track, so the small categories still get enough track
    to be visible */
 .cbar{position:relative;display:grid;align-items:center;gap:var(--s2) var(--s4);
-  grid-template-columns:1fr auto auto;
+  grid-template-columns:1fr 150px 30px;
   grid-template-areas:"name amt go" "bar pc go";
   padding:var(--s2) var(--s2);border-radius:var(--rounded-sm)}
 .cbar:hover{background:#ffffff8f}
@@ -964,11 +963,11 @@ body.in-app .flow{display:none}
    badge, and there is no tooltip to recover them */
 .cbar .cn2{grid-area:name;font-size:var(--text-sm);font-weight:500;min-width:0;
   line-height:1.35;text-wrap:pretty}
-/* One measure: the saving potential. Square at the baseline, 4px rounded data-end. */
-.b2{display:block}
+/* One measure: the rate this category saves at, as a fill inside a track sized to its full spend. */
+.b2{display:block;height:8px;border-radius:var(--rounded-full);background:#0096891a;overflow:hidden}
 .cbar .b2{grid-area:bar}
-.b2 i{display:block;height:10px;min-width:2px;border-radius:0 5px 5px 0;
-  background:var(--sentiment-positive);transition:width var(--t-slow)}
+.b2 i{display:block;height:100%;min-width:2px;border-radius:var(--rounded-full);
+  background:#0a6b4a;transition:width var(--t-slow)}
 .cbar .amt2{grid-area:amt;text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);
   font-weight:600;font-variant-numeric:tabular-nums;color:var(--sentiment-positive);
   white-space:nowrap}
@@ -1459,7 +1458,7 @@ body.in-app .flow{display:none}
             </button>
           </div>
         </div>
-        <p class="done-skip"><button class="linkbtn" id="skipDash">I want to skip this, take me to the dashboard</button></p>
+        <p class="done-skip"><span id="qaCount">0 out of 3 activated</span> <button class="btn btn-secondary btn-sm" id="skipDash">Go to dashboard</button></p>
       </div>
     </div>
   </section>
@@ -1854,12 +1853,14 @@ function finishIngest(){
 }
 
 /* the top agreement in each of the three highest-value categories */
+let qaItems = [];
 function quickAgreements(){
-  return live().map(r => {
+  qaItems = live().map(r => {
     const best = r.agr.slice().sort((a,b) => b.save - a.save)[0];
-    return { cat:r.n, name:best.n, save:best.save, covers:best.covers,
+    return { cat:r.n, agr:best, name:best.n, save:best.save, covers:best.covers,
              why:(CDET[best.n] || {}).why || [] };
   }).sort((a,b) => b.save - a.save).slice(0,3);
+  return qaItems;
 }
 
 let qaIdx = 0, qaN = 0, qaRaf = 0;
@@ -1887,7 +1888,7 @@ function renderQuickActivate(){
       </div>` : ''}
       <div class="qa-actions">
         <button class="btn btn-primary btn-sm qa-activate" data-amt="${fmt(a.save)} kr./year"
-          data-name="${a.name}" data-save="${a.save}" data-covers="${a.covers}">Activate</button>
+          data-idx="${i}" data-name="${a.name}" data-save="${a.save}" data-covers="${a.covers}">Activate</button>
         <button class="btn btn-secondary btn-sm qa-details">View details</button>
       </div>
     </article>`).join('');
@@ -1895,6 +1896,7 @@ function renderQuickActivate(){
     `<button class="qa-dot${i===0?' on':''}" role="tab" aria-label="Agreement ${i+1}" data-i="${i}"></button>`).join('');
   $('#qaTrack').scrollLeft = 0;   /* always start on the first card (defeats scroll restoration) */
   syncQaUi();
+  syncQaCount();
 }
 
 let qaAnim = 0;
@@ -1962,7 +1964,17 @@ function activateCard(btn){
     btn.innerHTML = TICK + 'Activated';
     btn.closest('.qa-card').classList.add('activated');
     ACTIVATED.set(btn.dataset.name, {save:+btn.dataset.save, covers:+btn.dataset.covers});   /* feeds the dashboard status widgets */
+    const item = qaItems[+btn.dataset.idx];
+    if(item){ item.agr.req = true; persist(); }   /* same flag the category drawer uses — keeps the potential-savings list in sync */
+    syncQaCount();
   }, RM ? 300 : 3000);
+}
+
+function syncQaCount(){
+  const n = Math.min(qaN, ACTIVATED.size);
+  $('#qaCount').textContent = `${n} out of ${qaN} activated`;
+  $('#skipDash').classList.toggle('btn-primary', n === qaN);
+  $('#skipDash').classList.toggle('btn-secondary', n !== qaN);
 }
 
 function showToast(amount){
@@ -2031,7 +2043,7 @@ const ROWS = [
      {n:'Ragn-Sells',         covers:40000,  save:1600},
      {n:'Marius Pedersen',    covers:128000, save:5100}]}
 ];
-const potOf = r => r.agr.reduce((s,a) => s + a.save, 0);
+const potOf = r => r.agr.reduce((s,a) => s + (a.req ? 0 : a.save), 0);
 const live = () => ROWS.filter(r => !r.hidden);
 const tot  = k => live().reduce((s,r) => s + r[k], 0);
 
@@ -2432,7 +2444,7 @@ function renderDash(){
   const part = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
   $('#greet').textContent = `${part}, ${state.user.split(' ')[0]}`;
   /* savings lead; spend is the context they sit on */
-  const rows  = live().slice().sort((a,b) => potOf(b) - potOf(a));
+  const rows  = live().filter(r => potOf(r) > 0).sort((a,b) => potOf(b) - potOf(a));
   const total = rows.reduce((s,r) => s + r.amt, 0);
   const save  = rows.reduce((s,r) => s + potOf(r), 0);
   const inv   = rows.reduce((s,r) => s + r.inv, 0);
@@ -2459,9 +2471,8 @@ function renderDash(){
 
   renderSpark();
 
-  /* One measure, one hue: the saving potential per category, on a shared scale
-     (the largest potential), with the spend it comes off as the label beneath. */
-  const maxSave = rows.length ? potOf(rows[0]) : 1;
+  /* One measure, one hue: the saving rate this category runs at — dark segment is the
+     rate% that becomes savings, the light track is the full spend it's a share of. */
   $('#sitBars').innerHTML = rows.map(r => {
     const pot = potOf(r);
     return `
@@ -2471,7 +2482,7 @@ function renderDash(){
         <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
         Quick win</span>` : ''}</span>
       <span class="amt2">+${fmt(pot)} <em class="u">kr./year</em></span>
-      <span class="b2"><i class="s2" style="width:${(pot / maxSave * 100).toFixed(1)}%"></i></span>
+      <span class="b2"><i class="s2" style="width:${r.rate}%"></i></span>
       <span class="pc2"><b>${r.rate}%</b> of ${fmt(r.amt)} kr.</span>
       <button class="rowgo" data-open="${r.id}" aria-label="How we found the ${r.n} saving">
         <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2830,7 +2841,6 @@ function renderHello(){
       + `Take a look at your potential savings below to see where the rest could come from.`;
     const items = [...ACTIVATED.entries()].map(([name,d]) =>
       ({name, save:d.save, bonus:Math.round(d.covers * 0.015)}));
-    const CHEV = '<svg class="hw-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     const list = (rows, tot) => `<ul class="hw-pop-list">${rows}${tot || ''}</ul>`;
 
     const savePop = `<p class="hw-pop-h">Where your savings come from</p>`
@@ -2849,7 +2859,6 @@ function renderHello(){
             <b class="hw-v">${number}</b>
             <span class="hw-u">${unit}</span>
           </span>
-          ${CHEV}
         </button>
         <div class="hw-pop" role="tooltip">${pop}</div>
       </div>`;
@@ -2860,18 +2869,7 @@ function renderHello(){
   }
 }
 
-/* status-widget explainer popovers (delegated — #helloWidgets persists across renders) */
-const closeWidgets = () => $$('#helloWidgets .hw.open').forEach(el => {
-  el.classList.remove('open');
-  el.querySelector('.hw-t').setAttribute('aria-expanded', 'false');
-});
-$('#helloWidgets').addEventListener('click', e => {
-  const btn = e.target.closest('.hw-t'); if(!btn) return;
-  const hw = btn.parentElement, wasOpen = hw.classList.contains('open');
-  closeWidgets();
-  if(!wasOpen){ hw.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
-});
-document.addEventListener('click', e => { if(!e.target.closest('#helloWidgets')) closeWidgets(); });
+/* status-widget explainer popovers appear on hover / keyboard focus (CSS-driven) */
 
 /* ---------- spend through the year ----------
    Actuals stop hard at July (this is August). The projection continues the same series
@@ -3084,7 +3082,7 @@ function renderCat(){
             <span class="am">covers ${fmt(a.covers)} kr. of your spend</span>
             <span class="sv">+${fmt(a.save)}</span>
             <span class="act">${a.req
-              ? `<span class="inuse">${CHECK} Requested</span>`
+              ? `<span class="inuse">${CHECK} Activated</span>`
               : `<button class="btn-act" data-act="${i}">Activate</button>`}</span>
           </li>`).join('')}
       </ul>
