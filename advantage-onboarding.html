@@ -39,7 +39,7 @@
   --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
 
-  --text-xs:12px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
   --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
 
   --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
@@ -108,7 +108,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 
 /* ---------- chips ---------- */
 .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rounded-full);
-  font-size:11px;font-weight:600;letter-spacing:.01em;line-height:1.4}
+  font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.4}
 .chip svg{width:12px;height:12px}
 .chip-rec{background:var(--general-primary);color:var(--general-primary-foreground)}
 .chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
@@ -133,7 +133,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .who b{color:var(--general-foreground);font-weight:600}
 .av{width:28px;height:28px;border-radius:var(--rounded-full);flex:0 0 auto;display:grid;place-items:center;
   background:var(--brand-ice);color:var(--general-primary);font-family:var(--font-sans);
-  font-size:11px;font-weight:600;letter-spacing:.02em}
+  font-size:13px;font-weight:600;letter-spacing:.02em}
 
 .stage{flex:1 1 auto;display:flex;flex-direction:column}
 .scr{display:none;flex:1 1 auto}
@@ -145,7 +145,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 /* headings take focus on screen change for screen readers — never show a ring for it */
 .scr h1[tabindex],.scr h2[tabindex],.dw h3[tabindex]{outline:none}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.pad{width:100%;min-width:0;max-width:1080px;margin:0 auto;padding:var(--s16) var(--s8) var(--s12)}
+.pad{width:100%;min-width:0;max-width:1200px;margin:0 auto;padding:var(--s16) var(--s8) var(--s12)}
 @media(max-width:700px){
   .pad{padding:var(--s12) var(--s4) var(--s8)}
   .topbar{padding:0 var(--s4)}
@@ -188,6 +188,9 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 /* ==========================================================================
    2 · SOURCES
    ========================================================================== */
+/* the h1 and lead are centred over the pair of cards */
+#s-source h1{font-size:var(--text-5xl);letter-spacing:-2px;line-height:1.05;text-align:center}
+#s-source .lead{margin-left:auto;margin-right:auto;text-align:center}
 .srcs{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s6);margin-top:var(--s12)}
 @media(max-width:900px){.srcs{grid-template-columns:1fr}}
 .src{position:relative;display:flex;flex-direction:column;padding:var(--s8);text-align:left;
@@ -195,7 +198,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
   box-shadow:var(--shadow-xs);transition:transform var(--t),box-shadow var(--t),border-color var(--t)}
 /* reserved on every card so the titles line up whether or not there's a badge */
 .src .top{display:flex;align-items:center;min-height:24px;margin-bottom:var(--s4)}
-.src h3{font-size:var(--text-3xl);letter-spacing:-1.1px;line-height:1.15;margin-bottom:var(--s4)}
+.src h3{font-size:var(--text-4xl);letter-spacing:-1.4px;line-height:1.12;margin-bottom:var(--s4)}
 .src .why{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.6}
 .src .why b{color:var(--general-foreground);font-weight:600}
 .src .act{margin-top:auto;padding-top:var(--s8)}
@@ -238,7 +241,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .read{padding:var(--s4) var(--s3);background:var(--surface)}
 .read b{display:block;font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;
   letter-spacing:-.8px;color:var(--general-primary)}
-.read span{display:block;margin-top:2px;font-size:11px;line-height:1.35;
+.read span{display:block;margin-top:2px;font-size:13px;line-height:1.35;
   color:var(--general-muted-foreground)}
 .steps{margin-top:var(--s10,40px);text-align:left;display:flex;flex-direction:column;gap:var(--s3)}
 .step{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-sm);
@@ -249,7 +252,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .step.now{color:var(--general-foreground);font-weight:500}
 .step.now .dot{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
 .step.done{color:var(--general-muted-foreground)}
-.step.done .dot{background:var(--sentiment-positive);border-color:var(--sentiment-positive);color:#fff}
+.step.done .dot{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
 .step.done .dot svg{opacity:1}
 
 /* ==========================================================================
@@ -269,7 +272,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 table{width:100%;border-collapse:collapse;min-width:760px}
 caption{text-align:left;padding:0 var(--s6) var(--s3);font-size:var(--text-xs);
   color:var(--general-muted-foreground)}
-th{text-align:left;padding:var(--s3) var(--s4);font-size:10px;font-weight:600;text-transform:uppercase;
+th{text-align:left;padding:var(--s3) var(--s4);font-size:13px;font-weight:600;text-transform:uppercase;
   letter-spacing:.08em;color:var(--general-muted-foreground);font-family:var(--font-mono);
   border-bottom:1px solid var(--hairline);white-space:nowrap;background:var(--surface)}
 th.r,td.r{text-align:right}
@@ -391,7 +394,7 @@ body.in-app .flow{display:none}
 .search input::placeholder{color:#8f8f8f}
 .search kbd{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
   padding:0 5px;border-radius:var(--rounded-xs);background:var(--surface);border:1px solid var(--sidebar-border);
-  box-shadow:var(--shadow-2xs);font-family:var(--font-mono);font-size:10px;color:var(--general-muted-foreground)}
+  box-shadow:var(--shadow-2xs);font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground)}
 /* connected ERP status */
 .erp{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s3) 0 var(--s3);
   background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
@@ -409,7 +412,7 @@ body.in-app .flow{display:none}
 .syncbtn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;
   flex:0 0 auto;cursor:pointer;border:none;border-radius:var(--rounded-full);
   background:var(--general-muted);color:var(--sidebar-foreground);
-  font-size:11px;font-weight:600;white-space:nowrap;transition:var(--t-fast)}
+  font-size:13px;font-weight:600;white-space:nowrap;transition:var(--t-fast)}
 .syncbtn:hover:not([disabled]):not(.done){background:var(--general-secondary);color:var(--general-primary)}
 .syncbtn[disabled]{cursor:default;color:var(--general-muted-foreground)}
 .syncbtn svg{width:14px;height:14px;flex:0 0 auto}
@@ -418,7 +421,7 @@ body.in-app .flow{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:1080px){.syncbtn span{display:none}.syncbtn{padding:0 7px}}
 @media (prefers-reduced-motion:reduce){.syncbtn.busy svg{animation:none}}
-.erp .et span{font-size:10px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
+.erp .et span{font-size:13px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
 @media(max-width:1080px){.erp .et span{display:none}}
 /* account menu */
 .userwrap{position:relative;flex:0 0 auto}
@@ -429,13 +432,13 @@ body.in-app .flow{display:none}
 .upop.on{opacity:1;transform:none;pointer-events:auto}
 .up-h{padding:var(--s4);border-bottom:1px solid var(--hairline)}
 .up-h b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
-.up-h span{display:block;font-size:11px;color:var(--general-muted-foreground);margin-top:1px}
+.up-h span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:1px}
 .up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
   background:none;border:none;cursor:pointer;text-align:left;font-size:var(--text-sm);
   color:var(--general-foreground);transition:var(--t-fast)}
 .up-i:hover{background:var(--general-muted)}
 .up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
-.up-f{padding:0 var(--s4) var(--s4);font-size:10px;color:#a3a3a3}
+.up-f{padding:0 var(--s4) var(--s4);font-size:13px;color:#a3a3a3}
 
 /* notifications */
 .notif{position:relative;flex:0 0 auto}
@@ -447,7 +450,7 @@ body.in-app .flow{display:none}
 .bell svg{width:20px;height:20px}
 .bell .bdg{position:absolute;top:2px;right:1px;min-width:17px;height:17px;padding:0 4px;
   border-radius:var(--rounded-full);background:var(--general-destructive);color:#fff;
-  font-size:10px;font-weight:700;line-height:17px;font-variant-numeric:tabular-nums;
+  font-size:13px;font-weight:700;line-height:17px;font-variant-numeric:tabular-nums;
   box-shadow:0 0 0 2px var(--surface)}
 .bell .bdg[hidden]{display:none}
 /* popover: height wraps the items, never the full column */
@@ -463,7 +466,7 @@ body.in-app .flow{display:none}
 .np-b{max-height:min(440px,60vh);overflow-y:auto;padding-bottom:var(--s2)}
 .ngrp+.ngrp{border-top:1px solid var(--hairline);margin-top:var(--s2);padding-top:var(--s2)}
 .ngrp .gh{display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s4);
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 .ngrp .gh .spacer{flex:1}
 .ngrp .gh em{font-style:normal;font-variant-numeric:tabular-nums}
@@ -476,7 +479,7 @@ body.in-app .flow{display:none}
 .note.read .dot{background:transparent}
 .note .nb{min-width:0}
 .note .nb b{display:block;font-size:var(--text-sm);font-weight:600;line-height:1.4}
-.note .nb span{display:block;margin-top:2px;font-size:11px;color:var(--general-muted-foreground)}
+.note .nb span{display:block;margin-top:2px;font-size:13px;color:var(--general-muted-foreground)}
 .note.read .nb b{font-weight:400;color:var(--general-muted-foreground)}
 .note .nv{flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-xs);font-weight:600;
   white-space:nowrap;color:var(--sentiment-positive)}
@@ -490,7 +493,7 @@ body.in-app .flow{display:none}
   border:none;cursor:pointer;border-radius:var(--rounded-full);transition:var(--t-fast)}
 .user:hover{background:var(--general-muted)}
 .user .uav{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
-  place-items:center;color:#fff;font-family:var(--font-sans);font-size:11px;font-weight:600;
+  place-items:center;color:#fff;font-family:var(--font-sans);font-size:13px;font-weight:600;
   background:linear-gradient(135deg,#2170ed,#0b00ab)}
 .user .un{font-size:var(--text-xs);font-weight:600;text-align:left;line-height:1.25;
   white-space:nowrap}
@@ -520,10 +523,10 @@ body.in-app .flow{display:none}
   transition:opacity var(--t-fast)}
 .ni .nb{flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--rounded-full);
   display:grid;place-items:center;background:var(--general-accent);color:var(--general-accent-foreground);
-  font-size:10px;font-weight:700;font-variant-numeric:tabular-nums}
+  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
 .rail.mini .ni{justify-content:center;padding:0}
 .rail.mini .ni .nt{opacity:0;width:0;flex:0 0 0}
-.rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:9px}
+.rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:13px}
 /* highlighted first entry — last of the two cards at the top of the rail, so its bottom
    margin is what separates that pair from the plain menu items below (holds when mini) */
 .ni.hero{height:auto;padding:var(--s3);margin-bottom:var(--s6);align-items:flex-start;
@@ -533,7 +536,7 @@ body.in-app .flow{display:none}
 .ni.hero .nic{color:var(--general-primary)}
 .ni.hero .hb{display:flex;flex-direction:column;gap:2px;min-width:0}
 .ni.hero .hb b{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
-.ni.hero .hb span{font-size:11px;color:var(--general-muted-foreground);line-height:1.4}
+.ni.hero .hb span{font-size:13px;color:var(--general-muted-foreground);line-height:1.4}
 .rail.mini .ni.hero{padding:0;height:44px;align-items:center;justify-content:center;
   border-color:transparent;background:var(--brand-ice)}
 .rail.mini .ni.hero .hb{display:none}
@@ -567,7 +570,7 @@ body.in-app .flow{display:none}
 .sda{width:22px;height:22px;flex:0 0 auto;display:block}
 .agent-btn .ab{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .agent-btn .ab b{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
-.agent-btn .ab span{font-size:11px;color:var(--general-muted-foreground);white-space:nowrap}
+.agent-btn .ab span{font-size:13px;color:var(--general-muted-foreground);white-space:nowrap}
 .rail.mini .agent-btn{justify-content:center;padding:0;height:44px}
 .rail.mini .agent-btn .ab{display:none}
 .rail.mini .agent-btn::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
@@ -648,7 +651,7 @@ body.in-app .flow{display:none}
 /* container, not viewport: opening a side panel shrinks the canvas without changing the
    window, so the card's breakpoints have to respond to the space it actually has */
 .page{container-type:inline-size;container-name:page;
-  width:100%;max-width:1080px;margin:0 auto;padding:var(--s12) var(--s8) var(--s16);
+  width:100%;max-width:1200px;margin:0 auto;padding:var(--s12) var(--s8) var(--s16);
   display:flex;flex-direction:column;gap:var(--s8)}
 @media(max-width:760px){.page{padding:var(--s8) var(--s4) var(--s12)}}
 
@@ -728,31 +731,32 @@ body.in-app .flow{display:none}
 .ipop.on{opacity:1;pointer-events:auto;transform:none}
 .ip-h{padding:var(--s4) var(--s4) var(--s2);font-family:var(--font-sans);font-size:var(--text-xs);
   font-weight:600}
-.ip-f{padding:var(--s3) var(--s4) var(--s4);font-size:11px;line-height:1.5;
+.ip-f{padding:var(--s3) var(--s4) var(--s4);font-size:13px;line-height:1.5;
   color:var(--general-muted-foreground)}
 .ip-f b{color:var(--general-foreground);font-weight:600}
 .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--hairline)}
 .fact{padding:var(--s3) var(--s4);background:var(--surface)}
 .fact b{display:block;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
   letter-spacing:-.5px;font-variant-numeric:tabular-nums}
-.fact span{display:block;margin-top:1px;font-size:11px;color:var(--general-muted-foreground)}
+.fact span{display:block;margin-top:1px;font-size:13px;color:var(--general-muted-foreground)}
 
 /* ---------- spend through the year ---------- */
 .spark{margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid #1b64dc1f}
 .sp-head{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4);
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 /* legend on its own line — three entries plus the title never fit one row in this column */
 .sp-lgs{flex:1 0 100%;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
 .sp-lg{display:inline-flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;
-  font-family:var(--font-body);font-size:11px}
+  font-family:var(--font-body);font-size:13px}
 .sp-lg i{width:14px;height:0;border-top:2px solid var(--general-primary);flex:0 0 auto}
 .sp-lg i.l2{border-top-style:dashed}
 .sp-lg i.l3{border-top-color:var(--sentiment-positive)}
 .sp-wrap{position:relative}
 .sp-wrap svg{display:block;width:100%;height:auto;overflow:visible}
 .sp-grid{stroke:#1b64dc1f;stroke-width:1}
-.sp-ax{font-family:var(--font-mono);font-size:8.5px;fill:#8f9bab}
+.sp-ax{font-family:var(--font-mono);font-size:var(--axfs,11px);fill:#8f9bab}
+.sp-ax.hide{display:none}
 .sp-ax.now{fill:#5f6b7c;font-weight:600}
 .sp-stop{stroke:#98a6b8;stroke-width:1;stroke-dasharray:3 3}
 .sp-l1{fill:none;stroke:var(--general-primary);stroke-width:2.2;stroke-linecap:round;
@@ -768,17 +772,17 @@ body.in-app .flow{display:none}
 .sp-cross{stroke:#98a6b8;stroke-width:1;opacity:0}
 .sp-cross.on{opacity:1}
 .sp-tip{position:absolute;z-index:6;padding:6px 10px;border-radius:var(--rounded-sm);
-  background:var(--brand-midnight);color:var(--surface);font-size:11px;line-height:1.45;
+  background:var(--brand-midnight);color:var(--surface);font-size:13px;line-height:1.45;
   white-space:nowrap;pointer-events:none;opacity:0;box-shadow:var(--shadow-md);
   transition:opacity var(--t-fast)}
 .sp-tip.on{opacity:1}
 .sp-tip b{font-weight:600}
 .sp-tip .t3{color:#6fe3c8}
-.sp-note{margin-top:var(--s4);font-size:11px;line-height:1.55;color:var(--general-muted-foreground)}
+.sp-note{margin-top:var(--s4);font-size:13px;line-height:1.55;color:var(--general-muted-foreground)}
 .sp-note b{color:var(--sentiment-positive);font-weight:600}
 /* category split */
 .split-head{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s4);
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 .split-head .spacer{flex:1}
 .cbars{list-style:none;display:flex;flex-direction:column;gap:var(--s1)}
@@ -799,7 +803,7 @@ body.in-app .flow{display:none}
 .cbar.quick .cn2{font-weight:600}
 .qtag{display:inline-flex;align-items:center;gap:4px;margin-left:var(--s2);padding:2px 7px;
   border-radius:var(--rounded-full);background:var(--sentiment-positive);color:#fff;
-  font-family:var(--font-body);font-size:10px;font-weight:700;letter-spacing:.01em;
+  font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:.01em;
   vertical-align:1px}
 .qtag svg{width:10px;height:10px}
 /* wraps rather than ellipsizes: a clipped label loses the category AND the Quick win
@@ -815,9 +819,9 @@ body.in-app .flow{display:none}
   font-weight:600;font-variant-numeric:tabular-nums;color:var(--sentiment-positive);
   white-space:nowrap}
 /* unit sits quieter than the figure, same tint as the hero's unit */
-.cbar .amt2 .u{font-style:normal;font-size:10px;font-weight:500;color:#4a8f89}
+.cbar .amt2 .u{font-style:normal;font-size:13px;font-weight:500;color:#4a8f89}
 /* secondary: the rate it comes from, and the spend it sits on */
-.cbar .pc2{grid-area:pc;text-align:right;font-family:var(--font-mono);font-size:11px;
+.cbar .pc2{grid-area:pc;text-align:right;font-family:var(--font-mono);font-size:13px;
   font-variant-numeric:tabular-nums;color:var(--general-muted-foreground);white-space:nowrap}
 .cbar .pc2 b{color:var(--general-foreground);font-weight:600}
 /* row CTA — spans both lines on the right */
@@ -831,7 +835,7 @@ body.in-app .flow{display:none}
 /* per-mark hover detail */
 .cbar::after{content:attr(data-tip);position:absolute;left:0;bottom:calc(100% - 4px);
   padding:5px 10px;border-radius:var(--rounded-sm);background:var(--brand-midnight);
-  color:var(--surface);font-size:11px;white-space:nowrap;pointer-events:none;opacity:0;z-index:4;
+  color:var(--surface);font-size:13px;white-space:nowrap;pointer-events:none;opacity:0;z-index:4;
   box-shadow:0 0 0 2px var(--surface),var(--shadow-md);transform:translateY(3px);
   transition:opacity var(--t-fast),transform var(--t-fast)}
 .cbar:hover::after{opacity:1;transform:none}
@@ -850,7 +854,7 @@ body.in-app .flow{display:none}
 .sh-head{display:flex;align-items:flex-end;gap:var(--s4);margin-bottom:var(--s3)}
 .sh-head>div{flex:1;min-width:0}
 .sh-eyebrow{display:flex;align-items:center;gap:6px;margin-bottom:var(--s1);
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 .sh-eyebrow svg{width:12px;height:12px;flex:0 0 auto;color:var(--general-primary)}
 .sh-head h2{font-size:var(--text-xl);letter-spacing:-.6px}
@@ -896,20 +900,20 @@ body.in-app .flow{display:none}
 .sup-leaf{position:absolute;top:var(--s2);left:var(--s2);z-index:2;
   display:inline-flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;
   border-radius:var(--rounded-full);background:#ffffffe6;box-shadow:var(--shadow-2xs);
-  color:var(--sentiment-positive);font-size:10px;font-weight:600;line-height:1.3;white-space:nowrap}
+  color:var(--sentiment-positive);font-size:13px;font-weight:600;line-height:1.3;white-space:nowrap}
 .sup-leaf svg{width:11px;height:11px;flex:0 0 auto}
 /* wordmark, not a logo file — a white tile overlapping the bottom edge of the image */
 .sup-logo{position:absolute;left:var(--s3);bottom:-18px;z-index:2;width:52px;height:52px;
   display:grid;place-items:center;padding:0 3px;overflow:hidden;text-align:center;
   background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-md);
-  box-shadow:var(--shadow-sm);font-family:var(--font-sans);font-weight:600;letter-spacing:-.2px;
-  line-height:1.15;color:var(--brand-midnight);overflow-wrap:anywhere}
+  box-shadow:var(--shadow-sm);font-family:var(--font-sans);font-weight:700;font-size:16px;
+  letter-spacing:.02em;line-height:1.15;color:var(--brand-midnight)}
 /* shelf 3 (per the sketch): no category label, badge sits on the image */
 .sup.inimg .sup-logo{bottom:var(--s2)}
 .sup.inimg .sup-b{padding-top:var(--s4)}
 .sup-b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;
   padding:calc(var(--s6) + var(--s2)) var(--s4) var(--s4)}
-.sup-cat{font-size:11px;color:var(--general-muted-foreground);
+.sup-cat{font-size:13px;color:var(--general-muted-foreground);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sup-n{margin-top:2px;font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
   letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -950,7 +954,7 @@ body.in-app .flow{display:none}
 :root{--dww:min(460px,42vw)}
 .dw-h{flex:0 0 auto;display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s6);
   border-bottom:1px solid var(--hairline)}
-.dw-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+.dw-eyebrow{font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--general-muted-foreground);margin-bottom:var(--s1)}
 .dw-h h3{font-size:var(--text-xl);letter-spacing:-.6px}
 .dw-h>div{flex:1;min-width:0}
@@ -981,13 +985,13 @@ body.in-app .flow{display:none}
   margin-bottom:var(--s4)}
 .dw-b h4 .n{display:inline-grid;place-items:center;width:18px;height:18px;margin-right:7px;
   border-radius:var(--rounded-xs);background:var(--general-muted);
-  font-family:var(--font-mono);font-size:10px;color:var(--general-muted-foreground);vertical-align:1px}
+  font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground);vertical-align:1px}
 .steps2{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
 .steps2 li{display:flex;gap:var(--s3);font-size:var(--text-sm);line-height:1.55;
   color:var(--general-muted-foreground)}
 .steps2 .sn{flex:0 0 auto;width:20px;height:20px;margin-top:1px;border-radius:var(--rounded-full);
   display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
-  font-family:var(--font-mono);font-size:10px;font-weight:600}
+  font-family:var(--font-mono);font-size:13px;font-weight:600}
 .steps2 li:last-child .sn{background:#d9f2ef;color:var(--sentiment-positive)}
 .steps2 b{color:var(--general-foreground);font-weight:600}
 .steps2 code{font-family:var(--font-mono);font-size:var(--text-xs);padding:1px 5px;
@@ -1001,7 +1005,7 @@ body.in-app .flow{display:none}
 .agr:hover{border-color:var(--general-border);background:#fcfdff}
 .agr.on{border-color:#00968947;background:#f4fcfb}
 .agr .an{grid-area:an;font-size:var(--text-sm);font-weight:600}
-.agr .am{grid-area:am;font-size:11px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
+.agr .am{grid-area:am;font-size:13px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
 .agr .sv{grid-area:sv;text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);
   font-weight:600;color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
 .agr .act{grid-area:act}
@@ -1009,7 +1013,7 @@ body.in-app .flow{display:none}
   background:var(--surface);color:var(--sentiment-positive);border-radius:var(--rounded-full);
   font-size:var(--text-xs);font-weight:600;cursor:pointer;transition:var(--t-fast)}
 .agr .btn-act:hover{background:var(--sentiment-positive);color:#fff}
-.agr .inuse{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+.agr .inuse{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;
   color:var(--sentiment-positive)}
 .agr .inuse svg{width:13px;height:13px}
 /* below this there isn't room to sit beside the content without squeezing it, so it
@@ -1025,101 +1029,11 @@ body.in-app .flow{display:none}
   .dw-b,.dw-h{padding:var(--s4)}
 }
 
-/* ---------- reports pair ---------- */
-:root{--green:#3f9142;--green-soft:#eaf5ea}
-.cards2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6)}
-@container page (max-width:820px){.cards2{grid-template-columns:1fr}}
-.rcard{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s6);text-align:left;
-  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-2xl);
-  box-shadow:var(--shadow-xs)}
-.rcard.sus{cursor:pointer;
-  transition:border-color var(--t-fast),box-shadow var(--t-fast),transform var(--t-fast)}
-.rcard.sus:hover{border-color:#3f914247;box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.rc-h{display:flex;align-items:center;gap:var(--s3)}
-.rc-eyebrow{display:inline-flex;align-items:center;gap:6px;flex:1;
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--green)}
-.rdot{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--green);flex:0 0 auto;
-  box-shadow:0 0 0 3px #3f914226}
-.rc-exp{flex:0 0 auto;width:28px;height:28px;display:grid;place-items:center;border-radius:var(--rounded-sm);
-  color:var(--general-muted-foreground);background:var(--general-muted);transition:var(--t-fast)}
-.rcard.sus:hover .rc-exp{background:var(--green);color:#fff}
-.rc-exp svg{width:14px;height:14px}
-/* leaf as the chart: filled from the base in proportion to what was avoided */
-.sus-top{display:flex;align-items:center;gap:var(--s5,20px)}
-.leaf-w{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:var(--s2)}
-.leaf-cap{font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;color:var(--green);
-  white-space:nowrap}
-.leaf-c{flex:0 0 auto;width:96px;height:96px}
-.leaf-c svg{width:100%;height:100%;display:block}
-.sus-fig b{display:block;font-family:var(--font-sans);font-size:var(--text-4xl);font-weight:600;
-  letter-spacing:-1.4px;line-height:1;color:var(--green)}
-.sus-fig b em{font-style:normal;font-size:var(--text-lg);font-weight:500;letter-spacing:-.4px}
-.sus-fig>span{display:block;margin-top:var(--s2);font-size:var(--text-sm);
-  color:var(--general-muted-foreground)}
-.sus-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hairline);
-  border:1px solid var(--hairline);border-radius:var(--rounded-lg);overflow:hidden}
-.sstat{padding:var(--s3) var(--s4);background:var(--surface)}
-.sstat b{display:block;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
-  letter-spacing:-.5px;font-variant-numeric:tabular-nums}
-.sstat span{display:block;margin-top:1px;font-size:10px;line-height:1.35;
-  color:var(--general-muted-foreground)}
-/* placeholder */
-.rcard.ph{align-items:center;justify-content:center;min-height:220px;
-  border:1.5px dashed #dcdcdc;box-shadow:none;background:#fcfcfd}
-.ph-b{text-align:center;color:#a3a3a3}
-.ph-b b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;
-  color:#8f8f8f}
-.ph-b span{display:block;margin-top:2px;font-size:var(--text-xs)}
-
-/* ---------- expanded sustainability report ---------- */
-.rep-sub{margin-top:var(--s2);font-size:var(--text-sm);line-height:1.55;
-  color:var(--general-muted-foreground);max-width:56ch}
-.rep .bc-eyebrow{gap:var(--s4)}
-.rband{display:flex;align-items:center;gap:var(--s8);flex-wrap:wrap;padding:var(--s6);
-  border-radius:var(--rounded-xl);background:linear-gradient(150deg,#1d3f22,#16321a)}
-.rband .leaf-c{width:104px;height:104px}
-.rband-figs{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s6);min-width:260px}
-.rfig b{display:block;font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;
-  letter-spacing:-.8px;color:#fff;font-variant-numeric:tabular-nums}
-.rfig span{display:block;margin-bottom:var(--s1);font-size:11px;color:#a8d3ab}
-.rsec{margin-top:var(--s8)}
-.rsec-h{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s4)}
-.rsec-h h4{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
-.rsec-h .spacer{flex:1}
-.rsec-h .tot{font-family:var(--font-mono);font-size:var(--text-xs);
-  color:var(--general-muted-foreground)}
-.sbar{display:grid;grid-template-columns:96px 1fr 62px;align-items:center;gap:var(--s4);
-  padding:var(--s2) 0}
-.sbar .sn{font-size:var(--text-sm);font-weight:500}
-.sbar .strk{height:12px;border-radius:0 6px 6px 0;background:var(--general-muted);overflow:hidden}
-.sbar .strk i{display:block;height:100%;border-radius:0 6px 6px 0;min-width:3px}
-.sbar .sv{text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;
-  font-variant-numeric:tabular-nums}
-.sbar .sd{grid-column:2/-1;font-size:11px;color:var(--general-muted-foreground);margin-top:-2px}
-.cbar2{display:grid;grid-template-columns:1fr auto;gap:var(--s2) var(--s4);padding:var(--s2) 0}
-.cbar2 .cn3{font-size:var(--text-sm)}
-.cbar2 .cv3{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;
-  font-variant-numeric:tabular-nums}
-.cbar2 .ct3{grid-column:1/-1;height:10px;border-radius:0 5px 5px 0;background:var(--general-muted);
-  overflow:hidden}
-.cbar2 .ct3 i{display:block;height:100%;background:var(--green);border-radius:0 5px 5px 0;min-width:3px}
-.cbar2 .cs3{grid-column:1/-1;font-size:10px;font-family:var(--font-mono);
-  color:var(--general-muted-foreground);margin-top:-4px}
-.gact{display:flex;gap:var(--s4);padding:var(--s4);border:1px solid var(--hairline);
-  border-radius:var(--rounded-md);background:var(--green-soft)}
-.gact+.gact{margin-top:var(--s2)}
-.gact .gv{flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700;
-  color:var(--green);min-width:52px}
-.gact .gb b{display:block;font-size:var(--text-sm);font-weight:600}
-.gact .gb span{display:block;margin-top:2px;font-size:var(--text-xs);line-height:1.5;
-  color:var(--general-muted-foreground)}
-
 /* ---------- business case dialog ---------- */
 .note.bcnote .nb b{color:var(--general-foreground)}
 .ncta{display:inline-flex!important;align-items:center;gap:5px;margin-top:var(--s2);
   padding:3px 9px;border-radius:var(--rounded-full);background:#d9f2ef;
-  color:var(--sentiment-positive)!important;font-size:11px;font-weight:600}
+  color:var(--sentiment-positive)!important;font-size:13px;font-weight:600}
 .ncta svg{width:12px;height:12px}
 .bcs{position:fixed;inset:0;z-index:50;background:#000a4552;opacity:0;pointer-events:none;
   transition:opacity var(--t)}
@@ -1134,7 +1048,7 @@ body.in-app .flow{display:none}
   padding:var(--s6) var(--s8) var(--s4);border-bottom:1px solid var(--hairline)}
 .bc-h>div{flex:1;min-width:0}
 .bc-eyebrow{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s2);
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 .bc-h h2{font-size:var(--text-2xl);letter-spacing:-.8px}
 /* stepper: progress plus random access across the eight cases */
@@ -1168,7 +1082,7 @@ body.in-app .flow{display:none}
   border:1px solid var(--sidebar-border);border-radius:var(--rounded-lg);background:var(--surface)}
 .cmp-c.win{border-color:var(--sentiment-positive);background:#f4fcfb;
   box-shadow:0 0 0 3px #0096891a}
-.cmp-c .ct{display:flex;align-items:center;gap:var(--s2);font-family:var(--font-mono);font-size:10px;
+.cmp-c .ct{display:flex;align-items:center;gap:var(--s2);font-family:var(--font-mono);font-size:13px;
   letter-spacing:.08em;text-transform:uppercase;color:var(--general-muted-foreground);
   margin-bottom:var(--s3)}
 .cmp-c .ct svg{width:12px;height:12px;flex:0 0 auto}
@@ -1187,7 +1101,7 @@ body.in-app .flow{display:none}
 .cmp-c.win .bonus{color:var(--sentiment-positive);font-weight:600}
 .cmp-arrow{display:grid;place-items:center;gap:var(--s1);align-self:center;padding:0 var(--s1)}
 .cmp-arrow svg{width:20px;height:20px;color:var(--sentiment-positive)}
-.cmp-arrow b{font-family:var(--font-mono);font-size:11px;font-weight:600;
+.cmp-arrow b{font-family:var(--font-mono);font-size:13px;font-weight:600;
   color:var(--sentiment-positive);white-space:nowrap}
 @media(max-width:680px){.cmp-arrow{transform:rotate(90deg);padding:var(--s1) 0}}
 /* why */
@@ -1205,7 +1119,7 @@ body.in-app .flow{display:none}
 .bc-meta{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s6);padding-top:var(--s6);
   border-top:1px solid var(--hairline)}
 .mchip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:var(--rounded-full);
-  background:var(--general-muted);font-size:11px;font-weight:500}
+  background:var(--general-muted);font-size:13px;font-weight:500}
 .mchip b{font-weight:700}
 .mchip svg{width:12px;height:12px;color:var(--general-muted-foreground)}
 /* decide table */
@@ -1232,7 +1146,7 @@ body.in-app .flow{display:none}
 .tline li{display:flex;gap:var(--s3);font-size:var(--text-sm);line-height:1.5}
 .tline .tn{flex:0 0 auto;width:22px;height:22px;border-radius:var(--rounded-full);
   background:var(--general-muted);color:var(--general-muted-foreground);display:grid;place-items:center;
-  font-family:var(--font-mono);font-size:10px;font-weight:600}
+  font-family:var(--font-mono);font-size:13px;font-weight:600}
 .tline li:first-child .tn{background:var(--sentiment-positive);color:#fff}
 .tline b{font-weight:600}
 .tline span{color:var(--general-muted-foreground)}
@@ -1370,98 +1284,7 @@ body.in-app .flow{display:none}
     </div>
   </section>
 
-  <!-- ==================== 4 · DATA SET ==================== -->
-  <section class="scr" id="s-data" aria-labelledby="h-data">
-    <div class="pad">
-      <div class="dhead">
-        <div>
-          <div class="eyebrow"><i></i>Step 2 of 3</div>
-          <h1 id="h-data">This is the data set retrieved from your ERP system</h1>
-          <p class="lead">We read <b id="dInv">1 284</b> invoices from <b id="dSrc">Visma.net</b> and grouped them into categories.
-            Hide anything that doesn't belong, then confirm — everything we suggest later is built on this.</p>
-        </div>
-        <span class="spacer"></span>
-      </div>
 
-      <div class="tbl-card">
-        <div class="tbl-top">
-          <span class="h">Data set · last 12 months</span>
-          <span class="chip chip-good" id="dChip">Read from your ERP</span>
-          <span class="spacer"></span>
-        </div>
-        <div class="tbl-scroll">
-          <table id="dTable">
-            <caption class="sr">Spend by category, read from the connected ERP</caption>
-            <thead><tr>
-              <th scope="col">Category</th>
-              <th scope="col" class="r">Suppliers</th>
-              <th scope="col" class="r">Invoices</th>
-              <th scope="col" class="r">Spend, 12 months (kr.)</th>
-              <th scope="col" class="r">Share</th>
-              <th scope="col"><span class="sr">Actions</span></th>
-            </tr></thead>
-            <tbody id="dBody"></tbody>
-            <tfoot><tr>
-              <td><span class="lbl">Total</span> <span id="tCat">8 categories</span></td>
-              <td class="r" id="tSup">59</td>
-              <td class="r" id="tInv">1 284</td>
-              <td class="r amt" id="tAmt">4 820 000</td>
-              <td></td>
-              <td></td>
-            </tr></tfoot>
-          </table>
-        </div>
-      </div>
-
-      <div class="dbar">
-        <span class="hint" id="dHint">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/></svg>
-          <span id="dHintTxt">11 suppliers couldn't be placed in a category — we'll ask you about those later</span></span>
-        <span class="spacer"></span>
-        <button class="btn btn-primary" id="confirmBtn">Confirm data set</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== 5 · CEO WELCOME ==================== -->
-  <section class="scr mid" id="s-ceo" aria-labelledby="h-ceo">
-    <div class="ceo">
-      <div class="card">
-        <div class="lhead">
-          <img src="assets/advantage-logo.svg" alt="Advantage">
-          <span class="spacer"></span>
-          <span class="ldate mono" id="ldate"></span>
-        </div>
-
-        <h1 id="h-ceo" class="salut">Dear Mette,</h1>
-        <div class="letter">
-          <p>Your data set is in. From tomorrow morning we read every new invoice you book and tell you when
-            you're paying more than you agreed — or more than 340 companies like yours.</p>
-          <p>Two promises, because they're the ones people ask me about. <b>We only read</b> — we never write
-            back into your system, and never contact a supplier without you seeing the message first. And
-            <b>we show our reasoning</b>: every number opens up into the invoice lines behind it. If you can't
-            trace it, don't trust it.</p>
-          <p>You'll hear from a person too. Lars is your advisor and he'll call this week — not to sell you
-            anything, just so you know who to shout at.</p>
-          <p class="valed">Yours,</p>
-        </div>
-
-        <div class="sig">
-          <span class="sigmark" aria-hidden="true">Kristian Bjørnstad</span>
-          <div class="sigid">
-            <span class="portrait" aria-hidden="true">KB</span>
-            <span class="ceo-id"><b>Kristian Bjørnstad</b><span>CEO, Advantage Nordic</span></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="ceo-act">
-        <button class="btn btn-primary" id="finish">Go to dashboard
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-    </div>
-  </section>
 
   </main>
 </div>
@@ -1533,9 +1356,9 @@ body.in-app .flow{display:none}
 
     <div class="appbody">
       <nav class="rail" id="rail" aria-label="Main">
-        <button class="agent-btn" id="agentBtn" data-tip="AI procurator" aria-expanded="false">
+        <button class="agent-btn" id="agentBtn" data-tip="Saving assistant" aria-expanded="false">
           <img class="sda" src="assets/sda-mark.svg" alt="">
-          <span class="ab"><b>AI procurator</b><span>Ask it anything</span></span>
+          <span class="ab"><b>Saving assistant</b><span>Ask it anything</span></span>
         </button>
         <div class="nav" id="nav"></div>
         <button class="railtog" id="railTog" aria-label="Collapse navigation" aria-expanded="true">
@@ -1550,7 +1373,7 @@ body.in-app .flow{display:none}
           <header class="ap-h">
             <div>
               <div class="ap-eyebrow">Made to make your procurement easier</div>
-              <h3 id="apT" tabindex="-1">AI procurator <img class="sda" src="assets/sda-mark.svg" alt=""></h3>
+              <h3 id="apT" tabindex="-1">Saving assistant <img class="sda" src="assets/sda-mark.svg" alt=""></h3>
             </div>
             <button class="apx" id="apWide" aria-label="Expand panel">
               <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 20h5v-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4l6 6M20 20l-6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
@@ -1585,7 +1408,7 @@ body.in-app .flow{display:none}
 
           <footer class="ap-f">
             <div class="ap-in">
-              <textarea id="apInput" rows="1" placeholder="Ask the procurator…"></textarea>
+              <textarea id="apInput" rows="1" placeholder="Ask the saving assistant…"></textarea>
               <div class="ap-in-r">
                 <button class="apattach" aria-label="Attach a file">
                   <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -1670,35 +1493,6 @@ body.in-app .flow{display:none}
             </div>
           </section>
 
-          <!-- 4 · reports pair: sustainability + a placeholder -->
-          <div class="cards2">
-            <button class="rcard sus" id="susCard">
-              <span class="rc-h">
-                <span class="rc-eyebrow"><i class="rdot"></i>Sustainability</span>
-                <span class="rc-exp" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M14 4h6v6M10 20H4v-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4l-7 7M4 20l7-7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
-                </span>
-              </span>
-              <span class="sus-top">
-                <span class="leaf-w">
-                  <span class="leaf-c" id="leafChart"></span>
-                  <span class="leaf-cap" id="leafCap"></span>
-                </span>
-                <span class="sus-fig">
-                  <b><span id="susTotal">0</span> <em>tCO₂e</em></b>
-                  <span>total footprint this year</span>
-                </span>
-              </span>
-              <span class="sus-stats" id="susStats"></span>
-            </button>
-
-            <div class="rcard ph">
-              <span class="ph-b">
-                <b>Coming next</b>
-                <span>Second report, to be designed</span>
-              </span>
-            </div>
-          </div>
 
         </section>
 
@@ -1747,29 +1541,6 @@ body.in-app .flow{display:none}
     <footer class="bc-f" id="bcFoot"></footer>
   </div>
 
-  <!-- expanded report: same dialog shell, separate state -->
-  <div class="bcs" id="repScrim"></div>
-  <div class="bc rep" id="rep" role="dialog" aria-modal="true" aria-labelledby="repT" aria-hidden="true">
-    <header class="bc-h">
-      <div>
-        <div class="bc-eyebrow"><span class="rc-eyebrow"><i class="rdot"></i>Sustainability agent</span>
-          <span>CSRD / ESRS</span></div>
-        <h2 id="repT" tabindex="-1">Sustainability — from the same data</h2>
-        <p class="rep-sub">No separate data collection — the reporting follows from the invoices
-          we already read.</p>
-      </div>
-      <button class="dwx" id="repX" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </header>
-    <div class="bc-b" id="repBody"></div>
-    <footer class="bc-f">
-      <span class="fnote">Figures follow the GHG Protocol. Every line traces to an invoice.</span>
-      <span class="spacer"></span>
-      <button class="btn btn-secondary btn-sm" id="repExport">Export for CSRD</button>
-      <button class="btn btn-primary btn-sm" id="repDone">Done</button>
-    </footer>
-  </div>
 </div>
 
 <script>
@@ -1790,9 +1561,9 @@ function initials(name){
 }
 
 /* ---------------- screens ---------------- */
-const SCREENS = ['s-login','s-source','s-load','s-data','s-ceo'];
+const SCREENS = ['s-login','s-source','s-load'];
 /* three user-facing steps; the loading screen is still part of "connect" */
-const STEP_OF = {'s-source':1,'s-load':1,'s-data':2,'s-ceo':3};
+const STEP_OF = {'s-source':1,'s-load':1};
 
 function show(id){
   curScr = id;
@@ -1845,7 +1616,7 @@ $('#steps').innerHTML = STEPS.map(s => `
   </span>${s}</div>`).join('');
 
 function runIngest(){
-  const rows = $$('#steps .step'), dur = RM ? 600 : 4600, t0 = performance.now();
+  const rows = $$('#steps .step'), dur = RM ? 600 : 7600, t0 = performance.now();
   /* the totals the counters climb to — the same figures the data set and dashboard use,
      so nothing the user sees here gets contradicted two screens later */
   const tInv = state.invoices;
@@ -1865,7 +1636,7 @@ function runIngest(){
     });
     $('#loadNow').textContent = p < 1 ? STEPS[at] + '…' : 'Done';
     if(p < 1) requestAnimationFrame(tick);
-    else setTimeout(() => { renderData(); show('s-data'); }, 500);
+    else setTimeout(enterApp, 500);   /* straight into the app */
   };
   requestAnimationFrame(tick);
 }
@@ -1923,61 +1694,8 @@ const potOf = r => r.agr.reduce((s,a) => s + a.save, 0);
 const live = () => ROWS.filter(r => !r.hidden);
 const tot  = k => live().reduce((s,r) => s + r[k], 0);
 
-const EYE_OFF = '<svg viewBox="0 0 24 24" fill="none"><path d="M3.5 3.5l17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.7 6.2A9.6 9.6 0 0112 6.1c6 0 9.5 5.9 9.5 5.9a17.5 17.5 0 01-2.6 3.4M6.9 8.4A17.4 17.4 0 002.5 12s3.5 5.9 9.5 5.9a9.4 9.4 0 003.6-.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9.9 9.9a3 3 0 004.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-const EYE_ON  = '<svg viewBox="0 0 24 24" fill="none"><path d="M2.5 12S6 6.1 12 6.1s9.5 5.9 9.5 5.9-3.5 5.9-9.5 5.9S2.5 12 2.5 12z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.9" stroke="currentColor" stroke-width="1.8"/></svg>';
 
-function renderData(){
-  $('#dInv').textContent = fmt(state.invoices);
-  $('#dSrc').textContent = state.source;
-  const total = tot('amt') || 1;
-  $('#dBody').innerHTML = ROWS.map(r => {
-    const pc = r.hidden ? 0 : Math.round(r.amt / total * 100);
-    return `<tr class="${r.needs && !r.hidden ? 'needs' : ''}${r.hidden ? ' gone' : ''}">
-      <td><span class="cn">
-        <span class="nmrow"><b>${r.n}</b>
-          ${r.hidden ? '<span class="chip chip-soft">Hidden</span>' : ''}
-          ${r.needs && !r.hidden ? '<span class="chip chip-warn">Needs you</span>' : ''}</span>
-        <span class="sub2">${r.top}</span></span></td>
-      <td class="r num">${r.sup}</td>
-      <td class="r num">${fmt(r.inv)}</td>
-      <td class="r"><span class="amt">${fmt(r.amt)}</span></td>
-      <td class="r">${r.hidden ? '<span class="muted">—</span>' : `<span class="share">
-        <span class="trk"><i style="width:${pc}%"></i></span><em>${pc}%</em></span>`}</td>
-      <td class="r">
-        <button class="rowx${r.hidden ? ' back' : ''}" data-hide="${r.id}"
-          title="${r.hidden ? 'Include again' : 'Hide from the data set'}"
-          aria-label="${r.hidden ? 'Include ' + r.n + ' again' : 'Hide ' + r.n + ' from the data set'}"
-        >${r.hidden ? EYE_ON : EYE_OFF}</button></td>
-    </tr>`;
-  }).join('');
 
-  $$('#dBody [data-hide]').forEach(b => b.addEventListener('click', () => {
-    const r = ROWS.find(x => x.id === b.dataset.hide);
-    r.hidden = !r.hidden;
-    persist();
-    renderData();
-  }));
-  totals();
-}
-
-function totals(){
-  const n = live().length;
-  $('#tCat').textContent = n + (n === 1 ? ' category' : ' categories');
-  $('#tSup').textContent = fmt(tot('sup'));
-  $('#tInv').textContent = fmt(tot('inv'));
-  $('#tAmt').textContent = fmt(tot('amt'));
-  const una = live().find(r => r.needs);
-  $('#dHint').style.visibility = una ? 'visible' : 'hidden';
-  if(una) $('#dHintTxt').textContent =
-    `${una.sup} suppliers couldn't be placed in a category — we'll ask you about those later`;
-}
-
-$('#confirmBtn').addEventListener('click', () => show('s-ceo'));
-
-/* ---------------- 5 · ceo letter ---------------- */
-$('#ldate').textContent = new Intl.DateTimeFormat('en-GB',
-  {day:'numeric', month:'long', year:'numeric'}).format(new Date());
-$('#finish').addEventListener('click', enterApp);
 
 /* ---------------- 6 · app shell ---------------- */
 const NAV = [
@@ -1995,7 +1713,7 @@ const NAV = [
   {id:'agreements', n:'Agreements', badge:'3',
    icon:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 16c1.5-2.5 2.5-2.5 3 0s1.5 1 3-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
 ];
-/* the rail reads as two groups: the two highlighted cards (AI procurator + Weekly
+/* the rail reads as two groups: the two highlighted cards (Saving assistant + Weekly
    discovery), then the plain menu starting at Dashboard, which is where we land. */
 let navAt = 'dashboard';
 
@@ -2192,7 +1910,7 @@ function renderCase(){
         <div class="drow"><span class="dk">Effort</span>
           <span class="dv">~2 weeks, almost none of it yours<small>We send the request and chase it · you approve nothing else</small></span></div>
       </div>
-      <p class="bc-ask">or <button class="linkbtn" id="bcAsk">ask the AI procurator to compare more options</button></p>`;
+      <p class="bc-ask">or <button class="linkbtn" id="bcAsk">ask the saving assistant to compare more options</button></p>`;
 
     $('#bcFoot').innerHTML = `
       <button class="btn btn-ghost" id="bcBack">← Back to the case</button>
@@ -2397,7 +2115,6 @@ function renderDash(){
   ].map(([v,l]) => `<div class="fact"><b>${v}</b><span>${l}</span></div>`).join('');
 
   renderSpark();
-  renderSus();
 
   /* One measure, one hue: the saving potential per category, on a shared scale
      (the largest potential), with the spend it comes off as the label beneath. */
@@ -2487,10 +2204,9 @@ const SUPPLIERS = [
 
 /* no logo files exist — set the name as a wordmark and size it to the tile */
 function wordmark(name){
-  const spaced = name.replace(/([a-z])([A-Z])/g, '$1 $2');
-  const mark = spaced.length > 12 ? spaced.split(' ')[0] : spaced;
-  const longest = Math.max(...mark.split(' ').map(w => w.length));
-  return {mark, size:Math.max(7.5, Math.min(11, 44 / (longest * 0.56))).toFixed(1)};
+  const w = name.replace(/([a-z])([A-Z])/g, '$1 $2').split(/[\s-]+/).filter(Boolean);
+  if(w.length === 1) return {mark: w[0].length <= 3 ? w[0].toUpperCase() : w[0].slice(0,2).toUpperCase()};
+  return {mark: (w[0][0] + w[1][0]).toUpperCase()};
 }
 
 const SUP_ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -2528,7 +2244,7 @@ function renderSup(){
                 <svg viewBox="0 0 24 24" fill="none">${SUP_ICON[c.ic]}</svg>
               </span>
               ${c.leaf ? `<span class="sup-leaf">${LEAF}Sustainable supplier</span>` : ''}
-              <span class="sup-logo" style="font-size:${wm.size}px" aria-hidden="true">${wm.mark}</span>
+              <span class="sup-logo" aria-hidden="true">${wm.mark}</span>
             </span>
             <span class="sup-b">
               ${c.cat ? `<span class="sup-cat">${c.cat}</span>` : ''}
@@ -2569,145 +2285,6 @@ function wireRow(row){
   sync();
 }
 const syncRows = () => rowSyncs.forEach(f => f());
-
-/* ---------- sustainability ----------
-   Reconciles three ways: scopes sum to the total, categories sum to the total, and each
-   category belongs to exactly one scope. Per-employee is the total over the staff count. */
-const SUS = {
-  total:512, avoided:41, staff:34, readiness:82,
-  scopes:[
-    {n:'Scope 1', v:58,  c:'#f54a00', d:'Fuel burned in vans you own'},
-    {n:'Scope 2', v:74,  c:'#1b64dc', d:'Electricity and heat you buy'},
-    {n:'Scope 3', v:380, c:'#3f9142', d:'Everything you purchase, and moving it'}
-  ],
-  cats:[
-    {n:'Purchased goods & materials', v:268, s:'Scope 3'},
-    {n:'Freight & delivery',         v:96,  s:'Scope 3'},
-    {n:'Electricity & heat',         v:74,  s:'Scope 2'},
-    {n:'Fuel, own vehicles',         v:58,  s:'Scope 1'},
-    {n:'Business travel',            v:16,  s:'Scope 3'}
-  ],
-  actions:[
-    {n:'Move building materials onto the Advantage agreement', v:24,
-     w:'Lower-carbon concrete and board sit inside the same agreement you are already being offered — the saving and the reduction are the same decision.'},
-    {n:'Consolidate freight onto one carrier', v:18,
-     w:'149 shipments last year across three carriers. Fewer part-loads is the single largest reduction available to you.'},
-    {n:'Switch site power to certified renewable', v:12,
-     w:'Same supplier, different tariff — covered by the group energy agreement.'}
-  ]
-};
-const susWouldBe = () => SUS.total + SUS.avoided;   /* the footprint without this year's work */
-/* The leaf fills to CSRD readiness: a figure already on the card, high enough to read at a
-   glance, and one where a fuller leaf genuinely means better. */
-const susFill = () => SUS.readiness / 100;
-
-/* A leaf, filled from the base in proportion to what was avoided. The body stays hollow so
-   a small fill still reads, the base is broad rather than pointed so a few per cent has
-   somewhere to show, and a waterline marks the level. */
-function leafSVG(pct, id){
-  const LEAF = 'M32 3C47 17 55 33 50 44C45 55 39 59 32 59C25 59 19 55 14 44C9 33 17 17 32 3Z';
-  const y = 59 - 56 * pct;    /* the leaf spans y 3..59, so 59 is the base */
-  return `<svg viewBox="0 0 64 64" role="img"
-    aria-label="${Math.round(pct*100)}% CSRD reporting readiness">
-    <defs><clipPath id="${id}"><path d="${LEAF}"/></clipPath></defs>
-    <path d="${LEAF}" fill="#fff"/>
-    <g clip-path="url(#${id})">
-      <rect x="0" y="${y.toFixed(1)}" width="64" height="64" fill="var(--green)"/>
-      <rect x="0" y="${y.toFixed(1)}" width="64" height="1.1" fill="#2b6b2e"/>
-    </g>
-    <path d="${LEAF}" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linejoin="round"/>
-    <path d="M32 9V57" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
-    <path d="M32 24L21 18M32 24l11-6M32 36l-12-7M32 36l12-7" stroke="var(--green)" stroke-width="1.3"
-      stroke-linecap="round" opacity=".32"/>
-  </svg>`;
-}
-
-function renderSus(){
-  const pct = susFill();
-  $('#leafChart').innerHTML = leafSVG(pct, 'leafCard');
-  $('#leafCap').textContent = SUS.readiness + '% CSRD ready';
-  $('#susTotal').textContent = fmt(SUS.total);
-  $('#susStats').innerHTML = [
-    [fmt(SUS.avoided) + ' t', 'avoided this year'],
-    [nf.format(+(SUS.total / SUS.staff).toFixed(1)) + ' t', 'per employee, across ' + SUS.staff + ' staff'],
-    [SUS.readiness + '%', 'CSRD readiness']
-  ].map(([v,l]) => `<span class="sstat"><b>${v}</b><span>${l}</span></span>`).join('');
-}
-
-function openRep(){
-  const pct = susFill();
-  const maxScope = Math.max(...SUS.scopes.map(s => s.v));
-  const maxCat = Math.max(...SUS.cats.map(c => c.v));
-  const gTot = SUS.actions.reduce((s,a) => s + a.v, 0);
-
-  $('#repBody').innerHTML = `
-    <div class="rband">
-      <span class="leaf-c">${leafSVG(pct, 'leafRep')}</span>
-      <div class="rband-figs">
-        <div class="rfig"><span>Avoided this year</span><b>${fmt(SUS.avoided)} tCO₂e</b></div>
-        <div class="rfig"><span>Per employee</span><b>${nf.format(+(SUS.total/SUS.staff).toFixed(1))} t</b></div>
-        <div class="rfig"><span>CSRD readiness</span><b>${SUS.readiness}%</b></div>
-      </div>
-    </div>
-
-    <div class="rsec">
-      <div class="rsec-h"><h4>Footprint per scope</h4><span class="spacer"></span>
-        <span class="tot">GHG Protocol · ${fmt(SUS.total)} tCO₂e total</span></div>
-      ${SUS.scopes.map(s => `
-        <div class="sbar">
-          <span class="sn">${s.n}</span>
-          <span class="strk"><i style="width:${(s.v/maxScope*100).toFixed(1)}%;background:${s.c}"></i></span>
-          <span class="sv">${s.v} t</span>
-          <span class="sd">${s.d}</span>
-        </div>`).join('')}
-    </div>
-
-    <div class="rsec">
-      <div class="rsec-h"><h4>Footprint per category</h4><span class="spacer"></span>
-        <span class="tot">sums to ${fmt(SUS.total)} t</span></div>
-      ${SUS.cats.map(c => `
-        <div class="cbar2">
-          <span class="cn3">${c.n}</span>
-          <span class="cv3">${c.v} t</span>
-          <span class="ct3"><i style="width:${(c.v/maxCat*100).toFixed(1)}%"></i></span>
-          <span class="cs3">${c.s} · ${Math.round(c.v/SUS.total*100)}% of your footprint</span>
-        </div>`).join('')}
-    </div>
-
-    <div class="rsec">
-      <div class="rsec-h"><h4>Green actions the agent recommends</h4><span class="spacer"></span>
-        <span class="tot" style="color:var(--green);font-weight:600">Potential: ${gTot} tCO₂e/yr</span></div>
-      ${SUS.actions.map(a => `
-        <div class="gact">
-          <span class="gv">−${a.v} t</span>
-          <span class="gb"><b>${a.n}</b><span>${a.w}</span></span>
-        </div>`).join('')}
-    </div>`;
-
-  $('#repScrim').classList.add('on');
-  $('#rep').classList.add('on');
-  $('#rep').setAttribute('aria-hidden','false');
-  $('#rep').inert = false;
-  setTimeout(() => $('#repT').focus(), 100);
-}
-function closeRep(){
-  $('#repScrim').classList.remove('on');
-  $('#rep').classList.remove('on');
-  $('#rep').setAttribute('aria-hidden','true');
-  $('#rep').inert = true;
-}
-$('#susCard').addEventListener('click', openRep);
-$('#repX').addEventListener('click', closeRep);
-$('#repDone').addEventListener('click', closeRep);
-$('#repScrim').addEventListener('click', closeRep);
-$('#repExport').addEventListener('click', () => {
-  const b = $('#repExport');
-  b.textContent = 'Exported ✓';
-  setTimeout(() => b.textContent = 'Export for CSRD', 2200);
-});
-addEventListener('keydown', e => {
-  if(e.key === 'Escape' && $('#rep').classList.contains('on')) closeRep();
-});
 
 /* ---------- the shortlist: 8 agreements worth doing first, across 3 categories ----------
    A genuine subset of the 21 — the highest-value agreement in each of the top three
@@ -2846,7 +2423,7 @@ function renderWalk(){
     c.agr.req = true;
     wSkipped.delete(wi);
     persist();
-    renderData();
+    renderDash();
     if(catAt) renderCat();
     wi++; renderWalk(); $('#bcBody').scrollTop = 0;
   });
@@ -2929,8 +2506,8 @@ function renderSpark(){
     ${ticks.map(t => `<line class="sp-grid" x1="${SP.l}" y1="${spY(t).toFixed(1)}"
         x2="${SP.w - SP.r}" y2="${spY(t).toFixed(1)}"/>
       <text class="sp-ax" x="${SP.l - 7}" y="${(spY(t) + 3).toFixed(1)}" text-anchor="end">${Math.round(t/1000)}k</text>`).join('')}
-    ${MON.map((m,i) => `<text class="sp-ax${i === CUT ? ' now' : ''}" x="${spX(i).toFixed(1)}"
-        y="${SP.h - 12}" text-anchor="middle">${m}</text>`).join('')}
+    ${MON.map((m,i) => `<text class="sp-ax${i === CUT ? ' now' : ''}" data-mi="${i}"
+        x="${spX(i).toFixed(1)}" y="${SP.h - 12}" text-anchor="middle">${m}</text>`).join('')}
     <text class="sp-ax now" x="${spX(CUT).toFixed(1)}" y="${SP.h - 2}" text-anchor="middle">today</text>
 
     <line class="sp-stop" x1="${spX(CUT).toFixed(1)}" y1="${yTop}" x2="${spX(CUT).toFixed(1)}" y2="${yBot}"/>
@@ -2956,6 +2533,27 @@ function renderSpark(){
 
   spNote();
   spHover();
+  spScaleText();
+  if(!spRO){
+    spRO = new ResizeObserver(spScaleText);
+    spRO.observe($('#spSvg'));
+  }
+}
+
+/* SVG text scales with the viewBox, so a fixed unit size renders at wildly different
+   pixel sizes. Size it from the measured width so it always lands on 13px. */
+let spRO = null;
+function spScaleText(){
+  const svg = $('#spSvg'); if(!svg) return;
+  const w = svg.getBoundingClientRect().width; if(!w) return;
+  const units = 13 * (SP.w / w);
+  svg.style.setProperty('--axfs', units.toFixed(2) + 'px');
+  /* below ~330px the twelve month labels would overlap at this size — show every other */
+  const thin = units > 18;
+  $$('#spSvg .sp-ax').forEach(t => {
+    const i = t.dataset.mi;
+    if(i !== undefined) t.classList.toggle('hide', thin && (+i % 2 === 1));
+  });
 }
 
 function spNote(){
@@ -3173,14 +2771,13 @@ addEventListener('keydown', e => { if(e.key === 'Escape') closeUser(); });
 
 /* ---------------- boot ---------------- */
 /* closed panels start inert so keyboard users don't tab into invisible controls */
-['#ap','#dw','#npop','#userPop','#rep'].forEach(s => $(s).inert = true);
+['#ap','#dw','#npop','#userPop'].forEach(s => $(s).inert = true);
 
 const jumpRaw = new URLSearchParams(location.search).get('step');
 const saved = jumpRaw ? null : readSaved();     /* an explicit ?step= always wins */
 if(saved) applySaved(saved);
 
 renderWho();
-renderData();
 
 if(saved && saved.scr === 'app'){
   enterApp();
