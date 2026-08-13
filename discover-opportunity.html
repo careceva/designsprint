@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Discover opportunity — where the group landed</title>
+<style>
+:root{
+  --general-background:#fafafa; --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc; --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff; --general-muted:#f2f2f2; --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d; --general-destructive:#dc2626; --general-border:#bdd7ff;
+  --sentiment-positive:#009689; --chart-potential:#f54a00;
+  --brand-ice:#edf5ff; --brand-midnight:#000a45; --surface:#fff;
+  --font-sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --rounded-sm:8px; --rounded-md:12px; --rounded-lg:16px; --rounded-xl:20px; --rounded-2xl:25px; --rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--general-background);color:var(--general-foreground);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+.wrap{max-width:1140px;margin:0 auto;padding:40px 28px 90px}
+
+header{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;
+  padding-bottom:24px;border-bottom:2px solid var(--general-foreground);margin-bottom:30px}
+header img.logo{height:32px;width:auto;margin-top:4px}
+header .ht{flex:1;min-width:300px}
+header h1{font-size:32px;letter-spacing:-1.2px;line-height:1.1}
+header p{color:var(--general-muted-foreground);font-size:14px;margin-top:8px;max-width:68ch}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--general-primary);margin-bottom:8px}
+.crew{display:inline-flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.crew span{font-family:var(--font-mono);font-size:11px;padding:3px 10px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground)}
+
+h2.sec{font-size:21px;letter-spacing:-.7px;margin:40px 0 6px}
+h2.sec+.lead{color:var(--general-muted-foreground);font-size:14px;margin-bottom:16px;max-width:72ch}
+
+/* converged step */
+.converged{background:var(--brand-ice);border:1px solid var(--general-border);
+  border-radius:var(--rounded-2xl);padding:26px 28px;box-shadow:var(--shadow-xs)}
+.converged .tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--general-primary);margin-bottom:10px}
+.converged p.big{font-family:var(--font-sans);font-size:22px;font-weight:600;letter-spacing:-.7px;line-height:1.35}
+.converged p.note{font-size:13.5px;color:var(--general-muted-foreground);margin-top:12px;max-width:70ch}
+
+/* flow */
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:22px;
+  background:var(--surface);border:1px solid var(--general-border);border-radius:var(--rounded-2xl);
+  box-shadow:var(--shadow-xs);overflow-x:auto}
+.fnode{background:#fdf3c8;border-radius:var(--rounded-sm);padding:11px 14px;font-size:13px;
+  font-weight:500;min-width:112px;text-align:center;flex:0 0 auto;line-height:1.35}
+.fnode.branch{background:#fdf3c8}
+.fbranch{display:flex;flex-direction:column;gap:8px;flex:0 0 auto}
+.farr{color:var(--general-muted-foreground);flex:0 0 auto;font-size:18px}
+.fnote{background:#fff7d6;border:1px dashed #e0cf7a;border-radius:var(--rounded-sm);
+  padding:8px 11px;font-size:11.5px;color:#6b5a12;flex:0 0 auto;max-width:150px;line-height:1.4}
+
+/* lanes */
+.lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+@media(max-width:940px){.lanes{grid-template-columns:1fr}}
+.lane{background:var(--surface);border:1px solid var(--general-border);
+  border-radius:var(--rounded-2xl);overflow:hidden;box-shadow:var(--shadow-xs)}
+.lane .lh{display:flex;align-items:center;gap:9px;padding:15px 18px;border-bottom:1px solid var(--general-muted)}
+.lane .lh .sw{width:12px;height:12px;border-radius:3px;flex:0 0 auto}
+.lane .lh b{font-family:var(--font-sans);font-size:14.5px;font-weight:600}
+.lane .lh span{font-size:11px;color:var(--general-muted-foreground);display:block;margin-top:1px}
+.lane ul{list-style:none;padding:12px 18px 18px}
+.lane li{font-size:13.5px;line-height:1.5;padding:9px 0;border-bottom:1px solid var(--general-muted)}
+.lane li:last-child{border-bottom:none}
+.lane li em{font-style:normal;color:var(--general-muted-foreground);display:block;font-size:11.5px;margin-top:3px}
+.lane.user .lh .sw{background:#a8d8f0}
+.lane.fore .lh .sw{background:#bfe5a0}
+.lane.back .lh .sw{background:#f2c4e8}
+.new{display:inline-block;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;
+  text-transform:uppercase;background:var(--general-accent);color:#3a1f00;
+  padding:1px 6px;border-radius:var(--rounded-xs,4px);margin-left:6px;vertical-align:1px}
+
+/* findings */
+.finds{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
+.f{background:var(--surface);border:1px solid var(--general-border);border-radius:var(--rounded-xl);
+  padding:20px 22px;box-shadow:var(--shadow-xs)}
+.f.hot{background:#fff7ed;border-color:transparent;box-shadow:inset 3px 0 0 var(--general-accent)}
+.f.good{background:#f0faf8;border-color:transparent;box-shadow:inset 3px 0 0 var(--sentiment-positive)}
+.f .n{font-family:var(--font-mono);font-size:11px;color:var(--general-muted-foreground);margin-bottom:6px}
+.f.hot .n{color:#a35c00}.f.good .n{color:var(--sentiment-positive)}
+.f h3{font-size:15.5px;margin-bottom:7px}
+.f p{font-size:13.5px;color:var(--general-muted-foreground);line-height:1.6}
+.f p b{color:var(--general-foreground)}
+.f p+p{margin-top:8px}
+
+table.q{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);
+  border:1px solid var(--general-border);border-radius:var(--rounded-xl);overflow:hidden;margin-top:14px}
+table.q th{text-align:left;padding:11px 15px;background:var(--general-muted);font-family:var(--font-mono);
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--general-muted-foreground);font-weight:400}
+table.q td{padding:12px 15px;border-top:1px solid var(--general-muted);vertical-align:top}
+table.q td.w{width:210px;font-weight:600}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--general-border);
+  font-family:var(--font-mono);font-size:11px;color:var(--general-muted-foreground);letter-spacing:.04em}
+@media print{body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img class="logo" src="assets/advantage-logo.svg" alt="Advantage">
+  <div class="ht">
+    <div class="eyebrow">Design Sprint · Step 5 detailed</div>
+    <h1>Discover opportunity — where the group landed</h1>
+    <p>The board written up, plus the five things in it that weren't there this morning. Three AI patterns were carried forward: <b>recommends products &amp; services</b>, <b>answers questions</b>, <b>auto-suggests text</b>.</p>
+    <div class="crew"><span>Anette</span><span>Nicolas</span><span>Sofia</span></div>
+  </div>
+</header>
+
+<h2 class="sec">The converged step</h2>
+<p class="lead">The sticky that was still blank. This is what the rest of the board adds up to.</p>
+<div class="converged">
+  <div class="tag">Proposed wording</div>
+  <p class="big">Sees a short, ranked set of opportunities built from their own spend and from what comparable companies do — and can question any of them in plain language before acting.</p>
+  <p class="note">It keeps the original step's intent, and adds the two things the group actually put on the board that weren't in the first version: the <b>comparison against other customers</b>, and the fact that the recommendation is <b>interrogable</b> rather than take-it-or-leave-it.</p>
+</div>
+
+<h2 class="sec">The flow as drawn</h2>
+<p class="lead">Two routes in, one analysis, one output.</p>
+<div class="flow">
+  <span class="fnode">Get more info from customer</span>
+  <span class="farr">→</span>
+  <span class="fbranch">
+    <span class="fnode branch">Connect with ERP</span>
+    <span class="fnode branch">Submit spend report</span>
+  </span>
+  <span class="farr">→</span>
+  <span class="fnode">Analysis data</span>
+  <span class="fnote">“See how you do compared to other customers”</span>
+  <span class="farr">→</span>
+  <span class="fnode">Creates recommended actions</span>
+  <span class="farr">→</span>
+  <span class="fnode">Takes actions according to recommendations</span>
+</div>
+
+<h2 class="sec">The three lanes</h2>
+<p class="lead">Everything from the board, tidied and grouped. Orange marks something that appeared for the first time today.</p>
+<div class="lanes">
+
+  <div class="lane user">
+    <div class="lh"><span class="sw"></span><b>What the user does<span>Blue lane</span></b></div>
+    <ul>
+      <li>Goes to the overview of their turnover</li>
+      <li>Reads about the agreements and suppliers</li>
+      <li>Opens chat with the AI</li>
+      <li>Starts the onboarding agent<span class="new">new</span>
+        <em>A second, distinct agent — not the same thing as the procurement chat</em></li>
+    </ul>
+  </div>
+
+  <div class="lane fore">
+    <div class="lh"><span class="sw"></span><b>AI in the foreground<span>Green lane · what the user sees</span></b></div>
+    <ul>
+      <li>Has a conversation with the user about their habits, and asks relevant follow-up questions<span class="new">new</span>
+        <em>The AI interrogates the customer — not just the data</em></li>
+      <li>Highlights the important actions in the dashboard. If a customer uses travel agreements but no hotel, suggests starting with hotel<span class="new">new</span>
+        <em>An adjacency rule — the clearest, most testable idea on the board</em></li>
+      <li>Comes with recommendations driven by market macros, e.g. “summer”<span class="new">new</span>
+        <em>Seasonality as a signal, not just the customer's own history</em></li>
+      <li>Shows possible savings on different agreements</li>
+      <li>Interface with agents</li>
+    </ul>
+  </div>
+
+  <div class="lane back">
+    <div class="lh"><span class="sw"></span><b>AI in the background<span>Pink lane · unseen</span></b></div>
+    <ul>
+      <li>Analyses spend data from suppliers, and from the ERP where available</li>
+      <li>Checks new suppliers and categories, and creates recommendations</li>
+      <li>Analyses savings data and suggests new possibilities</li>
+      <li>Benchmarks against similar companies — their habits and savings — to make the recommendation relevant</li>
+      <li>Analyses turnover, savings and transactions, and notifies the <b>sales rep</b> when a manual check is needed<span class="new">new</span>
+        <em>The first time an internal human enters the machine</em></li>
+    </ul>
+  </div>
+</div>
+
+<h2 class="sec">Five things that weren't there this morning</h2>
+<div class="finds">
+
+  <div class="f hot">
+    <div class="n">01 · Worth resolving first</div>
+    <h3>The flow you drew is an onboarding flow</h3>
+    <p><b>Get more info → connect ERP → analyse → recommend</b> is steps 2 and 3 of the journey, not step 5. In detailing “Discover opportunity” the group re-drew the data-acquisition path.</p>
+    <p>Two readings, and they lead to different products. Either the step boundary is wrong — or discovery genuinely <b>can't happen without a data top-up each time</b>, in which case every cycle of the loop asks the customer for something, and that's a very different experience from “it just tells you”.</p>
+  </div>
+
+  <div class="f good">
+    <div class="n">02 · Strongest idea on the board</div>
+    <h3>The adjacency rule</h3>
+    <p><em>“If the customer uses travel agreements but no hotel, suggest starting with hotel.”</em></p>
+    <p>Concrete, explainable, and it needs no new data — you already know which agreements are active. It's also the easiest thing here to put in front of someone on Friday and get a clean yes or no. <b>If one idea from this board gets prototyped, make it this one.</b></p>
+  </div>
+
+  <div class="f hot">
+    <div class="n">03 · Changes what this is</div>
+    <h3>A sales rep appeared in the background lane</h3>
+    <p><em>“Notifies the sales rep if a manual check is needed.”</em> That's the first internal human in the machine, and it quietly makes this a <b>hybrid service rather than an automated one</b>.</p>
+    <p>It also lines up with what both markets asked for independently — a person, not only a system. Worth making deliberate rather than incidental: what triggers the handoff, what the rep sees, and whether the customer is told it happened.</p>
+  </div>
+
+  <div class="f">
+    <div class="n">04 · Needs a decision</div>
+    <h3>There are now two agents</h3>
+    <p>“Opens chat with AI” and “starts the onboarding agent” are separate stickies. So is this one assistant with two modes, or two agents with different jobs and different tones?</p>
+    <p>Cheap to decide now, expensive later — it shapes the whole interface. My instinct: <b>one assistant, two moments</b>, because a customer who meets two different AIs in their first week will trust neither.</p>
+  </div>
+
+  <div class="f hot">
+    <div class="n">05 · A tension to name</div>
+    <h3>The AI asks the customer questions</h3>
+    <p>“Has a conversation about their habits and asks relevant follow-up questions”, plus “get more info from customer”. So the system interrogates the user to sharpen its recommendations.</p>
+    <p>That sits directly against the other group's finding — <b>avoid cold starts, don't make people fill things in</b>. Both can be true, but only if every question is earned: ask after showing value, never before, and never ask twice for something you could infer.</p>
+  </div>
+
+</div>
+
+<h2 class="sec">What I'd carry into Wednesday</h2>
+<table class="q">
+  <thead><tr><th class="w">Question</th><th>Why it matters, and how to settle it</th></tr></thead>
+  <tbody>
+    <tr><td class="w">Does discovery need fresh data every time?</td>
+      <td>If yes, the loop has an ask built into every cycle and the product is much heavier than it looks. If no, move the ERP/spend-report flow back to step 2 and let step 5 stay pure discovery. <b>Settle this before sketching</b> — it changes the storyboard's first frame.</td></tr>
+    <tr><td class="w">One agent or two?</td>
+      <td>Onboarding agent and procurement chat as separate things doubles the surface and halves the trust. Pick one and give it two moments.</td></tr>
+    <tr><td class="w">When does the sales rep get pulled in?</td>
+      <td>Define the trigger, what they see, and whether the customer knows. An invisible human handoff is a feature; a silent one is a surprise.</td></tr>
+    <tr><td class="w">How many questions may the AI ask?</td>
+      <td>Suggest a hard rule for the prototype — <b>no questions before the first piece of value is on screen</b> — and test whether people answer them at all.</td></tr>
+    <tr><td class="w">Is the peer comparison a headline or a footnote?</td>
+      <td>It shows up in both the flow and the background lane, so the group clearly rates it. Decide whether it drives the recommendation or merely supports it — that's a layout decision on Wednesday.</td></tr>
+  </tbody>
+</table>
+
+<footer>Discover opportunity · group output written up · Anette, Nicolas, Sofia</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage — 12-step journey, mapped against the prototype</title>
+<style>
+:root{
+  --general-background:#fafafa; --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc; --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff; --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2; --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d; --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626; --general-border:#bdd7ff;
+  --sentiment-positive:#009689; --sentiment-negative:#f54a00;
+  --brand-ice:#edf5ff; --brand-midnight:#000a45; --surface:#fff;
+  --font-sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --rounded-sm:8px; --rounded-md:12px; --rounded-lg:16px; --rounded-xl:20px; --rounded-2xl:25px; --rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--general-background);color:var(--general-foreground);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+.wrap{max-width:1280px;margin:0 auto;padding:40px 28px 80px}
+
+header{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;
+  padding-bottom:24px;border-bottom:2px solid var(--general-foreground);margin-bottom:28px}
+header img.logo{height:34px;width:auto;margin-top:4px}
+header .ht{flex:1;min-width:280px}
+header h1{font-size:32px;letter-spacing:-1.2px;line-height:1.1}
+header p{color:var(--general-muted-foreground);font-size:14px;margin-top:8px;max-width:66ch}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--general-primary);margin-bottom:8px}
+
+.findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:32px}
+.f{background:var(--surface);border:1px solid var(--general-border);border-radius:var(--rounded-xl);
+  padding:18px 20px;box-shadow:var(--shadow-xs)}
+.f.warn{background:#fff7ed;border-color:transparent;box-shadow:inset 3px 0 0 var(--general-accent)}
+.f.good{background:#f0faf8;border-color:transparent;box-shadow:inset 3px 0 0 var(--sentiment-positive)}
+.f .tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:6px}
+.f.warn .tag{color:#a35c00}.f.good .tag{color:var(--sentiment-positive)}
+.f h3{font-size:15px;margin-bottom:6px}
+.f p{font-size:13.5px;color:var(--general-muted-foreground);line-height:1.55}
+.f p b{color:var(--general-foreground)}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:14px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+.scroller{overflow-x:auto;padding-bottom:16px;margin:0 -28px;padding-left:28px;padding-right:28px}
+.track{display:grid;grid-auto-flow:column;grid-auto-columns:236px;gap:14px;min-width:min-content}
+.lane-labels{display:grid;grid-auto-flow:column;grid-auto-columns:236px;gap:14px;margin-bottom:8px}
+
+.step{display:grid;grid-template-rows:auto auto 1fr auto;gap:10px}
+.phase{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--general-muted-foreground);padding-left:2px}
+
+.hd{display:flex;align-items:center;gap:9px;padding:11px 14px;position:relative;
+  background:#d6f5ec;border-radius:var(--rounded-sm);min-height:52px}
+.hd .n{font-family:var(--font-mono);font-size:10px;color:#00695c;flex:0 0 auto}
+.hd b{font-family:var(--font-sans);font-size:13.5px;font-weight:600;line-height:1.25;color:#053b34}
+.hd .ico{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center}
+.hd .ico img{width:19px;height:19px;object-fit:contain;opacity:.78}
+.hd .ico svg{width:19px;height:19px;stroke:#0a5c50;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hd .swap{position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:var(--rounded-full);
+  background:var(--general-accent);color:#3a1f00;font-size:9px;font-weight:700;display:grid;place-items:center;
+  font-family:var(--font-mono)}
+
+.note{background:#fdf3c8;border-radius:var(--rounded-sm);padding:11px 13px;font-size:11.5px;line-height:1.5}
+.note+.note{margin-top:8px}
+.note em{font-style:italic;color:#6b5a12}
+.cell{display:flex;flex-direction:column}
+.cell.ai .note{background:#fdf3c8}
+.cell.ai .note.blank{background:repeating-linear-gradient(135deg,#fdf3c8 0 8px,#f6e79b 8px 16px);
+  color:#7a6512;font-weight:600;text-align:center;padding:16px 13px}
+
+.status{display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:var(--rounded-sm);
+  font-size:11.5px;font-weight:600;line-height:1.3}
+.status .d{width:8px;height:8px;border-radius:var(--rounded-full);flex:0 0 auto}
+.st-built{background:#e6f6f3;color:#00544c}.st-built .d{background:var(--sentiment-positive)}
+.st-part{background:#fff2e0;color:#8a4b00}.st-part .d{background:var(--general-accent)}
+.st-gap{background:#fdeaea;color:#a11313}.st-gap .d{background:var(--general-destructive)}
+
+.loopback{margin-top:26px;display:flex;align-items:center;gap:12px;padding:14px 18px;
+  background:var(--brand-ice);border:1px solid var(--general-border);border-radius:var(--rounded-xl);font-size:13.5px}
+.loopback svg{width:20px;height:20px;flex:0 0 auto;stroke:var(--general-primary);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.loopback b{font-weight:600}
+
+h2.sec{font-size:20px;letter-spacing:-.6px;margin:38px 0 14px}
+table.gaps{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);
+  border:1px solid var(--general-border);border-radius:var(--rounded-xl);overflow:hidden}
+table.gaps th{text-align:left;padding:11px 14px;background:var(--general-muted);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--general-muted-foreground);font-weight:400}
+table.gaps td{padding:11px 14px;border-top:1px solid var(--general-muted);vertical-align:top}
+table.gaps td b{font-weight:600}
+table.gaps td.w{width:170px}
+footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--general-border);
+  font-family:var(--font-mono);font-size:11px;color:var(--general-muted-foreground);letter-spacing:.04em}
+@media print{body{background:#fff}.scroller{overflow:visible}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img class="logo" src="assets/advantage-logo.svg" alt="Advantage">
+  <div class="ht">
+    <div class="eyebrow">Journey analysis · Design Sprint</div>
+    <h1>Twelve steps, three lanes — and where the prototype stops</h1>
+    <p>The new journey mapped against what the Autopilot prototype already does. Green headers are the user's step, yellow is what the AI contributes, and the bottom row is honest prototype coverage.</p>
+  </div>
+</header>
+
+<div class="findings">
+  <div class="f warn">
+    <div class="tag">The thing to notice</div>
+    <h3>The AI lane goes blank after "Decide"</h3>
+    <p>Steps <b>9, 10 and 11</b> — Follow activation, Monitor spend, Prove value — have <b>no AI note at all</b>. The intelligence story is fully worked out up to the decision and empty after it.</p>
+  </div>
+  <div class="f warn">
+    <div class="tag">And so does the prototype</div>
+    <h3>The same half is missing in the build</h3>
+    <p>Four of the five weakest steps sit after the decision. Two independent artefacts pointing at the same gap is worth taking seriously — <b>the post-decision half is unowned</b>.</p>
+  </div>
+  <div class="f good">
+    <div class="tag">The structural change</div>
+    <h3>This is a loop, not a funnel</h3>
+    <p>Step 12 feeds back into step 5. That is a real shift from the old six-step activation funnel, and it is what turns this from onboarding into <b>a service that keeps earning</b>.</p>
+  </div>
+  <div class="f">
+    <div class="tag">Watch this</div>
+    <h3>Step 4 and steps 10–11 are the same data</h3>
+    <p>Before the decision it's <em>potential</em>; after it, <em>verification</em>. Same numbers, opposite job. Building them as one screen is the obvious trap.</p>
+  </div>
+</div>
+
+<div class="legend">
+  <span><i style="background:#d6f5ec"></i>What the user does</span>
+  <span><i style="background:#fdf3c8"></i>What the AI does</span>
+  <span><i style="background:var(--sentiment-positive)"></i>Built</span>
+  <span><i style="background:var(--general-accent)"></i>Partial</span>
+  <span><i style="background:var(--general-destructive)"></i>Gap</span>
+  <span><i style="background:var(--general-accent);border-radius:9999px"></i>↺ = generic icon, swap for yours</span>
+</div>
+
+<div class="scroller">
+<div class="track">
+
+  <!-- 1 -->
+  <div class="step">
+    <div class="phase">Set up</div>
+    <div class="hd"><span class="n">01</span><span class="ico"><img src="assets/icons/ic-user.svg" alt=""></span><b>Log in</b></div>
+    <div class="cell ai">
+      <div class="note">Logs in because they have a specific need, got a notification, or want an overview.</div>
+      <div class="note">Uses existing company data to pre-populate the profile, and asks only for what improves recommendations.</div>
+    </div>
+    <div class="status st-part"><span class="d"></span>Partial — company finder exists, no notification entry</div>
+  </div>
+
+  <!-- 2 -->
+  <div class="step">
+    <div class="phase">Set up</div>
+    <div class="hd"><span class="n">02</span><span class="ico"><img src="assets/icons/ic-attach_file.svg" alt=""></span><b>Connect spend data</b></div>
+    <div class="cell ai">
+      <div class="note">Connects ERP/accounting or uploads a spend report, to get insight from real purchasing.</div>
+      <div class="note">Categorises spend automatically, identifies suppliers, builds the first picture of where potential sits.</div>
+    </div>
+    <div class="status st-built"><span class="d"></span>Built — connector picker + scan</div>
+  </div>
+
+  <!-- 3 -->
+  <div class="step">
+    <div class="phase">Orient</div>
+    <div class="hd"><span class="n">03</span><span class="ico"><img src="assets/icons/ic-outline.eye.svg" alt=""></span><b>Understand current position</b></div>
+    <div class="cell ai">
+      <div class="note">Reviews current agreements, suppliers, spend and overall procurement situation.</div>
+      <div class="note">Turns complex purchasing data into a plain overview: <em>“here is where you are, and where we see potential.”</em></div>
+    </div>
+    <div class="status st-built"><span class="d"></span>Built — profile reveal + tiles</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="step">
+    <div class="phase">Orient</div>
+    <div class="hd"><span class="n">04</span><span class="ico"><img src="assets/icons/ic-dash.svg" alt=""></span><b>See realized &amp; potential value</b></div>
+    <div class="cell ai">
+      <div class="note">Uses the Savings Dashboard for realized savings, potential, spend through agreements and accumulated bonus. Reads notifications about new opportunities and changes.</div>
+      <div class="note">Explains what is driving savings, highlights gaps, estimates further potential. Filters noise: <em>“these are the 3 things to know or act on.”</em></div>
+    </div>
+    <div class="status st-part"><span class="d"></span>Partial — no customer bonus anywhere</div>
+  </div>
+
+  <!-- 5 -->
+  <div class="step">
+    <div class="phase">Find</div>
+    <div class="hd"><span class="n">05</span><span class="ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg></span><b>Discover opportunity</b><span class="swap">↺</span></div>
+    <div class="cell ai">
+      <div class="note">Sees categories where cost could drop, terms improve, or more spend move onto Advantage agreements. Asks the AI Procurement Agent where to focus next.</div>
+      <div class="note">Continuously analyses spend, profile, industry and agreements for untapped opportunity. Enables conversation with the data: <em>“where can we save most?”</em></div>
+    </div>
+    <div class="status st-built"><span class="d"></span>Built — opportunity list + assistant</div>
+  </div>
+
+  <!-- 6 -->
+  <div class="step">
+    <div class="phase">Assess</div>
+    <div class="hd"><span class="n">06</span><span class="ico"><img src="assets/icons/ic-contract.svg" alt=""></span><b>Review business case</b></div>
+    <div class="cell ai">
+      <div class="note">Reviews potential savings, current spend, the recommended agreement, expected value and why it is relevant.</div>
+      <div class="note">Builds a personalised business case: the value, the reasoning, and the data behind it.</div>
+    </div>
+    <div class="status st-part"><span class="d"></span>Partial — reasoning steps, no case view</div>
+  </div>
+
+  <!-- 7 -->
+  <div class="step">
+    <div class="phase">Assess</div>
+    <div class="hd"><span class="n">07</span><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l7-3 7 3"/><path d="M5 8l-3 7h6zM19 8l-3 7h6z"/></svg></span><b>Evaluate</b><span class="swap">↺</span></div>
+    <div class="cell ai">
+      <div class="note">Judges whether changing supplier or agreement makes business sense — savings, terms, risk, effort and other considerations.</div>
+      <div class="note">Compares current situation against the proposed agreement: savings, terms, effort, risks.</div>
+    </div>
+    <div class="status st-gap"><span class="d"></span>Gap — no side-by-side comparison</div>
+  </div>
+
+  <!-- 8 -->
+  <div class="step">
+    <div class="phase">Act</div>
+    <div class="hd"><span class="n">08</span><span class="ico"><img src="assets/icons/ic-small-checkbox.svg" alt=""></span><b>Decide</b></div>
+    <div class="cell ai">
+      <div class="note">Decides whether to proceed, request an offer, approve a switch, or bring in an Advantage advisor.</div>
+      <div class="note">Recommends the next move and explains why — and hands to a human advisor when that suits better.</div>
+    </div>
+    <div class="status st-built"><span class="d"></span>Built — send / skip / escalate</div>
+  </div>
+
+  <!-- 9 -->
+  <div class="step">
+    <div class="phase">Deliver</div>
+    <div class="hd"><span class="n">09</span><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 109 9"/><path d="M12 7v5l3 2"/></svg></span><b>Follow activation</b><span class="swap">↺</span></div>
+    <div class="cell ai">
+      <div class="note">Follows the supplier switch and sees whether anything needs a decision or action.</div>
+      <div class="note blank">AI role not defined</div>
+    </div>
+    <div class="status st-gap"><span class="d"></span>Gap — no activation tracker</div>
+  </div>
+
+  <!-- 10 -->
+  <div class="step">
+    <div class="phase">Deliver</div>
+    <div class="hd"><span class="n">10</span><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 16V9M13 16v-4M18 16V7"/></svg></span><b>Monitor spend</b><span class="swap">↺</span></div>
+    <div class="cell ai">
+      <div class="note">Checks whether spend is actually moving to preferred suppliers, and spots spend going outside the chosen agreements. Verifies earlier decisions delivered.</div>
+      <div class="note blank">AI role not defined</div>
+    </div>
+    <div class="status st-part"><span class="d"></span>Partial — usage bars, no leakage view</div>
+  </div>
+
+  <!-- 11 -->
+  <div class="step">
+    <div class="phase">Prove</div>
+    <div class="hd"><span class="n">11</span><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Prove value</b><span class="swap">↺</span></div>
+    <div class="cell ai">
+      <div class="note">Sees accumulated and paid customer bonus as part of the value. Pulls supplier and compliance documentation, including for the Transparency Act.</div>
+      <div class="note blank">AI role not defined</div>
+    </div>
+    <div class="status st-gap"><span class="d"></span>Gap — no bonus, no compliance docs</div>
+  </div>
+
+  <!-- 12 -->
+  <div class="step">
+    <div class="phase">Loop</div>
+    <div class="hd"><span class="n">12</span><span class="ico"><img src="assets/icons/arrow-right-icon.svg" alt=""></span><b>Prioritise next opportunity</b></div>
+    <div class="cell ai">
+      <div class="note">Uses realized results and AI recommendations to choose which purchasing category to improve next.</div>
+      <div class="note">Ranks what to tackle next from what actually worked — closing the loop back to step 5.</div>
+    </div>
+    <div class="status st-gap"><span class="d"></span>Gap — no ranked next category</div>
+  </div>
+
+</div>
+</div>
+
+<div class="loopback">
+  <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 5v4h4"/></svg>
+  <span><b>Step 12 returns to step 5.</b> Everything from “Discover opportunity” onward runs again, on a better-informed basis each time — which means the screens in the second half get used far more often than the ones in the first, and are currently the least built.</span>
+</div>
+
+<h2 class="sec">What I'd add to the prototype, in priority order</h2>
+<table class="gaps">
+  <thead><tr><th class="w">Step</th><th>What's missing</th><th class="w">Why it earns its place</th></tr></thead>
+  <tbody>
+    <tr><td class="w"><b>07 · Evaluate</b></td>
+      <td>A side-by-side: current supplier and terms against the proposed agreement — price, terms, switching effort, risk. Today the prototype jumps straight from “here's an opportunity” to “send the message.”</td>
+      <td class="w">It's the actual decision moment, and it's the screen most likely to expose whether people trust the number.</td></tr>
+    <tr><td class="w"><b>09 · Follow activation</b></td>
+      <td>A tracker for a switch in progress: request sent → supplier confirmed → rate live → first invoice verified.</td>
+      <td class="w">The AI lane is blank here. Silence after a decision is where trust leaks away.</td></tr>
+    <tr><td class="w"><b>10 · Monitor spend</b></td>
+      <td>Leakage view — spend that went outside the agreement, by person or site. The usage bars show the total but never say <em>who</em>.</td>
+      <td class="w">Directly answers the adoption problem, and it's the one thing only you can see and the customer can't.</td></tr>
+    <tr><td class="w"><b>11 · Prove value</b></td>
+      <td>Accumulated and paid customer bonus, plus supplier and Transparency Act documentation.</td>
+      <td class="w">Bonus is real money nobody has designed for. Transparency Act is the only item on this journey with a legal deadline behind it.</td></tr>
+    <tr><td class="w"><b>12 · Prioritise next</b></td>
+      <td>A ranked “next category” card driven by what already worked, feeding back to step 5.</td>
+      <td class="w">Without it the journey isn't a loop, it's a one-off — and the whole retention argument rests on the loop.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec">One question for the room</h2>
+<p style="max-width:70ch;color:var(--general-muted-foreground);font-size:14px">
+The AI lane is richly specified for <b style="color:var(--general-foreground)">finding and recommending</b>, and empty for <b style="color:var(--general-foreground)">delivering and proving</b>. That may be deliberate — or it may be that nobody has yet asked what intelligence looks like after the decision. Worth settling before Wednesday's sketching, because the answer decides whether this is an advisory product or an operational one.
+</p>
+
+<footer>Journey analysis v1 · icons from Advantage Resources where available · ↺ marks a generic placeholder to swap</footer>
+
+</div>
+</body>
+</html>

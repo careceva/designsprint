@@ -1,0 +1,2767 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fafafa">
+<title>Advantage — AI procurement assistant</title>
+<style>
+/* ==========================================================================
+   Advantage Design System
+   Tokens read from NordicDesignSystem/DesginSystem/advantage/build/css/variables.css
+   Semantic --general-* / --sidebar-* only. No raw hex in components.
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-destructive-foreground:#ffffff;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+
+  --sidebar:#fafafa;
+  --sidebar-foreground:#3d3d3d;
+  --sidebar-primary:#1c1c1c;
+  --sidebar-primary-foreground:#fafafa;
+  --sidebar-accent:#f2f2f2;
+  --sidebar-accent-foreground:#1c1c1c;
+  --sidebar-border:#e0e0e0;
+  --sidebar-ring:#c7c7c7;
+  --sidebar-muted:#707070;
+
+  --categorical-chart-1:#f54a00;
+  --categorical-chart-2:#009689;
+  --categorical-chart-3:#104e64;
+  --categorical-chart-4:#ffb900;
+  --categorical-chart-5:#fe9a00;
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+
+  /* validated pair: CVD dE 14.7 protan / 36.0 tritan, contrast >=3:1 on #fafafa */
+  --chart-realized:var(--categorical-chart-2);
+  --chart-potential:var(--categorical-chart-1);
+  --chart-peer:#8a8a8a;
+
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:12px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+body{
+  font-family:var(--font-body);
+  background:var(--general-background);
+  color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;height:100vh;overflow:hidden;
+  -webkit-font-smoothing:antialiased;touch-action:manipulation;
+}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-3xl);letter-spacing:-1px;line-height:1.12}
+h2{font-size:var(--text-xl);letter-spacing:-.5px}
+h3{font-size:var(--text-base);letter-spacing:0}
+button,input,textarea{font-family:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d4d4d4;border-radius:20px;border:3px solid var(--general-background)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:40px;padding:0 24px;border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;
+  transition:background-color var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground)}
+.btn-primary:hover:not([disabled]){background:#1553bb}
+.btn-secondary{background:var(--surface);color:var(--general-foreground);border-color:var(--general-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover{background:var(--brand-ice)}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 12px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-soft{background:var(--general-secondary);color:var(--general-secondary-foreground)}
+.btn-soft:hover{background:var(--brand-cornflower);color:var(--surface)}
+.btn-sm{height:32px;padding:0 16px;font-size:var(--text-xs)}
+.btn-std{border-radius:var(--rounded-md)}          /* height x .27 */
+.btn-sm.btn-std{border-radius:var(--rounded-sm)}
+.icbtn{width:38px;height:38px;display:grid;place-items:center;cursor:pointer;
+  border:1px solid var(--general-border);background:var(--surface);
+  color:var(--general-muted-foreground);border-radius:var(--rounded-md);transition:var(--t-fast)}
+.icbtn:hover{background:var(--brand-ice);color:var(--general-foreground)}
+.icbtn svg{width:18px;height:18px}
+.kbd{display:inline-flex;align-items:center;gap:4px;height:38px;padding:0 10px;cursor:pointer;
+  font-size:var(--text-xs);color:var(--general-muted-foreground);background:var(--surface);
+  border:1px solid var(--general-border);border-radius:var(--rounded-md);transition:var(--t-fast)}
+.kbd:hover{color:var(--general-foreground);background:var(--brand-ice)}
+.kbd kbd{font-family:var(--font-mono);font-size:11px;background:var(--general-muted);
+  border-radius:var(--rounded-xs);padding:1px 5px}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;
+  border-radius:var(--rounded-full);font-size:11px;font-weight:600;white-space:nowrap}
+.chip-new{background:var(--general-secondary);color:var(--general-secondary-foreground)}
+.chip-sent{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-live{background:#d9f2ef;color:#00544c}
+.chip-warn{background:#ffeeda;color:#7a3e00}
+.chip-alert{background:#fde8e8;color:#a11313}
+.chip-done{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;
+  border-radius:var(--rounded-sm);font-size:var(--text-xs);font-weight:600;
+  background:var(--surface);color:var(--sentiment-positive);border:1px solid var(--sentiment-positive)}
+.chip-done svg{width:14px;height:14px}
+</style>
+<style>
+/* ---------- onboarding ---------- */
+.onb{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(900px 520px at 78% -12%,#1b64dc55,transparent 60%),
+             radial-gradient(700px 500px at -6% 112%,#00968944,transparent 55%),
+             linear-gradient(120deg,#000a45,#04185c 60%,#0b3a91);transition:opacity .5s}
+.onb.hide{opacity:0;pointer-events:none}
+.onb-card{width:600px;max-width:94vw;color:var(--surface);text-align:left}
+.onb-head{display:flex;flex-direction:column;align-items:center;gap:18px;margin-bottom:26px}
+.onb-brand{display:flex;align-items:center;gap:11px}
+.onb-logo{height:32px;width:auto;display:block}
+.onb-word{font-family:var(--font-sans);font-weight:600;font-size:var(--text-lg);letter-spacing:-.5px}
+.stepper{display:flex;align-items:center;gap:8px}
+.snode{display:flex;align-items:center;gap:7px;font-size:var(--text-xs);font-weight:500;color:#8fa3c9}
+.snode i{width:22px;height:22px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  font-style:normal;font-size:11px;font-weight:600;background:#ffffff22;color:#b9c8e4;transition:var(--t-fast)}
+.snode.on i{background:var(--surface);color:var(--brand-midnight)}
+.snode.cur{color:var(--surface)}
+.sline{width:26px;height:2px;background:#ffffff26;border-radius:2px}
+.onb-h{font-family:var(--font-sans);font-weight:600;font-size:var(--text-2xl);letter-spacing:-1px}
+.onb-sub{font-size:var(--text-sm);color:#a9bbd6;margin:8px 0 20px;line-height:1.55}
+.onb-step{display:none}
+.onb-step.show{display:block;animation:fade .45s cubic-bezier(.2,.7,.3,1)}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.cfield{display:flex;align-items:center;gap:10px;padding:12px 15px;margin-bottom:14px;
+  background:#ffffff14;border:1px solid #ffffff2b;border-radius:var(--rounded-md)}
+.cfield svg{width:18px;height:18px;color:#9cabc4;flex:0 0 auto}
+.cfield input{flex:1;background:none;border:none;outline:none;color:var(--surface);font-size:var(--text-base)}
+.cfield input::placeholder{color:#7e90ae}
+.colist{display:flex;flex-direction:column;gap:7px;max-height:250px;overflow-y:auto}
+.corow{display:flex;align-items:center;gap:12px;padding:11px 13px;cursor:pointer;
+  border-radius:var(--rounded-md);background:#ffffff0d;border:1px solid transparent;transition:var(--t-fast)}
+.corow:hover{background:#ffffff1a}
+.corow.sel{border-color:var(--brand-cornflower);background:#73abff2e}
+.cologo{width:34px;height:34px;border-radius:var(--rounded-sm);background:#ffffff1f;color:#cfdcf2;
+  display:grid;place-items:center;font-family:var(--font-sans);font-weight:600;font-size:var(--text-xs);flex:0 0 auto}
+.coinfo{flex:1;min-width:0}
+.coinfo b{display:block;font-size:var(--text-sm);font-weight:600}
+.coinfo span{font-size:var(--text-xs);color:#9cabc4}
+.cochk{width:20px;height:20px;color:#6fe3c8;flex:0 0 auto}
+.coempty{padding:22px;text-align:center;color:#7e90ae;font-size:var(--text-sm)}
+.conns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.conns{grid-template-columns:1fr}}
+.conn{display:flex;align-items:center;gap:11px;padding:13px;cursor:pointer;
+  border-radius:var(--rounded-md);background:#ffffff0d;border:1.5px solid #ffffff1a;transition:var(--t-fast)}
+.conn:hover{background:#ffffff1a}
+.conn.sel{border-color:var(--brand-cornflower);background:#73abff2e}
+.conn .cn-ic{width:34px;height:34px;border-radius:var(--rounded-sm);display:grid;place-items:center;
+  color:var(--surface);font-family:var(--font-sans);font-weight:600;font-size:var(--text-sm);flex:0 0 auto}
+.conn .cn-b{flex:1;min-width:0}
+.conn .cn-b b{display:block;font-size:var(--text-sm);font-weight:600}
+.conn .cn-b span{font-size:11px;color:#9cabc4}
+.conn .cn-chk{width:18px;height:18px;border-radius:var(--rounded-full);border:1.6px solid #ffffff47;flex:0 0 auto;transition:var(--t-fast)}
+.conn.sel .cn-chk{background:var(--brand-cornflower);border-color:var(--brand-cornflower);box-shadow:inset 0 0 0 3px #04185c}
+.conn.upload{grid-column:1/-1;border-style:dashed}
+
+/* ---------- expected profile (step 2) ---------- */
+.sy-head{display:flex;align-items:baseline;gap:12px;padding:0 16px 9px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#8fa3c9}
+.sy-head .sp{flex:1;min-width:0}
+.sy-head .c1{flex:0 0 128px;text-align:right}
+.sy-head .c2{flex:0 0 78px;text-align:center}
+.sy-head .c3{flex:0 0 27px}
+.sy-wrap{position:relative}
+.sy-wrap::after{content:"";position:absolute;left:0;right:0;bottom:0;height:56px;pointer-events:none;
+  border-radius:0 0 var(--rounded-md) var(--rounded-md);opacity:1;transition:opacity var(--t);
+  background:linear-gradient(to top,#052069f2,#05206900)}
+.sy-wrap.at-end::after{opacity:0}
+.sy-more{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);pointer-events:none;
+  display:flex;align-items:center;gap:6px;padding:4px 11px;border-radius:var(--rounded-full);
+  background:#ffffffe6;color:var(--brand-midnight);font-size:11px;font-weight:600;
+  box-shadow:var(--shadow-md);opacity:1;transition:opacity var(--t)}
+.sy-wrap.at-end .sy-more{opacity:0}
+.sy-more svg{width:12px;height:12px}
+.sy-list{display:flex;flex-direction:column;gap:6px;max-height:min(340px,46vh);
+  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#ffffff3d transparent}
+.sy-list::-webkit-scrollbar{width:6px}
+.sy-list::-webkit-scrollbar-thumb{background:#ffffff3d;border-radius:3px}
+.sy-row{display:flex;align-items:center;gap:12px;padding:10px 13px;
+  background:#ffffff0d;border:1px solid #ffffff14;border-radius:var(--rounded-md);transition:var(--t-fast)}
+.sy-row:hover{background:#ffffff17}
+.sy-row.edited{background:#0096891f;border-color:#6fe3c866}
+.sy-row.off{opacity:.45}
+.sy-b{flex:1 1 200px;min-width:0}
+.sy-b b{display:block;font-size:var(--text-sm);font-weight:600}
+.sy-b span{display:block;font-size:11px;color:#9cabc4;line-height:1.45;margin-top:2px}
+.sy-amt{display:flex;align-items:center;gap:5px;flex:0 0 auto;padding:7px 10px;cursor:text;
+  background:#ffffff17;border:1px solid #ffffff33;border-radius:var(--rounded-sm);transition:var(--t-fast)}
+.sy-amt:hover{border-color:#ffffff5c}
+.sy-amt:focus-within{border-color:var(--brand-cornflower);background:#73abff2e}
+.sy-amt input{width:78px;background:none;border:none;outline:none;text-align:right;color:var(--surface);
+  font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600}
+.sy-amt em{font-style:normal;font-family:var(--font-mono);font-size:11px;color:#9cabc4}
+.sy-row.off .sy-amt{visibility:hidden}
+.sy-tag{flex:0 0 auto;min-width:78px;text-align:center;padding:4px 8px;border-radius:var(--rounded-full);
+  font-size:10px;font-weight:600;background:#ffffff1a;color:#b9c8e4}
+.sy-tag.hi{background:#0096892e;color:#6fe3c8}
+.sy-tag.lo{background:#ffd08a24;color:#ffd08a}
+.sy-tag.mine{background:var(--surface);color:var(--brand-midnight)}
+.sy-x{flex:0 0 auto;width:27px;height:27px;display:grid;place-items:center;cursor:pointer;
+  background:none;border:none;border-radius:var(--rounded-xs);color:#7e90ae;transition:var(--t-fast)}
+.sy-x:hover{background:#ffffff26;color:var(--surface)}
+.sy-x svg{width:15px;height:15px}
+.sy-foot{display:flex;align-items:center;gap:14px;margin-top:12px;padding:13px 15px;
+  background:#ffffff12;border:1px solid #ffffff1f;border-radius:var(--rounded-md)}
+.sy-foot .l{flex:1;font-size:var(--text-xs);color:#a9bbd6;line-height:1.5}
+.sy-foot .l .linkbtn{margin-left:6px}
+.sy-foot .t{flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-lg);font-weight:600;white-space:nowrap}
+.sy-foot .t em{font-style:normal;font-size:11px;color:#9cabc4;margin-left:4px}
+@media(max-width:560px){
+  .sy-head{display:none}
+  .sy-row{flex-wrap:wrap}
+  .sy-b{flex:1 1 100%}
+  .sy-foot{flex-wrap:wrap}
+}
+
+.onb-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px}
+.linkbtn{background:none;border:none;color:#8fa3c9;font-size:var(--text-xs);cursor:pointer;text-decoration:underline}
+.linkbtn:hover{color:var(--surface)}
+.btn-onwhite{background:var(--surface);color:var(--brand-midnight)}
+.btn-onwhite:hover:not([disabled]){background:#e8eefb}
+.scan{width:360px;max-width:100%;margin:0 auto;text-align:center}
+.scan .ring{width:124px;height:124px;margin:0 auto 20px;position:relative}
+.scan .ring svg{transform:rotate(-90deg)}
+.scan .pct{position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;font-variant-numeric:tabular-nums}
+.scan .sline2{font-size:var(--text-sm);color:#a9bbd6;height:22px}
+.scan .counters{display:flex;justify-content:center;gap:26px;margin-top:18px}
+.scan .counters small{display:block;font-size:11px;color:#7e90ae;margin-bottom:3px}
+.scan .counters b{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;font-variant-numeric:tabular-nums}
+.reveal{text-align:center}
+.reveal .rsub{color:#a9bbd6;font-size:var(--text-sm);margin-bottom:10px}
+.reveal .twin{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.reveal .big{font-family:var(--font-sans);font-size:44px;font-weight:600;letter-spacing:-2px;line-height:1}
+.reveal .tw small{display:block;font-size:var(--text-xs);color:#9cabc4;margin-top:4px}
+.rfound{display:flex;flex-direction:column;gap:8px;max-width:420px;margin:20px auto 24px;text-align:left}
+.rf{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:var(--rounded-md);
+  background:#ffffff12;border:1px solid #ffffff1a;animation:rfin .5s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rfin{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+.rf .ic{width:30px;height:30px;border-radius:var(--rounded-sm);background:#0096894d;display:grid;place-items:center;flex:0 0 auto}
+.rf .ic svg{width:16px;height:16px;color:#8ff0dd}
+.rf .nm{flex:1;font-size:var(--text-sm);font-weight:500}
+.rf .am{font-size:var(--text-sm);font-weight:600;color:#8ff0dd;font-variant-numeric:tabular-nums}
+
+/* ---------- app shell ---------- */
+.app{display:grid;grid-template-columns:248px 1fr;height:100vh;visibility:hidden}
+.side{background:var(--sidebar);border-right:1px solid var(--sidebar-border);
+  display:flex;flex-direction:column;padding:18px 12px}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
+.brand{flex-direction:column;align-items:flex-start;gap:6px}
+.brand .logo-img{height:24px;width:auto;max-width:150px;display:block}
+.brand .brand-sub{font-size:11px;color:var(--sidebar-muted);letter-spacing:.01em;padding-left:1px}
+.brand .nm{font-family:var(--font-sans);font-weight:600;font-size:var(--text-sm);letter-spacing:-.3px;line-height:1.15}
+.brand .nm span{display:block;font-family:var(--font-body);font-weight:400;font-size:11px;color:var(--sidebar-muted);margin-top:2px}
+.nav{display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav .lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--sidebar-muted);padding:14px 12px 6px;font-weight:600}
+.nav a{display:flex;align-items:center;gap:11px;padding:9px 12px;cursor:pointer;
+  border-radius:var(--rounded-md);color:var(--sidebar-foreground);font-size:var(--text-sm);font-weight:500;transition:var(--t-fast)}
+.nav a svg{width:18px;height:18px;flex:0 0 auto}
+.nav a:hover{background:var(--sidebar-accent);color:var(--sidebar-accent-foreground)}
+.nav a.active{background:var(--sidebar-primary);color:var(--sidebar-primary-foreground)}
+.nav a .badge{margin-left:auto;min-width:20px;text-align:center;padding:1px 7px;border-radius:var(--rounded-full);
+  font-size:10px;font-weight:600;background:var(--general-primary);color:var(--general-primary-foreground)}
+.nav a.active .badge{background:var(--surface);color:var(--sidebar-primary)}
+.nav a .badge.alert{background:var(--general-destructive);color:var(--general-destructive-foreground)}
+.side-foot{margin-top:auto;padding-top:12px}
+.agent-pill{display:flex;align-items:center;gap:10px;padding:11px 12px;
+  border-radius:var(--rounded-md);background:var(--sidebar-accent);border:1px solid var(--sidebar-border)}
+.agent-pill .dot{width:8px;height:8px;border-radius:var(--rounded-full);background:var(--sentiment-positive);flex:0 0 auto}
+.agent-pill .txt{font-size:11px;line-height:1.35;color:var(--sidebar-muted)}
+.agent-pill .txt b{display:block;font-size:var(--text-xs);color:var(--general-foreground);font-weight:600}
+.pulse{animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #00968980}70%{box-shadow:0 0 0 9px #00968900}100%{box-shadow:0 0 0 0 #00968900}}
+
+.main{display:flex;flex-direction:column;min-width:0;height:100vh}
+.topbar{display:flex;align-items:center;gap:10px;padding:0 24px;height:64px;flex:0 0 auto;
+  background:#fafafaee;backdrop-filter:blur(12px);border-bottom:1px solid var(--general-border);z-index:6}
+.tenant{display:flex;align-items:center;gap:10px;padding:6px 9px;border-radius:var(--rounded-md)}
+.tenant .av{width:33px;height:33px;border-radius:var(--rounded-sm);background:var(--brand-midnight);
+  color:var(--surface);display:grid;place-items:center;font-family:var(--font-sans);font-weight:600;font-size:var(--text-xs)}
+.tenant b{font-size:var(--text-sm);font-weight:600}
+.tenant span{display:block;font-size:11px;color:var(--general-muted-foreground)}
+.spacer{flex:1}
+.synced{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:var(--text-xs);
+  color:var(--general-muted-foreground);border:1px solid var(--general-border);border-radius:var(--rounded-full);background:var(--surface)}
+.synced .g{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--sentiment-positive)}
+.bellwrap{position:relative}
+.bell-badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;
+  display:grid;place-items:center;border-radius:var(--rounded-full);border:2px solid var(--general-background);
+  background:var(--general-destructive);color:var(--general-destructive-foreground);
+  font-family:var(--font-mono);font-size:9.5px;font-weight:700}
+.scroll{overflow-y:auto;flex:1;scroll-behavior:smooth}
+.view{display:none;padding:26px 32px 80px;max-width:1240px;margin:0 auto}
+.view.show{display:block;animation:fade .45s cubic-bezier(.2,.7,.3,1)}
+.ph{margin-bottom:20px}
+.ph p{color:var(--general-muted-foreground);font-size:var(--text-sm);margin-top:6px;max-width:74ch;line-height:1.55}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:11px;
+  font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--general-primary);margin-bottom:9px}
+.eyebrow .pip{width:6px;height:6px;border-radius:var(--rounded-full);background:currentColor;box-shadow:0 0 0 4px var(--brand-ice)}
+</style>
+<style>
+/* ---------- action banner ---------- */
+.actionbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px;
+  padding:14px 18px;border-radius:var(--rounded-xl);
+  background:var(--brand-ice);border:1px solid var(--general-border);box-shadow:var(--shadow-xs)}
+.actionbar .flag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;
+  border-radius:var(--rounded-full);background:var(--general-accent);color:var(--general-accent-foreground);
+  font-size:var(--text-xs);font-weight:600}
+.actionbar b{font-size:var(--text-sm)}
+.actionbar span.sub{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
+/* ---------- cards / tiles ---------- */
+.card{background:var(--surface);border:1px solid var(--general-border);
+  border-radius:var(--rounded-2xl);box-shadow:var(--shadow-md)}
+.ch{display:flex;align-items:center;gap:12px;padding:20px 22px 6px}
+.ch h3{font-size:var(--text-base)}
+.ch .lg{display:flex;gap:14px;font-size:var(--text-xs);color:var(--general-muted-foreground);flex-wrap:wrap}
+.ch .lg span{display:inline-flex;align-items:center;gap:6px}
+.ch .lg i{width:12px;height:3px;border-radius:2px;display:inline-block}
+.ch .lg i.dash{background:repeating-linear-gradient(90deg,var(--chart-peer) 0 4px,transparent 4px 7px)}
+
+.hero{border:none;color:var(--surface);padding:26px 30px;position:relative;overflow:hidden;
+  border-radius:var(--rounded-2xl);box-shadow:var(--shadow-lg);
+  background:radial-gradient(720px 300px at 88% -30%,#1b64dc99,transparent 60%),
+             radial-gradient(560px 360px at -8% 130%,#00968966,transparent 55%),
+             linear-gradient(120deg,#000a45,#072464 55%,#0b3a91)}
+.hero-grid{display:grid;grid-template-columns:1fr 1px 1fr;gap:28px;align-items:center;position:relative;z-index:1}
+@media(max-width:880px){.hero-grid{grid-template-columns:1fr;gap:18px}.hero .dv{display:none}}
+.hero .dv{width:1px;height:80px;background:#ffffff26}
+.hero .lab{display:flex;align-items:center;gap:9px;font-size:var(--text-xs);color:#a9bbd6}
+.hero .lab .tag{padding:2px 8px;border-radius:var(--rounded-full);font-family:var(--font-mono);
+  font-size:10px;font-weight:600;letter-spacing:.05em;background:#ffffff1f;border:1px solid #ffffff33;color:#cfdcf2}
+.hero .big{font-family:var(--font-sans);font-size:44px;font-weight:600;letter-spacing:-2px;line-height:1;margin:8px 0 2px}
+.hero .big small{font-size:var(--text-xl);color:#c5d2e6;margin-left:6px;letter-spacing:0}
+.hero .sub{color:#9db0cd;font-size:var(--text-xs)}
+.hero .delta{display:inline-flex;align-items:center;gap:6px;margin-top:11px;padding:4px 10px;
+  border-radius:var(--rounded-full);font-size:var(--text-xs);font-weight:600;
+  background:#0096893d;border:1px solid #00968966;color:#8ff0dd}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}
+@media(max-width:1080px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{padding:18px 20px}
+.kpi .t{display:flex;align-items:center;gap:8px;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.kpi .t .ic{width:27px;height:27px;border-radius:var(--rounded-sm);display:grid;place-items:center;flex:0 0 auto}
+.kpi .t .ic svg{width:15px;height:15px}
+.kpi .v{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:600;letter-spacing:-1px;
+  margin-top:10px;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi .v small{font-size:var(--text-sm);color:var(--general-muted-foreground);font-weight:400;letter-spacing:0}
+.kpi .c{font-size:var(--text-xs);margin-top:5px;font-weight:600}
+.c.up{color:var(--sentiment-positive)}.c.flat{color:var(--general-muted-foreground)}.c.warn{color:#a35c00}
+.clickable{cursor:pointer;transition:box-shadow var(--t-fast)}
+.kpi.clickable:hover,.ev.clickable:hover{box-shadow:inset 0 0 0 1.5px var(--brand-cornflower),var(--shadow-md)}
+
+.cols{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;margin-top:18px;align-items:start}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;align-items:start}
+@media(max-width:1080px){.cols,.cols2{grid-template-columns:1fr}}
+
+/* ---------- chart ---------- */
+.chart-wrap{padding:10px 20px 6px;position:relative}
+svg.chart{display:block;width:100%;height:auto;overflow:visible}
+.hit{fill:transparent;cursor:crosshair}
+.chart-tip{position:fixed;z-index:99;pointer-events:none;opacity:0;transition:opacity .12s;
+  background:var(--brand-midnight);color:var(--surface);border-radius:var(--rounded-md);
+  padding:9px 12px;font-size:var(--text-xs);box-shadow:var(--shadow-lg);white-space:nowrap}
+.chart-tip.show{opacity:1}
+.chart-tip .r{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:3px}
+.chart-tip .r i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:6px}
+.chart-tip .r b{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.drill-hint{display:flex;align-items:center;gap:6px;padding:2px 22px 16px;
+  font-size:11px;color:var(--general-muted-foreground)}
+.drill-hint svg{width:13px;height:13px}
+table.data{width:100%;border-collapse:collapse;font-size:var(--text-xs)}
+table.data th{text-align:right;padding:6px 8px;border-bottom:1.5px solid var(--general-border);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-muted-foreground);font-weight:400}
+table.data td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--general-muted);
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+table.data th:first-child,table.data td:first-child{text-align:left;font-family:var(--font-body)}
+
+/* ---------- goals rings ---------- */
+.goals{display:flex;gap:24px;padding:16px 22px 22px;flex-wrap:wrap}
+.goal{display:flex;align-items:center;gap:15px;border-radius:var(--rounded-lg);padding:4px}
+.goal .ring{width:84px;height:84px;position:relative;flex:0 0 auto}
+.goal .ring .lbl{position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.goal .gt b{display:block;font-size:var(--text-sm);font-weight:600}
+.goal .gt span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.goal .gt .mini{font-size:11px;color:var(--general-muted-foreground);margin-top:4px}
+
+/* ---------- feed ---------- */
+.feed{padding:8px}
+.ev{display:flex;gap:13px;padding:11px 12px;border-radius:var(--rounded-md);transition:var(--t-fast)}
+.ev:hover{background:var(--general-muted)}
+.ev .ico{width:34px;height:34px;border-radius:var(--rounded-sm);flex:0 0 auto;display:grid;place-items:center}
+.ev .ico svg{width:17px;height:17px}
+.ev .bd{flex:1;min-width:0}
+.ev .bd p{font-size:var(--text-sm);line-height:1.45;color:var(--general-muted-foreground)}
+.ev .bd p b{color:var(--general-foreground);font-weight:600}
+.ev .bd .mt{font-size:11px;color:var(--general-muted-foreground);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.ev .amt{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;
+  color:var(--sentiment-positive);white-space:nowrap;font-variant-numeric:tabular-nums}
+.src{font-family:var(--font-mono);font-size:10px;color:var(--general-primary);
+  background:var(--brand-ice);padding:1px 7px;border-radius:var(--rounded-full)}
+
+/* ---------- list rows ---------- */
+.rowhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:18px 22px;border-bottom:1px solid var(--general-muted)}
+.rowhead .h{display:flex;align-items:center;gap:10px;font-size:var(--text-sm);font-weight:600}
+.rowhead .tot{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.rowhead .tot b{font-family:var(--font-mono);font-size:var(--text-sm);color:var(--chart-potential)}
+.opp{padding:18px 22px;border-bottom:1px solid var(--general-muted);transition:var(--t);overflow:hidden}
+.opp:last-child{border-bottom:none}
+.opp-main{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.opp .oic{width:46px;height:46px;border-radius:var(--rounded-md);flex:0 0 auto;display:grid;place-items:center;
+  background:var(--general-muted);border:1px solid var(--general-border)}
+.opp .oic svg{width:22px;height:22px;color:var(--general-primary)}
+.opp .obody{flex:1;min-width:200px}
+.opp .obody h4{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:var(--text-sm);font-weight:600}
+.opp .obody p{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:3px;line-height:1.45}
+.opp .obody p .hl{color:var(--general-foreground);font-weight:600}
+.opp .oright{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:0 0 auto}
+.opp .save{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
+  color:var(--chart-potential);letter-spacing:-.5px;text-align:right;font-variant-numeric:tabular-nums}
+.opp .save span{display:block;font-family:var(--font-body);font-size:11px;
+  color:var(--general-muted-foreground);font-weight:400;letter-spacing:0}
+.opp.done{background:#f0faf8;border-color:transparent}
+.opp.done .oic{background:var(--surface);border-color:var(--sentiment-positive)}
+.opp.removing{opacity:0;transform:translateX(40px);max-height:0!important;padding-top:0;padding-bottom:0}
+.reason-toggle{display:inline-flex;align-items:center;gap:5px;margin-top:8px;cursor:pointer;
+  font-size:11px;font-weight:600;color:var(--general-primary);user-select:none;background:none;border:none}
+.reason-toggle svg{width:13px;height:13px;transition:transform var(--t-fast)}
+.reason-toggle.open svg{transform:rotate(90deg)}
+.reason{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.7,.3,1)}
+.reason-inner{margin-top:13px;padding:14px 16px;background:var(--general-muted);
+  border:1px solid var(--general-border);border-radius:var(--rounded-md)}
+.rstep{display:flex;gap:12px;padding-bottom:14px;position:relative}
+.rstep:last-child{padding-bottom:0}
+.rstep::before{content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--general-border)}
+.rstep:last-child::before{display:none}
+.rstep .rn{width:24px;height:24px;border-radius:var(--rounded-full);flex:0 0 auto;display:grid;place-items:center;
+  font-family:var(--font-mono);font-size:11px;font-weight:600;z-index:1;border:2px solid var(--general-muted)}
+.rstep .rt{font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.55;padding-top:2px}
+.rstep .rt b{color:var(--general-foreground);font-weight:600}
+.rstep .rt code{font-family:var(--font-mono);font-size:11px;background:var(--surface);
+  padding:1px 6px;border-radius:var(--rounded-xs);color:var(--general-primary)}
+.empty{padding:48px;text-align:center;color:var(--general-muted-foreground)}
+.empty b{display:block;color:var(--general-foreground);font-weight:600;margin-top:8px}
+.empty .big{font-size:32px}
+
+/* progress bars */
+.bar{height:8px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:var(--rounded-full);width:0;
+  background:var(--sentiment-positive);transition:width 1s cubic-bezier(.2,.7,.3,1)}
+.bar.low>i{background:var(--chart-potential)}
+</style>
+<style>
+/* ---------- overlay + drawers ---------- */
+.overlay{position:fixed;inset:0;z-index:42;background:#000a4566;opacity:0;pointer-events:none;transition:opacity var(--t)}
+.overlay.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:480px;max-width:94vw;z-index:48;
+  display:flex;flex-direction:column;background:var(--surface);
+  border-left:1px solid var(--general-border);box-shadow:var(--shadow-xl);
+  transform:translateX(100%);transition:transform var(--t)}
+.drawer.open{transform:none}
+.drawer-h{padding:20px 22px 16px;border-bottom:1px solid var(--general-border);display:flex;gap:12px;align-items:flex-start}
+.drawer-h h3{font-size:var(--text-lg);letter-spacing:-.5px;line-height:1.25}
+.drawer-h .dsub{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:4px;line-height:1.45}
+.dx{margin-left:auto;flex:0 0 auto;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;
+  border:none;background:none;color:var(--general-muted-foreground);border-radius:var(--rounded-sm)}
+.dx:hover{background:var(--general-muted);color:var(--general-foreground)}
+.dx svg{width:18px;height:18px}
+.drawer-b{flex:1;overflow-y:auto;padding:18px 22px 24px}
+.drawer-f{padding:14px 22px;border-top:1px solid var(--general-border);display:flex;gap:10px;justify-content:flex-end}
+.dkpis{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:18px}
+.dk small{display:block;font-size:11px;color:var(--general-muted-foreground);margin-bottom:3px}
+.dk b{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:600;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.dbar{display:grid;grid-template-columns:140px 1fr 92px;align-items:center;gap:12px;margin-bottom:9px;font-size:var(--text-xs)}
+.dbar .dl{color:var(--general-muted-foreground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dbar .dt{height:10px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.dbar .dt i{display:block;height:100%;border-radius:var(--rounded-full)}
+.dbar .dv{text-align:right;font-family:var(--font-mono);font-weight:600;font-variant-numeric:tabular-nums}
+.dnote{display:flex;gap:8px;align-items:flex-start;margin-top:16px;
+  font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.55}
+.dnote svg{width:15px;height:15px;color:var(--general-primary);flex:0 0 auto;margin-top:2px}
+
+/* ---------- modal ---------- */
+.mdl-ov{position:fixed;inset:0;z-index:60;background:#000a4577;display:grid;place-items:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity var(--t)}
+.mdl-ov.show{opacity:1;pointer-events:auto}
+.mdl{width:640px;max-width:96vw;max-height:90vh;overflow-y:auto;background:var(--surface);
+  border-radius:var(--rounded-2xl);box-shadow:var(--shadow-xl);padding:30px;
+  transform:scale(.98);transition:transform var(--t)}
+.mdl-ov.show .mdl{transform:none}
+.ai-note{display:flex;gap:8px;align-items:flex-start;padding:11px 13px;margin:16px 0;
+  background:var(--brand-ice);border-radius:var(--rounded-md);
+  font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.5}
+.ai-note b{color:var(--general-foreground)}
+.mdl textarea{width:100%;min-height:210px;resize:vertical;padding:16px;
+  font-family:var(--font-body);font-size:var(--text-sm);line-height:1.6;color:var(--general-foreground);
+  background:var(--general-background);border:1px solid var(--general-border);border-radius:var(--rounded-lg)}
+.mdl-act{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:20px}
+
+/* ---------- command palette ---------- */
+.cmd-ov{position:fixed;inset:0;z-index:95;background:#000a4547;display:flex;justify-content:center;
+  padding-top:12vh;opacity:0;pointer-events:none;transition:opacity var(--t)}
+.cmd-ov.show{opacity:1;pointer-events:auto}
+.cmd{width:560px;max-width:92vw;height:max-content;background:var(--surface);border:1px solid var(--general-border);
+  border-radius:var(--rounded-xl);box-shadow:var(--shadow-xl);overflow:hidden;
+  transform:translateY(-10px) scale(.98);transition:transform var(--t)}
+.cmd-ov.show .cmd{transform:none}
+.cmd-in{display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid var(--general-border)}
+.cmd-in svg{width:19px;height:19px;color:var(--general-muted-foreground)}
+.cmd-in input{flex:1;border:none;outline:none;background:none;font-size:var(--text-base);color:var(--general-foreground)}
+.cmd-list{max-height:340px;overflow-y:auto;padding:8px}
+.cmd-it{display:flex;align-items:center;gap:12px;padding:11px 13px;cursor:pointer;
+  border-radius:var(--rounded-md);font-size:var(--text-sm);color:var(--general-foreground)}
+.cmd-it.sel,.cmd-it:hover{background:var(--brand-ice);color:var(--general-primary)}
+.cmd-it .ci{width:30px;height:30px;border-radius:var(--rounded-sm);background:var(--general-muted);
+  display:grid;place-items:center;flex:0 0 auto}
+.cmd-it .ci svg{width:16px;height:16px}
+.cmd-it .ck{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--general-muted-foreground)}
+.cmd-empty{padding:24px;text-align:center;color:var(--general-muted-foreground);font-size:var(--text-sm)}
+
+/* ---------- tour ---------- */
+.tour-hole{position:fixed;z-index:81;border-radius:var(--rounded-lg);pointer-events:none;opacity:0;
+  box-shadow:0 0 0 9999px #000a45a3;border:2px solid #ffffffcc;transition:all .45s cubic-bezier(.3,.8,.25,1)}
+.tour-tip{position:fixed;z-index:82;width:316px;max-width:90vw;opacity:0;pointer-events:none;
+  background:var(--surface);border:1px solid var(--general-border);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);padding:18px;transition:all .45s cubic-bezier(.3,.8,.25,1)}
+.tour-tip.show{opacity:1;pointer-events:auto}
+.tour-tip .sn{font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--general-primary)}
+.tour-tip h4{font-size:var(--text-base);margin:7px 0}
+.tour-tip p{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.55}
+.tour-nav{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.dots{display:flex;gap:6px}
+.dots i{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--general-muted);transition:var(--t-fast)}
+.dots i.on{background:var(--general-primary);width:18px;border-radius:var(--rounded-full)}
+
+/* ---------- demo bar ---------- */
+.demobar{position:fixed;left:50%;bottom:26px;z-index:75;display:flex;align-items:center;gap:16px;
+  max-width:640px;padding:14px 18px;border-radius:var(--rounded-xl);overflow:hidden;
+  background:var(--brand-midnight);color:var(--surface);box-shadow:var(--shadow-xl);
+  transform:translateX(-50%) translateY(150%);transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.demobar.show{transform:translateX(-50%)}
+.demobar .pl{width:34px;height:34px;border-radius:var(--rounded-sm);flex:0 0 auto;display:grid;place-items:center;background:#ffffff26}
+.demobar .pl svg{width:17px;height:17px}
+.demobar .cap b{display:block;font-size:var(--text-sm);font-weight:600}
+.demobar .cap span{font-size:var(--text-xs);color:#a9bbd6}
+.demobar .prog{position:absolute;left:0;bottom:0;height:3px;background:var(--brand-cornflower);transition:width .4s linear}
+
+/* ---------- assistant ---------- */
+.chat{position:fixed;top:0;right:0;height:100vh;width:420px;max-width:94vw;z-index:44;
+  display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--general-border);
+  box-shadow:var(--shadow-xl);transform:translateX(100%);transition:transform var(--t)}
+.chat.open{transform:none}
+.chat-h{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--general-border)}
+.chat-h .av{width:36px;height:36px;border-radius:var(--rounded-md);display:grid;place-items:center;
+  background:var(--general-primary);color:var(--general-primary-foreground)}
+.chat-h .av svg{width:19px;height:19px}
+.chat-h b{display:flex;align-items:center;gap:7px;font-size:var(--text-sm);font-weight:600}
+.chat-h b .on{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--sentiment-positive)}
+.chat-h span{font-size:11px;color:var(--general-muted-foreground)}
+.chat-log{flex:1;overflow-y:auto;padding:20px 18px;display:flex;flex-direction:column;gap:14px;background:var(--general-background)}
+.msg{display:flex;gap:10px;max-width:94%;animation:rise .4s cubic-bezier(.2,.7,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg .ma{width:28px;height:28px;border-radius:var(--rounded-sm);flex:0 0 auto;display:grid;place-items:center;
+  font-size:11px;font-weight:600;background:var(--general-primary);color:var(--general-primary-foreground)}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg.user .ma{background:var(--brand-midnight)}
+.bub{padding:11px 14px;border-radius:var(--rounded-lg);font-size:var(--text-sm);line-height:1.55}
+.msg.bot .bub{background:var(--surface);border:1px solid var(--general-border);
+  border-top-left-radius:var(--rounded-xs);color:var(--general-muted-foreground);box-shadow:var(--shadow-xs)}
+.msg.user .bub{background:var(--general-primary);color:var(--general-primary-foreground);border-top-right-radius:var(--rounded-xs)}
+.bub b{color:var(--general-foreground);font-weight:600}
+.msg.user .bub b{color:inherit}
+.bub .figure{display:block;font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;
+  letter-spacing:-1px;color:var(--sentiment-positive);margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.bub ul{margin:8px 0 2px;padding-left:18px}
+.bub li{margin:4px 0}
+.bub .think{margin-top:10px;border-top:1px dashed var(--general-border);padding-top:9px}
+.bub .think summary{display:flex;align-items:center;gap:6px;cursor:pointer;list-style:none;
+  font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--general-primary)}
+.bub .think summary::-webkit-details-marker{display:none}
+.bub .think .tl{font-size:11px;margin-top:7px;line-height:1.5}
+.bub .act{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.bub .act button{padding:7px 12px;cursor:pointer;border-radius:var(--rounded-sm);
+  font-size:var(--text-xs);font-weight:600;background:transparent;
+  border:1px solid var(--general-primary);color:var(--general-primary)}
+.bub .act button:hover{background:var(--general-primary);color:var(--general-primary-foreground)}
+.typing{display:flex;gap:4px;padding:13px 15px}
+.typing i{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--general-muted-foreground);animation:tp 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.18s}.typing i:nth-child(3){animation-delay:.36s}
+@keyframes tp{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 10px}
+.qchip{padding:7px 12px;cursor:pointer;border-radius:var(--rounded-full);
+  font-size:var(--text-xs);color:var(--general-foreground);background:var(--surface);
+  border:1px solid var(--general-border);transition:var(--t-fast)}
+.qchip:hover{border-color:var(--general-primary);color:var(--general-primary);background:var(--brand-ice)}
+.chat-in{display:flex;gap:9px;padding:14px 18px 18px;border-top:1px solid var(--general-border)}
+.chat-in input{flex:1;padding:11px 14px;font-size:var(--text-sm);outline:none;color:var(--general-foreground);
+  background:var(--general-input);border:1px solid var(--general-border);border-radius:var(--rounded-md)}
+.chat-in input:focus{border-color:var(--general-primary)}
+.chat-in button{width:42px;height:42px;flex:0 0 auto;display:grid;place-items:center;cursor:pointer;
+  border:none;border-radius:var(--rounded-md);background:var(--general-primary);color:var(--general-primary-foreground)}
+.chat-in button svg{width:18px;height:18px}
+.fab{position:fixed;right:26px;bottom:26px;z-index:38;display:flex;align-items:center;gap:10px;cursor:pointer;
+  padding:13px 20px;border:none;border-radius:var(--rounded-full);
+  background:var(--general-primary);color:var(--general-primary-foreground);
+  font-size:var(--text-sm);font-weight:600;box-shadow:var(--shadow-lg);transition:transform var(--t)}
+.fab:hover{transform:translateY(-2px)}
+.fab svg{width:18px;height:18px}
+.fab .nb{width:8px;height:8px;border-radius:var(--rounded-full);background:#8ff0dd}
+
+/* ---------- toasts ---------- */
+.toasts{position:fixed;left:50%;bottom:24px;z-index:70;transform:translateX(-50%);
+  display:flex;flex-direction:column;gap:10px;align-items:center}
+.toast{display:flex;align-items:center;gap:11px;max-width:480px;padding:13px 18px;
+  border-radius:var(--rounded-full);background:var(--brand-midnight);color:var(--surface);
+  font-size:var(--text-sm);box-shadow:var(--shadow-xl);
+  opacity:0;transform:translateY(10px);transition:opacity var(--t),transform var(--t)}
+.toast.in{opacity:1;transform:none}
+.toast .ti{width:24px;height:24px;flex:0 0 auto;display:grid;place-items:center;border-radius:var(--rounded-xs)}
+.toast .ti svg{width:15px;height:15px}
+.toast b{font-weight:600}
+canvas#confetti{position:fixed;inset:0;z-index:88;pointer-events:none}
+
+/* ---------- misc ---------- */
+.slider{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:var(--rounded-full);
+  outline:none;margin:18px 0 8px;background:var(--general-muted)}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:var(--rounded-full);
+  background:var(--surface);border:4px solid var(--general-primary);cursor:pointer;box-shadow:var(--shadow-md)}
+.slider::-moz-range-thumb{width:24px;height:24px;border-radius:var(--rounded-full);
+  background:var(--surface);border:4px solid var(--general-primary);cursor:pointer}
+.scale{display:flex;justify-content:space-between;font-family:var(--font-mono);
+  font-size:10px;letter-spacing:.08em;color:var(--general-muted-foreground)}
+.set{padding:22px}
+.set h3{display:flex;align-items:center;gap:9px}
+.set .help{font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.55;margin:8px 0 16px}
+.rule{display:flex;align-items:center;gap:13px;padding:14px 0;border-top:1px solid var(--general-muted)}
+.rule:first-of-type{border-top:none}
+.rule .rb{flex:1}
+.rule .rb b{font-size:var(--text-sm);font-weight:600}
+.rule .rb span{display:block;font-size:11px;color:var(--general-muted-foreground);margin-top:2px}
+.toggle{width:46px;height:27px;flex:0 0 auto;position:relative;cursor:pointer;
+  border-radius:var(--rounded-full);background:#cfcfcf;transition:background-color var(--t);border:none}
+.toggle.on{background:var(--sentiment-positive)}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:var(--rounded-full);
+  background:var(--surface);box-shadow:var(--shadow-sm);transition:transform var(--t)}
+.toggle.on::after{transform:translateX(19px)}
+.lvl-name{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:600;color:var(--general-primary)}
+.lvl-desc{margin-top:13px;padding:13px 15px;background:var(--brand-ice);
+  border:1px solid var(--general-border);border-radius:var(--rounded-md);
+  font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.5}
+.lvl-desc b{color:var(--general-primary)}
+.footnote{margin-top:26px;text-align:center;font-size:11px;color:var(--general-muted-foreground);line-height:1.5}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.05ms!important}}
+</style>
+</head>
+<body>
+
+<!-- ============ ONBOARDING ============ -->
+<div class="onb" id="onb">
+  <div class="onb-card">
+    <div class="onb-head">
+      <div class="onb-brand"><img class="onb-logo" src="assets/advantage-logo-white.svg" alt="Advantage"></div>
+      <div class="stepper" id="stepper">
+        <span class="snode on cur" data-s="0"><i>1</i>Your company</span><span class="sline"></span>
+        <span class="snode" data-s="1"><i>2</i>What we know</span><span class="sline"></span>
+        <span class="snode" data-s="2"><i>3</i>Connect spend</span><span class="sline"></span>
+        <span class="snode" data-s="3"><i>4</i>First scan</span>
+      </div>
+    </div>
+
+    <div class="onb-step show" id="onb1">
+      <h2 class="onb-h">Find your company</h2>
+      <p class="onb-sub">We pull your registry details so the assistant knows who it's working for.</p>
+      <div class="cfield">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <input id="coSearch" placeholder="Search by name or company number…" value="Nordvik" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="colist" id="coList" role="listbox" aria-label="Company results"></div>
+      <div class="onb-actions">
+        <button class="linkbtn" id="skipOnb">Skip setup</button>
+        <button class="btn btn-onwhite" id="onbNext1" disabled>Continue →</button>
+      </div>
+    </div>
+
+    <div class="onb-step" id="onbP">
+      <h2 class="onb-h">Here's what we already expect</h2>
+      <p class="onb-sub">You haven't connected anything yet. This is what public registry data and 340 similar contractors suggest a company your size buys. <b style="color:#fff">Correct anything that looks wrong.</b></p>
+      <div id="synthList"></div>
+      <div class="onb-actions">
+        <button class="linkbtn" id="pBack">← Back</button>
+        <button class="btn btn-onwhite" id="pNext">Looks about right →</button>
+      </div>
+    </div>
+
+    <div class="onb-step" id="onb2">
+      <h2 class="onb-h">Where does your spend live?</h2>
+      <p class="onb-sub">Pick your accounting system. We read invoices only — never write back — and you can disconnect any time.</p>
+      <div class="conns" id="conns"></div>
+      <div class="onb-actions">
+        <button class="linkbtn" id="onbBack">← Back</button>
+        <button class="btn btn-onwhite" id="onbNext2">Connect &amp; scan →</button>
+      </div>
+    </div>
+
+    <div class="onb-step" id="onb3">
+      <div class="scan">
+        <div class="ring">
+          <svg width="124" height="124" viewBox="0 0 124 124" aria-hidden="true">
+            <circle cx="62" cy="62" r="53" fill="none" stroke="#ffffff26" stroke-width="9"/>
+            <circle id="scanArc" cx="62" cy="62" r="53" fill="none" stroke="url(#sg)" stroke-width="9"
+              stroke-linecap="round" stroke-dasharray="333" stroke-dashoffset="333"/>
+            <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#73abff"/><stop offset="1" stop-color="#009689"/></linearGradient></defs>
+          </svg>
+          <div class="pct num" id="scanPct">0%</div>
+        </div>
+        <div class="sline2" id="scanLine" role="status" aria-live="polite">Connecting…</div>
+        <div class="counters">
+          <div><small>Invoices read</small><b class="num" id="cInv">0</b></div>
+          <div><small>Suppliers found</small><b class="num" id="cSup">0</b></div>
+          <div><small>Agreements matched</small><b class="num" id="cAgr">0</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="onb-step reveal" id="onb4">
+      <div class="rsub">Here's what we found in your invoices</div>
+      <div class="twin">
+        <div class="tw"><div class="big num" id="revPot">0</div><small>kr./year not being captured</small></div>
+        <div class="tw"><div class="big num" id="revSup">0</div><small>suppliers with an unused agreement</small></div>
+      </div>
+      <div class="rfound" id="revList"></div>
+      <button class="btn btn-onwhite" id="enterApp">Show me what to do next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app">
+  <aside class="side">
+    <div class="brand">
+      <img class="logo-img" src="assets/advantage-logo.svg" alt="Advantage">
+      <span class="brand-sub">Purchasing assistant</span>
+    </div>
+    <nav class="nav" aria-label="Main">
+      <div class="lbl">Overview</div>
+      <a class="active" data-view="overview" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      <a data-view="opportunities" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Opportunities<span class="badge" id="navOpp">5</span></a>
+      <a data-view="agreements" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h8l4 4v12H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 4v4h4M8 13h6M8 16.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Agreements</a>
+      <a data-view="alerts" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 20a2 2 0 004 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Alerts<span class="badge alert" id="navAlerts">3</span></a>
+      <a data-view="benchmark" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 16V9M13 16v-4M18 16V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Benchmark</a>
+      <div class="lbl">Settings</div>
+      <a data-view="automation" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="2.4" stroke="currentColor" stroke-width="1.7"/><circle cx="16" cy="16" r="2.4" stroke="currentColor" stroke-width="1.7"/><path d="M8 10.5V19M16 13.5V5M5 5h6M13 19h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>How much it does</a>
+      <div class="lbl">After the decision</div>
+      <a data-view="activation" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3a9 9 0 109 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activation<span class="badge" id="navAct">2</span></a>
+      <a data-view="monitor" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 16V9M13 16v-4M18 16V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Spend leakage</a>
+      <a data-view="value" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Bonus &amp; documents</a>
+      <a data-view="next" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 5v4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>What's next</a>
+      <a data-view="report" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M9 8h6M9 12h6M9 16h3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Report</a>
+    </nav>
+    <div class="side-foot">
+      <div class="agent-pill"><span class="dot pulse" aria-hidden="true"></span>
+        <span class="txt"><b>Watching your invoices</b>Last scan: today 06:12</span></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="tenant"><span class="av" aria-hidden="true">NB</span>
+        <span><b>Nordvik Byg A/S</b><span class="mono">CVR 38 42 11 07 · 34 staff</span></span></div>
+      <span class="spacer"></span>
+      <span class="synced"><span class="g" aria-hidden="true"></span><span id="syncLabel">Synced with Dinero</span></span>
+      <button class="kbd" id="cmdkBtn" title="Command palette"><kbd>⌘</kbd><kbd>K</kbd></button>
+      <button class="icbtn bellwrap" id="bellBtn" aria-label="Alerts"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 20a2 2 0 004 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span class="bell-badge num" id="bellBadge">3</span></button>
+      <button class="icbtn" id="tourBtn" aria-label="Guided tour"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M9.5 9.5a2.5 2.5 0 114 2c-1 .7-1.5 1.2-1.5 2.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1.1" fill="currentColor"/></svg></button>
+      <button class="btn btn-primary btn-sm" id="demoBtn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" fill="currentColor"/></svg>Auto-demo</button>
+    </header>
+    <div class="scroll" id="scroll">
+<!-- ===== DASHBOARD ===== -->
+<section class="view show" id="overview" aria-labelledby="ovh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Nordvik Byg A/S</div>
+    <h1 id="ovh">Good morning, Mette</h1>
+    <p>We read your invoices overnight. Here's what you've already saved, what's still on the table, and the one thing worth doing today.</p>
+  </div>
+
+  <div class="actionbar" id="actionbar">
+    <span class="flag">⚑ Action required</span>
+    <span><b id="banTitle">4 suppliers you already buy from have an agreement you're not using.</b>
+      <span class="sub" id="banSub">Worth about <b class="num" id="banValue">161 100 kr.</b> a year.</span></span>
+    <span class="spacer"></span>
+    <button class="btn btn-primary btn-sm" data-go="opportunities">Review them →</button>
+  </div>
+
+  <div class="card hero" id="heroCard">
+    <div class="hero-grid">
+      <div>
+        <div class="lab">Realized savings · this year <span class="tag">FROM YOUR INVOICES</span></div>
+        <div class="big"><span class="num" data-count="128400">0</span> <small>kr.</small></div>
+        <div class="sub">1 Jan – today · across 4 active agreements</div>
+        <div class="delta"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 17l6-6 4 3 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>+41% vs. last year</div>
+      </div>
+      <div class="dv" aria-hidden="true"></div>
+      <div>
+        <div class="lab">Still on the table <span class="tag">NOT CAPTURED</span></div>
+        <div class="big"><span class="num" data-count="214600" id="heroPot">0</span> <small>kr.</small></div>
+        <div class="sub">Across 5 suppliers you already use</div>
+        <div class="delta" style="background:#f54a0026;border-color:#f54a0055;color:#ffb59a">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5M12 16h.01M5 21h14a1 1 0 00.9-1.5l-7-13a1 1 0 00-1.8 0l-7 13A1 1 0 005 21z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Two are one click away</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="card kpi clickable" data-kpi="0" tabindex="0" role="button">
+      <div class="t"><span class="ic" style="background:var(--general-muted)"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 16V9M13 16v-4M18 16V7" stroke="var(--general-muted-foreground)" stroke-width="1.7" stroke-linecap="round"/></svg></span>Total spend read</div>
+      <div class="v"><span class="num" data-count="4820000">0</span> <small>kr.</small></div>
+      <div class="c flat">1 284 invoices · 12 months</div>
+    </div>
+    <div class="card kpi clickable" data-kpi="1" tabindex="0" role="button">
+      <div class="t"><span class="ic" style="background:#d9f2ef"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="var(--sentiment-positive)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Agreements in use</div>
+      <div class="v"><span class="num" id="kAgr">4</span> <small>/ 12</small></div>
+      <div class="c flat">available to a company your size</div>
+    </div>
+    <div class="card kpi clickable" data-kpi="2" tabindex="0" role="button">
+      <div class="t"><span class="ic" style="background:#ffeeda"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5L12 3z" stroke="#a35c00" stroke-width="1.7" stroke-linejoin="round"/></svg></span>Not captured</div>
+      <div class="v"><span class="num" id="kPot">214 600</span> <small>kr./yr</small></div>
+      <div class="c warn" id="kPotSub">5 suppliers ready to act on</div>
+    </div>
+    <div class="card kpi clickable" data-kpi="3" tabindex="0" role="button">
+      <div class="t"><span class="ic" style="background:var(--brand-ice)"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21c5-2 7-6 7-11V5l-7-2-7 2v5c0 5 2 9 7 11z" stroke="var(--general-primary)" stroke-width="1.6" stroke-linejoin="round"/></svg></span>Vs. similar companies</div>
+      <div class="v"><span class="num" data-count="71">0</span><small>th pct.</small></div>
+      <div class="c up">better than 71% of your peers</div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <div class="ch">
+        <h3>Realized vs. left on the table</h3>
+        <span class="spacer"></span>
+        <div class="lg">
+          <span><i style="background:var(--chart-realized)"></i>Realized</span>
+          <span><i style="background:var(--chart-potential)"></i>Not captured</span>
+          <span id="lgPeer"><i class="dash"></i>Peer average</span>
+        </div>
+      </div>
+      <div class="chart-wrap"><svg class="chart" id="chart" viewBox="0 0 720 260" role="img" aria-labelledby="chartDesc"><desc id="chartDesc">Twelve month line chart of realized savings against savings not yet captured, with a peer average reference line.</desc></svg></div>
+      <div class="drill-hint"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Click a month to see the invoices behind it</div>
+      <div style="padding:0 22px 20px">
+        <button class="btn btn-secondary btn-std btn-sm" id="btnTable" aria-expanded="false">Show as table</button>
+        <div id="tableView" hidden style="margin-top:14px">
+          <table class="data"><caption class="sr">Monthly savings</caption>
+            <thead><tr><th scope="col">Month</th><th scope="col">Realized</th><th scope="col">Not captured</th><th scope="col">Peer avg.</th></tr></thead>
+            <tbody id="tableBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Targets for this year</h3></div>
+      <div class="goals" id="goals"></div>
+    </div>
+  </div>
+
+  <div class="cols2">
+    <div class="card">
+      <div class="ch"><h3>What the assistant did</h3></div>
+      <div class="feed" id="feed"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Where you hear about it</h3></div>
+      <div style="padding:8px 22px 22px">
+        <p class="muted" style="font-size:var(--text-sm);line-height:1.6">Nothing here needs you to log in. When we find something worth acting on, it reaches you where you already are — and the message to the supplier is already written.</p>
+        <div style="margin-top:16px;padding:14px 16px;background:var(--general-muted);border-radius:var(--rounded-lg)">
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--general-muted-foreground);margin-bottom:6px">
+            <span style="width:18px;height:18px;border-radius:var(--rounded-xs);background:var(--general-primary);display:grid;place-items:center;color:#fff;font-size:10px" aria-hidden="true">A</span>
+            Advantage · today 06:14</div>
+          <div style="font-size:var(--text-sm);line-height:1.5">
+            <b>Stark Byggecenter</b> — you spent 684 000 kr. there last year at list price. Your agreement rate is 9% lower.
+            <span style="color:var(--general-muted-foreground)"> Reply “yes” and we'll send the request.</span></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <span class="chip chip-new">Email</span><span class="chip chip-new">Teams</span><span class="chip chip-sent">SMS (off)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footnote">Demo data. Nordvik Byg A/S is a fictional customer — every figure traces back to an invoice line.</div>
+</section>
+
+<!-- ===== OPPORTUNITIES ===== -->
+<section class="view" id="opportunities" aria-labelledby="oph">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Found in your invoices</div>
+    <h1 id="oph">Suppliers you already use, at the wrong price</h1>
+    <p>Each of these is a supplier you buy from today where an Advantage agreement exists and isn't being used. Open “how we worked this out” to see the reasoning — nothing here is a guess.</p>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="rowhead">
+      <div class="h"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5L12 3z" stroke="var(--general-accent)" stroke-width="1.7" stroke-linejoin="round"/></svg>Ready to act on</div>
+      <div class="tot">Worth <b id="oppTotal">214 600 kr./yr</b></div>
+    </div>
+    <div id="oppList"></div>
+  </div>
+  <div class="footnote">Anything under your auto-approve limit is handled without asking. Everything above it comes to you first.</div>
+</section>
+
+<!-- ===== AGREEMENTS ===== -->
+<section class="view" id="agreements" aria-labelledby="agh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Agreements &amp; suppliers</div>
+    <h1 id="agh">What you've got, and how much of it you use</h1>
+    <p>An agreement nobody buys from is money left on the table. This is the share of eligible spend actually going through each one.</p>
+  </div>
+  <div class="cols">
+    <div class="card" style="overflow:hidden">
+      <div class="rowhead"><div class="h">Agreement usage</div><div class="tot"><span id="agrSummary">4 active · 2 barely used</span></div></div>
+      <div id="agrList" style="padding:8px 22px 20px"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="card" style="overflow:hidden">
+        <div class="rowhead"><div class="h">Active, but no spend</div></div>
+        <div id="agrDead"></div>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>What's coming up</h3></div>
+        <div id="agrTimeline" style="padding:8px 22px 22px"></div>
+      </div>
+    </div>
+  </div>
+  <div class="footnote">An agreement added and never used is the most common way this service quietly stops paying for itself.</div>
+</section>
+
+<!-- ===== ALERTS ===== -->
+<section class="view" id="alerts" aria-labelledby="alh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" style="background:var(--general-destructive);box-shadow:0 0 0 4px #fde8e8" aria-hidden="true"></span>Watching your invoices</div>
+    <h1 id="alh">Things that changed since last month</h1>
+    <p>We compare every line against your own history and against what similar companies pay. When something moves, you hear about it here.</p>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="rowhead"><div class="h">Needs a decision</div><div class="tot"><b id="alertCount" style="color:var(--general-destructive)">3</b> open</div></div>
+    <div id="alertList"></div>
+  </div>
+</section>
+
+<!-- ===== BENCHMARK ===== -->
+<section class="view" id="benchmark" aria-labelledby="bmh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>17 000 Nordic companies</div>
+    <h1 id="bmh">How your prices compare</h1>
+    <p>Anonymous comparison against companies of similar size and sector. Green means you're paying less than the market; orange means there's room.</p>
+  </div>
+  <div class="card hero" style="margin-bottom:18px">
+    <div class="hero-grid">
+      <div><div class="lab">Purchasing score</div>
+        <div class="big"><span class="num" data-count="71">0</span><small>/100</small></div>
+        <div class="sub">Better than 71% of comparable companies</div></div>
+      <div class="dv" aria-hidden="true"></div>
+      <div style="display:flex;gap:30px;flex-wrap:wrap">
+        <div><div class="lab">Categories above market</div><div style="font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;margin-top:6px">2 of 6</div></div>
+        <div><div class="lab">Estimated gap</div><div style="font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;margin-top:6px;color:#8ff0dd" class="num">86 400 kr.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><h3>Your price per category, against the market</h3></div>
+    <div id="percList" style="padding:12px 22px 22px"></div>
+  </div>
+  <div class="footnote">Aggregated and anonymised. No individual company's data is ever shown — only market patterns.</div>
+</section>
+
+<!-- ===== AUTOMATION ===== -->
+<section class="view" id="automation" aria-labelledby="auh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>You set the rules</div>
+    <h1 id="auh">How much should it do on its own?</h1>
+    <p>The assistant works inside limits you choose. Turn it up and it acts more; turn it down and it asks more.</p>
+  </div>
+  <div class="cols2">
+    <div class="card set">
+      <h3>Autonomy</h3>
+      <p class="help">How much the assistant handles without checking with you first.</p>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="lvl-name" id="lvlName">Balanced</span>
+        <span class="chip chip-live">● Live</span>
+      </div>
+      <input type="range" min="0" max="4" step="1" value="2" class="slider" id="autoLevel" aria-label="Autonomy level">
+      <div class="scale"><span>QUIET</span><span>HANDS-ON</span></div>
+      <div class="lvl-desc" id="lvlDesc"></div>
+    </div>
+    <div class="card set">
+      <h3>Auto-approve limit</h3>
+      <p class="help">Anything worth <b>less</b> than this each year, the assistant activates itself. Anything <b>above</b> it comes to you.</p>
+      <div style="font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:600;letter-spacing:-1px" class="num">
+        <span id="threshVal">15 000</span> <span style="font-size:var(--text-base);color:var(--general-muted-foreground)">kr./yr</span></div>
+      <input type="range" min="0" max="60000" step="2500" value="15000" class="slider" id="thresh" aria-label="Auto-approve limit">
+      <div class="scale"><span>0 KR.</span><span>60 000 KR.</span></div>
+      <p class="help" style="margin-top:10px" id="threshNote"></p>
+    </div>
+  </div>
+  <div class="card set" style="margin-top:18px">
+    <h3>Rules</h3>
+    <div class="rule"><div class="rb"><b>Always show the source</b><span>Every figure links back to an invoice line</span></div><button class="toggle on" role="switch" aria-checked="true" aria-label="Always show the source"></button></div>
+    <div class="rule"><div class="rb"><b>Ask before contacting a supplier</b><span>Drafts are prepared but never sent without you</span></div><button class="toggle on" role="switch" aria-checked="true" aria-label="Ask before contacting a supplier"></button></div>
+    <div class="rule"><div class="rb"><b>Hand large ones to an advisor</b><span>Anything over 50 000 kr./yr goes to a person, not a message</span></div><button class="toggle on" role="switch" aria-checked="true" aria-label="Hand large ones to an advisor"></button></div>
+    <div class="rule"><div class="rb"><b>Weekly invoice scan</b><span>Looks for new suppliers and price changes every Monday</span></div><button class="toggle on" role="switch" aria-checked="true" aria-label="Weekly invoice scan"></button></div>
+    <h3 style="margin-top:22px">Where we reach you</h3>
+    <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:12px" id="channels"></div>
+    <div class="lvl-desc" style="margin-top:18px" id="rulePreview"></div>
+  </div>
+</section>
+
+<!-- ===== REPORT ===== -->
+<section class="view" id="report" aria-labelledby="rph">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Proof, monthly</div>
+    <h1 id="rph">The report that lands in your inbox</h1>
+    <p>Delivered on the first of every month. Every line traces to an invoice, so it holds up when someone asks.</p>
+  </div>
+  <div class="card" style="overflow:hidden;max-width:880px;margin:0 auto">
+    <div class="hero" style="border-radius:0;box-shadow:none">
+      <div class="lab">Savings report · August</div>
+      <h2 style="font-family:var(--font-sans);font-size:var(--text-2xl);margin:8px 0 4px;letter-spacing:-1px">Nordvik Byg A/S</h2>
+      <div class="sub">To: Mette Hansen, Operations</div>
+      <div style="display:flex;gap:34px;flex-wrap:wrap;margin-top:18px">
+        <div><div class="lab">Realized this month</div><div style="font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600" class="num">18 900 kr.</div></div>
+        <div><div class="lab">Year to date</div><div style="font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600" class="num" id="repYtd">128 400 kr.</div></div>
+        <div><div class="lab">Still uncaptured</div><div style="font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;color:#ffb59a" class="num" id="repPot">214 600 kr.</div></div>
+      </div>
+    </div>
+    <div style="padding:28px 30px 32px">
+      <div style="padding:16px 18px;background:var(--general-muted);border-left:3px solid var(--general-primary);border-radius:0 var(--rounded-md) var(--rounded-md) 0;font-size:var(--text-sm);line-height:1.65;color:var(--general-muted-foreground)">
+        <b style="color:var(--general-foreground)">Mette —</b> you realized <b style="color:var(--general-foreground)">18 900 kr.</b> in August across four agreements. We also found four suppliers you already buy from where an agreement exists and isn't being used, worth about <b style="color:var(--general-foreground)">161 100 kr.</b> a year. Two can be activated in one click.
+      </div>
+      <h3 style="margin:24px 0 10px">Realized this month</h3>
+      <table class="data" id="repTable">
+        <thead><tr><th scope="col">Category</th><th scope="col">Agreement</th><th scope="col">Saved</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="dnote" style="margin-top:20px">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><b style="color:var(--general-foreground)">Calculated, not guessed.</b> Each figure is an invoice line multiplied by a fixed agreement rate — worked out in code, not written by a language model. The assistant only writes the wording around it.</span>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-std" id="btnShare">Share with the board</button>
+        <button class="btn btn-primary" id="btnPdf">Download PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===== EVALUATE (contextual, step 07) ===== -->
+<section class="view" id="evaluate" aria-labelledby="evh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Step 7 · Before you decide</div>
+    <h1 id="evh">Compare what you have with what's proposed</h1>
+    <p>Not just the price. Terms, effort and risk too — because a saving you never switch to isn't a saving.</p>
+  </div>
+  <div id="evalBody"></div>
+</section>
+
+<!-- ===== ACTIVATION (step 09) ===== -->
+<section class="view" id="activation" aria-labelledby="ach">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Step 9 · In progress</div>
+    <h1 id="ach">Switches under way</h1>
+    <p>Once you've decided, this is where it lives until the new rate shows up on an invoice. Nothing here needs chasing — we do that.</p>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="rowhead"><div class="h">Active switches</div><div class="tot"><span id="actSummary"></span></div></div>
+    <div id="actList"></div>
+  </div>
+  <div class="footnote">A switch that stalls silently is the fastest way to lose a customer's trust. If a supplier goes quiet for five days we chase them, and tell you we did.</div>
+</section>
+
+<!-- ===== MONITOR SPEND / LEAKAGE (step 10) ===== -->
+<section class="view" id="monitor" aria-labelledby="mnh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Step 10 · Verify</div>
+    <h1 id="mnh">Is the spend actually moving?</h1>
+    <p>An agreement only pays when people buy through it. This is what went outside your agreements last quarter — and who bought it.</p>
+  </div>
+  <div class="kpis" style="margin-top:0">
+    <div class="card kpi"><div class="t">Spend on agreement</div>
+      <div class="v"><span class="num" id="mOn">0</span> <small>kr.</small></div>
+      <div class="c up" id="mOnPct">—</div></div>
+    <div class="card kpi"><div class="t">Went elsewhere</div>
+      <div class="v" style="color:var(--chart-potential)"><span class="num" id="mOff">0</span> <small>kr.</small></div>
+      <div class="c warn" id="mOffPct">—</div></div>
+    <div class="card kpi"><div class="t">Cost of that</div>
+      <div class="v" style="color:var(--chart-potential)"><span class="num" id="mCost">0</span> <small>kr.</small></div>
+      <div class="c warn">at your agreed rates</div></div>
+    <div class="card kpi"><div class="t">People buying off-agreement</div>
+      <div class="v"><span class="num" id="mPeople">0</span></div>
+      <div class="c flat">across 3 sites</div></div>
+  </div>
+  <div class="cols" style="margin-top:18px">
+    <div class="card" style="overflow:hidden">
+      <div class="rowhead"><div class="h">Where it leaked</div><div class="tot">Last quarter</div></div>
+      <div id="leakList" style="padding:16px 22px 22px"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Who to talk to</h3></div>
+      <div style="padding:8px 22px 22px" id="leakPeople"></div>
+    </div>
+  </div>
+  <div class="footnote">This is the one view your customers can't build themselves — you can see the invoice, they can only see the total.</div>
+</section>
+
+<!-- ===== PROVE VALUE (step 11) ===== -->
+<section class="view" id="value" aria-labelledby="vlh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Step 11 · Proof</div>
+    <h1 id="vlh">Bonus, and the paperwork behind it</h1>
+    <p>Savings are only half the value. The volume bonus is real money paid back — and the supplier documentation is what you reach for when someone asks.</p>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <div class="ch"><h3>Customer bonus</h3><span class="spacer"></span>
+        <span class="chip chip-live" id="bonusChip">Accruing</span></div>
+      <div style="padding:8px 22px 22px">
+        <div class="dkpis" id="bonusKpis" style="margin-bottom:22px"></div>
+        <div id="bonusBars"></div>
+        <p class="muted" style="font-size:var(--text-xs);margin-top:16px;line-height:1.55">
+          Bonus accrues on qualifying spend through Advantage agreements and is paid annually in February. It sits outside the savings figure — it is money returned on top.</p>
+      </div>
+    </div>
+    <div class="card" style="overflow:hidden">
+      <div class="rowhead"><div class="h">Supplier &amp; compliance documents</div></div>
+      <div id="docList"></div>
+    </div>
+  </div>
+  <div class="footnote">Åpenhetsloven / the Transparency Act is the only obligation on this journey with a legal deadline behind it — the documents are collected as a by-product of buying, not as a separate exercise.</div>
+</section>
+
+<!-- ===== PRIORITISE NEXT (step 12) ===== -->
+<section class="view" id="next" aria-labelledby="nxh">
+  <div class="ph">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Step 12 · The loop</div>
+    <h1 id="nxh">What to take on next</h1>
+    <p>Ranked by what actually worked for you, not by what's easiest for us to sell. Picking one sends you back to the start of the loop with a sharper target.</p>
+  </div>
+  <div id="nextList"></div>
+  <div class="card" style="margin-top:18px;padding:22px;background:var(--brand-ice);border-color:transparent">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <span style="flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-sm);background:var(--surface);display:grid;place-items:center">
+        <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 5v4h4" stroke="var(--general-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span style="font-size:var(--text-sm);line-height:1.6">
+        <b>This is where the loop closes.</b> What you learned from the last switch — how long it took, whether the saving landed, how much resistance there was internally — changes the ranking here. The second time round is better informed than the first.</span>
+    </div>
+  </div>
+</section>
+
+
+      </div>
+  </div>
+</div>
+
+<!-- ============ OVERLAYS ============ -->
+<div class="overlay" id="overlay"></div>
+
+<aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="dTitle">
+  <div class="drawer-h">
+    <div><h3 id="dTitle"></h3><div class="dsub" id="dSub"></div></div>
+    <button class="dx" id="drawerClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="drawer-b">
+    <div class="dkpis" id="dKpis"></div>
+    <div id="dBars"></div>
+    <div id="dTable"></div>
+    <div class="dnote" id="dNote"></div>
+  </div>
+  <div class="drawer-f">
+    <button class="btn btn-secondary btn-std" id="dExport">Export CSV</button>
+    <button class="btn btn-primary" id="dOpen">Open in Dinero</button>
+  </div>
+</aside>
+
+<aside class="chat" id="chat" aria-hidden="true" aria-label="Assistant">
+  <div class="chat-h">
+    <span class="av" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4l1.6 3.6L17 9l-3 2.5.8 3.7L12 13l-2.8 2.2.8-3.7L7 9l3.4-1.4L12 4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
+    <span><b><span class="on" aria-hidden="true"></span>Purchasing assistant</b><span>Answers from your own invoices</span></span>
+    <button class="dx" id="chatClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="chat-log" id="chatLog"></div>
+  <div class="chips" id="chips">
+    <button class="qchip" data-q="I'd rather talk to a person">Talk to a person</button>
+    <button class="qchip" data-q="What have we saved this year?">What have we saved?</button>
+    <button class="qchip" data-q="What should I do next?">What should I do next?</button>
+    <button class="qchip" data-q="How do I know these numbers are right?">Are these numbers right?</button>
+    <button class="qchip" data-q="Which agreements are we not using?">Unused agreements</button>
+  </div>
+  <div class="chat-in">
+    <label class="sr" for="chatInput">Ask the assistant</label>
+    <input id="chatInput" placeholder="Ask about your spend…" autocomplete="off" spellcheck="false">
+    <button id="chatSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-3-6-7-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+  </div>
+</aside>
+
+<button class="fab" id="fab"><span class="nb" aria-hidden="true"></span>
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-11.9 7.6L3 21l1.9-6A8.5 8.5 0 1121 11.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Ask the assistant</button>
+
+<div class="mdl-ov" id="mdlOv" role="dialog" aria-modal="true" aria-labelledby="mdlH">
+  <div class="mdl">
+    <div class="eyebrow"><span class="pip" aria-hidden="true"></span>Draft prepared for you</div>
+    <h2 id="mdlH" style="font-size:var(--text-2xl);letter-spacing:-1px">Get your rate with <span id="mdlSupplier">Stark Byggecenter</span></h2>
+    <p class="muted" style="font-size:var(--text-sm);margin-top:10px">Written from your own spend. Change anything before it goes.</p>
+    <div class="ai-note"><span aria-hidden="true">✦</span><span id="mdlBasis"></span></div>
+    <label class="sr" for="draft">Message to supplier</label>
+    <textarea id="draft" spellcheck="false"></textarea>
+    <div class="mdl-act">
+      <button class="btn btn-ghost btn-sm" id="btnHuman">Let an advisor handle it</button>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary btn-std" id="btnSkip">Not this one</button>
+      <button class="btn btn-primary" id="btnSend">Send request</button>
+    </div>
+  </div>
+</div>
+
+<div class="cmd-ov" id="cmdOv">
+  <div class="cmd">
+    <div class="cmd-in">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+      <label class="sr" for="cmdInput">Search commands</label>
+      <input id="cmdInput" placeholder="Search pages and actions…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="cmd-list" id="cmdList" role="listbox"></div>
+  </div>
+</div>
+
+<div class="tour-hole" id="tourHole" aria-hidden="true"></div>
+<div class="tour-tip" id="tourTip" role="dialog" aria-labelledby="tTitle">
+  <div class="sn" id="tStepN"></div>
+  <h4 id="tTitle"></h4>
+  <p id="tBody"></p>
+  <div class="tour-nav">
+    <div class="dots" id="tDots"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" id="tSkip">Close</button>
+      <button class="btn btn-primary btn-sm" id="tNext">Next</button>
+    </div>
+  </div>
+</div>
+
+<div class="demobar" id="demobar">
+  <span class="pl" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" fill="currentColor"/></svg></span>
+  <span class="cap"><b id="demoTitle">Auto-demo</b><span id="demoCap"></span></span>
+  <button class="btn btn-sm" id="demoStop" style="background:#ffffff26;color:#fff">Stop</button>
+  <span class="prog" id="demoProg" style="width:0"></span>
+</div>
+
+<div class="chart-tip" id="tip" role="status" aria-live="off"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+"use strict";
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nf = new Intl.NumberFormat('da-DK', {maximumFractionDigits:0});
+const fmt = n => nf.format(Math.round(n));
+const kr  = n => fmt(n) + ' kr.';
+
+/* ---------------- data ---------------- */
+const state = {
+  source:'Dinero', invoices:1284, suppliers:47, spend:4820000,
+  realized:128400, gained:0, agrActive:4, agrTotal:12,
+  threshold:15000, autoLevel:2, view:'overview'
+};
+
+const OPPS = [
+  {id:'stark', name:'Stark Byggecenter', cat:'Building materials', spend:684000, inv:96, pot:61500, rate:'9%', state:'new',
+   icon:'<path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+   reason:['Read <b>96 invoices</b> from Dinero over 12 months.','Annual spend with this supplier: <code>684 000 kr.</code>, all at list price.','Matched to the <b>Advantage building-materials agreement</b> — same supplier, same delivery terms.','Applied the agreement rate: <code>9%</code> below the prices you paid.','Cross-checked 3 sample invoices. Variance under 2%.']},
+  {id:'ahlsell', name:'Ahlsell', cat:'Tools &amp; workwear', spend:412000, inv:74, pot:45300, rate:'11%', state:'new',
+   icon:'<path d="M14 7l3-3 3 3-3 3M4 20l8-8M6 6l4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+   reason:['Found <b>74 invoices</b> across tools, safety gear and workwear.','Annual spend: <code>412 000 kr.</code> with no agreement attached.','Matched to <b>Ahlsell Nordic</b> framework terms.','Rate difference: <code>11%</code> → <code>45 300 kr./yr</code>.']},
+  {id:'circlek', name:'Circle K Business', cat:'Fuel &amp; transport', spend:298000, inv:212, pot:23800, rate:'8%', state:'new',
+   icon:'<path d="M3 13l2-5h14l2 5M5 13h14v5H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="8" cy="18" r="1.4" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="18" r="1.4" stroke="currentColor" stroke-width="1.5"/>',
+   reason:['<b>212 fuel receipts</b> across 6 vehicles.','Annual spend: <code>298 000 kr.</code> on retail pump prices.','Business fuel card gives <code>8%</code> off list, invoiced monthly.','Also removes 212 receipts a year from your bookkeeping.']},
+  {id:'lyreco', name:'Lyreco', cat:'Office supplies', spend:96000, inv:41, pot:18200, rate:'19%', state:'new',
+   icon:'<rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+   reason:['<b>41 invoices</b> spread across 3 different office suppliers.','Consolidating onto the <b>Lyreco agreement</b> covers all of it.','Largest percentage gap of any category: <code>19%</code>.']},
+  {id:'dhl', name:'DHL Erhverv', cat:'Freight', spend:154000, inv:158, pot:12300, rate:'8%', state:'new',
+   icon:'<path d="M3 7h13v8H3zM16 10h3l2 2v3h-5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="17" r="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="17" r="1.5" stroke="currentColor" stroke-width="1.5"/>',
+   reason:['<b>158 shipments</b> booked at counter rates.','Annual freight spend: <code>154 000 kr.</code>','Advantage volume tier gives <code>8%</code> on the same zones.']}
+];
+
+const AGREEMENTS = [
+  {n:'Telenor Erhverv', c:'Telecom', used:92},
+  {n:'Q8 Fuel Card', c:'Fuel', used:71},
+  {n:'Contorland', c:'Office', used:38},
+  {n:'Jysk Erhverv', c:'Site furnishing', used:12}
+];
+
+const DEAD = [
+  {n:'Contorland', why:'Active since March · no orders in 4 months'},
+  {n:'Jysk Erhverv', why:'12% of eligible spend · rest goes elsewhere'}
+];
+
+const ALERTS = [
+  {id:'a1', sev:'high', title:'Stark raised prices 6% in July', cat:'Building materials',
+   body:'Your unit prices moved before the agreement was applied. Activating it now claws the increase back and more.',
+   delta:'+18 400 kr./yr', action:'Fix this'},
+  {id:'a2', sev:'high', title:'Jysk Erhverv agreement barely used', cat:'Site furnishing',
+   body:'Only 12% of eligible spend goes through it. Three people are ordering the same items elsewhere at list price.',
+   delta:'+9 700 kr./yr', action:'See who'},
+  {id:'a3', sev:'info', title:'Telecom agreement renews in 24 days', cat:'Renewal',
+   body:'Market rates have fallen since you signed. We can renegotiate before it auto-renews.',
+   delta:'Deadline: 3 Sep', action:'Prepare'}
+];
+
+const PERC = [
+  {n:'Fuel &amp; transport', p:78, over:false, you:'8,42 kr./l', mkt:'8,96 kr./l'},
+  {n:'Telecom', p:74, over:false, you:'186 kr./line', mkt:'214 kr./line'},
+  {n:'Freight', p:61, over:false, you:'41 kr./parcel', mkt:'44 kr./parcel'},
+  {n:'Office supplies', p:44, over:true, you:'index 106', mkt:'index 100'},
+  {n:'Building materials', p:31, over:true, you:'index 112', mkt:'index 100'},
+  {n:'Tools &amp; workwear', p:28, over:true, you:'index 114', mkt:'index 100'}
+];
+
+const FEED = [
+  {t:'today 06:14', h:false, txt:'<b>New supplier match.</b> Ahlsell now has an agreement in your category — you spent 412 000 kr. there last year.', amt:'+45 300'},
+  {t:'2 days ago', h:false, txt:'<b>Agreement going unused.</b> Jysk Erhverv is running at 12% of eligible spend.', amt:'+9 700'},
+  {t:'1 week ago', h:false, txt:'<b>Rate improved.</b> Your Telenor Erhverv rate went up 2 points at the Nordic renegotiation.', amt:'+4 100'},
+  {t:'2 weeks ago', h:false, txt:'<b>Q8 fuel card activated.</b> First invoice confirms the 6% rate is live.', amt:'+11 200'}
+];
+
+const MONTHS = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+const SERIES = {
+  realized: [3200,4100,5200,6800,7900,8600,9400,10800,11900,12600,13400,14500],
+  potential:[21400,20900,20100,19800,19200,18900,18400,18200,17900,17600,17800,17400],
+  peer:     [9800,10200,11100,11800,12400,13100,13600,14200,14800,15100,15500,15900]
+};
+const MONTH_DETAIL = MONTHS.map((m,i)=>({
+  m, tot:SERIES.realized[i],
+  rows:[['Telecom','Telenor Erhverv',Math.round(SERIES.realized[i]*0.38)],
+        ['Fuel','Q8 Fuel Card',Math.round(SERIES.realized[i]*0.31)],
+        ['Office','Contorland',Math.round(SERIES.realized[i]*0.19)],
+        ['Site furnishing','Jysk Erhverv',Math.round(SERIES.realized[i]*0.12)]]
+}));
+
+const CONNECTORS = [
+  ['dinero','Dinero','Accounting · Visma','#4353ff','D',1284],
+  ['economic','e-conomic','Accounting · Visma','#0f7b4f','e',1640],
+  ['vismanet','Visma.net','ERP · Visma','#c4361e','V',2310],
+  ['fortnox','Fortnox','Accounting · SE','#1b7a3e','F',1420],
+  ['tripletex','Tripletex','Accounting · NO','#2f8fbf','T',1105],
+  ['bank','Bank account','PSD2 / Open Banking','#5b4bd6','B',890]
+];
+const COMPANIES = [
+  ['Nordvik Byg A/S','CVR 38 42 11 07 · København · 34 staff'],
+  ['Nordvik Entreprise ApS','CVR 41 09 55 12 · Glostrup · 12 staff'],
+  ['Nordvik Anlæg A/S','CVR 33 87 64 19 · Aarhus · 61 staff'],
+  ['Nordvik Service ApS','CVR 40 22 19 88 · Taastrup · 8 staff'],
+  ['Nordisk Byggeteknik A/S','CVR 29 44 71 60 · Aalborg · 47 staff']
+];
+
+const openOpps = () => OPPS.filter(o => o.state === 'new');
+const totalPot  = () => openOpps().reduce((s,o) => s + o.pot, 0);
+
+/* ---------------- onboarding ---------------- */
+let selCo = null;
+const selConns = new Set(['dinero']);
+
+function renderCompanies(){
+  const q = ($('#coSearch').value || '').toLowerCase();
+  const rows = COMPANIES.filter(c => c[0].toLowerCase().includes(q) || c[1].toLowerCase().includes(q));
+  $('#coList').innerHTML = rows.length ? rows.map(c => `
+    <div class="corow${c[0]===selCo?' sel':''}" data-co="${c[0]}" role="option" tabindex="0" aria-selected="${c[0]===selCo}">
+      <span class="cologo">${c[0].slice(0,2).toUpperCase()}</span>
+      <span class="coinfo"><b>${c[0]}</b><span>${c[1]}</span></span>
+      ${c[0]===selCo?'<svg class="cochk" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+    </div>`).join('') : '<div class="coempty">No match — try another name</div>';
+  $$('#coList [data-co]').forEach(r => {
+    const pick = () => { selCo = r.dataset.co; renderCompanies(); $('#onbNext1').disabled = false; };
+    r.addEventListener('click', pick);
+    r.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(); } });
+  });
+}
+
+function renderConnectors(){
+  $('#conns').innerHTML = CONNECTORS.map(c => `
+    <button class="conn${selConns.has(c[0])?' sel':''}" data-cn="${c[0]}" aria-pressed="${selConns.has(c[0])}">
+      <span class="cn-ic" style="background:${c[3]}">${c[4]}</span>
+      <span class="cn-b"><b>${c[1]}</b><span>${c[2]}</span></span>
+      <span class="cn-chk" aria-hidden="true"></span>
+    </button>`).join('') + `
+    <button class="conn upload" data-cn="upload" aria-pressed="false">
+      <span class="cn-ic" style="background:#ffffff26"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M12 16V4m0 0l-4 4m4-4l4 4M5 20h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="cn-b"><b>Upload invoices instead</b><span>CSV / XML / PDF — we read them for you</span></span>
+      <span class="cn-chk" aria-hidden="true"></span>
+    </button>`;
+  $$('#conns [data-cn]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.cn;
+    selConns.has(id) ? selConns.delete(id) : selConns.add(id);
+    b.classList.toggle('sel', selConns.has(id));
+    b.setAttribute('aria-pressed', String(selConns.has(id)));
+    $('#onbNext2').disabled = selConns.size === 0;
+    const first = CONNECTORS.find(c => selConns.has(c[0]));
+    if(first){ state.source = first[1]; state.invoices = first[5]; }
+  }));
+  $('#onbNext2').disabled = selConns.size === 0;
+}
+
+/* ---------- expected purchasing profile (step 2) ---------- */
+/* Dummy but plausible: 34-staff Danish residential contractor, ~4.2m kr. addressable.
+   Deliberately below the 4.82m the scan later reads — the estimate is meant to be beaten. */
+const SYNTH = [
+  {id:'mat', n:'Building materials', est:1850000, conf:'hi',
+   why:'Timber, concrete, insulation — the biggest line for contractors your size'},
+  {id:'tool', n:'Tools &amp; workwear', est:640000, conf:'md',
+   why:'Assumes 22 of your 34 staff work on site'},
+  {id:'fuel', n:'Fuel &amp; transport', est:520000, conf:'hi',
+   why:'11 vans on your CVR, at the Danish average for diesel'},
+  {id:'rent', n:'Machine &amp; equipment rental', est:480000, conf:'md',
+   why:'Lifts, scaffolding, site huts — varies most between companies like yours'},
+  {id:'frg', n:'Freight &amp; delivery', est:310000, conf:'lo',
+   why:'Barely visible in registry data — our weakest guess'},
+  {id:'tel', n:'Telecom &amp; IT', est:264000, conf:'hi',
+   why:'34 mobile lines and 3 site connections'}
+];
+const CONF = {hi:['Confident','hi'], md:['Fair guess',''], lo:['Rough guess','lo']};
+const SY_X = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.4" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 17.5l11-11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const SY_UNDO = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 5v4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+const syTotal = () => SYNTH.reduce((s,r) => s + (r.off ? 0 : r.val), 0);
+const syTouched = () => SYNTH.filter(r => r.edited || r.off).length;
+
+function renderSynth(){
+  SYNTH.forEach(r => { if(r.val === undefined){ r.val = r.est; r.edited = false; r.off = false; } });
+  const box = $('#synthList');
+  if(!box.dataset.built){
+    box.dataset.built = '1';
+    box.innerHTML = `
+      <div class="sy-head"><span class="sp">What we think you buy</span>
+        <span class="c1">Per year</span><span class="c2">How sure</span><span class="c3"></span></div>
+      <div class="sy-wrap" id="syWrap">
+        <div class="sy-list" id="syList"></div>
+        <span class="sy-more" id="syMore">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="syMoreN"></span></span>
+      </div>
+      <div class="sy-foot">
+        <span class="l" id="syNote"></span>
+        <span class="t"><span id="syT">0</span><em>kr./yr</em></span>
+      </div>`;
+  }
+  $('#syList').innerHTML = SYNTH.map(r => {
+    const [label, cls] = CONF[r.conf];
+    return `<div class="sy-row${r.edited?' edited':''}${r.off?' off':''}">
+      <span class="sy-b"><b>${r.n}</b>
+        <span>${r.off ? 'You told us you don’t buy this — we’ll leave it out' : r.why}</span></span>
+      <label class="sy-amt">
+        <span class="sr">${r.n} — estimated spend per year, in kroner</span>
+        <input type="text" inputmode="numeric" autocomplete="off" data-sy="${r.id}"
+          value="${fmt(r.val)}"${r.off?' disabled':''}><em>kr.</em>
+      </label>
+      <span class="sy-tag${r.edited?' mine':(cls?' '+cls:'')}">${r.edited?'Your figure':label}</span>
+      <button class="sy-x" data-off="${r.id}"
+        aria-label="${r.off?'Put '+r.n+' back':'We don’t buy '+r.n}">${r.off?SY_UNDO:SY_X}</button>
+    </div>`;
+  }).join('');
+
+  $$('#syList [data-sy]').forEach(inp => {
+    const r = SYNTH.find(x => x.id === inp.dataset.sy);
+    inp.addEventListener('focus', () => inp.select());
+    inp.addEventListener('input', () => {
+      const v = parseInt(inp.value.replace(/\D/g,''), 10);
+      r.val = isNaN(v) ? 0 : v;
+      syFoot();
+    });
+    inp.addEventListener('change', () => { r.edited = r.val !== r.est; renderSynth(); });
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); inp.blur(); } });
+  });
+  $$('#syList [data-off]').forEach(b => b.addEventListener('click', () => {
+    const r = SYNTH.find(x => x.id === b.dataset.off);
+    r.off = !r.off;
+    renderSynth();
+  }));
+
+  const l = $('#syList');
+  if(!l.dataset.wired){ l.dataset.wired = '1'; l.addEventListener('scroll', sySeen); }
+  syFoot(); sySeen();
+}
+
+/* the list scrolls on shorter screens — say so, rather than clipping a row silently */
+function sySeen(){
+  const l = $('#syList'), fold = l.scrollTop + l.clientHeight;
+  $('#syWrap').classList.toggle('at-end', fold >= l.scrollHeight - 4);
+  const hidden = $$('#syList .sy-row').filter(r => r.offsetTop + r.offsetHeight > fold + 2).length;
+  $('#syMoreN').textContent = hidden + (hidden === 1 ? ' more category' : ' more categories');
+}
+
+function syFoot(){
+  $('#syT').textContent = fmt(syTotal());
+  const n = syTouched();
+  $('#syNote').innerHTML = n
+    ? `You’ve corrected <b style="color:#fff">${n} of ${SYNTH.length}</b> — we’ll use your figures and keep estimating the rest.
+       <button class="linkbtn" id="syReset">Back to our guess</button>`
+    : `Click any figure to change it, or <b style="color:#fff">⊘</b> if it’s not something you buy at all.
+       Real invoice numbers replace all of this the moment you connect.`;
+  const rs = $('#syReset');
+  if(rs) rs.addEventListener('click', () => {
+    SYNTH.forEach(r => { r.val = r.est; r.edited = false; r.off = false; });
+    renderSynth();
+  });
+  $('#pNext').textContent = n ? 'Save and continue →' : 'Looks about right →';
+}
+
+function onbShow(id){
+  $$('.onb-step').forEach(s => s.classList.remove('show'));
+  $('#'+id).classList.add('show');
+  const idx = id==='onb1'?0 : id==='onbP'?1 : id==='onb2'?2 : 3;
+  $$('#stepper .snode').forEach((n,i) => {
+    n.classList.toggle('on', i<=idx); n.classList.toggle('cur', i===idx);
+  });
+}
+
+function countTo(el, target, dur){
+  if(RM){ el.textContent = fmt(target); return; }
+  const t0 = performance.now(); dur = dur || 900;
+  const tick = now => {
+    const p = Math.min(1,(now-t0)/dur), e = 1-Math.pow(1-p,3);
+    el.textContent = fmt(target*e);
+    if(p<1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function runScan(){
+  onbShow('onb3');
+  const dur = RM ? 500 : 3400, t0 = performance.now(), C = 333;
+  const arc=$('#scanArc'), pct=$('#scanPct'), line=$('#scanLine');
+  const lines = ['Connecting to '+state.source+'…','Reading supplier invoices…','Categorising spend…','Matching suppliers to agreements…','Benchmarking against similar companies…'];
+  (function tick(t){
+    const p = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-p,2);
+    arc.style.strokeDashoffset = C*(1-e);
+    pct.textContent = Math.round(e*100)+'%';
+    $('#cInv').textContent = fmt(e*state.invoices);
+    $('#cSup').textContent = fmt(e*state.suppliers);
+    $('#cAgr').textContent = fmt(e*state.agrTotal);
+    line.textContent = lines[Math.min(lines.length-1, Math.floor(p*lines.length))];
+    if(p<1) requestAnimationFrame(tick); else setTimeout(revealFound, 420);
+  })(t0);
+}
+
+function revealFound(){
+  onbShow('onb4');
+  countTo($('#revPot'), totalPot());
+  countTo($('#revSup'), OPPS.length, 700);
+  $('#revList').innerHTML = OPPS.slice(0,3).map((o,i)=>`
+    <div class="rf" style="animation-delay:${.2+i*.16}s">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="nm">${o.name}<br><span style="font-size:11px;color:#9cabc4">${o.cat}</span></span>
+      <span class="am">+${fmt(o.pot)} kr.</span>
+    </div>`).join('');
+  if(!RM) setTimeout(confetti, 500);
+}
+
+function enterApp(){
+  $('#onb').classList.add('hide');
+  $('#app').style.visibility = 'visible';
+  $('#syncLabel').textContent = 'Synced with ' + state.source;
+  setTimeout(() => { $('#onb').style.display = 'none'; bootApp(); }, 550);
+}
+
+$('#coSearch').addEventListener('input', renderCompanies);
+$('#onbNext1').addEventListener('click', () => { onbShow('onbP'); renderSynth(); });
+$('#pBack').addEventListener('click', () => onbShow('onb1'));
+$('#pNext').addEventListener('click', () => onbShow('onb2'));
+$('#onbBack').addEventListener('click', () => onbShow('onbP'));
+$('#onbNext2').addEventListener('click', runScan);
+$('#skipOnb').addEventListener('click', enterApp);
+$('#enterApp').addEventListener('click', () => { enterApp(); setTimeout(openTour, 800); });
+renderCompanies(); renderConnectors();
+</script>
+<script>
+"use strict";
+/* ---------------- navigation ---------------- */
+function go(v){
+  state.view = v;
+  $$('.view').forEach(s => s.classList.toggle('show', s.id === v));
+  $$('.nav a[data-view]').forEach(a => a.classList.toggle('active', a.dataset.view === v));
+  $('#scroll').scrollTop = 0;
+  if(v==='overview'){ countUp(); drawChart(); renderGoals(); renderFeed(); }
+  if(v==='opportunities') renderOpps();
+  if(v==='agreements') renderAgreements();
+  if(v==='alerts') renderAlerts();
+  if(v==='benchmark'){ countUp(); renderPerc(); }
+  if(v==='automation'){ syncAuto(); syncThreshold(); renderChannels(); }
+  if(v==='report') renderReport();
+}
+$$('.nav a[data-view]').forEach(a => {
+  a.addEventListener('click', () => go(a.dataset.view));
+  a.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(a.dataset.view); } });
+});
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]');
+  if(g) go(g.dataset.go);
+});
+
+function countUp(){
+  $$('[data-count]').forEach(el => {
+    if(el.dataset.done) return; el.dataset.done = 1;
+    countTo(el, +el.dataset.count, 1100);
+  });
+}
+
+/* ---------------- chart ---------------- */
+const PAD = {l:54, r:64, t:14, b:30}, CW = 720, CH = 260, CMAX = 24000;
+const sx = i => PAD.l + (i/(MONTHS.length-1)) * (CW-PAD.l-PAD.r);
+const sy = v => PAD.t + (1 - v/CMAX) * (CH-PAD.t-PAD.b);
+const dpath = a => a.map((v,i) => (i?'L':'M') + sx(i).toFixed(1) + ' ' + sy(v).toFixed(1)).join(' ');
+
+function drawChart(){
+  const svg = $('#chart'); if(!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  svg.innerHTML = '<desc id="chartDesc">Twelve month line chart of realized savings against savings not yet captured, with a peer average reference line.</desc>';
+  const add = (tag, at, txt) => {
+    const el = document.createElementNS(NS, tag);
+    for(const k in at) el.setAttribute(k, at[k]);
+    if(txt != null) el.textContent = txt;
+    svg.appendChild(el); return el;
+  };
+  for(let g=0; g<=4; g++){
+    const v = CMAX/4*g, y = sy(v);
+    add('line',{x1:PAD.l,x2:CW-PAD.r,y1:y,y2:y,stroke:'#e8e8e8','stroke-width':1});
+    add('text',{x:PAD.l-10,y:y+4,'text-anchor':'end',fill:'#8a8a8a','font-size':11,'font-family':'var(--font-mono)'}, fmt(v));
+  }
+  MONTHS.forEach((m,i) => add('text',{x:sx(i),y:CH-PAD.b+20,'text-anchor':'middle',fill:'#8a8a8a','font-size':11,'font-family':'var(--font-body)'}, m));
+
+  add('path',{d:dpath(SERIES.peer),fill:'none',stroke:'var(--chart-peer)','stroke-width':2,'stroke-dasharray':'5 5','stroke-linecap':'round'});
+  add('text',{x:CW-PAD.r+8,y:sy(SERIES.peer.at(-1))+4,fill:'#6b6b6b','font-size':11,'font-family':'var(--font-body)'},'Peers');
+
+  ['potential','realized'].forEach(k => {
+    const col = k==='realized' ? 'var(--chart-realized)' : 'var(--chart-potential)';
+    add('path',{d:dpath(SERIES[k])+` L ${sx(11)} ${sy(0)} L ${sx(0)} ${sy(0)} Z`,fill:col,opacity:.08,stroke:'none'});
+    add('path',{d:dpath(SERIES[k]),fill:'none',stroke:col,'stroke-width':2,'stroke-linecap':'round','stroke-linejoin':'round'});
+    add('circle',{cx:sx(11),cy:sy(SERIES[k].at(-1)),r:5,fill:col,stroke:'#fff','stroke-width':2});
+    add('text',{x:CW-PAD.r+8,y:sy(SERIES[k].at(-1))+4,fill:col,'font-size':11,'font-weight':600,'font-family':'var(--font-body)'},
+      k==='realized' ? 'Realized' : 'Not captured');
+  });
+
+  const cross = add('line',{x1:0,x2:0,y1:PAD.t,y2:CH-PAD.b,stroke:'#b0b0b0','stroke-width':1,'stroke-dasharray':'3 3',opacity:0});
+  const dots = ['realized','potential'].map(k => add('circle',{cx:0,cy:0,r:5,
+    fill: k==='realized'?'var(--chart-realized)':'var(--chart-potential)',stroke:'#fff','stroke-width':2,opacity:0}));
+  const tip = $('#tip'), bw = (CW-PAD.l-PAD.r)/MONTHS.length;
+
+  MONTHS.forEach((m,i) => {
+    const band = add('rect',{class:'hit',x:sx(i)-bw/2,y:PAD.t,width:bw,height:CH-PAD.t-PAD.b});
+    band.addEventListener('mousemove', e => {
+      cross.setAttribute('x1',sx(i)); cross.setAttribute('x2',sx(i)); cross.setAttribute('opacity',1);
+      dots[0].setAttribute('cx',sx(i)); dots[0].setAttribute('cy',sy(SERIES.realized[i])); dots[0].setAttribute('opacity',1);
+      dots[1].setAttribute('cx',sx(i)); dots[1].setAttribute('cy',sy(SERIES.potential[i])); dots[1].setAttribute('opacity',1);
+      tip.innerHTML = `<b>${m}</b>
+        <div class="r"><span><i style="background:var(--chart-realized)"></i>Realized</span><b>${fmt(SERIES.realized[i])}</b></div>
+        <div class="r"><span><i style="background:var(--chart-potential)"></i>Not captured</span><b>${fmt(SERIES.potential[i])}</b></div>
+        <div class="r"><span><i style="background:var(--chart-peer)"></i>Peer avg.</span><b>${fmt(SERIES.peer[i])}</b></div>`;
+      tip.classList.add('show');
+      tip.style.left = Math.min(e.clientX+14, innerWidth-220) + 'px';
+      tip.style.top  = (e.clientY-70) + 'px';
+    });
+    band.addEventListener('mouseleave', () => {
+      cross.setAttribute('opacity',0); dots.forEach(d => d.setAttribute('opacity',0)); tip.classList.remove('show');
+    });
+    band.addEventListener('click', () => openMonth(i));
+  });
+  renderTable();
+}
+function renderTable(){
+  $('#tableBody').innerHTML = MONTHS.map((m,i) =>
+    `<tr><td>${m}</td><td>${fmt(SERIES.realized[i])}</td><td>${fmt(SERIES.potential[i])}</td><td>${fmt(SERIES.peer[i])}</td></tr>`).join('');
+}
+$('#btnTable').addEventListener('click', e => {
+  const v = $('#tableView'), open = v.hasAttribute('hidden');
+  v.toggleAttribute('hidden', !open);
+  e.target.setAttribute('aria-expanded', String(open));
+  e.target.textContent = open ? 'Hide table' : 'Show as table';
+});
+
+/* ---------------- rings + goals ---------------- */
+function ring(host, pct, color, label){
+  const r=34, c=2*Math.PI*r, off=c*(1-Math.min(pct,100)/100);
+  host.innerHTML = `<svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true">
+    <circle cx="42" cy="42" r="${r}" fill="none" stroke="var(--general-muted)" stroke-width="9"/>
+    <circle cx="42" cy="42" r="${r}" fill="none" stroke="${color}" stroke-width="9" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${RM?off:c}" transform="rotate(-90 42 42)">
+      ${RM?'':`<animate attributeName="stroke-dashoffset" from="${c}" to="${off}" dur="1.1s" fill="freeze"/>`}
+    </circle></svg><div class="lbl" style="color:${color}">${label}</div>`;
+}
+function renderGoals(){
+  const host = $('#goals'); if(host.dataset.done) return; host.dataset.done = 1;
+  const capture = Math.round(state.realized/(state.realized+totalPot())*100);
+  host.innerHTML = `
+    <div class="goal clickable" data-goal="capture" tabindex="0" role="button">
+      <div class="ring" id="gA"></div>
+      <div class="gt"><b>Capture rate</b><span>Of everything available to you</span>
+        <div class="mini">Target 70% · <b style="color:var(--chart-potential)">${capture}% today</b></div></div>
+    </div>
+    <div class="goal clickable" data-goal="coverage" tabindex="0" role="button">
+      <div class="ring" id="gB"></div>
+      <div class="gt"><b>Agreement coverage</b><span>Agreements in active use</span>
+        <div class="mini"><b class="num">${state.agrActive}</b> of <b class="num">${state.agrTotal}</b> available</div></div>
+    </div>`;
+  ring($('#gA'), capture, 'var(--chart-potential)', capture+'%');
+  ring($('#gB'), state.agrActive/state.agrTotal*100, 'var(--sentiment-positive)', Math.round(state.agrActive/state.agrTotal*100)+'%');
+  $$('#goals .goal').forEach(g => {
+    const f = () => openGoal(g.dataset.goal);
+    g.addEventListener('click', f);
+    g.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); f(); } });
+  });
+}
+function refreshGoals(){ const h=$('#goals'); if(h){ h.dataset.done=''; renderGoals(); } }
+
+/* ---------------- feed ---------------- */
+function renderFeed(){
+  $('#feed').innerHTML = FEED.map((f,i) => `
+    <div class="ev clickable" data-ev="${i}" tabindex="0" role="button">
+      <span class="ico" style="background:${f.h?'var(--brand-ice)':'var(--general-muted)'}">
+        <svg viewBox="0 0 24 24" fill="none"><path d="${f.h?'M16 21v-2a4 4 0 00-8 0v2M12 11a4 4 0 100-8 4 4 0 000 8z':'M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5L12 3z'}" stroke="${f.h?'var(--general-accent)':'var(--general-primary)'}" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+      <span class="bd"><p>${f.txt}</p><span class="mt"><span>${f.t}</span><span class="src">${state.source}</span></span></span>
+      ${f.amt?`<span class="amt">${f.amt}</span>`:''}
+    </div>`).join('');
+  $$('#feed .ev').forEach(e => e.addEventListener('click', () => openFeed(+e.dataset.ev)));
+}
+
+/* ---------------- opportunities ---------------- */
+function renderOpps(){
+  const list = $('#oppList'); list.innerHTML = '';
+  if(!OPPS.length || !OPPS.some(o => o.state !== 'skipped')){
+    list.innerHTML = '<div class="empty"><div class="big">✓</div><b>Nothing left open</b><span>We keep reading your invoices and will tell you when something new turns up.</span></div>';
+  }
+  OPPS.forEach(o => {
+    const auto = o.pot <= state.threshold && o.state === 'new';
+    const el = document.createElement('div');
+    el.className = 'opp' + (o.state !== 'new' ? ' done' : '');
+    el.dataset.id = o.id; el.style.maxHeight = '520px';
+    const chip = o.state==='new'   ? (auto?'<span class="chip chip-new">Auto-approve</span>':'')
+              : o.state==='sent'   ? '<span class="chip chip-sent">✓ Request sent</span>'
+              : o.state==='human'  ? '<span class="chip chip-warn">Advisor handling</span>'
+              :                      '<span class="chip chip-sent">Skipped</span>';
+    el.innerHTML = `
+      <div class="opp-main">
+        <span class="oic"><svg viewBox="0 0 24 24" fill="none">${o.icon}</svg></span>
+        <div class="obody">
+          <h4>${o.name} ${chip}</h4>
+          <p>You buy at list price. Agreement rate is <span class="hl">${o.rate}</span> lower.
+             <span class="src">${fmt(o.inv)} invoices</span></p>
+          <button class="reason-toggle" data-rt="${o.id}" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            How we worked this out</button>
+          <div class="reason" id="rs-${o.id}"><div class="reason-inner">
+            ${o.reason.map((r,i) => {
+              const last = i === o.reason.length-1;
+              return `<div class="rstep"><span class="rn" style="background:${last?'#d9f2ef':'var(--brand-ice)'};color:${last?'var(--sentiment-positive)':'var(--general-primary)'}">${last?'✓':i+1}</span><span class="rt">${r}</span></div>`;
+            }).join('')}
+          </div></div>
+        </div>
+        <div class="oright">
+          <span class="save">+${fmt(o.pot)}<span>kr./year</span></span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--general-muted-foreground)">${fmt(o.spend)} kr. spent</span>
+        </div>
+      </div>`;
+    const right = el.querySelector('.oright');
+    if(o.state === 'new'){
+      const b = document.createElement('button');
+      b.className = 'btn btn-primary btn-sm';
+      b.textContent = auto ? 'Approve' : 'Draft message';
+      b.addEventListener('click', () => openModal(o.id));
+      right.appendChild(b);
+    } else if(o.state !== 'skipped'){
+      const s = document.createElement('span');
+      s.className = 'chip-done';
+      s.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>In progress';
+      right.appendChild(s);
+    }
+    list.appendChild(el);
+  });
+  $$('#oppList [data-rt]').forEach(t => t.addEventListener('click', () => {
+    const r = $('#rs-'+t.dataset.rt), open = !t.classList.contains('open');
+    t.classList.toggle('open', open);
+    t.setAttribute('aria-expanded', String(open));
+    r.style.maxHeight = open ? r.scrollHeight+'px' : '0px';
+  }));
+  $('#oppTotal').textContent = kr(totalPot()) + '/yr';
+  $('#navOpp').textContent = openOpps().length;
+}
+</script>
+<script>
+"use strict";
+/* ---------------- agreements ---------------- */
+function renderAgreements(){
+  const l = $('#agrList');
+  l.innerHTML = AGREEMENTS.map((a,i) => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--general-muted)">
+      <div style="display:flex;align-items:baseline;gap:8px;font-size:var(--text-sm)">
+        <b>${a.n}</b><span class="muted" style="font-size:var(--text-xs)">${a.c}</span>
+        <span class="spacer"></span>
+        <span class="mono" style="font-weight:600;color:${a.used<50?'var(--chart-potential)':'var(--sentiment-positive)'}">${a.used}%</span>
+        ${a.used<50?'<span class="chip chip-warn">Underused</span>':''}
+      </div>
+      <div class="bar ${a.used<50?'low':''}"><i data-w="${a.used}"></i></div>
+    </div>`).join('');
+  setTimeout(() => $$('#agrList .bar i').forEach(b => b.style.width = b.dataset.w+'%'), 60);
+  $('#agrSummary').textContent = `${state.agrActive} active · ${AGREEMENTS.filter(a=>a.used<50).length} barely used`;
+
+  $('#agrDead').innerHTML = DEAD.map(d => `
+    <div style="display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--general-muted)">
+      <span class="oic" style="width:38px;height:38px"><span class="mono" style="font-size:11px;color:var(--general-muted-foreground)">${d.n.slice(0,2).toUpperCase()}</span></span>
+      <span style="flex:1;min-width:0"><b style="font-size:var(--text-sm)">${d.n}</b>
+        <span style="display:block;font-size:11px;color:var(--general-muted-foreground)">${d.why}</span></span>
+      <button class="btn btn-soft btn-sm btn-std" data-buyer="${d.n}">Contact buyer</button>
+    </div>`).join('');
+  $$('#agrDead [data-buyer]').forEach(b => b.addEventListener('click', () =>
+    toast('Message sent', 'Your buyer has been asked about ' + b.dataset.buyer + '.')));
+
+  const T = [['Sep','Stark agreement goes live',true],['Sep','Telecom renewal',false],['Oct','Ahlsell onboarding',false],['Nov','Quarterly review',false]];
+  $('#agrTimeline').innerHTML = T.map(t => `
+    <div style="display:flex;gap:12px;padding:10px 0;align-items:flex-start">
+      <span style="width:10px;height:10px;margin-top:5px;border-radius:var(--rounded-full);flex:0 0 auto;
+        background:${t[2]?'var(--sentiment-positive)':'var(--surface)'};border:2px solid ${t[2]?'var(--sentiment-positive)':'var(--general-border)'}"></span>
+      <span style="flex:1"><b style="font-size:var(--text-sm)">${t[1]}</b>
+        <span style="display:block;font-family:var(--font-mono);font-size:11px;color:var(--general-muted-foreground)">${t[0]}</span></span>
+    </div>`).join('');
+}
+
+/* ---------------- alerts ---------------- */
+function renderAlerts(){
+  const list = $('#alertList');
+  const open = ALERTS.filter(a => !a.done);
+  if(!open.length){
+    list.innerHTML = '<div class="empty"><div class="big">✓</div><b>Nothing needs you</b><span>We keep watching and will flag anything that moves.</span></div>';
+  } else {
+    list.innerHTML = ALERTS.map(a => {
+      if(a.done) return '';
+      const col = a.sev==='high' ? 'var(--general-destructive)' : 'var(--general-primary)';
+      const wash = a.sev==='high' ? '#fde8e8' : 'var(--brand-ice)';
+      const chipC = a.sev==='high' ? 'chip-alert' : 'chip-new';
+      return `<div class="opp" data-alert="${a.id}" style="max-height:240px">
+        <div class="opp-main">
+          <span class="oic" style="background:${wash};border-color:transparent">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16h.01M5 21h14a1 1 0 00.9-1.5l-7-13a1 1 0 00-1.8 0l-7 13A1 1 0 005 21z" stroke="${col}" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+          <div class="obody">
+            <h4>${a.title} <span class="chip ${chipC}">${a.sev==='high'?'Needs a decision':'Heads up'}</span></h4>
+            <p><span class="hl">${a.cat}</span> · ${a.body}</p>
+          </div>
+          <div class="oright">
+            <span class="save" style="color:${col};font-size:var(--text-base)">${a.delta}</span>
+            <button class="btn btn-primary btn-sm" data-res="${a.id}">${a.action}</button>
+          </div>
+        </div></div>`;
+    }).join('');
+  }
+  $$('#alertList [data-res]').forEach(b => b.addEventListener('click', () => resolveAlert(b.dataset.res)));
+  $('#alertCount').textContent = open.length;
+  $('#navAlerts').textContent = open.length;
+  $('#bellBadge').textContent = open.length;
+  $('#bellBadge').style.display = open.length ? '' : 'none';
+}
+function resolveAlert(id){
+  const a = ALERTS.find(x => x.id === id), row = $(`[data-alert="${id}"]`);
+  if(!row || row.dataset.busy) return; row.dataset.busy = 1;
+  const btn = row.querySelector('[data-res]');
+  btn.disabled = true; btn.textContent = 'Working…';
+  setTimeout(() => {
+    a.done = true;
+    row.classList.add('done');
+    row.querySelector('.oright').innerHTML =
+      '<span class="chip-done"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Handled</span>';
+    FEED.unshift({t:'just now', h:false, txt:`<b>${a.title}</b> — handled. We'll confirm once the supplier replies.`, amt:''});
+    toast('Handled', a.title);
+    confetti();
+    setTimeout(() => { row.classList.add('removing'); setTimeout(renderAlerts, 520); }, 900);
+  }, 1100);
+}
+
+/* ---------------- benchmark ---------------- */
+function renderPerc(){
+  const h = $('#percList');
+  h.innerHTML = PERC.map((p,i) => {
+    const col = p.over ? 'var(--chart-potential)' : 'var(--sentiment-positive)';
+    return `<div class="dbar clickable" data-perc="${i}" tabindex="0" role="button" style="margin-bottom:14px">
+      <span class="dl" style="color:var(--general-foreground)">${p.n}</span>
+      <span class="dt" style="height:22px;border-radius:var(--rounded-sm);position:relative">
+        <i style="width:0;background:${col};border-radius:var(--rounded-sm)" data-w="${p.p}"></i>
+        <span style="position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:#cfcfcf"></span>
+      </span>
+      <span class="dv" style="color:${col}">${p.p}th<span style="display:block;font-family:var(--font-body);font-size:10px;font-weight:400;color:var(--general-muted-foreground)">${p.over?'above market':'below market'}</span></span>
+    </div>`;
+  }).join('');
+  setTimeout(() => $$('#percList i').forEach(i => i.style.width = i.dataset.w+'%'), 60);
+  $$('#percList [data-perc]').forEach(r => {
+    const f = () => openPerc(+r.dataset.perc);
+    r.addEventListener('click', f);
+    r.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); f(); } });
+  });
+}
+
+/* ---------------- automation ---------------- */
+const LVL = [
+  ['Quiet','Stays out of the way and only tells you about big changes.'],
+  ['Careful','Surfaces the top few things and always waits for you.'],
+  ['Balanced','Shows the best next actions and handles the small ones itself.'],
+  ['Proactive','Activates small savings on its own and proposes the rest.'],
+  ['Hands-on','Works inside your rules and reports back afterwards.']
+];
+function syncAuto(){
+  const s = $('#autoLevel'); state.autoLevel = +s.value;
+  $('#lvlName').textContent = LVL[state.autoLevel][0];
+  $('#lvlDesc').innerHTML = '<b>'+LVL[state.autoLevel][0]+'</b> — '+LVL[state.autoLevel][1];
+  const p = state.autoLevel/4*100;
+  s.style.background = `linear-gradient(90deg,var(--general-primary) ${p}%,var(--general-muted) ${p}%)`;
+}
+function syncThreshold(){
+  const s = $('#thresh'); state.threshold = +s.value;
+  $('#threshVal').textContent = fmt(state.threshold);
+  const p = state.threshold/60000*100;
+  s.style.background = `linear-gradient(90deg,var(--general-primary) ${p}%,var(--general-muted) ${p}%)`;
+  const n = OPPS.filter(o => o.pot <= state.threshold).length;
+  $('#threshNote').innerHTML = `Right now the assistant would handle <b>${n} of ${OPPS.length}</b> on its own. The rest come to you.`;
+  $('#rulePreview').innerHTML = `The assistant activates anything worth up to <b>${kr(state.threshold)}</b> a year by itself, drafts everything above that for your approval, hands anything over 50 000 kr. to an advisor, and reaches you by <b>email and Teams</b>.`;
+  if(state.view === 'opportunities') renderOpps();
+}
+function renderChannels(){
+  const h = $('#channels'); if(h.dataset.done) return; h.dataset.done = 1;
+  const CH = [['Email',true],['Teams',true],['SMS',false],['Monthly PDF',true]];
+  h.innerHTML = CH.map(c => `<button class="qchip${c[1]?' on':''}" data-ch aria-pressed="${c[1]}"
+    style="${c[1]?'border-color:var(--general-primary);color:var(--general-primary);background:var(--brand-ice)':''}">${c[0]}</button>`).join('');
+  $$('#channels [data-ch]').forEach(b => b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(on));
+    b.style.cssText = on ? 'border-color:var(--general-primary);color:var(--general-primary);background:var(--brand-ice)' : '';
+  }));
+}
+$('#autoLevel').addEventListener('input', syncAuto);
+$('#thresh').addEventListener('input', syncThreshold);
+$$('.toggle').forEach(t => t.addEventListener('click', () => {
+  const on = !t.classList.contains('on');
+  t.classList.toggle('on', on); t.setAttribute('aria-checked', String(on));
+}));
+
+/* ---------------- report ---------------- */
+function renderReport(){
+  $('#repYtd').textContent = kr(state.realized);
+  $('#repPot').textContent = kr(totalPot());
+  const rows = [['Telecom','Telenor Erhverv',7200],['Fuel','Q8 Fuel Card',5900],['Office','Contorland',3600],['Site furnishing','Jysk Erhverv',2200]];
+  $('#repTable').querySelector('tbody').innerHTML =
+    rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${fmt(r[2])} kr.</td></tr>`).join('') +
+    `<tr style="font-weight:600"><td>Total</td><td></td><td>${fmt(rows.reduce((s,r)=>s+r[2],0))} kr.</td></tr>`;
+}
+$('#btnShare').addEventListener('click', () => toast('Shared','Sent to 3 recipients.'));
+$('#btnPdf').addEventListener('click', () => { toast('PDF ready','August report downloaded.'); confetti(); });
+
+/* ---------------- drawer ---------------- */
+let lastFocus = null;
+function openDrawer(c){
+  lastFocus = document.activeElement;
+  $('#dTitle').textContent = c.title;
+  $('#dSub').textContent = c.sub || '';
+  $('#dKpis').innerHTML = (c.kpis||[]).map(k =>
+    `<div class="dk"><small>${k.l}</small><b style="color:${k.c||'var(--general-foreground)'}">${k.v}</b></div>`).join('');
+  const mx = c.bars ? Math.max(...c.bars.map(b => b.v)) : 1;
+  $('#dBars').innerHTML = (c.bars||[]).map(b =>
+    `<div class="dbar"><span class="dl">${b.l}</span><span class="dt"><i style="width:${Math.max(4,Math.round(b.v/mx*100))}%;background:${b.c||'var(--general-primary)'}"></i></span><span class="dv">${b.d||fmt(b.v)}</span></div>`).join('');
+  $('#dTable').innerHTML = c.rows ? `<table class="data" style="margin-top:16px">
+    <thead><tr>${(c.cols||[]).map((h,i)=>`<th scope="col">${h}</th>`).join('')}</tr></thead>
+    <tbody>${c.rows.map(r => `<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table>` : '';
+  $('#dNote').innerHTML = c.note ? `<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>${c.note}</span>` : '';
+  $('#drawer').classList.add('open');
+  $('#drawer').setAttribute('aria-hidden','false');
+  $('#overlay').classList.add('show');
+  setTimeout(() => $('#drawerClose').focus(), 80);
+}
+function closeDrawer(){
+  $('#drawer').classList.remove('open');
+  $('#drawer').setAttribute('aria-hidden','true');
+  $('#overlay').classList.remove('show');
+  if(lastFocus) lastFocus.focus();
+}
+$('#drawerClose').addEventListener('click', closeDrawer);
+$('#overlay').addEventListener('click', () => { closeDrawer(); closeChat(); });
+$('#dExport').addEventListener('click', () => toast('Exported','Downloaded as CSV.'));
+$('#dOpen').addEventListener('click', () => toast('Opening '+state.source,'The invoices open in your accounting system.'));
+
+function openMonth(i){
+  const M = MONTH_DETAIL[i];
+  openDrawer({title:'Realized savings — '+M.m, sub:'The invoice lines behind this month',
+    kpis:[{l:'Realized',v:kr(M.tot),c:'var(--sentiment-positive)'},{l:'Agreements',v:M.rows.length},{l:'Source',v:state.source}],
+    bars:M.rows.map(r => ({l:r[0], v:r[2], c:'var(--chart-realized)'})),
+    cols:['Category','Agreement','Saved'],
+    rows:M.rows.map(r => [r[0], r[1], fmt(r[2])+' kr.']),
+    note:'Each line is an invoice total multiplied by the agreed rate. Traceable back to '+state.source+'.'});
+}
+function openPerc(i){
+  const p = PERC[i], col = p.over ? 'var(--chart-potential)' : 'var(--sentiment-positive)';
+  openDrawer({title:p.n.replace('&amp;','&')+' — against the market',
+    sub: p.over ? 'You pay more than comparable companies here' : 'You pay less than comparable companies here',
+    kpis:[{l:'Percentile',v:p.p+'th',c:col},{l:'Your price',v:p.you},{l:'Market',v:p.mkt}],
+    cols:['Reference','Basis','Price'],
+    rows:[['Your price','From your invoices',p.you],['Market average','17 000 companies',p.mkt],['Best quartile','Same size &amp; sector','—']],
+    note:'Aggregated and anonymised. No individual company is identifiable.'});
+}
+function openGoal(which){
+  if(which === 'capture'){
+    const cap = Math.round(state.realized/(state.realized+totalPot())*100);
+    openDrawer({title:'Capture rate', sub:'Share of available savings you actually realize',
+      kpis:[{l:'Today',v:cap+'%',c:'var(--chart-potential)'},{l:'Target',v:'70%'},{l:'Gap',v:kr(totalPot()),c:'var(--chart-potential)'}],
+      bars:OPPS.filter(o=>o.state==='new').map(o => ({l:o.name, v:o.pot, c:'var(--chart-potential)'})),
+      cols:['Supplier','Category','Uncaptured'],
+      rows:openOpps().map(o => [o.name, o.cat, fmt(o.pot)+' kr.']),
+      note:'Every point of capture rate is worth roughly 3 400 kr. a year at your spend level.'});
+  } else {
+    openDrawer({title:'Agreement coverage', sub:state.agrActive+' of '+state.agrTotal+' agreements in active use',
+      kpis:[{l:'Active',v:state.agrActive},{l:'Available',v:state.agrTotal},{l:'Coverage',v:Math.round(state.agrActive/state.agrTotal*100)+'%'}],
+      bars:AGREEMENTS.map(a => ({l:a.n, v:a.used, d:a.used+'%', c:a.used<50?'var(--chart-potential)':'var(--sentiment-positive)'})),
+      cols:['Agreement','Category','Usage'],
+      rows:AGREEMENTS.map(a => [a.n, a.c, a.used+'%']),
+      note:'An agreement below 50% usage usually means someone in the company is still ordering elsewhere.'});
+  }
+}
+function openFeed(i){
+  const f = FEED[i];
+  openDrawer({title:'Activity', sub:f.t,
+    kpis:[{l:'Value',v:f.amt||'—',c:'var(--sentiment-positive)'},{l:'Source',v:state.source}],
+    cols:['Detail','',''], rows:[[f.txt.replace(/<[^>]+>/g,''),'','']],
+    note:'Traceable to the underlying invoice lines.'});
+}
+function openKpi(i){
+  if(i === 0) return openMonth(11);
+  if(i === 1) return openGoal('coverage');
+  if(i === 2) return go('opportunities');
+  return go('benchmark');
+}
+$$('[data-kpi]').forEach(k => {
+  const f = () => openKpi(+k.dataset.kpi);
+  k.addEventListener('click', f);
+  k.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); f(); } });
+});
+</script>
+<script>
+"use strict";
+/* ---------------- draft modal ---------------- */
+let activeOpp = null, modalFocus = null;
+const draftFor = o => `Hi,
+
+We're Nordvik Byg A/S (CVR 38 42 11 07) and we buy from you regularly — around ${kr(o.spend)} over the last twelve months, across ${fmt(o.inv)} invoices, mostly ${o.cat.replace('&amp;','and').toLowerCase()}.
+
+We're part of the Advantage Nordic purchasing group, which has a framework agreement with you. We'd like our account moved onto those terms — roughly ${o.rate} against the prices we're paying today.
+
+Could you confirm our account is linked to the Advantage agreement, and from which date the new prices apply?
+
+Kind regards,
+Mette Hansen
+Operations, Nordvik Byg A/S`;
+
+function openModal(id){
+  const o = OPPS.find(x => x.id === id); activeOpp = id; modalFocus = document.activeElement;
+  $('#mdlSupplier').textContent = o.name;
+  $('#mdlBasis').innerHTML = `Based on <b>${kr(o.spend)}</b> spent with this supplier over 12 months across <b>${fmt(o.inv)}</b> invoices. The rate difference is <b>${o.rate}</b>.`;
+  $('#draft').value = draftFor(o);
+  $('#mdlOv').classList.add('show');
+  setTimeout(() => $('#draft').focus(), 80);
+}
+function closeModal(){
+  $('#mdlOv').classList.remove('show');
+  if(modalFocus) modalFocus.focus();
+}
+$('#mdlOv').addEventListener('click', e => { if(e.target === $('#mdlOv')) closeModal(); });
+$('#draft').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && (e.metaKey || e.ctrlKey)){ e.preventDefault(); $('#btnSend').click(); }
+});
+$('#btnSend').addEventListener('click', () => {
+  const o = OPPS.find(x => x.id === activeOpp);
+  o.state = 'sent';
+  const gain = Math.round(o.pot * 0.4);
+  state.realized += gain; state.gained += gain; state.agrActive += 1;
+  FEED.unshift({t:'just now', h:false, txt:`<b>Request sent to ${o.name}.</b> We'll chase in 5 days if nothing comes back, and confirm once the rate is live.`, amt:'+'+fmt(o.pot)});
+  closeModal(); refreshAll();
+  toast('Sent to ' + o.name, kr(o.pot) + ' a year now in progress');
+  confetti();
+});
+$('#btnSkip').addEventListener('click', () => {
+  const o = OPPS.find(x => x.id === activeOpp);
+  o.state = 'skipped';
+  FEED.unshift({t:'just now', h:false, txt:`<b>${o.name} skipped.</b> We won't suggest it again unless your spend there changes.`, amt:''});
+  closeModal(); refreshAll();
+  toast('Skipped', o.name + ' won\'t be suggested again');
+});
+$('#btnHuman').addEventListener('click', () => {
+  const o = OPPS.find(x => x.id === activeOpp);
+  o.state = 'human';
+  FEED.unshift({t:'just now', h:true, txt:`<b>Passed to your advisor.</b> Lars Bech is taking over ${o.name} — worth ${kr(o.pot)}, so a person handles it. He'll call Thursday.`, amt:'+'+fmt(o.pot)});
+  closeModal(); refreshAll();
+  toast('Lars Bech will handle it', o.name + ' — he\'ll call Thursday');
+});
+
+function refreshAll(){
+  $('#kPot').textContent = fmt(totalPot());
+  $('#kPotSub').textContent = openOpps().length + ' suppliers ready to act on';
+  $('#kAgr').textContent = state.agrActive;
+  $('#heroPot').textContent = fmt(totalPot()); $('#heroPot').dataset.done = 1;
+  const open = openOpps();
+  if(open.length){
+    $('#banTitle').textContent = open.length + ' suppliers you already buy from have an agreement you\'re not using.';
+    $('#banSub').innerHTML = 'Worth about <b class="num">' + kr(totalPot()) + '</b> a year.';
+  } else {
+    $('#actionbar').querySelector('.flag').textContent = '✓ All caught up';
+    $('#actionbar').querySelector('.flag').style.background = '#d9f2ef';
+    $('#banTitle').textContent = 'Everything we found is now in progress.';
+    $('#banSub').innerHTML = 'We keep reading your invoices and will tell you when something new turns up.';
+  }
+  renderOpps(); renderFeed(); refreshGoals();
+  if(state.view === 'report') renderReport();
+}
+
+/* ---------------- toast + confetti ---------------- */
+function toast(title, body){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="ti" style="background:var(--sentiment-positive)"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><b>${title}</b>${body?' · '+body:''}</span>`;
+  $('#toasts').appendChild(t);
+  requestAnimationFrame(() => t.classList.add('in'));
+  setTimeout(() => { t.classList.remove('in'); setTimeout(() => t.remove(), 300); }, 3600);
+}
+function confetti(){
+  if(RM) return;
+  const cv = $('#confetti'), ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const cols = ['#1b64dc','#009689','#73abff','#ff9b3d','#dbe9ff'];
+  const P = Array.from({length:80}, (_,i) => ({
+    x: innerWidth/2 + (Math.random()-.5)*240, y: innerHeight*.34,
+    vx:(Math.random()-.5)*9, vy: Math.random()*-11-4, g:.34,
+    s: 5+Math.random()*6, c: cols[i%cols.length], r: Math.random()*6, vr:(Math.random()-.5)*.4, a:1
+  }));
+  let f = 0;
+  (function loop(){
+    ctx.clearRect(0,0,cv.width,cv.height); f++;
+    P.forEach(p => {
+      p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr; if(f>60) p.a -= .025;
+      ctx.save(); ctx.globalAlpha = Math.max(p.a,0);
+      ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); ctx.restore();
+    });
+    if(f < 110) requestAnimationFrame(loop); else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+/* ---------------- assistant ---------------- */
+const log = () => $('#chatLog');
+let chatBooted = false;
+function openChat(){
+  $('#chat').classList.add('open'); $('#chat').setAttribute('aria-hidden','false');
+  $('#overlay').classList.add('show');
+  if(!chatBooted){ chatBooted = true;
+    botSay(`<b>Hi Mette.</b> I read your invoices from ${state.source} and answer from what's actually in them. Ask me anything, or pick one below.`); }
+  setTimeout(() => $('#chatInput').focus(), 300);
+}
+function closeChat(){
+  $('#chat').classList.remove('open'); $('#chat').setAttribute('aria-hidden','true');
+  $('#overlay').classList.remove('show');
+}
+function userSay(t){
+  const d = document.createElement('div'); d.className = 'msg user';
+  d.innerHTML = `<span class="ma">M</span><span class="bub">${t}</span>`;
+  log().appendChild(d); log().scrollTop = log().scrollHeight;
+}
+function botSay(html){
+  const d = document.createElement('div'); d.className = 'msg bot';
+  d.innerHTML = `<span class="ma"><svg viewBox="0 0 24 24" fill="none" width="15" height="15"><path d="M12 4l1.6 3.6L17 9l-3 2.5.8 3.7L12 13l-2.8 2.2.8-3.7L7 9l3.4-1.4L12 4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span><span class="bub">${html}</span>`;
+  log().appendChild(d); log().scrollTop = log().scrollHeight;
+  d.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => { go(b.dataset.act); closeChat(); }));
+}
+const THINK = a => `<details class="think"><summary>How I worked that out</summary><div class="tl">${a.map(x=>'• '+x).join('<br>')}</div></details>`;
+function reply(q){
+  q = q.toLowerCase();
+  if(/(person|human|advisor|adviser|call|talk to|speak to|someone)/.test(q))
+    return `Of course — you can always talk to a person. Your advisor is <b>Lars Bech</b>. Want him to call today, or shall I book fifteen minutes?
+      <span class="act"><button onclick="toast('Call booked','Lars Bech will ring you today.')">Call me today</button><button onclick="toast('Booked','15 minutes with Lars is in your calendar.')">Book 15 min</button></span>`;
+  if(/(saved|saving|this year|ytd|how much)/.test(q))
+    return `You've realized <span class="figure">${kr(state.realized)}</span> so far this year across ${state.agrActive} active agreements.
+      ${THINK(['Summed the agreed rate against each invoice line','Cross-checked against your '+state.source+' postings','Compared to the same period last year'])}`;
+  if(/(next|should i do|potential|opportunit|more|left)/.test(q))
+    return `There are <b>${openOpps().length} suppliers</b> you already buy from where an agreement exists and isn't being used — worth <b>${kr(totalPot())}</b> a year. The biggest is <b>${openOpps()[0] ? openOpps()[0].name : '—'}</b>.
+      <span class="act"><button data-act="opportunities">Show me →</button></span>`;
+  if(/(unused|not using|never|dormant|idle|agreement)/.test(q))
+    return `Two agreements are barely used: <b>Contorland</b> at 38% and <b>Jysk Erhverv</b> at 12% of eligible spend. That usually means someone is still ordering elsewhere.
+      <span class="act"><button data-act="agreements">See usage →</button></span>`;
+  if(/(right|sure|trust|accurate|how do you know|correct|made up|hallucinat)/.test(q))
+    return `<b>I don't guess the numbers.</b> Each figure is an invoice line multiplied by a fixed agreement rate — worked out in code. I only write the wording around it, and every figure links back to a document in ${state.source}.
+      ${THINK(['Figures calculated deterministically, not generated','Language model writes the explanation only','Every line traceable to an invoice'])}`;
+  if(/(benchmark|compare|others|peers|market|percentile)/.test(q))
+    return `Across 17 000 Nordic companies you sit in the <b>71st percentile</b> — better than most. You're strongest on fuel and telecom, and paying above market on building materials and workwear.
+      <span class="act"><button data-act="benchmark">See the breakdown →</button></span>`;
+  if(/(alert|price|rose|increase|change|watch)/.test(q))
+    return `Three things moved this month. The one worth acting on: <b>Stark raised prices 6% in July</b> before your agreement was applied.
+      <span class="act"><button data-act="alerts">See alerts →</button></span>`;
+  if(/(login|log in|why|effort|time)/.test(q))
+    return `You shouldn't need to. I read the invoices, work out what's worth doing, and send it to you by email or Teams with the message already drafted. This dashboard is for when you want to look.`;
+  if(/(hi|hello|hey|morning)/.test(q))
+    return `Hello. Try asking what you've saved, what to do next, or which agreements aren't being used.`;
+  return `I answer from Nordvik's own invoices. Try:<ul><li>"What have we saved this year?"</li><li>"What should I do next?"</li><li>"Which agreements are we not using?"</li></ul>`;
+}
+function respond(q){
+  const d = document.createElement('div'); d.className = 'msg bot'; d.id = 'typing';
+  d.innerHTML = `<span class="ma"></span><span class="bub"><span class="typing"><i></i><i></i><i></i></span></span>`;
+  log().appendChild(d); log().scrollTop = log().scrollHeight;
+  setTimeout(() => { const t = $('#typing'); if(t) t.remove(); botSay(reply(q)); }, RM ? 200 : 700 + Math.random()*400);
+}
+function ask(q){ openChat(); userSay(q); respond(q); }
+$('#chatSend').addEventListener('click', () => {
+  const i = $('#chatInput'), v = i.value.trim(); if(!v) return;
+  i.value = ''; userSay(v); respond(v);
+});
+$('#chatInput').addEventListener('keydown', e => { if(e.key === 'Enter') $('#chatSend').click(); });
+$$('#chips .qchip').forEach(c => c.addEventListener('click', () => ask(c.dataset.q)));
+$('#fab').addEventListener('click', openChat);
+$('#chatClose').addEventListener('click', closeChat);
+
+/* ---------------- command palette ---------------- */
+const CMD = [
+  {l:'Dashboard', v:'overview'}, {l:'Opportunities', v:'opportunities'},
+  {l:'Agreements &amp; usage', v:'agreements'}, {l:'Alerts', v:'alerts'},
+  {l:'Benchmark against peers', v:'benchmark'}, {l:'How much it does on its own', v:'automation'},
+  {l:'Monthly report', v:'report'},
+  {l:'Ask the assistant', f:openChat}, {l:'Start guided tour', f:() => openTour()},
+  {l:'Run auto-demo', f:() => startDemo()}
+];
+let cmdSel = 0, cmdF = CMD;
+function openCmd(){ $('#cmdOv').classList.add('show'); $('#cmdInput').value = ''; cmdF = CMD; cmdSel = 0; renderCmd(); setTimeout(()=>$('#cmdInput').focus(),60); }
+function closeCmd(){ $('#cmdOv').classList.remove('show'); }
+function renderCmd(){
+  const list = $('#cmdList');
+  list.innerHTML = cmdF.length ? cmdF.map((c,i) => `<div class="cmd-it${i===cmdSel?' sel':''}" data-i="${i}" role="option">
+    <span class="ci"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>${c.l}<span class="ck">↵</span></div>`).join('')
+    : '<div class="cmd-empty">No match</div>';
+  $$('#cmdList .cmd-it').forEach(it => it.addEventListener('click', () => runCmd(+it.dataset.i)));
+}
+function runCmd(i){ const c = cmdF[i]; if(!c) return; closeCmd(); c.v ? go(c.v) : c.f(); }
+$('#cmdInput').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  cmdF = CMD.filter(c => c.l.toLowerCase().includes(q)); cmdSel = 0; renderCmd();
+});
+$('#cmdInput').addEventListener('keydown', e => {
+  if(e.key === 'ArrowDown'){ e.preventDefault(); cmdSel = Math.min(cmdSel+1, cmdF.length-1); renderCmd(); }
+  else if(e.key === 'ArrowUp'){ e.preventDefault(); cmdSel = Math.max(cmdSel-1, 0); renderCmd(); }
+  else if(e.key === 'Enter'){ e.preventDefault(); runCmd(cmdSel); }
+});
+$('#cmdOv').addEventListener('click', e => { if(e.target === $('#cmdOv')) closeCmd(); });
+$('#cmdkBtn').addEventListener('click', openCmd);
+$('#bellBtn').addEventListener('click', () => go('alerts'));
+addEventListener('keydown', e => {
+  if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); openCmd(); }
+  if(e.key === 'Escape'){ closeCmd(); closeModal(); closeDrawer(); closeChat(); if(tourOn) closeTour(); if(demoOn) stopDemo(); }
+});
+
+/* ---------------- tour ---------------- */
+const TOUR = [
+  {v:'overview', s:'#actionbar', t:'The one thing worth doing', b:'Not a feed of everything — the single action with the most money behind it, and what it is worth.'},
+  {v:'overview', s:'#heroCard', t:'Realized against uncaptured', b:'What you have actually saved, next to what is still sitting there. The gap is the point.'},
+  {v:'overview', s:'#chart', t:'Twelve months, both lines', b:'Hover for any month, click to open the invoices behind it. The dashed line is companies like yours.'},
+  {v:'opportunities', s:'#oppList .opp', t:'Every suggestion shows its working', b:'Open “how we worked this out” — invoice counts, spend, the rate applied. Nothing is a black box.'},
+  {v:'opportunities', s:'#oppList .opp .oright', t:'One click, message already written', b:'The draft to the supplier is built from your own spend. Edit it, send it, or hand it to an advisor.'},
+  {v:'alerts', s:'#alertList', t:'Things that moved', b:'Price rises, agreements going unused, renewals coming up — caught against your own history.'},
+  {v:'benchmark', s:'#percList', t:'Where you stand', b:'Anonymous comparison against 17 000 Nordic companies, per category.'},
+  {v:'automation', s:'#autoLevel', t:'You set the limits', b:'Decide how much it does on its own. Small things handled, big things brought to you.'}
+];
+let ti = 0, tourOn = false;
+function openTour(){ tourOn = true; ti = 0; $('#tourTip').classList.add('show'); $('#tourHole').style.opacity = '1'; showStep(); }
+function closeTour(){ tourOn = false; $('#tourTip').classList.remove('show'); $('#tourHole').style.opacity = '0'; }
+function showStep(){
+  const s = TOUR[ti]; go(s.v);
+  $('#tStepN').textContent = `Step ${ti+1} of ${TOUR.length}`;
+  $('#tTitle').textContent = s.t; $('#tBody').textContent = s.b;
+  $('#tNext').textContent = ti === TOUR.length-1 ? 'Done' : 'Next';
+  $('#tDots').innerHTML = TOUR.map((_,i) => `<i class="${i===ti?'on':''}"></i>`).join('');
+  setTimeout(() => {
+    const el = document.querySelector(s.s); if(!el) return placeTip(null);
+    el.scrollIntoView({block:'center', behavior: RM ? 'auto' : 'smooth'});
+    setTimeout(() => {
+      const r = el.getBoundingClientRect(), p = 8, h = $('#tourHole');
+      h.style.left = (r.left-p)+'px'; h.style.top = (r.top-p)+'px';
+      h.style.width = (r.width+p*2)+'px'; h.style.height = (r.height+p*2)+'px';
+      placeTip(r);
+    }, RM ? 10 : 340);
+  }, RM ? 10 : 140);
+}
+function placeTip(r){
+  const tip = $('#tourTip'), tw = 316, th = tip.offsetHeight || 180, m = 16;
+  let left, top;
+  if(!r){ left = (innerWidth-tw)/2; top = (innerHeight-th)/2; }
+  else { top = r.bottom+14; if(top+th > innerHeight-m) top = Math.max(m, r.top-th-14);
+         left = Math.min(Math.max(m, r.left), innerWidth-tw-m); }
+  tip.style.left = left+'px'; tip.style.top = top+'px';
+}
+$('#tNext').addEventListener('click', () => {
+  if(ti < TOUR.length-1){ ti++; showStep(); }
+  else { closeTour(); toast('That\'s the tour','Everything here is clickable — have a poke around.'); }
+});
+$('#tSkip').addEventListener('click', closeTour);
+$('#tourBtn').addEventListener('click', openTour);
+addEventListener('resize', () => { if(tourOn) showStep(); });
+
+/* ---------------- auto-demo ---------------- */
+const DEMO = [
+  {t:2400, ti:'The dashboard', c:'Realized savings next to what is still uncaptured', a:()=>go('overview')},
+  {t:3000, ti:'Twelve months', c:'Both lines, plus how companies like yours are doing', a:()=>{go('overview'); drawChart();}},
+  {t:3000, ti:'Opportunities', c:'Suppliers you already buy from, at the wrong price', a:()=>go('opportunities')},
+  {t:3200, ti:'It shows its working', c:'Invoice counts, spend, the rate applied — no black box', a:()=>{const t=document.querySelector('[data-rt]'); if(t && !t.classList.contains('open')) t.click();}},
+  {t:3600, ti:'One click', c:'The message to the supplier is already written from your data', a:()=>{const b=document.querySelector('#oppList .opp [data-id], #oppList .opp .btn-primary'); if(b) b.click();}},
+  {t:3200, ti:'Or hand it to a person', c:'Both markets asked for a human — so that stays on the table', a:()=>{const b=$('#btnHuman'); if(b && $('#mdlOv').classList.contains('show')) b.click();}},
+  {t:3000, ti:'Alerts', c:'Price rises and agreements quietly going unused', a:()=>go('alerts')},
+  {t:3000, ti:'Benchmark', c:'Where you sit against 17 000 Nordic companies', a:()=>go('benchmark')},
+  {t:3000, ti:'You set the limits', c:'How much it does on its own is your call', a:()=>go('automation')},
+  {t:3200, ti:'Ask it anything', c:'Answers come from your own invoices', a:()=>ask('What should I do next?')},
+  {t:2600, ti:'That\'s the loop', c:'Read invoices → find the gap → act → prove it', a:()=>{closeChat(); go('overview');}}
+];
+let demoOn = false, demoT = [];
+function startDemo(){
+  if(demoOn) return; demoOn = true; closeTour();
+  $('#demobar').classList.add('show');
+  let acc = 0, total = DEMO.reduce((a,b) => a+b.t, 0), el = 0;
+  DEMO.forEach(s => {
+    demoT.push(setTimeout(() => {
+      s.a && s.a();
+      $('#demoTitle').textContent = s.ti; $('#demoCap').textContent = s.c;
+      el += s.t; $('#demoProg').style.width = (el/total*100)+'%';
+    }, acc));
+    acc += s.t;
+  });
+  demoT.push(setTimeout(stopDemo, acc+400));
+}
+function stopDemo(){
+  demoOn = false; demoT.forEach(clearTimeout); demoT = [];
+  $('#demobar').classList.remove('show'); $('#demoProg').style.width = '0';
+  closeModal();
+}
+$('#demoBtn').addEventListener('click', () => demoOn ? stopDemo() : startDemo());
+$('#demoStop').addEventListener('click', stopDemo);
+
+/* ---------------- boot ---------------- */
+let booted = false;
+function bootApp(){
+  if(booted) return; booted = true;
+  countUp(); drawChart(); renderGoals(); renderFeed(); renderOpps();
+  syncAuto(); syncThreshold(); renderChannels();
+  $('#navOpp').textContent = openOpps().length;
+  $('#navAlerts').textContent = ALERTS.filter(a=>!a.done).length;
+  $('#banValue').textContent = kr(totalPot());
+}
+addEventListener('resize', () => { if(booted && state.view === 'overview') drawChart(); });
+</script>
+<script>
+"use strict";
+/* =====================================================================
+   Journey extension — steps 7, 9, 10, 11, 12
+   Added after mapping the 12-step journey: the AI lane and the build
+   were both empty after "Decide". These are the post-decision screens.
+   ===================================================================== */
+
+const ACTIVATIONS = [
+  {id:'q8', name:'Q8 Fuel Card', cat:'Fuel', value:11200, stage:3, started:'12 days ago',
+   steps:['Request sent','Supplier confirmed','Rate live','First invoice verified'],
+   note:'Verified on invoice #4468 — the 6% is showing up. Nothing left to do.'},
+  {id:'telenor', name:'Telenor Erhverv', cat:'Telecom', value:4100, stage:2, started:'6 days ago',
+   steps:['Request sent','Supplier confirmed','Rate live','First invoice verified'],
+   note:'Rate goes live on your next billing cycle, 1 September. We will check the invoice and confirm.'},
+  {id:'stark', name:'Stark Byggecenter', cat:'Building materials', value:61500, stage:1, started:'2 days ago',
+   steps:['Request sent','Supplier confirmed','Rate live','First invoice verified'],
+   note:'No reply yet. We chase automatically on day 5 — that is Thursday.'}
+];
+
+const LEAK = [
+  {cat:'Building materials', off:184000, on:96000, cost:16600, who:'Site 2 · Jonas P.'},
+  {cat:'Tools &amp; workwear', off:121000, on:38000, cost:13300, who:'Workshop · Rikke M.'},
+  {cat:'Office supplies', off:41000, on:12000, cost:7800,  who:'Office · Mette H.'},
+  {cat:'Freight',           off:29000, on:112000, cost:2300, who:'Site 1 · Anders K.'}
+];
+const PEOPLE = [
+  {n:'Jonas P.', r:'Site foreman, Site 2', off:184000, why:'Buys at the trade counter — never sees the portal'},
+  {n:'Rikke M.', r:'Workshop lead', off:121000, why:'Orders by phone from a rep she has used for years'},
+  {n:'Anders K.', r:'Site manager, Site 1', off:29000, why:'Mostly on agreement — small ad-hoc top-ups'}
+];
+
+const BONUS = {accrued:34800, paid:52400, rate:'1,8%', next:'February',
+  years:[{y:'2024', v:41200}, {y:'2025', v:52400}, {y:'2026 (accruing)', v:34800}]};
+
+const DOCS = [
+  {n:'Transparency Act statement', s:'Åpenhetsloven · 2026', tag:'Required', st:'ready'},
+  {n:'Supplier due diligence — Stark', s:'Updated June 2026', tag:'Compliance', st:'ready'},
+  {n:'Supplier due diligence — Ahlsell', s:'Awaiting supplier', tag:'Compliance', st:'wait'},
+  {n:'Environmental certifications', s:'11 suppliers · 9 on file', tag:'ESG', st:'part'},
+  {n:'Framework agreement terms', s:'All active agreements', tag:'Contract', st:'ready'}
+];
+
+const NEXT = [
+  {n:'Tools &amp; workwear', why:'Biggest leak, and the Ahlsell agreement is already open', val:45300, effort:'Low', conf:'High',
+   basis:'121 000 kr. went off-agreement last quarter. One conversation with the workshop lead covers most of it.'},
+  {n:'Building materials', why:'Largest spend, but the switch is already in flight', val:61500, effort:'Medium', conf:'High',
+   basis:'Wait for the Stark activation to land before starting another materials change.'},
+  {n:'Insurance', why:'Untouched category, renewal window opens in 11 weeks', val:28000, effort:'Medium', conf:'Medium',
+   basis:'No agreement in place. Comparable companies save 12–16% here.'},
+  {n:'IT &amp; electronics', why:'Small spend, small return — park it', val:6400, effort:'Low', conf:'Low',
+   basis:'Only 74 000 kr. a year. Not worth the internal effort yet.'}
+];
+
+/* ---------- Evaluate (step 7) ---------- */
+let evalOpp = null;
+function openEvaluate(id){
+  evalOpp = id;
+  const o = OPPS.find(x => x.id === id);
+  const eff = o.pot > 50000 ? 'Medium' : 'Low';
+  const risk = o.pot > 50000 ? 'Supplier must re-price an open order book' : 'Low — same supplier, same terms';
+  $('#evalBody').innerHTML = `
+  <div class="card" style="overflow:hidden;margin-bottom:18px">
+    <div class="rowhead">
+      <div class="h"><span class="oic" style="width:34px;height:34px"><svg viewBox="0 0 24 24" fill="none">${o.icon}</svg></span>${o.name}</div>
+      <div class="tot">Worth <b>${kr(o.pot)}/yr</b></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 56px 1fr;gap:0;align-items:stretch">
+      <div style="padding:22px">
+        <div class="eyebrow" style="color:var(--general-muted-foreground)"><span class="pip" style="background:var(--general-muted-foreground);box-shadow:0 0 0 4px var(--general-muted)"></span>Today</div>
+        <h3 style="margin-bottom:14px">Buying at list price</h3>
+        ${cmpRow('Unit prices','List — no agreement applied')}
+        ${cmpRow('Annual spend', fmt(o.spend)+' kr.')}
+        ${cmpRow('Payment terms','14 days')}
+        ${cmpRow('Delivery','Standard, charged per drop')}
+        ${cmpRow('Invoices to handle', fmt(o.inv)+' a year')}
+        ${cmpRow('Effort to keep','None — it is what you do now')}
+      </div>
+      <div style="display:grid;place-items:center;background:var(--general-muted)">
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--general-muted-foreground);writing-mode:vertical-rl">VS</span>
+      </div>
+      <div style="padding:22px;background:var(--brand-ice)">
+        <div class="eyebrow"><span class="pip"></span>Proposed</div>
+        <h3 style="margin-bottom:14px">On the Advantage agreement</h3>
+        ${cmpRow('Unit prices','<b style="color:var(--sentiment-positive)">'+o.rate+' below</b> what you pay today', true)}
+        ${cmpRow('Annual spend', fmt(o.spend - o.pot)+' kr. <span style="color:var(--sentiment-positive)">(−'+fmt(o.pot)+')</span>', true)}
+        ${cmpRow('Payment terms','30 days', true)}
+        ${cmpRow('Delivery','Free over 2 500 kr.', true)}
+        ${cmpRow('Invoices to handle','Consolidated monthly', true)}
+        ${cmpRow('Effort to switch','<b>'+eff+'</b> — same supplier, account re-linked', true)}
+      </div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="card set">
+      <h3>What could go wrong</h3>
+      <p class="help">Worth reading before you commit. We would rather you knew now.</p>
+      <div class="rule"><div class="rb"><b>Switching risk</b><span>${risk}</span></div>
+        <span class="chip ${o.pot>50000?'chip-warn':'chip-live'}">${o.pot>50000?'Medium':'Low'}</span></div>
+      <div class="rule"><div class="rb"><b>Time to first saving</b><span>${o.pot>50000?'4–6 weeks — supplier has to re-price':'2–3 weeks'}</span></div>
+        <span class="chip chip-new">${o.pot>50000?'6 weeks':'3 weeks'}</span></div>
+      <div class="rule"><div class="rb"><b>Internal effort</b><span>Someone has to tell whoever actually orders. That is the step people skip.</span></div>
+        <span class="chip chip-warn">1 conversation</span></div>
+      <div class="rule"><div class="rb"><b>If you do nothing</b><span>You keep paying ${fmt(o.pot)} kr. a year more than you need to.</span></div>
+        <span class="chip chip-alert">${fmt(o.pot)} kr./yr</span></div>
+    </div>
+    <div class="card set">
+      <h3>The recommendation</h3>
+      <p class="help">Based on your spend, this supplier's terms, and how similar switches went for companies like you.</p>
+      <div class="lvl-desc" style="margin-top:0">
+        <b>Proceed.</b> ${o.pot > 50000
+          ? 'The value is large enough to justify the effort, but it is worth having an advisor run this one — the supplier will need to re-price an open order book.'
+          : 'Low effort, low risk, and the saving lands within a month. This is the kind you approve without much thought.'}
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px">
+        <button class="btn btn-secondary btn-std" data-go="opportunities">Back</button>
+        <span class="spacer"></span>
+        ${o.pot > 50000 ? '<button class="btn btn-secondary btn-std" id="evalAdvisor">Ask an advisor</button>' : ''}
+        <button class="btn btn-primary" id="evalProceed">Proceed →</button>
+      </div>
+    </div>
+  </div>`;
+  const p = $('#evalProceed'); if(p) p.addEventListener('click', () => { go('opportunities'); openModal(id); });
+  const a = $('#evalAdvisor'); if(a) a.addEventListener('click', () => { openModal(id); setTimeout(() => $('#btnHuman').click(), 120); });
+  go('evaluate');
+}
+function cmpRow(l, v, good){
+  return `<div style="display:flex;gap:12px;padding:9px 0;border-top:1px solid ${good?'#c9dcfb':'var(--general-muted)'};font-size:var(--text-sm)">
+    <span style="flex:0 0 44%;color:var(--general-muted-foreground);font-size:var(--text-xs)">${l}</span>
+    <span style="flex:1">${v}</span></div>`;
+}
+
+/* add a Compare button to every open opportunity */
+const _renderOpps = renderOpps;
+renderOpps = function(){
+  _renderOpps();
+  $$('#oppList .opp').forEach(row => {
+    const o = OPPS.find(x => x.id === row.dataset.id);
+    if(!o || o.state !== 'new') return;
+    const right = row.querySelector('.oright');
+    const primary = right.querySelector('.btn-primary');
+    if(primary) primary.textContent = 'Draft message';
+    const b = document.createElement('button');
+    b.className = 'btn btn-secondary btn-std btn-sm';
+    b.textContent = 'Compare first';
+    b.addEventListener('click', () => openEvaluate(o.id));
+    right.insertBefore(b, primary);
+  });
+};
+
+/* ---------- Activation (step 9) ---------- */
+function renderActivation(){
+  const live = ACTIVATIONS.filter(a => a.stage < 4);
+  $('#actSummary').textContent = live.length + ' in progress · ' + kr(ACTIVATIONS.reduce((s,a)=>s+a.value,0)) + '/yr at stake';
+  $('#navAct').textContent = live.length;
+  $('#actList').innerHTML = ACTIVATIONS.map(a => `
+    <div class="opp">
+      <div class="opp-main">
+        <span class="oic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3a9 9 0 109 9" stroke="var(--general-primary)" stroke-width="1.7" stroke-linecap="round"/><path d="M12 7v5l3 2" stroke="var(--general-primary)" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+        <div class="obody" style="flex:1 1 100%">
+          <h4>${a.name} ${a.stage>=4?'<span class="chip chip-live">✓ Live and verified</span>':'<span class="chip chip-new">Step '+a.stage+' of 4</span>'}</h4>
+          <p>${a.cat} · started ${a.started} · worth <span class="hl">${kr(a.value)}</span> a year</p>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px">
+            ${a.steps.map((s,i) => {
+              const done = i < a.stage, now = i === a.stage;
+              return `<div>
+                <div style="height:5px;border-radius:var(--rounded-full);background:${done?'var(--sentiment-positive)':(now?'var(--general-accent)':'var(--general-muted)')}"></div>
+                <div style="font-size:10px;margin-top:6px;color:${done||now?'var(--general-foreground)':'var(--general-muted-foreground)'};font-weight:${now?600:400}">${s}</div>
+              </div>`;
+            }).join('')}
+          </div>
+          <p style="margin-top:12px;padding:10px 12px;background:var(--general-muted);border-radius:var(--rounded-sm)">${a.note}</p>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- Monitor / leakage (step 10) ---------- */
+function renderMonitor(){
+  const on = LEAK.reduce((s,l)=>s+l.on,0), off = LEAK.reduce((s,l)=>s+l.off,0), cost = LEAK.reduce((s,l)=>s+l.cost,0);
+  $('#mOn').textContent = fmt(on);
+  $('#mOff').textContent = fmt(off);
+  $('#mCost').textContent = fmt(cost);
+  $('#mPeople').textContent = PEOPLE.length;
+  $('#mOnPct').textContent = Math.round(on/(on+off)*100) + '% of eligible spend';
+  $('#mOffPct').textContent = Math.round(off/(on+off)*100) + '% went elsewhere';
+  const mx = Math.max(...LEAK.map(l => l.on + l.off));
+  $('#leakList').innerHTML = LEAK.map(l => `
+    <div style="margin-bottom:18px">
+      <div style="display:flex;align-items:baseline;gap:8px;font-size:var(--text-sm);margin-bottom:7px">
+        <b>${l.cat}</b><span class="spacer"></span>
+        <span class="mono" style="color:var(--chart-potential);font-weight:600">−${fmt(l.cost)} kr.</span>
+      </div>
+      <div style="display:flex;height:14px;border-radius:var(--rounded-sm);overflow:hidden;background:var(--general-muted)">
+        <span style="width:${l.on/mx*100}%;background:var(--sentiment-positive)"></span>
+        <span style="width:2px;background:var(--surface)"></span>
+        <span style="width:${l.off/mx*100}%;background:var(--chart-potential)"></span>
+      </div>
+      <div style="display:flex;gap:14px;margin-top:6px;font-size:11px;color:var(--general-muted-foreground)">
+        <span><b class="mono">${fmt(l.on)}</b> on agreement</span>
+        <span><b class="mono" style="color:var(--chart-potential)">${fmt(l.off)}</b> elsewhere</span>
+        <span class="spacer"></span><span>${l.who}</span>
+      </div>
+    </div>`).join('');
+  $('#leakPeople').innerHTML = PEOPLE.map(p => `
+    <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--general-muted)">
+      <span class="oic" style="width:36px;height:36px;flex:0 0 auto"><span class="mono" style="font-size:11px;color:var(--general-muted-foreground)">${p.n.slice(0,2).toUpperCase()}</span></span>
+      <span style="flex:1;min-width:0">
+        <b style="font-size:var(--text-sm)">${p.n}</b>
+        <span style="display:block;font-size:11px;color:var(--general-muted-foreground)">${p.r}</span>
+        <span style="display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:4px">${p.why}</span>
+      </span>
+      <span class="mono" style="font-size:var(--text-xs);color:var(--chart-potential);font-weight:600;white-space:nowrap">${fmt(p.off)}</span>
+    </div>`).join('') +
+    `<button class="btn btn-primary btn-sm" style="margin-top:16px" id="leakNudge">Send them the agreement</button>`;
+  const b = $('#leakNudge');
+  if(b) b.addEventListener('click', () => { toast('Sent', 'All three now have the supplier list and a one-page how-to.'); confetti(); });
+}
+
+/* ---------- Prove value (step 11) ---------- */
+function renderValue(){
+  $('#bonusKpis').innerHTML = `
+    <div class="dk"><small>Accruing this year</small><b style="color:var(--sentiment-positive)">${kr(BONUS.accrued)}</b></div>
+    <div class="dk"><small>Paid last year</small><b>${kr(BONUS.paid)}</b></div>
+    <div class="dk"><small>Bonus rate</small><b>${BONUS.rate}</b></div>
+    <div class="dk"><small>Next payout</small><b>${BONUS.next}</b></div>`;
+  const mx = Math.max(...BONUS.years.map(y => y.v));
+  $('#bonusBars').innerHTML = BONUS.years.map(y => `
+    <div class="dbar"><span class="dl">${y.y}</span>
+      <span class="dt"><i style="width:${y.v/mx*100}%;background:var(--sentiment-positive)"></i></span>
+      <span class="dv">${fmt(y.v)}</span></div>`).join('');
+  $('#docList').innerHTML = DOCS.map(d => {
+    const chip = d.st==='ready' ? '<span class="chip chip-live">Ready</span>'
+              : d.st==='wait'  ? '<span class="chip chip-warn">Awaiting supplier</span>'
+              :                  '<span class="chip chip-new">9 of 11</span>';
+    return `<div style="display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--general-muted)">
+      <span class="oic" style="width:36px;height:36px;flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><rect x="5" y="3" width="14" height="18" rx="2" stroke="var(--general-primary)" stroke-width="1.7"/><path d="M9 8h6M9 12h6" stroke="var(--general-primary)" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+      <span style="flex:1;min-width:0"><b style="font-size:var(--text-sm)">${d.n}</b>
+        <span style="display:block;font-size:11px;color:var(--general-muted-foreground)">${d.s}</span></span>
+      ${chip}
+      <button class="btn btn-secondary btn-std btn-sm" data-doc="${d.n}">Get</button>
+    </div>`;
+  }).join('');
+  $$('#docList [data-doc]').forEach(b => b.addEventListener('click', () =>
+    toast('Downloaded', b.dataset.doc)));
+}
+
+/* ---------- Prioritise next (step 12) ---------- */
+function renderNext(){
+  $('#nextList').innerHTML = NEXT.map((n,i) => {
+    const rank = i+1;
+    const dim = n.conf === 'Low';
+    return `<div class="card" style="padding:20px 22px;margin-bottom:12px;${dim?'opacity:.62':''}">
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+        <span style="flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-sm);display:grid;place-items:center;
+          background:${rank===1?'var(--general-primary)':'var(--general-muted)'};color:${rank===1?'var(--general-primary-foreground)':'var(--general-muted-foreground)'};
+          font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600">${rank}</span>
+        <span style="flex:1 1 260px;min-width:0">
+          <b style="font-size:var(--text-base);font-family:var(--font-sans)">${n.n}</b>
+          ${rank===1?'<span class="chip chip-new" style="margin-left:8px">Start here</span>':''}
+          <span style="display:block;font-size:var(--text-sm);color:var(--general-muted-foreground);margin-top:4px">${n.why}</span>
+          <span style="display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:8px;padding:9px 11px;background:var(--general-muted);border-radius:var(--rounded-sm)">${n.basis}</span>
+        </span>
+        <span style="flex:0 0 auto;text-align:right">
+          <span style="display:block;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;color:var(--chart-potential)" class="num">+${fmt(n.val)}</span>
+          <span style="display:block;font-size:11px;color:var(--general-muted-foreground)">kr./year</span>
+          <span style="display:flex;gap:6px;margin-top:10px;justify-content:flex-end">
+            <span class="chip ${n.effort==='Low'?'chip-live':'chip-warn'}">${n.effort} effort</span>
+            <span class="chip ${n.conf==='High'?'chip-live':(n.conf==='Low'?'chip-sent':'chip-new')}">${n.conf} confidence</span>
+          </span>
+          ${rank===1?'<button class="btn btn-primary btn-sm" style="margin-top:12px" data-next="'+i+'">Take this on</button>':''}
+        </span>
+      </div>
+    </div>`;
+  }).join('');
+  $$('#nextList [data-next]').forEach(b => b.addEventListener('click', () => {
+    toast('Added to your list', 'We will start finding suppliers in that category.');
+    confetti(); go('opportunities');
+  }));
+}
+
+/* ---------- wire into navigation ---------- */
+const _go = go;
+go = function(v){
+  _go(v);
+  if(v==='activation') renderActivation();
+  if(v==='monitor')    renderMonitor();
+  if(v==='value')      renderValue();
+  if(v==='next')       renderNext();
+};
+/* only the four new links need listeners — the originals already resolve `go` at call time */
+['activation','monitor','value','next'].forEach(v => {
+  const a = document.querySelector(`.nav a[data-view="${v}"]`); if(!a) return;
+  a.addEventListener('click', () => go(v));
+  a.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(v); } });
+});
+
+/* ---------- bonus tile on the dashboard (step 4 gap) ---------- */
+(function addBonusTile(){
+  const kpis = document.querySelector('#overview .kpis'); if(!kpis) return;
+  const el = document.createElement('div');
+  el.className = 'card kpi clickable';
+  el.setAttribute('tabindex','0'); el.setAttribute('role','button');
+  el.innerHTML = `<div class="t"><span class="ic" style="background:#d9f2ef">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M7 8a3 3 0 013-3h2.5a3 3 0 010 6h-1a3 3 0 000 6H13a3 3 0 003-3" stroke="var(--sentiment-positive)" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </span>Customer bonus</div>
+    <div class="v" style="color:var(--sentiment-positive)"><span class="num">${fmt(BONUS.accrued)}</span> <small>kr.</small></div>
+    <div class="c up">accruing · paid ${BONUS.next}</div>`;
+  el.addEventListener('click', () => go('value'));
+  el.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go('value'); } });
+  kpis.appendChild(el);
+  kpis.style.gridTemplateColumns = 'repeat(auto-fit,minmax(208px,1fr))';
+})();
+
+/* ---------- extend the tour + demo through the new half ---------- */
+TOUR.push(
+  {v:'evaluate',   s:'#evalBody', t:'Compare before you commit', b:'Price, terms, effort and risk side by side — plus what happens if you do nothing.'},
+  {v:'activation', s:'#actList', t:'What happens after you say yes', b:'A switch in progress, tracked to the first verified invoice. We chase the supplier, not you.'},
+  {v:'monitor',    s:'#leakList', t:'Where the spend actually went', b:'The leakage view names the category and the person. This is the bit customers cannot see for themselves.'},
+  {v:'value',      s:'#bonusKpis', t:'Bonus is money on top', b:'Savings are half the value. The volume bonus is cash paid back, and the compliance documents come with it.'},
+  {v:'next',       s:'#nextList', t:'And round again', b:'Ranked by what already worked here. Picking one starts the loop over with a sharper target.'}
+);
+DEMO.splice(DEMO.length-1, 0,
+  {t:3200, ti:'Compare first', c:'Price, terms, effort and risk — not just the saving', a:()=>{ if(openOpps()[0]) openEvaluate(openOpps()[0].id); }},
+  {t:3000, ti:'After the decision', c:'A switch tracked to the first verified invoice', a:()=>go('activation')},
+  {t:3200, ti:'Where the spend leaked', c:'Named category, named person — the view only you can build', a:()=>go('monitor')},
+  {t:3000, ti:'Bonus and paperwork', c:'Money paid back, plus Transparency Act documents', a:()=>go('value')},
+  {t:3000, ti:'Then round again', c:'Ranked next category, informed by what just worked', a:()=>go('next')}
+);
+
+/* ---------- assistant knows about the new half ---------- */
+const _reply = reply;
+reply = function(q){
+  const l = q.toLowerCase();
+  if(/(leak|outside|off.agreement|who is buying|not using it|elsewhere)/.test(l))
+    return `Last quarter <b>${kr(LEAK.reduce((s,x)=>s+x.off,0))}</b> went outside your agreements — costing about <b>${kr(LEAK.reduce((s,x)=>s+x.cost,0))}</b>. Most of it is two people: Jonas at Site 2 and Rikke in the workshop.
+      <span class="act"><button data-act="monitor">Show me →</button></span>`;
+  if(/(bonus|kickback|rebate|paid back)/.test(l))
+    return `You have <b>${kr(BONUS.accrued)}</b> accruing this year at ${BONUS.rate} on qualifying spend, paid out in ${BONUS.next}. Last year you received ${kr(BONUS.paid)}. It sits on top of the savings figure.
+      <span class="act"><button data-act="value">See the bonus →</button></span>`;
+  if(/(transparency|åpenhet|apenhet|compliance|document|due diligence|auditor)/.test(l))
+    return `Your Transparency Act statement is ready, and 9 of 11 supplier certifications are on file. Ahlsell's due diligence is still with the supplier.
+      <span class="act"><button data-act="value">Open documents →</button></span>`;
+  if(/(activation|switch|progress|status|how long|when will)/.test(l))
+    return `Three switches are running. Q8 is live and verified, Telenor goes live 1 September, and Stark hasn't replied yet — we chase them Thursday.
+      <span class="act"><button data-act="activation">Track them →</button></span>`;
+  if(/(next|after this|what should we do next|which category)/.test(l))
+    return `Tools and workwear, on the numbers — biggest leak, agreement already open, and one conversation covers most of it. Worth about ${kr(45300)} a year.
+      <span class="act"><button data-act="next">See the ranking →</button></span>`;
+  return _reply(q);
+};
+
+/* ---------- refresh new views when state changes ---------- */
+const _refreshAll = refreshAll;
+refreshAll = function(){
+  _refreshAll();
+  if(state.view==='activation') renderActivation();
+  if(state.view==='next') renderNext();
+};
+
+$('#navAct').textContent = ACTIVATIONS.filter(a => a.stage < 4).length;
+</script>
+
+</body>
+</html>

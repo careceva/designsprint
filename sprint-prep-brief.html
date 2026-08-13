@@ -1,0 +1,721 @@
+<title>Design Sprint 2 — Seiva / Advantage Nordic</title>
+<style>
+  :root {
+    --ground: #F2F5F1;
+    --surface: #FBFCFA;
+    --ink: #15211B;
+    --muted: #5B6A61;
+    --faint: #8B9890;
+    --rule: #D3DCD4;
+    --rule-strong: #B4C0B6;
+    --accent: #B8412B;
+    --accent-soft: #F3E2DD;
+    --signal: #2E6B4E;
+    --signal-soft: #DFEDE4;
+    --warn: #8A6008;
+    --warn-soft: #F6EBD2;
+
+    --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #101613;
+      --surface: #171F1A;
+      --ink: #E6EBE5;
+      --muted: #9DAAA1;
+      --faint: #718077;
+      --rule: #2A342D;
+      --rule-strong: #3C4941;
+      --accent: #E8836A;
+      --accent-soft: #35211C;
+      --signal: #6FBE93;
+      --signal-soft: #16301F;
+      --warn: #D8AE5C;
+      --warn-soft: #2E2515;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #101613;
+    --surface: #171F1A;
+    --ink: #E6EBE5;
+    --muted: #9DAAA1;
+    --faint: #718077;
+    --rule: #2A342D;
+    --rule-strong: #3C4941;
+    --accent: #E8836A;
+    --accent-soft: #35211C;
+    --signal: #6FBE93;
+    --signal-soft: #16301F;
+    --warn: #D8AE5C;
+    --warn-soft: #2E2515;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16.5px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 1.5rem 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 60rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4.5rem;
+  }
+
+  section { display: flex; flex-direction: column; gap: 1.1rem; }
+
+  p, li { max-width: 40em; }
+
+  /* ---------- masthead ---------- */
+
+  header.masthead {
+    padding: 4.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--rule-strong);
+    padding-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(2.4rem, 6vw, 3.9rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0;
+    max-width: 16em;
+  }
+
+  .standfirst {
+    font-family: var(--display);
+    font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+    line-height: 1.45;
+    color: var(--muted);
+    margin: 0;
+    max-width: 34em;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 1.25rem 2rem;
+    margin-top: 0.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--rule);
+  }
+  .fact { display: flex; flex-direction: column; gap: 0.3rem; }
+  .fact dt {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .fact dd { margin: 0; font-size: 0.95rem; line-height: 1.35; }
+
+  /* ---------- headings ---------- */
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin: 0;
+    max-width: 20em;
+  }
+
+  h3 {
+    font-family: var(--body);
+    font-weight: 650;
+    font-size: 1.02rem;
+    letter-spacing: -0.005em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 -0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  p { margin: 0; }
+  strong { font-weight: 650; }
+  em { font-style: italic; }
+
+  ul.plain { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  ul.plain li::marker { color: var(--faint); }
+
+  /* ---------- reframe pair ---------- */
+
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .pair > div {
+    background: var(--surface);
+    padding: 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .pair-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .pair blockquote {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 1.06rem;
+    line-height: 1.42;
+    max-width: none;
+  }
+  .pair .was blockquote { color: var(--muted); }
+  .pair .now { box-shadow: inset 3px 0 0 var(--accent); }
+
+  /* ---------- callout ---------- */
+
+  .callout {
+    border: 1px solid var(--rule-strong);
+    background: var(--surface);
+    padding: 1.5rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .callout.risk { background: var(--warn-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--warn); }
+  .callout.risk .callout-label { color: var(--warn); }
+  .callout.pick { background: var(--signal-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--signal); }
+  .callout.pick .callout-label { color: var(--signal); }
+  .callout-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ---------- tables ---------- */
+
+  .scroller { overflow-x: auto; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 34rem;
+    font-size: 0.92rem;
+  }
+  th {
+    text-align: left;
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 0.66rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 0 0.9rem 0.6rem 0;
+    border-bottom: 1px solid var(--rule-strong);
+    vertical-align: bottom;
+  }
+  td {
+    padding: 0.75rem 0.9rem 0.75rem 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  tr:last-child td { border-bottom: none; }
+  th:last-child, td:last-child { padding-right: 0; }
+
+  td.theme { font-weight: 600; width: 22%; }
+  td.probe { color: var(--muted); font-style: italic; }
+
+  /* ---------- schedule ---------- */
+
+  .day {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+  .day:first-of-type { padding-top: 0; border-top: none; }
+
+  .day-head { display: flex; flex-direction: column; gap: 0.35rem; }
+  .day-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .day-goal { color: var(--muted); font-size: 0.95rem; max-width: 42em; }
+
+  .mine {
+    background: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
+    padding: 0.9rem 1.1rem;
+    font-size: 0.92rem;
+    max-width: none;
+    margin-top: 0.25rem;
+  }
+  .mine b {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  table.sched { min-width: 30rem; }
+  table.sched td.t {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--faint);
+    white-space: nowrap;
+    width: 8.5rem;
+    padding-top: 0.85rem;
+  }
+  table.sched td.a { }
+  table.sched tr.meal td { color: var(--faint); }
+  table.sched tr.meal td.a { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .note { display: block; color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+  .who {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    padding: 0.05rem 0.35rem;
+    margin-left: 0.4rem;
+    vertical-align: 1px;
+  }
+
+  /* ---------- decisions ---------- */
+
+  ol.decisions {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: d;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+  ol.decisions li {
+    counter-increment: d;
+    display: grid;
+    grid-template-columns: 2.2rem 1fr;
+    gap: 0.5rem 0.75rem;
+    max-width: none;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  ol.decisions li:last-child { border-bottom: none; padding-bottom: 0; }
+  ol.decisions li::before {
+    content: counter(d, decimal-leading-zero);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    padding-top: 0.15rem;
+  }
+  ol.decisions .q { font-weight: 650; }
+  ol.decisions .rec { grid-column: 2; color: var(--muted); font-size: 0.92rem; }
+  ol.decisions .rec b { color: var(--ink); font-weight: 600; }
+  ol.decisions .ask {
+    display: inline-block;
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 0.68rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 0.35rem;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule-strong);
+    padding-top: 1.5rem;
+    color: var(--faint);
+    font-size: 0.85rem;
+    font-family: var(--mono);
+    letter-spacing: 0.03em;
+  }
+
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible, :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  @media (max-width: 34rem) {
+    body { padding: 0 1.1rem 4rem; }
+    .wrap { gap: 3.5rem; }
+    table.sched td.t { width: 6.5rem; }
+  }
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Product Discovery · Sprint 2 · Preparation brief</p>
+  <h1>Walking in prepared</h1>
+  <p class="standfirst">An external team facilitates. You're the in-house designer — which means you own something the facilitators can't: the product's history, the customer data, and the memory of what the last workshop did and didn't answer. This is what to bring, what to push on, and where your leverage sits on each of the four days.</p>
+  <dl class="facts">
+    <div class="fact"><dt>Product</dt><dd>Seiva (SE) / Advantage (NO, DK) — Visma</dd></div>
+    <div class="fact"><dt>Format</dt><dd>Full 4-day sprint, Tue–Fri</dd></div>
+    <div class="fact"><dt>Facilitation</dt><dd>External team — not you</dd></div>
+    <div class="fact"><dt>Your role</dt><dd>In-house design, domain memory, data access</dd></div>
+    <div class="fact"><dt>Test day</dt><dd>Friday · 2 SE, 2 NO, 1 DK</dd></div>
+    <div class="fact"><dt>Highest leverage</dt><dd>The week before it starts</dd></div>
+  </dl>
+</header>
+
+<section>
+  <p class="section-label">Where we are</p>
+  <h2>What the first sprint actually produced</h2>
+  <p>The AI Discovery &amp; Prototyping workshop produced an affinity map: seven themes, twenty-eight features, all of them plausible. But read it closely and it answers only one question — <em>what could we build?</em> Every item is a solution. None of them is traced to something we watched a customer struggle with.</p>
+  <p>That is a normal outcome for an ideation workshop and not a failure. It just means the next step isn't more ideation. It's going back one layer and finding out which of those twenty-eight bets is standing on a real problem.</p>
+  <p>The good news: the affinity map is an excellent list of <strong>hypotheses</strong>. We already know what the team believes. Sprint 2 puts those beliefs under load.</p>
+</section>
+
+<section>
+  <p class="section-label">The challenge</p>
+  <h2>Send the facilitators a sharpened challenge before Day 1</h2>
+  <p>Facilitators will run whatever statement they're handed. They don't know the product well enough to notice what's wrong with this one — you do. Getting a better version into their hands a week early is cheap; arguing about it at 09:30 on Tuesday in front of the whole team is expensive.</p>
+  <div class="pair">
+    <div class="was">
+      <p class="pair-label">As written in the plan</p>
+      <blockquote>How might we use AI to enhance purchasing business supplies in a proactive way for procurement responsibles to increase total everyday spend across more partner agreements?</blockquote>
+    </div>
+    <div class="now">
+      <p class="pair-label">Proposed for Sprint 2</p>
+      <blockquote>How might we help the person who actually buys everyday supplies at a Nordic SMB get the agreement price without having to know which agreements exist?</blockquote>
+    </div>
+  </div>
+  <p>Three things the original does to us:</p>
+  <ul class="plain">
+    <li><strong>It names the solution before the problem.</strong> "Use AI, proactively" is an answer. Bake it into the challenge and Day 1 becomes a search for justification rather than a search for truth. Keep AI as the leading hypothesis; don't make it the premise.</li>
+    <li><strong>The outcome is our metric, not theirs.</strong> No office manager has ever wanted to increase total everyday spend across more partner agreements. They want the printer paper to arrive and not to get shouted at about the budget. Business value should follow user value in the sentence, not replace it.</li>
+    <li><strong>"Procurement responsibles" is a job title, not a behaviour.</strong> In a twelve-person Swedish company, the person ordering coffee, paper and workwear is an office manager, a site foreman, or the owner's partner. Many of them have never used the word procurement. If we recruit by title we will test the wrong people.</li>
+  </ul>
+  <p>The business framing stays on the wall alongside it — the sprint still has to move spend onto agreements. We just stop pretending that's what the user wants.</p>
+</section>
+
+<section>
+  <p class="section-label">The bet that could sink everything</p>
+  <div class="callout risk">
+    <p class="callout-label">Central risk · test this first</p>
+    <h3>Every one of the seven themes assumes the buying moment happens in our portal.</h3>
+    <p>"Proactive AI" only works if there is a surface to be proactive on. But there is a real chance the buying moment lives somewhere we don't control: a reply to a supplier's email, a rep's phone number saved in someone's contacts, a webshop with saved card details, a line item entered straight into the ERP. If that's where the decision happens, then a smarter dashboard is a better answer to a question nobody asked.</p>
+    <p>So Day 1's single most valuable output is not a journey map of our portal. It's an honest answer to: <strong>where is the buyer standing at the moment they decide?</strong> If it isn't in the portal, the sprint pivots to reaching them there — email, Teams, the ERP, the supplier's own checkout — and that is a good outcome, not a derailment.</p>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Hypotheses under load</p>
+  <h2>The seven themes, and the pain each one is quietly assuming</h2>
+  <p>Print this and put it on the wall. Every theme gets a probe on Day 1. Anything that survives is allowed into Day 2's sketching; anything that doesn't gets parked, loudly, so nobody smuggles it back in.</p>
+  <div class="scroller">
+    <table>
+      <thead>
+        <tr><th>Theme</th><th>The pain it assumes</th><th>How we check it on Day 1</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="theme">1 · AI assistance &amp; human support</td>
+          <td>They can't find what they need and don't want to phone anyone.</td>
+          <td class="probe">"Last time you needed something new — walk me through exactly what you did, minute by minute."</td>
+        </tr>
+        <tr>
+          <td class="theme">2 · Savings intelligence</td>
+          <td>They don't believe or can't see the savings, so the value fades.</td>
+          <td class="probe">"What did you save last year? Where would you go to find out? Does anyone ever ask you for that number?"</td>
+        </tr>
+        <tr>
+          <td class="theme">3 · Onboarding &amp; integration</td>
+          <td>The first thirty days are too much work to get through.</td>
+          <td class="probe">"Tell me about your first month. What did you set up, and what did you never get round to?"</td>
+        </tr>
+        <tr>
+          <td class="theme">4 · Proactive engagement</td>
+          <td>They forget the service exists between purchases.</td>
+          <td class="probe">"When did you last log in, and what made you? What else was in your inbox that day?"</td>
+        </tr>
+        <tr>
+          <td class="theme">5 · UX &amp; navigation</td>
+          <td>The portal itself is the obstacle.</td>
+          <td class="probe">Live task, not opinion: "Find me a deal on office chairs." Watch, don't ask.</td>
+        </tr>
+        <tr>
+          <td class="theme">6 · Supplier &amp; agreement management</td>
+          <td>Agreements get added and then go stale, unused.</td>
+          <td class="probe">"Which agreements do you actually buy from? Which did you add and never use — and why not?"</td>
+        </tr>
+        <tr>
+          <td class="theme">7 · Activation &amp; conversion</td>
+          <td>The path from signed-up to first purchase is too slow.</td>
+          <td class="probe">Recruit one customer who never activated. Their answer is worth all six other rows.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Your single biggest lever</p>
+  <h2>Week −1: do the research the sprint can't do, and walk in holding it</h2>
+  <p>You asked the sprint to discover what actually hurts. Straight answer: a four-day sprint can't do generative research. Day 1 buys roughly three hours of expert time — enough to <em>challenge</em> a hypothesis, not to <em>discover</em> a pain cold. Run it unprepared and Day 1 becomes six well-informed people confidently sharing opinions, which is exactly how the last workshop produced an affinity map instead of a problem.</p>
+  <p>This is where being the in-house designer is an advantage rather than a constraint. External facilitators cannot pull transaction data, cannot get a churned customer on the phone, and cannot tell the difference between a real pain and a story the company tells itself. You can. Four to six customer interviews in the week before, 45 minutes each, recorded — roughly three days of your time.</p>
+  <p>Walk into Day 1 with that pain map and your position changes completely. You are no longer one voice with an opinion; you're the person holding the only evidence in the room. Hand it to the facilitators in advance and ask for a slot on Day 1 to present it — <strong>as raw material for the team to attack, not as a conclusion.</strong> If you do one thing from this document, do this.</p>
+  <div class="callout">
+    <p class="callout-label">Recruiting — from data, not from the sales team's favourites</p>
+    <p>17,000 customers and full transaction history is an unfair advantage; use it. Pull the sample deliberately:</p>
+    <ul class="plain">
+      <li><strong>2 high-savings actives</strong> — what does "working" look like, and what do they do that others don't?</li>
+      <li><strong>2 low-activity accounts</strong> — agreements added, little or no spend against them. <em>This is where the pain lives.</em></li>
+      <li><strong>1 never-activated or churned</strong> — the most uncomfortable half-hour of the sprint and the most useful.</li>
+    </ul>
+    <p>Happy customers introduced by their account manager will confirm everything we already believe. Budget for the awkward ones.</p>
+  </div>
+  <p>Also worth fixing from last time: the previous sprint's expert interviews ran 20 minutes each and skewed internal — salespeople describing customer pain second-hand. This time, 30 minutes, and at least three of the four experts are people who personally place orders.</p>
+</section>
+
+<section>
+  <p class="section-label">The four days</p>
+  <h2>What a good version of each day looks like — and where your job sits in it</h2>
+  <p>The facilitators own this agenda, not you. Treat the schedules below as a reference for what a well-run day looks like, so you can tell early whether the sprint is drifting and intervene while it's still cheap. The boxed note on each day is the part that's actually yours.</p>
+
+  <div class="day">
+    <div class="day-head">
+      <p class="day-num">Day 1 · Tuesday</p>
+      <h3>Understand — is the problem what we think it is?</h3>
+      <p class="day-goal">Ends with one user, one moment, one pain chosen by the Decider. Nothing else from today matters if the room doesn't leave with that.</p>
+      <p class="mine"><b>Your job today</b>Present the Week −1 pain map, and be the person who keeps asking <em>where is the buyer standing when they decide?</em> You're also the only one who can say "we tried that in 2024 and here's what happened" — use it to kill dead ends fast, but sparingly. An in-house designer who says "we already know that" too often gets tuned out by lunch, and the facilitators will start routing around you.</p>
+    </div>
+    <div class="scroller">
+      <table class="sched">
+        <tbody>
+          <tr><td class="t">09:00 – 09:20</td><td class="a">Kickoff: sprint rules, roles named out loud, devices away</td></tr>
+          <tr><td class="t">09:20 – 09:40</td><td class="a">Business framing — where the money actually is<span class="note">Twenty minutes, hard stop. Last sprint spent an hour on alignment before anyone had said anything new.</span></td></tr>
+          <tr><td class="t">09:40 – 10:15</td><td class="a">The challenge under attack: list every assumption, then "how could we be completely wrong?"</td></tr>
+          <tr><td class="t">10:15 – 10:30</td><td class="a">Break</td></tr>
+          <tr><td class="t">10:30 – 11:15</td><td class="a">Pain map readout from Week −1 research<span class="who">Design</span></td></tr>
+          <tr><td class="t">11:15 – 12:15</td><td class="a">Map the buying moment — the journey from the <em>buyer's</em> side, starting outside our product<span class="note">Not the six-step portal funnel. That map starts at "company wants to lower costs", which is the CFO's story, not the buyer's.</span></td></tr>
+          <tr class="meal"><td class="t">12:15 – 13:00</td><td class="a">Lunch</td></tr>
+          <tr><td class="t">13:00 – 15:20</td><td class="a">Expert interviews — 4 × 30 min with 5 min reset (13:00 / 13:35 / 14:10 / 14:45)<span class="note">Whole team takes HMW notes silently throughout. Minimum three of four are people who place orders themselves.</span></td></tr>
+          <tr><td class="t">15:20 – 15:35</td><td class="a">Break</td></tr>
+          <tr><td class="t">15:35 – 16:15</td><td class="a">Cluster the How Might We notes, dot-vote</td></tr>
+          <tr><td class="t">16:15 – 16:45</td><td class="a">Mark the target on the map: one user, one moment<span class="who">Decider</span></td></tr>
+          <tr><td class="t">16:45 – 17:00</td><td class="a">Park what we're deliberately not solving. Write it up where everyone can see it.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head">
+      <p class="day-num">Day 2 · Wednesday</p>
+      <h3>Sketch and decide</h3>
+      <p class="day-goal">Ends with a storyboard of 8–12 frames and named prototype roles. The first frame must be wherever the user actually is — inbox, shop floor, ERP — not a login screen.</p>
+      <p class="mine"><b>Your job today</b>Sketch like everyone else — don't appoint yourself art director, it suppresses the non-designers and their sketches are usually the interesting ones. Your real contribution is the lightning demos: you know the competitive and adjacent landscape better than the room does. Bring three prepared. Then at storyboarding, watch for the classic drift — the team quietly redesigning the dashboard because that's the surface they can picture. Ask what the first frame is, and keep asking.</p>
+    </div>
+    <div class="scroller">
+      <table class="sched">
+        <tbody>
+          <tr><td class="t">09:00 – 09:20</td><td class="a">Recap; target restated in one sentence by the Decider</td></tr>
+          <tr><td class="t">09:20 – 10:00</td><td class="a">Lightning demos — three minutes each<span class="note">Look outside the category: bank apps that spot a subscription, Amazon Business reordering, Klarna, Oda, ERP approval nudges, Duolingo's re-engagement. Two must come from outside B2B software entirely.</span></td></tr>
+          <tr><td class="t">10:00 – 10:15</td><td class="a">Break</td></tr>
+          <tr><td class="t">10:15 – 10:45</td><td class="a">Notes and ideas — silent, individual</td></tr>
+          <tr><td class="t">10:45 – 11:15</td><td class="a">Crazy 8s</td></tr>
+          <tr><td class="t">11:15 – 12:15</td><td class="a">Solution sketch — three panels, silent, self-explanatory, given a name</td></tr>
+          <tr class="meal"><td class="t">12:15 – 13:00</td><td class="a">Lunch</td></tr>
+          <tr><td class="t">13:00 – 13:45</td><td class="a">Art museum and heat map — silent review, no pitching</td></tr>
+          <tr><td class="t">13:45 – 14:30</td><td class="a">Speed critique, 3 min per sketch</td></tr>
+          <tr><td class="t">14:30 – 14:45</td><td class="a">Break</td></tr>
+          <tr><td class="t">14:45 – 15:15</td><td class="a">Straw poll, then the supervote<span class="who">Decider</span></td></tr>
+          <tr><td class="t">15:15 – 16:15</td><td class="a">Storyboard — 8 to 12 frames, no invention allowed at this stage</td></tr>
+          <tr><td class="t">16:15 – 16:45</td><td class="a">Prototype roles, fidelity, and the data decision (see below)</td></tr>
+          <tr><td class="t">16:45 – 17:00</td><td class="a">Close</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head">
+      <p class="day-num">Day 3 · Thursday</p>
+      <h3>Prototype and prepare</h3>
+      <p class="day-goal">Ends with a prototype that has survived a stranger, five loaded data variants, and a scorecard everyone has agreed to before they see any results.</p>
+      <p class="mine"><b>Your job today</b>Almost certainly Maker — you'll be building. Two things to protect while your head is down: get the design system components ready <em>before</em> Tuesday so Thursday isn't spent drawing buttons, and make sure someone else owns the test script, because you cannot build the prototype and write the script well on the same day. If the facilitators haven't assigned an Interviewer by Wednesday evening, raise it Wednesday evening.</p>
+    </div>
+    <div class="scroller">
+      <table class="sched">
+        <tbody>
+          <tr><td class="t">09:00 – 09:15</td><td class="a">Standup: who is building which frames</td></tr>
+          <tr><td class="t">09:15 – 12:00</td><td class="a">Build — Maker, Stitcher, Asset collector<span class="who">Prototype</span><span class="note">In parallel: the Interviewer writes the test script. One person owns it and runs all five sessions on Friday.</span></td></tr>
+          <tr class="meal"><td class="t">12:00 – 12:45</td><td class="a">Lunch</td></tr>
+          <tr><td class="t">12:45 – 13:15</td><td class="a">Script review with the whole team — every task read aloud, leading questions removed</td></tr>
+          <tr><td class="t">13:15 – 13:45</td><td class="a">Build the scorecard: what counts as a pass, agreed <em>before</em> we see a single user</td></tr>
+          <tr><td class="t">13:45 – 15:00</td><td class="a">Build continues; stitch check at 15:00</td></tr>
+          <tr><td class="t">15:00 – 15:30</td><td class="a">Trial run with an internal colleague who has never seen it<span class="note">Non-negotiable. This is the checkpoint that catches the broken prototype, and it's what the previous plan's two vague "align on prototype" blocks were missing.</span></td></tr>
+          <tr><td class="t">15:30 – 16:30</td><td class="a">Fix what the trial broke; load the five customer data variants</td></tr>
+          <tr><td class="t">16:30 – 17:00</td><td class="a">End-to-end dry run and remote tech check</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head">
+      <p class="day-num">Day 4 · Friday</p>
+      <h3>Test and decide</h3>
+      <p class="day-goal">Ends with a decision — ship it, iterate it, or rethink the premise — and named owners for Monday.</p>
+      <p class="mine"><b>Your job today — and the week after</b>Take the notes nobody else will value on Monday: verbatim quotes, where hands hesitated, what people did before they spoke. The facilitators leave on Friday evening. You're still here, and in three months you'll be the only person who can say what user 4 actually said. Own the write-up, and own the follow-through — the sprint's output is a decision, not a design, and turning it into something buildable is your work, not theirs. Ask on Friday who's paying for that time.</p>
+    </div>
+    <div class="scroller">
+      <table class="sched">
+        <tbody>
+          <tr><td class="t">08:30 – 09:15</td><td class="a">Final check, observer room, note-taking grid on the wall</td></tr>
+          <tr><td class="t">09:30 – 10:25</td><td class="a">User 1 — Sweden</td></tr>
+          <tr><td class="t">10:35 – 11:30</td><td class="a">User 2 — Norway</td></tr>
+          <tr class="meal"><td class="t">11:30 – 12:15</td><td class="a">Lunch + 15 min pattern check</td></tr>
+          <tr><td class="t">12:15 – 13:10</td><td class="a">User 3 — Sweden</td></tr>
+          <tr><td class="t">13:20 – 14:15</td><td class="a">User 4 — Norway</td></tr>
+          <tr><td class="t">14:25 – 15:20</td><td class="a">User 5 — Denmark<span class="note">DK goes last deliberately — see the testing note below.</span></td></tr>
+          <tr><td class="t">15:20 – 15:40</td><td class="a">Break</td></tr>
+          <tr><td class="t">15:40 – 16:10</td><td class="a">Scorecard filled in alone first, then together</td></tr>
+          <tr><td class="t">16:10 – 16:45</td><td class="a">Patterns → the decision<span class="who">Decider</span></td></tr>
+          <tr><td class="t">16:45 – 17:00</td><td class="a">Owners, next steps, retro</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Craft decisions</p>
+  <h2>Two prototype calls to win — you'll probably be the one building it</h2>
+  <p>Both of these have to be argued for on Wednesday afternoon at the latest, and only one person in the room will be thinking about them. That's you.</p>
+  <div class="callout pick">
+    <p class="callout-label">Call one · build five data variants, not one demo</p>
+    <p>If the concept shows AI making suggestions, generic dummy data destroys the test. A procurement person can tell in two seconds whether "we noticed you buy a lot of coffee" is a real observation about their company or filler text. With fake data you learn whether the idea is <em>believable</em>. With their own data you learn whether it's <em>useful</em> — and only the second one tells you to build it.</p>
+    <p>So: pull each of the five testers' actual spend categories from transaction data and build five variants of the prototype. Roughly two extra hours on Day 3, and the highest-leverage two hours in the whole sprint. This needs a data access decision made <em>this week</em>, not on Thursday morning.</p>
+  </div>
+  <div class="callout pick">
+    <p class="callout-label">Call two · prototype the intervention, not the intelligence</p>
+    <p>The tempting thing to build is a clever recommendation engine. But the model's accuracy is an engineering question we can answer later and cheaply. The question we can only answer with a human in front of us is: <strong>does a busy office manager, mid-task, act on an unsolicited suggestion at all?</strong> Design the prototype around that moment — where it appears, what it interrupts, what it asks for — and let the suggestion itself be a fixed, well-chosen example.</p>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Testing across three markets</p>
+  <h2>Two SE, two NO, one DK — and what that costs us</h2>
+  <ul class="plain">
+    <li><strong>Moderate in the participant's own language.</strong> Norwegian and Danish SMB buyers will underperform in English and we'll misread hesitation as confusion about the concept.</li>
+    <li><strong>Prototype UI in English, and rule copy out of the findings.</strong> Building three localised variants isn't realistic in a day. The moderator flags it up front, and we agree in advance that no wording finding counts. What we're testing is comprehension of the <em>concept</em>, not the label.</li>
+    <li><strong>Denmark goes last, at 14:25.</strong> DK is the newest and thinnest market — if the DK product differs from SE/NO, a DK tester can fail on things that have nothing to do with the concept. Running them fifth means we already hold four clean signals and can tell the two apart.</li>
+    <li><strong>Brief the observers on what a market difference looks like</strong> versus a concept failure. Otherwise the loudest voice in the debrief attributes everything to "the Danes do it differently."</li>
+  </ul>
+</section>
+
+<section>
+  <p class="section-label">People</p>
+  <h2>Two gaps in the current list — flag them, don't fill them</h2>
+  <p>Staffing is the facilitators' problem, but they can only work with the names they're given. Both gaps below are internal to your organisation, which means nobody on the external team can close them. Send this list to whoever booked the sprint.</p>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Role</th><th>Who</th><th>Commitment</th></tr></thead>
+      <tbody>
+        <tr><td class="theme">Decider</td><td><strong>Unnamed</strong> — the biggest gap in the current plan</td><td>All four days. Must be in the room Wed 14:45 and Fri 16:10, and must be able to fund what Friday recommends.</td></tr>
+        <tr><td class="theme">Sprint team</td><td>Nicolas, Pelle, Anette, Sofia, Audun, Catalin</td><td>Six people, same six all four days. Part-time attendance is the single most reliable way to ruin a sprint.</td></tr>
+        <tr><td class="theme">Facilitation</td><td>Julie, Radu, Lucia</td><td>Three facilitators for a six-person team is one too many. Suggest one lead, one support, and the third joins as a note-taker on test day.</td></tr>
+        <tr><td class="theme">Prototyper</td><td><strong>Unnamed</strong></td><td>Identify before Day 1, not on Thursday morning. They should sit in on Day 1 so they understand the target rather than receiving it second-hand.</td></tr>
+        <tr><td class="theme">Interviewer</td><td>One person, all five sessions</td><td>Consistency across sessions matters more than sharing the fun.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Your pre-sprint checklist</p>
+  <h2>Six things to settle before Tuesday, and who to ask</h2>
+  <ol class="decisions">
+    <li>
+      <p class="q">Make sure the facilitators know AI is already decided at C level.<br><span class="ask">Answered · tell the facilitators before Day 1</span></p>
+      <p class="rec">Settled: the AI direction is fixed above this sprint. Facilitators who don't know that will run a Day 1 that appears to put it up for debate, the room will spend two hours re-deciding something already decided, and everyone will leave irritated. <b>Tell them in advance and reframe the day honestly:</b> not <em>whether</em> AI, but <em>which pain is severe enough that an automated intervention is welcome</em> — and where it intervenes, and whether it acts, suggests, or hands off to a human. That's still a real sprint with a real open question at the centre of it.</p>
+    </li>
+    <li>
+      <p class="q">Who is the Decider?<br><span class="ask">Ask: sprint sponsor · flag to facilitators once named</span></p>
+      <p class="rec">Currently unnamed. <b>Sofia Ekberg</b> is the obvious candidate if she can commit all four days and has authority to fund what Friday recommends. A sprint without a Decider produces a recommendation nobody owns — and you'll be the one holding that recommendation in three months.</p>
+    </li>
+    <li>
+      <p class="q">Can I run customer interviews the week before?<br><span class="ask">Ask: your manager · needs ~3 days of your time</span></p>
+      <p class="rec">The Week −1 research above. This is your call to make and defend. Frame it as risk reduction, not extra research: without it, four days of six people's time rests on assumptions nobody checked. <b>Get the recruiting brief out roughly two weeks ahead</b> — SMB customers don't answer on 48 hours' notice.</p>
+    </li>
+    <li>
+      <p class="q">Can we put real customer transaction data in the prototype, and who signs it off?<br><span class="ask">Ask: data / privacy owner · yes-or-no needed this week</span></p>
+      <p class="rec">Blocks the five-variant prototype. Needs a name and an answer well before Thursday — a GDPR review on Thursday afternoon is not a plan, and the fallback (generic dummy data) meaningfully weakens what Friday can tell you.</p>
+    </li>
+    <li>
+      <p class="q">What am I building in, and is it ready?<br><span class="ask">Ask: yourself · before Tuesday</span></p>
+      <p class="rec">If the concept turns out conversational or data-driven, a clickable Figma file may not carry it, and Thursday is far too late to discover that. Have components, a starter file, and a plausible faster route ready to go. <b>Thursday should be assembly, not construction.</b></p>
+    </li>
+    <li>
+      <p class="q">If Friday says the portal is the wrong surface, is there appetite to act on it?<br><span class="ask">Ask: sponsor · privately, this week</span></p>
+      <p class="rec">Now the sharpest question on the list, and the one to ask one-to-one rather than in a room. AI being decided doesn't settle <em>where</em> it lives — email, the ERP, a supplier's checkout, or a person's hands are all still on the table. But if the honest answer is "it has to be in the portal", then the sprint is scoped inside the portal whether anyone says so or not, and it's far better to know that now than to spend Friday afternoon arguing for a finding nobody was ever going to fund.</p>
+    </li>
+  </ol>
+</section>
+
+<footer>
+  Preparation brief · in-house design · Seiva / Advantage Nordic Sprint 2
+</footer>
+
+</div>
