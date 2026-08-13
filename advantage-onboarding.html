@@ -828,13 +828,24 @@ body.in-app .flow{display:none}
   filter:blur(22px);opacity:.95}
 .sit-head,.sit-body{position:relative;z-index:1}
 .sit-head{display:flex;align-items:center;gap:var(--s3);padding:var(--s6) var(--s8) 0}
-.sit-head h2{font-size:var(--text-lg);letter-spacing:-.4px}
+.sit-head h2{font-size:var(--text-2xl);letter-spacing:-.6px;font-weight:600}
 .sit-head .spacer{flex:1}
 
+/* two headline figures, side by side: what's already secured vs. what's still on the table.
+   Lives inside sit-left, in the space the single hero figure used to occupy. */
+.sit-split{display:flex;gap:var(--s6)}
+.split-stat{display:flex;flex-direction:column;gap:var(--s2);flex:1;min-width:0}
+.split-stat + .split-stat{padding-left:var(--s6);border-left:1px solid var(--hairline)}
+.split-l{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.split-v{font-family:var(--font-sans);font-size:40px;font-weight:600;
+  letter-spacing:-1.2px;line-height:1.05;color:var(--general-foreground);white-space:nowrap}
+.split-v small{font-size:var(--text-xl);font-weight:500;letter-spacing:-.5px;
+  color:var(--general-muted-foreground)}
+.split-v.hero{color:var(--sentiment-positive)}
 
 /* horizontal split: headline + facts on the left, category breakdown on the right */
 .sit-body{padding:var(--s6) var(--s8) var(--s8);display:grid;gap:var(--s8);
-  grid-template-columns:minmax(260px,.85fr) minmax(340px,1.15fr);align-items:start}
+  grid-template-columns:minmax(280px,1fr) minmax(320px,1.05fr);align-items:start}
 .sit-left{min-width:0}
 .sit-right{min-width:0;padding-left:var(--s8);border-left:1px solid #1b64dc1f}
 @container page (max-width:940px){
@@ -842,56 +853,16 @@ body.in-app .flow{display:none}
   .sit-right{padding-left:0;border-left:none;padding-top:var(--s6);border-top:1px solid #1b64dc1f}
 }
 @container page (max-width:560px){
-  /* stack the row: label, figures, bar — the arrow keeps its column on the right */
-  .cbar{grid-template-columns:1fr auto;grid-template-areas:"name go" "amt go" "bar go"}
-  .cbar .amt2{text-align:left}
-  .cbar .pc2{display:none}          /* the figures carry it; the label needs the room */
+  .cbar-split{flex-direction:column;gap:var(--s3)}
+  .cbar-split .split-stat + .split-stat{padding-left:0;border-left:none}
 }
 @container page (max-width:440px){
   .sit-head{padding:var(--s4) var(--s4) 0}
   .sit-body{padding:var(--s4)}
 }
-/* hero figure — proportional figures, not tabular: tabular looks loose at display size */
-.figure{display:flex;align-items:baseline;gap:var(--s2);font-family:var(--font-sans);
-  font-size:var(--text-5xl);font-weight:600;letter-spacing:-2.2px;line-height:1.05}
-.figure small{font-size:var(--text-xl);font-weight:500;letter-spacing:-.5px;
-  color:var(--general-muted-foreground)}
-.figure.save{color:var(--sentiment-positive)}
-.figure.save small{color:#4a8f89}
-/* the saving as a rate of total spend — same shape as the per-category label. This is now
-   the only place the spend total appears, so it carries the info affordance. */
-.fig-rate{position:relative;display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s3);
-  font-family:var(--font-mono);font-size:var(--text-l);
-  font-variant-numeric:tabular-nums;color:var(--general-muted-foreground)}
-.fig-rate b{color:var(--general-foreground);font-weight:600}
 .figure-sub{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.55;
   color:var(--general-muted-foreground)}
 .figure-sub b{color:var(--general-foreground);font-weight:600}
-/* supporting facts */
-/* the four supporting facts now live behind the info icon on the total */
-.ihold{display:inline-flex;flex:0 0 auto}
-.ibtn{width:22px;height:22px;display:grid;place-items:center;background:none;border:none;
-  cursor:pointer;border-radius:var(--rounded-full);color:var(--general-muted-foreground);
-  transition:var(--t-fast)}
-.ibtn:hover{background:#1b64dc1f;color:var(--general-primary)}
-.ibtn[aria-expanded="true"]{background:var(--general-primary);color:#fff}
-.ibtn svg{width:16px;height:16px}
-/* opens downward: the button now sits near the top of the card */
-.ipop{position:absolute;top:calc(100% + 10px);left:0;transform:translateY(-4px);
-  z-index:12;width:min(320px,100%);background:var(--surface);border:1px solid var(--hairline);
-  border-radius:var(--rounded-lg);box-shadow:var(--shadow-xl);opacity:0;pointer-events:none;
-  transition:opacity var(--t-fast),transform var(--t-fast)}
-.ipop.on{opacity:1;pointer-events:auto;transform:none}
-.ip-h{padding:var(--s4) var(--s4) var(--s2);font-family:var(--font-sans);font-size:var(--text-xs);
-  font-weight:600}
-.ip-f{padding:var(--s3) var(--s4) var(--s4);font-size:13px;line-height:1.5;
-  color:var(--general-muted-foreground)}
-.ip-f b{color:var(--general-foreground);font-weight:600}
-.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--hairline)}
-.fact{padding:var(--s3) var(--s4);background:var(--surface)}
-.fact b{display:block;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
-  letter-spacing:-.5px;font-variant-numeric:tabular-nums}
-.fact span{display:block;margin-top:1px;font-size:13px;color:var(--general-muted-foreground)}
 
 /* ---------- spend through the year ---------- */
 .spark{margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid #1b64dc1f}
@@ -938,49 +909,42 @@ body.in-app .flow{display:none}
   font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 .split-head .spacer{flex:1}
-.cbars{list-style:none;display:flex;flex-direction:column;gap:var(--s1)}
-/* label row over a full-width track, so the small categories still get enough track
-   to be visible */
-.cbar{position:relative;display:grid;align-items:center;gap:var(--s2) var(--s4);
-  grid-template-columns:1fr 150px 30px;
-  grid-template-areas:"name amt go" "bar pc go";
-  padding:var(--s2) var(--s2);border-radius:var(--rounded-sm)}
+.cbars{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+/* each row is a small card: title, the same activated/remaining split as the headline
+   figure above, then a track sized to the two shares — same logic, smaller scale */
+.cbar{position:relative;display:flex;flex-direction:column;gap:var(--s2);
+  padding:var(--s3);border-radius:var(--rounded-md)}
 .cbar:hover{background:#ffffff8f}
 /* which row the side panel is showing */
 .cbar.sel{background:#ffffffd9}
 .cbar.sel .rowgo{color:#fff;background:var(--sentiment-positive)}
 /* the quick win — the one row that should catch the eye */
-.cbar.quick{background:#ffffffd9;border:1px solid #00968947;padding:var(--s3);
+.cbar.quick{background:#ffffffd9;border:1px solid #00968947;padding:var(--s4) var(--s3);
   box-shadow:0 1px 2px #0096891a}
 .cbar.quick:hover{background:#fff;border-color:#00968980}
-.cbar.quick .cn2{font-weight:600}
 .qtag{display:inline-flex;align-items:center;gap:4px;margin-left:var(--s2);padding:2px 7px;
   border-radius:var(--rounded-full);background:var(--sentiment-positive);color:#fff;
   font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:.01em;
   vertical-align:1px}
 .qtag svg{width:10px;height:10px}
+.cbar-top{display:flex;align-items:center;gap:var(--s2)}
 /* wraps rather than ellipsizes: a clipped label loses the category AND the Quick win
    badge, and there is no tooltip to recover them */
-.cbar .cn2{grid-area:name;font-size:var(--text-sm);font-weight:500;min-width:0;
-  line-height:1.35;text-wrap:pretty}
-/* One measure: the rate this category saves at, as a fill inside a track sized to its full spend. */
+.cbar .cn2{flex:1;min-width:0;font-size:var(--text-base);font-weight:600;letter-spacing:-.2px;
+  line-height:1.3;text-wrap:pretty}
+.cbar-split{display:flex;gap:var(--s4)}
+.cbar-split .split-l{font-size:var(--text-xs)}
+.cbar-split .split-v{font-size:var(--text-xl);letter-spacing:-.4px}
+.cbar-split .split-v small{font-size:var(--text-xs)}
+/* One measure: the activated share of this category's original potential, as a fill
+   inside a track sized to what's still remaining. */
 .b2{display:block;height:8px;border-radius:var(--rounded-full);background:#0096891a;overflow:hidden}
-.cbar .b2{grid-area:bar}
 .b2 i{display:block;height:100%;min-width:2px;border-radius:var(--rounded-full);
   background:#0a6b4a;transition:width var(--t-slow)}
-.cbar .amt2{grid-area:amt;text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);
-  font-weight:600;font-variant-numeric:tabular-nums;color:var(--sentiment-positive);
-  white-space:nowrap}
-/* unit sits quieter than the figure, same tint as the hero's unit */
-.cbar .amt2 .u{font-style:normal;font-size:13px;font-weight:500;color:#4a8f89}
-/* secondary: the rate it comes from, and the spend it sits on */
-.cbar .pc2{grid-area:pc;text-align:right;font-family:var(--font-mono);font-size:13px;
-  font-variant-numeric:tabular-nums;color:var(--general-muted-foreground);white-space:nowrap}
-.cbar .pc2 b{color:var(--general-foreground);font-weight:600}
-/* row CTA — spans both lines on the right */
-.rowgo{grid-area:go;align-self:center;width:30px;height:30px;display:grid;place-items:center;
-  background:none;border:none;cursor:pointer;border-radius:var(--rounded-full);
-  color:#a3a3a3;transition:var(--t-fast)}
+/* row CTA */
+.rowgo{flex:0 0 auto;width:30px;height:30px;
+  display:grid;place-items:center;background:none;border:none;cursor:pointer;
+  border-radius:var(--rounded-full);color:#a3a3a3;transition:var(--t-fast)}
 .cbar:hover .rowgo{color:var(--sentiment-positive);background:#0096891a}
 .rowgo:hover{background:var(--sentiment-positive)!important;color:#fff!important}
 .rowgo svg{width:16px;height:16px}
@@ -1620,26 +1584,21 @@ body.in-app .flow{display:none}
           <!-- 2 · current situation -->
           <section class="sit" aria-labelledby="sit-h">
             <div class="sit-head">
-              <h2 id="sit-h">Potential savings</h2>
+              <h2 id="sit-h">Savings</h2>
               <span class="spacer"></span>
               <span class="chip chip-soft">Based on the last 12 months</span>
             </div>
             <div class="sit-body">
               <div class="sit-left">
-                <div class="figure save"><span id="sitSave">0</span> <small>kr./year</small></div>
-                <div class="fig-rate">
-                  <span id="sitRate"></span>
-                  <span class="ihold">
-                    <button class="ibtn" id="factsBtn" aria-expanded="false"
-                      aria-label="What this spend total is made of">
-                      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.6" r="1.15" fill="currentColor"/></svg>
-                    </button>
-                    <div class="ipop" id="factsPop" role="region" aria-label="What this spend total is made of">
-                      <div class="ip-h">What that spend is made of</div>
-                      <div class="facts" id="sitFacts"></div>
-                      <p class="ip-f" id="sitProv"></p>
-                    </div>
-                  </span>
+                <div class="sit-split">
+                  <div class="split-stat">
+                    <span class="split-l">From activated agreements</span>
+                    <b class="split-v" id="sitActivated">0 <small>kr./year</small></b>
+                  </div>
+                  <div class="split-stat">
+                    <span class="split-l">Remaining potential agreements</span>
+                    <b class="split-v hero" id="sitRemaining">0 <small>kr./year</small></b>
+                  </div>
                 </div>
                 <p class="figure-sub" id="sitSaveSub"></p>
 
@@ -1663,8 +1622,7 @@ body.in-app .flow{display:none}
               </div>
               <div class="sit-right">
                 <div class="split-head">
-                  <span>Saving potential by category</span><span class="spacer"></span>
-                  <span>Rate · category spend</span>
+                  <span>Saving potential by category</span>
                 </div>
                 <ol class="cbars" id="sitBars"></ol>
               </div>
@@ -2445,48 +2403,51 @@ function renderDash(){
   $('#greet').textContent = `${part}, ${state.user.split(' ')[0]}`;
   /* savings lead; spend is the context they sit on */
   const rows  = live().filter(r => potOf(r) > 0).sort((a,b) => potOf(b) - potOf(a));
-  const total = rows.reduce((s,r) => s + r.amt, 0);
   const save  = rows.reduce((s,r) => s + potOf(r), 0);
-  const inv   = rows.reduce((s,r) => s + r.inv, 0);
-  const sup   = rows.reduce((s,r) => s + r.sup, 0);
 
   /* welcome + status line — reflects what the user activated in onboarding */
   renderHello();
 
-  $('#sitSave').textContent = fmt(save);
-  $('#sitRate').innerHTML = `<b>${(save / total * 100).toFixed(1)}%</b> of ${fmt(total)} kr.`;
+  const activated  = ROWS.reduce((s,r) => s + r.agr.reduce((s2,a) => s2 + (a.req ? a.save : 0), 0), 0);
+  const totalSpend = live().reduce((s,r) => s + r.amt, 0);
+  $('#sitActivated').innerHTML = `${fmt(activated)} <small>kr./year</small>`;
+  $('#sitRemaining').innerHTML = `${fmt(save)} <small>kr./year</small>`;
+
   $('#sitSaveSub').innerHTML =
-    `Available on the spending you already do, if these categories moved onto an Advantage `
-    + `agreement. Nothing here asks you to change supplier.`;
-
-  $('#sitProv').innerHTML = `Read from <b style="color:inherit">${state.source}</b> · `
-    + `1 Aug 2025 to today · every figure traces to an invoice line`;
-
-  $('#sitFacts').innerHTML = [
-    [fmt(inv), 'invoices read'],
-    [fmt(sup), 'suppliers'],
-    [rows.length, rows.length === 1 ? 'category' : 'categories'],
-    [fmt(total / (inv || 1)), 'average invoice, kr.']
-  ].map(([v,l]) => `<div class="fact"><b>${v}</b><span>${l}</span></div>`).join('');
+    `You are already saving <b>${(activated / totalSpend * 100).toFixed(1)}%</b> of your spending, `
+    + `and you can still save <b>${(save / totalSpend * 100).toFixed(1)}%</b> more. `
+    + `Your total spend is <b>${fmt(totalSpend)} kr.</b>`;
 
   renderSpark();
 
-  /* One measure, one hue: the saving rate this category runs at — dark segment is the
-     rate% that becomes savings, the light track is the full spend it's a share of. */
+  /* same logic as the headline figure above, one level down: what's already activated
+     in this category vs. what's still open, and a track sized to that split. */
   $('#sitBars').innerHTML = rows.map(r => {
-    const pot = potOf(r);
+    const catActivated = r.agr.reduce((s,a) => s + (a.req ? a.save : 0), 0);
+    const catRemaining = potOf(r);
+    const catTotal = catActivated + catRemaining;
     return `
     <li class="cbar${catAt === r.id ? ' sel' : ''}${r.quick ? ' quick' : ''}" data-row="${r.id}"
       data-tip="${fmt(r.inv)} invoices · ${r.sup} suppliers · ${r.top}">
-      <span class="cn2">${r.n}${r.quick ? `<span class="qtag">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
-        Quick win</span>` : ''}</span>
-      <span class="amt2">+${fmt(pot)} <em class="u">kr./year</em></span>
-      <span class="b2"><i class="s2" style="width:${r.rate}%"></i></span>
-      <span class="pc2"><b>${r.rate}%</b> of ${fmt(r.amt)} kr.</span>
-      <button class="rowgo" data-open="${r.id}" aria-label="How we found the ${r.n} saving">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+      <div class="cbar-top">
+        <span class="cn2">${r.n}${r.quick ? `<span class="qtag">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
+          Quick win</span>` : ''}</span>
+        <button class="rowgo" data-open="${r.id}" aria-label="How we found the ${r.n} saving">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="cbar-split">
+        <div class="split-stat">
+          <span class="split-l">From activated agreements</span>
+          <b class="split-v">${fmt(catActivated)} <small>kr./year</small></b>
+        </div>
+        <div class="split-stat">
+          <span class="split-l">Remaining potential agreements</span>
+          <b class="split-v hero">${fmt(catRemaining)} <small>kr./year</small></b>
+        </div>
+      </div>
+      <span class="b2"><i class="s2" style="width:${catTotal ? (catActivated / catTotal * 100).toFixed(1) : 0}%"></i></span>
     </li>`;
   }).join('');
   $$('#sitBars [data-open]').forEach(b => b.addEventListener('click', () => openCat(b.dataset.open)));
@@ -2829,44 +2790,50 @@ function renderHello(){
   const bonus = Math.round(vals.reduce((s,v) => s + v.covers, 0) * 0.015);  /* ~1.5% volume bonus */
   const left  = Math.max(0, total - actN);
   const p = $('#helloP'), w = $('#helloWidgets');
-  if(actN === 0){
-    p.innerHTML = `Thanks for choosing Advantage — we're glad to have you on board. `
-      + `${total} agreements are ready to activate whenever you are; explore your potential savings below to see where they come from.`;
-    w.innerHTML = '';
-  } else {
-    /* plain first-time summary — no bold, no colour */
-    p.textContent = `Thanks for choosing Advantage — we're glad to have you on board. `
+
+  p.textContent = actN === 0
+    ? `Thanks for choosing Advantage — we're glad to have you on board. `
+      + `${total} agreements are ready to activate whenever you are; explore your potential savings below to see where they come from.`
+    : `Thanks for choosing Advantage — we're glad to have you on board. `
       + `You've just activated ${actN} agreement${actN === 1 ? '' : 's'}, and ${left} more `
       + `${left === 1 ? 'is' : 'are'} still available to explore. `
       + `Take a look at your potential savings below to see where the rest could come from.`;
-    const items = [...ACTIVATED.entries()].map(([name,d]) =>
-      ({name, save:d.save, bonus:Math.round(d.covers * 0.015)}));
-    const list = (rows, tot) => `<ul class="hw-pop-list">${rows}${tot || ''}</ul>`;
 
-    const savePop = `<p class="hw-pop-h">Where your savings come from</p>`
+  /* realised is always 0 until a supplier confirms and it lands on an invoice — these
+     boxes stay visible from day one so the user always has somewhere to check back */
+  const items = [...ACTIVATED.entries()].map(([name,d]) =>
+    ({name, save:d.save, bonus:Math.round(d.covers * 0.015)}));
+  const list = (rows, tot) => `<ul class="hw-pop-list">${rows}${tot || ''}</ul>`;
+  const emptyPop = `<p class="hw-pop-f">Nothing activated yet — activate an agreement below to see it appear here once the supplier confirms.</p>`;
+
+  const savePop = actN
+    ? `<p class="hw-pop-h">Waiting to be confirmed</p>`
       + list(items.map(x => `<li><span>${x.name}</span><b>${fmt(x.save)} kr.</b></li>`).join(''),
-             `<li class="tot"><span>Total per year</span><b>${fmt(saved)} kr.</b></li>`);
-    const bonusPop = `<p class="hw-pop-h">Volume bonus by agreement</p>`
+             `<li class="tot"><span>Total per year, once confirmed</span><b>${fmt(saved)} kr.</b></li>`)
+      + `<p class="hw-pop-f">Each supplier confirms within 5 working days, and the new price appears on your next invoice — that's when this becomes realised.</p>`
+    : emptyPop;
+  const bonusPop = actN
+    ? `<p class="hw-pop-h">Waiting to be confirmed</p>`
       + list(items.map(x => `<li><span>${x.name}</span><b>+${fmt(x.bonus)} kr.</b></li>`).join(''),
-             `<li class="tot"><span>Total per year</span><b>+${fmt(bonus)} kr.</b></li>`)
-      + `<p class="hw-pop-f">A volume bonus of about 1.5% on the spend routed through these agreements, paid annually on top of your savings.</p>`;
+             `<li class="tot"><span>Total per year, once confirmed</span><b>+${fmt(bonus)} kr.</b></li>`)
+      + `<p class="hw-pop-f">A volume bonus of about 1.5% on the spend routed through these agreements, paid annually on top of your savings — once confirmed.</p>`
+    : emptyPop;
 
-    const card = (i, label, number, unit, aria, pop) => `
-      <div class="hw">
-        <button class="hw-t" data-i="${i}" aria-expanded="false" aria-label="${aria}">
-          <span class="hw-txt">
-            <span class="hw-l">${label}</span>
-            <b class="hw-v">${number}</b>
-            <span class="hw-u">${unit}</span>
-          </span>
-        </button>
-        <div class="hw-pop" role="tooltip">${pop}</div>
-      </div>`;
+  const card = (i, label, number, aria, pop) => `
+    <div class="hw">
+      <button class="hw-t" data-i="${i}" aria-expanded="false" aria-label="${aria}">
+        <span class="hw-txt">
+          <span class="hw-l">${label}</span>
+          <b class="hw-v">${number}</b>
+          <span class="hw-u">Pending updated invoices</span>
+        </span>
+      </button>
+      <div class="hw-pop" role="tooltip">${pop}</div>
+    </div>`;
 
-    w.innerHTML =
-        card(0, 'Currently saving', fmt(saved),        `kr./year / ${actN} agreements`, 'Currently saving — where it comes from', savePop)
-      + card(1, 'Volume bonus',    `+${fmt(bonus)}`,   'kr./year',                      'Volume bonus — by agreement', bonusPop);
-  }
+  w.innerHTML =
+      card(0, 'Realised savings', '0 kr', 'Realised savings — what is pending', savePop)
+    + card(1, 'Realised bonus',  '+0 kr', 'Realised bonus — what is pending',   bonusPop);
 }
 
 /* status-widget explainer popovers appear on hover / keyboard focus (CSS-driven) */
@@ -2992,22 +2959,6 @@ function spHover(){
     hit.addEventListener('mouseleave', () => { tip.classList.remove('on'); cross.classList.remove('on'); });
   });
 }
-
-/* ---------- facts popover ---------- */
-$('#factsBtn').addEventListener('click', e => {
-  e.stopPropagation();
-  const on = $('#factsPop').classList.toggle('on');
-  $('#factsPop').inert = !on;
-  $('#factsBtn').setAttribute('aria-expanded', String(on));
-});
-$('#factsPop').addEventListener('click', e => e.stopPropagation());
-function closeFacts(){
-  $('#factsPop').classList.remove('on');
-  $('#factsPop').inert = true;
-  $('#factsBtn').setAttribute('aria-expanded','false');
-}
-document.addEventListener('click', closeFacts);
-addEventListener('keydown', e => { if(e.key === 'Escape') closeFacts(); });
 
 /* ---------- category explainer ---------- */
 let catAt = null;
