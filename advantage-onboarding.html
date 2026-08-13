@@ -124,7 +124,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .topbar.on{opacity:1;transform:none}
 .topbar img{height:30px;width:auto;display:block}
 .topbar .spacer{flex:1}
-.prog{display:flex;align-items:center;gap:var(--s2)}
+.prog{display:none;align-items:center;gap:var(--s2)}
 .prog i{width:26px;height:3px;border-radius:2px;background:var(--general-muted);transition:background-color var(--t)}
 .prog i.on{background:var(--general-primary)}
 .prog span{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-left:var(--s2);
@@ -188,16 +188,15 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 /* ==========================================================================
    2 · SOURCES
    ========================================================================== */
-.srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s6);margin-top:var(--s12)}
+#s-source h1{font-size:var(--text-5xl);letter-spacing:-2px;line-height:1.05}
+.srcs{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s6);margin-top:var(--s12)}
 @media(max-width:900px){.srcs{grid-template-columns:1fr}}
-.src{position:relative;display:flex;flex-direction:column;padding:var(--s6);text-align:left;
+.src{position:relative;display:flex;flex-direction:column;padding:var(--s8);text-align:left;
   background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
   box-shadow:var(--shadow-xs);transition:transform var(--t),box-shadow var(--t),border-color var(--t)}
 /* reserved on every card so the titles line up whether or not there's a badge */
 .src .top{display:flex;align-items:center;min-height:24px;margin-bottom:var(--s4)}
-.src h3{font-size:var(--text-2xl);letter-spacing:-.8px;line-height:1.18;margin-bottom:var(--s4)}
-/* in the 3-up layout one title wraps to two lines — reserve both so the body copy aligns */
-@media(min-width:901px){.src h3{min-height:calc(1.18em * 2)}}
+.src h3{font-size:var(--text-4xl);letter-spacing:-1.4px;line-height:1.12;margin-bottom:var(--s4)}
 .src .why{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.6}
 .src .why b{color:var(--general-foreground);font-weight:600}
 .src .act{margin-top:auto;padding-top:var(--s8)}
@@ -206,11 +205,6 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .src.live:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--brand-cornflower)}
 /* rendered at full fidelity but inert for this round of testing */
 .src.inert{pointer-events:none}
-.trust{display:flex;flex-wrap:wrap;gap:var(--s6);margin-top:var(--s12);padding-top:var(--s6);
-  border-top:1px solid var(--hairline)}
-.trust div{display:flex;align-items:center;gap:var(--s2);font-size:var(--text-xs);
-  color:var(--general-muted-foreground)}
-.trust svg{width:15px;height:15px;color:var(--sentiment-positive);flex:0 0 auto}
 
 /* ==========================================================================
    3 · LOADING
@@ -238,7 +232,16 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
   color:var(--general-muted-foreground)}
 .pctrow b{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;
   color:var(--general-foreground);font-variant-numeric:tabular-nums}
-.steps{margin-top:var(--s12);text-align:left;display:flex;flex-direction:column;gap:var(--s3)}
+/* live read counters */
+.reads{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:var(--s8);
+  background:var(--hairline);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  overflow:hidden}
+.read{padding:var(--s4) var(--s3);background:var(--surface)}
+.read b{display:block;font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;
+  letter-spacing:-.8px;color:var(--general-primary)}
+.read span{display:block;margin-top:2px;font-size:11px;line-height:1.35;
+  color:var(--general-muted-foreground)}
+.steps{margin-top:var(--s10,40px);text-align:left;display:flex;flex-direction:column;gap:var(--s3)}
 .step{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-sm);
   color:#b3b3b3;transition:color var(--t)}
 .step .dot{width:18px;height:18px;flex:0 0 auto;border-radius:var(--rounded-full);
@@ -247,7 +250,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .step.now{color:var(--general-foreground);font-weight:500}
 .step.now .dot{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
 .step.done{color:var(--general-muted-foreground)}
-.step.done .dot{background:var(--sentiment-positive);border-color:var(--sentiment-positive);color:#fff}
+.step.done .dot{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
 .step.done .dot svg{opacity:1}
 
 /* ==========================================================================
@@ -1299,9 +1302,8 @@ body.in-app .flow{display:none}
   <!-- ==================== 2 · SOURCES ==================== -->
   <section class="scr" id="s-source" aria-labelledby="h-source">
     <div class="pad">
-      <div class="eyebrow"><i></i>Step 1 of 3</div>
-      <h1 id="h-source">Where should we read your spending from?</h1>
-      <p class="lead">The more we can read, the more we can find. Pick one to start — you can add the others later.</p>
+      <h1 id="h-source">Only one step to start saving!</h1>
+      <p class="lead">The more we can read, the more we can find. Pick one to start — you can add the other later.</p>
 
       <div class="srcs">
         <!-- live -->
@@ -1312,18 +1314,14 @@ body.in-app .flow{display:none}
               Recommended</span>
           </div>
           <h3>Connect your ERP</h3>
-          <p class="why">Read-only access to the invoices you've already booked, so <b>every figure traces back to a line on a real invoice</b> — nothing we suggest is a guess, and we spot a price change the month it happens.</p>
+          <p class="why">Connecting your ERP ensures your savings are calculated using your actual
+            invoice data, providing you with highly accurate, personalized insights. You can connect
+            with complete peace of mind: <b>the integration is strictly read-only</b>, your data is
+            securely stored within the EU, and you retain full control to disconnect at any time.</p>
           <div class="act"><button class="btn btn-primary btn-block" id="goErp">Connect ERP</button></div>
         </div>
 
         <!-- rendered fully, but inert for this round of testing -->
-        <div class="src inert">
-          <div class="top"></div>
-          <h3>Upload your own documents</h3>
-          <p class="why">Drop in invoices, statements or a spend export and we read them the same way — but we only ever know <b>what your last upload told us</b>, so we find less, and later.</p>
-          <div class="act"><button class="btn btn-secondary btn-block" tabindex="-1" aria-disabled="true">Upload documents</button></div>
-        </div>
-
         <div class="src inert">
           <div class="top"></div>
           <h3>Let the assistant find it</h3>
@@ -1332,11 +1330,6 @@ body.in-app .flow{display:none}
         </div>
       </div>
 
-      <div class="trust">
-        <div><svg viewBox="0 0 24 24" fill="none"><path d="M12 21c5-2 7-6 7-11V5l-7-2-7 2v5c0 5 2 9 7 11z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Read-only — we never write back</div>
-        <div><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="10" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7.5a4 4 0 018 0V10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Your data stays in the EU</div>
-        <div><svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Disconnect at any time</div>
-      </div>
     </div>
   </section>
 
@@ -1366,6 +1359,13 @@ body.in-app .flow{display:none}
 
       <div class="track"><i id="bar"></i></div>
       <div class="pctrow"><span id="loadNow" role="status" aria-live="polite">Connecting…</span><b class="num" id="pct">0%</b></div>
+
+      <!-- what's actually coming back, counting up with the progress -->
+      <div class="reads">
+        <div class="read"><b class="num" id="rInv">0</b><span>invoices read</span></div>
+        <div class="read"><b class="num" id="rSup">0</b><span>suppliers found</span></div>
+        <div class="read"><b class="num" id="rAgr">0</b><span>agreements matched</span></div>
+      </div>
 
       <div class="steps" id="steps"></div>
     </div>
@@ -1846,11 +1846,19 @@ $('#steps').innerHTML = STEPS.map(s => `
   </span>${s}</div>`).join('');
 
 function runIngest(){
-  const rows = $$('#steps .step'), dur = RM ? 600 : 4600, t0 = performance.now();
+  const rows = $$('#steps .step'), dur = RM ? 600 : 7600, t0 = performance.now();
+  /* the totals the counters climb to — the same figures the data set and dashboard use,
+     so nothing the user sees here gets contradicted two screens later */
+  const tInv = state.invoices;
+  const tSup = ROWS.reduce((s,r) => s + r.sup, 0);
+  const tAgr = ROWS.reduce((s,r) => s + r.agr.length, 0);
   const tick = now => {
     const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 2);
     $('#bar').style.width = (e * 100) + '%';
     $('#pct').textContent = Math.round(e * 100) + '%';
+    $('#rInv').textContent = fmt(tInv * e);
+    $('#rSup').textContent = fmt(tSup * e);
+    $('#rAgr').textContent = fmt(tAgr * e);
     const at = Math.min(rows.length - 1, Math.floor(p * rows.length));
     rows.forEach((r,i) => {
       r.classList.toggle('done', i < at || p === 1);
