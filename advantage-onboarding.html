@@ -777,7 +777,7 @@ body.in-app .flow{display:none}
 .hello{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4)}
 .hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
 /* welcoming status line — one size, one weight; only the counts are emphasised in savings green */
-.hello-row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s6);
+.hello-row{display:flex;align-items:stretch;justify-content:space-between;gap:var(--s6);
   flex-wrap:wrap;width:100%}
 .hello-p{flex:1 1 340px;font-size:var(--text-lg);line-height:1.55;
   color:var(--general-muted-foreground);max-width:60ch}
@@ -785,6 +785,11 @@ body.in-app .flow{display:none}
 .hello-p .linkbtn{font-size:inherit;vertical-align:baseline}
 /* status widgets: a wide "Currently saving" card on top, two half-width cards below */
 .hello-widgets{flex:0 1 440px;display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);align-content:start}
+.export-btn{flex:0 0 auto;flex-direction:column;gap:var(--s2);height:auto;
+  padding:var(--s4);align-self:stretch;border-radius:var(--rounded-md)}
+.export-btn.busy svg{animation:spin 900ms linear infinite}
+.export-btn.done{background:#d9f2ef;border-color:transparent;color:var(--sentiment-positive)}
+@media (prefers-reduced-motion:reduce){.export-btn.busy svg{animation:none}}
 .hw{position:relative}
 .hw-wide{grid-column:1 / -1}
 .hw-t{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s4);
@@ -1585,6 +1590,10 @@ body.in-app .flow{display:none}
             <div class="hello-row">
               <p class="hello-p" id="helloP"><!-- filled by renderHello() --></p>
               <div class="hello-widgets" id="helloWidgets"></div>
+              <button class="btn btn-secondary btn-sm export-btn" id="exportBtn">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 17v2a2 2 0 002 2h10a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span id="exportLbl">Export report</span>
+              </button>
             </div>
           </header>
 
@@ -2400,6 +2409,24 @@ $('#syncBtn').addEventListener('click', () => {
     persist();
     setTimeout(() => { btn.classList.remove('done'); lbl.textContent = 'Sync now'; }, 2500);
   }, RM ? 300 : 1800);
+});
+
+let exporting = false;
+$('#exportBtn').addEventListener('click', () => {
+  if(exporting) return;
+  exporting = true;
+  const btn = $('#exportBtn'), lbl = $('#exportLbl');
+  btn.disabled = true;
+  btn.classList.add('busy');
+  lbl.textContent = 'Exporting…';
+  setTimeout(() => {
+    btn.classList.remove('busy');
+    btn.classList.add('done');
+    lbl.textContent = 'Report exported';
+    btn.disabled = false;
+    exporting = false;
+    setTimeout(() => { btn.classList.remove('done'); lbl.textContent = 'Export report'; }, 2500);
+  }, RM ? 300 : 1400);
 });
 
 $('#bannerX').addEventListener('click', () => $('#bannerwrap').style.display = 'none');
