@@ -820,12 +820,8 @@ body.in-app .flow{display:none}
 /* 2 · current situation — subtle blue gradient rising from the bottom */
 /* Bottom-anchored wash, only the lower third of the card, with a blurred top edge. It
    bleeds past left/right/bottom so the blur only ever softens the edge that shows. */
-.sit{position:relative;border:1px solid var(--general-border);border-radius:var(--rounded-2xl);
+.sit{position:relative;border:1px solid var(--hairline);border-radius:var(--rounded-2xl);
   overflow:hidden;background:var(--surface);box-shadow:var(--shadow-xs)}
-.sit::after{content:"";position:absolute;left:-40px;right:-40px;bottom:-40px;
-  height:calc(34% + 40px);z-index:0;pointer-events:none;
-  background:linear-gradient(to top,#dceaff,#eef4ff 48%,transparent);
-  filter:blur(22px);opacity:.95}
 .sit-head,.sit-body{position:relative;z-index:1}
 .sit-head{display:flex;align-items:center;gap:var(--s3);padding:var(--s6) var(--s8) 0}
 .sit-head h2{font-size:var(--text-2xl);letter-spacing:-.6px;font-weight:600}
@@ -838,8 +834,9 @@ body.in-app .flow{display:none}
 .split-stat + .split-stat{padding-left:var(--s6);border-left:1px solid var(--hairline)}
 .split-l{font-size:var(--text-sm);color:var(--general-muted-foreground)}
 .split-v{font-family:var(--font-sans);font-size:40px;font-weight:600;
-  letter-spacing:-1.2px;line-height:1.05;color:var(--general-foreground);white-space:nowrap}
-.split-v small{font-size:var(--text-xl);font-weight:500;letter-spacing:-.5px;
+  letter-spacing:-1.2px;line-height:1.05;color:var(--general-foreground);white-space:nowrap;
+  display:flex;flex-direction:column;align-items:flex-start;gap:var(--s2)}
+.split-v small{font-size:var(--text-xl);font-weight:500;letter-spacing:-.5px;line-height:1;
   color:var(--general-muted-foreground)}
 .split-v.hero{color:var(--sentiment-positive)}
 
@@ -847,117 +844,116 @@ body.in-app .flow{display:none}
 .sit-body{padding:var(--s6) var(--s8) var(--s8);display:grid;gap:var(--s8);
   grid-template-columns:minmax(280px,1fr) minmax(320px,1.05fr);align-items:start}
 .sit-left{min-width:0}
-.sit-right{min-width:0;padding-left:var(--s8);border-left:1px solid #1b64dc1f}
+/* spending-history chart */
+.spend{margin-top:var(--s6);padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.spend-head{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s3)}
+.spend-eyebrow{flex:1;font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.spend-lgs{display:flex;gap:var(--s3) var(--s4);flex-wrap:wrap}
+.spend-lg{display:inline-flex;align-items:center;gap:6px;font-size:13px;
+  color:var(--general-muted-foreground)}
+.spend-lg i{display:inline-block;width:16px;height:0;border-top:2.5px solid var(--general-primary)}
+.spend-lg i.sl-p{border-top-style:dashed;opacity:.75}
+.spend-lg i.sl-a{border-top-color:#111827}
+.spend-lg i.sl-all{border-top-color:var(--sentiment-positive)}
+.spend-wrap{position:relative}
+#spendSvg{display:block;width:100%;height:auto;overflow:visible}
+.spd-hit{fill:transparent;cursor:crosshair}
+.spd-cross{stroke:#c7ced9;stroke-width:1;opacity:0}
+.spd-cross.on{opacity:1}
+.spd-tip{position:absolute;z-index:6;padding:7px 11px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:#fff;font-family:var(--font-mono);font-size:13px;
+  line-height:1.5;white-space:nowrap;pointer-events:none;opacity:0;
+  transition:opacity var(--t-fast);box-shadow:var(--shadow-md)}
+.spd-tip.on{opacity:1}
+.spd-tip b{font-weight:600}
+.spd-tip .t-a{color:#c9d6ff}
+.spd-tip .t-all{color:#6fe3c8}
+.spd-grid{stroke:#e6e9ef;stroke-width:1}
+.spd-ax{fill:var(--general-muted-foreground);font-size:11px;font-family:var(--font-mono)}
+.spd-area{fill:#1b64dc12;stroke:none}
+.spd-cut{stroke:#c7ced9;stroke-width:1;stroke-dasharray:3 3}
+.spd-line{fill:none;stroke:var(--general-primary);stroke-width:2.5;
+  stroke-linecap:round;stroke-linejoin:round}
+.spd-proj{fill:none;stroke:var(--general-primary);stroke-width:2.5;stroke-dasharray:5 5;
+  stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+.spd-dot{fill:#fff;stroke:var(--general-primary);stroke-width:2.5}
+/* projected spend once the activated agreements bite (solid) and if everything is activated (dashed) */
+.spd-actd{fill:none;stroke:#111827;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.spd-alld{fill:none;stroke:var(--sentiment-positive);stroke-width:2.5;
+  stroke-linecap:round;stroke-linejoin:round}
+.spd-x{fill:var(--general-muted-foreground);font-size:11px;font-family:var(--font-mono)}
+.spd-x.now{fill:var(--general-foreground);font-weight:600}
+.spd-today{fill:var(--general-foreground);font-size:10px;font-family:var(--font-mono);font-weight:600}
+.spend-note{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.55;
+  color:var(--general-muted-foreground)}
+.spend-note b{color:var(--general-foreground);font-weight:600}
+.sit-right{min-width:0;padding-left:var(--s8);border-left:1px solid #1b64dc1f;
+  --cbar-grid:minmax(0,1fr) 96px 104px 32px 28px}
 @container page (max-width:940px){
   .sit-body{grid-template-columns:1fr;gap:var(--s6)}
   .sit-right{padding-left:0;border-left:none;padding-top:var(--s6);border-top:1px solid #1b64dc1f}
-}
-@container page (max-width:560px){
-  .cbar-split{flex-direction:column;gap:var(--s3)}
-  .cbar-split .split-stat + .split-stat{padding-left:0;border-left:none}
 }
 @container page (max-width:440px){
   .sit-head{padding:var(--s4) var(--s4) 0}
   .sit-body{padding:var(--s4)}
 }
-.figure-sub{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.55;
+.figure-sub{margin-top:var(--s6);font-size:var(--text-sm);line-height:1.55;
   color:var(--general-muted-foreground)}
 .figure-sub b{color:var(--general-foreground);font-weight:600}
 
-/* ---------- spend through the year ---------- */
-.spark{margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid #1b64dc1f}
-.sp-head{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4);
-  font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--general-muted-foreground)}
-/* legend on its own line — three entries plus the title never fit one row in this column */
-.sp-lgs{flex:1 0 100%;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
-.sp-lg{display:inline-flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;
-  font-family:var(--font-body);font-size:13px}
-.sp-lg i{width:14px;height:0;border-top:2px solid var(--general-primary);flex:0 0 auto}
-.sp-lg i.l2{border-top-style:dashed}
-.sp-lg i.l3{border-top-color:var(--sentiment-positive)}
-.sp-wrap{position:relative}
-.sp-wrap svg{display:block;width:100%;height:auto;overflow:visible}
-.sp-grid{stroke:#1b64dc1f;stroke-width:1}
-.sp-ax{font-family:var(--font-mono);font-size:var(--axfs,11px);fill:#8f9bab}
-.sp-ax.hide{display:none}
-.sp-ax.now{fill:#5f6b7c;font-weight:600}
-.sp-stop{stroke:#98a6b8;stroke-width:1;stroke-dasharray:3 3}
-.sp-l1{fill:none;stroke:var(--general-primary);stroke-width:2.2;stroke-linecap:round;
-  stroke-linejoin:round}
-.sp-l2{fill:none;stroke:var(--general-primary);stroke-width:2.2;stroke-dasharray:5 4;
-  stroke-linecap:round}
-.sp-l3{fill:none;stroke:var(--sentiment-positive);stroke-width:2.2;stroke-linecap:round;
-  stroke-linejoin:round}
-.sp-area{fill:var(--general-primary);opacity:.09}
-.sp-band{fill:var(--sentiment-positive);opacity:.1}
-.sp-dot{fill:#fff;stroke-width:2.4}
-.sp-hit{fill:transparent;cursor:crosshair}
-.sp-cross{stroke:#98a6b8;stroke-width:1;opacity:0}
-.sp-cross.on{opacity:1}
-.sp-tip{position:absolute;z-index:6;padding:6px 10px;border-radius:var(--rounded-sm);
-  background:var(--brand-midnight);color:var(--surface);font-size:13px;line-height:1.45;
-  white-space:nowrap;pointer-events:none;opacity:0;box-shadow:var(--shadow-md);
-  transition:opacity var(--t-fast)}
-.sp-tip.on{opacity:1}
-.sp-tip b{font-weight:600}
-.sp-tip .t3{color:#6fe3c8}
-.sp-note{margin-top:var(--s4);font-size:13px;line-height:1.55;color:var(--general-muted-foreground)}
-.sp-note b{color:var(--sentiment-positive);font-weight:600}
 /* category split */
 .split-head{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s4);
   font-family:var(--font-mono);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 .split-head .spacer{flex:1}
-.cbars{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
-/* each row is a small card: title, the same activated/remaining split as the headline
-   figure above, then a track sized to the two shares — same logic, smaller scale */
-.cbar{position:relative;display:flex;flex-direction:column;gap:var(--s2);
-  padding:var(--s3);border-radius:var(--rounded-md)}
-.cbar:hover{background:#ffffff8f}
-/* which row the side panel is showing */
-.cbar.sel{background:#ffffffd9}
-.cbar.sel .rowgo{color:#fff;background:var(--sentiment-positive)}
-/* the quick win — the one row that should catch the eye */
-.cbar.quick{background:#ffffffd9;border:1px solid #00968947;padding:var(--s4) var(--s3);
-  box-shadow:0 1px 2px #0096891a}
-.cbar.quick:hover{background:#fff;border-color:#00968980}
-.qtag{display:inline-flex;align-items:center;gap:4px;margin-left:var(--s2);padding:2px 7px;
-  border-radius:var(--rounded-full);background:var(--sentiment-positive);color:#fff;
-  font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:.01em;
-  vertical-align:1px}
-.qtag svg{width:10px;height:10px}
-.cbar-top{display:flex;align-items:center;gap:var(--s2)}
+/* a table: a shared column grid (--cbar-grid) keeps the header and every row aligned.
+   Columns: ring · category · activated · potential · row CTA */
+.cbar-head{display:grid;grid-template-columns:var(--cbar-grid);gap:var(--s2);
+  align-items:end;padding:0 var(--s3) var(--s2);margin-bottom:var(--s1);
+  border-bottom:1px solid var(--hairline);
+  font-size:var(--text-xs);line-height:1.25;color:var(--general-muted-foreground)}
+.cbar-head span:nth-child(2),.cbar-head span:nth-child(3){text-align:right}
+.cbars{list-style:none;display:flex;flex-direction:column}
+/* each row is still a clickable card; the ring shows the activated share */
+/* the whole row is the click target that opens the category panel */
+.cbar{position:relative;display:grid;grid-template-columns:var(--cbar-grid);
+  align-items:center;gap:var(--s2);cursor:pointer;
+  padding:var(--s3);border-radius:var(--rounded-md);border:1px solid transparent}
+.cbar:hover{background:var(--general-muted)}
+/* which row the side panel is showing — a light grey wash across the whole row */
+.cbar.sel{background:var(--general-muted)}
+/* the horizontal track, now a compact ring: activated share filled clockwise
+   over the remaining-potential track, punched hollow with a radial mask */
+/* a filled pie: the activated share as a solid green wedge over a light-grey remainder.
+   The wedge uses the same green as the potential-agreements figure. */
+.cprog{width:24px;height:24px;margin-left:var(--s2);justify-self:end;border-radius:50%;
+  background:conic-gradient(var(--sentiment-positive) calc(var(--p,0)*1%),#dfe1e5 0)}
+/* fully activated: a filled check, styled like the synchronization-page steps */
+.cdone{width:24px;height:24px;margin-left:var(--s2);justify-self:end;
+  display:grid;place-items:center;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive);color:#fff}
+.cdone svg{width:13px;height:13px}
 /* wraps rather than ellipsizes: a clipped label loses the category AND the Quick win
    badge, and there is no tooltip to recover them */
-.cbar .cn2{flex:1;min-width:0;font-size:var(--text-base);font-weight:600;letter-spacing:-.2px;
+.cbar .cn2{min-width:0;font-size:var(--text-base);font-weight:600;letter-spacing:-.2px;
   line-height:1.3;text-wrap:pretty}
-.cbar-split{display:flex;gap:var(--s4)}
-.cbar-split .split-l{font-size:var(--text-xs)}
-.cbar-split .split-v{font-size:var(--text-xl);letter-spacing:-.4px}
-.cbar-split .split-v small{font-size:var(--text-xs)}
-/* One measure: the activated share of this category's original potential, as a fill
-   inside a track sized to what's still remaining. */
-.b2{display:block;height:8px;border-radius:var(--rounded-full);background:#0096891a;overflow:hidden}
-.b2 i{display:block;height:100%;min-width:2px;border-radius:var(--rounded-full);
-  background:#0a6b4a;transition:width var(--t-slow)}
-/* row CTA */
-.rowgo{flex:0 0 auto;width:30px;height:30px;
-  display:grid;place-items:center;background:none;border:none;cursor:pointer;
-  border-radius:var(--rounded-full);color:#a3a3a3;transition:var(--t-fast)}
-.cbar:hover .rowgo{color:var(--sentiment-positive);background:#0096891a}
-.rowgo:hover{background:var(--sentiment-positive)!important;color:#fff!important}
+/* marks a category that gained a brand-new agreement after fast-forwarding 6 months */
+.cnew{display:inline-block;margin-left:var(--s2);padding:1px 7px;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive);color:#fff;font-size:11px;font-weight:700;
+  letter-spacing:.02em;vertical-align:1px}
+.cval{justify-self:end;white-space:nowrap;
+  display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+  font-size:var(--text-base);font-weight:600;letter-spacing:-.2px;
+  color:var(--general-foreground)}
+.cval small{font-size:11px;font-weight:500;line-height:1;
+  color:var(--general-muted-foreground)}
+.cval.hero{color:var(--sentiment-positive)}
+/* row CTA — purely decorative now; the whole row is clickable, so no hover/pressed state */
+.rowgo{flex:0 0 auto;width:28px;height:28px;justify-self:center;pointer-events:none;
+  display:grid;place-items:center;background:none;border:none;
+  border-radius:var(--rounded-full);color:#a3a3a3}
 .rowgo svg{width:16px;height:16px}
-
-/* per-mark hover detail */
-.cbar::after{content:attr(data-tip);position:absolute;left:0;bottom:calc(100% - 4px);
-  padding:5px 10px;border-radius:var(--rounded-sm);background:var(--brand-midnight);
-  color:var(--surface);font-size:13px;white-space:nowrap;pointer-events:none;opacity:0;z-index:4;
-  box-shadow:0 0 0 2px var(--surface),var(--shadow-md);transform:translateY(3px);
-  transition:opacity var(--t-fast),transform var(--t-fast)}
-.cbar:hover::after{opacity:1;transform:none}
-/* the top row has no headroom — drop its tooltip below instead of over the column header */
-.cbar:first-child::after{bottom:auto;top:calc(100% - 4px);transform:translateY(-3px)}
 
 /* ==========================================================================
    SUPPLIERS — shelves of supplier recommendations
@@ -1088,11 +1084,19 @@ body.in-app .flow{display:none}
 .dw-f .fl b{color:var(--sentiment-positive);font-weight:600}
 /* summary block */
 .dw-sum{padding:var(--s6);border-radius:var(--rounded-lg);
-  background:linear-gradient(to top,#e2f4f2,#f7fdfc)}
-.dw-sum .big{display:flex;align-items:baseline;gap:var(--s2);font-family:var(--font-sans);
-  font-size:var(--text-4xl);font-weight:600;letter-spacing:-1.4px;color:var(--sentiment-positive)}
-.dw-sum .big small{font-size:var(--text-base);font-weight:500;color:#4a8f89;letter-spacing:0}
-.dw-sum .rate{margin-top:var(--s2);font-family:var(--font-mono);font-size:var(--text-xs);
+  background:var(--surface);border:1px solid var(--hairline)}
+.dw-sum .dw-split{display:flex;gap:var(--s4)}
+.dw-sum .dw-stat{display:flex;flex-direction:column;gap:var(--s2);flex:1;min-width:0}
+.dw-sum .dw-stat + .dw-stat{padding-left:var(--s4);border-left:1px solid var(--hairline)}
+.dw-sum .dw-l{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.dw-sum .dw-v{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s1);
+  font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:600;letter-spacing:-1px;
+  color:var(--general-foreground);white-space:nowrap}
+.dw-sum .dw-v small{font-size:var(--text-sm);font-weight:500;line-height:1;
+  color:var(--general-muted-foreground)}
+.dw-sum .dw-v.hero{color:var(--sentiment-positive)}
+.dw-sum .dw-v.hero small{color:#4a8f89}
+.dw-sum .rate{margin-top:var(--s4);font-family:var(--font-mono);font-size:var(--text-xs);
   color:var(--general-muted-foreground)}
 .dw-sum .rate b{color:var(--general-foreground);font-weight:600}
 .agr-note{margin-top:var(--s4);font-size:var(--text-xs);line-height:1.55;
@@ -1491,7 +1495,10 @@ body.in-app .flow{display:none}
         <div class="up-h"><b id="upName">Mette Hansen</b><span id="upCo">Nordvik Byg A/S</span></div>
         <button class="up-i" id="restartBtn">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Start the prototype over</button>
+          Restart prototype</button>
+        <button class="up-i" id="fwdBtn">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 5l7 7-7 7M13 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Fast forward 6 months</button>
         <p class="up-f">Progress is kept per browser tab.</p>
       </div>
       </div>
@@ -1596,33 +1603,36 @@ body.in-app .flow{display:none}
                     <b class="split-v" id="sitActivated">0 <small>kr./year</small></b>
                   </div>
                   <div class="split-stat">
-                    <span class="split-l">Remaining potential agreements</span>
+                    <span class="split-l">Potential agreements</span>
                     <b class="split-v hero" id="sitRemaining">0 <small>kr./year</small></b>
                   </div>
                 </div>
                 <p class="figure-sub" id="sitSaveSub"></p>
 
-                <!-- 3 · the year so far, and where it lands -->
-                <div class="spark">
-                  <div class="sp-head">
-                    <span>Spend through <span id="spYear">2026</span></span>
-                    <span class="sp-lgs">
-                      <span class="sp-lg"><i class="l1"></i>Actual</span>
-                      <span class="sp-lg"><i class="l2"></i>Projected</span>
-                      <span class="sp-lg"><i class="l3"></i>If you act now</span>
-                    </span>
+                <!-- spending history: past 6 months actual, today, next 6 projected -->
+                <div class="spend">
+                  <div class="spend-head">
+                    <span class="spend-eyebrow">Spending history</span>
+                    <span class="spend-lgs" id="spendLgs"></span>
                   </div>
-                  <div class="sp-wrap">
-                    <svg id="spSvg" viewBox="0 0 460 236" role="img"
-                      aria-labelledby="spDesc"><desc id="spDesc"></desc></svg>
-                    <div class="sp-tip" id="spTip" aria-hidden="true"></div>
+                  <div class="spend-wrap">
+                    <svg id="spendSvg" viewBox="0 0 480 220" role="img"
+                      aria-label="Spending history rising over twelve months, today in the middle"></svg>
+                    <div class="spd-tip" id="spendTip"></div>
                   </div>
-                  <p class="sp-note" id="spNote"></p>
+                  <p class="spend-note" id="spendNote"></p>
                 </div>
               </div>
               <div class="sit-right">
                 <div class="split-head">
                   <span>Saving potential by category</span>
+                </div>
+                <div class="cbar-head" role="presentation">
+                  <span>Purchasing category</span>
+                  <span>From activated agreements</span>
+                  <span>Potential agreements</span>
+                  <span></span>
+                  <span></span>
                 </div>
                 <ol class="cbars" id="sitBars"></ol>
               </div>
@@ -2005,6 +2015,23 @@ const potOf = r => r.agr.reduce((s,a) => s + (a.req ? 0 : a.save), 0);
 const live = () => ROWS.filter(r => !r.hidden);
 const tot  = k => live().reduce((s,r) => s + r[k], 0);
 
+/* Fast-forward 6 months surfaces three framework agreements Advantage has negotiated since
+   onboarding. They're injected as un-activated potential into their categories only in fwd6
+   mode, so they feed the headline Potential figure and show up in the category list with a
+   "New" tag. injectNew6() is idempotent, so a reload or a second click never duplicates. */
+const NEW6 = [
+  {cat:'mat',  n:'Saint-Gobain Frame', covers:168000, save:13400},
+  {cat:'tool', n:'Snickers Workwear',  covers:96000,  save:8600},
+  {cat:'fuel', n:'Shell Fleet Nordic', covers:82000,  save:6200}
+];
+function injectNew6(){
+  NEW6.forEach(x => {
+    const r = ROWS.find(row => row.id === x.cat);
+    if(r && !r.agr.some(a => a.n === x.n))
+      r.agr.push({n:x.n, covers:x.covers, save:x.save, req:false, isNew:true});
+  });
+}
+
 
 
 
@@ -2027,6 +2054,9 @@ const NAV = [
 /* the rail reads as two groups: the two highlighted cards (Saving assistant + Weekly
    discovery), then the plain menu starting at Dashboard, which is where we land. */
 let navAt = 'dashboard';
+/* "Fast forward 6 months" demo mode — flips the realised savings/bonus cards from
+   pending to realised and swaps the welcome copy. Persisted so a reload keeps it. */
+let fwd6 = false;
 
 function renderNav(){
   $('#nav').innerHTML = NAV.map(i => i.hero
@@ -2401,8 +2431,13 @@ function renderDash(){
   const h = new Date().getHours();
   const part = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
   $('#greet').textContent = `${part}, ${state.user.split(' ')[0]}`;
-  /* savings lead; spend is the context they sit on */
-  const rows  = live().filter(r => potOf(r) > 0).sort((a,b) => potOf(b) - potOf(a));
+  /* savings lead; spend is the context they sit on. Every category stays in the list:
+     those that still have agreements to activate sort to the top (largest potential
+     first); fully-activated ones sink to the bottom rather than disappearing. */
+  const rows  = live().slice().sort((a,b) => {
+    const pa = potOf(a), pb = potOf(b);
+    return (pb > 0) - (pa > 0) || pb - pa;
+  });
   const save  = rows.reduce((s,r) => s + potOf(r), 0);
 
   /* welcome + status line — reflects what the user activated in onboarding */
@@ -2418,7 +2453,7 @@ function renderDash(){
     + `and you can still save <b>${(save / totalSpend * 100).toFixed(1)}%</b> more. `
     + `Your total spend is <b>${fmt(totalSpend)} kr.</b>`;
 
-  renderSpark();
+  renderSpend(activated, save);
 
   /* same logic as the headline figure above, one level down: what's already activated
      in this category vs. what's still open, and a track sized to that split. */
@@ -2426,31 +2461,126 @@ function renderDash(){
     const catActivated = r.agr.reduce((s,a) => s + (a.req ? a.save : 0), 0);
     const catRemaining = potOf(r);
     const catTotal = catActivated + catRemaining;
+    const pct = catTotal ? (catActivated / catTotal * 100) : 0;
+    const done = catRemaining === 0 && catActivated > 0;   /* every agreement activated */
+    const hasNew = fwd6 && r.agr.some(a => a.isNew && !a.req);   /* fresh agreement to activate */
     return `
-    <li class="cbar${catAt === r.id ? ' sel' : ''}${r.quick ? ' quick' : ''}" data-row="${r.id}"
-      data-tip="${fmt(r.inv)} invoices · ${r.sup} suppliers · ${r.top}">
-      <div class="cbar-top">
-        <span class="cn2">${r.n}${r.quick ? `<span class="qtag">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
-          Quick win</span>` : ''}</span>
-        <button class="rowgo" data-open="${r.id}" aria-label="How we found the ${r.n} saving">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-      <div class="cbar-split">
-        <div class="split-stat">
-          <span class="split-l">From activated agreements</span>
-          <b class="split-v">${fmt(catActivated)} <small>kr./year</small></b>
-        </div>
-        <div class="split-stat">
-          <span class="split-l">Remaining potential agreements</span>
-          <b class="split-v hero">${fmt(catRemaining)} <small>kr./year</small></b>
-        </div>
-      </div>
-      <span class="b2"><i class="s2" style="width:${catTotal ? (catActivated / catTotal * 100).toFixed(1) : 0}%"></i></span>
+    <li class="cbar${catAt === r.id ? ' sel' : ''}" data-row="${r.id}">
+      <span class="cn2">${r.n}${hasNew ? '<span class="cnew">New</span>' : ''}</span>
+      <b class="cval">${fmt(catActivated)} <small>kr./year</small></b>
+      <b class="cval hero">${fmt(catRemaining)} <small>kr./year</small></b>
+      ${done
+        ? `<span class="cdone" role="img" aria-label="All agreements activated">${TICK}</span>`
+        : `<span class="cprog" style="--p:${pct.toFixed(1)}" role="img"
+             aria-label="${pct.toFixed(0)}% of potential activated"></span>`}
+      <button class="rowgo" data-open="${r.id}" aria-label="How we found the ${r.n} saving">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </li>`;
   }).join('');
-  $$('#sitBars [data-open]').forEach(b => b.addEventListener('click', () => openCat(b.dataset.open)));
+  $$('#sitBars .cbar').forEach(li => li.addEventListener('click', () => openCat(li.dataset.row)));
+  /* the chevron stays as a keyboard target (Enter opens); stopPropagation avoids a
+     double-open when its click bubbles to the row handler above */
+  $$('#sitBars [data-open]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); openCat(b.dataset.open);
+  }));
+}
+
+/* spending history: a rising line, past 6 months actual (solid) + today + next 6 months
+   projected (dashed), with today centred. Illustrative figures — spend trends upward.
+   When agreements are activated, two black lines branch off today into the future: the
+   solid one is the projection with what's activated now, the dashed one is where it would
+   land if every remaining agreement were activated too. Both track the activated total. */
+function renderSpend(activated, potential){
+  const svg = $('#spendSvg'); if(!svg) return;
+  const W = 480, H = 220, L = 46, R = 14, T = 14, B = 34;
+  const x0 = L, x1 = W - R, y0 = T, y1 = H - B;
+  /* a gentle wobble on top of the upward trend — real invoice totals are never a clean line */
+  const vals = [362, 381, 372, 398, 412, 441, 462, 470, 492, 485, 514, 529, 547];  /* thousand kr */
+  const N = vals.length, mid = 6, min = 350, max = 560;
+  const sx = i => x0 + (x1 - x0) * i / (N - 1);
+  const sy = v => y1 - (y1 - y0) * (v - min) / (max - min);
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const cm = new Date().getMonth();
+  const labels = vals.map((_,i) => MON[((cm + i - mid) % 12 + 12) % 12]);
+  const pts = vals.map((v,i) => [sx(i), sy(v)]);
+  const line = a => a.map((p,i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const actual = pts.slice(0, mid + 1), proj = pts.slice(mid);   /* proj shares today's point */
+
+  /* savings scenarios — a monthly reduction (annual saving / 12), applied to the projected
+     months, sharing today's point so the lines fan out from it. Depth tracks activation. */
+  const offA   = (activated || 0) / 12000;                 /* with what's activated now */
+  const offAll = ((activated || 0) + (potential || 0)) / 12000;   /* if all agreements were on */
+  const scen = off => [pts[mid]].concat(
+    vals.slice(mid + 1).map((v,j) => [sx(mid + 1 + j), sy(v - off)]));
+  const showA   = (activated || 0) > 0;                    /* solid black: only once something is on */
+  const showAll = showA && (potential || 0) > 0;           /* dashed black: only if more remains */
+  const withPts = scen(offA), allPts = scen(offAll);
+
+  const lg = (cls, label) => `<span class="spend-lg"><i class="${cls}"></i>${label}</span>`;
+  const lgs = $('#spendLgs');
+  if(lgs) lgs.innerHTML = lg('', 'Actual') + lg('sl-p', 'Projected')
+    + (showA ? lg('sl-a', 'With your agreements') : '')
+    + (showAll ? lg('sl-all', 'If you activate all') : '');
+
+  const grid = [400, 480, 560].map(g =>
+    `<line class="spd-grid" x1="${x0}" y1="${sy(g).toFixed(1)}" x2="${x1}" y2="${sy(g).toFixed(1)}"/>
+     <text class="spd-ax" x="${x0 - 8}" y="${(sy(g) + 4).toFixed(1)}" text-anchor="end">${g}k</text>`).join('');
+  const area = `${line(actual)} L${sx(mid).toFixed(1)} ${y1} L${x0.toFixed(1)} ${y1} Z`;
+  const xlabels = labels.map((m,i) =>
+    `<text class="spd-x${i === mid ? ' now' : ''}" x="${sx(i).toFixed(1)}" y="${H - 14}" text-anchor="middle">${m}</text>`).join('')
+    + `<text class="spd-today" x="${sx(mid).toFixed(1)}" y="${H - 3}" text-anchor="middle">today</text>`;
+
+  svg.innerHTML = `
+    ${grid}
+    <path class="spd-area" d="${area}"/>
+    <line class="spd-cut" x1="${sx(mid).toFixed(1)}" y1="${y0}" x2="${sx(mid).toFixed(1)}" y2="${y1}"/>
+    <path class="spd-proj" d="${line(proj)}"/>
+    ${showAll ? `<path class="spd-alld" d="${line(allPts)}"/>` : ''}
+    ${showA ? `<path class="spd-actd" d="${line(withPts)}"/>` : ''}
+    <path class="spd-line" d="${line(actual)}"/>
+    <circle class="spd-dot" cx="${sx(mid).toFixed(1)}" cy="${sy(vals[mid]).toFixed(1)}" r="4"/>
+    ${xlabels}
+    <line class="spd-cross" id="spendCross" y1="${y0}" y2="${y1}"/>
+    ${vals.map((_,i) => `<rect class="spd-hit" data-mi="${i}"
+        x="${(sx(i) - (x1 - x0) / (2 * (N - 1))).toFixed(1)}" y="${y0}"
+        width="${((x1 - x0) / (N - 1)).toFixed(1)}" height="${(y1 - y0).toFixed(1)}"/>`).join('')}`;
+
+  const pastRise = (vals[mid] - vals[0]) * 1000;
+  const futRise  = (vals[N - 1] - vals[mid]) * 1000;
+  const note = $('#spendNote');
+  if(note) note.innerHTML =
+    `Your monthly spend has climbed <b>${fmt(pastRise)} kr.</b> over the past six months. `
+    + `At your current suppliers and the price increases already announced, it's on track to rise a `
+    + `further <b>${fmt(futRise)} kr.</b> over the next six — the dashed line shows that projection.`;
+
+  /* hover: a crosshair on the hovered month plus a tooltip with the actual/projected
+     figure, and — once agreements are on — what that month would look like instead */
+  const tip = $('#spendTip'), cross = $('#spendCross');
+  $$('#spendSvg .spd-hit').forEach(hit => {
+    const i = +hit.dataset.mi;
+    const show = () => {
+      const isProj = i > mid;
+      cross.setAttribute('x1', sx(i).toFixed(1));
+      cross.setAttribute('x2', sx(i).toFixed(1));
+      cross.classList.add('on');
+      let html = `<b>${labels[i]}${i === mid ? ' · today' : ''}</b> · ${fmt(vals[i] * 1000)} kr.`
+        + (isProj ? ' <span style="opacity:.7">projected</span>' : '');
+      if(isProj && showA) html += `<br><span class="t-a">${fmt((vals[i] - offA) * 1000)} kr. with your agreements</span>`;
+      if(isProj && showAll) html += `<br><span class="t-all">${fmt((vals[i] - offAll) * 1000)} kr. if you activate all</span>`;
+      tip.innerHTML = html;
+      tip.classList.add('on');
+      const px = sx(i) / W * 100, py = sy(vals[i]);
+      const below = py < y0 + (y1 - y0) * 0.34;
+      tip.style.left = px + '%';
+      tip.style.top = (py / H * 100) + '%';
+      tip.style.transform =
+        `translate(${px > 78 ? '-96%' : px < 14 ? '-4%' : '-50%'},${below ? '30%' : '-135%'})`;
+    };
+    hit.addEventListener('mouseenter', show);
+    hit.addEventListener('mousemove', show);
+    hit.addEventListener('mouseleave', () => { tip.classList.remove('on'); cross.classList.remove('on'); });
+  });
 }
 
 /* ---------------- suppliers ----------------
@@ -2791,21 +2921,36 @@ function renderHello(){
   const left  = Math.max(0, total - actN);
   const p = $('#helloP'), w = $('#helloWidgets');
 
-  p.textContent = actN === 0
-    ? `Thanks for choosing Advantage — we're glad to have you on board. `
-      + `${total} agreements are ready to activate whenever you are; explore your potential savings below to see where they come from.`
-    : `Thanks for choosing Advantage — we're glad to have you on board. `
-      + `You've just activated ${actN} agreement${actN === 1 ? '' : 's'}, and ${left} more `
-      + `${left === 1 ? 'is' : 'are'} still available to explore. `
-      + `Take a look at your potential savings below to see where the rest could come from.`;
+  /* realised figures for the "6 months later" view come from the agreements that are
+     actually activated (a.req) — the same source the dashboard totals use, so it survives
+     a reload even when the in-session ACTIVATED map is empty. Half a year in, the realised
+     amount is ~half the annual run-rate. */
+  const reqAgs   = ROWS.flatMap(r => r.agr.filter(a => a.req));
+  const rItems   = reqAgs.map(a => ({name:a.n, save:a.save, bonus:Math.round(a.covers * 0.015)}));
+  const rSaveYr  = rItems.reduce((s,x) => s + x.save, 0);
+  const rBonusYr = rItems.reduce((s,x) => s + x.bonus, 0);
+  const rSave    = Math.round(rSaveYr / 2), rBonus = Math.round(rBonusYr / 2);
 
-  /* realised is always 0 until a supplier confirms and it lands on an invoice — these
-     boxes stay visible from day one so the user always has somewhere to check back */
-  const items = [...ACTIVATED.entries()].map(([name,d]) =>
-    ({name, save:d.save, bonus:Math.round(d.covers * 0.015)}));
+  if(fwd6){
+    p.innerHTML = `It's six months on. The agreements you activated are live and the savings `
+      + `are now landing on your invoices — the realised figures are below. `
+      + `<b>3 new agreements have been made available.</b>`;
+  } else {
+    p.textContent = actN === 0
+      ? `Thanks for choosing Advantage — we're glad to have you on board. `
+        + `${total} agreements are ready to activate whenever you are; explore your potential savings below to see where they come from.`
+      : `Thanks for choosing Advantage — we're glad to have you on board. `
+        + `You've just activated ${actN} agreement${actN === 1 ? '' : 's'}, and ${left} more `
+        + `${left === 1 ? 'is' : 'are'} still available to explore. `
+        + `Take a look at your potential savings below to see where the rest could come from.`;
+  }
+
   const list = (rows, tot) => `<ul class="hw-pop-list">${rows}${tot || ''}</ul>`;
   const emptyPop = `<p class="hw-pop-f">Nothing activated yet — activate an agreement below to see it appear here once the supplier confirms.</p>`;
 
+  /* day-one (pending) popovers — from the in-session ACTIVATED map */
+  const items = [...ACTIVATED.entries()].map(([name,d]) =>
+    ({name, save:d.save, bonus:Math.round(d.covers * 0.015)}));
   const savePop = actN
     ? `<p class="hw-pop-h">Waiting to be confirmed</p>`
       + list(items.map(x => `<li><span>${x.name}</span><b>${fmt(x.save)} kr.</b></li>`).join(''),
@@ -2819,146 +2964,40 @@ function renderHello(){
       + `<p class="hw-pop-f">A volume bonus of about 1.5% on the spend routed through these agreements, paid annually on top of your savings — once confirmed.</p>`
     : emptyPop;
 
-  const card = (i, label, number, aria, pop) => `
+  /* realised (6-months-later) popovers — from the activated agreements (a.req) */
+  const savePopF = rItems.length
+    ? `<p class="hw-pop-h">Confirmed on your invoices</p>`
+      + list(rItems.map(x => `<li><span>${x.name}</span><b>${fmt(x.save)} kr.</b></li>`).join(''),
+             `<li class="tot"><span>Annual run-rate, now live</span><b>${fmt(rSaveYr)} kr.</b></li>`)
+      + `<p class="hw-pop-f">These agreements have been live for six months. The figure above is what has accrued so far this year.</p>`
+    : emptyPop;
+  const bonusPopF = rItems.length
+    ? `<p class="hw-pop-h">Confirmed on your invoices</p>`
+      + list(rItems.map(x => `<li><span>${x.name}</span><b>+${fmt(x.bonus)} kr.</b></li>`).join(''),
+             `<li class="tot"><span>Annual run-rate, now live</span><b>+${fmt(rBonusYr)} kr.</b></li>`)
+      + `<p class="hw-pop-f">A volume bonus of about 1.5% on the spend routed through these agreements, accruing toward the annual payout.</p>`
+    : emptyPop;
+
+  const card = (i, label, number, sub, aria, pop) => `
     <div class="hw">
       <button class="hw-t" data-i="${i}" aria-expanded="false" aria-label="${aria}">
         <span class="hw-txt">
           <span class="hw-l">${label}</span>
           <b class="hw-v">${number}</b>
-          <span class="hw-u">Pending updated invoices</span>
+          <span class="hw-u">${sub}</span>
         </span>
       </button>
       <div class="hw-pop" role="tooltip">${pop}</div>
     </div>`;
 
-  w.innerHTML =
-      card(0, 'Realised savings', '0 kr', 'Realised savings — what is pending', savePop)
-    + card(1, 'Realised bonus',  '+0 kr', 'Realised bonus — what is pending',   bonusPop);
+  w.innerHTML = fwd6
+    ? card(0, 'Realised savings', `${fmt(rSave)} kr`,  'Realised · last 6 months', 'Realised savings so far', savePopF)
+      + card(1, 'Realised bonus',  `+${fmt(rBonus)} kr`, 'Realised · last 6 months', 'Realised bonus so far',   bonusPopF)
+    : card(0, 'Realised savings', '0 kr',  'Pending updated invoices', 'Realised savings — what is pending', savePop)
+      + card(1, 'Realised bonus',  '+0 kr', 'Pending updated invoices', 'Realised bonus — what is pending',   bonusPop);
 }
 
 /* status-widget explainer popovers appear on hover / keyboard focus (CSS-driven) */
-
-/* ---------- spend through the year ----------
-   Actuals stop hard at July (this is August). The projection continues the same series
-   dashed — same hue, broken stroke, the standard "this hasn't happened yet" signal. The
-   third line only appears on request: it is a claim about the future, so it shouldn't sit
-   there looking like data. */
-const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-/* real months don't rise in a straight line — winter low, spring ramp, a June dip */
-const ACT  = [380000,389000,419000,436000,452000,446000,471000];        /* Jan–Jul, real */
-const PROJ = [486000,498000,512000,523000,534000];                     /* Aug–Dec, if nothing changes */
-const POT  = [470000,464000,458000,453000,449000];                     /* Aug–Dec, if they act now */
-const CUT  = ACT.length - 1;                                           /* July index */
-
-const SP = {w:460, h:236, l:44, r:26, t:16, b:28};
-const spX = i => SP.l + i * (SP.w - SP.l - SP.r) / (MON.length - 1);
-const spY = v => {
-  const lo = 350000, hi = 575000;   /* framed so the even 60k ticks land clear of both edges */
-  return SP.t + (1 - (v - lo) / (hi - lo)) * (SP.h - SP.t - SP.b);
-};
-const spPath = pts => pts.map((p,i) => (i ? 'L' : 'M') + spX(p[0]).toFixed(1) + ' ' + spY(p[1]).toFixed(1)).join(' ');
-
-function renderSpark(){
-  $('#spYear').textContent = new Date().getFullYear();
-  const actPts  = ACT.map((v,i) => [i, v]);
-  const projPts = [[CUT, ACT[CUT]], ...PROJ.map((v,i) => [CUT + 1 + i, v])];
-  const potPts  = [[CUT, ACT[CUT]], ...POT.map((v,i) => [CUT + 1 + i, v])];
-  const ticks = [380000, 440000, 500000, 560000];   /* even 60k spacing */
-  const yTop = SP.t, yBot = SP.h - SP.b;
-
-  const band = projPts.map(p => `${spX(p[0]).toFixed(1)} ${spY(p[1]).toFixed(1)}`).join(' L')
-    + ' L' + [...potPts].reverse().map(p => `${spX(p[0]).toFixed(1)} ${spY(p[1]).toFixed(1)}`).join(' L');
-
-  $('#spSvg').innerHTML = `
-    <desc id="spDesc">Monthly spend January to July actual, rising from 318 000 to 471 000 kr.,
-      then projected to 534 000 kr. by December.</desc>
-    ${ticks.map(t => `<line class="sp-grid" x1="${SP.l}" y1="${spY(t).toFixed(1)}"
-        x2="${SP.w - SP.r}" y2="${spY(t).toFixed(1)}"/>
-      <text class="sp-ax" x="${SP.l - 7}" y="${(spY(t) + 3).toFixed(1)}" text-anchor="end">${Math.round(t/1000)}k</text>`).join('')}
-    ${MON.map((m,i) => `<text class="sp-ax${i === CUT ? ' now' : ''}" data-mi="${i}"
-        x="${spX(i).toFixed(1)}" y="${SP.h - 12}" text-anchor="middle">${m}</text>`).join('')}
-    <text class="sp-ax now" x="${spX(CUT).toFixed(1)}" y="${SP.h - 2}" text-anchor="middle">today</text>
-
-    <line class="sp-stop" x1="${spX(CUT).toFixed(1)}" y1="${yTop}" x2="${spX(CUT).toFixed(1)}" y2="${yBot}"/>
-
-    <path class="sp-area" d="${spPath(actPts)} L${spX(CUT).toFixed(1)} ${yBot} L${spX(0).toFixed(1)} ${yBot} Z"/>
-    <g>
-      <path class="sp-band" d="M${band} Z"/>
-      <path class="sp-l3" d="${spPath(potPts)}"/>
-      <circle class="sp-dot" cx="${spX(11).toFixed(1)}" cy="${spY(POT[4]).toFixed(1)}" r="4"
-        stroke="var(--sentiment-positive)"/>
-    </g>
-    <path class="sp-l2" d="${spPath(projPts)}"/>
-    <path class="sp-l1" d="${spPath(actPts)}"/>
-    <circle class="sp-dot" cx="${spX(CUT).toFixed(1)}" cy="${spY(ACT[CUT]).toFixed(1)}" r="4.2"
-      stroke="var(--general-primary)"/>
-    <circle class="sp-dot" cx="${spX(11).toFixed(1)}" cy="${spY(PROJ[4]).toFixed(1)}" r="4"
-      stroke="var(--general-primary)"/>
-
-    <line class="sp-cross" id="spCross" y1="${yTop}" y2="${yBot}"/>
-    ${MON.map((m,i) => `<rect class="sp-hit" data-mi="${i}"
-        x="${(spX(i) - (SP.w - SP.l - SP.r) / 22).toFixed(1)}" y="${yTop}"
-        width="${((SP.w - SP.l - SP.r) / 11).toFixed(1)}" height="${yBot - yTop}"/>`).join('')}`;
-
-  spNote();
-  spHover();
-  spScaleText();
-  if(!spRO){
-    spRO = new ResizeObserver(spScaleText);
-    spRO.observe($('#spSvg'));
-  }
-}
-
-/* SVG text scales with the viewBox, so a fixed unit size renders at wildly different
-   pixel sizes. Size it from the measured width so it always lands on 13px. */
-let spRO = null;
-function spScaleText(){
-  const svg = $('#spSvg'); if(!svg) return;
-  const w = svg.getBoundingClientRect().width; if(!w) return;
-  const units = 11.5 * (SP.w / w);   /* target ~11.5px on screen — a touch smaller than before */
-  svg.style.setProperty('--axfs', units.toFixed(2) + 'px');
-  /* below ~330px the twelve month labels would overlap at this size — show every other */
-  const thin = units > 18;
-  $$('#spSvg .sp-ax').forEach(t => {
-    const i = t.dataset.mi;
-    if(i !== undefined) t.classList.toggle('hide', thin && (+i % 2 === 1));
-  });
-}
-
-function spNote(){
-  const gap = PROJ.reduce((s,v) => s + v, 0) - POT.reduce((s,v) => s + v, 0);
-  $('#spNote').innerHTML =
-    `Jan–Jul is read from your invoices. Aug–Dec assumes your current suppliers and the increases
-     already announced — acting now keeps about <b>${fmt(gap)} kr.</b> of that out of the line
-     before December.`;
-}
-
-function spHover(){
-  const tip = $('#spTip'), cross = $('#spCross'), wrap = $('.sp-wrap');
-  $$('#spSvg .sp-hit').forEach(hit => {
-    const i = +hit.dataset.mi;
-    const show = () => {
-      const proj = i > CUT;
-      const val = proj ? PROJ[i - CUT - 1] : ACT[i];
-      cross.setAttribute('x1', spX(i).toFixed(1));
-      cross.setAttribute('x2', spX(i).toFixed(1));
-      cross.classList.add('on');
-      tip.innerHTML = `<b>${MON[i]}</b> · ${fmt(val)} kr.${proj ? ' <span style="opacity:.7">projected</span>' : ''}`
-        + (proj ? `<br><span class="t3">${fmt(POT[i - CUT - 1])} kr. if you act now</span>` : '');
-      tip.classList.add('on');
-      const px = spX(i) / SP.w * 100, py = spY(val);
-      /* flip below the point when there's no headroom, so it never covers the legend */
-      const below = py < SP.t + (SP.h - SP.t - SP.b) * 0.34;
-      tip.style.left = px + '%';
-      tip.style.top = (py / SP.h * 100) + '%';
-      tip.style.transform =
-        `translate(${px > 70 ? '-92%' : px < 18 ? '-8%' : '-50%'},${below ? '35%' : '-140%'})`;
-    };
-    hit.addEventListener('mouseenter', show);
-    hit.addEventListener('mousemove', show);
-    hit.addEventListener('mouseleave', () => { tip.classList.remove('on'); cross.classList.remove('on'); });
-  });
-}
 
 /* ---------- category explainer ---------- */
 let catAt = null;
@@ -2994,16 +3033,35 @@ $('#dwX').addEventListener('click', closeCat);
 addEventListener('keydown', e => {
   if(e.key === 'Escape' && $('#dw').classList.contains('on')) closeCat();
 });
+/* click anywhere outside the panel closes it — but not on a category row (that opens /
+   switches it) or inside the panel itself */
+document.addEventListener('click', e => {
+  /* an in-drawer action (activate) re-renders the panel and detaches the clicked element;
+     a detached target isn't an outside click, so ignore it and keep the drawer open */
+  if(!e.target.isConnected) return;
+  if($('#dw').classList.contains('on') && !e.target.closest('#dw') && !e.target.closest('.cbar'))
+    closeCat();
+});
 
 function renderCat(){
   const r = ROWS.find(x => x.id === catAt);
   const pot = potOf(r), open = r.agr.filter(a => !a.req);
   const rem = open.reduce((s,a) => s + a.save, 0);
+  const act = r.agr.reduce((s,a) => s + (a.req ? a.save : 0), 0);
   $('#dwT').textContent = r.n;
 
   $('#dwB').innerHTML = `
     <div class="dw-sum">
-      <div class="big">${fmt(pot)} <small>kr./year saving potential</small></div>
+      <div class="dw-split">
+        <div class="dw-stat">
+          <span class="dw-l">From activated agreements</span>
+          <b class="dw-v">${fmt(act)} <small>kr./year</small></b>
+        </div>
+        <div class="dw-stat">
+          <span class="dw-l">Potential<br>agreements</span>
+          <b class="dw-v hero">${fmt(pot)} <small>kr./year</small></b>
+        </div>
+      </div>
       <div class="rate"><b>${r.rate}%</b> of ${fmt(r.amt)} kr. spent in this category</div>
     </div>
 
@@ -3051,13 +3109,15 @@ function renderCat(){
   $$('#dwB [data-act]').forEach(b => b.addEventListener('click', () => {
     r.agr[+b.dataset.act].req = true;
     persist();
-    renderCat();
+    renderCat();      /* refresh the drawer */
+    renderDash();     /* and the main page — category list, rings and headline figures */
   }));
   const all = $('#dwAll');
   if(all) all.addEventListener('click', () => {
     r.agr.forEach(a => a.req = true);
     persist();
     renderCat();
+    renderDash();
   });
 }
 
@@ -3073,7 +3133,7 @@ function persist(){
   try{
     sessionStorage.setItem(SKEY, JSON.stringify({
       scr: inApp ? 'app' : curScr,
-      navAt,
+      navAt, fwd6,
       company: state.company, user: state.user, source: state.source, invoices: state.invoices,
       hidden: ROWS.filter(r => r.hidden).map(r => r.id),
       req: ROWS.flatMap(r => r.agr.map((a,i) => a.req ? r.id + ':' + i : null)).filter(Boolean),
@@ -3100,6 +3160,7 @@ function applySaved(d){
   if(Array.isArray(d.unread) && d.unread.length === NOTES.length)
     NOTES.forEach((n,i) => n.unread = !!d.unread[i]);
   if(d.navAt) navAt = d.navAt;
+  if(typeof d.fwd6 === 'boolean') fwd6 = d.fwd6;
 }
 
 function startOver(){
@@ -3114,6 +3175,14 @@ $('#userBtn').addEventListener('click', e => {
 });
 $('#userPop').addEventListener('click', e => e.stopPropagation());
 $('#restartBtn').addEventListener('click', startOver);
+$('#fwdBtn').addEventListener('click', () => {
+  fwd6 = true;
+  injectNew6();                                  /* surface the 3 newly available agreements */
+  closeUser();
+  navAt = 'dashboard'; renderNav(); setView();   /* make sure the dashboard is what we land on */
+  renderDash();
+  persist();
+});
 function closeUser(){
   $('#userPop').classList.remove('on');
   $('#userPop').inert = true;
@@ -3128,6 +3197,9 @@ addEventListener('keydown', e => { if(e.key === 'Escape') closeUser(); });
 
 const jumpRaw = new URLSearchParams(location.search).get('step');
 const saved = jumpRaw ? null : readSaved();     /* an explicit ?step= always wins */
+/* inject the fast-forward agreements before applySaved so their activation (a.req,
+   keyed by index) restores onto the right entries after a reload */
+if(saved && saved.fwd6) injectNew6();
 if(saved) applySaved(saved);
 
 renderWho();
