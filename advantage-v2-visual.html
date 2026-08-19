@@ -782,8 +782,7 @@ body.in-app .flow{display:none}
 
 /* status tiles: four across on the situation card, each a card with a hover popover
    listing what's behind the number — the same interaction the old two widgets used */
-.sitn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);align-items:stretch}
-@media(max-width:900px){.sitn-grid{grid-template-columns:1fr 1fr}}
+.sitn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--s3);align-items:stretch}
 @media(max-width:520px){.sitn-grid{grid-template-columns:1fr}}
 .hw{position:relative;height:100%}
 .hw-wide{grid-column:1 / -1}
@@ -812,6 +811,25 @@ body.in-app .flow{display:none}
 .hw-trend-bar i{display:block;height:100%;border-radius:var(--rounded-full);
   background:var(--brand-midnight)}
 .hw-trend.down + .hw-trend-bar i{background:var(--sentiment-negative,#b3261e)}
+/* the fourth tile: a promo card, not a stat — a soft, uneven blue glow low in the card,
+   badge top-left, a big flat headline number, a category row with an icon and a trailing
+   arrow that signals "this opens something" the same way the other clickable rows do */
+.qd-card{position:relative;overflow:hidden;flex-direction:column;align-items:flex-start;
+  justify-content:flex-start;gap:var(--s3);text-align:left}
+.qd-card::before{content:"";position:absolute;left:-15%;right:-10%;bottom:-35%;height:75%;
+  background:radial-gradient(ellipse at 45% 100%,#edf5ff 0%,#edf5ff 45%,transparent 75%);
+  filter:blur(22px);border-radius:55% 45% 35% 65% / 60% 40% 60% 40%;
+  pointer-events:none;z-index:0}
+.qd-badge{position:relative;z-index:1;padding:3px 10px;border-radius:var(--rounded-full);
+  background:var(--general-primary);color:#fff;font-size:13px;font-weight:700}
+.qd-hero{position:relative;z-index:1;font-family:var(--font-sans);font-size:var(--text-2xl); margin-top:16px;
+  font-weight:600;letter-spacing:-.6px;line-height:1;color:var(--general-foreground)}
+.qd-hero b{font-weight:600}
+.qd-cat-row{position:relative;z-index:1;display:flex;align-items:center;gap:var(--s2);
+  width:100%;margin-top:auto}
+.qd-ic{width:20px;height:20px;color:var(--general-foreground);flex:0 0 auto}
+.qd-cat-label{font-size:var(--text-sm);font-weight:600;color:var(--general-foreground)}
+.qd-arrow{width:16px;height:16px;color:var(--general-primary);flex:0 0 auto}
 /* bigger explainer popover, listing the agreements behind each number */
 .hw-pop{position:absolute;top:calc(100% + 8px);right:0;z-index:25;width:min(340px,86vw);
   padding:var(--s4);background:var(--surface);border:1px solid var(--hairline);
@@ -836,6 +854,7 @@ body.in-app .flow{display:none}
 .sitn-head .spacer{flex:1}
 
 /* 3 · opportunities — two columns, category-level and agreement-level, same row component */
+.opp{margin-top:var(--s8)}
 .opp-head{margin-bottom:var(--s6)}
 .opp-head h2{font-size:var(--text-2xl);letter-spacing:-.6px;font-weight:600}
 .opp-sub{margin-top:var(--s2);font-size:var(--text-base);line-height:1.5;
@@ -939,27 +958,31 @@ body.in-app .flow{display:none}
 .opp-table td:not(:first-child),.opp-table th:not(:first-child){text-align:right;
   font-variant-numeric:tabular-nums}
 
-/* agreement cards: every open agreement gets its own card — an initials tile stands in
-   for a supplier logo, shaded to match its category's slice in the chart above, plus a
-   thin proportional bar against the largest open agreement and a clearly-labelled saving
-   figure that doesn't need the reader to already know "+61.300" means "kr. every year" */
-.opp-list-bars{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+/* agreement cards: every open agreement gets its own card — a two-tone logo tile stands
+   in for a supplier logo (no real mark files exist), the discount rate sits next to it,
+   two feature bullets say why it's worth doing, and a clearly-labelled saving figure
+   closes the card so no one has to already know "+61.300" means "kr. every year" */
+.opp-list-bars{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
   gap:var(--s6);list-style:none}
-.agr-card{position:relative;display:flex;flex-direction:column;gap:var(--s3);cursor:pointer;
+.agr-card{position:relative;display:flex;flex-direction:column;gap:var(--s4);cursor:pointer;
   padding:var(--s6);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
   background:var(--surface);transition:border-color var(--t-fast),box-shadow var(--t-fast)}
 .agr-card:hover,.agr-card:focus-visible{border-color:var(--general-border);box-shadow:var(--shadow-sm)}
 .agr-card-top{display:flex;align-items:center;justify-content:space-between}
-.opp-logo{flex:0 0 auto;width:44px;height:44px;border-radius:var(--rounded-md);
-  display:grid;place-items:center;font-family:var(--font-sans);font-weight:700;
+.agr-logo{flex:0 0 auto;width:48px;height:48px;border-radius:var(--rounded-md);
+  display:grid;place-items:center;font-family:var(--font-sans);font-weight:600;
   font-size:var(--text-sm);letter-spacing:.01em}
+.agr-card-disc{flex:0 0 auto;padding:4px 10px;border-radius:var(--rounded-full);
+  background:#0096891a;color:var(--sentiment-positive);font-size:13px;font-weight:700}
 .agr-card-name{font-size:var(--text-base);font-weight:600;letter-spacing:-.2px;
   line-height:1.3;text-wrap:pretty}
-.agr-card-meta{font-size:13px;font-weight:500;color:var(--general-muted-foreground)}
-.opp-mini-track{display:block;height:5px;border-radius:var(--rounded-full);
-  background:var(--general-muted);overflow:hidden}
-.opp-mini-track i{display:block;height:100%;border-radius:0 var(--rounded-full) var(--rounded-full) 0}
-.agr-card-foot{margin-top:auto;padding-top:var(--s3);border-top:1px solid var(--hairline);
+.agr-card-meta{font-size:13px;font-weight:500;color:#2B2B2B}
+.agr-card-why{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.agr-card-why li{position:relative;padding-left:16px;font-size:13px;line-height:1.5;
+  color:#2B2B2B}
+.agr-card-why li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;
+  border-radius:var(--rounded-full);background:var(--general-border)}
+.agr-card-foot{margin-top:auto;padding-top:var(--s4);border-top:1px solid var(--hairline);
   display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s3)}
 .opp-amt-block{display:flex;flex-direction:column;gap:3px}
 .opp-amt-label{font-size:13px;font-weight:600;color:var(--sentiment-positive)}
@@ -1039,7 +1062,12 @@ body.in-app .flow{display:none}
    ========================================================================== */
 /* the two canvas views — one at a time, each keeping the page's own vertical rhythm */
 #viewDash,#viewSup{min-width:0;display:flex;flex-direction:column;gap:var(--s8)}
-#viewDash[hidden],#viewSup[hidden]{display:none}
+/* !important, not just a plain override: on some Chromium builds, a [hidden]
+   element that contains a CSS-container-query descendant (.page uses
+   container-type) can still get painted during a full-page/print-style capture
+   if display:none isn't forced — this is what surfaced as the opportunities donut
+   showing through on the category-tab page. Forcing it removes any ambiguity. */
+#viewDash[hidden],#viewSup[hidden]{display:none!important}
 .shelf{min-width:0}
 .sh-head{display:flex;align-items:flex-end;gap:var(--s4);margin-bottom:var(--s3)}
 .sh-head>div{flex:1;min-width:0}
@@ -1174,9 +1202,13 @@ body.in-app .flow{display:none}
   color:var(--general-primary)}
 .agr-more svg{width:13px;height:13px;transition:transform var(--t-fast)}
 .agr.clickable:hover .agr-more svg{transform:translateX(3px)}
-.agr .inuse{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;
+/* not scoped to .agr — .inuse (the "already activated" tick) shows up in several
+   unrelated contexts (the opp-cta footer, the category-tab agreement rows); an SVG
+   with no explicit size renders at the browser's oversized default, so this sizing
+   has to apply everywhere the class is used, not just inside .agr */
+.inuse{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;
   color:var(--sentiment-positive)}
-.agr .inuse svg{width:13px;height:13px}
+.inuse svg{width:13px;height:13px;flex:0 0 auto}
 
 /* ---------- business case dialog ---------- */
 .note.bcnote .nb b{color:var(--general-foreground)}
@@ -1309,6 +1341,173 @@ body.in-app .flow{display:none}
     transition-duration:.05s!important}
   .loader .fill{clip-path:inset(0 0 0 0)}
 }
+
+/* ---------- category page (opens in a new tab) ----------
+   Reached from an Opportunities category click. Keeps the real app chrome (top bar +
+   left nav) so it never feels orphaned, then — Airbnb-listing style — a wide white
+   content wrapper holds two columns: a hero CARD on the left (picture, the numbers,
+   and the agreements that deliver them — everything you need to act, in one place)
+   that stays in view while the supporting reading (terms, calculation, timeline,
+   contact) scrolls past on the right, each of those separated by a quiet hairline
+   instead of its own box.
+   Spacing here uses only the 8pt tokens already defined in :root (s1–s24) — no
+   one-off values — so every gap in this page is a multiple of 4px by design. */
+.cat-tab-wrap{max-width:1134px;margin:0 auto;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-xl);box-shadow:var(--shadow-sm);
+  padding:var(--s12)}
+/* no align-items:start — the hero column needs to STRETCH to the full height of the
+   (much taller) right column, so its sticky child has room to stay pinned for the
+   whole scroll instead of releasing almost immediately. This is what actually makes
+   a sticky sidebar behave like one. */
+.cat-tab-grid{display:grid;grid-template-columns:380px 1fr;gap:var(--s16)}
+
+/* no boxed container here — just the image, then the info, sitting directly in the
+   column. The image scrolls with the page like normal content; once it scrolls out
+   and .cat-tab-hero-body's top would pass the sticky offset, THAT locks in place —
+   so the eye reads it as "the picture scrolled away, then the panel caught" rather
+   than the whole thing being pinned from the first pixel of scroll. */
+.cat-tab-hero{display:flex;flex-direction:column}
+.cat-tab-hero-img{position:relative;height:220px;border-radius:var(--rounded-lg);
+  background-size:cover;background-position:center;overflow:hidden;flex:0 0 auto}
+/* fades the photo into the page's own background instead of a hard-edged crop —
+   "blend into the background" */
+.cat-tab-hero-img::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 35%,var(--surface) 100%)}
+/* each of the 4 groups below (identity, saving, agreements, actions) gets a full
+   32px apart — noticeably more than the 16-20px used *within* a group, so the eye
+   can tell "new section" from "next line of the same thing" at a glance */
+.cat-tab-hero-body{position:sticky;top:var(--s8);background:var(--surface);
+  padding-top:var(--s6);display:flex;flex-direction:column;gap:var(--s8)}
+.cat-tab-identity{display:flex;flex-direction:column;gap:var(--s3)}
+.cat-tab-chip{align-self:flex-start}
+.cat-tab-title{font-size:var(--text-2xl);letter-spacing:-.6px;line-height:1.2}
+.cat-tab-sub{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground)}
+.cat-tab-save{padding:var(--s5,20px);border-radius:var(--rounded-md);background:#f4fcfb;
+  border:1px solid #00968930;display:flex;flex-direction:column;gap:var(--s1)}
+.cat-tab-save-l{font-size:var(--text-xs);font-weight:600;color:var(--sentiment-positive)}
+.cat-tab-save-v{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:700;
+  letter-spacing:-1px;color:var(--sentiment-positive)}
+.cat-tab-save-v small{margin-left:var(--s1);font-size:var(--text-sm);font-weight:600}
+.cat-tab-save-d{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid #00968924;
+  font-size:var(--text-xs);line-height:1.6;color:var(--general-muted-foreground)}
+
+/* the agreements list, now living inside the hero card's narrow column: still a
+   each one a small elevated card (shadow, not a hairline) so it pops off the page,
+   with a gap between cards doing the separating instead of a divider line. Content
+   is cut to the minimum: name, discount, saving — coverage amount now lives one
+   click away, on the agreement's own page. */
+.cat-tab-agrs{padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.cat-tab-agrs h3{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:var(--s4)}
+.cat-agr-list{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+.cat-agr-row{display:flex;align-items:center;gap:var(--s3);
+  padding:var(--s4);border-radius:var(--rounded-md);background:var(--surface);
+  box-shadow:var(--shadow-xs);transition:box-shadow var(--t-fast),transform var(--t-fast)}
+.cat-agr-row.clickable{cursor:pointer}
+.cat-agr-row.clickable:hover,.cat-agr-row.clickable:focus-visible{
+  box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.cat-agr-row.clickable:hover .agr-card-go{background:var(--general-primary);color:#fff}
+.cat-agr-row.on{background:#f4fcfb;box-shadow:none;border:1px solid #00968930}
+.cat-agr-row .agr-logo{width:40px;height:40px;font-size:var(--text-xs)}
+.cat-agr-row-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.cat-agr-row-name{font-size:var(--text-sm);font-weight:600;letter-spacing:-.1px}
+.cat-agr-row-disc{font-size:var(--text-xs);font-weight:600;color:var(--sentiment-positive)}
+.cat-agr-row-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:var(--s2)}
+.cat-agr-row-save{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:700;
+  color:var(--sentiment-positive);white-space:nowrap}
+.cat-agr-row-save small{margin-left:2px;font-size:12px;font-weight:600}
+.cat-agr-row .agr-card-go{width:26px;height:26px}
+.cat-agr-row .agr-card-go svg{width:14px;height:14px}
+
+.cat-tab-hero-foot{display:flex;gap:var(--s3);padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.cat-tab-icon-btn{width:38px;height:38px;display:grid;place-items:center;border-radius:var(--rounded-full);
+  border:1px solid var(--hairline);background:var(--surface);color:var(--general-muted-foreground);
+  cursor:pointer;transition:background var(--t-fast),color var(--t-fast),border-color var(--t-fast)}
+.cat-tab-icon-btn svg{width:17px;height:17px}
+.cat-tab-icon-btn:hover{border-color:var(--general-border);color:var(--general-foreground)}
+.cat-tab-icon-btn.on{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
+
+/* the right column: every direct child (each opp-sec) gets one consistent gap from
+   the flex container — no ad-hoc margin rules, and nothing here reaches outside
+   .cat-tab-main to affect the shared .opp-sec class used by the original in-page
+   opportunity views */
+.cat-tab-main{display:flex;flex-direction:column;gap:var(--s12);min-width:0}
+@media(max-width:860px){
+  .cat-tab-wrap{padding:var(--s6) var(--s4)}
+  .cat-tab-grid{grid-template-columns:1fr;gap:var(--s8)}
+  .cat-tab-hero-body{position:static}
+}
+
+/* ---------- data confidence: estimated vs verified numbers ----------
+   A number is either VERIFIED (from the customer's own invoices/agreement — solid,
+   full-colour) or ESTIMATED (from benchmark/historical data until they upload the
+   real thing — dashed, muted, shown as a range rather than a false-precise point
+   figure). Same two states, reused everywhere a number needs to carry this. */
+.cmp-c.estimated{border-style:dashed;background:var(--general-muted)}
+.cmp-c.estimated .ct{color:var(--general-muted-foreground)}
+.cmp-c.estimated .price{color:var(--general-muted-foreground);font-size:var(--text-2xl)}
+.cmp-note{margin-top:var(--s4);padding-top:var(--s4);border-top:1px solid var(--hairline);
+  font-size:12px;line-height:1.55;color:var(--general-muted-foreground)}
+.cmp-note a{color:var(--general-primary);font-weight:600;text-decoration:none}
+.cmp-note a:hover{text-decoration:underline}
+.est-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground);font-size:11px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase}
+.est-chip svg{width:11px;height:11px}
+.cat-tab-save.estimated{background:var(--general-muted);border-color:var(--sidebar-border)}
+.cat-tab-save.estimated .cat-tab-save-l,.cat-tab-save.estimated .cat-tab-save-v{color:var(--general-foreground)}
+.cat-tab-save-link{margin-top:var(--s1);display:inline-block;font-size:12px;font-weight:600;
+  color:var(--general-primary);text-decoration:none}
+.cat-tab-save-link:hover{text-decoration:underline}
+
+/* ---------- data center: one place to see and fix every estimated number ---------- */
+.dc-page{display:flex;flex-direction:column;gap:var(--s10);max-width:820px;margin:0 auto;width:100%}
+.dc-hero h1{font-size:var(--text-3xl);letter-spacing:-.7px}
+.dc-hero p{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.6;
+  color:var(--general-muted-foreground);max-width:64ch}
+.dc-meter{margin-top:var(--s6);padding:var(--s6);border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);background:var(--surface);display:flex;flex-direction:column;gap:var(--s3)}
+.dc-meter-top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3)}
+.dc-meter-top b{font-size:var(--text-2xl);letter-spacing:-.5px}
+.dc-meter-top span{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.dc-meter-track{height:8px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.dc-meter-fill{height:100%;border-radius:var(--rounded-full);
+  background:linear-gradient(90deg,var(--brand-cornflower),var(--sentiment-positive));
+  transition:width var(--t-slow)}
+.dc-cat{border-top:1px solid var(--hairline);padding-top:var(--s6)}
+.dc-cat-h{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);margin-bottom:var(--s4)}
+.dc-cat-h h3{font-size:var(--text-lg);letter-spacing:-.3px}
+.dc-cat-h span{font-size:12px;font-weight:600;color:var(--general-muted-foreground)}
+.dc-row{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) 0;border-top:1px solid var(--hairline)}
+.dc-row:first-of-type{border-top:none;padding-top:0}
+.dc-row-name{flex:1 1 auto;min-width:0;font-size:var(--text-sm);font-weight:600}
+.dc-row-status{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600}
+.dc-row-status.ok{color:var(--sentiment-positive)}
+.dc-row-status.no{color:var(--general-muted-foreground)}
+.dc-row-status svg{width:13px;height:13px}
+.dc-row input[type=file]{display:none}
+
+/* ---------- welcome: a one-time modal explaining estimated vs verified data ---------- */
+.wms{position:fixed;inset:0;z-index:50;background:#000a4552;opacity:0;pointer-events:none;
+  transition:opacity var(--t)}
+.wms.on{opacity:1;pointer-events:auto}
+.wm{position:fixed;z-index:51;left:50%;top:50%;width:min(520px,calc(100vw - 32px));
+  background:var(--surface);border-radius:var(--rounded-2xl);box-shadow:var(--shadow-xl);
+  opacity:0;pointer-events:none;transform:translate(-50%,-46%) scale(.98);
+  transition:opacity var(--t),transform var(--t)}
+.wm.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.wm-body{padding:var(--s8)}
+.wm-ring{width:52px;height:52px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--brand-ice);color:var(--general-primary);margin-bottom:var(--s6)}
+.wm-ring svg{width:24px;height:24px}
+.wm-body h2{font-size:var(--text-2xl);letter-spacing:-.6px}
+.wm-body p{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground)}
+.wm-legend{margin-top:var(--s6);display:flex;flex-direction:column;gap:var(--s3)}
+.wm-legend-row{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-sm)}
+.wm-swatch{flex:0 0 auto;width:14px;height:14px;border-radius:4px}
+.wm-swatch.verified{background:var(--sentiment-positive)}
+.wm-swatch.estimated{background:var(--surface);border:1.5px dashed var(--general-muted-foreground)}
+.wm-actions{margin-top:var(--s8);display:flex;justify-content:flex-end;gap:var(--s3)}
 </style>
 </head>
 <body>
@@ -1363,8 +1562,8 @@ body.in-app .flow{display:none}
   <div class="bannerwrap" id="bannerwrap">
     <div class="banner" role="status">
       <span class="bdot" aria-hidden="true"></span>
-      <span><b>3 agreements</b> still need your attention</span>
-      <button class="blink" id="bannerGo">Review them
+      <span id="bannerMsg"></span>
+      <button class="blink" id="bannerGo">Upload agreements
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
@@ -1409,6 +1608,9 @@ body.in-app .flow{display:none}
         <button class="up-i" id="restartBtn">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Restart prototype</button>
+        <button class="up-i" id="replayWelcomeBtn">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/></svg>
+          Data confidence intro</button>
         <p class="up-f">Progress is kept per browser tab.</p>
       </div>
       </div>
@@ -1498,7 +1700,7 @@ body.in-app .flow{display:none}
           <!-- 2 · your situation: what's actually happening today, before any pitch -->
           <section class="situation" aria-labelledby="sitn-h">
             <div class="sitn-head">
-              <h2 id="sitn-h">Your situation</h2>
+              <h2 id="sitn-h">Summary</h2>
               <span class="spacer"></span>
               <span class="chip chip-soft">Year to date</span>
             </div>
@@ -1563,6 +1765,15 @@ body.in-app .flow{display:none}
              agreement carries enough weight (terms, timeline) to earn its own page. -->
         <section id="viewOpp" hidden></section>
 
+        <!-- a category's own page: reached from an Opportunities category click, opened
+             in a new tab so the dashboard stays put in the original one -->
+        <section id="viewCatTab" hidden></section>
+
+        <!-- data confidence center: where every "estimated" number points to, one
+             place to see and fix what's missing instead of an upload widget on
+             every single card -->
+        <section id="viewDataCenter" hidden></section>
+
         </div>
       </main>
     </div>
@@ -1585,6 +1796,32 @@ body.in-app .flow{display:none}
     <div class="bc-steps" id="bcSteps" hidden></div>
     <div class="bc-b" id="bcBody"></div>
     <footer class="bc-f" id="bcFoot"></footer>
+  </div>
+
+  <!-- one-time welcome: explains estimated vs verified data before any number on the
+       dashboard could otherwise be mistaken for the customer's real, exact figure -->
+  <div class="wms" id="wms"></div>
+  <div class="wm" id="wm" role="dialog" aria-modal="true" aria-labelledby="wmT" aria-hidden="true">
+    <div class="wm-body">
+      <div class="wm-ring">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg>
+      </div>
+      <h2 id="wmT" tabindex="-1">Your dashboard is live from day one</h2>
+      <p>We've filled in today's numbers using industry benchmarks and our AI's read of
+        similar companies, so you have something useful before uploading anything.
+        Upload your real agreements and spend reports any time to swap estimates for
+        your exact numbers.</p>
+      <div class="wm-legend">
+        <div class="wm-legend-row"><span class="wm-swatch verified" aria-hidden="true"></span>
+          <span><b>Verified</b> — from your own invoices or agreement</span></div>
+        <div class="wm-legend-row"><span class="wm-swatch estimated" aria-hidden="true"></span>
+          <span><b>Estimated</b> — benchmark data, shown as a range until you upload</span></div>
+      </div>
+      <div class="wm-actions">
+        <button class="btn btn-secondary" id="wmLater">Continue to dashboard</button>
+        <button class="btn btn-primary" id="wmUpload">Upload agreements</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -1739,6 +1976,9 @@ let navAt = 'dashboard';
 /* v2 always opens in the "established account" state: realised figures from day one,
    not a pending/day-one framing — there's no onboarding moment to contrast it against. */
 let fwd6 = true;
+/* shown once per tab, right after login — explains estimated vs verified data
+   before the user could mistake a benchmark number for their real one */
+let seenWelcome = false;
 
 function renderNav(){
   $('#nav').innerHTML = NAV.map(i => i.hero
@@ -1753,7 +1993,11 @@ function renderNav(){
        </button>`
   ).join('');
   $$('#nav [data-nav]').forEach(b => b.addEventListener('click', () => {
-    navAt = b.dataset.nav; persist(); renderNav(); setView();
+    navAt = b.dataset.nav; persist(); renderNav();
+    oppAt = null; $('#viewOpp').hidden = true;
+    const ct = $('#viewCatTab'); if(ct) ct.hidden = true;
+    const dc = $('#viewDataCenter'); if(dc) dc.hidden = true;
+    setView();
   }));
 }
 
@@ -2050,7 +2294,7 @@ document.addEventListener('click', closeNotes);
 addEventListener('keydown', e => { if(e.key === 'Escape') closeNotes(); });
 
 $('#bannerX').addEventListener('click', () => $('#bannerwrap').style.display = 'none');
-$('#bannerGo').addEventListener('click', () => { navAt = 'agreements'; renderNav(); setView(); });
+$('#bannerGo').addEventListener('click', openDataCenter);
 
 function enterApp(){
   $('#userCo').textContent = state.company;
@@ -2063,12 +2307,33 @@ function enterApp(){
   renderNotes();
   renderDash();
   renderSup();
+  renderDataBanner();
   setView();
   document.body.classList.add('in-app');
   $('#app').classList.add('on');
   inApp = true;
   persist();
+  if(!seenWelcome) openWelcome();
 }
+
+function openWelcome(){
+  $('#wms').classList.add('on');
+  $('#wm').classList.add('on');
+  $('#wm').setAttribute('aria-hidden', 'false');
+  setTimeout(() => $('#wmT').focus(), 100);
+}
+function closeWelcome(){
+  $('#wms').classList.remove('on');
+  $('#wm').classList.remove('on');
+  $('#wm').setAttribute('aria-hidden', 'true');
+  seenWelcome = true;
+  persist();
+}
+$('#wms').addEventListener('click', closeWelcome);
+$('#wmLater').addEventListener('click', closeWelcome);
+$('#wmUpload').addEventListener('click', () => { closeWelcome(); openDataCenter(); });
+addEventListener('keydown', e => { if(e.key === 'Escape' && $('#wm').classList.contains('on')) closeWelcome(); });
+$('#replayWelcomeBtn').addEventListener('click', () => { closeUser(); openWelcome(); });
 
 /* ---------------- dashboard ---------------- */
 /* Reads the same ROWS the user confirmed in step 2, so hidden categories stay hidden. */
@@ -2093,21 +2358,25 @@ function renderDash(){
   ROWS.forEach(r => r.agr.forEach((a,i) => { if(!a.req) agrOpps.push({r, a, i}); }));
   agrOpps.sort((x,y) => y.a.save - x.a.save);
   const agrTotalSave = agrOpps.reduce((s,x) => s + x.a.save, 0);
-  const maxAgrSave = agrOpps.length ? Math.max(...agrOpps.map(x => x.a.save)) : 1;
   $('#oppAgrTotal').textContent = agrOpps.length
     ? `${fmt(agrTotalSave)} kr./year across ${agrOpps.length}` : 'all activated';
   $('#oppByAgr').innerHTML = agrOpps.slice(0, 8).map(({r,a,i}) => {
-    const shade = CAT_SHADE[r.id] || '#999', fg = CAT_SHADE_FG[r.id] || '#fff';
+    const shade = CAT_SHADE[r.id] || '#999';
+    const tint = avatarTint(shade);
+    const rate = Math.round(a.save / a.covers * 100);
+    const why = agrWhy(r, a);
     return `
     <li class="agr-card" data-cat="${r.id}" data-idx="${i}" tabindex="0" role="button"
       aria-label="See the ${a.n} opportunity">
       <div class="agr-card-top">
-        <span class="opp-logo" style="background:${shade};color:${fg}" aria-hidden="true">${initialsOf(a.n)}</span>
-        ${a.isNew ? '<span class="cnew">New</span>' : ''}
+        <span class="agr-logo" style="background:${tint.bg};color:${tint.fg}" aria-hidden="true">${initialsOf(a.n)}</span>
+        <span class="agr-card-disc">−${rate}%</span>
       </div>
-      <span class="agr-card-name">${a.n}</span>
+      <span class="agr-card-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</span>
       <span class="agr-card-meta">${r.n} · covers ${fmt(a.covers)} kr. of your spend</span>
-      <span class="opp-mini-track"><i style="width:${(a.save / maxAgrSave * 100).toFixed(1)}%;background:${shade}"></i></span>
+      <ul class="agr-card-why">
+        ${why.slice(0, 2).map(w => `<li>${w}</li>`).join('')}
+      </ul>
       <div class="agr-card-foot">
         <span class="opp-amt-block">
           <span class="opp-amt-label">Yearly saving</span>
@@ -2120,10 +2389,13 @@ function renderDash(){
     </li>`;
   }).join('') || `<p class="opp-empty">Every agreement is already active — nothing open right now.</p>`;
 
+  /* opens the same category-tab page (in a new tab) that a category click does,
+     landing straight on this one agreement instead of the category overview */
+  const gotoAgr = li => window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
   $$('#oppByAgr .agr-card').forEach(li => {
-    li.addEventListener('click', () => openOpportunity('agr', li.dataset.cat, +li.dataset.idx));
+    li.addEventListener('click', () => gotoAgr(li));
     li.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openOpportunity('agr', li.dataset.cat, +li.dataset.idx); }
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); gotoAgr(li); }
     });
   });
 }
@@ -2145,6 +2417,20 @@ const CAT_ICON = {
   tel:'<rect x="3" y="4" width="18" height="12" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M9 20h6M12 16v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
   site:'<path d="M4 7h16M9.5 7V4.8h5V7M6 7l1 13.2h10L18 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.5 11v5.5M13.5 11v5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
 };
+/* one free (Unsplash License) photo per category, for the category-tab hero banner —
+   picked for the theme, not staged/posed shots, since it has to blend into a plain
+   white page background rather than carry its own caption or subject in focus */
+const CAT_PHOTO = {
+  mat:'photo-1508450859948-4e04fabaa4ea',   // grayscale concrete structure, exposed pillars
+  tool:'photo-1667923316358-df29a911e139',  // wrench and work gloves
+  fuel:'photo-1647618983095-8490d721074b',  // fuel pump display
+  off:'photo-1681975264904-362dae92e526',   // desk with phone, pens, stationery
+  rent:'photo-1751054770504-c69daeec4721',  // excavator at a construction site
+  frg:'photo-1783428673235-77dafc15eb59',   // semi-truck on asphalt
+  tel:'photo-1558494949-ef010cbdcc31',      // server room / network cabling
+  site:'photo-1751688220612-e9cae6486014'   // construction site alley with a dumpster
+};
+const catPhotoUrl = id => `https://images.unsplash.com/${CAT_PHOTO[id] || CAT_PHOTO.mat}?w=900&q=80&auto=format&fit=crop`;
 
 /* "Circle K" -> "CK" — no logo files exist for these suppliers, so a tidy initials tile
    stands in for one, the same way the supplier catalogue used to before it had real marks */
@@ -2152,6 +2438,23 @@ function initialsOf(name){
   const w = name.replace(/([a-z])([A-Z])/g, '$1 $2').split(/[\s-]+/).filter(Boolean);
   if(w.length === 1) return w[0].length <= 3 ? w[0].toUpperCase() : w[0].slice(0, 2).toUpperCase();
   return (w[0][0] + w[1][0]).toUpperCase();
+}
+/* a very light tint of the given hsl(...) shade — the avatar reads as identity, not
+   as another loud, saturated block competing with the chart it's borrowed its hue from */
+function avatarTint(hsl){
+  const m = hsl.match(/hsl\(([\d.]+) /);
+  const h = m ? m[1] : 217;
+  return { bg:`hsl(${h} 45% 95%)`, fg:`hsl(${h} 30% 40%)` };
+}
+/* two curated reasons where we have them (CDET); a still-true, still-specific fallback
+   for the rest, so every card says something real about that agreement */
+function agrWhy(r, a){
+  const d = CDET[a.n];
+  if(d && d.why && d.why.length) return d.why;
+  return [
+    `Covers ${fmt(a.covers)} kr. of your ${r.n.toLowerCase()} spend, at group terms.`,
+    `Same supplier, same delivery — only the price on the invoice changes.`
+  ];
 }
 
 const polarPt = (cx, cy, r, deg) => {
@@ -2221,7 +2524,7 @@ function renderOppViz(catRows, remaining){
     donutTip.classList.add('on');
   };
   const hideDonut = () => donutTip.classList.remove('on');
-  const gotoCat = id => openOpportunity('cat', id);
+  const gotoCat = id => window.open(catTabUrl(id), '_blank');
   $$('#oppDonut .opp-donut-seg').forEach(el => {
     const seg = segs.find(s => s.row.id === el.dataset.cat);
     el.addEventListener('mouseenter', () => showDonut(seg));
@@ -2415,6 +2718,31 @@ const CDET = {
     why:['Already a supplier you use — this moves the existing account onto group terms.',
          'Removes the remaining pump-price share of your fuel spend.']}
 };
+
+/* ---------------- data confidence ----------------
+   An agreement is VERIFIED when we have real, curated pricing for it (CDET) — that
+   only exists once we've read the customer's own invoices or agreement for it.
+   Anything else is ESTIMATED: the fallback price index used elsewhere is really a
+   benchmark guess, not their number, so it's surfaced as one instead of quietly
+   passed off as fact. manualVerified lets the Data Center "upload" flow flip one
+   over to verified without needing a real backend behind it. */
+let manualVerified = new Set();
+const isEstimated = a => !CDET[a.n] && !manualVerified.has(a.n);
+function dataConfidence(){
+  const all = ROWS.flatMap(r => r.agr);
+  const total = all.length;
+  const estimated = all.filter(isEstimated).length;
+  return {total, estimated, verified: total - estimated};
+}
+
+function renderDataBanner(){
+  const {total, estimated} = dataConfidence();
+  const wrap = $('#bannerwrap');
+  if(!estimated){ wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  $('#bannerMsg').innerHTML = `<b>${estimated} of ${total} agreements</b> are using estimated data, not your real numbers`;
+}
+
 /* the dashboard's welcome line — orients the user and sums up where they stand today */
 /* the dashboard's welcome line — short, and pointed at whatever is new */
 function renderHello(){
@@ -2439,11 +2767,8 @@ function renderSituation(){
   const saveYTD  = Math.round(saveYr  * yearFrac);
   const bonusYTD = Math.round(bonusYr * yearFrac);
 
-  const agrTotal     = ROWS.reduce((s,r) => s + r.agr.length, 0);
-  const agrInUse      = reqAgs.length;
-  const totalSpend    = live().reduce((s,r) => s + r.amt, 0);
-  const coveredSpend  = items.reduce((s,x) => s + x.covers, 0);
-  const coveredPct    = totalSpend ? (coveredSpend / totalSpend * 100) : 0;
+  const agrTotal = ROWS.reduce((s,r) => s + r.agr.length, 0);
+  const agrInUse = reqAgs.length;
 
   /* illustrative — a live build would compare each figure against its own value last period */
   const trendBar = (pct, label, dir) => `
@@ -2475,8 +2800,6 @@ function renderSituation(){
       + list(items.map(x => `<li><span>${x.name}</span></li>`).join(''), '')
       + `<p class="hw-pop-f">${agrTotal - agrInUse} more are ready to activate under Opportunities.</p>`
     : emptyPop;
-  const covPop = `<p class="hw-pop-f">${fmt(coveredSpend)} kr. of your ${fmt(totalSpend)} kr. annual spend is on
-    an Advantage framework agreement. The rest is still at list price.</p>`;
 
   const tile = (label, number, sub, aria, pop, trend) => `
     <div class="hw">
@@ -2491,6 +2814,20 @@ function renderSituation(){
       <div class="hw-pop" role="tooltip">${pop}</div>
     </div>`;
 
+  /* the fourth tile: a promo card, not a computed figure — a stand-out deal worth
+     surfacing on its own, styled distinctly from the three data tiles beside it */
+  const quickDealHTML = `
+    <button class="hw-t qd-card" id="qdCard" aria-label="Easy deal — 35% discount on the travel category, see suppliers">
+      <span class="qd-badge">Easy deal</span>
+      <div class="qd-hero"><b>35%</b> discount</div>
+      <div class="qd-cat-row">
+        <svg class="qd-ic" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 13.4L3 11V8.6l7.5 1.1V5a1.5 1.5 0 013 0v4.7L21 8.6V11l-7.5 2.4v4.3l3 1.6V21L12 19.7 7.5 21v-1.7l3-1.6v-4.3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        <span class="qd-cat-label">Travel category</span>
+        <span class="spacer"></span>
+        <svg class="qd-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </button>`;
+
   $('#sitnGrid').innerHTML =
       tile('Realised savings', `${fmt(saveYTD)} kr.`, 'Year to date', 'Realised savings year to date', savePop,
         trendBar(24, '+24% vs last 6 months', 'up'))
@@ -2498,8 +2835,9 @@ function renderSituation(){
         trendBar(19, '+19% vs last 6 months', 'up'))
     + tile('Agreements in use', `${agrInUse}`, `of ${agrTotal} available`, 'Agreements in use', usePop,
         trendBar(15, '+2 vs last 6 months', 'up'))
-    + tile('Spend under agreement', `${coveredPct.toFixed(0)}%`, `of ${fmt(totalSpend)} kr. total spend`, 'Share of spend under agreement', covPop,
-        trendBar(9, '+9pp vs last 6 months', 'up'));
+    + quickDealHTML;
+
+  $('#qdCard').addEventListener('click', () => { navAt = 'suppliers'; renderNav(); setView(); });
 }
 
 /* status-widget explainer popovers appear on hover / keyboard focus (CSS-driven) */
@@ -2527,6 +2865,90 @@ function closeOpportunity(){
   $('#viewOpp').hidden = true;
   setView();
   renderDash();
+}
+
+/* ---------------- data confidence center ----------------
+   Every "Improve accuracy" link in the app — the banner, a dashed estimated card,
+   the welcome modal — lands here. One place to see what's estimated and fix it,
+   instead of an upload widget bolted onto every card that shows a number. */
+const DASH_CIRCLE = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3"/></svg>';
+
+function openDataCenter(){
+  $('#viewDash').hidden = true;
+  $('#viewSup').hidden = true;
+  $('#viewOpp').hidden = true;
+  const ct = $('#viewCatTab'); if(ct) ct.hidden = true;
+  $('#viewDataCenter').hidden = false;
+  renderDataCenter();
+  $('#canvas').scrollTop = 0;
+}
+function closeDataCenter(){
+  $('#viewDataCenter').hidden = true;
+  setView();
+  renderDash();
+}
+
+function renderDataCenter(){
+  const {total, verified} = dataConfidence();
+  const pct = total ? Math.round(verified / total * 100) : 100;
+
+  const cats = ROWS.map(r => {
+    const rows = r.agr.map((a, i) => {
+      const est = isEstimated(a);
+      return `
+      <div class="dc-row">
+        <span class="dc-row-name">${a.n}</span>
+        ${est
+          ? `<span class="dc-row-status no">${DASH_CIRCLE} Estimated</span>
+             <label class="btn btn-secondary btn-sm">Upload agreement
+               <input type="file" accept=".pdf,.csv,.xlsx" data-cat="${r.id}" data-idx="${i}">
+             </label>`
+          : `<span class="dc-row-status ok">${TICK} Verified</span>`}
+      </div>`;
+    }).join('');
+    const okCount = r.agr.length - r.agr.filter(isEstimated).length;
+    return `
+    <div class="dc-cat">
+      <div class="dc-cat-h"><h3>${r.n}</h3><span>${okCount} of ${r.agr.length} verified</span></div>
+      ${rows}
+    </div>`;
+  }).join('');
+
+  $('#viewDataCenter').innerHTML = `
+    <div class="dc-page">
+      <p class="opp-back"><button class="btn btn-ghost btn-sm" id="dcBack">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H6M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to dashboard</button></p>
+      <header class="dc-hero">
+        <h1 id="dcT" tabindex="-1">Data confidence</h1>
+        <p>Verified numbers come from your own invoices or agreements. Estimated numbers
+          are industry benchmarks and our AI's read of similar companies, shown as a
+          range until you upload the real thing.</p>
+        <div class="dc-meter">
+          <div class="dc-meter-top"><b>${pct}% verified</b><span>${verified} of ${total} agreements</span></div>
+          <div class="dc-meter-track"><div class="dc-meter-fill" style="width:${pct}%"></div></div>
+        </div>
+      </header>
+      ${cats}
+    </div>`;
+
+  $('#dcBack').addEventListener('click', closeDataCenter);
+  $$('#viewDataCenter input[type=file]').forEach(inp => {
+    inp.addEventListener('change', () => {
+      if(!inp.files.length) return;
+      const r = ROWS.find(x => x.id === inp.dataset.cat);
+      const a = r.agr[+inp.dataset.idx];
+      const label = inp.closest('label');
+      label.textContent = 'Analysing…';
+      setTimeout(() => {
+        manualVerified.add(a.n);
+        persist();
+        renderDataBanner();
+        renderDataCenter();
+      }, RM ? 200 : 900);
+    });
+  });
+  setTimeout(() => { const h = $('#dcT'); if(h) h.focus({preventScroll:true}); }, 50);
 }
 
 function renderOpportunity(){
@@ -2710,6 +3132,255 @@ function renderOppCategory(r){
   });
 }
 
+/* ---------- category page (opens in a new tab) ----------
+   A category opportunity opens in its own browser tab (window.open, same-origin, so
+   sessionStorage — and with it every activated agreement — carries over). It keeps the
+   real app shell (top bar + left nav) and renders into its own section of the canvas,
+   the same way the dashboard and suppliers views do. */
+const catTabUrl = (id, agrIdx) => `${location.pathname}?catView=${encodeURIComponent(id)}`
+  + (agrIdx === undefined ? '' : `&agr=${agrIdx}`);
+
+const catTabShareSvg = '<svg viewBox="0 0 24 24" fill="none"><circle cx="18" cy="5" r="2.6" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.6" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="19" r="2.6" stroke="currentColor" stroke-width="1.7"/><path d="M8.3 10.7l7.4-4.4M8.3 13.3l7.4 4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+const catTabFavSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 4.5c1.7-2.6 7.5-2 7.5 2.7 0 3.7-4.4 7-7.5 9.8-3.1-2.8-7.5-6.1-7.5-9.8 0-4.7 5.8-5.3 7.5-2.7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+
+const catTabFavs = new Set();
+
+function catTabShell(heroHTML, mainHTML){
+  $('#viewCatTab').innerHTML = `
+    <div class="cat-tab-wrap">
+      <div class="cat-tab-grid">
+        <aside class="cat-tab-hero">${heroHTML}</aside>
+        <div class="cat-tab-main">${mainHTML}</div>
+      </div>
+    </div>`;
+  const h1 = $('.cat-tab-title'); if(h1){ h1.tabIndex = -1; setTimeout(() => h1.focus({preventScroll:true}), 50); }
+}
+
+/* its own contact markup — not oppContactHTML — so #oppHuman/#oppAI in the (possibly
+   still-rendered, just hidden) opportunity view can never collide with this section's ids */
+const catTabContactHTML = () => `
+  <section class="opp-sec opp-contact">
+    <h3>Need more info?</h3>
+    <p>Talk to a procurement specialist or ask our AI assistant before you decide.</p>
+    <div class="opp-contact-actions">
+      <button class="btn btn-secondary" id="catTabHuman">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 19v-1a5 5 0 015-5h2a5 5 0 015 5v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 8.3a3 3 0 000-5.8M19 19v-1a4.7 4.7 0 00-2.5-4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Talk to a specialist</button>
+      <button class="btn btn-secondary" id="catTabAI">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.9 4.3 4.6.6-3.4 3.2.9 4.7-4-2.3-4 2.3.9-4.7L5.5 7.9l4.6-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        Ask the AI assistant</button>
+    </div>
+  </section>`;
+
+function wireCatTabContact(askText){
+  const human = $('#catTabHuman'), ai = $('#catTabAI');
+  if(human) human.addEventListener('click', () =>
+    alert('Not part of this prototype — a procurement specialist would be looped in here.'));
+  if(ai) ai.addEventListener('click', () => alert(`Not part of this prototype — the AI assistant would open here to answer: "${askText}"`));
+}
+
+/* no boxed card — just a photo (real Unsplash image, faded into the page background)
+   above the numbers, then the info panel that turns sticky once the photo scrolls
+   past. extraHTML — the agreements list — is optional, since the single-agreement
+   page reuses this same shape without it. */
+function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML){
+  return `
+    <div class="cat-tab-hero-img" style="background-image:url('${catPhotoUrl(catId)}')" aria-hidden="true"></div>
+    <div class="cat-tab-hero-body">
+      <div class="cat-tab-identity">
+        <span class="chip chip-soft cat-tab-chip">${tag}</span>
+        <h1 class="cat-tab-title">${title}</h1>
+        <p class="cat-tab-sub">${sub}</p>
+      </div>
+      <div class="cat-tab-save">
+        <span class="cat-tab-save-l">Potential yearly saving</span>
+        <b class="cat-tab-save-v">+${fmt(save)} <small>kr./year</small></b>
+        <p class="cat-tab-save-d">${desc}</p>
+      </div>
+      ${extraHTML || ''}
+      <footer class="cat-tab-hero-foot">
+        <button class="cat-tab-icon-btn" id="catTabShare" aria-label="Share this page" data-tip="Share">${catTabShareSvg}</button>
+        <button class="cat-tab-icon-btn${catTabFavs.has(title) ? ' on' : ''}" id="catTabFav"
+          aria-label="Save to favourites" aria-pressed="${catTabFavs.has(title)}" data-tip="Favourite">${catTabFavSvg}</button>
+      </footer>
+    </div>`;
+}
+
+function wireCatTabHeroFoot(title){
+  $('#catTabShare').addEventListener('click', async () => {
+    try{ await navigator.clipboard.writeText(location.href); alert('Link copied.'); }
+    catch(e){ alert(location.href); }
+  });
+  $('#catTabFav').addEventListener('click', () => {
+    if(catTabFavs.has(title)) catTabFavs.delete(title); else catTabFavs.add(title);
+    const b = $('#catTabFav');
+    const on = catTabFavs.has(title);
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+}
+
+/* the whole category: a sticky hero CARD on the left — picture, the numbers, and
+   the agreements that deliver them, all in one place — while the supporting
+   sections (terms, calculation, timeline, contact) scroll past on the right */
+function renderCatTab(r){
+  const pot = potOf(r);
+  const rows = r.agr.map((a,i) => {
+    const rate = Math.round(a.save / a.covers * 100);
+    const tint = avatarTint('hsl(217 45% 40%)');
+    return `
+    <li class="cat-agr-row${a.req ? ' on' : ' clickable'}"${a.req ? '' : ` data-agr="${i}" tabindex="0" role="button"`}>
+      <span class="agr-logo" style="background:${tint.bg};color:${tint.fg}" aria-hidden="true">${initialsOf(a.n)}</span>
+      <span class="cat-agr-row-main">
+        <span class="cat-agr-row-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</span>
+        <span class="cat-agr-row-disc">−${rate}% vs. today${isEstimated(a)
+          ? ` <span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}</span>
+      </span>
+      <span class="cat-agr-row-end">
+        <b class="cat-agr-row-save">+${fmt(a.save)}<small>kr./yr</small></b>
+        ${a.req
+          ? `<span class="inuse">${TICK} Activated</span>`
+          : `<span class="agr-card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`}
+      </span>
+    </li>`;
+  }).join('');
+
+  const agreementsHTML = `
+    <section class="cat-tab-agrs">
+      <h3>Agreements that would deliver it</h3>
+      <ul class="cat-agr-list">${rows}</ul>
+      <p class="agr-note">Open an agreement to see how it compares to what you pay today, and activate
+        it from there.</p>
+    </section>`;
+
+  catTabShell(
+    catTabHeroHTML(r.id, 'Purchasing category', r.n, pot,
+      `${r.rate}% of ${fmt(r.amt)} kr. spent in this category, across ${r.sup} suppliers.`,
+      `Every agreement below was matched to a supplier you already buy from — nothing changes
+       operationally, only the price once it's activated.`, agreementsHTML),
+    `
+    ${oppTermsHTML()}
+    <section class="opp-sec">
+      <h3>How we calculate this</h3>
+      <ol class="steps2">
+        <li><span class="sn">1</span><span>Read <b>${fmt(r.inv)} invoices</b> from
+          <b>${state.source}</b> across <b>${r.sup} suppliers</b> in this category, over 12 months.</span></li>
+        <li><span class="sn">2</span><span>Summed the line items, not the invoice totals:
+          <code>${fmt(r.amt)} kr.</code> — all of it at the prices you're paying today.</span></li>
+        <li><span class="sn">3</span><span>Matched each supplier to an Advantage framework agreement
+          covering the same goods and delivery terms.</span></li>
+        <li><span class="sn">4</span><span>Compared your invoice prices with the agreement rate.
+          The gap is <b>${r.rate}%</b> on average, weighted by what you actually buy.</span></li>
+        <li><span class="sn">✓</span><span><code>${r.rate}%</code> of <code>${fmt(r.amt)} kr.</code>
+          = <b>${fmt(pot)} kr./year</b>. Cross-checked against 3 sample invoices per supplier —
+          variance under 2%.</span></li>
+      </ol>
+    </section>
+    ${oppTimelineHTML()}
+    ${catTabContactHTML()}`
+  );
+  wireCatTabHeroFoot(r.n);
+  wireCatTabContact(`Tell me more about the ${r.n} opportunity`);
+  $$('.cat-agr-row[data-agr]').forEach(li => {
+    const go = () => renderCatTabAgreement(r, +li.dataset.agr);
+    li.addEventListener('click', go);
+    li.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+  });
+}
+
+/* a single agreement inside the tab: same shell, the price comparison + why bullets,
+   and an Activate button that mutates state and re-renders in place */
+function renderCatTabAgreement(r, idx){
+  const a = r.agr[idx];
+  const rate = Math.round(a.save / a.covers * 100);
+  const est = isEstimated(a);
+  /* we're always confident in OUR side of the comparison (it's the deal we're
+     offering); "today" is the uncertain side when there's no curated CDET entry —
+     so it's the "today" card, not the whole comparison, that goes dashed */
+  const spread = Math.max(6, Math.round(rate * 0.7));
+  const d = CDET[a.n] || {
+    ulabel:'price index · your basket = 100',
+    a: `${100 - spread}–${100 + spread}`,
+    b: String(100 - rate), bonus:'No bonus', why:[]
+  };
+  /* the decision (activate, or see that it's already active) sits right under the
+     number it's justified by, instead of in a footer far below the fold */
+  const activateHTML = a.req
+    ? `<div class="cat-tab-activate"><span class="inuse">${TICK} Activated</span></div>`
+    : `<div class="cat-tab-activate"><button class="btn btn-primary btn-block" id="catTabActivate">Activate this agreement</button></div>`;
+  catTabShell(
+    catTabHeroHTML(r.id, r.n, a.n, a.save,
+      `${rate}% below what you pay today, on the ${fmt(a.covers)} kr. you already spend with them.`,
+      `Same supplier, same delivery — only the price on the invoice changes once this is active.`,
+      activateHTML),
+    `
+    <p class="opp-back"><button class="btn btn-ghost btn-sm" id="catTabBack">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H6M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to ${r.n}</button></p>
+    <section class="opp-sec" style="padding-top:0;border-top:none">
+      <h3>How we calculate this</h3>
+      <div class="cmp">
+        <div class="cmp-c${est ? ' estimated' : ''}">
+          <div class="ct">Today${est ? ' · estimated' : ''}</div>
+          <div class="cmp-sup">${a.n}</div>
+          <div class="price">${d.a}</div>
+          <div class="unit">${d.ulabel}</div>
+          <div class="bonus">No agreement</div>
+        </div>
+        <div class="cmp-arrow">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>−${rate}%</b>
+        </div>
+        <div class="cmp-c win">
+          <div class="ct">${TICK} Advantage agreement</div>
+          <div class="cmp-sup">${a.n}</div>
+          <div class="price">${d.b}</div>
+          <div class="unit">${d.ulabel}</div>
+          <div class="bonus">${d.bonus}</div>
+        </div>
+      </div>
+      ${est ? `<p class="cmp-note">${DASH_CIRCLE} Today's price is an industry-benchmark
+        estimate — we don't have your ${a.n} agreement or invoices yet.
+        <a href="#" id="cmpUploadLink">Upload it to see your exact number →</a></p>` : ''}
+      ${d.why.length ? `<div class="bc-why"><h4>Why this one</h4>
+        <ul>${d.why.map(w => `<li><span class="tick">${TICK}</span><span>${w}</span></li>`).join('')}</ul></div>` : ''}
+    </section>
+    ${oppTermsHTML()}
+    ${oppTimelineHTML()}
+    ${catTabContactHTML()}
+    <p class="opp-cta-note">Category <b>${r.n}</b> · Effort <b>low</b> · Switch time <b>~2 weeks</b></p>`
+  );
+  wireCatTabHeroFoot(a.n);
+  wireCatTabContact(`Tell me more about the ${a.n} agreement`);
+  $('#catTabBack').addEventListener('click', () => renderCatTab(r));
+  const upLink = $('#cmpUploadLink');
+  if(upLink) upLink.addEventListener('click', e => { e.preventDefault(); openDataCenter(); });
+  const actBtn = $('#catTabActivate');
+  if(actBtn) actBtn.addEventListener('click', () => {
+    actBtn.disabled = true; actBtn.textContent = 'Sending…';
+    setTimeout(() => { a.req = true; persist(); renderCatTabAgreement(r, idx); }, RM ? 300 : 1400);
+  });
+}
+
+function bootCatTab(id){
+  const r = ROWS.find(x => x.id === id);
+  document.title = r ? `${r.n} · Advantage` : 'Advantage';
+  navAt = 'categories';
+  enterApp();
+  $('#viewDash').hidden = true;
+  $('#viewSup').hidden = true;
+  $('#viewOpp').hidden = true;
+  $('#viewCatTab').hidden = false;
+  $('#canvas').scrollTop = 0;
+  if(!r){ $('#viewCatTab').innerHTML = '<p>Category not found.</p>'; return; }
+  /* an explicit ?agr= lands straight on that one agreement's page — same layout
+     reached from a category's own agreement list, just skipping the overview */
+  const agrRaw = new URLSearchParams(location.search).get('agr');
+  const agrIdx = agrRaw === null ? NaN : parseInt(agrRaw, 10);
+  if(!Number.isNaN(agrIdx) && r.agr[agrIdx]) renderCatTabAgreement(r, agrIdx);
+  else renderCatTab(r);
+}
+
 /* activate one or more agreements: a short "sending / confirming" beat, then thank-you
    + what it's now earning. Dummy timing — nothing here waits on a real supplier. */
 function runActivationFunnel(batch){
@@ -2793,7 +3464,8 @@ function persist(){
       company: state.company, user: state.user, source: state.source, invoices: state.invoices,
       hidden: ROWS.filter(r => r.hidden).map(r => r.id),
       req: ROWS.flatMap(r => r.agr.map((a,i) => a.req ? r.id + ':' + i : null)).filter(Boolean),
-      unread: NOTES.map(n => n.unread ? 1 : 0)
+      unread: NOTES.map(n => n.unread ? 1 : 0),
+      seenWelcome, manualVerified: [...manualVerified]
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
 }
@@ -2816,6 +3488,8 @@ function applySaved(d){
     NOTES.forEach((n,i) => n.unread = !!d.unread[i]);
   if(d.navAt) navAt = d.navAt;
   if(typeof d.fwd6 === 'boolean') fwd6 = d.fwd6;
+  if(typeof d.seenWelcome === 'boolean') seenWelcome = d.seenWelcome;
+  if(Array.isArray(d.manualVerified)) manualVerified = new Set(d.manualVerified);
 }
 
 function startOver(){
@@ -2849,7 +3523,10 @@ const saved = jumpRaw ? null : readSaved();     /* an explicit ?step= always win
 injectNew6();
 if(saved) applySaved(saved);
 
-if((saved && saved.scr === 'app') || jumpRaw){
+const catViewId = new URLSearchParams(location.search).get('catView');
+if(catViewId){
+  bootCatTab(catViewId);
+} else if((saved && saved.scr === 'app') || jumpRaw){
   enterApp();
 }
 </script>
