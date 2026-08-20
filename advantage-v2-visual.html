@@ -536,12 +536,17 @@ body.in-app .flow{display:none}
 /* connected ERP status */
 .erp{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s3) 0 var(--s3);
   background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
-  box-shadow:var(--shadow-2xs);cursor:default;transition:var(--t-fast)}
+  box-shadow:var(--shadow-2xs);cursor:pointer;transition:var(--t-fast)}
 .erp:hover{border-color:var(--general-border);background:var(--brand-ice)}
 .erp .live{position:relative;width:8px;height:8px;flex:0 0 auto;border-radius:var(--rounded-full);
   background:var(--sentiment-positive)}
 .erp .live::after{content:"";position:absolute;inset:-4px;border-radius:var(--rounded-full);
   border:1.5px solid var(--sentiment-positive);opacity:.45;animation:pip 2.4s ease-out infinite}
+/* nothing connected yet: the same pill, but the dot reads as "needs attention" and the
+   label becomes the ask rather than a status */
+.erp.none .live{background:var(--sentiment-negative)}
+.erp.none .live::after{border-color:var(--sentiment-negative)}
+.erp.none .et b{color:var(--general-primary)}
 @keyframes pip{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.5);opacity:0}}
 .erp .et{display:flex;flex-direction:column;line-height:1.25}
 .erp{padding-right:var(--s1)}
@@ -1089,6 +1094,11 @@ body.in-app .flow{display:none}
    if display:none isn't forced — this is what surfaced as the opportunities donut
    showing through on the category-tab page. Forcing it removes any ambiguity. */
 #viewDash[hidden],#viewSup[hidden]{display:none!important}
+/* same reasoning as above: .page itself sets display:flex, which beats the
+   plain [hidden] UA default the same way — without !important, hiding .page on
+   Fanny's dashboard still leaves its top/bottom padding rendering as an empty
+   112px box above #viewNewCustomer even though every child inside is hidden. */
+.page[hidden]{display:none!important}
 .shelf{min-width:0}
 .sh-head{display:flex;align-items:flex-end;gap:var(--s4);margin-bottom:var(--s3)}
 .sh-head>div{flex:1;min-width:0}
@@ -1543,6 +1553,11 @@ body.in-app .flow{display:none}
 .nc-page{width:100%;padding:var(--s12) var(--s8) var(--s16)}
 .nc-shell{position:relative}
 .nc-main{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:var(--s10,40px)}
+/* greeting: the same shape as the existing-customer dashboard's .hello, so both
+   personas open on a page that introduces itself the same way */
+.nc-hello{display:flex;flex-direction:column;gap:var(--s3)}
+.nc-hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+.nc-hello p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:70ch}
 .nc-sec{padding-top:var(--s8);border-top:1px solid var(--hairline)}
 .nc-sec h3{font-size:var(--text-xl);letter-spacing:-.3px}
 .nc-sub{margin-top:var(--s2);font-size:16px;color:var(--general-muted-foreground)}
@@ -1585,9 +1600,9 @@ body.in-app .flow{display:none}
    inline caption (icon + one sentence) instead of a big boxed banner sitting
    above everything — reads as a credibility note next to the title, not an
    apology in a callout */
-.nc-sum-head{display:flex;align-items:baseline;gap:var(--s5,20px);flex-wrap:wrap}
-.nc-sum-note{display:inline-flex;align-items:flex-start;gap:var(--s2);max-width:56ch;
-  font-size:15px;line-height:1.5;color:var(--general-muted-foreground)}
+.nc-sum-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s6);flex-wrap:wrap}
+.nc-sum-note{margin-left:auto;display:inline-flex;align-items:flex-start;gap:var(--s2);max-width:44ch;
+  font-size:15px;line-height:1.5;color:var(--general-muted-foreground);text-align:left}
 .nc-sum-note svg{flex:0 0 auto;width:16px;height:16px;color:var(--general-primary);margin-top:2px}
 
 /* summary: three separate stat cards (not one card with columns), the way a
@@ -1602,33 +1617,54 @@ body.in-app .flow{display:none}
 .nc-ov-card-l{min-height:20px;font-size:16px;color:var(--general-muted-foreground)}
 .nc-ov-card-v{min-height:38px;display:flex;align-items:center;
   font-size:var(--text-3xl);font-weight:700;letter-spacing:-.5px}
-.nc-ov-card-v small{font-size:var(--text-base);font-weight:600;color:var(--general-muted-foreground)}
+.nc-ov-card-v small{margin-left:3px;font-size:var(--text-base);font-weight:600;color:var(--general-muted-foreground)}
 .nc-ov-card-c{min-height:20px;font-size:15px;color:var(--general-muted-foreground)}
 .nc-highlight-card{margin-top:var(--s5,20px);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s6);
-  display:flex;align-items:center;justify-content:space-between;gap:var(--s6);flex-wrap:wrap}
+  display:flex;align-items:center;gap:var(--s6);flex-wrap:wrap}
 .nc-hl-figs{display:flex;gap:var(--s8);flex-wrap:wrap}
+.nc-hl-divider{width:1px;align-self:stretch;background:var(--hairline)}
 .nc-ov-hl{display:flex;flex-direction:column;gap:3px}
 .nc-ov-hl-l{font-size:16px;color:var(--general-muted-foreground)}
 .nc-ov-hl-v{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.4px}
 .nc-ov-hl-v.accent{color:var(--sentiment-positive)}
 .nc-ov-hl-v small{font-size:16px;font-weight:600;color:var(--general-muted-foreground)}
-.nc-ov-cta{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
-.nc-ov-cta p{font-size:15px;line-height:1.5;color:var(--general-muted-foreground);max-width:32ch}
+/* the upload prompt: icon, copy and button travel together as one group pushed to
+   the card's right edge, with real breathing room after the divider — so the text
+   reads as the button's label rather than floating mid-card */
+.nc-ov-cta{margin-left:auto;padding-left:var(--s6);display:flex;align-items:center;
+  gap:var(--s4);flex-wrap:wrap}
+.nc-ov-cta-ic{flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-md);
+  display:grid;place-items:center;background:var(--general-muted);color:var(--general-foreground)}
+.nc-ov-cta-ic svg{width:17px;height:17px}
+.nc-ov-cta p{font-size:15px;line-height:1.5;color:var(--general-muted-foreground);max-width:26ch}
 
 /* bento: categories list + saving-assistant advisory, side by side */
 .nc-bento-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6)}
 @media(max-width:860px){.nc-bento-row{grid-template-columns:1fr}}
 .nc-bento-cell{border:1px solid var(--hairline);border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s6)}
-.nc-bento-cell h4{font-size:var(--text-lg);font-weight:600;letter-spacing:-.2px;margin-bottom:var(--s2)}
+.nc-bento-cell h3{font-size:var(--text-lg);font-weight:600;letter-spacing:-.2px;margin-bottom:var(--s2)}
 
 /* the 6-category mini list inside the bento — reuses the dashboard's
    .opp-legend-item row (icon, sparkline, amount, chevron) so a new customer's
    category list and an existing customer's opportunity legend read the same */
-.nc-mini-sub{margin-bottom:var(--s3)}
+.nc-mini-sub{margin-bottom:var(--s4)}
+/* a column header for the amount column — mirrors the row's own trailing geometry
+   (amount min-width + gap + 16px chevron) so "Savings" lands over the figures */
+.nc-mini-colhead{display:flex;align-items:center;gap:var(--s4);
+  margin:0 calc(var(--s3) * -1);   /* match .nc-mini-list's inset so the header sits over the figures */
+  padding:0 var(--s3) var(--s2);border-bottom:1px solid var(--hairline)}
+.nc-mini-colhead-sp{flex:1 1 auto}
+.nc-mini-colhead-amt{flex:0 0 auto;min-width:76px;text-align:right;font-size:13px;font-weight:600;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.nc-mini-colhead-go{flex:0 0 auto;width:16px}
 .nc-mini-list{margin:0 calc(var(--s3) * -1)}
 .nc-mini-list .opp-legend-amt{min-width:76px}
+/* .opp-legend-txt/-amt come in at var(--text-sm) (14px) from the shared dashboard
+   component — below this page's own 15px body-copy floor, so bump them back up */
+.nc-mini-list .opp-legend-txt{font-size:16px}
+.nc-mini-list .opp-legend-amt{font-size:16px}
 
 /* the saving-assistant advisory card: a semicircle gauge, a short recommended-
    actions list (icon + text + value), and a full-bleed primary button pinned
@@ -1642,7 +1678,10 @@ body.in-app .flow{display:none}
 .nc-gauge-label span{font-size:15px;color:var(--general-muted-foreground)}
 .nc-advisory-eyebrow{display:block;text-align:center;font-size:13px;font-weight:600;
   letter-spacing:.04em;text-transform:uppercase;color:var(--general-muted-foreground)}
-.nc-advisory-title{margin-top:2px;text-align:center;font-size:var(--text-lg);font-weight:600;letter-spacing:-.2px}
+/* the card's own headline, sitting above the gauge — bigger than the section
+   h3s because it is the card's hook, not a label for a list */
+.nc-advisory-title{margin-top:var(--s1);text-align:center;font-size:var(--text-2xl);
+  font-weight:700;letter-spacing:-.5px;line-height:1.2}
 .nc-rec-list{margin-top:var(--s5,20px);list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
 .nc-rec-row{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);
   border-radius:var(--rounded-md);background:var(--general-muted)}
@@ -1652,8 +1691,9 @@ body.in-app .flow{display:none}
 .nc-rec-txt{flex:1 1 auto;min-width:0;font-size:15px;line-height:1.4;color:var(--general-foreground)}
 .nc-rec-txt b{font-weight:600}
 .nc-rec-val{flex:0 0 auto;font-size:15px;font-weight:700;color:var(--sentiment-positive)}
-.nc-advisory-cta{width:calc(100% + var(--s12));margin:var(--s6) calc(var(--s6) * -1) 0;
-  border-radius:0;height:52px;font-size:16px}
+/* a self-contained pill, centred — not a full-bleed bar welded to the card edge */
+.nc-advisory-cta{align-self:center;margin:var(--s6) 0 var(--s6);padding:0 var(--s6);
+  border-radius:var(--rounded-full);height:44px;font-size:16px}
 .nc-advisory-foot{display:flex;align-items:center;justify-content:center;gap:var(--s2);
   width:calc(100% + var(--s12));margin:0 calc(var(--s6) * -1);
   padding:var(--s3) var(--s6);border-top:1px solid var(--hairline);
@@ -1670,29 +1710,39 @@ body.in-app .flow{display:none}
    just a viewport constraint. */
 .nc-activity{position:fixed;top:68px;right:0;bottom:0;width:320px;
   border-left:1px solid var(--hairline);background:var(--surface);
-  padding:var(--s8) var(--s6);overflow-y:auto;z-index:5}
+  padding:var(--s8) var(--s6) 0;overflow-y:auto;z-index:5;
+  display:flex;flex-direction:column;transition:width var(--t)}
+.nc-activity-body{flex:1 1 auto;min-height:0}
 body.activity-on .canvas{padding-right:calc(320px + var(--s10,40px))}
+/* collapsed: an icon-width strip, exactly like .rail.mini on the left */
+.nc-activity.mini{width:76px;padding-left:0;padding-right:0}
+body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
+.nc-activity.mini .nc-activity-head,
+.nc-activity.mini .nc-activity-empty p{display:none}
+.nc-activity.mini .nc-activity-empty{padding:0;border:none;background:none}
+.nc-activity.mini .nc-activity-ill{margin:0 auto;width:44px;height:44px}
+.nc-activity.mini .nc-activity-ill svg{width:22px;height:22px}
 .nc-activity-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s4)}
 .nc-activity-head h3{font-size:var(--text-lg);font-weight:600}
-.nc-activity-hide{flex:0 0 auto;width:28px;height:28px;border-radius:var(--rounded-md);
-  display:grid;place-items:center;color:var(--general-muted-foreground);transition:background var(--t-fast)}
-.nc-activity-hide:hover{background:var(--general-muted);color:var(--general-foreground)}
-.nc-activity-hide svg{width:15px;height:15px}
 .nc-activity-empty{padding:var(--s10,40px) var(--s5,20px);border:1px solid var(--hairline);
   border-radius:var(--rounded-lg);background:var(--surface);text-align:center}
-.nc-activity-ill{width:64px;height:64px;margin:0 auto var(--s5,20px);border-radius:var(--rounded-full);
-  display:grid;place-items:center;background:var(--brand-ice)}
+.nc-activity-ill{position:relative;width:64px;height:64px;margin:0 auto var(--s5,20px);
+  border-radius:var(--rounded-full);display:grid;place-items:center;background:var(--brand-ice)}
 .nc-activity-ill svg{width:30px;height:30px;color:var(--general-primary)}
-/* the reopen tab: a small pinned handle at the edge so hiding the rail is never
-   a dead end — same right edge, vertically centered, one click to bring it back */
-.activity-reopen{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:5;
-  width:32px;height:56px;border-radius:var(--rounded-md) 0 0 var(--rounded-md);
-  border:1px solid var(--hairline);border-right:none;background:var(--surface);
-  box-shadow:var(--shadow-sm);display:grid;place-items:center;color:var(--general-muted-foreground);
-  transition:color var(--t-fast),width var(--t-fast)}
-.activity-reopen:hover{color:var(--general-primary);width:38px}
-.activity-reopen svg{width:18px;height:18px}
 .nc-activity-empty p{font-size:16px;line-height:1.55;color:var(--general-muted-foreground)}
+/* the collapse control: reuses .railtog wholesale, mirrored to sit at the rail's
+   own foot and rotate the opposite way */
+.activity-tog{margin-top:auto;position:sticky;bottom:0;background:var(--surface)}
+.nc-activity.mini .activity-tog{justify-content:center;padding:0}
+.nc-activity.mini .activity-tog svg{transform:rotate(180deg)}
+.nc-activity.mini .activity-tog span{display:none}
+/* tooltip on the collapsed icon, same pattern as .rail.mini .ni::after */
+.nc-activity.mini .nc-activity-ill::after{content:attr(data-tip);position:absolute;
+  right:calc(100% + 12px);top:50%;transform:translateY(-50%) translateX(4px);
+  padding:6px 9px;border-radius:var(--rounded-sm);background:var(--sidebar-foreground);
+  color:#fff;font-size:13px;font-weight:500;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity var(--t-fast),transform var(--t-fast)}
+.nc-activity.mini .nc-activity-ill:hover::after{opacity:1;transform:translateY(-50%)}
 
 /* ---------- welcome: a one-time modal explaining estimated vs verified data ---------- */
 .wms{position:fixed;inset:0;z-index:50;background:#000a4552;opacity:0;pointer-events:none;
@@ -1785,6 +1835,10 @@ body.activity-on .canvas{padding-right:calc(320px + var(--s10,40px))}
         <kbd>⌘</kbd><kbd>K</kbd>
       </div>
       <span class="spacer"></span>
+      <!-- data-source status: a live pill for a customer whose ERP is connected, and a
+           red-dot call to action for one who hasn't connected anything yet. Either way
+           it points at the same place — the data centre and its three input methods. -->
+      <button class="erp" id="erpPill"></button>
       <div class="notif">
         <button class="bell" id="bellBtn" aria-label="Notifications" aria-expanded="false">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5a6 6 0 1112 0c0 4.7 1.9 5.7 1.9 5.7H4.1S6 14.2 6 9.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 004 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
@@ -1995,25 +2049,27 @@ body.activity-on .canvas{padding-right:calc(320px + var(--s10,40px))}
              inline-size, which implies contain:layout and would turn it into the
              fixed-position containing block instead of the viewport). -->
         <aside id="activityRail" class="nc-activity" hidden>
-          <div class="nc-activity-head">
-            <h3>Advantage activity</h3>
-            <button type="button" class="nc-activity-hide" id="activityHideBtn" aria-label="Hide Advantage activity">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </button>
-          </div>
-          <div class="nc-activity-empty">
-            <div class="nc-activity-ill">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H9l-4 4v-4H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                <path d="M8 9.5h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
+          <div class="nc-activity-body">
+            <div class="nc-activity-head">
+              <h3>Advantage activity</h3>
             </div>
-            <p>Every request, upload and reply with Advantage will show up here.</p>
+            <div class="nc-activity-empty">
+              <div class="nc-activity-ill" data-tip="Advantage activity">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H9l-4 4v-4H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                  <path d="M8 9.5h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <p>Every request, upload and reply with Advantage will show up here.</p>
+            </div>
           </div>
+          <!-- same collapse affordance as the left nav's #railTog, mirrored: chevron +
+               label at the foot of the rail, collapsing to an icon-width strip -->
+          <button type="button" class="railtog activity-tog" id="activityTog" aria-expanded="true" aria-label="Collapse Advantage activity">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l6 7-6 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4v16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+            <span>Collapse</span>
+          </button>
         </aside>
-        <button type="button" class="activity-reopen" id="activityReopenBtn" hidden aria-label="Show Advantage activity">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H9l-4 4v-4H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-        </button>
 
       </main>
     </div>
@@ -2257,6 +2313,7 @@ function setView(){
   if(sup) syncRows();               /* rows measure 0 while hidden */
   if(ncDash) renderNewCustomerDash();
   updateActivityRail();
+  renderErpPill();
 }
 
 function setRail(mini){
@@ -2545,11 +2602,9 @@ $('#bannerX').addEventListener('click', () => {
   $('#bannerwrap').style.display = 'none';
   updateActivityRail();
 });
-$('#activityHideBtn').addEventListener('click', () => {
-  activityHidden = true; persist(); updateActivityRail();
-});
-$('#activityReopenBtn').addEventListener('click', () => {
-  activityHidden = false; persist(); updateActivityRail();
+$('#erpPill').addEventListener('click', openDataCenter);
+$('#activityTog').addEventListener('click', () => {
+  activityMini = !activityMini; persist(); updateActivityRail();
 });
 $('#bannerGo').addEventListener('click', () => { navAt = 'agreements'; renderNav(); setView(); });
 
@@ -2816,15 +2871,37 @@ function ncAgreementCard(r, a, idx){
    for it) independent of the user's own hide/show choice, and reserves space
    by padding .canvas rather than any individual view, so every page — Bob's
    dashboard, suppliers, category tab, Fanny's page — reflows the same way. */
+/* the appbar data-source pill. Two states, driven by whether anything is actually
+   connected: a live sync status for an existing customer, or a red-dot ask for a
+   new one. Both open the data centre, where the three input methods live. */
+function renderErpPill(){
+  const pill = $('#erpPill');
+  if(!pill) return;
+  const connected = !newCustomer || ncErpConnected;
+  pill.classList.toggle('none', !connected);
+  pill.setAttribute('aria-label', connected
+    ? `Data source: ${state.source} connected. Open data confidence.`
+    : 'No data connected. Connect a data source.');
+  /* the connected pill carries the source name in mono as a live status; the
+     unconnected one is a plain call to action, so it stays a single line */
+  pill.innerHTML = connected
+    ? `<span class="live"></span>
+       <span class="et"><b>Data connected</b><span>${state.source}</span></span>`
+    : `<span class="live"></span>
+       <span class="et"><b>Connect your data</b></span>`;
+}
+
 function updateActivityRail(){
   const rail = $('#activityRail');
-  const reopen = $('#activityReopenBtn');
   if(!rail) return;
-  const fits = innerWidth >= 1440;
-  const show = fits && !activityHidden;
+  const show = innerWidth >= 1440;
   rail.hidden = !show;
-  reopen.hidden = !(fits && activityHidden);
+  rail.classList.toggle('mini', activityMini);
   document.body.classList.toggle('activity-on', show);
+  document.body.classList.toggle('activity-mini', activityMini);
+  const t = $('#activityTog');
+  t.setAttribute('aria-expanded', String(!activityMini));
+  t.setAttribute('aria-label', activityMini ? 'Expand Advantage activity' : 'Collapse Advantage activity');
   if(show){
     const bar = $('.appbar');
     rail.style.top = (bar ? Math.round(bar.getBoundingClientRect().bottom) : 68) + 'px';
@@ -2832,19 +2909,22 @@ function updateActivityRail(){
 }
 addEventListener('resize', updateActivityRail);
 
-function ncMiniCatRow(r, maxSave){
+function ncMiniCatRow(r){
   const estAmt = Math.round(r.amt * NC_SIZE_MULT[ncSize]);
   const estSave = Math.round(estAmt * r.rate / 100);
-  const share = maxSave ? estSave / maxSave : 0;
   return `
     <li class="opp-legend-item" data-cat="${r.id}" tabindex="0" role="button" aria-label="${r.n}: up to ${fmt(estSave)} kr./year">
       <span class="opp-legend-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
       <span class="opp-legend-txt">${r.n}</span>
-      ${sparkline(share)}
       <b class="opp-legend-amt">${saveFig(estSave, true)} kr.</b>
       <svg class="opp-legend-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </li>`;
 }
+
+/* the getting-started checklist is parked, not deleted — the markup below still
+   works and the account/upload/ERP state still feeds it, so flipping this back to
+   true restores the widget exactly as it was. */
+const NC_SHOW_GETTING_STARTED = false;
 
 function renderNewCustomerDash(){
   const mult = NC_SIZE_MULT[ncSize];
@@ -2859,7 +2939,6 @@ function renderNewCustomerDash(){
   const byRate = [...ROWS].sort((a,b) => b.rate - a.rate);
   const topCat = byRate[0], secondCat = byRate[1];
   const sixCats = byRate.slice(0, 6);
-  const sixCatsMaxSave = Math.max(...sixCats.map(r => Math.round(r.amt * mult * r.rate / 100)));
   const topAgrs = ROWS.flatMap(r => r.agr.map((a,i) => ({r, a, i})))
     .sort((x,y) => y.a.save - x.a.save).slice(0, 6);
 
@@ -2872,10 +2951,17 @@ function renderNewCustomerDash(){
     <div class="nc-page">
       <div class="nc-shell">
         <div class="nc-main">
-          ${ncGettingStartedHidden ? '' : `
+          <header class="nc-hello">
+            <h1 id="ncT" tabindex="-1">Hello, ${state.user.split(' ')[0]}</h1>
+            <p>Your account is live. Every figure below is what companies like
+              ${state.company} actually achieve on Advantage agreements — connect your
+              data to turn it into your own numbers.</p>
+          </header>
+
+          ${NC_SHOW_GETTING_STARTED && !ncGettingStartedHidden ? `
           <section class="nc-card">
             <div class="nc-gs-head">
-              <h3 id="ncT" tabindex="-1">Getting started</h3>
+              <h3>Getting started</h3>
               <span class="nc-gs-sub">Fanny, let's finish setting up your account</span>
             </div>
             <div class="nc-gs-track">
@@ -2900,7 +2986,7 @@ function renderNewCustomerDash(){
               </li>
             </ul>
             <button class="linkbtn nc-gs-hide" id="ncHideGS">Hide this widget</button>
-          </section>`}
+          </section>` : ''}
 
           <section class="nc-sec">
             <div class="nc-sum-head">
@@ -2931,7 +3017,9 @@ function renderNewCustomerDash(){
                 <div class="nc-ov-hl"><span class="nc-ov-hl-l">Typical saving</span>
                   <b class="nc-ov-hl-v accent">up to ${avgRate}%</b></div>
               </div>
+              <span class="nc-hl-divider" aria-hidden="true"></span>
               <div class="nc-ov-cta">
+                <span class="nc-ov-cta-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v14a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 13h6M9 17h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
                 <p>Upload your financial report to turn this into an accurate prediction for
                   ${state.company}.</p>
                 <button class="btn btn-secondary btn-sm" id="ncUploadReport">Upload financial report</button>
@@ -2942,11 +3030,18 @@ function renderNewCustomerDash(){
           <section class="nc-sec">
             <div class="nc-bento-row">
               <div class="nc-bento-cell">
-                <h4>Savings opportunity within categories</h4>
+                <h3>Savings opportunity within categories</h3>
                 <p class="nc-sub nc-mini-sub">What peers like you save per year, in each category</p>
-                <ul class="opp-legend nc-mini-list">${sixCats.map(r => ncMiniCatRow(r, sixCatsMaxSave)).join('')}</ul>
+                <div class="nc-mini-colhead">
+                  <span class="nc-mini-colhead-sp"></span>
+                  <span class="nc-mini-colhead-amt">Savings</span>
+                  <span class="nc-mini-colhead-go"></span>
+                </div>
+                <ul class="opp-legend nc-mini-list">${sixCats.map(r => ncMiniCatRow(r)).join('')}</ul>
               </div>
               <div class="nc-bento-cell nc-advisory">
+                <span class="nc-advisory-eyebrow">Saving assistant</span>
+                <h2 class="nc-advisory-title">Three moves worth ${fmtCompact(saveTotal)} kr. a year</h2>
                 <div class="nc-gauge-wrap">
                   <svg class="nc-gauge" viewBox="0 0 120 66">
                     <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--general-muted)" stroke-width="10" stroke-linecap="round"/>
@@ -2956,8 +3051,6 @@ function renderNewCustomerDash(){
                   </svg>
                   <div class="nc-gauge-label"><b>${avgRate}%</b><span>Savings potential</span></div>
                 </div>
-                <span class="nc-advisory-eyebrow">Saving assistant recommends</span>
-                <h4 class="nc-advisory-title">Unlock more with these tips</h4>
                 <ul class="nc-rec-list">
                   <li class="nc-rec-row">
                     <span class="nc-rec-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[topCat.id] || ''}</svg></span>
@@ -3278,7 +3371,7 @@ let ncSize = 'medium';
 let ncPeers = 148;
 let ncErpConnected = false;
 let ncGettingStartedHidden = false;
-let activityHidden = false;
+let activityMini = false;
 function dataConfidence(){
   const all = ROWS.flatMap(r => r.agr);
   const total = all.length;
@@ -3423,6 +3516,11 @@ function closeOpportunity(){
 const DASH_CIRCLE = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3"/></svg>';
 
 function openDataCenter(){
+  /* the data centre lives inside .page, which setView() hides outright on the
+     new-customer dashboard — so un-hide it (and stand the new-customer view
+     down) or this would open onto a blank canvas for Fanny */
+  $('.page').hidden = false;
+  const nc = $('#viewNewCustomer'); if(nc) nc.hidden = true;
   $('#viewDash').hidden = true;
   $('#viewSup').hidden = true;
   $('#viewOpp').hidden = true;
@@ -4078,7 +4176,7 @@ function persist(){
       req: ROWS.flatMap(r => r.agr.map((a,i) => a.req ? r.id + ':' + i : null)).filter(Boolean),
       unread: NOTES.map(n => n.unread ? 1 : 0),
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
-      newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityHidden
+      newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityMini
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
 }
@@ -4111,7 +4209,7 @@ function applySaved(d){
   if(typeof d.ncPeers === 'number') ncPeers = d.ncPeers;
   if(typeof d.ncErpConnected === 'boolean') ncErpConnected = d.ncErpConnected;
   if(typeof d.ncGettingStartedHidden === 'boolean') ncGettingStartedHidden = d.ncGettingStartedHidden;
-  if(typeof d.activityHidden === 'boolean') activityHidden = d.activityHidden;
+  if(typeof d.activityMini === 'boolean') activityMini = d.activityMini;
 }
 
 function startOver(){
