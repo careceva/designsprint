@@ -799,7 +799,7 @@ body.in-app .flow{display:none}
 }
 
 /* --- canvas --- */
-.canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--general-background)}
+.canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--surface)}
 /* container, not viewport: opening a side panel shrinks the canvas without changing the
    window, so the card's breakpoints have to respond to the space it actually has */
 .page{container-type:inline-size;container-name:page;
@@ -988,7 +988,7 @@ body.in-app .flow{display:none}
 .opp-list-bars{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
   gap:var(--s6);list-style:none}
 /* Fanny's dashboard fits 3 wider cards per row instead of the default auto-fill 4 */
-.nc-agr-grid{grid-template-columns:repeat(3,1fr)}
+.nc-agr-grid{grid-template-columns:repeat(3,1fr);margin-top:var(--s8)}
 @media(max-width:860px){.nc-agr-grid{grid-template-columns:1fr}}
 .agr-card{position:relative;display:flex;flex-direction:column;gap:var(--s4);cursor:pointer;
   padding:var(--s6);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
@@ -1555,11 +1555,23 @@ body.in-app .flow{display:none}
 .nc-main{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:var(--s10,40px)}
 /* greeting: the same shape as the existing-customer dashboard's .hello, so both
    personas open on a page that introduces itself the same way */
-.nc-hello{display:flex;flex-direction:column;gap:var(--s3)}
+.nc-hello{display:flex;align-items:flex-start;justify-content:space-between;
+  gap:var(--s6);flex-wrap:wrap}
+/* an explicit flex-basis, not auto: with wrap enabled the text block's max-content
+   width plus the button overflowed the row, so the button wrapped underneath
+   instead of shrinking the text. 420px lets both share one line, and it still
+   wraps deliberately on narrow screens. */
+.nc-hello-txt{flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:var(--s3)}
 .nc-hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
-.nc-hello p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:70ch}
+.nc-hello p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:64ch}
+/* nudged down so the button optically centres on the h1's cap height rather than
+   hanging off its very top edge */
+.nc-hello .btn{flex:0 0 auto;margin-top:var(--s1)}
 .nc-sec{padding-top:var(--s8);border-top:1px solid var(--hairline)}
-.nc-sec h3{font-size:var(--text-xl);letter-spacing:-.3px}
+/* section titles carry the weight of the reference's "Your overview" heading —
+   clearly the top of their section, one step under the page greeting (text-4xl)
+   and well clear of the card titles (text-lg) below them */
+.nc-sec h2{font-size:var(--text-3xl);font-weight:700;letter-spacing:-.7px}
 .nc-sub{margin-top:var(--s2);font-size:16px;color:var(--general-muted-foreground)}
 
 /* getting-started, as its own card: title + subtitle inline, a segmented
@@ -1596,55 +1608,43 @@ body.in-app .flow{display:none}
 .nc-gs-row.done .nc-gs-status{background:var(--sentiment-positive);border-color:var(--sentiment-positive);color:#fff}
 .nc-gs-hide{margin-top:var(--s5,20px);font-size:15px}
 
-/* the Summary heading now carries its own "this is a benchmark" line as a quiet
-   inline caption (icon + one sentence) instead of a big boxed banner sitting
-   above everything — reads as a credibility note next to the title, not an
-   apology in a callout */
-.nc-sum-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s6);flex-wrap:wrap}
-.nc-sum-note{margin-left:auto;display:inline-flex;align-items:flex-start;gap:var(--s2);max-width:44ch;
-  font-size:15px;line-height:1.5;color:var(--general-muted-foreground);text-align:left}
-.nc-sum-note svg{flex:0 0 auto;width:16px;height:16px;color:var(--general-primary);margin-top:2px}
-
-/* summary: three separate stat cards (not one card with columns), the way a
-   Stripe-style overview does it, then one highlight card below for the
-   spend range / saving % / upload CTA. Each tier (label/value/caption) gets a
-   min-height so the three cards line up row-for-row even when one caption
-   wraps to a different number of lines than its neighbours. */
-.nc-ov-grid{margin-top:var(--s6);display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s5,20px)}
+/* summary: each cell is its own rounded card, separated by an 8px gutter rather
+   than sharing a hairline edge — the cards still line up on one grid, so the
+   figures read as a set, but each one is a discrete surface. Every tier
+   (label/value/caption) keeps a min-height so the cards line up row-for-row even
+   when one caption wraps to a different number of lines than its neighbours. */
+/* the page itself is white, so the summary block sits on a grey tray: the 8px
+   padding + 8px gutters are the only grey the eye sees, which is what separates
+   the white cards now that they no longer contrast against the canvas. Container
+   radius steps UP from the cards' --rounded-lg by the 8px inset, per the nested-
+   radius rule. */
+.nc-ov{display:flex;flex-direction:column;gap:var(--s2);
+  padding:var(--s2);border-radius:var(--rounded-2xl);background:var(--general-muted)}
+.nc-ov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2)}
+.nc-ov-card{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s6);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:var(--shadow-xs)}
 @media(max-width:720px){.nc-ov-grid{grid-template-columns:1fr}}
-.nc-ov-card{display:flex;flex-direction:column;gap:var(--s2);border:1px solid var(--hairline);
-  border-radius:var(--rounded-lg);background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s6)}
 .nc-ov-card-l{min-height:20px;font-size:16px;color:var(--general-muted-foreground)}
 .nc-ov-card-v{min-height:38px;display:flex;align-items:center;
   font-size:var(--text-3xl);font-weight:700;letter-spacing:-.5px}
 .nc-ov-card-v small{margin-left:3px;font-size:var(--text-base);font-weight:600;color:var(--general-muted-foreground)}
-.nc-ov-card-c{min-height:20px;font-size:15px;color:var(--general-muted-foreground)}
-.nc-highlight-card{margin-top:var(--s5,20px);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
-  background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s6);
-  display:flex;align-items:center;gap:var(--s6);flex-wrap:wrap}
-.nc-hl-figs{display:flex;gap:var(--s8);flex-wrap:wrap}
-.nc-hl-divider{width:1px;align-self:stretch;background:var(--hairline)}
-.nc-ov-hl{display:flex;flex-direction:column;gap:3px}
-.nc-ov-hl-l{font-size:16px;color:var(--general-muted-foreground)}
-.nc-ov-hl-v{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.4px}
-.nc-ov-hl-v.accent{color:var(--sentiment-positive)}
-.nc-ov-hl-v small{font-size:16px;font-weight:600;color:var(--general-muted-foreground)}
-/* the upload prompt: icon, copy and button travel together as one group pushed to
-   the card's right edge, with real breathing room after the divider — so the text
-   reads as the button's label rather than floating mid-card */
-.nc-ov-cta{margin-left:auto;padding-left:var(--s6);display:flex;align-items:center;
-  gap:var(--s4);flex-wrap:wrap}
-.nc-ov-cta-ic{flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-md);
-  display:grid;place-items:center;background:var(--general-muted);color:var(--general-foreground)}
-.nc-ov-cta-ic svg{width:17px;height:17px}
-.nc-ov-cta p{font-size:15px;line-height:1.5;color:var(--general-muted-foreground);max-width:26ch}
+.nc-ov-card-v.accent{color:var(--sentiment-positive)}
+/* the second row is the same grid, so all six cards align on one set of columns
+   — the previous full-width band couldn't line its figures up with the cards
+   above and left a void where a third figure belongs. One step down in value
+   size keeps these reading as supporting context, not headline numbers. */
+.nc-ov-card.is-sub .nc-ov-card-v{font-size:var(--text-2xl);letter-spacing:-.4px}
 
 /* bento: categories list + saving-assistant advisory, side by side */
 .nc-bento-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6)}
 @media(max-width:860px){.nc-bento-row{grid-template-columns:1fr}}
 .nc-bento-cell{border:1px solid var(--hairline);border-radius:var(--rounded-lg);
-  background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s6)}
-.nc-bento-cell h3{font-size:var(--text-lg);font-weight:600;letter-spacing:-.2px;margin-bottom:var(--s2)}
+  background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s8)}
+/* both bento cards title the same way — one rule, so the pair can't drift apart
+   again (the advisory card only overrides alignment below, never the type) */
+.nc-bento-cell h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.4px;
+  line-height:1.25;margin-bottom:var(--s2)}
 
 /* the 6-category mini list inside the bento — reuses the dashboard's
    .opp-legend-item row (icon, sparkline, amount, chevron) so a new customer's
@@ -1678,10 +1678,9 @@ body.in-app .flow{display:none}
 .nc-gauge-label span{font-size:15px;color:var(--general-muted-foreground)}
 .nc-advisory-eyebrow{display:block;text-align:center;font-size:13px;font-weight:600;
   letter-spacing:.04em;text-transform:uppercase;color:var(--general-muted-foreground)}
-/* the card's own headline, sitting above the gauge — bigger than the section
-   h3s because it is the card's hook, not a label for a list */
-.nc-advisory-title{margin-top:var(--s1);text-align:center;font-size:var(--text-2xl);
-  font-weight:700;letter-spacing:-.5px;line-height:1.2}
+/* alignment only — the type comes from the shared .nc-bento-cell h2 rule so both
+   cards' titles stay identical */
+.nc-advisory-title{margin-top:var(--s1);text-align:center}
 .nc-rec-list{margin-top:var(--s5,20px);list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
 .nc-rec-row{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);
   border-radius:var(--rounded-md);background:var(--general-muted)}
@@ -1692,11 +1691,13 @@ body.in-app .flow{display:none}
 .nc-rec-txt b{font-weight:600}
 .nc-rec-val{flex:0 0 auto;font-size:15px;font-weight:700;color:var(--sentiment-positive)}
 /* a self-contained pill, centred — not a full-bleed bar welded to the card edge */
-.nc-advisory-cta{align-self:center;margin:var(--s6) 0 var(--s6);padding:0 var(--s6);
+.nc-advisory-cta{align-self:center;margin:var(--s8) 0;padding:0 var(--s6);
   border-radius:var(--rounded-full);height:44px;font-size:16px}
+/* full-bleed footer: the negative margin has to match .nc-bento-cell's padding
+   (--s8 each side, so --s16 of extra width) or it won't reach the card edges */
 .nc-advisory-foot{display:flex;align-items:center;justify-content:center;gap:var(--s2);
-  width:calc(100% + var(--s12));margin:0 calc(var(--s6) * -1);
-  padding:var(--s3) var(--s6);border-top:1px solid var(--hairline);
+  width:calc(100% + var(--s16));margin:0 calc(var(--s8) * -1);
+  padding:var(--s4) var(--s8);border-top:1px solid var(--hairline);
   background:var(--general-muted);font-size:13px;color:var(--general-muted-foreground)}
 .nc-advisory-foot .sda{width:16px;height:16px}
 
@@ -2942,7 +2943,6 @@ function renderNewCustomerDash(){
   const topAgrs = ROWS.flatMap(r => r.agr.map((a,i) => ({r, a, i})))
     .sort((x,y) => y.a.save - x.a.save).slice(0, 6);
 
-  const providedInfo = manualVerified.size > 0;
   const uploadedDocs = manualVerified.size > 0;
   const gsDone = 1 + (uploadedDocs ? 1 : 0) + (ncErpConnected ? 1 : 0);
   const gsPct = Math.round(gsDone / 3 * 100);
@@ -2952,10 +2952,13 @@ function renderNewCustomerDash(){
       <div class="nc-shell">
         <div class="nc-main">
           <header class="nc-hello">
-            <h1 id="ncT" tabindex="-1">Hello, ${state.user.split(' ')[0]}</h1>
-            <p>Your account is live. Every figure below is what companies like
-              ${state.company} actually achieve on Advantage agreements — connect your
-              data to turn it into your own numbers.</p>
+            <div class="nc-hello-txt">
+              <h1 id="ncT" tabindex="-1">Hello, ${state.user.split(' ')[0]}</h1>
+              <p>Your account is live. Every figure below is what ${state.industry.toLowerCase()}
+                companies your size actually achieve on Advantage agreements — connect your
+                data to make them exact.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="ncDeepDive">See how we calculate this</button>
           </header>
 
           ${NC_SHOW_GETTING_STARTED && !ncGettingStartedHidden ? `
@@ -2988,41 +2991,27 @@ function renderNewCustomerDash(){
             <button class="linkbtn nc-gs-hide" id="ncHideGS">Hide this widget</button>
           </section>` : ''}
 
-          <section class="nc-sec">
-            <div class="nc-sum-head">
-              <h3>Summary</h3>
-              ${providedInfo ? '' : `
-              <p class="nc-sum-note">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg>
-                <span>Benchmarked against real outcomes from ${state.industry.toLowerCase()} companies your
-                  size — upload your numbers any time and watch this become unmistakably yours.</span>
-              </p>`}
-            </div>
-            <div class="nc-ov-grid">
-              <div class="nc-ov-card"><span class="nc-ov-card-l">Realised savings</span>
-                <b class="nc-ov-card-v">${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}<small> kr.</small></b>
-                <span class="nc-ov-card-c">Year to date, typical for peers</span></div>
-              <div class="nc-ov-card"><span class="nc-ov-card-l">Agreements in use</span>
-                <b class="nc-ov-card-v">${peerAgrCount}<small> of 24</small></b>
-                <span class="nc-ov-card-c">Average across the peer group</span></div>
-              <div class="nc-ov-card"><span class="nc-ov-card-l">Customer bonus</span>
-                <b class="nc-ov-card-v">${fmtCompact(bonusLow)}–${fmtCompact(bonusHigh)}<small> kr.</small></b>
-                <span class="nc-ov-card-c">Paid annually on volume</span></div>
-            </div>
-
-            <div class="nc-highlight-card">
-              <div class="nc-hl-figs">
-                <div class="nc-ov-hl"><span class="nc-ov-hl-l">Typical spend</span>
-                  <b class="nc-ov-hl-v">${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}<small> kr./yr</small></b></div>
-                <div class="nc-ov-hl"><span class="nc-ov-hl-l">Typical saving</span>
-                  <b class="nc-ov-hl-v accent">up to ${avgRate}%</b></div>
+          <!-- the benchmark framing and the "see how we calculate this" action both
+               live in the page header above now, so this block carries no visible
+               heading of its own — just an accessible name -->
+          <section class="nc-sec" aria-label="Your benchmark">
+            <div class="nc-ov">
+              <div class="nc-ov-grid">
+                <div class="nc-ov-card"><span class="nc-ov-card-l">Saved by companies like yours</span>
+                  <b class="nc-ov-card-v">${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}<small> kr.</small></b></div>
+                <div class="nc-ov-card"><span class="nc-ov-card-l">Agreements they have in use</span>
+                  <b class="nc-ov-card-v">${peerAgrCount}<small> of 24</small></b></div>
+                <div class="nc-ov-card"><span class="nc-ov-card-l">Customer bonus they earn</span>
+                  <b class="nc-ov-card-v">${fmtCompact(bonusLow)}–${fmtCompact(bonusHigh)}<small> kr.</small></b></div>
               </div>
-              <span class="nc-hl-divider" aria-hidden="true"></span>
-              <div class="nc-ov-cta">
-                <span class="nc-ov-cta-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v14a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 13h6M9 17h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
-                <p>Upload your financial report to turn this into an accurate prediction for
-                  ${state.company}.</p>
-                <button class="btn btn-secondary btn-sm" id="ncUploadReport">Upload financial report</button>
+
+              <div class="nc-ov-grid">
+                <div class="nc-ov-card is-sub"><span class="nc-ov-card-l">Typical spend</span>
+                  <b class="nc-ov-card-v">${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}<small> kr./yr</small></b></div>
+                <div class="nc-ov-card is-sub"><span class="nc-ov-card-l">Typical saving</span>
+                  <b class="nc-ov-card-v accent">up to ${avgRate}%</b></div>
+                <div class="nc-ov-card is-sub"><span class="nc-ov-card-l">Benchmarked against</span>
+                  <b class="nc-ov-card-v">${ncPeers}<small> companies</small></b></div>
               </div>
             </div>
           </section>
@@ -3030,7 +3019,7 @@ function renderNewCustomerDash(){
           <section class="nc-sec">
             <div class="nc-bento-row">
               <div class="nc-bento-cell">
-                <h3>Savings opportunity within categories</h3>
+                <h2>Savings opportunity within categories</h2>
                 <p class="nc-sub nc-mini-sub">What peers like you save per year, in each category</p>
                 <div class="nc-mini-colhead">
                   <span class="nc-mini-colhead-sp"></span>
@@ -3081,7 +3070,7 @@ function renderNewCustomerDash(){
           </section>
 
           <section class="nc-sec">
-            <h3>Opportunities by agreement</h3>
+            <h2>Opportunities by agreement</h2>
             <p class="nc-sub">What other companies use and save.</p>
             <ol class="opp-list opp-list-bars nc-agr-grid">${topAgrs.map(({r,a,i}) => ncAgreementCard(r, a, i)).join('')}</ol>
           </section>
@@ -3097,7 +3086,6 @@ function renderNewCustomerDash(){
   const openHub = () => openDataCenter();
   const checkUpload = $('#ncCheckUpload'); if(checkUpload) checkUpload.addEventListener('click', openHub);
   const checkErp = $('#ncCheckErp'); if(checkErp) checkErp.addEventListener('click', openHub);
-  $('#ncUploadReport').addEventListener('click', openHub);
   const hideGS = $('#ncHideGS');
   if(hideGS) hideGS.addEventListener('click', () => {
     ncGettingStartedHidden = true; persist(); renderNewCustomerDash();
@@ -3105,6 +3093,12 @@ function renderNewCustomerDash(){
   $('#ncAskAssistant').addEventListener('click', () => {
     toggleAgent(true);
     agentAsk(`What should ${state.company} do first to start saving?`);
+  });
+  /* "in-depth analysis" = the assistant breaking the benchmark down, which is the
+     one place in the prototype that can actually answer a follow-up question */
+  $('#ncDeepDive').addEventListener('click', () => {
+    toggleAgent(true);
+    agentAsk(`Break down the full savings potential for ${state.company} category by category, and explain how you calculated it.`);
   });
   setTimeout(() => { const h = $('#ncT'); if(h) h.focus({preventScroll:true}); }, 50);
 }
