@@ -11,7 +11,16 @@
       "Bash(node vcta.mjs)",
       "Bash(node --check c7.js)",
       "Bash(node -e \"1\")",
-      "Bash(node --check c8.js)"
+      "Bash(node --check c8.js)",
+      "Bash(node --check /tmp/pwscratch/chk.js)",
+      "Bash(node --check /tmp/pwscratch/sv.js)",
+      "Bash(node --check /tmp/pwscratch/sv3.js)",
+      "Bash(node --check /tmp/pwscratch/f.js)",
+      "Bash(node --check /tmp/pwscratch/h.js)",
+      "Bash(node --check /tmp/pwscratch/i.js)",
+      "Bash(node --check /tmp/pwscratch/k.js)",
+      "Bash(node vasst.mjs)",
+      "Bash(node --check /tmp/pwscratch/l.js)"
     ]
   }
 }
