@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Advantage — a modern spend intelligence dashboard for finding and activating purchasing savings."
+    />
+    <title>Advantage — Spend intelligence</title>
+    <link rel="stylesheet" href="assets/advantage-v3.css" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+
+    <main id="login" class="login-screen">
+      <section class="login-story" aria-label="Advantage introduction">
+        <div class="story-orb story-orb-one"></div>
+        <div class="story-orb story-orb-two"></div>
+
+        <a class="brand brand-inverse" href="#" aria-label="Advantage home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+          <span>Advantage</span>
+        </a>
+
+        <div class="story-copy">
+          <div class="eyebrow light"><span></span> Spend intelligence</div>
+          <h1>See where your money <em>could go further.</em></h1>
+          <p>
+            Advantage reads the patterns in your purchasing data and turns them into
+            clear, ready-to-use savings opportunities.
+          </p>
+        </div>
+
+        <div class="story-proof" aria-label="Product benefits">
+          <div class="proof-card proof-primary">
+            <span class="proof-label">Potential savings found</span>
+            <strong>266.700 kr.</strong>
+            <span class="proof-caption">per year</span>
+            <div class="sparkline" aria-hidden="true">
+              <span style="height: 30%"></span><span style="height: 42%"></span>
+              <span style="height: 36%"></span><span style="height: 58%"></span>
+              <span style="height: 53%"></span><span style="height: 76%"></span>
+              <span style="height: 92%"></span>
+            </div>
+          </div>
+          <div class="proof-stack">
+            <div class="proof-mini"><b>1.284</b><span>invoices analysed</span></div>
+            <div class="proof-mini"><b>19</b><span>agreements ready</span></div>
+          </div>
+        </div>
+
+        <p class="story-footnote">
+          <span class="status-dot"></span> Read-only connections. Your data stays yours.
+        </p>
+      </section>
+
+      <section class="login-panel" aria-labelledby="welcome-title">
+        <div class="login-card">
+          <div class="login-heading">
+            <div class="eyebrow"><span></span> Interactive prototype</div>
+            <h2 id="welcome-title">Welcome back</h2>
+            <p>Choose a company to explore its spend overview.</p>
+          </div>
+
+          <div class="account-list" aria-label="Demo accounts">
+            <button class="account-choice" type="button" data-account="bob">
+              <span class="avatar avatar-blue">BI</span>
+              <span class="account-copy">
+                <strong>Bob Iversen</strong>
+                <span>Nordvik Byg A/S</span>
+                <small><i class="status-dot"></i> All data connected</small>
+              </span>
+              <span class="choice-arrow" aria-hidden="true">→</span>
+            </button>
+
+            <button class="account-choice" type="button" data-account="fanny">
+              <span class="avatar avatar-warm">FK</span>
+              <span class="account-copy">
+                <strong>Fanny Kristensen</strong>
+                <span>Kristensen Elektro ApS</span>
+                <small><i class="status-dot status-dot-warm"></i> Explore with benchmark data</small>
+              </span>
+              <span class="choice-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+
+          <div class="login-meta">
+            <span>Demo environment</span>
+            <button type="button" class="text-button" data-open="about">What will I see?</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="dashboard" class="dashboard" hidden>
+      <div id="announcement" class="announcement">
+        <span class="announcement-kicker">New this week</span>
+        <span id="announcement-copy">Three new agreements match your spend patterns.</span>
+        <button type="button" data-action="scroll-opportunities">Review opportunities <span>→</span></button>
+        <button class="announcement-close icon-button" type="button" aria-label="Dismiss announcement" data-action="dismiss-announcement">×</button>
+      </div>
+
+      <header class="topbar">
+        <div class="topbar-start">
+          <button class="icon-button mobile-menu" type="button" aria-label="Open navigation" data-action="toggle-nav">
+            <span class="menu-lines" aria-hidden="true"></span>
+          </button>
+          <a class="brand" href="#" data-action="overview" aria-label="Advantage overview">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+            <span>Advantage</span>
+          </a>
+        </div>
+
+        <label class="search-field" for="global-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
+          <input id="global-search" type="search" placeholder="Search suppliers, agreements, reports…" autocomplete="off" />
+          <kbd>⌘ K</kbd>
+        </label>
+
+        <div class="topbar-actions">
+          <button id="data-pill" class="data-pill" type="button" data-action="open-data">
+            <span class="status-dot"></span>
+            <span><b>Data connected</b><small>Visma.net</small></span>
+          </button>
+          <button class="icon-button notification-button" type="button" aria-label="Open notifications" data-action="toggle-notifications">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+            <span class="notification-count">3</span>
+          </button>
+          <div class="account-menu-wrap">
+            <button id="account-button" class="account-button" type="button" aria-expanded="false" data-action="toggle-account">
+              <span id="top-avatar" class="avatar avatar-blue">BI</span>
+              <span class="top-account-copy"><b id="top-account-name">Bob Iversen</b><small id="top-company">Nordvik Byg A/S</small></span>
+              <span class="chevron">⌄</span>
+            </button>
+            <div id="account-popover" class="account-popover" hidden>
+              <span class="popover-label">Demo as</span>
+              <button type="button" data-switch-account="bob"><span class="avatar avatar-blue">BI</span><span><b>Bob Iversen</b><small>Connected customer</small></span></button>
+              <button type="button" data-switch-account="fanny"><span class="avatar avatar-warm">FK</span><span><b>Fanny Kristensen</b><small>Benchmark preview</small></span></button>
+              <hr />
+              <button type="button" class="restart-button" data-action="restart"><span>↩</span> Restart prototype</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-grid">
+        <aside id="sidebar" class="sidebar">
+          <div class="sidebar-quick">
+            <button type="button" class="assistant-launch" data-action="toggle-assistant">
+              <span class="assistant-star">✦</span>
+              <span><b>Saving assistant</b><small>Ask about your spend</small></span>
+              <span>↗</span>
+            </button>
+          </div>
+
+          <nav aria-label="Main navigation">
+            <span class="nav-label">Workspace</span>
+            <button class="nav-item active" type="button" data-view="overview">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>
+              Overview
+            </button>
+            <button class="nav-item" type="button" data-view="suppliers">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V10l8-5 8 5v11"></path><path d="M9 21v-7h6v7"></path></svg>
+              Suppliers
+            </button>
+            <button class="nav-item" type="button" data-view="reports">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9"></path><path d="M10 19V5"></path><path d="M16 19v-8"></path><path d="M22 19V3"></path></svg>
+              Reports
+            </button>
+            <button class="nav-item" type="button" data-view="categories">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>
+              Categories
+            </button>
+            <button class="nav-item" type="button" data-view="agreements">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"></path><path d="M15 3v5h5M10 13h6M10 17h6"></path></svg>
+              Agreements <span class="nav-badge">3</span>
+            </button>
+          </nav>
+
+          <div class="sidebar-footer">
+            <div class="weekly-card">
+              <span class="weekly-icon">↗</span>
+              <div><small>Weekly pulse</small><strong>4 new findings</strong><span>since Monday</span></div>
+            </div>
+            <button class="collapse-button" type="button" data-action="collapse-nav"><span>‹</span> Collapse</button>
+          </div>
+        </aside>
+
+        <main id="main-content" class="main-content" tabindex="-1">
+          <div id="context-banner" class="context-banner">
+            <div><span class="banner-icon">✓</span><span><b>Verified data</b><small>Figures below are based on 1.284 synced invoices.</small></span></div>
+            <button type="button" class="text-button" data-action="open-data">See data sources</button>
+          </div>
+
+          <section id="overview-view" class="page-view active" data-page="overview">
+            <div class="page-heading">
+              <div>
+                <span id="date-label" class="page-kicker">Thursday, 21 August</span>
+                <h1 id="greeting">Good morning, Bob</h1>
+                <p id="greeting-copy">Your purchasing performance is moving in the right direction.</p>
+              </div>
+              <button id="primary-action" class="primary-button" type="button" data-action="open-data">
+                <span>↻</span> Refresh data
+              </button>
+            </div>
+
+            <section class="metric-section" aria-labelledby="summary-title">
+              <div class="section-title-row">
+                <div><h2 id="summary-title">Performance at a glance</h2><p id="summary-subtitle">Year to date · updated 06:14</p></div>
+                <div class="period-toggle" aria-label="Select reporting period">
+                  <button class="active" type="button" data-period="ytd">YTD</button>
+                  <button type="button" data-period="12m">12 months</button>
+                </div>
+              </div>
+              <div id="metric-grid" class="metric-grid"></div>
+            </section>
+
+            <section id="opportunities" class="opportunity-layout" aria-labelledby="opportunity-title">
+              <article class="opportunity-card">
+                <div class="opportunity-card-head">
+                  <div>
+                    <span class="card-eyebrow">Savings opportunity</span>
+                    <h2 id="opportunity-title">You could still save <em id="opportunity-total">266.700 kr.</em></h2>
+                    <p id="opportunity-note">Estimated annual savings across 19 available agreements.</p>
+                  </div>
+                  <button class="ghost-button" type="button" data-action="toggle-chart">View as table</button>
+                </div>
+                <div id="chart-wrap" class="chart-wrap">
+                  <div class="chart-scale" aria-hidden="true"><span>140K</span><span>100K</span><span>60K</span><span>20K</span></div>
+                  <div id="bar-chart" class="bar-chart" role="img" aria-label="Potential savings by category"></div>
+                </div>
+                <div id="chart-table" class="chart-table" hidden></div>
+              </article>
+
+              <article class="next-move-card">
+                <div class="next-move-top">
+                  <span class="assistant-star">✦</span>
+                  <span class="card-eyebrow">Recommended next move</span>
+                </div>
+                <div class="saving-ring"><span id="move-percent">9%</span><small>better rate</small></div>
+                <h3 id="move-title">Activate Bygma Framework</h3>
+                <p id="move-copy">Same materials and delivery setup. The group rate could save 61.300 kr. a year.</p>
+                <button class="inverse-button" type="button" data-agreement="Bygma Framework">Review business case <span>→</span></button>
+              </article>
+            </section>
+
+            <section class="agreements-section" aria-labelledby="agreements-title">
+              <div class="section-title-row">
+                <div><h2 id="agreements-title">Best agreement matches</h2><p>Ranked by impact and ease of activation.</p></div>
+                <button class="text-button" type="button" data-view-trigger="agreements">View all agreements <span>→</span></button>
+              </div>
+              <div id="agreement-list" class="agreement-list"></div>
+            </section>
+          </section>
+
+          <section id="generic-view" class="page-view generic-view" data-page="generic" hidden>
+            <div class="page-heading">
+              <div><span class="page-kicker">Purchasing intelligence</span><h1 id="generic-title">Suppliers</h1><p id="generic-subtitle">A clearer view of the businesses you buy from.</p></div>
+              <button class="primary-button" type="button" data-action="toast">Export overview</button>
+            </div>
+            <div id="generic-content"></div>
+          </section>
+        </main>
+
+        <aside class="insight-rail" aria-labelledby="action-title">
+          <div class="rail-heading">
+            <div><span class="card-eyebrow">Today</span><h2 id="action-title">Next best actions</h2></div>
+            <span class="action-count">3</span>
+          </div>
+
+          <div id="action-list" class="action-list">
+            <button type="button" class="action-card featured" data-agreement="Bygma Framework">
+              <span class="action-meta"><i class="priority-dot"></i> Highest impact</span>
+              <strong>Review the Bygma business case</strong>
+              <span>61.300 kr. potential yearly saving</span>
+              <i class="action-arrow">→</i>
+            </button>
+            <button type="button" class="action-card" data-action="open-data">
+              <span class="action-meta">Data quality</span>
+              <strong>2 suppliers need matching</strong>
+              <span>Resolve in less than 3 minutes</span>
+              <i class="action-arrow">→</i>
+            </button>
+            <button type="button" class="action-card" data-view-trigger="reports">
+              <span class="action-meta">Ready to share</span>
+              <strong>August spend report</strong>
+              <span>Updated with this week’s invoices</span>
+              <i class="action-arrow">→</i>
+            </button>
+          </div>
+
+          <div class="rail-activity">
+            <div class="rail-activity-head"><h3>Recent activity</h3><button class="text-button" type="button" data-action="toast">See all</button></div>
+            <ul id="activity-list">
+              <li><span class="activity-icon positive">↗</span><p><b>Price protection found</b><small>Stark Byggecenter · 2h</small></p><strong>+18.4K</strong></li>
+              <li><span class="activity-icon">✓</span><p><b>Visma sync complete</b><small>1.284 invoices · 6h</small></p></li>
+              <li><span class="activity-icon warm">!</span><p><b>New fuel terms</b><small>Circle K · Yesterday</small></p></li>
+            </ul>
+          </div>
+
+          <button class="ask-card" type="button" data-action="toggle-assistant">
+            <span class="assistant-star">✦</span>
+            <span><small>Need a second opinion?</small><b>Ask the saving assistant</b></span>
+            <span>→</span>
+          </button>
+        </aside>
+      </div>
+    </div>
+
+    <div id="overlay" class="overlay" hidden></div>
+
+    <aside id="notification-drawer" class="drawer" aria-labelledby="notification-title" aria-hidden="true">
+      <div class="drawer-head"><div><span class="card-eyebrow">Inbox</span><h2 id="notification-title">Notifications</h2></div><button class="icon-button" type="button" aria-label="Close notifications" data-action="close-drawers">×</button></div>
+      <button class="mark-read text-button" type="button" data-action="mark-read">Mark all as read</button>
+      <div class="notification-list">
+        <button type="button" data-agreement="Circle K Fuel Card"><span class="notification-icon">↗</span><span><b>Fuel business case is ready</b><small>42.500 kr. estimated annual saving · now</small></span><i></i></button>
+        <button type="button" data-agreement="Stark Byggecenter"><span class="notification-icon warm">!</span><span><b>Stark raised prices by 4%</b><small>Building materials · 2 days ago</small></span><i></i></button>
+        <button type="button" data-agreement="Lyreco Erhverv"><span class="notification-icon">✦</span><span><b>New quick win in office supplies</b><small>19% rate gap found · 3 days ago</small></span><i></i></button>
+      </div>
+    </aside>
+
+    <aside id="assistant-drawer" class="drawer assistant-drawer" aria-labelledby="assistant-title" aria-hidden="true">
+      <div class="assistant-drawer-top">
+        <div class="assistant-star large">✦</div>
+        <button class="icon-button" type="button" aria-label="Close saving assistant" data-action="close-drawers">×</button>
+      </div>
+      <span class="card-eyebrow">Made for your purchasing data</span>
+      <h2 id="assistant-title">Saving assistant</h2>
+      <p>Ask a question or start with one of these suggestions.</p>
+      <div class="prompt-list">
+        <button type="button" data-prompt="Which agreement should I activate first?">Which agreement should I activate first? <span>→</span></button>
+        <button type="button" data-prompt="Compare my building material suppliers">Compare my building material suppliers <span>→</span></button>
+        <button type="button" data-prompt="Draft a summary for my leadership team">Draft a summary for my leadership team <span>→</span></button>
+      </div>
+      <div id="assistant-response" class="assistant-response" hidden></div>
+      <form id="assistant-form" class="assistant-form">
+        <label for="assistant-input" class="sr-only">Ask the saving assistant</label>
+        <input id="assistant-input" type="text" placeholder="Ask about your spend…" />
+        <button type="submit" aria-label="Send question">↑</button>
+      </form>
+      <small class="assistant-disclaimer">Answers are based on the data shown in this prototype.</small>
+    </aside>
+
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+      <button class="icon-button modal-close" type="button" aria-label="Close dialog" data-action="close-modal">×</button>
+      <div id="modal-content"></div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+      <span>✓</span><span id="toast-copy">Done</span>
+    </div>
+
+    <script src="assets/advantage-v3.js"></script>
+  </body>
+</html>
