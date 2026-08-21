@@ -1,0 +1,2097 @@
+<!doctype html>
+<!--
+================================================================================
+ADVANTAGE — ALT 3 · "MONEY MOVEMENT"
+================================================================================
+
+THESIS (2 sentences)
+The current Advantage dashboard is a beautifully built measuring instrument that
+never moves a krone: it quantifies 423.985 kr. of savings potential in nine
+different framings and then hands the hardest part — telling the supplier,
+changing the account code, checking the next invoice — to a button labelled
+"Activate". This version deletes the measuring and builds the second half of the
+product: a dated commitment, a supplier handoff artefact you can actually send,
+named internal prerequisites, and a verification loop that reads the next invoice
+and says whether the discounted rate appeared, disputed it when it did not.
+
+REMOVED FROM v2, AND WHY
+· "Benchmarked against 148 companies", "5 of 24 agreements in use", "savings
+  potential up to 35%" — comparison as entertainment. None of the three changes
+  what anybody does on Monday. (The 148-peer basis survives only as a provenance
+  footnote on Fanny's estimates, where it is the reason a number is a range.)
+· "Companies like yours" framing everywhere — flattery with no action attached.
+· The savings gauge and the three generic assistant tips — a needle and three
+  suggestions that were true of any construction company in Denmark.
+· The category savings list as a browsing surface. It rendered 19 handsome
+  agreement cards worth, in aggregate, 0 kr., because 16 of them sat in
+  categories already covered by an active agreement. This version shows the 3
+  commitments that carry real incremental money (47.544 kr.) and says out loud
+  that the rest are alternates worth nothing extra.
+· Weekly discovery, the activity rail's empty state, the announcement banner —
+  three surfaces whose job was to have something on them.
+
+ADDED, AND WHY
+· A commitment step with a date. Committing produces a dated plan — day 0, day 3,
+  day 14, day 45 — not a toast.
+· The supplier handoff. Activation is a message to a human at the supplier. The
+  product now generates it: framework agreement number, customer account number,
+  effective date, what to confirm and by when, copy to clipboard.
+· Internal prerequisites with named owners — the ERP discount profile and the
+  person who actually places the orders. Most activations die here, silently.
+· The verification loop, the centrepiece. Every invoice from an activated
+  supplier is checked against the agreed rate: awaiting first invoice →
+  confirmed, rate matched → discrepancy, invoiced at list price. Simulate the
+  next invoice to watch it advance.
+· Promised vs realised over time, with leakage broken out — Stark quietly raised
+  prices and invoiced at 0%, −18.400 kr., which is the single most valuable thing
+  this product will do this year.
+· A dispute path: deviation letter, credit note, resolution that flows back into
+  realised.
+
+THE STRONGEST OBJECTION TO THIS VERSION
+Nobody activates anything on a page that only tracks activations. v2's browsing
+surfaces are not decoration — they are the demand generation, and a procurement
+manager who opens Advantage twice a year needs a reason to look before he needs a
+task list. By deleting the measuring instrument I have optimised for the five
+customers already in flight and made the product almost unusable as a pitch to
+the ninety-five who are not: Fanny's version is honest, and honestly empty. A
+fairer product probably keeps one discovery surface and puts the entire
+verification machine behind it, rather than replacing it. I accept that trade and
+argue it anyway, because a savings product that never checks whether the saving
+happened is a brochure, and v2 shipped nine ways to read the brochure.
+================================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — Money movement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap">
+<style>
+/* ==========================================================================
+   Advantage Design System — tokens copied from advantage-v2-visual.html.
+   Semantic tokens only. No raw hex in components.
+   NOTE: the scale has no --s5/--s7/--s9/--s10 — always var(--s5,20px) etc.
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+
+  --sidebar-border:#e0e0e0;
+
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+
+  --hairline:#ececec;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  --t-slow:.5s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{font-family:var(--font-body);background:var(--surface);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-5xl);letter-spacing:-1.2px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+h4{font-size:var(--text-sm)}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num,.tab{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active:not([disabled]){transform:translateY(1px)}
+.btn[disabled]{cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover:not([disabled]){background:#1553bb}
+.btn-primary[disabled]{background:var(--general-muted);color:#a3a3a3;box-shadow:none}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border)}
+.btn-secondary[disabled]{background:var(--general-muted);border-color:transparent;color:#8f8f8f;box-shadow:none}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3);height:36px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-danger{background:var(--general-destructive);color:#fff}
+.btn-danger:hover:not([disabled]){background:#b81d1d}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs)}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.4}
+.chip svg{width:12px;height:12px}
+.chip-rec{background:var(--general-primary);color:var(--general-primary-foreground)}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-warn{background:#fff2e0;color:#a35c00}
+.chip-good{background:#d9f2ef;color:var(--sentiment-positive)}
+.chip-bad{background:#feeae4;color:var(--sentiment-negative)}
+.est-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground);font-size:11px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase}
+.est-chip svg{width:11px;height:11px}
+
+/* ==========================================================================
+   LOGIN
+   ========================================================================== */
+.flow{min-height:100vh;display:flex;flex-direction:column}
+.stage{flex:1 1 auto;display:flex;flex-direction:column}
+.scr{display:none;flex:1 1 auto}
+.scr.on{display:flex;flex-direction:column}
+.scr.on.mid{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;align-content:center;
+  padding:var(--s12) var(--s6)}
+.scr.on>*{animation:rise var(--t-slow) both;min-width:0}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.login{width:420px;max-width:100%;text-align:center}
+.login .mark{height:40px;width:auto;margin:0 auto var(--s8);display:block}
+.login h1{font-size:var(--text-5xl);letter-spacing:-2px}
+.login .lead{font-size:var(--text-base);margin:var(--s3) auto 0;max-width:38ch;
+  color:var(--general-muted-foreground);line-height:1.55}
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-sm)}
+.login .card{margin-top:var(--s12);padding:var(--s8);text-align:left}
+.login-choice{display:flex;flex-direction:column;gap:var(--s3)}
+.login-persona{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  cursor:pointer;text-align:left;transition:var(--t-fast)}
+.login-persona:hover,.login-persona:focus-visible{border-color:var(--general-border);background:var(--brand-ice)}
+.login-persona-av{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.login-persona:hover .login-persona-av{background:var(--surface)}
+.login-persona-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.login-persona-txt b{font-size:var(--text-sm);font-weight:600}
+.login-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+.login-persona-go{flex:0 0 auto;width:16px;height:16px;color:#a3a3a3;transition:color var(--t-fast)}
+.login-persona:hover .login-persona-go{color:var(--general-primary)}
+.tinyfoot{margin-top:var(--s6);font-size:var(--text-xs);color:#8f8f8f;text-align:center}
+
+/* ==========================================================================
+   APP SHELL
+   ========================================================================== */
+body.in-app{background:var(--brand-midnight);overflow:hidden}
+body.in-app .flow{display:none}
+.app{display:none;flex-direction:column;height:100vh;height:100dvh;padding-top:var(--s3)}
+.app.on{display:flex;animation:rise var(--t-slow) both}
+.wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--surface);
+  border-radius:var(--rounded-2xl) var(--rounded-2xl) 0 0;overflow:hidden;
+  box-shadow:0 -1px 0 #ffffff1a,var(--shadow-xl)}
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:68px;padding:0 var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.appbar .brand{display:flex;align-items:center;flex:0 0 auto}
+.appbar .brand img{height:28px;width:auto;display:block}
+.appbar .spacer{flex:1}
+.erp{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s3);
+  background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  box-shadow:var(--shadow-2xs);cursor:pointer;transition:var(--t-fast)}
+.erp:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.erp .live{position:relative;width:8px;height:8px;flex:0 0 auto;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive)}
+.erp .live::after{content:"";position:absolute;inset:-4px;border-radius:var(--rounded-full);
+  border:1.5px solid var(--sentiment-positive);opacity:.45;animation:pip 2.4s ease-out infinite}
+.erp.none .live{background:var(--sentiment-negative)}
+.erp.none .live::after{border-color:var(--sentiment-negative)}
+@keyframes pip{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.5);opacity:0}}
+.erp .et{display:flex;flex-direction:column;line-height:1.25;text-align:left}
+.erp .et b{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
+.erp .et span{font-size:13px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
+@media(max-width:1080px){.erp .et span{display:none}}
+.userwrap{position:relative;flex:0 0 auto}
+.user{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s2);background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);transition:var(--t-fast)}
+.user:hover{background:var(--general-muted)}
+.user .uav{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;color:#fff;font-family:var(--font-sans);font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,#2170ed,#0b00ab)}
+.user .un{font-size:var(--text-xs);font-weight:600;text-align:left;line-height:1.25;white-space:nowrap}
+.user .un span{display:block;font-weight:400;color:var(--general-muted-foreground)}
+.user .uc{width:14px;height:14px;color:var(--general-muted-foreground)}
+@media(max-width:1000px){.user .un{display:none}}
+.upop{position:absolute;top:calc(100% + 8px);right:0;z-index:35;width:260px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.upop.on{opacity:1;transform:none;pointer-events:auto}
+.up-h{padding:var(--s4);border-bottom:1px solid var(--hairline)}
+.up-h b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.up-h span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:1px}
+.up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
+  background:none;border:none;cursor:pointer;text-align:left;font-size:var(--text-sm);
+  transition:var(--t-fast)}
+.up-i:hover{background:var(--general-muted)}
+.up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.up-sep{padding:var(--s3) var(--s4) var(--s1);border-top:1px solid var(--hairline);margin-top:var(--s1)}
+.up-sep span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.up-persona-av{flex:0 0 auto;width:28px;height:28px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:12px;font-weight:600}
+.up-persona-txt{display:flex;flex-direction:column;min-width:0}
+.up-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+
+/* --- rail --- */
+.appbody{flex:1 1 auto;min-height:0;display:flex}
+.rail{flex:0 0 auto;width:252px;display:flex;flex-direction:column;padding:var(--s4) var(--s3);
+  border-right:1px solid var(--hairline);transition:width var(--t)}
+.rail.mini{width:76px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-height:0}
+.ni{position:relative;display:flex;align-items:center;gap:var(--s3);width:100%;height:44px;
+  padding:0 var(--s3);background:none;border:none;cursor:pointer;border-radius:var(--rounded-md);
+  font-size:var(--text-sm);font-weight:500;text-align:left;
+  transition:background-color var(--t-fast),color var(--t-fast)}
+.ni:hover{background:var(--general-muted)}
+.ni.on{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
+.ni .nic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center}
+.ni .nic svg{width:20px;height:20px}
+.ni .nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:opacity var(--t-fast)}
+.ni .nb{flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--general-accent);color:var(--general-accent-foreground);
+  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.ni .nb.bad{background:var(--general-destructive);color:#fff}
+.rail.mini .ni{justify-content:center;padding:0}
+.rail.mini .ni .nt{opacity:0;width:0;flex:0 0 0}
+.rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:13px}
+.rail.mini .ni::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
+  transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
+  white-space:nowrap;pointer-events:none;opacity:0;z-index:5;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.rail.mini .ni:hover::after,.rail.mini .ni:focus-visible::after{opacity:1;transform:translateY(-50%)}
+.railtog{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;height:40px;margin-top:var(--s3);
+  padding:0 var(--s3);background:none;border:none;border-top:1px solid var(--hairline);cursor:pointer;
+  color:var(--general-muted-foreground);font-size:var(--text-xs);font-weight:500;transition:var(--t-fast)}
+.railtog:hover{color:var(--general-foreground)}
+.railtog svg{width:20px;height:20px;flex:0 0 auto;transition:transform var(--t)}
+.rail.mini .railtog{justify-content:center;padding:0}
+.rail.mini .railtog svg{transform:rotate(180deg)}
+.rail.mini .railtog span{display:none}
+
+/* --- canvas --- */
+.canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--surface)}
+.page{width:100%;max-width:1200px;margin:0 auto;padding:var(--s12) var(--s8) var(--s16);
+  display:flex;flex-direction:column;gap:var(--s12)}
+@media(max-width:760px){.page{padding:var(--s8) var(--s4) var(--s12)}
+  .appbar{padding:0 var(--s4);gap:var(--s3)}}
+.view[hidden]{display:none}
+
+/* ==========================================================================
+   SHARED PAGE FURNITURE
+   ========================================================================== */
+.hello{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3)}
+.hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+.hello-p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:74ch}
+.hello-p b{font-weight:600;color:var(--general-foreground)}
+.sec{display:flex;flex-direction:column;gap:var(--s4)}
+.sec-h{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap}
+.sec-h .spacer{flex:1}
+.sec-h p{flex:1 1 100%;font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground);
+  max-width:78ch}
+.hr{border:none;border-top:1px solid var(--hairline)}
+.back{display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;
+  padding:0;font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.back:hover{color:var(--general-primary)}
+.back svg{width:15px;height:15px}
+
+/* stat tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--s3)}
+.tile{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s4);background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md);box-shadow:var(--shadow-xs)}
+.tile.hi{border-color:var(--general-border);background:linear-gradient(160deg,#f7fbff,#fff)}
+.tile.bad{border-color:#f7c9b6;background:linear-gradient(160deg,#fff6f2,#fff)}
+.tile-l{font-size:13px;line-height:1.25;color:var(--general-muted-foreground)}
+.tile-v{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:600;letter-spacing:-.7px;
+  line-height:1;font-variant-numeric:tabular-nums}
+.tile-v.pos{color:var(--sentiment-positive)}
+.tile-v.neg{color:var(--sentiment-negative)}
+.tile-v small{font-family:var(--font-body);font-size:13px;font-weight:400;letter-spacing:0;
+  color:var(--general-muted-foreground);margin-left:5px}
+.tile-u{font-size:13px;line-height:1.35;color:var(--general-muted-foreground)}
+
+/* ==========================================================================
+   ACTIVATION ROWS + STAGE TRACK
+   ========================================================================== */
+.acts{display:flex;flex-direction:column}
+.act{display:grid;grid-template-columns:auto minmax(0,1.5fr) minmax(0,2fr) auto auto;
+  align-items:center;gap:var(--s4);width:100%;padding:var(--s4) var(--s2);background:none;
+  border:none;border-top:1px solid var(--hairline);cursor:pointer;text-align:left;
+  transition:background var(--t-fast)}
+.act:last-child{border-bottom:1px solid var(--hairline)}
+.act:hover{background:#fafbfd}
+.logo{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-sm);display:grid;
+  place-items:center;overflow:hidden;background:var(--general-muted);
+  border:1px solid var(--hairline);font-family:var(--font-sans);font-size:var(--text-xs);
+  font-weight:700;color:var(--general-muted-foreground)}
+.logo img{width:100%;height:100%;object-fit:contain;padding:4px;display:block}
+.act-id{min-width:0;display:flex;flex-direction:column;gap:3px}
+.act-id b{font-size:var(--text-sm);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act-id span{font-size:13px;color:var(--general-muted-foreground)}
+.act-money{display:flex;flex-direction:column;gap:3px;text-align:right;min-width:120px}
+.act-money b{font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+  font-variant-numeric:tabular-nums}
+.act-money span{font-size:13px;color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.act-go{width:18px;height:18px;color:var(--general-primary);flex:0 0 auto}
+@media(max-width:900px){
+  .act{grid-template-columns:auto minmax(0,1fr) auto;row-gap:var(--s3)}
+  .track-wrap{grid-column:1/-1}
+}
+
+/* stage track — five dots and a rule, computed from real state */
+.track-wrap{min-width:0}
+.track5{display:flex;align-items:center;gap:0;min-width:0}
+.track5 .tn{flex:0 0 auto;position:relative;width:14px;height:14px;border-radius:var(--rounded-full);
+  border:2px solid var(--general-muted);background:var(--surface);display:grid;place-items:center}
+.track5 .tn svg{width:8px;height:8px;opacity:0;color:#fff}
+.track5 .tn.done{background:var(--sentiment-positive);border-color:var(--sentiment-positive)}
+.track5 .tn.done svg{opacity:1}
+.track5 .tn.now{border-color:var(--general-accent);box-shadow:0 0 0 3px #ff9b3d33}
+.track5 .tn.bad{background:var(--sentiment-negative);border-color:var(--sentiment-negative)}
+.track5 .tn.bad svg{opacity:1}
+.track5 .tl{flex:1 1 auto;height:2px;background:var(--general-muted);min-width:8px}
+.track5 .tl.done{background:var(--sentiment-positive)}
+.track-lbl{margin-top:6px;font-size:13px;color:var(--general-muted-foreground)}
+.track-lbl b{color:var(--general-foreground);font-weight:600}
+
+/* verification state pill */
+.vstate{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:13px;font-weight:600;white-space:nowrap}
+.vstate svg{width:12px;height:12px}
+.vstate.awaiting{background:#fff2e0;color:#a35c00}
+.vstate.confirmed{background:#d9f2ef;color:var(--sentiment-positive)}
+.vstate.discrepancy{background:#feeae4;color:var(--sentiment-negative)}
+.vstate.prep{background:var(--general-secondary);color:var(--general-primary)}
+
+/* ==========================================================================
+   NEEDS-YOU / ALERT CARDS
+   ========================================================================== */
+.alert{display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s4) var(--s5,20px);
+  border:1px solid #f7c9b6;border-left:4px solid var(--sentiment-negative);
+  border-radius:var(--rounded-md);background:linear-gradient(120deg,#fff6f2,#fff)}
+.alert.warn{border-color:#ffdcb0;border-left-color:var(--general-accent);
+  background:linear-gradient(120deg,#fffaf3,#fff)}
+.alert-ic{flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:#feeae4;color:var(--sentiment-negative)}
+.alert.warn .alert-ic{background:#fff2e0;color:#a35c00}
+.alert-ic svg{width:18px;height:18px}
+.alert-b{flex:1 1 auto;min-width:0}
+.alert-b b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.alert-b p{margin-top:3px;font-size:var(--text-sm);line-height:1.55;color:var(--general-muted-foreground)}
+.alert-b p .fig{font-family:var(--font-sans);font-weight:600;color:var(--general-foreground);
+  font-variant-numeric:tabular-nums}
+.alert-act{flex:0 0 auto;align-self:center}
+@media(max-width:700px){.alert{flex-wrap:wrap}.alert-act{width:100%}.alert-act .btn{width:100%}}
+
+/* ==========================================================================
+   ACTIVATION DETAIL
+   ========================================================================== */
+.det-head{display:flex;align-items:flex-start;gap:var(--s4);flex-wrap:wrap}
+.det-head .logo{width:56px;height:56px;border-radius:var(--rounded-md)}
+.det-head-t{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+.det-head-t h1{font-size:var(--text-3xl);letter-spacing:-1px}
+.det-meta{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);font-size:13px;
+  color:var(--general-muted-foreground)}
+.det-meta b{font-family:var(--font-mono);font-weight:600;color:var(--general-foreground)}
+.det-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:var(--s8)}
+@media(max-width:960px){.det-grid{grid-template-columns:minmax(0,1fr)}}
+.panel{padding:var(--s6);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);box-shadow:var(--shadow-xs);display:flex;flex-direction:column;gap:var(--s4)}
+.panel.bad{border-color:#f7c9b6}
+.panel-h{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap}
+.panel-h h3{flex:1 1 auto;min-width:0}
+.panel p.note{font-size:13px;line-height:1.6;color:var(--general-muted-foreground)}
+
+/* dated plan */
+.plan{list-style:none;display:flex;flex-direction:column}
+.plan li{display:grid;grid-template-columns:76px 18px minmax(0,1fr);gap:var(--s3);
+  padding:var(--s3) 0;border-top:1px solid var(--hairline)}
+.plan li:first-child{border-top:none;padding-top:0}
+.plan .d{font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums}
+.plan .d b{display:block;font-family:var(--font-sans);font-size:var(--text-xs);font-weight:700;
+  color:var(--general-foreground)}
+.plan .pip{position:relative;width:12px;height:12px;margin-top:4px;border-radius:var(--rounded-full);
+  border:2px solid var(--general-muted);background:var(--surface)}
+.plan li.done .pip{background:var(--sentiment-positive);border-color:var(--sentiment-positive)}
+.plan li.now .pip{border-color:var(--general-accent);box-shadow:0 0 0 3px #ff9b3d33}
+.plan li.bad .pip{background:var(--sentiment-negative);border-color:var(--sentiment-negative)}
+.plan .pt{min-width:0}
+.plan .pt b{display:block;font-size:var(--text-sm);font-weight:600}
+.plan .pt span{display:block;margin-top:2px;font-size:13px;line-height:1.55;
+  color:var(--general-muted-foreground)}
+
+/* supplier handoff artefact */
+.artefact{position:relative;border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);
+  background:#fbfcfe;overflow:hidden}
+.artefact-h{display:flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--hairline);background:var(--surface)}
+.artefact-h span{flex:1 1 auto;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.artefact pre{max-height:340px;overflow:auto;padding:var(--s4);font-family:var(--font-mono);
+  font-size:var(--text-xs);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.artefact-f{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;padding:var(--s3) var(--s4);
+  border-top:1px solid var(--hairline);background:var(--surface)}
+.artefact-f .spacer{flex:1}
+.copied{font-size:13px;font-weight:600;color:var(--sentiment-positive)}
+
+/* prerequisite tasks */
+.tasks{list-style:none;display:flex;flex-direction:column}
+.tasks li{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s3) 0;
+  border-top:1px solid var(--hairline)}
+.tasks li:first-child{border-top:none;padding-top:0}
+.tk{flex:0 0 auto;width:22px;height:22px;margin-top:1px;border-radius:var(--rounded-xs);
+  border:1.6px solid var(--sidebar-border);background:var(--surface);cursor:pointer;display:grid;
+  place-items:center;color:#fff;transition:var(--t-fast)}
+.tk:hover{border-color:var(--general-primary)}
+.tk svg{width:13px;height:13px;opacity:0}
+.tk[aria-pressed="true"]{background:var(--sentiment-positive);border-color:var(--sentiment-positive)}
+.tk[aria-pressed="true"] svg{opacity:1}
+.tasks .tb{flex:1 1 auto;min-width:0}
+.tasks .tb b{display:block;font-size:var(--text-sm);font-weight:600}
+.tasks li.done .tb b{color:var(--general-muted-foreground);text-decoration:line-through}
+.tasks .tb span{display:block;margin-top:2px;font-size:13px;line-height:1.55;
+  color:var(--general-muted-foreground)}
+.owner{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:2px 8px;
+  border-radius:var(--rounded-full);background:var(--general-muted);font-size:12px;font-weight:600;
+  color:var(--general-muted-foreground)}
+.owner svg{width:11px;height:11px}
+
+/* verification */
+.vhero{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) var(--s5,20px);
+  border-radius:var(--rounded-md);border:1px solid var(--hairline);background:var(--general-muted)}
+.vhero.awaiting{background:#fffaf3;border-color:#ffdcb0}
+.vhero.confirmed{background:#f2fbfa;border-color:#b9e5e1}
+.vhero.discrepancy{background:#fff6f2;border-color:#f7c9b6}
+.vhero-ic{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:var(--surface);box-shadow:var(--shadow-xs)}
+.vhero-ic svg{width:20px;height:20px}
+.vhero.awaiting .vhero-ic{color:#a35c00}
+.vhero.confirmed .vhero-ic{color:var(--sentiment-positive)}
+.vhero.discrepancy .vhero-ic{color:var(--sentiment-negative)}
+.vhero-b b{display:block;font-family:var(--font-sans);font-size:var(--text-base);font-weight:600}
+.vhero-b p{margin-top:2px;font-size:13px;line-height:1.55;color:var(--general-muted-foreground)}
+table.tbl{width:100%;border-collapse:collapse;font-size:var(--text-xs)}
+table.tbl caption{text-align:left;font-size:13px;color:var(--general-muted-foreground);
+  padding-bottom:var(--s2)}
+table.tbl th,table.tbl td{text-align:right;padding:var(--s2) var(--s2);
+  border-bottom:1px solid var(--hairline);white-space:nowrap}
+table.tbl th:first-child,table.tbl td:first-child{text-align:left}
+table.tbl thead th{font-family:var(--font-body);font-size:12px;font-weight:600;
+  color:var(--general-muted-foreground);text-transform:uppercase;letter-spacing:.04em}
+table.tbl td.n{font-variant-numeric:tabular-nums;font-family:var(--font-mono)}
+table.tbl tr.bad td{background:#fff6f2}
+table.tbl tr.tot td{border-bottom:none;border-top:2px solid var(--general-foreground);font-weight:700}
+.sim{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);padding:var(--s3) var(--s4);
+  border:1px dashed var(--sidebar-border);border-radius:var(--rounded-md);background:#fbfcfe}
+.sim .sl{flex:1 1 180px;font-size:12px;line-height:1.5;color:var(--general-muted-foreground)}
+.sim .sl b{display:block;font-size:var(--text-xs);color:var(--general-foreground)}
+
+/* ==========================================================================
+   LEDGER — promised vs realised
+   ========================================================================== */
+.chart{display:flex;align-items:flex-end;gap:var(--s3);height:220px;padding:var(--s4) 0;
+  border-bottom:1px solid var(--sidebar-border)}
+.cbar{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;
+  align-items:center;gap:6px;height:100%}
+.cbar .stack{position:relative;width:100%;max-width:62px;display:flex;flex-direction:column;
+  justify-content:flex-end;height:100%}
+.cbar .seg{width:100%;border-radius:var(--rounded-xs) var(--rounded-xs) 0 0;
+  transition:height var(--t-slow)}
+.cbar .seg.r{background:var(--general-primary)}
+.cbar .seg.l{background:var(--sentiment-negative);border-radius:var(--rounded-xs) var(--rounded-xs) 0 0}
+.cbar .seg.r + .seg{border-radius:0}
+.cbar .cm{font-size:12px;color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.cbar.pending .stack::after{content:"";position:absolute;inset:auto 0 0 0;height:6px;
+  border-radius:var(--rounded-xs);background:repeating-linear-gradient(90deg,
+    var(--general-muted) 0 4px,transparent 4px 8px)}
+.legend{display:flex;flex-wrap:wrap;gap:var(--s4);font-size:13px;color:var(--general-muted-foreground)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;
+  vertical-align:-1px}
+.legend i.r{background:var(--general-primary)}
+.legend i.l{background:var(--sentiment-negative)}
+.bonus{display:flex;flex-direction:column;gap:var(--s2)}
+.bonus-row{display:flex;align-items:baseline;gap:var(--s3);font-size:var(--text-sm);
+  padding:var(--s2) 0;border-top:1px solid var(--hairline)}
+.bonus-row:first-child{border-top:none}
+.bonus-row .spacer{flex:1}
+.bonus-row .bv{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600}
+.bonus-row.tot{border-top:2px solid var(--general-foreground);font-weight:700}
+
+/* ==========================================================================
+   COMMIT FLOW
+   ========================================================================== */
+.commit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:var(--s8);align-items:start}
+@media(max-width:960px){.commit{grid-template-columns:minmax(0,1fr)}}
+.pick{display:flex;flex-direction:column;gap:var(--s3)}
+.pick-o{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);cursor:pointer;
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  text-align:left;transition:var(--t-fast)}
+.pick-o:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.pick-o[aria-pressed="true"]{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
+.pick-o .pb{flex:1 1 auto;min-width:0}
+.pick-o .pb b{display:block;font-size:var(--text-sm);font-weight:600}
+.pick-o .pb span{display:block;font-size:13px;color:var(--general-muted-foreground)}
+.pick-o .pv{flex:0 0 auto;text-align:right}
+.pick-o .pv b{font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+  font-variant-numeric:tabular-nums}
+.pick-o .pv span{display:block;font-size:12px;color:var(--general-muted-foreground)}
+.dead{padding:var(--s4);border:1px dashed var(--sidebar-border);border-radius:var(--rounded-md);
+  background:var(--general-muted);font-size:13px;line-height:1.6;color:var(--general-muted-foreground)}
+.dead b{color:var(--general-foreground)}
+.fgrp{display:flex;flex-direction:column;gap:6px}
+.flabel{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
+.fin{display:flex;align-items:center;height:46px;padding:0 var(--s4);background:var(--general-input);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);
+  box-shadow:inset 0 1px 2px #0000000a;transition:var(--t-fast)}
+.fin:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.fin input,.fin select{flex:1;min-width:0;border:none;outline:none;background:none;font-size:var(--text-sm)}
+.fhint{font-size:12px;line-height:1.5;color:var(--general-muted-foreground)}
+
+/* ==========================================================================
+   FANNY — the machinery, explained, with no fake progress
+   ========================================================================== */
+.mach{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--s3);
+  counter-reset:mach}
+.mach-s{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s4);background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md)}
+.mach-s .mn{width:26px;height:26px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--brand-ice);color:var(--general-primary);font-family:var(--font-sans);
+  font-size:var(--text-xs);font-weight:700}
+.mach-s b{font-size:var(--text-sm);font-weight:600}
+.mach-s p{font-size:13px;line-height:1.55;color:var(--general-muted-foreground)}
+.empty{padding:var(--s8) var(--s6);text-align:center;border:1px dashed var(--sidebar-border);
+  border-radius:var(--rounded-lg);background:#fcfcfd}
+.empty b{display:block;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600}
+.empty p{margin:var(--s2) auto 0;max-width:56ch;font-size:var(--text-sm);line-height:1.6;
+  color:var(--general-muted-foreground)}
+
+/* ==========================================================================
+   DIALOG (dispute)
+   ========================================================================== */
+.scrim{position:fixed;inset:0;z-index:60;background:#0f0f0f00;pointer-events:none;
+  transition:background var(--t)}
+.scrim.on{background:#0f0f0f52;pointer-events:auto}
+.dlg{position:fixed;z-index:61;left:50%;top:50%;width:min(680px,94vw);max-height:88vh;overflow:auto;
+  transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;
+  background:var(--surface);border-radius:var(--rounded-2xl);box-shadow:var(--shadow-xl);
+  transition:opacity var(--t),transform var(--t)}
+.dlg.on{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.dlg-h{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s6) var(--s6) var(--s4)}
+.dlg-h>div{flex:1;min-width:0}
+.dlg-h h2{font-size:var(--text-xl)}
+.dlg-h p{margin-top:4px;font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.dlgx{flex:0 0 auto;width:32px;height:32px;display:grid;place-items:center;background:none;border:none;
+  cursor:pointer;border-radius:var(--rounded-sm);color:var(--general-muted-foreground)}
+.dlgx:hover{background:var(--general-muted);color:var(--general-foreground)}
+.dlgx svg{width:16px;height:16px}
+.dlg-b{padding:0 var(--s6) var(--s6);display:flex;flex-direction:column;gap:var(--s4)}
+.dlg-f{position:sticky;bottom:0;display:flex;gap:var(--s2);justify-content:flex-end;flex-wrap:wrap;
+  padding:var(--s4) var(--s6);border-top:1px solid var(--hairline);background:var(--surface)}
+.steps3{display:flex;align-items:center;gap:var(--s2);font-size:13px;
+  color:var(--general-muted-foreground)}
+.steps3 .s3{display:inline-flex;align-items:center;gap:6px}
+.steps3 .s3 i{width:9px;height:9px;border-radius:var(--rounded-full);background:var(--general-muted)}
+.steps3 .s3.on i{background:var(--general-primary)}
+.steps3 .s3.on{color:var(--general-foreground);font-weight:600}
+.steps3 .s3.done i{background:var(--sentiment-positive)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:var(--s2) var(--s4);font-size:var(--text-sm)}
+.kv dt{color:var(--general-muted-foreground)}
+.kv dd{font-family:var(--font-mono);font-variant-numeric:tabular-nums;text-align:right}
+.kv dd.neg{color:var(--sentiment-negative);font-weight:700}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+
+<!-- ==================== LOGIN ==================== -->
+<div class="flow">
+  <main class="stage">
+    <section class="scr on mid" id="s-login">
+      <div class="login">
+        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <h1>Money movement</h1>
+        <p class="lead">Every activation, who has been told, and whether the next invoice
+          actually carried the agreed rate.</p>
+        <div class="card">
+          <div class="login-choice">
+            <button class="login-persona" id="loginBob" type="button">
+              <span class="login-persona-av">BI</span>
+              <span class="login-persona-txt">
+                <b>Bob Iversen</b>
+                <span>Nordvik Byg A/S · 5 activations in flight, 1 discrepancy</span>
+              </span>
+              <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="login-persona" id="loginFanny" type="button">
+              <span class="login-persona-av">FK</span>
+              <span class="login-persona-txt">
+                <b>Fanny Kristensen</b>
+                <span>Kristensen Elektro ApS · nothing activated yet</span>
+              </span>
+              <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <p class="tinyfoot">Prototype — pick either account to sign in.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ==================== APP SHELL ==================== -->
+<div class="app" id="app">
+  <div class="wrap">
+
+    <header class="appbar">
+      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="spacer"></span>
+      <button class="erp" id="erpPill" type="button"></button>
+      <div class="userwrap">
+        <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
+          <span class="uav" id="userAv">BI</span>
+          <span class="un"><span id="userName">Bob Iversen</span><span id="userCo">Nordvik Byg A/S</span></span>
+          <svg class="uc" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="upop" id="userPop" role="region" aria-label="Account">
+          <div class="up-h"><b id="upName">Bob Iversen</b><span id="upCo">Nordvik Byg A/S</span></div>
+          <button class="up-i" id="restartBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Restart prototype</button>
+          <div class="up-sep"><span>Demo as</span></div>
+          <button class="up-i up-persona" id="personaBob" type="button">
+            <span class="up-persona-av">BI</span>
+            <span class="up-persona-txt"><b>Bob Iversen</b><span>5 activations in flight</span></span>
+          </button>
+          <button class="up-i up-persona" id="personaFanny" type="button">
+            <span class="up-persona-av">FK</span>
+            <span class="up-persona-txt"><b>Fanny Kristensen</b><span>Nothing activated yet</span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="appbody">
+      <nav class="rail" id="rail" aria-label="Main">
+        <div class="nav" id="nav"></div>
+        <button class="railtog" id="railTog" aria-label="Collapse navigation" aria-expanded="true">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-6 7 6 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Collapse</span>
+        </button>
+      </nav>
+
+      <main class="canvas" id="canvas">
+        <div class="page">
+          <section class="view" id="viewFlight"></section>
+          <section class="view" id="viewDetail" hidden></section>
+          <section class="view" id="viewLedger" hidden></section>
+          <section class="view" id="viewQueue" hidden></section>
+          <section class="view" id="viewCommit" hidden></section>
+        </div>
+      </main>
+    </div>
+
+  </div>
+</div>
+
+<!-- dispute dialog -->
+<div class="scrim" id="scrim"></div>
+<div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgT" aria-hidden="true">
+  <header class="dlg-h">
+    <div>
+      <div class="steps3" id="dlgSteps"></div>
+      <h2 id="dlgT" tabindex="-1">Price deviation</h2>
+      <p id="dlgSub"></p>
+    </div>
+    <button class="dlgx" id="dlgX" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+  <div class="dlg-b" id="dlgBody"></div>
+  <footer class="dlg-f" id="dlgFoot"></footer>
+</div>
+
+<script>
+"use strict";
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+const pct = n => nf.format(n).replace('.', ',');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const initials = n => n.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+function say(msg){ $('#live').textContent = msg; }
+
+/* ---------- icons ---------- */
+const TICK  = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const BANG  = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5M12 16.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg>';
+const CLOCK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3.2 2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+const DASHC = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3.4"/></svg>';
+const CHEV  = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const PERSON= '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.9"/><path d="M5 20c0-3.4 3.1-5.4 7-5.4s7 2 7 5.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+const COPY  = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.2" stroke="currentColor" stroke-width="1.8"/><path d="M15 6.5V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7a2 2 0 002 2h.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+
+/* ---------- dates ---------- */
+const TODAY = (() => { const d = new Date(); d.setHours(9,0,0,0); return d; })();
+const DA_M = ['januar','februar','marts','april','maj','juni','juli','august','september',
+              'oktober','november','december'];
+const DA_S = ['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+const daFull  = d => `${d.getDate()}. ${DA_M[d.getMonth()]} ${d.getFullYear()}`;
+const daShort = d => `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+const iso     = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const dayAdd  = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+/* day-of-month is passed explicitly so month arithmetic can never overflow (31 Mar -1mo) */
+const atMonth = (mAgo, day) => new Date(TODAY.getFullYear(), TODAY.getMonth()-mAgo, day, 9);
+const daysBetween = (a,b) => Math.round((b - a) / 86400000);
+const monthKey = d => d.getFullYear()*12 + d.getMonth();
+const MKEY_NOW = monthKey(TODAY);
+
+/* ==========================================================================
+   THE NUMBER MODEL
+   Total spend 4.820.000 · full potential 423.985 · 1.284 invoices/year.
+   Covered (activated categories) 4.032.800 + leaking 787.200 = 4.820.000.
+   Realised-rate 376.441 + not-yet-committed 47.544 = 423.985.
+   ========================================================================== */
+const CATS = [
+  {id:'mat', n:'Building materials',          spend:2132300, rate:9,  save:191907, sup:18, inv:424},
+  {id:'tool',n:'Tools & workwear',            spend:664800,  rate:11, save:73128,  sup:11, inv:178},
+  {id:'fuel',n:'Fuel & transport',            spend:530700,  rate:8,  save:42456,  sup:5,  inv:223},
+  {id:'off', n:'Office supplies',             spend:205000,  rate:19, save:38950,  sup:5,  inv:62},
+  {id:'rent',n:'Machine & equipment rental',  spend:500000,  rate:6,  save:30000,  sup:4,  inv:96},
+  {id:'frg', n:'Freight & delivery',          spend:328800,  rate:8,  save:26304,  sup:6,  inv:142},
+  {id:'tel', n:'Telecom & IT',                spend:290400,  rate:5,  save:14520,  sup:3,  inv:24},
+  {id:'site',n:'Site services & waste',       spend:168000,  rate:4,  save:6720,   sup:4,  inv:135}
+];
+const cat = id => CATS.find(c => c.id === id);
+const TOTAL_SPEND = CATS.reduce((s,c) => s + c.spend, 0);   // 4.820.000
+const TOTAL_POT   = CATS.reduce((s,c) => s + c.save,  0);   // 423.985
+const TOTAL_INV   = CATS.reduce((s,c) => s + c.inv,   0);   // 1.284
+
+/* 22 named framework agreements. `fw` is the number quoted to the supplier. */
+const AGRS = [
+  {n:'Stark Byggecenter',       c:'mat',  fw:'VA-4471-DK'},
+  {n:'Bygma Framework',         c:'mat',  fw:'VA-4472-DK'},
+  {n:'Ahlsell Nordic',          c:'mat',  fw:'VA-4480-DK'},
+  {n:'Optimera Erhverv',        c:'mat',  fw:'VA-4486-DK'},
+  {n:'Saint-Gobain Frame',      c:'mat',  fw:'VA-4491-DK'},
+  {n:'Hilti Erhverv',           c:'tool', fw:'VA-5102-DK'},
+  {n:'Würth Nordic',            c:'tool', fw:'VA-5108-DK'},
+  {n:'Engelbert Strauss',       c:'tool', fw:'VA-5114-DK'},
+  {n:'Q8 Fuel Card',            c:'fuel', fw:'VA-6203-DK'},
+  {n:'Circle K Business',       c:'fuel', fw:'VA-6210-DK'},
+  {n:'Lyreco Erhverv',          c:'off',  fw:'VA-7009-DK'},
+  {n:'Contorland',              c:'off',  fw:'VA-7014-DK'},
+  {n:'Cramo Danmark',           c:'rent', fw:'VA-7702-DK'},
+  {n:'GSV Materieludlejning',   c:'rent', fw:'VA-7708-DK'},
+  {n:'Riwal Lifting',           c:'rent', fw:'VA-7715-DK'},
+  {n:'DSV Road',                c:'frg',  fw:'VA-8301-DK'},
+  {n:'GLS Erhverv',             c:'frg',  fw:'VA-8306-DK'},
+  {n:'Danske Fragtmænd',        c:'frg',  fw:'VA-8312-DK'},
+  {n:'Telenor Erhverv',         c:'tel',  fw:'VA-8905-DK'},
+  {n:'Dustin IT',               c:'tel',  fw:'VA-8911-DK'},
+  {n:'Ragn-Sells',              c:'site', fw:'VA-9404-DK'},
+  {n:'Marius Pedersen',         c:'site', fw:'VA-9410-DK'}
+];
+const agr = n => AGRS.find(a => a.n === n);
+
+/* logos on disk; everything else gets an initials chip */
+const LOGOS = {
+  'Stark Byggecenter': {f:'stark.jpeg', bg:'#f48222'},
+  'Bygma Framework':   {f:'bygma-logo-png_seeklogo-381076.png', bg:'#ffffff'},
+  'Ahlsell Nordic':    {f:'ahlsell.png', bg:'#ffffff'},
+  'Q8 Fuel Card':      {f:'q8.png', bg:'#ffffff'},
+  'Hilti Erhverv':     {f:'hilti.png', bg:'#d2091e'},
+  'Lyreco Erhverv':    {f:'lyreco.png', bg:'#2e2e88'}
+};
+function logoHtml(name, cls){
+  const l = LOGOS[name];
+  if(l) return `<span class="logo ${cls||''}" style="background:${l.bg}">
+    <img src="assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
+  return `<span class="logo ${cls||''}" aria-hidden="true">${esc(initials(name))}</span>`;
+}
+
+/* ---------- customer bonus: tiered on covered volume, recomputed every render ---------- */
+const BONUS_TIERS = [
+  {upTo:1e6,      rate:0.010, label:'first 1.000.000 kr. at 1,0%'},
+  {upTo:3e6,      rate:0.015, label:'1.000.000 – 3.000.000 kr. at 1,5%'},
+  {upTo:Infinity, rate:0.020, label:'above 3.000.000 kr. at 2,0%'}
+];
+function bonusBreakdown(vol){
+  let prev = 0, out = [], total = 0;
+  BONUS_TIERS.forEach(t => {
+    const band = Math.max(0, Math.min(vol, t.upTo) - prev);
+    const amt  = Math.round(band * t.rate);
+    if(band > 0){ out.push({label:t.label, band, amt}); total += amt; }
+    prev = t.upTo;
+  });
+  return {rows:out, total};
+}
+const bonusOf = vol => bonusBreakdown(vol).total;
+
+/* ---------- personas ---------- */
+const PERSONAS = {
+  bob: {
+    key:'bob', user:'Bob Iversen', company:'Nordvik Byg A/S', cvr:'31 44 08 27',
+    email:'bob.iversen@nordvikbyg.dk', erp:'e-conomic', verified:true,
+    orderOwner:'Jonas Bak, site lead'
+  },
+  fanny: {
+    key:'fanny', user:'Fanny Kristensen', company:'Kristensen Elektro ApS', cvr:'42 07 19 55',
+    email:'fanny@kristensenelektro.dk', erp:null, verified:false,
+    industry:'Electrical contracting', size:'medium', peers:148,
+    orderOwner:'Mikkel Toft, installation lead'
+  }
+};
+let P = PERSONAS.bob;
+let ACTS = [];
+let view = 'flight';
+let openId = null;
+let seq = 200;
+
+/* ---------- estimated ranges (Fanny) ---------- */
+const BAND = 0.15;
+const estLo = v => Math.round(v * (1 - BAND));
+const estHi = v => Math.round(v * (1 + BAND));
+const estRange = v => `${fmt(estLo(v))} – ${fmt(estHi(v))}`;
+
+/* ==========================================================================
+   ACTIVATIONS — a commitment with a date, a supplier who has been told,
+   internal prerequisites with owners, and an invoice-by-invoice rate check.
+   ========================================================================== */
+function taskSet(a, doneFlags){
+  const c = cat(a.catId);
+  const defs = [
+    {t:`Link account ${a.acct} to ${a.fw} in the ERP`,
+     d:`Set the discount profile on the supplier card in ${P.erp || 'the finance system'} so posted invoices are checked against the agreement rate, not the list price.`,
+     owner:`${P.user}, finance`},
+    {t:'Brief whoever places the orders',
+     d:`Every ${c.n.toLowerCase()} order must go through the business account ${a.acct}. Trade-counter and cash purchases fall outside the agreement and carry no discount.`,
+     owner:P.orderOwner},
+    {t:'File the supplier’s written confirmation',
+     d:'Keep the confirmation with the agreement. Without it there is nothing to point at when an invoice comes back at list price.',
+     owner:`${P.user}, finance`}
+  ];
+  return defs.map((d,i) => ({...d, done: !!(doneFlags && doneFlags[i])}));
+}
+
+let INVNO = 0;
+function invoice(prefix, date, expected, rate, got){
+  INVNO++;
+  return {
+    no: `${prefix}-${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(200+INVNO)}`,
+    date, base: Math.round(expected / (rate/100)), expected, got,
+    credited:false
+  };
+}
+
+function makeAct(o){
+  const c = cat(o.catId);
+  const a = {
+    id: o.id, agrName: o.agrName, catId: o.catId, promised: c.save, rate: c.rate,
+    acct: o.acct, fw: agr(o.agrName).fw,
+    committedAt: o.committedAt, eff: o.eff,
+    confirmBy: dayAdd(o.eff, 3),
+    notifiedAt: o.notifiedAt || null,
+    tasks: [], invoices: [], dispute: null,
+    orderOwner: P.orderOwner
+  };
+  a.tasks = taskSet(a, o.done);
+  return a;
+}
+
+/* Bob: five activations at five different stages, one of them a live discrepancy.
+   Invoice discounts are the real per-invoice amounts, not 1/12 of the annual
+   figure — they sum to 98.959 kr. realised and 117.359 kr. entitled, and the
+   18.400 kr. gap is the whole of the Stark deviation. */
+function seedBob(){
+  const A = [];
+  const stark = makeAct({id:'ACT-2026-0148', agrName:'Stark Byggecenter', catId:'mat',
+    acct:'88214-03', committedAt:atMonth(5,-12), eff:atMonth(5,1),
+    notifiedAt:atMonth(5,-11), done:[1,1,1]});
+  [14820, 16402, 15947, 16800].forEach((d,i) =>
+    stark.invoices.push(invoice('SB', atMonth(5-i,12), d, 9, d)));
+  /* the deviation: Stark put through a 4% price increase and invoiced at list price */
+  const bad = invoice('SB', atMonth(1,12), 18400, 9, 0);
+  bad.note = 'Invoiced at list price after a 4% price increase — agreement rate not applied.';
+  stark.invoices.push(bad);
+  stark.dispute = {state:'open', invNo:bad.no, amount:18400, sentAt:null, resolvedAt:null,
+                   raisedAt:atMonth(1,15)};
+  A.push(stark);
+
+  const hilti = makeAct({id:'ACT-2026-0151', agrName:'Hilti Erhverv', catId:'tool',
+    acct:'44190-11', committedAt:atMonth(4,-12), eff:atMonth(4,1),
+    notifiedAt:atMonth(4,-11), done:[1,1,1]});
+  [5980, 6240, 6010, 6146].forEach((d,i) =>
+    hilti.invoices.push(invoice('HI', atMonth(4-i,12), d, 11, d)));
+  A.push(hilti);
+
+  const q8 = makeAct({id:'ACT-2026-0155', agrName:'Q8 Fuel Card', catId:'fuel',
+    acct:'70552-08', committedAt:atMonth(3,-12), eff:atMonth(3,1),
+    notifiedAt:atMonth(3,-11), done:[1,1,1]});
+  [3480, 3602, 3532].forEach((d,i) =>
+    q8.invoices.push(invoice('Q8', atMonth(3-i,12), d, 8, d)));
+  A.push(q8);
+
+  /* notified, prerequisites closed, nothing invoiced yet */
+  A.push(makeAct({id:'ACT-2026-0161', agrName:'Lyreco Erhverv', catId:'off',
+    acct:'31877-02', committedAt:dayAdd(TODAY,-31), eff:dayAdd(TODAY,-24),
+    notifiedAt:dayAdd(TODAY,-30), done:[1,1,1]}));
+
+  /* youngest: supplier told, two prerequisites still open — this is where
+     activations die quietly in the current product */
+  A.push(makeAct({id:'ACT-2026-0166', agrName:'Cramo Danmark', catId:'rent',
+    acct:'52034-07', committedAt:dayAdd(TODAY,-12), eff:dayAdd(TODAY,-9),
+    notifiedAt:dayAdd(TODAY,-11), done:[1,0,0]}));
+  return A;
+}
+
+/* ---------- derived state: everything below is computed, never stored ---------- */
+const actById = id => ACTS.find(a => a.id === id);
+const openLeak = a => a.invoices.reduce((s,i) => s + (i.credited ? 0 : i.expected - i.got), 0);
+const realisedOf = a => a.invoices.reduce((s,i) => s + i.got, 0);
+const entitledOf = a => a.invoices.reduce((s,i) => s + i.expected, 0);
+const recoveredOf = a => a.invoices.reduce((s,i) => s + (i.credited ? i.expected - 0 : 0), 0);
+const prereqDone = a => a.tasks.every(t => t.done);
+
+/* the three verification states, derived from the invoices themselves */
+function vstate(a){
+  if(openLeak(a) > 0) return 'discrepancy';
+  if(a.invoices.length === 0) return 'awaiting';
+  return 'confirmed';
+}
+const VLABEL = {
+  awaiting:'Awaiting first invoice',
+  confirmed:'Confirmed — rate matched',
+  discrepancy:'Discrepancy — invoiced at old rate'
+};
+const VICON = {awaiting:CLOCK, confirmed:TICK, discrepancy:BANG};
+
+/* five-stage track: committed · supplier notified · prerequisites · first invoice · verified */
+const STAGES = ['Committed','Supplier notified','Prerequisites','First invoice','Verified'];
+function stageOf(a){
+  let i = 1;                                  // committed is always true
+  if(a.notifiedAt) i++;
+  if(prereqDone(a)) i++;
+  if(a.invoices.length) i++;
+  if(vstate(a) === 'confirmed' && a.invoices.length) i++;
+  return i;                                    // 1..5
+}
+function stageLabel(a){
+  const v = vstate(a);
+  if(v === 'discrepancy') return 'Deviation raised against the agreement';
+  if(v === 'confirmed')   return `Verified on ${a.invoices.length} invoice${a.invoices.length===1?'':'s'}`;
+  if(!prereqDone(a))     return `${a.tasks.filter(t=>!t.done).length} prerequisite(s) still open`;
+  return 'Waiting for the first invoice after the effective date';
+}
+
+/* portfolio aggregates */
+function totals(){
+  const promised  = ACTS.reduce((s,a) => s + a.promised, 0);
+  const realised  = ACTS.reduce((s,a) => s + realisedOf(a), 0);
+  const entitled  = ACTS.reduce((s,a) => s + entitledOf(a), 0);
+  const leak      = ACTS.reduce((s,a) => s + openLeak(a), 0);
+  const recovered = ACTS.reduce((s,a) => s + recoveredOf(a), 0);
+  const covered   = ACTS.reduce((s,a) => s + cat(a.catId).spend, 0);
+  const committedCats = new Set(ACTS.map(a => a.catId));
+  const open      = CATS.filter(c => !committedCats.has(c.id));
+  return {
+    promised, realised, entitled, leak, recovered, covered,
+    leaking: TOTAL_SPEND - covered,
+    openCats: open,
+    openSave: open.reduce((s,c) => s + c.save, 0),
+    bonus: bonusBreakdown(covered),
+    invChecked: ACTS.reduce((s,a) => s + a.invoices.length, 0)
+  };
+}
+
+/* ==========================================================================
+   THE SUPPLIER HANDOFF — the artefact v2 never produced.
+   ========================================================================== */
+function notifText(a){
+  const c = cat(a.catId);
+  return `To:      Key Account / Erhvervsteam — ${a.agrName}
+Cc:      ${P.email}
+Subject: Aktivering af rammeaftale ${a.fw} — ${P.company}, kundenr. ${a.acct}
+
+Dear ${a.agrName} account team,
+
+${P.company} (CVR ${P.cvr}, customer no. ${a.acct}) is activating Advantage
+framework agreement ${a.fw} with effect from ${daFull(a.eff)}.
+
+From that date, please apply the framework discount matrix — ${pct(c.rate)}% on the
+agreement assortment for ${c.n.toLowerCase()} — to every order and invoice
+raised against customer no. ${a.acct}, including standing orders, site
+deliveries and any order placed by our sites directly.
+
+Please confirm in writing by ${daFull(a.confirmBy)}:
+
+  1. that customer no. ${a.acct} is linked to framework agreement ${a.fw}
+  2. the invoice date on which the discounted rate first appears
+  3. the named contact who handles price deviations on this account
+
+Please note that we reconcile every invoice line against the agreement rate.
+An invoice raised at list price on or after ${daShort(a.eff)} will be returned
+as a price deviation under ${a.fw}, with a request for a credit note.
+
+Kind regards
+${P.user}
+${P.company}
+${P.email}
+
+Advantage activation reference ${a.id}`;
+}
+
+function disputeText(a){
+  const c = cat(a.catId);
+  const inv = a.invoices.find(i => i.no === a.dispute.invNo) || a.invoices[a.invoices.length-1];
+  return `To:      Key Account / Erhvervsteam — ${a.agrName}
+Cc:      ${P.email}
+Subject: Prisafvigelse — faktura ${inv.no}, rammeaftale ${a.fw}
+
+Dear ${a.agrName} account team,
+
+Invoice ${inv.no} of ${daFull(inv.date)}, ${fmt(inv.base)} kr. net, was raised
+at list price against customer no. ${a.acct}.
+
+Framework agreement ${a.fw}, effective ${daFull(a.eff)}, entitles
+customer no. ${a.acct} to ${pct(c.rate)}% on the agreement assortment. The
+invoice applies 0%.
+
+  Invoiced, net of VAT            ${fmt(inv.base)} kr.
+  Agreement rate                  ${pct(c.rate)}%
+  Discount due on this invoice    ${fmt(inv.expected)} kr.
+  Discount applied                0 kr.
+  Shortfall                       ${fmt(inv.expected)} kr.
+
+We request:
+
+  1. a credit note of ${fmt(inv.expected)} kr. against invoice ${inv.no}
+  2. written confirmation that customer no. ${a.acct} is correctly linked
+     to ${a.fw} before your next invoice run
+  3. confirmation that the price increase notified this quarter is applied
+     to the list price only, and not to the agreement assortment
+
+Kind regards
+${P.user}
+${P.company}
+${P.email}
+
+Advantage activation reference ${a.id}`;
+}
+
+/* clipboard with a synchronous fallback for file:// origins where the async
+   Clipboard API is unavailable */
+async function copyText(txt, btn){
+  let ok = false;
+  try { await navigator.clipboard.writeText(txt); ok = true; }
+  catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = txt; ta.setAttribute('readonly','');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch(e2){ ok = false; }
+    ta.remove();
+  }
+  const flag = btn && btn.parentElement.querySelector('.copied');
+  if(flag){
+    flag.textContent = ok ? 'Copied to clipboard' : 'Copy failed — select the text above';
+    setTimeout(() => { flag.textContent = ''; }, 4000);
+  }
+  say(ok ? 'Copied to clipboard.' : 'Copy failed. Select the text manually.');
+}
+
+/* ==========================================================================
+   SHELL
+   ========================================================================== */
+const NAV = [
+  {k:'flight', t:'Money movement', tip:'Money movement',
+   ic:'<svg viewBox="0 0 24 24" fill="none"><path d="M3 17l5-6 4 3 5-7 4 4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 21h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'},
+  {k:'ledger', t:'Promised vs realised', tip:'Promised vs realised',
+   ic:'<svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4" width="17" height="16" rx="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M8 15V9M12 15v-3M16 15v-7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>'},
+  {k:'queue',  t:'Invoice verification', tip:'Invoice verification',
+   ic:'<svg viewBox="0 0 24 24" fill="none"><path d="M6 3.5h12v17l-3-2-3 2-3-2-3 2v-17z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.5 9h5M9.5 12.5h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'},
+  {k:'commit', t:'Start an activation', tip:'Start an activation',
+   ic:'<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>'}
+];
+function renderNav(){
+  const t = totals();
+  const needs = ACTS.filter(a => vstate(a) === 'discrepancy').length
+              + ACTS.filter(a => !prereqDone(a)).length;
+  $('#nav').innerHTML = NAV.map(n => {
+    let badge = '';
+    if(n.k === 'queue' && t.leak > 0) badge = `<span class="nb bad">${ACTS.filter(a=>vstate(a)==='discrepancy').length}</span>`;
+    else if(n.k === 'flight' && needs > 0) badge = `<span class="nb">${needs}</span>`;
+    return `<button class="ni ${view===n.k?'on':''}" type="button" data-nav="${n.k}"
+      data-tip="${n.tip}" ${view===n.k?'aria-current="page"':''}>
+      <span class="nic">${n.ic}</span><span class="nt">${n.t}</span>${badge}</button>`;
+  }).join('');
+  $$('[data-nav]').forEach(b => b.addEventListener('click', () => go(b.dataset.nav)));
+}
+function renderErp(){
+  const p = $('#erpPill');
+  if(P.verified){
+    p.className = 'erp';
+    p.innerHTML = `<span class="live"></span><span class="et"><b>${P.erp} connected</b>
+      <span>${fmt(TOTAL_INV)} invoices/year</span></span>`;
+    p.setAttribute('aria-label', `${P.erp} connected — invoice verification is live`);
+  } else {
+    p.className = 'erp none';
+    p.innerHTML = `<span class="live"></span><span class="et"><b>No invoice feed</b>
+      <span>verification off</span></span>`;
+    p.setAttribute('aria-label', 'No invoice feed connected — verification is unavailable');
+  }
+}
+$('#erpPill').addEventListener('click', () => say(P.verified
+  ? `${P.erp} is connected. Every invoice from an activated supplier is checked against the agreement rate.`
+  : 'No invoice feed. Connect one to verify that activated rates actually appear on invoices.'));
+
+$('#railTog').addEventListener('click', () => {
+  const mini = $('#rail').classList.toggle('mini');
+  $('#railTog').setAttribute('aria-expanded', String(!mini));
+});
+$('#userBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#userPop').classList.toggle('on');
+  $('#userBtn').setAttribute('aria-expanded', String(on));
+});
+document.addEventListener('click', () => {
+  $('#userPop').classList.remove('on');
+  $('#userBtn').setAttribute('aria-expanded','false');
+});
+$('#userPop').addEventListener('click', e => e.stopPropagation());
+$('#restartBtn').addEventListener('click', () => location.reload());
+$('#personaBob').addEventListener('click', () => { applyPersona('bob'); go('flight'); });
+$('#personaFanny').addEventListener('click', () => { applyPersona('fanny'); go('flight'); });
+
+function applyPersona(key){
+  P = PERSONAS[key];
+  INVNO = 0;
+  ACTS = key === 'bob' ? seedBob() : [];
+  openId = null;
+  $('#userName').textContent = P.user;
+  $('#userCo').textContent   = P.company;
+  $('#userAv').textContent   = initials(P.user);
+  $('#upName').textContent   = P.user;
+  $('#upCo').textContent     = P.company;
+  renderErp();
+}
+function enterApp(){
+  document.body.classList.add('in-app');
+  $('#app').classList.add('on');
+  go('flight');
+}
+function loginAs(key){ applyPersona(key); enterApp(); }
+$('#loginBob').addEventListener('click', () => loginAs('bob'));
+$('#loginFanny').addEventListener('click', () => loginAs('fanny'));
+
+function go(v, id){
+  view = v; if(id) openId = id;
+  ['flight','detail','ledger','queue','commit'].forEach(k =>
+    $('#view' + k[0].toUpperCase() + k.slice(1)).hidden = (k !== v));
+  ({flight:renderFlight, detail:renderDetail, ledger:renderLedger,
+    queue:renderQueue, commit:renderCommit})[v]();
+  renderNav();
+  $('#canvas').scrollTop = 0;
+  const h = $('#view' + v[0].toUpperCase() + v.slice(1)).querySelector('h1');
+  if(h){ h.setAttribute('tabindex','-1'); h.focus(); }
+}
+
+/* ---------- small shared renderers ---------- */
+function trackHtml(a){
+  const at = stageOf(a), bad = vstate(a) === 'discrepancy';
+  let h = '<div class="track5" role="img" aria-label="Stage ' + at + ' of 5: ' + STAGES[at-1] + '">';
+  for(let i = 1; i <= 5; i++){
+    const done = i < at || (i === at && at === 5 && !bad);
+    const isBad = bad && i === 5;
+    h += `<span class="tn ${isBad ? 'bad' : done ? 'done' : ''} ${(!bad && i === at && at < 5) ? 'now' : ''}">${
+      isBad ? BANG : TICK}</span>`;
+    if(i < 5) h += `<span class="tl ${i < at ? 'done' : ''}"></span>`;
+  }
+  h += '</div>';
+  return `<div class="track-wrap">${h}<div class="track-lbl"><b>${esc(STAGES[at-1])}</b> · ${esc(stageLabel(a))}</div></div>`;
+}
+const vpill = v => `<span class="vstate ${v}">${VICON[v]}${VLABEL[v]}</span>`;
+
+function actRows(){
+  return `<div class="acts">` + ACTS.map(a => {
+    const v = vstate(a), r = realisedOf(a);
+    return `<button class="act" type="button" data-act="${a.id}"
+        aria-label="${esc(a.agrName)} — ${VLABEL[v]}">
+      ${logoHtml(a.agrName)}
+      <span class="act-id"><b>${esc(a.agrName)}</b>
+        <span>${esc(cat(a.catId).n)} · ${esc(a.fw)} · effective ${daShort(a.eff)}</span></span>
+      ${trackHtml(a)}
+      <span class="act-money">
+        <b>${fmt(r)}</b>
+        <span>of ${fmt(a.promised)} kr./year promised</span>
+        ${openLeak(a) > 0 ? `<span style="color:var(--sentiment-negative);font-weight:600">−${fmt(openLeak(a))} kr. leaking</span>` : ''}
+      </span>
+      <span class="act-go" aria-hidden="true">${CHEV}</span>
+    </button>`;
+  }).join('') + `</div>`;
+}
+function wireActRows(){
+  $$('[data-act]').forEach(b => b.addEventListener('click', () => go('detail', b.dataset.act)));
+}
+
+/* ==========================================================================
+   VIEW 1 · MONEY MOVEMENT
+   ========================================================================== */
+function renderFlight(){
+  const t = totals();
+  const hour = TODAY.getHours();
+  const part = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const first = P.user.split(' ')[0];
+
+  if(!ACTS.length){ renderFlightEmpty(part, first, t); return; }
+
+  const disc = ACTS.filter(a => vstate(a) === 'discrepancy');
+  const stuck = ACTS.filter(a => !prereqDone(a));
+
+  $('#viewFlight').innerHTML = `
+    <header class="hello">
+      <h1>${part}, ${esc(first)}</h1>
+      <p class="hello-p">You have <b>${ACTS.length} activations</b> in flight promising
+        <b>${fmt(t.promised)} kr.</b> a year. <b>${fmt(t.realised)} kr.</b> has actually
+        arrived on invoices so far${t.leak > 0 ? `, and <b style="color:var(--sentiment-negative)">${fmt(t.leak)} kr.</b> is leaking` : ''}.</p>
+    </header>
+
+    <section class="sec">
+      <div class="tiles">
+        <div class="tile hi"><span class="tile-l">Promised, annualised</span>
+          <span class="tile-v">${fmt(t.promised)}<small>kr.</small></span>
+          <span class="tile-u">across ${ACTS.length} activations</span></div>
+        <div class="tile"><span class="tile-l">Realised on invoices</span>
+          <span class="tile-v pos">${fmt(t.realised)}<small>kr.</small></span>
+          <span class="tile-u">${t.invChecked} invoices checked</span></div>
+        <div class="tile ${t.leak > 0 ? 'bad' : ''}"><span class="tile-l">Leaking now</span>
+          <span class="tile-v ${t.leak > 0 ? 'neg' : ''}">${t.leak > 0 ? '−' : ''}${fmt(t.leak)}<small>kr.</small></span>
+          <span class="tile-u">${t.leak > 0 ? 'invoiced at the old rate' : 'every checked invoice matched'}</span></div>
+        <div class="tile"><span class="tile-l">Customer bonus, annualised</span>
+          <span class="tile-v">${fmt(t.bonus.total)}<small>kr.</small></span>
+          <span class="tile-u">on ${fmt(t.covered)} kr. covered volume</span></div>
+        <div class="tile"><span class="tile-l">Not committed yet</span>
+          <span class="tile-v">${fmt(t.openSave)}<small>kr.</small></span>
+          <span class="tile-u">${t.openCats.length} categories, ${fmt(t.leaking)} kr. of spend</span></div>
+      </div>
+    </section>
+
+    ${(disc.length || stuck.length) ? `
+    <section class="sec" aria-labelledby="needs-h">
+      <div class="sec-h"><h2 id="needs-h">Needs you now</h2>
+        <p>Two kinds of activation failure: a supplier who did not apply the rate, and an
+          internal step nobody closed. Both end the same way — the money does not move.</p></div>
+      ${disc.map(a => {
+        const inv = a.invoices.find(i => i.no === a.dispute.invNo);
+        return `<div class="alert">
+        <span class="alert-ic">${BANG}</span>
+        <span class="alert-b"><b>${esc(a.agrName)} invoiced at list price</b>
+          <p>Invoice ${esc(inv.no)} of ${daShort(inv.date)}, ${fmt(inv.base)} kr. net, carries 0%
+            where ${esc(a.fw)} entitles you to ${pct(a.rate)}%. Shortfall
+            <span class="fig">${fmt(inv.expected)} kr.</span> on this invoice alone; they notified a
+            4% price increase this quarter and appear to have applied it to the agreement
+            assortment.</p></span>
+        <span class="alert-act"><button class="btn btn-danger btn-sm" type="button"
+          data-dispute="${a.id}">Open dispute</button></span></div>`;}).join('')}
+      ${stuck.map(a => `<div class="alert warn">
+        <span class="alert-ic">${CLOCK}</span>
+        <span class="alert-b"><b>${esc(a.agrName)} — ${a.tasks.filter(t=>!t.done).length} prerequisites open</b>
+          <p>Effective since ${daShort(a.eff)}. Until ${esc(a.tasks.find(t=>!t.done).owner)} closes
+            &ldquo;${esc(a.tasks.find(t=>!t.done).t)}&rdquo;, orders keep going through at list price and
+            the <span class="fig">${fmt(a.promised)} kr.</span> stays on paper.</p></span>
+        <span class="alert-act"><button class="btn btn-secondary btn-sm" type="button"
+          data-act="${a.id}">Open the plan</button></span></div>`).join('')}
+    </section>` : ''}
+
+    <section class="sec" aria-labelledby="fl-h">
+      <div class="sec-h"><h2 id="fl-h">Activations in flight</h2>
+        <span class="spacer"></span>
+        <span class="chip chip-soft">${fmt(t.covered)} kr. of spend covered</span></div>
+      ${actRows()}
+    </section>
+
+    <section class="sec" aria-labelledby="op-h">
+      <div class="sec-h"><h2 id="op-h">Not committed yet</h2>
+        <p>Three categories carry incremental money. The other 17 agreements in the
+          catalogue sit in categories an activation already covers — activating them adds
+          nothing, so they are not listed as opportunities.</p></div>
+      <div class="acts">
+        ${t.openCats.map(c => {
+          const cand = AGRS.find(a => a.c === c.id);
+          return `<button class="act" type="button" data-commit="${esc(cand.n)}">
+            ${logoHtml(cand.n)}
+            <span class="act-id"><b>${esc(cand.n)}</b>
+              <span>${esc(c.n)} · ${fmt(c.spend)} kr. spend at list price · ${esc(cand.fw)}</span></span>
+            <span class="track-wrap"><span class="vstate prep">Nothing sent to this supplier</span></span>
+            <span class="act-money"><b>${fmt(c.save)}</b>
+              <span>kr./year at ${pct(c.rate)}%</span></span>
+            <span class="act-go" aria-hidden="true">${CHEV}</span></button>`;
+        }).join('')}
+      </div>
+    </section>`;
+
+  wireActRows();
+  $$('[data-dispute]').forEach(b => b.addEventListener('click', () => openDispute(b.dataset.dispute)));
+  $$('[data-commit]').forEach(b => b.addEventListener('click', () => go('commit')));
+}
+
+/* Fanny: the machinery, one available commitment, and no invented progress. */
+function renderFlightEmpty(part, first, t){
+  $('#viewFlight').innerHTML = `
+    <header class="hello">
+      <h1>${part}, ${esc(first)}</h1>
+      <p class="hello-p">Nothing is activated, so there is nothing realised and no promised
+        figure to report. Here is the machinery you will be using, and the one activation
+        you can start today.</p>
+    </header>
+
+    <section class="sec" aria-labelledby="est-h">
+      <div class="sec-h"><h2 id="est-h">What is at stake</h2>
+        <span class="spacer"></span>
+        <span class="est-chip">${DASHC} Estimated</span>
+        <p>Estimated from ${P.peers} ${esc(P.industry.toLowerCase())} companies of comparable size,
+          because nothing is connected yet. Every figure is a ±15% band, not a number.
+          Connect an invoice feed and these become your own.</p></div>
+      <div class="tiles">
+        <div class="tile"><span class="tile-l">Addressable spend</span>
+          <span class="tile-v">4,1 – 5,5<small>M kr.</small></span>
+          <span class="tile-u">up to ${fmt(estHi(TOTAL_SPEND))} kr./year</span></div>
+        <div class="tile"><span class="tile-l">Saving, if activated and verified</span>
+          <span class="tile-v">up to ${fmt(estHi(376441))}<small>kr.</small></span>
+          <span class="tile-u">band ${estRange(376441)} kr./year</span></div>
+        <div class="tile"><span class="tile-l">Customer bonus</span>
+          <span class="tile-v">up to ${fmt(estHi(60656))}<small>kr.</small></span>
+          <span class="tile-u">band ${estRange(60656)} kr./year</span></div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="mach-h">
+      <div class="sec-h"><h2 id="mach-h">What an activation actually does</h2>
+        <p>An activation is not a switch. It is a dated commitment, a message to a named
+          person at the supplier, two or three internal changes, and then a rate check on
+          every invoice that follows — for as long as the agreement runs.</p></div>
+      <div class="mach">
+        ${[['Commit','You pick an effective date. Everything below is scheduled from it — day 0, day 3, day 14, day 45.'],
+           ['Tell the supplier','We generate the notification to their account team quoting the framework number, your account number and the effective date. You send it.'],
+           ['Change your side','The ERP discount profile and the person who places the orders. Named owners, or it does not happen.'],
+           ['First invoice','On the first invoice after the effective date we compare the applied rate to the agreed rate, line by line.'],
+           ['Verify, or dispute','Rate matched, or invoiced at the old rate. The second case is where we send a deviation letter and chase a credit note.']]
+          .map((s,i) => `<div class="mach-s"><span class="mn">${i+1}</span>
+            <b>${esc(s[0])}</b><p>${esc(s[1])}</p></div>`).join('')}
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="none-h">
+      <div class="sec-h"><h2 id="none-h">Activations in flight</h2></div>
+      <div class="empty"><b>0 activations</b>
+        <p>No promised figure, no realised figure, no verification history. There will be
+          nothing on this page until you commit to something and a supplier invoices you.</p></div>
+    </section>
+
+    <section class="sec" aria-labelledby="one-h">
+      <div class="sec-h"><h2 id="one-h">Available to start</h2>
+        <p>One agreement is ready to commit to: your largest category, where the framework
+          rate is known and does not depend on your invoice history.</p></div>
+      <div class="acts">
+        <button class="act" type="button" id="fannyStart">
+          ${logoHtml('Stark Byggecenter')}
+          <span class="act-id"><b>Stark Byggecenter</b>
+            <span>Building materials · VA-4471-DK · framework rate ${pct(9)}%</span></span>
+          <span class="track-wrap"><span class="vstate prep">Nothing sent to this supplier</span></span>
+          <span class="act-money"><b>up to ${fmt(estHi(191907))}</b>
+            <span>kr./year · estimated band</span></span>
+          <span class="act-go" aria-hidden="true">${CHEV}</span></button>
+      </div>
+    </section>`;
+  const b = $('#fannyStart');
+  if(b) b.addEventListener('click', () => go('commit'));
+}
+
+/* ==========================================================================
+   VIEW 2 · ACTIVATION DETAIL — the dated plan, the handoff, the prerequisites,
+   and the verification loop.
+   ========================================================================== */
+function planOf(a){
+  const v = vstate(a), firstInv = a.invoices[0], lastInv = a.invoices[a.invoices.length-1];
+  const secondWindow = dayAdd(a.eff, 45);
+  return [
+    {day:'Day 0', date:a.committedAt, state:'done',
+     t:'Committed', d:`Effective date set to ${daFull(a.eff)}. Framework agreement ${a.fw}
+        locked to account ${a.acct}, and everything below scheduled from that date.`},
+    {day:'Day 0', date:a.notifiedAt || dayAdd(a.committedAt,1),
+     state:a.notifiedAt ? 'done' : 'now',
+     t:a.notifiedAt ? 'Notification sent to the supplier' : 'Send the notification to the supplier',
+     d:a.notifiedAt
+       ? `Sent to the ${a.agrName} account team. Nobody at the supplier applies a rate they were never told about.`
+       : `Nothing has been sent yet. Until the ${a.agrName} account team has this in writing, the agreement is not in force on their side.`},
+    {day:'Day 3', date:a.confirmBy, state:prereqDone(a) ? 'done' : 'now',
+     t:'Prerequisites closed, confirmation received',
+     d:prereqDone(a)
+       ? `ERP profile set, order placers briefed, supplier confirmation filed.`
+       : `${a.tasks.filter(t=>!t.done).length} of ${a.tasks.length} internal steps still open, and the supplier’s written confirmation was due ${daShort(a.confirmBy)}.`},
+    {day:'Day 14', date:firstInv ? firstInv.date : dayAdd(a.eff,14),
+     state:firstInv ? (openLeak(a) > 0 ? 'bad' : 'done') : 'now',
+     t:firstInv ? 'First invoice checked' : 'First invoice after the effective date',
+     d:firstInv
+       ? (openLeak(a) > 0
+          ? `Invoice ${firstInv.no} onwards checked. A later invoice came back at list price — see verification below.`
+          : `Invoice ${firstInv.no}, ${fmt(firstInv.base)} kr. net, carried ${pct(a.rate)}% as agreed.`)
+       : `We check the applied rate against ${pct(a.rate)}% the moment an invoice from ${a.agrName} lands on account ${a.acct}.`},
+    {day:'Day 45', date:secondWindow,
+     state: a.invoices.length > 1 ? (openLeak(a) > 0 ? 'bad' : 'done') : 'now',
+     t:'Second invoice re-check', d:`A rate that appears once can disappear again after a price
+        revision. Every subsequent invoice is checked the same way — this is how a quiet
+        reversion gets caught instead of being discovered at year end.`}
+  ];
+}
+
+function renderDetail(){
+  const a = actById(openId);
+  if(!a){ go('flight'); return; }
+  const c = cat(a.catId), v = vstate(a), leak = openLeak(a);
+  const realised = realisedOf(a), entitled = entitledOf(a);
+  const monthly = Math.round(a.promised / 12);
+
+  $('#viewDetail').innerHTML = `
+    <div><button class="back" type="button" id="detBack">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      All activations</button></div>
+
+    <header class="det-head">
+      ${logoHtml(a.agrName)}
+      <div class="det-head-t">
+        <h1>${esc(a.agrName)}</h1>
+        <div class="det-meta">
+          <span>${esc(c.n)}</span>
+          <span>Framework <b>${esc(a.fw)}</b></span>
+          <span>Account <b>${esc(a.acct)}</b></span>
+          <span>Effective <b>${daShort(a.eff)}</b></span>
+          <span>Ref <b>${esc(a.id)}</b></span>
+        </div>
+      </div>
+      ${vpill(v)}
+    </header>
+
+    <div class="tiles">
+      <div class="tile hi"><span class="tile-l">Promised, annualised</span>
+        <span class="tile-v">${fmt(a.promised)}<small>kr.</small></span>
+        <span class="tile-u">${pct(c.rate)}% of ${fmt(c.spend)} kr. · ${fmt(monthly)} kr./month</span></div>
+      <div class="tile"><span class="tile-l">Realised on invoices</span>
+        <span class="tile-v pos">${fmt(realised)}<small>kr.</small></span>
+        <span class="tile-u">${a.invoices.length} invoices checked</span></div>
+      <div class="tile"><span class="tile-l">Entitled on those invoices</span>
+        <span class="tile-v">${fmt(entitled)}<small>kr.</small></span>
+        <span class="tile-u">what the agreement rate should have delivered</span></div>
+      <div class="tile ${leak ? 'bad' : ''}"><span class="tile-l">Gap</span>
+        <span class="tile-v ${leak ? 'neg' : ''}">${leak ? '−' : ''}${fmt(leak)}<small>kr.</small></span>
+        <span class="tile-u">${leak ? 'not credited yet' : 'no gap'}</span></div>
+    </div>
+
+    <div class="det-grid">
+      <div style="display:flex;flex-direction:column;gap:var(--s8)">
+
+        <!-- THE VERIFICATION LOOP -->
+        <section class="panel ${v === 'discrepancy' ? 'bad' : ''}" aria-labelledby="ver-h">
+          <div class="panel-h"><h3 id="ver-h">Verification</h3>${vpill(v)}</div>
+          <div class="vhero ${v}">
+            <span class="vhero-ic">${VICON[v]}</span>
+            <span class="vhero-b"><b>${VLABEL[v]}</b>
+              <p>${v === 'awaiting'
+                  ? `Nothing has been invoiced against account ${esc(a.acct)} since ${daShort(a.eff)}. The rate is unproven until an invoice arrives.`
+                  : v === 'confirmed'
+                  ? `${a.invoices.length} invoices since ${daShort(a.eff)} all carried ${pct(a.rate)}%. ${fmt(realised)} kr. of discount is money that has actually changed hands.`
+                  : `One invoice applied 0% where ${esc(a.fw)} entitles you to ${pct(a.rate)}%. ${fmt(leak)} kr. short, and it will repeat on every invoice until the supplier fixes the account link.`}</p></span>
+          </div>
+          <table class="tbl">
+            <caption>Every invoice from ${esc(a.agrName)} on account ${esc(a.acct)} since the effective date</caption>
+            <thead><tr><th scope="col">Invoice</th><th scope="col">Date</th>
+              <th scope="col">Net</th><th scope="col">Rate due</th><th scope="col">Rate applied</th>
+              <th scope="col">Discount</th><th scope="col">Result</th></tr></thead>
+            <tbody>
+              ${a.invoices.length ? a.invoices.map(i => {
+                const short = i.expected - i.got, ok = short === 0;
+                const appliedRate = i.base ? (i.got / i.base * 100) : 0;
+                return `<tr class="${(!ok && !i.credited) ? 'bad' : ''}">
+                  <td class="n">${esc(i.no)}</td><td class="n">${daShort(i.date)}</td>
+                  <td class="n">${fmt(i.base)}</td><td class="n">${pct(a.rate)}%</td>
+                  <td class="n">${pct(Math.round(appliedRate*10)/10)}%</td>
+                  <td class="n">${fmt(i.got)}</td>
+                  <td>${i.credited ? '<span style="color:var(--sentiment-positive);font-weight:600">credited</span>'
+                       : ok ? '<span style="color:var(--sentiment-positive);font-weight:600">matched</span>'
+                       : `<span style="color:var(--sentiment-negative);font-weight:700">−${fmt(short)}</span>`}</td></tr>`;
+              }).join('') : `<tr><td colspan="7" style="text-align:left;color:var(--general-muted-foreground)">
+                No invoice yet. Verification starts with the first one.</td></tr>`}
+              ${a.invoices.length ? `<tr class="tot"><td>Total</td><td></td>
+                <td class="n">${fmt(a.invoices.reduce((s,i)=>s+i.base,0))}</td><td></td><td></td>
+                <td class="n">${fmt(realised)}</td>
+                <td>${leak ? `<span style="color:var(--sentiment-negative)">−${fmt(leak)}</span>` : 'matched'}</td></tr>` : ''}
+            </tbody>
+          </table>
+          ${a.dispute && a.dispute.state !== 'resolved' ? `
+            <button class="btn btn-danger" type="button" data-dispute="${a.id}">
+              ${BANG} Open the dispute — ${fmt(a.dispute.amount)} kr.</button>` : ''}
+          ${a.dispute && a.dispute.state === 'resolved' ? `
+            <p class="note">Dispute resolved ${daShort(a.dispute.resolvedAt)} — credit note for
+              ${fmt(a.dispute.amount)} kr. received and posted. Recovered money counts as realised.</p>` : ''}
+          <div class="sim">
+            <span class="sl"><b>Prototype control</b>Advance the loop to see what happens when
+              the next invoice from ${esc(a.agrName)} arrives.</span>
+            <button class="btn btn-secondary btn-sm" type="button" data-sim-ok="${a.id}">
+              Next invoice — at agreed rate</button>
+            <button class="btn btn-secondary btn-sm" type="button" data-sim-bad="${a.id}">
+              Next invoice — at old rate</button>
+          </div>
+        </section>
+
+        <!-- THE SUPPLIER HANDOFF -->
+        <section class="panel" aria-labelledby="ho-h">
+          <div class="panel-h"><h3 id="ho-h">Supplier handoff</h3>
+            ${a.notifiedAt
+              ? `<span class="chip chip-good">${TICK} Sent ${daShort(a.notifiedAt)}</span>`
+              : `<span class="chip chip-warn">${CLOCK} Not sent</span>`}</div>
+          <p class="note">Activation is a message to a person at ${esc(a.agrName)}. This is that
+            message, pre-filled with the framework number, your account number and the effective
+            date — the three things they need to change the price on their side.</p>
+          <div class="artefact">
+            <div class="artefact-h">${COPY}<span>Notification to ${esc(a.agrName)} — account team</span></div>
+            <pre id="notifPre">${esc(notifText(a))}</pre>
+            <div class="artefact-f">
+              <button class="btn btn-primary btn-sm" type="button" id="copyNotif">${COPY} Copy notification</button>
+              ${a.notifiedAt ? '' : `<button class="btn btn-secondary btn-sm" type="button"
+                 data-sent="${a.id}">Mark as sent</button>`}
+              <span class="spacer"></span><span class="copied" role="status"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- INTERNAL PREREQUISITES -->
+        <section class="panel" aria-labelledby="pre-h">
+          <div class="panel-h"><h3 id="pre-h">Internal prerequisites</h3>
+            <span class="chip ${prereqDone(a) ? 'chip-good' : 'chip-warn'}">
+              ${a.tasks.filter(t=>t.done).length} of ${a.tasks.length} done</span></div>
+          <p class="note">The supplier applying the rate is half of it. These are the changes on
+            your side, with the person who has to make them.</p>
+          <ul class="tasks">
+            ${a.tasks.map((t,i) => `<li class="${t.done ? 'done' : ''}">
+              <button class="tk" type="button" aria-pressed="${t.done}"
+                data-task="${a.id}" data-ti="${i}"
+                aria-label="${t.done ? 'Reopen' : 'Complete'}: ${esc(t.t)}">${TICK}</button>
+              <span class="tb"><b>${esc(t.t)}</b><span>${esc(t.d)}</span>
+                <span class="owner">${PERSON}${esc(t.owner)}</span></span></li>`).join('')}
+          </ul>
+        </section>
+      </div>
+
+      <!-- THE DATED PLAN -->
+      <aside class="panel" aria-labelledby="pl-h">
+        <div class="panel-h"><h3 id="pl-h">Activation plan</h3></div>
+        <p class="note">Committed ${daFull(a.committedAt)}. Everything below is scheduled from
+          the effective date, ${daFull(a.eff)}.</p>
+        <ul class="plan">
+          ${planOf(a).map(p => `<li class="${p.state}">
+            <span class="d"><b>${p.day}</b>${daShort(p.date)}</span>
+            <span class="pip"></span>
+            <span class="pt"><b>${esc(p.t)}</b><span>${esc(p.d)}</span></span></li>`).join('')}
+        </ul>
+      </aside>
+    </div>`;
+
+  $('#detBack').addEventListener('click', () => go('flight'));
+  $('#copyNotif').addEventListener('click', e => copyText(notifText(a), e.currentTarget));
+  $$('[data-sent]').forEach(b => b.addEventListener('click', () => {
+    a.notifiedAt = new Date(TODAY);
+    say(`Notification to ${a.agrName} marked as sent.`);
+    renderDetail();
+  }));
+  $$('[data-task]').forEach(b => b.addEventListener('click', () => {
+    const t = a.tasks[+b.dataset.ti];
+    t.done = !t.done;
+    say(`${t.t} — ${t.done ? 'done' : 'reopened'}. ${a.tasks.filter(x=>x.done).length} of ${a.tasks.length} prerequisites complete.`);
+    renderDetail(); renderNav();
+  }));
+  $$('[data-dispute]').forEach(b => b.addEventListener('click', () => openDispute(b.dataset.dispute)));
+  $$('[data-sim-ok]').forEach(b => b.addEventListener('click', () => simulate(a, true)));
+  $$('[data-sim-bad]').forEach(b => b.addEventListener('click', () => simulate(a, false)));
+}
+
+/* the loop, made demonstrable: the next invoice arrives, at the agreed rate or not */
+function simulate(a, ok){
+  const expected = Math.round(a.promised / 12);
+  const prefix = a.invoices.length ? a.invoices[0].no.split('-')[0] : initials(a.agrName);
+  const inv = invoice(prefix, new Date(TODAY), expected, a.rate, ok ? expected : 0);
+  if(!ok) inv.note = 'Invoiced at list price — agreement rate not applied.';
+  a.invoices.push(inv);
+  if(!ok){
+    a.dispute = {state:'open', invNo:inv.no, amount:expected, sentAt:null,
+                 resolvedAt:null, raisedAt:new Date(TODAY)};
+    say(`Invoice ${inv.no} from ${a.agrName} arrived at the old rate. ${fmt(expected)} kr. short — discrepancy raised.`);
+  } else {
+    say(`Invoice ${inv.no} from ${a.agrName} confirmed at ${pct(a.rate)}%. ${fmt(expected)} kr. realised.`);
+  }
+  renderDetail(); renderNav();
+}
+
+/* ==========================================================================
+   THE DISPUTE PATH — review, send the deviation letter, resolve on credit note.
+   ========================================================================== */
+let dlgAct = null;
+function openDispute(id){
+  dlgAct = actById(id);
+  if(!dlgAct || !dlgAct.dispute) return;
+  $('#scrim').classList.add('on');
+  $('#dlg').classList.add('on');
+  $('#dlg').setAttribute('aria-hidden','false');
+  renderDispute();
+  setTimeout(() => $('#dlgT').focus(), 80);
+}
+function closeDispute(){
+  $('#scrim').classList.remove('on');
+  $('#dlg').classList.remove('on');
+  $('#dlg').setAttribute('aria-hidden','true');
+  dlgAct = null;
+  if(view === 'detail') renderDetail(); else if(view === 'queue') renderQueue(); else renderFlight();
+  renderNav();
+}
+$('#scrim').addEventListener('click', closeDispute);
+$('#dlgX').addEventListener('click', closeDispute);
+addEventListener('keydown', e => {
+  if(e.key === 'Escape' && $('#dlg').classList.contains('on')) closeDispute();
+});
+
+function renderDispute(){
+  const a = dlgAct, d = a.dispute, c = cat(a.catId);
+  const inv = a.invoices.find(i => i.no === d.invNo);
+  const step = d.state === 'open' ? 0 : d.state === 'sent' ? 1 : 2;
+  const names = ['Review the deviation','Deviation sent','Credit note received'];
+
+  $('#dlgSteps').innerHTML = names.map((n,i) =>
+    `<span class="s3 ${i === step ? 'on' : ''} ${i < step ? 'done' : ''}"><i></i>${n}</span>`).join('');
+  $('#dlgT').textContent = `Price deviation — ${a.agrName}`;
+  $('#dlgSub').textContent = `Invoice ${inv.no} of ${daFull(inv.date)} · framework ${a.fw}`;
+
+  $('#dlgBody').innerHTML = `
+    <div class="vhero discrepancy">
+      <span class="vhero-ic">${BANG}</span>
+      <span class="vhero-b"><b>${fmt(d.amount)} kr. short on this invoice</b>
+        <p>${esc(a.agrName)} notified a 4% price increase this quarter and applied it to the
+          agreement assortment, invoicing at list price. Account ${esc(a.acct)} either is not
+          linked to ${esc(a.fw)} on their side, or the link was dropped in the price revision.</p></span>
+    </div>
+    <dl class="kv">
+      <dt>Invoiced, net of VAT</dt><dd>${fmt(inv.base)} kr.</dd>
+      <dt>Agreement rate (${esc(a.fw)})</dt><dd>${pct(c.rate)}%</dd>
+      <dt>Discount due on this invoice</dt><dd>${fmt(inv.expected)} kr.</dd>
+      <dt>Discount applied</dt><dd>${fmt(inv.got)} kr.</dd>
+      <dt>Shortfall</dt><dd class="neg">−${fmt(d.amount)} kr.</dd>
+      <dt>Exposure if it repeats for a year</dt><dd class="neg">−${fmt(a.promised)} kr.</dd>
+    </dl>
+    ${step === 2 ? `<p class="note">Credit note received ${daFull(d.resolvedAt)} and posted against
+      invoice ${esc(inv.no)}. The ${fmt(d.amount)} kr. now counts as realised, and the next invoice
+      from ${esc(a.agrName)} is checked the same way.</p>` : `
+    <div class="artefact">
+      <div class="artefact-h">${COPY}<span>Price deviation — ${esc(a.agrName)} account team</span></div>
+      <pre>${esc(disputeText(a))}</pre>
+      <div class="artefact-f">
+        <button class="btn btn-primary btn-sm" type="button" id="copyDisp">${COPY} Copy deviation letter</button>
+        <span class="spacer"></span><span class="copied" role="status"></span>
+      </div>
+    </div>`}
+    ${step === 1 ? `<p class="note">Sent ${daFull(d.sentAt)}. Awaiting a credit note of
+      ${fmt(d.amount)} kr. and written confirmation that account ${esc(a.acct)} is linked to
+      ${esc(a.fw)}. Nothing on the next invoice is trusted until both arrive.</p>` : ''}`;
+
+  $('#dlgFoot').innerHTML =
+    step === 0 ? `<button class="btn btn-secondary" type="button" id="dlgLater">Not now</button>
+                  <button class="btn btn-danger" type="button" id="dlgSend">Mark deviation as sent</button>`
+  : step === 1 ? `<button class="btn btn-secondary" type="button" id="dlgLater">Still waiting</button>
+                  <button class="btn btn-primary" type="button" id="dlgRes">Credit note received — resolve</button>`
+  :              `<button class="btn btn-primary" type="button" id="dlgLater">Done</button>`;
+
+  const cd = $('#copyDisp');
+  if(cd) cd.addEventListener('click', e => copyText(disputeText(a), e.currentTarget));
+  $('#dlgLater').addEventListener('click', closeDispute);
+  const s = $('#dlgSend'), r = $('#dlgRes');
+  if(s) s.addEventListener('click', () => {
+    d.state = 'sent'; d.sentAt = new Date(TODAY);
+    say(`Deviation letter for invoice ${inv.no} marked as sent to ${a.agrName}.`);
+    renderDispute();
+  });
+  if(r) r.addEventListener('click', () => {
+    d.state = 'resolved'; d.resolvedAt = new Date(TODAY);
+    inv.credited = true; inv.got = inv.expected;
+    say(`Credit note of ${fmt(d.amount)} kr. from ${a.agrName} posted. Realised savings now ${fmt(totals().realised)} kr.`);
+    renderDispute(); renderNav();
+  });
+}
+
+/* ==========================================================================
+   VIEW 3 · PROMISED VS REALISED, over time, with leakage broken out
+   ========================================================================== */
+function monthSeries(n){
+  const out = [];
+  for(let m = n - 1; m >= 0; m--){
+    const d = atMonth(m, 1), key = monthKey(d);
+    let realised = 0, leak = 0;
+    ACTS.forEach(a => a.invoices.forEach(i => {
+      if(monthKey(i.date) !== key) return;
+      realised += i.got;
+      if(!i.credited) leak += i.expected - i.got;
+    }));
+    out.push({d, label:DA_S[d.getMonth()], realised, leak, current:key === MKEY_NOW});
+  }
+  return out;
+}
+
+function renderLedger(){
+  const t = totals();
+  if(!ACTS.length){
+    $('#viewLedger').innerHTML = `
+      <header class="hello"><h1>Promised vs realised</h1>
+        <p class="hello-p">Nothing has been promised, so nothing can be realised. This page
+          fills in from the first confirmed invoice.</p></header>
+      <div class="empty"><b>No history</b>
+        <p>The ledger is built from invoices, not from estimates. It stays empty until an
+          activation is committed and a supplier invoices you at the agreed rate.</p></div>`;
+    return;
+  }
+  const series = monthSeries(6);
+  const peak = Math.max(...series.map(s => s.realised + s.leak), 1);
+
+  $('#viewLedger').innerHTML = `
+    <header class="hello"><h1>Promised vs realised</h1>
+      <p class="hello-p">${fmt(t.promised)} kr. a year has been promised across
+        ${ACTS.length} activations. <b>${fmt(t.realised)} kr.</b> has been realised on
+        ${t.invChecked} invoices, against <b>${fmt(t.entitled)} kr.</b> those same invoices
+        should have carried. The difference is not rounding — it is a supplier who did not
+        apply the rate.</p></header>
+
+    <section class="sec" aria-labelledby="ch-h">
+      <div class="sec-h"><h2 id="ch-h">Realised by month</h2><span class="spacer"></span>
+        <span class="legend"><span><i class="r"></i>Realised on invoices</span>
+          <span><i class="l"></i>Leaked — invoiced at old rate</span></span></div>
+      <div class="chart" role="img" aria-label="${series.map(s =>
+        `${s.label}: ${fmt(s.realised)} kroner realised${s.leak ? `, ${fmt(s.leak)} leaked` : ''}`).join('. ')}">
+        ${series.map(s => `<div class="cbar ${(s.current && !s.realised && !s.leak) ? 'pending' : ''}">
+          <span class="stack">
+            ${s.leak ? `<span class="seg l" style="height:${(s.leak/peak*100).toFixed(1)}%"></span>` : ''}
+            <span class="seg r" style="height:${(s.realised/peak*100).toFixed(1)}%"></span>
+          </span>
+          <span class="cm">${s.label}</span></div>`).join('')}
+      </div>
+      <table class="tbl">
+        <caption>Month by month — what the checked invoices entitled you to, and what arrived</caption>
+        <thead><tr><th scope="col">Month</th><th scope="col">Entitled</th>
+          <th scope="col">Realised</th><th scope="col">Gap</th></tr></thead>
+        <tbody>
+          ${series.map(s => `<tr class="${s.leak ? 'bad' : ''}">
+            <td>${s.label} ${s.d.getFullYear()}${s.current ? ' <span class="muted">(in progress)</span>' : ''}</td>
+            <td class="n">${fmt(s.realised + s.leak)}</td><td class="n">${fmt(s.realised)}</td>
+            <td class="n">${s.leak ? `<span style="color:var(--sentiment-negative);font-weight:700">−${fmt(s.leak)}</span>` : '—'}</td></tr>`).join('')}
+          <tr class="tot"><td>Total</td><td class="n">${fmt(t.entitled)}</td>
+            <td class="n">${fmt(t.realised)}</td>
+            <td class="n">${t.leak ? `−${fmt(t.leak)}` : '—'}</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="sec" aria-labelledby="pa-h">
+      <div class="sec-h"><h2 id="pa-h">By activation</h2>
+        <p>Promised is annual and contractual. Realised is the sum of discounts that have
+          appeared on real invoices. An activation with a promise and no realised figure is
+          not a saving yet — it is an intention.</p></div>
+      <table class="tbl">
+        <thead><tr><th scope="col">Activation</th><th scope="col">Effective</th>
+          <th scope="col">Promised /year</th><th scope="col">Realised to date</th>
+          <th scope="col">Leaking</th><th scope="col">State</th></tr></thead>
+        <tbody>
+          ${ACTS.map(a => `<tr class="${openLeak(a) ? 'bad' : ''}">
+            <td>${esc(a.agrName)}<br><span class="muted" style="font-size:12px">${esc(cat(a.catId).n)}</span></td>
+            <td class="n">${daShort(a.eff)}</td><td class="n">${fmt(a.promised)}</td>
+            <td class="n">${fmt(realisedOf(a))}</td>
+            <td class="n">${openLeak(a) ? `<span style="color:var(--sentiment-negative);font-weight:700">−${fmt(openLeak(a))}</span>` : '—'}</td>
+            <td>${VLABEL[vstate(a)]}</td></tr>`).join('')}
+          <tr class="tot"><td>Total</td><td></td><td class="n">${fmt(t.promised)}</td>
+            <td class="n">${fmt(t.realised)}</td>
+            <td class="n">${t.leak ? `−${fmt(t.leak)}` : '—'}</td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="sec" aria-labelledby="bo-h">
+      <div class="sec-h"><h2 id="bo-h">Customer bonus</h2>
+        <p>Tiered on the volume actually covered by an activation — ${fmt(t.covered)} kr. of
+          ${fmt(TOTAL_SPEND)} kr. It recomputes the moment a sixth activation covers another
+          category.</p></div>
+      <div class="panel">
+        <div class="bonus">
+          ${t.bonus.rows.map(r => `<div class="bonus-row"><span>${esc(r.label)}</span>
+            <span class="spacer"></span><span class="muted">${fmt(r.band)} kr.</span>
+            <span class="bv">${fmt(r.amt)} kr.</span></div>`).join('')}
+          <div class="bonus-row tot"><span>Customer bonus, annualised</span>
+            <span class="spacer"></span><span class="bv">${fmt(t.bonus.total)} kr.</span></div>
+        </div>
+        <hr class="hr">
+        <div class="bonus">
+          <div class="bonus-row"><span>Covered by an activation</span><span class="spacer"></span>
+            <span class="bv">${fmt(t.covered)} kr.</span></div>
+          <div class="bonus-row"><span>Still bought at list price</span><span class="spacer"></span>
+            <span class="bv">${fmt(t.leaking)} kr.</span></div>
+          <div class="bonus-row tot"><span>Total spend</span><span class="spacer"></span>
+            <span class="bv">${fmt(t.covered + t.leaking)} kr.</span></div>
+        </div>
+        <hr class="hr">
+        <div class="bonus">
+          <div class="bonus-row"><span>Discount rate now under agreement, annualised</span>
+            <span class="spacer"></span><span class="bv">${fmt(t.promised)} kr.</span></div>
+          <div class="bonus-row"><span>Customer bonus on covered volume</span>
+            <span class="spacer"></span><span class="bv">${fmt(t.bonus.total)} kr.</span></div>
+          <div class="bonus-row tot"><span>Under agreement today</span><span class="spacer"></span>
+            <span class="bv">${fmt(t.promised + t.bonus.total)} kr.</span></div>
+        </div>
+        <p class="note">Of that, <b>${fmt(t.realised)} kr.</b> has actually appeared on an invoice.
+          The remaining ${fmt(t.openSave)} kr. of discount potential sits in
+          ${t.openCats.length} categories nobody has committed to — full potential across all
+          ${CATS.length} categories is ${fmt(t.promised + t.openSave)} kr.</p>
+      </div>
+    </section>`;
+}
+
+/* ==========================================================================
+   VIEW 4 · INVOICE VERIFICATION QUEUE
+   ========================================================================== */
+function renderQueue(){
+  const t = totals();
+  const rows = [];
+  ACTS.forEach(a => a.invoices.forEach(i => rows.push({a, i})));
+  rows.sort((x,y) => y.i.date - x.i.date);
+  const awaiting = ACTS.filter(a => vstate(a) === 'awaiting');
+
+  if(!ACTS.length){
+    $('#viewQueue').innerHTML = `
+      <header class="hello"><h1>Invoice verification</h1>
+        <p class="hello-p">There is nothing to verify. Verification needs two things: an
+          activation with an agreed rate, and an invoice feed to check it against.
+          ${P.verified ? '' : 'Neither is connected yet.'}</p></header>
+      <div class="empty"><b>Nothing in the queue</b>
+        <p>Once an activation is committed, every invoice from that supplier lands here and is
+          compared against the agreed rate before you ever see it on a statement.</p></div>`;
+    return;
+  }
+
+  $('#viewQueue').innerHTML = `
+    <header class="hello"><h1>Invoice verification</h1>
+      <p class="hello-p">${t.invChecked} invoices checked against the agreed rate.
+        ${t.leak ? `<b style="color:var(--sentiment-negative)">${ACTS.filter(a=>openLeak(a)>0).length} supplier(s)
+        invoiced at the old rate</b>, ${fmt(t.leak)} kr. outstanding.` : 'Every one matched.'}</p></header>
+
+    ${awaiting.length ? `<section class="sec" aria-labelledby="aw-h">
+      <div class="sec-h"><h2 id="aw-h">Awaiting a first invoice</h2>
+        <p>Activated, effective, and unproven. A rate nobody has invoiced is not yet a saving.</p></div>
+      <div class="acts">${awaiting.map(a => `<button class="act" type="button" data-act="${a.id}">
+        ${logoHtml(a.agrName)}
+        <span class="act-id"><b>${esc(a.agrName)}</b>
+          <span>effective ${daShort(a.eff)} · ${daysBetween(a.eff, TODAY)} days, no invoice</span></span>
+        <span class="track-wrap">${vpill('awaiting')}</span>
+        <span class="act-money"><b>${fmt(a.promised)}</b><span>kr./year unproven</span></span>
+        <span class="act-go" aria-hidden="true">${CHEV}</span></button>`).join('')}</div>
+    </section>` : ''}
+
+    <section class="sec" aria-labelledby="q-h">
+      <div class="sec-h"><h2 id="q-h">Checked invoices</h2><span class="spacer"></span>
+        <span class="chip chip-soft">newest first</span></div>
+      <table class="tbl">
+        <thead><tr><th scope="col">Invoice</th><th scope="col">Supplier</th><th scope="col">Date</th>
+          <th scope="col">Net</th><th scope="col">Due</th><th scope="col">Applied</th>
+          <th scope="col">Result</th><th scope="col"></th></tr></thead>
+        <tbody>
+          ${rows.map(({a,i}) => {
+            const short = i.expected - i.got;
+            return `<tr class="${(short > 0 && !i.credited) ? 'bad' : ''}">
+              <td class="n">${esc(i.no)}</td><td>${esc(a.agrName)}</td>
+              <td class="n">${daShort(i.date)}</td><td class="n">${fmt(i.base)}</td>
+              <td class="n">${fmt(i.expected)}</td><td class="n">${fmt(i.got)}</td>
+              <td>${i.credited ? '<span style="color:var(--sentiment-positive);font-weight:600">credited</span>'
+                   : short === 0 ? '<span style="color:var(--sentiment-positive);font-weight:600">matched</span>'
+                   : `<span style="color:var(--sentiment-negative);font-weight:700">−${fmt(short)}</span>`}</td>
+              <td>${(short > 0 && !i.credited)
+                   ? `<button class="btn btn-danger btn-sm" type="button" data-dispute="${a.id}">Dispute</button>`
+                   : `<button class="linkbtn" type="button" data-act="${a.id}">Open</button>`}</td></tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </section>`;
+  wireActRows();
+  $$('[data-dispute]').forEach(b => b.addEventListener('click', () => openDispute(b.dataset.dispute)));
+}
+
+/* ==========================================================================
+   VIEW 5 · COMMIT — the step v2 replaced with a toast
+   ========================================================================== */
+let commitPick = null;
+function commitCandidates(){
+  const taken = new Set(ACTS.map(a => a.catId));
+  if(!P.verified) return [agr('Stark Byggecenter')];
+  return CATS.filter(c => !taken.has(c.id)).map(c => AGRS.find(a => a.c === c.id));
+}
+function renderCommit(){
+  const cands = commitCandidates();
+  if(!cands.length){
+    $('#viewCommit').innerHTML = `
+      <header class="hello"><h1>Start an activation</h1>
+        <p class="hello-p">Every category with incremental money is already committed. The
+          remaining agreements sit in categories an activation covers, so activating them
+          would add 0 kr.</p></header>
+      <div class="empty"><b>Nothing left worth committing to</b>
+        <p>Your effort is better spent on the verification queue than on the catalogue.</p></div>`;
+    return;
+  }
+  if(!commitPick || !cands.some(c => c.n === commitPick)) commitPick = cands[0].n;
+  const picked = agr(commitPick), pc = cat(picked.c);
+  const nextFirst = new Date(TODAY.getFullYear(), TODAY.getMonth()+1, 1);
+  const taken = new Set(ACTS.map(a => a.catId));
+  const alternates = AGRS.filter(a => taken.has(a.c));
+
+  $('#viewCommit').innerHTML = `
+    <header class="hello"><h1>Start an activation</h1>
+      <p class="hello-p">Committing sets an effective date and generates the plan: the
+        notification to the supplier, the internal prerequisites with owners, and the invoice
+        date from which we check the rate. It is not a toast.</p></header>
+
+    <div class="commit">
+      <section class="sec" aria-labelledby="pk-h">
+        <div class="sec-h"><h2 id="pk-h">What are you committing to?</h2></div>
+        <div class="pick">
+          ${cands.map(a => { const c = cat(a.c); return `
+            <button class="pick-o" type="button" data-pick="${esc(a.n)}"
+              aria-pressed="${a.n === commitPick}">
+              ${logoHtml(a.n)}
+              <span class="pb"><b>${esc(a.n)}</b>
+                <span>${esc(c.n)} · ${esc(a.fw)} · ${pct(c.rate)}% on the assortment</span></span>
+              <span class="pv"><b>${P.verified ? fmt(c.save) : 'up to ' + fmt(estHi(c.save))}</b>
+                <span>kr./year${P.verified ? '' : ' · estimated'}</span></span>
+            </button>`; }).join('')}
+        </div>
+        ${alternates.length ? `<div class="dead"><b>${alternates.length} other agreements are not listed.</b>
+          They cover categories an existing activation already discounts
+          (${[...taken].map(id => esc(cat(id).n.toLowerCase())).join(', ')}). Committing to a second
+          agreement in the same category moves no additional money, so it is not an
+          opportunity — it is an alternative supplier, and it belongs in a supplier list, not here.</div>` : ''}
+        ${P.verified ? '' : `<div class="dead"><b>Only one agreement can be committed to today.</b>
+          The rest need your invoice history to fix a rate and an account number to quote.
+          Showing them as opportunities with estimated figures would be a promise we cannot
+          verify later.</div>`}
+      </section>
+
+      <section class="panel" aria-labelledby="cf-h">
+        <div class="panel-h"><h3 id="cf-h">The commitment</h3></div>
+        <div class="fgrp"><label class="flabel" for="cEff">Effective date</label>
+          <span class="fin"><input id="cEff" type="date" value="${iso(nextFirst)}" min="${iso(TODAY)}"></span>
+          <span class="fhint">Day 0 of the plan. Suppliers apply rates from a date, not from a
+            click — pick the start of a billing period.</span></div>
+        <div class="fgrp"><label class="flabel" for="cAcct">Your account number with ${esc(picked.n)}</label>
+          <span class="fin"><input id="cAcct" type="text" value="${P.verified ? '61408-05' : '20551-01'}"
+            inputmode="numeric" autocomplete="off"></span>
+          <span class="fhint">Quoted in the notification. Without it the supplier cannot link
+            the framework agreement to anything.</span></div>
+        <div class="fgrp"><label class="flabel" for="cOwner">Who places the orders?</label>
+          <span class="fin"><input id="cOwner" type="text" value="${esc(P.orderOwner)}" autocomplete="off"></span>
+          <span class="fhint">They get the prerequisite that stops orders going through outside
+            the account. This is where most activations quietly fail.</span></div>
+        <hr class="hr">
+        <dl class="kv">
+          <dt>Framework agreement</dt><dd>${esc(picked.fw)}</dd>
+          <dt>Rate on the assortment</dt><dd>${pct(pc.rate)}%</dd>
+          <dt>Spend in scope</dt><dd>${fmt(pc.spend)} kr./year</dd>
+          <dt>Promised, annualised</dt><dd>${P.verified ? fmt(pc.save) : 'up to ' + fmt(estHi(pc.save))} kr.</dd>
+          <dt>Customer bonus after this</dt><dd>${fmt(bonusOf(totals().covered + pc.spend))} kr.</dd>
+        </dl>
+        <button class="btn btn-primary btn-block" type="button" id="cGo">Commit and generate the plan</button>
+        <p class="note">You will get a dated plan, a notification to copy, and three
+          prerequisites with named owners. Nothing is sent automatically.</p>
+      </section>
+    </div>`;
+
+  $$('[data-pick]').forEach(b => b.addEventListener('click', () => {
+    commitPick = b.dataset.pick; renderCommit();
+  }));
+  $('#cGo').addEventListener('click', () => {
+    const effVal = $('#cEff').value;
+    const parts = effVal ? effVal.split('-').map(Number) : null;
+    const eff = parts ? new Date(parts[0], parts[1]-1, parts[2], 9) : new Date(nextFirst);
+    const acctVal = $('#cAcct').value.trim() || '00000-00';
+    const ownerVal = $('#cOwner').value.trim() || P.orderOwner;
+    P.orderOwner = ownerVal;
+    const a = makeAct({
+      id:`ACT-${TODAY.getFullYear()}-0${seq++}`, agrName:picked.n, catId:picked.c,
+      acct:acctVal, committedAt:new Date(TODAY), eff, notifiedAt:null, done:[0,0,0]
+    });
+    ACTS.push(a);
+    say(`${picked.n} committed, effective ${daFull(eff)}. Plan generated — the supplier has not been told yet.`);
+    commitPick = null;
+    go('detail', a.id);
+  });
+}
+
+/* ---------- boot ---------- */
+applyPersona('bob');
+renderErp();
+</script>
+</body>
+</html>

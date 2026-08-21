@@ -1,0 +1,2478 @@
+<!doctype html>
+<!--
+  ADVANTAGE V2 — APPROACH A · "THE DIAGNOSTIC LEDGER"
+
+  THESIS
+  Advantage is not a catalogue of supplier deals, it is a standing financial diagnosis: one
+  canonical page showing where the company's money is escaping and how much has been caught
+  back. Both a connected customer and a brand-new one see the identical layout, section order
+  and wording — only the confidence of the figures differs — so nobody is shown an empty state
+  or held behind a data gate to reach the real product.
+
+  FOR
+  Danish SMB owners in construction and trades (Bob Iversen · Nordvik Byg A/S, connected;
+  Fanny Kristensen · Kristensen Elektro ApS, nothing connected) plus the Visma advisor sitting
+  beside them who has to defend every number out loud.
+
+  THE THREE FEATURES THAT CARRY IT
+  1. Identical layout, different confidence. One page for both accounts. Bob's figures are
+     invoice-verified and exact; Fanny's are ±bands with a visible method line naming sector,
+     headcount, region and the 148-company peer set. Upload/connect is offered as SHARPENING
+     (it narrows her bands live), never as a toll gate.
+  2. The covered-vs-leaking diagnosis as the hero. A proportional hand-drawn flow of all
+     4.820.000 kr. of annual spend splitting into what an agreement covers and what escapes,
+     with the money each side returns or withholds attached to it. Activating an agreement
+     visibly moves volume from leaking to covered and moves the caught figure with it.
+  3. A category ledger ranked by GAP, not by size. Office supplies (205.000 kr., 19% gap)
+     outranks building materials (2.132.300 kr., 9% gap). Rows expand IN PLACE — the totals
+     never leave the screen — revealing benchmark logic, suppliers and matched agreements,
+     each carrying its own figure and confidence marker so provenance survives the zoom.
+
+  DELIBERATELY LEFT OUT
+  No subscription, fee or renewal story anywhere — money comes back two ways only, invoice
+  discount and customer bonus. No onboarding wizard, no working search, no saving-assistant
+  conversation, no separate Suppliers/Reports pages (the rail scrolls this one page), no
+  dark mode, no fabricated PDF export or e-signature.
+
+  VISUAL SYSTEM
+  Tokens, app shell, login screen and components are the existing Advantage design system
+  from advantage-v2-visual.html — deliberately unchanged. What differs is the information
+  design, not the identity.
+
+  ARITHMETIC RECONCILES LIVE — see the audit strip at the foot of the page.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — Financial diagnosis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&display=swap">
+<style>
+/* ==========================================================================
+   Advantage Design System — tokens copied verbatim from advantage-v2-visual.html
+   Semantic tokens only. No raw hex in components.
+   NOTE: there is deliberately no --s5/--s7/--s9/--s10. An unresolved var() kills
+   the whole declaration silently, so in-between values use var(--s5,20px).
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+
+  --sidebar-border:#e0e0e0;
+  --sidebar-foreground:#1c1c1c;
+
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  /* 8pt spacing scale */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+
+  --hairline:#ececec;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  --t-slow:.5s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{
+  font-family:var(--font-body);background:var(--surface);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-5xl);letter-spacing:-1.2px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+table{border-collapse:collapse;width:100%}
+
+/* ---------- buttons (shared scale with the app) ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active:not([disabled]){transform:translateY(1px)}
+.btn[disabled]{cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover:not([disabled]){background:#1553bb}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border)}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3);height:36px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.btn-dark{background:var(--general-foreground);color:var(--surface);border-radius:var(--rounded-full)}
+.btn-dark:hover{background:#2e2e2e}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs)}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.4}
+.chip svg{width:12px;height:12px}
+.chip-rec{background:var(--general-primary);color:var(--general-primary-foreground)}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-warn{background:#fff2e0;color:#a35c00}
+.chip-good{background:#d9f2ef;color:var(--sentiment-positive)}
+.chip-leak{background:#ffece2;color:#c23c00}
+.est-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground);font-size:11px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase}
+.est-chip svg{width:11px;height:11px}
+.est-chip.ver{background:#d9f2ef;color:var(--sentiment-positive)}
+.est-chip.mod{background:var(--brand-ice);color:var(--general-primary)}
+
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-sm)}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:var(--text-xs);font-weight:600;
+  letter-spacing:.02em;color:var(--general-primary)}
+.eyebrow i{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--general-primary);
+  flex:0 0 auto}
+.lead{font-size:var(--text-lg);color:var(--general-muted-foreground);line-height:1.55;
+  max-width:52ch;margin-top:var(--s3)}
+.tinyfoot{margin-top:var(--s6);font-size:var(--text-xs);color:#8f8f8f;text-align:center}
+
+/* ==========================================================================
+   1 · LOGIN  — same pattern as advantage-v2-visual.html #s-login
+   ========================================================================== */
+.flow{min-height:100vh;display:flex;flex-direction:column}
+.stage{flex:1 1 auto;display:flex;flex-direction:column}
+.scr{display:none;flex:1 1 auto}
+.scr.on{display:flex;flex-direction:column}
+.scr.on.mid{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;align-content:center;
+  padding:var(--s12) var(--s6)}
+.scr.on>*{animation:rise var(--t-slow) both;min-width:0}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.login{width:400px;max-width:100%;text-align:center}
+.login .mark{height:40px;width:auto;margin:0 auto var(--s8);display:block}
+.login h1{font-size:var(--text-5xl);letter-spacing:-2px}
+.login .lead{font-size:var(--text-base);margin:var(--s3) auto 0;max-width:34ch;text-align:center}
+.login .card{margin-top:var(--s12);padding:var(--s8);text-align:left}
+.login-choice{display:flex;flex-direction:column;gap:var(--s3)}
+.login-persona{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  cursor:pointer;text-align:left;transition:var(--t-fast)}
+.login-persona:hover,.login-persona:focus-visible{border-color:var(--general-border);background:var(--brand-ice)}
+.login-persona-av{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.login-persona:hover .login-persona-av{background:var(--surface)}
+.login-persona-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.login-persona-txt b{font-size:var(--text-sm);font-weight:600}
+.login-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+.login-persona-go{flex:0 0 auto;width:16px;height:16px;color:#a3a3a3;transition:color var(--t-fast)}
+.login-persona:hover .login-persona-go,.login-persona:focus-visible .login-persona-go{color:var(--general-primary)}
+.login-lbl{display:block;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);
+  margin-bottom:var(--s3)}
+
+/* ==========================================================================
+   2 · APP SHELL — banner, rounded white wrapper, rail, canvas
+   ========================================================================== */
+body.in-app{background:var(--brand-midnight);overflow:hidden}
+body.in-app .flow{display:none}
+.app{display:none;flex-direction:column;height:100vh;height:100dvh}
+.app.on{display:flex;animation:rise var(--t-slow) both}
+
+.banner{flex:1 1 auto;width:100%;min-width:0;display:flex;align-items:center;gap:var(--s4);
+  min-height:46px;padding:var(--s2) calc(var(--s6) + 40px) var(--s2) var(--s6);
+  color:#dce6fb;font-size:var(--text-sm)}
+.banner b{color:var(--surface);font-weight:600}
+.btitle{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;color:var(--surface);font-weight:600}
+.btitle svg{width:14px;height:14px;opacity:.65}
+.banner .btxt{flex:1 1 auto;min-width:0;text-align:center}
+.bcta{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;height:28px;
+  padding:0 var(--s3);border:none;border-radius:var(--rounded-sm);cursor:pointer;
+  background:var(--general-primary);color:#fff;font-size:13px;font-weight:600;
+  white-space:nowrap;transition:background var(--t-fast)}
+.bcta:hover{background:#1553bb}
+.bcta svg{width:13px;height:13px}
+.bannerwrap{position:relative;display:flex;justify-content:center;flex:0 0 auto}
+.bannerwrap .bx{position:absolute;top:50%;right:var(--s6);transform:translateY(-50%);
+  width:28px;height:28px;display:grid;place-items:center;background:none;border:none;cursor:pointer;
+  color:#8fa3c9;border-radius:var(--rounded-full);transition:var(--t-fast)}
+.bannerwrap .bx:hover{background:#ffffff1f;color:var(--surface)}
+.bannerwrap .bx svg{width:14px;height:14px}
+
+.wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--surface);
+  border-radius:var(--rounded-2xl) var(--rounded-2xl) 0 0;overflow:hidden;
+  box-shadow:0 -1px 0 #ffffff1a,var(--shadow-xl)}
+
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:68px;padding:0 var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.appbar .brand{display:flex;align-items:center;flex:0 0 auto}
+.appbar .brand img{height:28px;width:auto;display:block}
+.appbar .spacer{flex:1}
+.search{position:relative;display:flex;align-items:center;gap:var(--s2);min-width:0;width:min(460px,42vw);
+  height:42px;padding:0 var(--s3) 0 var(--s4);background:#f7f8fa;border:1px solid transparent;
+  border-radius:var(--rounded-full);transition:var(--t-fast)}
+.search:hover{background:var(--general-muted)}
+.search:focus-within{background:var(--surface);border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
+.search svg{width:17px;height:17px;color:var(--general-muted-foreground);flex:0 0 auto}
+.search input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:var(--text-sm)}
+.search input::placeholder{color:#8f8f8f}
+.search kbd{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
+  padding:0 5px;border-radius:var(--rounded-xs);background:var(--surface);border:1px solid var(--sidebar-border);
+  box-shadow:var(--shadow-2xs);font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground)}
+.erp{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s1) 0 var(--s3);
+  background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  box-shadow:var(--shadow-2xs);cursor:pointer;transition:var(--t-fast)}
+.erp:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.erp .live{position:relative;width:8px;height:8px;flex:0 0 auto;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive)}
+.erp .live::after{content:"";position:absolute;inset:-4px;border-radius:var(--rounded-full);
+  border:1.5px solid var(--sentiment-positive);opacity:.45;animation:pip 2.4s ease-out infinite}
+.erp.none .live{background:var(--sentiment-negative)}
+.erp.none .live::after{border-color:var(--sentiment-negative)}
+.erp.none .et b{color:var(--general-primary)}
+@keyframes pip{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.5);opacity:0}}
+.erp .et{display:flex;flex-direction:column;line-height:1.25;text-align:left}
+.erp .et b{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
+.erp .et span{font-size:13px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
+@media(max-width:1080px){.erp .et span{display:none}}
+.syncbtn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;
+  flex:0 0 auto;cursor:pointer;border:none;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--sidebar-foreground,#1c1c1c);
+  font-size:13px;font-weight:600;white-space:nowrap;transition:var(--t-fast)}
+.syncbtn:hover:not([disabled]):not(.done){background:var(--general-secondary);color:var(--general-primary)}
+.syncbtn[disabled]{cursor:default;color:var(--general-muted-foreground)}
+.syncbtn svg{width:14px;height:14px;flex:0 0 auto}
+.syncbtn.busy svg{animation:spin 900ms linear infinite}
+.syncbtn.done{background:#d9f2ef;color:var(--sentiment-positive)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:1080px){.syncbtn span{display:none}.syncbtn{padding:0 7px}}
+@media(prefers-reduced-motion:reduce){.syncbtn.busy svg{animation:none}.erp .live::after{animation:none}}
+
+.notif{position:relative;flex:0 0 auto}
+.bell{position:relative;width:38px;height:38px;display:grid;place-items:center;background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);color:var(--sidebar-foreground,#1c1c1c);
+  transition:var(--t-fast)}
+.bell:hover{background:var(--general-muted)}
+.bell.on{background:var(--brand-ice);color:var(--general-primary)}
+.bell svg{width:20px;height:20px}
+.bell .bdg{position:absolute;top:2px;right:1px;min-width:17px;height:17px;padding:0 4px;
+  border-radius:var(--rounded-full);background:var(--general-destructive);color:#fff;
+  font-size:13px;font-weight:700;line-height:17px;font-variant-numeric:tabular-nums;
+  box-shadow:0 0 0 2px var(--surface)}
+.npop{position:absolute;top:calc(100% + 10px);right:0;z-index:35;width:min(400px,calc(100vw - 32px));
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px) scale(.98);transform-origin:100% 0;
+  pointer-events:none;transition:opacity var(--t-fast),transform var(--t-fast)}
+.npop.on{opacity:1;transform:none;pointer-events:auto}
+.np-h{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s4) var(--s3)}
+.np-h b{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.np-h .spacer{flex:1}
+.np-b{max-height:min(440px,60vh);overflow-y:auto;padding-bottom:var(--s2)}
+.note{display:grid;grid-template-columns:8px 1fr auto;align-items:start;gap:var(--s3);width:100%;
+  padding:var(--s3) var(--s4);background:none;border:none;text-align:left;cursor:pointer;
+  transition:var(--t-fast)}
+.note:hover{background:#fafbfd}
+.note .dot{width:8px;height:8px;margin-top:5px;border-radius:var(--rounded-full);
+  background:var(--general-primary)}
+.note.read .dot{background:transparent}
+.note .nb{min-width:0}
+.note .nb b{display:block;font-size:var(--text-sm);font-weight:600;line-height:1.4}
+.note .nb span{display:block;margin-top:2px;font-size:13px;color:var(--general-muted-foreground)}
+.note.read .nb b{font-weight:400;color:var(--general-muted-foreground)}
+.note .nv{flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-xs);font-weight:600;
+  white-space:nowrap;color:var(--sentiment-positive)}
+.note .nv.dn{color:var(--sentiment-negative)}
+.note .nv.nu{color:var(--general-muted-foreground);font-weight:500}
+
+.userwrap{position:relative;flex:0 0 auto}
+.user{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s2);background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);transition:var(--t-fast)}
+.user:hover{background:var(--general-muted)}
+.user .uav{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;color:#fff;font-family:var(--font-sans);font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,#2170ed,#0b00ab)}
+.user .un{font-size:var(--text-xs);font-weight:600;text-align:left;line-height:1.25;white-space:nowrap}
+.user .un span{display:block;font-weight:400;color:var(--general-muted-foreground);white-space:nowrap}
+.user .uc{width:14px;height:14px;color:var(--general-muted-foreground)}
+@media(max-width:1000px){.user .un{display:none}}
+.upop{position:absolute;top:calc(100% + 8px);right:0;z-index:35;width:250px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.upop.on{opacity:1;transform:none;pointer-events:auto}
+.up-h{padding:var(--s4);border-bottom:1px solid var(--hairline)}
+.up-h b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.up-h span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:1px}
+.up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
+  background:none;border:none;cursor:pointer;text-align:left;font-size:var(--text-sm);
+  color:var(--general-foreground);transition:var(--t-fast)}
+.up-i:hover{background:var(--general-muted)}
+.up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.up-i[aria-current="true"]{background:var(--brand-ice)}
+.up-f{padding:0 var(--s4) var(--s4);font-size:13px;color:#a3a3a3}
+.up-sep{padding:var(--s3) var(--s4) var(--s1);border-top:1px solid var(--hairline);margin-top:var(--s1)}
+.up-sep span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.up-persona-av{flex:0 0 auto;width:28px;height:28px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:12px;font-weight:600}
+.up-persona-txt{display:flex;flex-direction:column;min-width:0}
+.up-persona-txt b{font-weight:600}
+.up-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+
+.appbody{flex:1 1 auto;min-height:0;display:flex}
+.rail{flex:0 0 auto;width:248px;display:flex;flex-direction:column;padding:var(--s4) var(--s3);
+  border-right:1px solid var(--hairline);transition:width var(--t)}
+.rail.mini{width:76px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-height:0}
+.ni{position:relative;display:flex;align-items:center;gap:var(--s3);width:100%;height:44px;
+  padding:0 var(--s3);background:none;border:none;cursor:pointer;border-radius:var(--rounded-md);
+  color:var(--sidebar-foreground,#1c1c1c);font-size:var(--text-sm);font-weight:500;text-align:left;
+  transition:background-color var(--t-fast),color var(--t-fast)}
+.ni:hover{background:var(--general-muted)}
+.ni.on{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
+.ni .nic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center}
+.ni .nic svg{width:20px;height:20px}
+.ni.hero .nic,.ni.hero .nic svg{width:22px;height:22px}
+.ni .nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:opacity var(--t-fast)}
+.ni .nb{flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--general-accent);color:var(--general-accent-foreground);
+  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.rail.mini .ni{justify-content:center;padding:0}
+.rail.mini .ni .nt{opacity:0;width:0;flex:0 0 0}
+.rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:13px}
+.ni.hero{height:auto;padding:var(--s3);margin-bottom:var(--s6);align-items:flex-start;
+  background:linear-gradient(160deg,#edf5ff,#f7fbff);border:1px solid var(--general-border);
+  color:var(--general-foreground)}
+.ni.hero:hover{border-color:var(--brand-cornflower);background:linear-gradient(160deg,#e4efff,#f2f8ff)}
+.ni.hero .nic{color:var(--general-primary)}
+.ni.hero .hb{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ni.hero .hb b{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
+.ni.hero .hb span{font-size:13px;color:var(--general-muted-foreground);line-height:1.4}
+.rail.mini .ni.hero{padding:0;height:44px;align-items:center;justify-content:center;
+  border-color:transparent;background:var(--brand-ice)}
+.rail.mini .ni.hero .hb{display:none}
+.rail.mini .ni::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
+  transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
+  white-space:nowrap;pointer-events:none;opacity:0;z-index:5;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.rail.mini .ni:hover::after,.rail.mini .ni:focus-visible::after{opacity:1;transform:translateY(-50%)}
+.railtog{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;height:40px;margin-top:var(--s3);
+  padding:0 var(--s3);background:none;border:none;border-top:1px solid var(--hairline);cursor:pointer;
+  color:var(--general-muted-foreground);font-size:var(--text-xs);font-weight:500;
+  border-radius:0 0 var(--rounded-md) var(--rounded-md);transition:color var(--t-fast)}
+.railtog:hover{color:var(--general-foreground)}
+.railtog svg{width:20px;height:20px;flex:0 0 auto;transition:transform var(--t)}
+.rail.mini .railtog{justify-content:center;padding:0}
+.rail.mini .railtog svg{transform:rotate(180deg)}
+.rail.mini .railtog span{display:none}
+.agent-btn{position:relative;flex:0 0 auto;display:flex;align-items:center;gap:var(--s3);width:100%;
+  padding:var(--s3);margin-bottom:var(--s3);cursor:pointer;text-align:left;
+  border:1px solid var(--general-border);border-radius:var(--rounded-md);
+  background:linear-gradient(140deg,#eef4ff,#f6fbf7 55%,#fff8f0);
+  transition:box-shadow var(--t-fast),border-color var(--t-fast),transform .1s ease}
+.agent-btn:hover{border-color:var(--brand-cornflower);box-shadow:var(--shadow-sm)}
+.agent-btn:active{transform:translateY(1px)}
+.sda{width:22px;height:22px;flex:0 0 auto;display:block}
+.agent-btn .ab{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.agent-btn .ab b{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
+.agent-btn .ab span{font-size:13px;color:var(--general-muted-foreground);white-space:nowrap}
+.rail.mini .agent-btn{justify-content:center;padding:0;height:44px}
+.rail.mini .agent-btn .ab{display:none}
+.rail.mini .agent-btn::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
+  transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
+  white-space:nowrap;pointer-events:none;opacity:0;z-index:5;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.rail.mini .agent-btn:hover::after{opacity:1;transform:translateY(-50%)}
+
+.canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--surface);scroll-behavior:smooth}
+.page{container-type:inline-size;container-name:page;
+  width:100%;max-width:1200px;margin:0 auto;padding:var(--s12) var(--s8) var(--s16);
+  display:flex;flex-direction:column;gap:var(--s12)}
+@media(max-width:760px){
+  .page{padding:var(--s8) var(--s4) var(--s12)}
+  .rail{position:absolute;z-index:10;height:100%;background:var(--surface);box-shadow:var(--shadow-lg)}
+  .appbar{padding:0 var(--s4);gap:var(--s3)}
+  .appbar .brand img{height:24px}
+  .search{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .canvas{scroll-behavior:auto}
+}
+
+/* ==========================================================================
+   3 · THE DIAGNOSTIC LEDGER — this approach's own information design,
+   built entirely from the tokens above. Hairlines, not boxes; grey trays
+   with white cards inside; pill buttons; nested radius steps down by 8px.
+   ========================================================================== */
+
+/* section frame — hairline rule + eyebrow, never a boxed panel */
+.sec{display:flex;flex-direction:column;gap:var(--s6);min-width:0}
+.sec-h{display:flex;flex-direction:column;gap:var(--s3);padding-top:var(--s4);
+  border-top:1px solid var(--hairline)}
+.sec-h.first{border-top:none;padding-top:0}
+.sec-h-r{display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap}
+.sec-h h2{flex:0 1 auto}
+.sec-h .spacer{flex:1 1 auto}
+.sec-p{font-size:var(--text-sm);line-height:1.65;color:var(--general-muted-foreground);max-width:78ch}
+.sec-p b{font-weight:600;color:var(--general-foreground)}
+.sec-p .mono{font-size:13px}
+
+/* page title + method line */
+.hello{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4)}
+.hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+.hello-p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:70ch}
+.hello-p b{font-weight:600;color:var(--general-foreground)}
+.methodline{display:flex;gap:var(--s4);align-items:flex-start;flex-wrap:wrap;width:100%;
+  padding:var(--s4) var(--s6);background:var(--brand-ice);border-radius:var(--rounded-lg)}
+.methodline.est{background:var(--general-muted)}
+.methodline-k{flex:0 0 auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);padding-top:2px}
+.methodline-v{flex:1 1 420px;min-width:0;font-size:var(--text-xs);line-height:1.75;
+  color:var(--general-muted-foreground)}
+.methodline-v b{color:var(--general-foreground);font-weight:600}
+.methodline-v em{font-style:normal;font-weight:600;color:var(--general-primary)}
+
+/* grey tray + white cards (the .nc-ov pattern) */
+.tray{display:flex;flex-direction:column;gap:var(--s2);
+  padding:var(--s2);border-radius:var(--rounded-2xl);background:var(--brand-ice)}
+.tray.warm{background:#fff1e8}
+.tray-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2)}
+.tray-grid.two{grid-template-columns:repeat(2,1fr)}
+.tcard{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s6);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:var(--shadow-xs);min-width:0}
+@media(max-width:720px){.tray-grid,.tray-grid.two{grid-template-columns:1fr}}
+.tcard-l{min-height:20px;font-size:16px;color:var(--general-muted-foreground);
+  display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.tcard-v{min-height:44px;display:flex;flex-wrap:wrap;align-items:baseline;
+  font-family:var(--font-sans);font-size:var(--text-4xl);font-weight:800;letter-spacing:-1px;
+  color:var(--general-foreground);font-variant-numeric:tabular-nums}
+.tcard-v small{margin-left:4px;font-size:var(--text-base);font-weight:600;
+  color:var(--general-muted-foreground);letter-spacing:0}
+.tcard-v.band{font-size:var(--text-2xl);letter-spacing:-.6px}
+.tcard-v.pos{color:var(--sentiment-positive)}
+.tcard-v.neg{color:var(--sentiment-negative)}
+.tcard-f{font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
+
+/* hero — claim + proportional flow, side by side inside the tray */
+.hero-card{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,1fr);gap:var(--s8);
+  align-items:start}
+@container page (max-width:820px){.hero-card{grid-template-columns:minmax(0,1fr)}}
+.hero-claim{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
+.hero-claim .k{font-size:16px;color:var(--general-muted-foreground)}
+.hero-figure{font-family:var(--font-sans);font-size:var(--text-5xl);font-weight:800;letter-spacing:-2px;
+  line-height:1;color:var(--sentiment-negative);font-variant-numeric:tabular-nums}
+.hero-figure.band{font-size:var(--text-3xl);letter-spacing:-1px}
+.hero-claim p{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground);max-width:46ch}
+.hero-claim p b{color:var(--general-foreground);font-weight:600}
+.hero-flow{min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+.hero-flow svg{display:block;width:100%;height:auto}
+.flow-note{font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
+
+/* the split bar — primary readout of the diagnosis */
+.splitcard{display:flex;flex-direction:column;gap:var(--s3)}
+.split-bar{display:flex;height:60px;border-radius:var(--rounded-md);overflow:hidden;
+  background:var(--general-muted)}
+.split-seg{position:relative;display:flex;flex-direction:column;justify-content:center;
+  padding:0 var(--s4);overflow:hidden;min-width:0;
+  transition:flex-basis var(--t-slow)}
+.split-cov{background:linear-gradient(120deg,#009689,#04b3a2);color:#fff}
+.split-leak{background:repeating-linear-gradient(135deg,#ffe3d3 0 8px,#ffd6c1 8px 16px);
+  color:#a83400}
+.split-seg .sv{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;letter-spacing:-.4px;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.split-seg .sk{font-size:13px;white-space:nowrap;opacity:.92}
+.split-key{display:flex;gap:var(--s6);flex-wrap:wrap;font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.split-key div{display:flex;align-items:center;gap:var(--s2)}
+.split-key i{width:12px;height:12px;border-radius:3px;flex:0 0 auto}
+.split-key .kc{background:var(--sentiment-positive)}
+.split-key .kl{background:repeating-linear-gradient(135deg,#ffe3d3 0 4px,#ffd6c1 4px 8px)}
+.split-key b{font-family:var(--font-mono);color:var(--general-foreground);font-weight:600}
+/* recovery bar — second, explicitly different scale */
+.rec-bar{display:flex;height:32px;border-radius:var(--rounded-sm);overflow:hidden;
+  background:var(--general-muted)}
+.rec-seg{display:flex;align-items:center;padding:0 var(--s3);overflow:hidden;min-width:0;
+  transition:flex-basis var(--t-slow);font-size:13px;font-weight:600;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.rec-got{background:var(--sentiment-positive);color:#fff}
+.rec-left{background:var(--general-secondary);color:#123f8f}
+
+/* sharpen block */
+.sharpen{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s6);
+  border:1px solid var(--general-border);border-radius:var(--rounded-xl);background:var(--brand-ice)}
+.sharpen-h{display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap}
+.sharpen-h h3{font-size:var(--text-base)}
+.sharpen p{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground);max-width:80ch}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3)}
+@media(max-width:820px){.steps{grid-template-columns:1fr}}
+.step{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s4);background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);box-shadow:var(--shadow-xs)}
+.step.done{background:#f6fbfa;border-color:#bfe6e1}
+.step .sn{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.step.done .sn{color:var(--sentiment-positive)}
+.step b{font-size:var(--text-sm);font-weight:600}
+.step p{font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
+.step .btn{margin-top:auto}
+.band-meter{display:flex;align-items:center;gap:var(--s3);padding-top:var(--s4);
+  border-top:1px solid var(--general-border);flex-wrap:wrap}
+.band-meter .bl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);flex:0 0 auto}
+.band-track{flex:1 1 120px;height:10px;border-radius:var(--rounded-full);background:var(--surface);
+  border:1px solid var(--general-border);position:relative;min-width:80px}
+.band-fill{position:absolute;top:-1px;bottom:-1px;left:50%;transform:translateX(-50%);
+  border-radius:var(--rounded-full);background:var(--brand-cornflower);
+  transition:width var(--t-slow)}
+.band-v{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:600;
+  color:var(--general-primary);flex:0 0 auto}
+
+/* ---------- category ledger: gap-ranked rows that expand in place ---------- */
+.cl{display:flex;flex-direction:column}
+.cl-head{display:grid;grid-template-columns:34px minmax(140px,1.4fr) 130px 170px 130px 104px 26px;
+  gap:var(--s3);align-items:center;padding:0 var(--s4) var(--s2);
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);border-bottom:1px solid var(--sidebar-border)}
+.cl-head .r{text-align:right}
+.cl-item{border-bottom:1px solid var(--hairline)}
+.cl-row{display:grid;grid-template-columns:34px minmax(140px,1.4fr) 130px 170px 130px 104px 26px;
+  gap:var(--s3);align-items:center;width:100%;padding:var(--s4);background:none;border:none;
+  cursor:pointer;text-align:left;border-radius:var(--rounded-md);transition:background var(--t-fast)}
+.cl-row:hover{background:#fafbfd}
+.cl-item.open .cl-row{background:var(--brand-ice)}
+.cl-rank{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;
+  color:var(--general-muted-foreground)}
+.cl-item.open .cl-rank{color:var(--general-primary)}
+.cl-name{min-width:0}
+.cl-name b{display:block;font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+  letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-name span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:1px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-num{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;text-align:right;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.cl-num.q{font-weight:500;color:var(--general-muted-foreground)}
+.cl-num.pos{color:var(--sentiment-positive)}
+.cl-num.neg{color:var(--sentiment-negative)}
+.gapbar{display:flex;align-items:center;gap:var(--s3)}
+.gapbar-t{flex:1 1 auto;height:8px;border-radius:var(--rounded-full);background:var(--general-muted);
+  min-width:40px;overflow:hidden}
+.gapbar-f{display:block;height:100%;border-radius:var(--rounded-full);
+  background:var(--sentiment-negative);transition:width var(--t-slow)}
+.cl-item.covered .gapbar-f{background:var(--sentiment-positive)}
+.gapbar-v{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700;width:40px;
+  text-align:right;flex:0 0 auto}
+.cl-chev{width:20px;height:20px;justify-self:end;color:var(--general-muted-foreground);
+  transition:transform var(--t-fast)}
+.cl-item.open .cl-chev{transform:rotate(90deg);color:var(--general-primary)}
+@media(max-width:1080px){
+  .cl-head,.cl-row{grid-template-columns:28px minmax(120px,1.3fr) 110px 140px 110px 24px}
+  .cl-head .h-st,.cl-row .c-st{display:none}
+}
+@media(max-width:760px){
+  .cl-head{display:none}
+  .cl-row{grid-template-columns:26px minmax(0,1fr) 104px;row-gap:var(--s2)}
+  .cl-row .c-spend{display:none}
+  .cl-row .c-gap{grid-column:2/4}
+  .cl-chev{display:none}
+}
+.cl-exp{display:none;padding:0 var(--s4) var(--s6)}
+.cl-item.open .cl-exp{display:block;animation:unfold var(--t) both}
+@keyframes unfold{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.exp-grid{display:grid;grid-template-columns:minmax(240px,1fr) minmax(280px,1.3fr);gap:var(--s3)}
+@media(max-width:940px){.exp-grid{grid-template-columns:minmax(0,1fr)}}
+.exp-col{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
+.ebox{border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  box-shadow:var(--shadow-xs);overflow:hidden}
+.ebox>h4{padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline);background:#fafbfd;
+  font-family:var(--font-body);font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.ebox>div{padding:var(--s4)}
+.calc-row{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s4);
+  padding:var(--s2) 0;border-bottom:1px solid var(--hairline);font-size:var(--text-sm)}
+.calc-row:last-child{border-bottom:none}
+.calc-row>span{color:var(--general-muted-foreground)}
+.calc-row b{font-family:var(--font-mono);font-weight:600;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.calc-row.eq{border-top:2px solid var(--general-foreground);border-bottom:none;
+  margin-top:var(--s2);padding-top:var(--s3)}
+.calc-row.eq>span{color:var(--general-foreground);font-weight:600}
+.calc-row.eq b{color:var(--sentiment-positive)}
+.enote{font-size:13px;line-height:1.6;color:var(--general-muted-foreground);margin-top:var(--s3)}
+.sup-list{display:flex;flex-wrap:wrap;gap:var(--s2);margin-bottom:var(--s4)}
+.sup{padding:4px 10px;border-radius:var(--rounded-full);background:var(--general-muted);
+  font-size:13px;color:var(--general-foreground)}
+
+/* agreement rows inside an expansion — the .cat-agr-row / .agr-card-go pattern */
+.agr-row{display:grid;grid-template-columns:40px minmax(0,1fr) 116px auto;gap:var(--s3);
+  align-items:center;padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline)}
+.agr-row:last-child{border-bottom:none}
+.agr-row.rec{background:#fafbfd}
+.agr-logo{width:40px;height:40px;border:1px solid var(--hairline);border-radius:var(--rounded-sm);
+  display:grid;place-items:center;overflow:hidden;flex:0 0 auto;background:var(--surface)}
+.agr-logo img{max-width:80%;max-height:68%;object-fit:contain;display:block}
+.agr-logo b{font-family:var(--font-sans);font-size:var(--text-xs);font-weight:700;color:#fff}
+.agr-id{min-width:0;display:flex;flex-direction:column;gap:2px}
+.agr-id b{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.agr-id .sub{font-size:13px;color:var(--general-muted-foreground);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.agr-id .meta{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;margin-top:2px}
+.agr-n{text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.agr-n small{display:block;font-family:var(--font-body);font-size:11px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--general-muted-foreground);margin-top:2px}
+.agr-n .delta{display:block;font-size:11px;font-weight:600;margin-top:2px}
+.agr-act{display:flex;gap:var(--s2);justify-content:flex-end;flex-wrap:wrap}
+@media(max-width:820px){
+  .agr-row{grid-template-columns:36px minmax(0,1fr) 104px;row-gap:var(--s2)}
+  .agr-act{grid-column:1/4;justify-content:flex-start}
+}
+
+/* ---------- term sheet ---------- */
+.ts{overflow:hidden}
+.ts-top{display:flex;gap:var(--s4);align-items:flex-start;flex-wrap:wrap;padding:var(--s6);
+  border-bottom:1px solid var(--hairline);background:#fafbfd}
+.ts-logo{width:56px;height:56px;border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  display:grid;place-items:center;overflow:hidden;background:var(--surface);flex:0 0 auto}
+.ts-logo img{max-width:80%;max-height:68%;object-fit:contain}
+.ts-logo b{font-family:var(--font-sans);font-size:var(--text-base);font-weight:700;color:#fff}
+.ts-id{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+.ts-id h3{font-size:var(--text-xl);letter-spacing:-.5px}
+.ts-id p{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.ts-fig{flex:0 0 auto;text-align:right;display:flex;flex-direction:column;gap:var(--s1)}
+.ts-fig .k{font-size:13px;color:var(--general-muted-foreground)}
+.ts-fig .v{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;letter-spacing:-1px;
+  color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.ts-fig .v.band{font-size:var(--text-xl);letter-spacing:-.5px}
+.ts-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.ts-cell{padding:var(--s4) var(--s6);border-bottom:1px solid var(--hairline);
+  border-left:1px solid var(--hairline);display:flex;flex-direction:column;gap:var(--s2)}
+.ts-cell:first-child{border-left:none}
+.ts-cell .k{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.ts-cell p{font-size:var(--text-sm);line-height:1.55}
+.ts-cell .q{font-size:13px;color:var(--general-muted-foreground)}
+.ts-sec{padding:var(--s6);display:flex;flex-direction:column;gap:var(--s4)}
+.ts-sec+.ts-sec{border-top:1px solid var(--hairline)}
+.ts-sec>h4{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);font-family:var(--font-body)}
+.tiers{border:1px solid var(--hairline);border-radius:var(--rounded-lg);overflow:hidden}
+.tiers th,.tiers td{padding:var(--s3) var(--s4);text-align:left;font-size:var(--text-sm);
+  border-bottom:1px solid var(--hairline)}
+.tiers tr:last-child td{border-bottom:none}
+.tiers th{background:#fafbfd;font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.tiers td.n{text-align:right;font-family:var(--font-mono);font-weight:700;
+  font-variant-numeric:tabular-nums}
+.tiers tr.here td{background:var(--brand-ice)}
+.tiers .q{color:var(--general-muted-foreground);font-size:13px}
+.getgive{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);overflow:hidden}
+.gg{padding:var(--s4) var(--s6);display:flex;flex-direction:column;gap:var(--s3)}
+.gg+.gg{border-left:1px solid var(--hairline);background:#fafbfd}
+@media(max-width:640px){.gg+.gg{border-left:none;border-top:1px solid var(--hairline)}}
+.gg h5{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.gg ul{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+.gg li{display:flex;gap:var(--s3);font-size:var(--text-sm);line-height:1.5;
+  color:var(--general-muted-foreground)}
+.gg li i{flex:0 0 auto;width:18px;height:18px;margin-top:1px;display:grid;place-items:center;
+  border-radius:var(--rounded-full);font-family:var(--font-sans);font-size:12px;font-weight:700;
+  font-style:normal}
+.gg-get li i{background:#d9f2ef;color:var(--sentiment-positive)}
+.gg-give li i{background:#fff2e0;color:#a35c00}
+.impl{list-style:none;display:flex;flex-direction:column}
+.impl li{display:grid;grid-template-columns:28px minmax(0,1fr) 132px 150px;gap:var(--s4);
+  padding:var(--s3) 0;border-bottom:1px solid var(--hairline);align-items:baseline}
+.impl li:last-child{border-bottom:none}
+.impl-no{width:24px;height:24px;border-radius:var(--rounded-full);background:var(--brand-ice);
+  color:var(--general-primary);display:grid;place-items:center;font-family:var(--font-mono);
+  font-size:12px;font-weight:700}
+.impl-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.impl-t b{font-size:var(--text-sm);font-weight:600}
+.impl-t p{font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
+.impl-m{display:flex;flex-direction:column;gap:1px}
+.impl-m .k{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.impl-m .v{font-size:13px}
+@media(max-width:760px){.impl li{grid-template-columns:28px minmax(0,1fr);row-gap:var(--s2)}
+  .impl-m{grid-column:2/3}}
+.ts-foot{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;padding:var(--s6);
+  border-top:1px solid var(--hairline);background:#fafbfd}
+.ts-foot p{flex:1 1 320px;min-width:0;font-size:13px;line-height:1.55;
+  color:var(--general-muted-foreground)}
+.ts-foot p b{color:var(--general-foreground);font-weight:600}
+
+/* ---------- signals ---------- */
+.sig-row{display:grid;grid-template-columns:92px 28px minmax(0,1fr) 132px 92px;gap:var(--s3);
+  align-items:center;padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline)}
+.sig-row:last-child{border-bottom:none}
+.sig-d{font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground)}
+.sig-i{width:28px;height:28px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  font-family:var(--font-sans);font-size:var(--text-sm);font-weight:700}
+.sig-i.up{background:#d9f2ef;color:var(--sentiment-positive)}
+.sig-i.dn{background:#ffece2;color:#c23c00}
+.sig-i.nu{background:var(--general-muted);color:var(--general-muted-foreground)}
+.sig-t{min-width:0;display:flex;flex-direction:column;gap:1px}
+.sig-t b{font-size:var(--text-sm);font-weight:600}
+.sig-t span{font-size:13px;color:var(--general-muted-foreground)}
+.sig-v{text-align:right;font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.sig-v.up{color:var(--sentiment-positive)}
+.sig-v.dn{color:var(--sentiment-negative)}
+.sig-v.nu{color:var(--general-muted-foreground);font-weight:500}
+.sig-p{text-align:right}
+@media(max-width:820px){
+  .sig-row{grid-template-columns:28px minmax(0,1fr) 104px;row-gap:var(--s1)}
+  .sig-d{grid-column:2/4;font-size:12px}
+  .sig-p{display:none}
+}
+
+/* ---------- audit ---------- */
+.audit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.audit-c{padding:var(--s4) var(--s6);border-left:1px solid var(--hairline);
+  display:flex;flex-direction:column;gap:var(--s2)}
+.audit-c:first-child{border-left:none}
+.audit-c .k{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.audit-c .eqn{font-family:var(--font-mono);font-size:13px;line-height:1.9;
+  color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.audit-c .eqn b{color:var(--general-foreground);font-weight:600}
+.audit-c .ok{color:var(--sentiment-positive);font-weight:700}
+@media(max-width:800px){.audit-c{border-left:none;border-top:1px solid var(--hairline)}
+  .audit-c:first-child{border-top:none}}
+.colophon{font-size:13px;line-height:1.75;color:var(--general-muted-foreground)}
+.colophon b{color:var(--general-foreground);font-weight:600}
+
+/* chart */
+.chart{display:flex;flex-direction:column;gap:var(--s3)}
+.chart svg{display:block;width:100%;height:auto}
+.chart-key{display:flex;gap:var(--s6);flex-wrap:wrap;font-size:13px;
+  color:var(--general-muted-foreground)}
+.chart-key div{display:flex;align-items:center;gap:var(--s2)}
+.chart-key i{width:18px;height:0;border-top:2px solid;flex:0 0 auto}
+.ledger td,.ledger th{padding:var(--s3) 0;text-align:right;font-size:var(--text-sm);
+  border-bottom:1px solid var(--hairline);vertical-align:baseline}
+.ledger th{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);border-bottom-color:var(--sidebar-border)}
+.ledger th:first-child,.ledger td:first-child{text-align:left}
+.ledger td:first-child{color:var(--general-muted-foreground)}
+.ledger td.v{font-family:var(--font-mono);font-weight:700;color:var(--general-foreground);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.ledger td.v.pos{color:var(--sentiment-positive)}
+.ledger td.v.neg{color:var(--sentiment-negative)}
+.ledger td small{display:block;font-size:12px;color:var(--general-muted-foreground);
+  font-weight:400;margin-top:2px}
+.ledger tr.tot td{border-bottom:2px solid var(--general-foreground);
+  border-top:1px solid var(--sidebar-border);font-weight:700;padding-top:var(--s4)}
+.ledger tr.tot td:first-child{color:var(--general-foreground);font-weight:600}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:var(--s6);transform:translate(-50%,160%);z-index:60;
+  display:flex;align-items:center;gap:var(--s3);max-width:min(720px,92vw);
+  padding:var(--s3) var(--s6);border-radius:var(--rounded-full);
+  background:var(--brand-midnight);color:#e8eefb;font-size:var(--text-sm);
+  box-shadow:var(--shadow-xl);transition:transform var(--t)}
+.toast.on{transform:translate(-50%,0)}
+.toast b{font-family:var(--font-mono);font-weight:700;color:#5fe0c6;white-space:nowrap}
+.toast .q{color:#93a6cc}
+@media(max-width:640px){.toast{flex-wrap:wrap;border-radius:var(--rounded-lg)}}
+</style>
+</head>
+<body>
+
+<div class="flow">
+  <main class="stage">
+
+  <!-- ==================== 1 · LOGIN ==================== -->
+  <section class="scr on mid" id="s-login" aria-labelledby="h-login">
+    <div class="login">
+      <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+      <h1 id="h-login">Welcome</h1>
+      <p class="lead">Your invoices already know where the money is going. Choose an account to sign in and we'll read them.</p>
+
+      <div class="card login-choice">
+        <span class="login-lbl">Sign in as</span>
+        <button class="login-persona" id="loginBob" type="button">
+          <span class="login-persona-av">BI</span>
+          <span class="login-persona-txt">
+            <b>Bob Iversen</b>
+            <span>Nordvik Byg A/S · existing customer, all data connected</span>
+          </span>
+          <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="login-persona" id="loginFanny" type="button">
+          <span class="login-persona-av">FK</span>
+          <span class="login-persona-txt">
+            <b>Fanny Kristensen</b>
+            <span>Kristensen Elektro ApS · new customer, no data yet</span>
+          </span>
+          <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="tinyfoot">Prototype — both accounts open the same diagnosis, laid out identically.
+        Only the confidence of the figures differs. Switch account any time from the account menu.</p>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<!-- ==================== 2 · APP SHELL ==================== -->
+<div class="app" id="app">
+
+  <div class="bannerwrap" id="bannerwrap">
+    <div class="banner" role="status">
+      <span class="btitle"><span id="bannerTitle">Diagnosis</span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+      </span>
+      <span class="btxt" id="bannerTxt"></span>
+      <button class="bcta" id="bannerGo"><span id="bannerGoTxt">Show me</span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <button class="bx" id="bannerX" aria-label="Dismiss">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="wrap">
+
+    <header class="appbar">
+      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="spacer"></span>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <input id="appSearch" type="search" placeholder="Search suppliers, agreements, invoices…" aria-label="Search">
+        <kbd>⌘</kbd><kbd>K</kbd>
+      </div>
+      <span class="spacer"></span>
+      <button class="erp" id="erpPill"></button>
+      <div class="notif">
+        <button class="bell" id="bellBtn" aria-label="Notifications" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5a6 6 0 1112 0c0 4.7 1.9 5.7 1.9 5.7H4.1S6 14.2 6 9.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 004 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <span class="bdg" id="bellBadge">0</span>
+        </button>
+        <div class="npop" id="npop" role="region" aria-label="Notifications">
+          <div class="np-h"><b>Signals</b><span class="spacer"></span>
+            <button class="linkbtn" id="npAll">Mark all read</button></div>
+          <div class="np-b" id="npBody"></div>
+        </div>
+      </div>
+      <div class="userwrap">
+        <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
+          <span class="uav" id="userAv">BI</span>
+          <span class="un"><span id="userName">Bob Iversen</span><span id="userCo">Nordvik Byg A/S</span></span>
+          <svg class="uc" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="upop" id="userPop" role="region" aria-label="Account">
+          <div class="up-h"><b id="upName">Bob Iversen</b><span id="upCo">Nordvik Byg A/S</span></div>
+          <div class="up-sep"><span>Switch account</span></div>
+          <button class="up-i up-persona" id="personaBob">
+            <span class="up-persona-av">BI</span>
+            <span class="up-persona-txt"><b>Bob Iversen</b><span>Existing customer · all data connected</span></span>
+          </button>
+          <button class="up-i up-persona" id="personaFanny">
+            <span class="up-persona-av">FK</span>
+            <span class="up-persona-txt"><b>Fanny Kristensen</b><span>New customer · no data yet</span></span>
+          </button>
+          <div class="up-sep"><span></span></div>
+          <button class="up-i" id="signOutBtn">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 12H4M8 8l-4 4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 4h6a2 2 0 012 2v12a2 2 0 01-2 2h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Sign out</button>
+          <p class="up-f">The layout does not change when you switch — only the confidence of the numbers.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="appbody">
+      <nav class="rail" id="rail" aria-label="Main">
+        <button class="agent-btn" id="agentBtn" data-tip="Saving assistant" aria-expanded="false">
+          <img class="sda" src="assets/sda-mark.svg" alt="">
+          <span class="ab"><b>Saving assistant</b><span>Ask it anything</span></span>
+        </button>
+        <div class="nav" id="nav"></div>
+        <button class="railtog" id="railTog" aria-label="Collapse navigation" aria-expanded="true">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-6 7 6 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Collapse</span>
+        </button>
+      </nav>
+
+      <main class="canvas" id="canvas">
+        <div class="page">
+
+          <!-- greeting + method line -->
+          <section class="hello" id="sec-top">
+            <h1 id="pageTitle" tabindex="-1">Financial diagnosis</h1>
+            <p class="hello-p" id="pageSub"></p>
+            <div class="methodline" id="methodline">
+              <span class="methodline-k">Method</span>
+              <span class="methodline-v" id="methodText"></span>
+            </div>
+          </section>
+
+          <!-- 01 · the diagnosis (hero) -->
+          <section class="sec" id="sec-diagnosis" aria-labelledby="h-diag">
+            <header class="sec-h first">
+              <span class="eyebrow"><i></i>01 · The diagnosis</span>
+              <div class="sec-h-r"><h2 id="h-diag">Where the money goes, and what escapes</h2></div>
+              <p class="sec-p" id="diagNote"></p>
+            </header>
+
+            <div class="tray">
+              <div class="tcard hero-card">
+                <div class="hero-claim" id="heroClaim"></div>
+                <div class="hero-flow">
+                  <span class="tcard-l" style="min-height:0">Flow of annual supplier spend</span>
+                  <div id="flow"></div>
+                  <p class="flow-note" id="flowNote"></p>
+                </div>
+              </div>
+
+              <div class="tcard splitcard">
+                <span class="tcard-l" id="splitLbl"></span>
+                <div class="split-bar" id="splitBar" role="img">
+                  <div class="split-seg split-cov" id="segCov">
+                    <span class="sv" id="segCovV"></span><span class="sk" id="segCovK"></span>
+                  </div>
+                  <div class="split-seg split-leak" id="segLeak">
+                    <span class="sv" id="segLeakV"></span><span class="sk" id="segLeakK"></span>
+                  </div>
+                </div>
+                <div class="split-key" id="splitKey"></div>
+                <span class="tcard-l" style="min-height:0;margin-top:var(--s2)">Caught against still on the table — a different scale: the recoverable money only</span>
+                <div class="rec-bar" id="recBar" role="img">
+                  <div class="rec-seg rec-got" id="recGot"></div>
+                  <div class="rec-seg rec-left" id="recLeft"></div>
+                </div>
+                <p class="flow-note" id="recNote"></p>
+              </div>
+
+              <div class="tray-grid" id="diagFigsA"></div>
+              <div class="tray-grid" id="diagFigsB"></div>
+            </div>
+
+            <div id="sharpenSlot"></div>
+          </section>
+
+          <!-- 02 · value captured -->
+          <section class="sec" id="sec-value" aria-labelledby="h-val">
+            <header class="sec-h">
+              <span class="eyebrow"><i></i>02 · Value captured</span>
+              <div class="sec-h-r"><h2 id="h-val">What the covered side actually returns</h2></div>
+              <p class="sec-p" id="valNote"></p>
+            </header>
+            <div class="card" style="padding:var(--s6);display:grid;grid-template-columns:minmax(260px,.85fr) minmax(280px,1.15fr);gap:var(--s8)" id="valGrid">
+              <div style="display:flex;flex-direction:column;gap:var(--s3);min-width:0">
+                <span class="tcard-l" id="valLbl"></span>
+                <div id="valBig"></div>
+                <p class="flow-note" id="valClaim"></p>
+                <div id="valFrame"></div>
+              </div>
+              <div style="min-width:0;display:flex;flex-direction:column;gap:var(--s8)">
+                <table class="ledger">
+                  <caption class="sr">Value returned — invoice discounts and customer bonus</caption>
+                  <thead><tr><th scope="col">Line</th><th scope="col">Amount</th><th scope="col">Basis</th></tr></thead>
+                  <tbody id="valBody"></tbody>
+                </table>
+                <div class="chart">
+                  <span class="tcard-l" style="min-height:0" id="chartLbl"></span>
+                  <div id="chart"></div>
+                  <div class="chart-key">
+                    <div><i style="border-color:#009689"></i> Invoice discount realised (cumulative)</div>
+                    <div><i style="border-color:#ff9b3d;border-top-style:dotted"></i> Customer bonus accruing</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 03 · category ledger -->
+          <section class="sec" id="sec-categories" aria-labelledby="h-cat">
+            <header class="sec-h">
+              <span class="eyebrow"><i></i>03 · Category ledger</span>
+              <div class="sec-h-r"><h2 id="h-cat">Ranked by gap, not by size</h2>
+                <span class="spacer"></span>
+                <button class="linkbtn" id="expandAll">Open every row</button></div>
+              <p class="sec-p">
+                Rank is the distance above the negotiated group rate — not the size of the spend.
+                Office supplies is the smallest line on this page at <span class="mono">205.000&nbsp;kr.</span>
+                and still ranks first, because you pay <span class="mono">19%</span> over the group rate there,
+                while building materials at <span class="mono">2.132.300&nbsp;kr.</span> is only
+                <span class="mono">9%</span> over. A gap is the part you can actually recover; size only tells
+                you how loud it is. <b>Open a row to see the benchmark logic, the suppliers behind it and the
+                matched agreements</b> — the totals above stay on screen.
+              </p>
+            </header>
+            <div class="cl">
+              <div class="cl-head" aria-hidden="true">
+                <div>Rank</div><div>Category</div><div class="r">Annual spend</div>
+                <div>Gap vs group rate</div><div class="r">Recoverable</div>
+                <div class="h-st">Status</div><div></div>
+              </div>
+              <div id="clRows"></div>
+            </div>
+          </section>
+
+          <!-- 04 · term sheet -->
+          <section class="sec" id="sec-agreements" aria-labelledby="h-ts" hidden>
+            <header class="sec-h">
+              <span class="eyebrow"><i></i>04 · Term sheet</span>
+              <div class="sec-h-r"><h2 id="h-ts" tabindex="-1">Agreement terms &amp; implementation</h2>
+                <span class="spacer"></span>
+                <button class="btn btn-secondary btn-sm" id="tsClose">Close term sheet</button></div>
+            </header>
+            <div id="termSheet"></div>
+          </section>
+
+          <!-- 05 · signals -->
+          <section class="sec" id="sec-signals" aria-labelledby="h-sig">
+            <header class="sec-h">
+              <span class="eyebrow"><i></i>05 · Signals</span>
+              <div class="sec-h-r"><h2 id="h-sig">What changed, and what it did to the diagnosis</h2></div>
+              <p class="sec-p" id="sigNote"></p>
+            </header>
+            <div class="card" style="overflow:hidden" id="sigRows"></div>
+          </section>
+
+          <!-- audit -->
+          <section class="sec" id="sec-audit" aria-labelledby="h-aud">
+            <header class="sec-h">
+              <span class="eyebrow"><i></i>06 · Audit</span>
+              <div class="sec-h-r"><h2 id="h-aud">Every total on this page reconciles</h2></div>
+              <p class="sec-p">Recomputed on every activation, account switch and sharpening step. If a
+                figure anywhere above disagreed with another, it would show up here as a failed check.</p>
+            </header>
+            <div class="card" style="overflow:hidden"><div class="audit-grid" id="audit"></div></div>
+            <p class="colophon" id="colophon"></p>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODEL — every displayed total is derived from this data by function, so the
+   page cannot contradict itself after an activation, an account switch or a
+   sharpening step.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const CATALOGUE = 24;
+const MONTHS = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+const MONTHS_ELAPSED = 12;
+
+/* Customer bonus, tiered on volume routed through active agreements:
+   1,0% of the first 1.000.000 · 1,5% from 1–3M · 2,0% above 3M            */
+const BONUS_TIERS = [
+  {upTo:1000000, rate:0.010},
+  {upTo:3000000, rate:0.015},
+  {upTo:Infinity, rate:0.020}
+];
+function bonusOn(volume){
+  let from = 0, total = 0;
+  for (const t of BONUS_TIERS){
+    const slice = Math.max(0, Math.min(volume, t.upTo) - from);
+    total += slice * t.rate;
+    from = t.upTo;
+    if (volume <= t.upTo) break;
+  }
+  return total;
+}
+function bonusBreakdown(volume){
+  const out = []; let from = 0;
+  for (const t of BONUS_TIERS){
+    const slice = Math.max(0, Math.min(volume, t.upTo) - from);
+    if (slice > 0) out.push({
+      band: from === 0 ? 'first ' + fmt(t.upTo)
+            : (t.upTo === Infinity ? 'above ' + fmt(from) : fmt(from) + '–' + fmt(t.upTo)),
+      rate:t.rate, slice, amount:slice*t.rate
+    });
+    from = t.upTo;
+    if (volume <= t.upTo) break;
+  }
+  return out;
+}
+
+/* The 8 categories. `rate` IS the gap versus the group rate, so the array order
+   below is already the gap ranking — office supplies first, smallest spend.   */
+const CATS = [
+  {id:'off', name:'Office supplies', spend:205000, rate:.19, saving:38950,
+   suppliers:5, invoices:62, itemised:true, idx:119,
+   note:'Five suppliers and no framework price. Toner and paper carry the whole gap: you buy at list on a six-week cycle while the group list is repriced quarterly.'},
+  {id:'tool', name:'Tools & workwear', spend:664800, rate:.11, saving:73128,
+   suppliers:11, invoices:178, itemised:true, idx:111,
+   note:'Eleven suppliers for one need. Consumables — bits, blades, anchors — are bought over the counter at branch price, which sits 11% above the framework line.'},
+  {id:'mat', name:'Building materials', spend:2132300, rate:.09, saving:191907,
+   suppliers:18, invoices:424, itemised:true, idx:109,
+   note:'Largest line, tightest gap — you already negotiate well here. The residual 9% is timber and plasterboard bought off-contract at branch level.'},
+  {id:'fuel', name:'Fuel & transport', spend:530700, rate:.08, saving:42456,
+   suppliers:5, invoices:223, itemised:true, idx:108,
+   note:'42.800 litres a year across five card issuers. The group rate is a fixed øre/litre rebate off list, applied at the pump — no reclaim admin.'},
+  {id:'frg', name:'Freight & delivery', spend:328800, rate:.08, saving:26304,
+   suppliers:4, invoices:168, itemised:false, idx:108,
+   note:'Delivery is invoiced per drop by the merchant rather than under a carrier agreement, so every pallet pays retail freight.'},
+  {id:'rent', name:'Machine & equipment rental', spend:500000, rate:.06, saving:30000,
+   suppliers:6, invoices:96, itemised:false, idx:106,
+   note:'Day rates are close to group already; the gap is long hire periods billed at day rate instead of the weekly tier.'},
+  {id:'tel', name:'Telecom & IT', spend:290400, rate:.05, saving:14520,
+   suppliers:3, invoices:48, itemised:false, idx:105,
+   note:'Mobile and site broadband on legacy per-seat pricing. Hardware is bought ad hoc rather than on the IT framework.'},
+  {id:'site', name:'Site services & waste', spend:168000, rate:.04, saving:6720,
+   suppliers:3, invoices:85, itemised:false, idx:104,
+   note:'Container hire and disposal are near group rate already. Smallest recoverable line on the page — correctly ranked last.'}
+];
+
+const LOGOS = {
+  stark:{img:'assets/company-logos/stark.jpeg', bg:'#f48222'},
+  bygma:{img:'assets/company-logos/bygma-logo-png_seeklogo-381076.png', bg:'#ffffff'},
+  ahlsell:{img:'assets/company-logos/ahlsell.png', bg:'#ffffff'},
+  q8:{img:'assets/company-logos/q8.png', bg:'#ffffff'},
+  hilti:{img:'assets/company-logos/hilti.png', bg:'#d2091e'},
+  lyreco:{img:'assets/company-logos/lyreco.png', bg:'#2e2e88'}
+};
+
+/* Agreements. Within a category they are mutually exclusive routings of that
+   category's volume — activating one routes the whole category, which is what
+   makes the covered/leaking split and the bonus tier reconcile.               */
+const AGS = [
+  {id:'stark', cat:'mat', name:'Stark Byggecenter', logo:'stark', rec:true, saving:191907, live:1,
+   sub:'Framework · builders merchant · 214 branches',
+   valid:'01.09.2025 – 31.08.2027', notice:'3 months, written, to either party',
+   parties:'Nordvik Byg A/S (customer) · Stark Danmark A/S (supplier) · Visma Advantage Nordic (negotiating party)',
+   excl:'Special-order joinery, hire equipment, and any item already on a project-specific quotation.',
+   tiers:[{band:'0 – 750.000 kr./yr', d:'6,0%', note:'entry line'},
+          {band:'750.000 – 1.500.000 kr./yr', d:'8,0%', note:''},
+          {band:'1.500.000 – 2.500.000 kr./yr', d:'9,0%', note:'your volume'},
+          {band:'above 2.500.000 kr./yr', d:'11,5%', note:'next tier'}],
+   hereTier:2,
+   get:['9,0% off the Stark trade list on every invoice line, applied automatically at the till and in webshop checkout.',
+        'Volume counts toward the annual customer bonus, currently in the 2,0% tier.',
+        'Quarterly price file with 14 days notice before any list change.',
+        'Named account manager and a fixed 48-hour dispute window on wrong pricing.'],
+   must:['Buy on the Nordvik account number, not on cash or a private card — off-account purchases fall outside the agreement.',
+         'Keep 60% or more of materials volume with Stark for the tier to hold at renewal.',
+         'Settle within 30 days net; late settlement suspends the discount for that month.'],
+   steps:[{t:'Confirm the account link',d:'1 day',o:'Bob (owner)',x:'Advantage sends Stark your CVR and account number; Stark flags the account as framework-priced.'},
+          {t:'Discount file activated at Stark',d:'2–3 days',o:'Stark account team',x:'The 9,0% line discount is loaded against your account in Stark ERP. No action from you.'},
+          {t:'Verify on the first invoice',d:'at next delivery',o:'Advantage (automatic)',x:'Advantage reads the next Stark invoice from Visma.net and confirms the line discount landed.'},
+          {t:'Tell the site foremen',d:'15 minutes',o:'Bob (owner)',x:'The only operational change: always quote the account number at the counter.'}]},
+  {id:'bygma', cat:'mat', name:'Bygma Framework', logo:'bygma', rec:false, saving:172716,
+   sub:'Framework · builders merchant · alternative routing',
+   valid:'01.01.2026 – 31.12.2027', notice:'3 months, written',
+   parties:'Nordvik Byg A/S · Bygma Gruppen A/S · Visma Advantage Nordic',
+   excl:'Timber futures pricing, project quotations, and rental.',
+   tiers:[{band:'0 – 1.000.000 kr./yr', d:'5,5%', note:''},
+          {band:'1.000.000 – 2.500.000 kr./yr', d:'8,1%', note:'your volume'},
+          {band:'above 2.500.000 kr./yr', d:'9,4%', note:'next tier'}], hereTier:1},
+  {id:'ahlsell', cat:'mat', name:'Ahlsell Nordic', logo:'ahlsell', rec:false, saving:159923,
+   sub:'Framework · technical wholesale', valid:'01.03.2026 – 28.02.2028', notice:'2 months, written',
+   parties:'Nordvik Byg A/S · Ahlsell Danmark ApS · Visma Advantage Nordic',
+   excl:'Ventilation plant and project-specific fabrication.',
+   tiers:[{band:'0 – 1.000.000 kr./yr', d:'5,0%', note:''},
+          {band:'1.000.000 – 3.000.000 kr./yr', d:'7,5%', note:'your volume'},
+          {band:'above 3.000.000 kr./yr', d:'9,0%', note:''}], hereTier:1},
+  {id:'optimera', cat:'mat', name:'Optimera Erhverv', logo:null, rec:false, saving:149261,
+   sub:'Framework · builders merchant', valid:'01.02.2026 – 31.01.2028', notice:'3 months, written',
+   parties:'Nordvik Byg A/S · Optimera Danmark A/S · Visma Advantage Nordic',
+   excl:'Doors and windows on configured order.',
+   tiers:[{band:'0 – 1.500.000 kr./yr', d:'5,0%', note:''},
+          {band:'above 1.500.000 kr./yr', d:'7,0%', note:'your volume'}], hereTier:1},
+  {id:'saintg', cat:'mat', name:'Saint-Gobain Frame', logo:null, rec:false, saving:138600,
+   sub:'Framework · insulation & boards', valid:'01.01.2026 – 31.12.2026', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Saint-Gobain Denmark A/S · Visma Advantage Nordic',
+   excl:'Everything outside insulation, plasterboard and render systems.',
+   tiers:[{band:'0 – 800.000 kr./yr', d:'4,0%', note:''},
+          {band:'above 800.000 kr./yr', d:'6,5%', note:'your volume'}], hereTier:1},
+
+  {id:'hilti', cat:'tool', name:'Hilti Erhverv', logo:'hilti', rec:true, saving:73128, live:3,
+   sub:'Framework · power tools, fixings, service',
+   valid:'01.11.2025 – 31.10.2027', notice:'3 months, written',
+   parties:'Nordvik Byg A/S · Hilti Danmark A/S · Visma Advantage Nordic',
+   excl:'Fleet Management subscriptions, training courses, and repairs outside warranty.',
+   tiers:[{band:'0 – 250.000 kr./yr', d:'7,0%', note:''},
+          {band:'250.000 – 600.000 kr./yr', d:'9,5%', note:''},
+          {band:'600.000 – 1.000.000 kr./yr', d:'11,0%', note:'your volume'},
+          {band:'above 1.000.000 kr./yr', d:'14,0%', note:'next tier'}],
+   hereTier:2,
+   get:['11,0% off list on tools, consumables and fixings, on the invoice — no rebate to claim.',
+        'Free tool service and calibration for the agreement period.',
+        '24-hour replacement loan on any tool sent for repair.',
+        'Consumables ordered on the account ship next day at no freight charge.'],
+   must:['Order on the account, including counter sales at Hilti Center.',
+         'Register tools to the company, not to individual fitters, so service cover applies.',
+         'Two named orderers only — this is where the 11% otherwise leaks back out.'],
+   steps:[{t:'Nominate two orderers',d:'same day',o:'Bob (owner)',x:'Advantage submits the two names; Hilti binds the framework price to those logins.'},
+          {t:'Price file loaded',d:'2 days',o:'Hilti account team',x:'11,0% discount applied across webshop, app and counter.'},
+          {t:'Register existing tools',d:'30–45 minutes',o:'Site lead',x:'Scan tool QR codes in the Hilti app to bring the current fleet under service cover.'},
+          {t:'Verify on invoice',d:'at next order',o:'Advantage (automatic)',x:'Advantage reads the next Hilti invoice and confirms the discount line.'}]},
+  {id:'wurth', cat:'tool', name:'Würth Nordic', logo:null, rec:false, saving:59832,
+   sub:'Framework · fixings, consumables, van stock', valid:'01.02.2026 – 31.01.2028', notice:'2 months, written',
+   parties:'Nordvik Byg A/S · Würth Danmark A/S · Visma Advantage Nordic',
+   excl:'ORSY van racking hardware and installation.',
+   tiers:[{band:'0 – 400.000 kr./yr', d:'6,0%', note:''},
+          {band:'above 400.000 kr./yr', d:'9,0%', note:'your volume'}], hereTier:1},
+  {id:'strauss', cat:'tool', name:'Engelbert Strauss', logo:null, rec:false, saving:46536,
+   sub:'Framework · workwear & PPE', valid:'01.01.2026 – 31.12.2027', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Engelbert Strauss GmbH · Visma Advantage Nordic',
+   excl:'Custom embroidery and logo setup fees.',
+   tiers:[{band:'0 – 150.000 kr./yr', d:'5,0%', note:''},
+          {band:'above 150.000 kr./yr', d:'7,0%', note:'your volume'}], hereTier:1},
+
+  {id:'q8', cat:'fuel', name:'Q8 Fuel Card', logo:'q8', rec:true, saving:42456, live:6,
+   sub:'Framework · fuel card · 260 stations in Denmark',
+   valid:'01.02.2026 – 31.01.2028', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Q8 Danmark A/S (Kuwait Petroleum) · Visma Advantage Nordic',
+   excl:'Shop purchases, car wash, AdBlue in canister, and refuelling abroad.',
+   tiers:[{band:'0 – 20.000 litres/yr', d:'5,0%', note:''},
+          {band:'20.000 – 60.000 litres/yr', d:'8,0%', note:'your volume · 42.800 l'},
+          {band:'above 60.000 litres/yr', d:'9,5%', note:'next tier'}],
+   hereTier:1,
+   get:['8,0% off pump price as a fixed øre/litre rebate, applied on the card statement.',
+        'One consolidated monthly invoice with a per-vehicle breakdown, posted straight into Visma.net.',
+        'Driver and vehicle level reporting — litres per van, per month.',
+        'Cards replaced within 3 working days if lost.'],
+   must:['Refuel at Q8 or F24 stations; other brands fall outside the rebate.',
+         'One card per vehicle, PIN protected, no shared cards.',
+         'Keep at least 20.000 litres a year on the card to hold the tier.'],
+   steps:[{t:'Order the cards',d:'1 day',o:'Bob (owner)',x:'Vehicle registrations submitted; one card issued per van.'},
+          {t:'Cards delivered and PIN set',d:'3–5 days',o:'Q8',x:'Cards arrive by post with separate PIN letters.'},
+          {t:'Hand out and brief drivers',d:'20 minutes',o:'Site lead',x:'One rule for the drivers: Q8 or F24 only, always the vehicle card.'},
+          {t:'Statement posted to Visma.net',d:'first month end',o:'Advantage (automatic)',x:'Advantage matches the statement and confirms the øre/litre rebate landed.'}]},
+  {id:'circlek', cat:'fuel', name:'Circle K Business', logo:null, rec:false, saving:37149,
+   sub:'Framework · fuel card · alternative routing', valid:'01.03.2026 – 28.02.2028', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Circle K Danmark A/S · Visma Advantage Nordic',
+   excl:'Shop and wash purchases; the Truck Diesel network is priced separately.',
+   tiers:[{band:'0 – 25.000 litres/yr', d:'4,5%', note:''},
+          {band:'above 25.000 litres/yr', d:'7,0%', note:'your volume'}], hereTier:1},
+
+  {id:'lyreco', cat:'off', name:'Lyreco Erhverv', logo:'lyreco', rec:true, saving:38950, live:11,
+   sub:'Framework · office supplies, toner, canteen',
+   valid:'01.07.2026 – 30.06.2028', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Lyreco Danmark A/S · Visma Advantage Nordic',
+   excl:'Furniture above 15.000 kr., print hardware, and bespoke branded stationery.',
+   tiers:[{band:'Core list — 320 most-bought lines', d:'35,0%', note:'best single discount in the catalogue'},
+          {band:'Extended catalogue', d:'18,0%', note:''},
+          {band:'Toner & ink (own brand)', d:'22,0%', note:''},
+          {band:'Blended effect on your basket', d:'19,0%', note:'your gap'}],
+   hereTier:3,
+   get:['35,0% off the 320-line core list — the single largest discount anywhere in the Advantage catalogue.',
+        'A blended 19,0% across your actual basket, which is the figure used everywhere else on this page.',
+        'Free delivery on orders above 500 kr., next working day.',
+        'Locked core-list pricing for the full agreement period — no quarterly repricing.'],
+   must:['Order through the Lyreco business portal rather than by phone or e-mail.',
+         'Consolidate to one weekly order — sub-500 kr. orders carry freight and erase the gain.',
+         'Switch toner to Lyreco own brand where the printer warranty allows it.'],
+   steps:[{t:'Portal account created',d:'same day',o:'Advantage',x:'Advantage requests the account; core-list pricing is attached before first login.'},
+          {t:'Build the standing basket',d:'20 minutes',o:'Office admin',x:'Move your 30 repeat items onto the core list so the 35% applies to the bulk of the spend.'},
+          {t:'First order placed',d:'1 day',o:'Office admin',x:'Confirms portal pricing before the old suppliers are closed.'},
+          {t:'Close the two ad-hoc suppliers',d:'1 day',o:'Bob (owner)',x:'Two of the five current suppliers carry most of the leak; stop buying there.'},
+          {t:'Verify on invoice',d:'at first invoice',o:'Advantage (automatic)',x:'Advantage confirms the blended 19,0% on the first Lyreco invoice read from Visma.net.'}]},
+  {id:'contorland', cat:'off', name:'Contorland', logo:null, rec:false, saving:30750,
+   sub:'Framework · office supplies · alternative routing', valid:'01.01.2026 – 31.12.2027', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Contorland A/S · Visma Advantage Nordic',
+   excl:'Furniture and coffee machines on lease.',
+   tiers:[{band:'Core list', d:'26,0%', note:''},{band:'Extended catalogue', d:'12,0%', note:''},
+          {band:'Blended effect on your basket', d:'15,0%', note:'your gap'}], hereTier:2},
+
+  {id:'cramo', cat:'rent', name:'Cramo Danmark', logo:null, rec:true, saving:30000, live:8,
+   sub:'Framework · machine & equipment rental',
+   valid:'01.04.2026 – 31.03.2028', notice:'2 months, written',
+   parties:'Nordvik Byg A/S · Cramo A/S · Visma Advantage Nordic',
+   excl:'Operator-manned hire, transport outside Region Midtjylland, and damage waivers.',
+   tiers:[{band:'Day hire', d:'4,0%', note:''},
+          {band:'Weekly hire (5+ days)', d:'6,0%', note:'your volume'},
+          {band:'Monthly hire (20+ days)', d:'9,0%', note:'next tier'}],
+   hereTier:1,
+   get:['6,0% off the weekly tariff, and automatic reclassification of any hire past day 5 to the weekly rate.',
+        'Fixed transport rate inside Region Midtjylland.',
+        'Digital hire log per site, exported monthly.',
+        'Priority allocation on lifts during peak season.'],
+   must:['Book through the Cramo business portal so hires are logged against the framework.',
+         'Return on the booked day — overrun days are billed at day rate outside the agreement.',
+         'One named booker per site.'],
+   steps:[{t:'Portal access for site leads',d:'1 day',o:'Bob (owner)',x:'Two named bookers registered against the framework account.'},
+          {t:'Framework rates attached',d:'2 days',o:'Cramo',x:'Weekly-tier reclassification switched on for the account.'},
+          {t:'Move open hires to the account',d:'30 minutes',o:'Site lead',x:'Three current hires sit outside the account and should be moved.'},
+          {t:'Verify on invoice',d:'first month end',o:'Advantage (automatic)',x:'Advantage checks the first Cramo invoice for the weekly-tier line.'}]},
+  {id:'gsv', cat:'rent', name:'GSV Materieludlejning', logo:null, rec:false, saving:25000,
+   sub:'Framework · rental · alternative routing', valid:'01.05.2026 – 30.04.2028', notice:'2 months, written',
+   parties:'Nordvik Byg A/S · GSV Materieludlejning A/S · Visma Advantage Nordic',
+   excl:'Manned hire and site cabins on long lease.',
+   tiers:[{band:'Day hire', d:'3,0%', note:''},{band:'Weekly hire', d:'5,0%', note:'your volume'}], hereTier:1},
+  {id:'riwal', cat:'rent', name:'Riwal Lifting', logo:null, rec:false, saving:20000,
+   sub:'Framework · lifts & access equipment', valid:'01.03.2026 – 28.02.2028', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Riwal Danmark A/S · Visma Advantage Nordic',
+   excl:'Everything outside powered access.',
+   tiers:[{band:'Day hire', d:'2,5%', note:''},{band:'Weekly hire', d:'4,0%', note:'your volume'}], hereTier:1},
+
+  {id:'dsv', cat:'frg', name:'DSV Road', logo:null, rec:true, saving:26304,
+   sub:'Framework · pallet & part-load freight',
+   valid:'01.09.2026 – 31.08.2028', notice:'2 months, written',
+   parties:'Nordvik Byg A/S · DSV Road A/S · Visma Advantage Nordic',
+   excl:'Express before 09:00, temperature-controlled freight, and island surcharges.',
+   tiers:[{band:'0 – 200 pallets/yr', d:'5,0%', note:''},
+          {band:'200 – 600 pallets/yr', d:'8,0%', note:'your volume · est. 310 pallets'},
+          {band:'above 600 pallets/yr', d:'10,5%', note:'next tier'}],
+   hereTier:1,
+   get:['8,0% off the DSV Road tariff on part-load and pallet freight.',
+        'One carrier invoice a month instead of merchant-billed delivery lines.',
+        'Booked delivery windows on site, which cuts standing time for the crew.',
+        'Track and trace per consignment, linked to the project number.'],
+   must:['Book freight yourself instead of letting the merchant arrange delivery — this is the real change, and it is the only one.',
+         'Give a project number on every booking so the freight lands on the right job.',
+         'Keep roughly 200 pallets a year on DSV to hold the tier.'],
+   steps:[{t:'Open the DSV account',d:'2 days',o:'Advantage',x:'Advantage submits CVR and volume estimate; DSV issues the account with the tariff attached.'},
+          {t:'Stop merchant-arranged delivery',d:'1 day',o:'Bob (owner)',x:'Tell Stark and Bygma to ship ex-works; you book the transport.'},
+          {t:'Brief the site leads on booking',d:'45 minutes',o:'Site lead',x:'One short routine: book the pallet, quote the project number.'},
+          {t:'First consolidated invoice',d:'first month end',o:'DSV',x:'Replaces the per-drop freight lines currently buried inside merchant invoices.'},
+          {t:'Verify the tariff',d:'at first invoice',o:'Advantage (automatic)',x:'Advantage reads the invoice and confirms the 8,0% tariff discount.'}]},
+  {id:'gls', cat:'frg', name:'GLS Erhverv', logo:null, rec:false, saving:22358,
+   sub:'Framework · parcel & small freight', valid:'01.10.2026 – 30.09.2028', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · GLS Denmark A/S · Visma Advantage Nordic',
+   excl:'Pallet freight above 31,5 kg per unit.',
+   tiers:[{band:'0 – 500 parcels/yr', d:'4,5%', note:''},
+          {band:'above 500 parcels/yr', d:'6,8%', note:'your volume'}], hereTier:1},
+  {id:'fragt', cat:'frg', name:'Danske Fragtmænd', logo:null, rec:false, saving:19728,
+   sub:'Framework · pallet freight, Denmark', valid:'01.09.2026 – 31.08.2027', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Danske Fragtmænd A/S · Visma Advantage Nordic',
+   excl:'Long goods above 4 m and island surcharges.',
+   tiers:[{band:'0 – 300 pallets/yr', d:'4,0%', note:''},
+          {band:'above 300 pallets/yr', d:'6,0%', note:'your volume'}], hereTier:1},
+
+  {id:'telenor', cat:'tel', name:'Telenor Erhverv', logo:null, rec:true, saving:14520,
+   sub:'Framework · mobile, site broadband, M2M',
+   valid:'01.10.2026 – 30.09.2028', notice:'1 month per subscription',
+   parties:'Nordvik Byg A/S · Telenor A/S · Visma Advantage Nordic',
+   excl:'Handset hardware, roaming outside EU/EEA, and content subscriptions.',
+   tiers:[{band:'1 – 10 subscriptions', d:'3,5%', note:''},
+          {band:'11 – 30 subscriptions', d:'5,0%', note:'your volume · 19 subscriptions'},
+          {band:'above 30 subscriptions', d:'7,5%', note:'next tier'}],
+   hereTier:1,
+   get:['5,0% off the business tariff across mobile, site broadband and M2M SIMs.',
+        'Free internal calls between company numbers.',
+        'One invoice for all subscriptions, split by cost centre.',
+        'Site broadband installed within 10 working days of order.'],
+   must:['Move all 19 subscriptions at once — a split estate loses the volume tier.',
+         'Accept a 12-month minimum term per subscription.',
+         'Port numbers rather than reissue them, so the crew keep their numbers.'],
+   steps:[{t:'Inventory the current estate',d:'1 hour',o:'Office admin',x:'List the 19 numbers and their current terms; Advantage checks for binding periods.'},
+          {t:'Porting order submitted',d:'2 days',o:'Advantage',x:'All numbers ported in one batch to keep the volume tier intact.'},
+          {t:'SIMs delivered and swapped',d:'5–7 days',o:'Telenor / Site lead',x:'New SIMs by post; numbers move overnight with no downtime in working hours.'},
+          {t:'Verify tariff on first invoice',d:'first month end',o:'Advantage (automatic)',x:'Advantage confirms the 5,0% tariff line and the cost-centre split.'}]},
+  {id:'dustin', cat:'tel', name:'Dustin IT', logo:null, rec:false, saving:11616,
+   sub:'Framework · IT hardware & licences', valid:'01.11.2026 – 31.10.2028', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Dustin A/S · Visma Advantage Nordic',
+   excl:'Apple hardware and extended on-site service plans.',
+   tiers:[{band:'0 – 150.000 kr./yr', d:'2,5%', note:''},
+          {band:'above 150.000 kr./yr', d:'4,0%', note:'your volume'}], hereTier:1},
+
+  {id:'ragn', cat:'site', name:'Ragn-Sells', logo:null, rec:true, saving:6720,
+   sub:'Framework · waste, containers, disposal',
+   valid:'01.09.2026 – 31.08.2028', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Ragn-Sells Danmark A/S · Visma Advantage Nordic',
+   excl:'Hazardous waste, asbestos handling, and soil classification.',
+   tiers:[{band:'0 – 40 container swaps/yr', d:'2,5%', note:''},
+          {band:'41 – 120 swaps/yr', d:'4,0%', note:'your volume · est. 74 swaps'},
+          {band:'above 120 swaps/yr', d:'6,0%', note:'next tier'}],
+   hereTier:1,
+   get:['4,0% off container hire and disposal rates.',
+        'Fixed swap-out window of 48 hours, so containers stop blocking the site.',
+        'Sorted-fraction rebate credited on the same invoice.',
+        'Waste documentation per project, ready for handover.'],
+   must:['Order swaps through the portal, not by calling the driver.',
+         'Sort at source — mixed containers are billed at the unsorted rate and the discount is lost.',
+         'One container type per site position.'],
+   steps:[{t:'Register the sites',d:'1 day',o:'Office admin',x:'Three active sites registered so containers are priced under the framework.'},
+          {t:'Rates attached to the account',d:'2 days',o:'Ragn-Sells',x:'4,0% applied to hire and disposal lines.'},
+          {t:'Sorting briefing on site',d:'30 minutes',o:'Site lead',x:'The one behaviour that carries the discount: sort at source.'},
+          {t:'Verify on invoice',d:'first month end',o:'Advantage (automatic)',x:'Advantage checks the first invoice for the framework rate and the sorting rebate.'}]},
+  {id:'marius', cat:'site', name:'Marius Pedersen', logo:null, rec:false, saving:5040,
+   sub:'Framework · waste & recycling · alternative routing', valid:'01.10.2026 – 30.09.2028', notice:'1 month, written',
+   parties:'Nordvik Byg A/S · Marius Pedersen A/S · Visma Advantage Nordic',
+   excl:'Hazardous waste and industrial cleaning.',
+   tiers:[{band:'0 – 60 swaps/yr', d:'2,0%', note:''},
+          {band:'above 60 swaps/yr', d:'3,0%', note:'your volume'}], hereTier:1}
+];
+
+/* 5 of 24 live at the start, one per category:
+   mat · tool · fuel · off · rent → covered 4.032.800, caught 376.441        */
+const INITIAL_ACTIVE = ['stark','hilti','q8','lyreco','cramo'];
+
+const ACCOUNTS = {
+  bob:{
+    id:'bob', name:'Bob Iversen', ini:'BI', company:'Nordvik Byg A/S', cvr:'DK 31 88 04 62',
+    trade:'Construction & carpentry · 24 employees · Region Midtjylland',
+    erpTitle:'Visma.net', erpSub:'synced 06:14', connected:true,
+    bannerTitle:'Verified data',
+    bannerTxt:'1.284 invoices read from Visma.net this morning — <b>787.200 kr.</b> of your spend still runs outside an agreement',
+    bannerCta:'Show me the leak',
+    method:'<b>Verified.</b> Read directly from your own accounting data: <b>1.284 supplier invoices</b> across '
+      + '<b>55 suppliers</b> for the twelve months to 21.08.2026, pulled from <b>Visma.net</b> '
+      + '(last sync 21.08.2026, 06:14). Line-level prices are compared against the negotiated Advantage group '
+      + 'rate for each article group. No industry averages are used anywhere on this page — every figure traces '
+      + 'back to an invoice line.'
+  },
+  fanny:{
+    id:'fanny', name:'Fanny Kristensen', ini:'FK', company:'Kristensen Elektro ApS', cvr:'DK 42 09 71 33',
+    trade:'Electrical contracting · 20–49 employees · Region Midtjylland',
+    erpTitle:'Connect data', erpSub:'no source', connected:false,
+    bannerTitle:'Estimated data',
+    bannerTxt:'Nothing connected yet — every figure here is modelled from <b>148 peer companies</b> and shown as a range',
+    bannerCta:'Sharpen the numbers',
+    method:'<em>Estimated.</em> Nothing is connected yet, so this diagnosis is modelled — not guessed. Inputs: '
+      + '<b>sector</b> electrical contracting (DB07 43.21.00), <b>company size band</b> 20–49 employees, '
+      + '<b>region</b> Region Midtjylland, benchmarked against <b>148 peer companies</b> already on Advantage. '
+      + 'The spend mix comes from Danmarks Statistik industry accounts; supplier price levels come from published '
+      + 'price lists and <b>AI web scraping</b> of supplier catalogues, refreshed weekly. Bands are '
+      + '±<b>__BAND__%</b> — they narrow the moment you give us anything real, and the page you are looking at '
+      + 'does not change when you do.'
+  }
+};
+
+/* Sharpening: never a gate, only a lens. */
+const SHARPEN_STEPS = [
+  {id:'profile', n:'Step 1', title:'Confirm your company profile',
+   desc:'Headcount band, region and the trades you actually run. Four fields, forty seconds.',
+   cta:'Confirm profile', band:.09,
+   done:'Profile confirmed — 24 employees, Region Midtjylland, electrical contracting.'},
+  {id:'upload', n:'Step 2', title:'Upload 3 supplier invoices',
+   desc:'Any three invoices from your biggest suppliers. We read the line prices, not your accounts.',
+   cta:'Upload invoices', band:.06,
+   done:'3 invoices read — Solar A/S, Lemvigh-Müller, AO Johansen. Line prices matched.'},
+  {id:'connect', n:'Step 3', title:'Connect Visma.net',
+   desc:'Read-only access to twelve months of supplier invoices. Every band becomes an exact figure.',
+   cta:'Connect Visma.net', band:0,
+   done:'Visma.net connected — 1.104 invoices read. All figures verified.'}
+];
+
+const SIGNALS = [
+  {d:'21.08.2026', k:'nu', t:'Visma.net sync completed', s:'1.284 invoices read across 55 suppliers · twelve months', v:0},
+  {d:'04.08.2026', k:'up', t:'Q8 fuel rate confirmed on your latest invoice', s:'8,0% øre/litre rebate verified on invoice 2026-8841', v:33900},
+  {d:'15.07.2026', k:'up', t:'Quick win captured in Office supplies', s:'19% gap on 205.000 kr. found and routed to Lyreco Erhverv', v:38950},
+  {d:'02.07.2026', k:'dn', t:'Stark Byggecenter raised list prices 4%', s:'Framework discount held; net effect on your materials line', v:-18400},
+  {d:'19.06.2026', k:'nu', t:'Fuel agreement — business case ready', s:'Circle K alternative modelled at 42.800 litres a year', v:42500},
+  {d:'11.04.2026', k:'up', t:'Cramo weekly-tier reclassification went live', s:'Hires past day 5 now bill at the weekly rate automatically', v:30000}
+];
+
+const EXTRA_SUP = {
+  off:['Lyreco','Contorland','Staples DK','AJ Produkter','Kontor Syd'],
+  tool:['Hilti','Würth','Engelbert Strauss','Sanistål','Ahlsell','Dahl'],
+  mat:['Stark','Bygma','Ahlsell','Optimera','Saint-Gobain','XL-Byg'],
+  fuel:['Q8','Circle K','OK Benzin','Shell','Uno-X'],
+  frg:['DSV Road','GLS','Danske Fragtmænd','Bring'],
+  rent:['Cramo','GSV','Riwal','Loxam','Pitzner Materiel','Zurhaake'],
+  tel:['Telenor','Dustin','TDC Erhverv'],
+  site:['Ragn-Sells','Marius Pedersen','Stena Recycling']
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATE + DERIVATION
+   ═══════════════════════════════════════════════════════════════════════════ */
+const state = {
+  account:'bob',
+  active:new Set(INITIAL_ACTIVE),
+  open:new Set(['off']),      /* top-ranked gap open by default — the inversion is the point */
+  term:null,
+  sharpen:new Set(),
+  newlyActive:new Set(),
+  readNotes:new Set(),
+  navAt:'dashboard',
+  railMini:false
+};
+
+const cat = id => CATS.find(c => c.id === id);
+const ag  = id => AGS.find(a => a.id === id);
+const agsIn = id => AGS.filter(a => a.cat === id);
+const activeAgIn = id => agsIn(id).find(a => state.active.has(a.id)) || null;
+const acct = () => ACCOUNTS[state.account];
+
+const TOTAL_SPEND     = CATS.reduce((s,c)=>s+c.spend,0);      /* 4.820.000 */
+const TOTAL_POTENTIAL = CATS.reduce((s,c)=>s+c.saving,0);     /*   423.985 */
+const TOTAL_INVOICES  = CATS.reduce((s,c)=>s+c.invoices,0);   /*     1.284 */
+const TOTAL_SUPPLIERS = CATS.reduce((s,c)=>s+c.suppliers,0);  /*        55 */
+
+function derive(){
+  let covered = 0, caught = 0;
+  CATS.forEach(c => { const a = activeAgIn(c.id); if (a){ covered += c.spend; caught += a.saving; } });
+  const leaking   = TOTAL_SPEND - covered;
+  const remaining = CATS.reduce((s,c)=> s + (activeAgIn(c.id) ? 0 : c.saving), 0);
+  const bonus     = bonusOn(covered);
+  return {covered, leaking, caught, remaining, bonus, value:caught+bonus,
+          identified:caught+remaining};
+}
+
+function bandPct(){
+  if (state.account === 'bob') return 0;
+  let b = .15;
+  SHARPEN_STEPS.forEach(s => { if (state.sharpen.has(s.id)) b = Math.min(b, s.band); });
+  return b;
+}
+const isEstimated = () => bandPct() > 0;
+
+/* ── formatting ── */
+const DA = new Intl.NumberFormat('da-DK',{maximumFractionDigits:0});
+const fmt = n => DA.format(Math.round(n));
+const kr  = n => fmt(n) + ' kr.';
+const pct = (x,d) => new Intl.NumberFormat('da-DK',
+  {minimumFractionDigits:d||0, maximumFractionDigits:d||0}).format(x*100) + '%';
+function short(n){
+  if (Math.abs(n) >= 1000000)
+    return new Intl.NumberFormat('da-DK',{maximumFractionDigits:1}).format(n/1000000)+'M';
+  return Math.round(n/1000)+'K';
+}
+/* the single place a number becomes prose: exact when connected, a band when not */
+function val(n, opts){
+  const o = opts||{}, b = bandPct();
+  if (b === 0) return {text:(o.short ? short(n)+' kr.' : kr(n)), est:false, mid:n};
+  const lo = n*(1-b), hi = n*(1+b);
+  return {text:(o.short ? short(lo)+'–'+short(hi)+' kr.' : fmt(lo)+'–'+fmt(hi)+' kr.'),
+          est:true, lo, hi, mid:n};
+}
+const DASH = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" '
+  + 'stroke="currentColor" stroke-width="2.4" stroke-dasharray="3 3"/></svg>';
+const TICK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4 10-10" '
+  + 'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function prov(kind){
+  if (kind === 'v') return '<span class="est-chip ver">'+TICK+'Verified</span>';
+  if (kind === 'm') return '<span class="est-chip mod">Modelled</span>';
+  return '<span class="est-chip">'+DASH+'Estimated</span>';
+}
+const provKind = () => isEstimated() ? 'e' : 'v';
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function logoTile(a, cls){
+  const L = a.logo && LOGOS[a.logo];
+  if (L) return '<span class="'+cls+'" style="background:'+L.bg+'"><img src="'+L.img+'" alt=""></span>';
+  const ini = a.name.split(/[\s-]/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  return '<span class="'+cls+'" style="background:linear-gradient(135deg,#2170ed,#0b00ab)"><b>'+ini+'</b></span>';
+}
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHELL — appbar, rail, notifications, banner
+   ═══════════════════════════════════════════════════════════════════════════ */
+const NAV = [
+  {id:'discover', n:'Weekly discovery', hero:true, target:'sec-signals',
+   sub:'4 new findings since Monday',
+   icon:'<path d="M12 3l2.1 4.7 4.9.6-3.6 3.4.9 5-4.3-2.5-4.3 2.5.9-5L5 8.3l4.9-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {id:'dashboard', n:'Overview', target:'sec-top',
+   icon:'<rect x="3" y="3" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/>'},
+  {id:'suppliers', n:'Suppliers', target:'sec-categories',
+   icon:'<path d="M4 10v9a1 1 0 001 1h14a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 6.5L4.6 3.6A1 1 0 015.5 3h13a1 1 0 01.9.6L21 6.5c0 1.7-1.3 3-3 3a3 3 0 01-3-3 3 3 0 01-3 3 3 3 0 01-3-3 3 3 0 01-3 3c-1.7 0-3-1.3-3-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 20v-5h4v5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {id:'reports', n:'Reports', target:'sec-audit',
+   icon:'<rect x="4" y="3" width="16" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h8M8 16h4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'},
+  {id:'categories', n:'Categories', target:'sec-categories',
+   icon:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/>'},
+  {id:'agreements', n:'Agreements', target:'sec-agreements', badge:String(24 - INITIAL_ACTIVE.length),
+   icon:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 16c1.5-2.5 2.5-2.5 3 0s1.5 1 3-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
+];
+
+function renderNav(){
+  $('#nav').innerHTML = NAV.map(i => i.hero
+    ? '<button class="ni hero'+(state.navAt===i.id?' on':'')+'" data-nav="'+i.id+'" data-tip="'+i.n+'">'
+      + '<span class="nic"><svg viewBox="0 0 24 24" fill="none">'+i.icon+'</svg></span>'
+      + '<span class="hb"><b>'+i.n+'</b><span>'+i.sub+'</span></span></button>'
+    : '<button class="ni'+(state.navAt===i.id?' on':'')+'" data-nav="'+i.id+'" data-tip="'+i.n+'">'
+      + '<span class="nic"><svg viewBox="0 0 24 24" fill="none">'+i.icon+'</svg></span>'
+      + '<span class="nt">'+i.n+'</span>'
+      + (i.badge ? '<span class="nb">'+i.badge+'</span>' : '')+'</button>'
+  ).join('');
+}
+
+function renderShell(){
+  const p = acct();
+  $('#userAv').textContent = p.ini;
+  $('#userName').textContent = p.name;
+  $('#userCo').textContent = p.company;
+  $('#upName').textContent = p.name;
+  $('#upCo').textContent = p.company;
+  $('#personaBob').setAttribute('aria-current', String(state.account === 'bob'));
+  $('#personaFanny').setAttribute('aria-current', String(state.account === 'fanny'));
+
+  /* ERP pill: a live source, or the ask when nothing is connected. Fanny's pill
+     flips to "connected" the moment sharpening reaches step 3 — same component. */
+  const eff = state.account === 'bob' ? true : bandPct() === 0;
+  $('#erpPill').className = 'erp' + (eff ? '' : ' none');
+  $('#erpPill').innerHTML =
+    '<span class="live" aria-hidden="true"></span>'
+    + '<span class="et"><b>'+(eff ? 'Visma.net' : 'Connect data')+'</b>'
+    + '<span>'+(eff ? (state.account==='bob' ? 'synced 06:14' : '1.104 invoices') : 'no source')+'</span></span>'
+    + '<span class="syncbtn" role="presentation">'
+    + '<svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0113.7-5.7M20 12a8 8 0 01-13.7 5.7" '
+    + 'stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M17 3v4h-4M7 21v-4h4" '
+    + 'stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '<span>'+(eff ? 'Sync' : 'Start')+'</span></span>';
+  void connected;
+
+  /* banner */
+  $('#bannerTitle').textContent = isEstimated() ? ACCOUNTS.fanny.bannerTitle : ACCOUNTS.bob.bannerTitle;
+  const d = derive();
+  $('#bannerTxt').innerHTML = isEstimated()
+    ? p.bannerTxt
+    : '1.284 invoices read from Visma.net this morning — <b>'+kr(d.leaking)
+      + '</b> of your spend still runs outside an agreement';
+  $('#bannerGoTxt').textContent = isEstimated() ? 'Sharpen the numbers' : 'Show me the leak';
+
+  renderNotes();
+}
+
+function renderNotes(){
+  const est = isEstimated();
+  const unread = SIGNALS.filter((s,i) => !state.readNotes.has(i)).length;
+  const bdg = $('#bellBadge');
+  bdg.textContent = String(unread);
+  bdg.hidden = unread === 0;
+  $('#npBody').innerHTML = SIGNALS.map((s,i)=>{
+    const read = state.readNotes.has(i);
+    let v = '—', cls = 'nu';
+    if (s.v !== 0){
+      cls = s.v > 0 ? 'up' : 'dn';
+      const a = Math.abs(s.v);
+      v = (s.v<0?'−':'+') + (est ? short(a*(1-bandPct()))+'–'+short(a*(1+bandPct())) : fmt(a));
+    }
+    return '<button class="note'+(read?' read':'')+'" data-note="'+i+'">'
+      + '<span class="dot" aria-hidden="true"></span>'
+      + '<span class="nb"><b>'+esc(s.t)+'</b><span>'+esc(s.d)+' · '+esc(s.s)+'</span></span>'
+      + '<span class="nv '+cls+'">'+v+'</span></button>';
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAGE HEAD + METHOD LINE
+   ═══════════════════════════════════════════════════════════════════════════ */
+function renderHead(){
+  const p = acct(), d = derive(), est = isEstimated();
+  $('#pageSub').innerHTML =
+    '<b>'+esc(p.company)+'</b> · '+esc(p.cvr)+' · '+esc(p.trade)+' · '
+    + val(TOTAL_SPEND,{short:true}).text+' of annual supplier spend under review · issued 21.08.2026';
+  $('#methodline').className = 'methodline' + (est ? ' est' : '');
+  $('#methodText').innerHTML = p.method.replace('__BAND__', pct(bandPct(),0).replace('%',''));
+  void d;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   01 · THE DIAGNOSIS — hero
+   ═══════════════════════════════════════════════════════════════════════════ */
+function renderDiagnosis(){
+  const d = derive(), est = isEstimated();
+  const leakV = val(d.leaking), covV = val(d.covered);
+  const unrouted = CATS.filter(c => !activeAgIn(c.id));
+
+  $('#diagNote').innerHTML = est
+    ? 'This is your diagnosis, not a demo of somebody else\'s. Every figure is modelled from the '
+      + '148-company peer set and shown as a range — the real product, just less sharp. Nothing on this page '
+      + 'is hidden until you connect.'
+    : 'Read from your own invoices. Spend that runs through a framework agreement is <b>covered</b> — you pay '
+      + 'the negotiated group rate on it. Spend that does not is <b>leaking</b> — you pay whatever the counter '
+      + 'charges, and the difference never comes back.';
+
+  $('#heroClaim').innerHTML =
+    '<span class="k">'+(est ? 'Estimated leak, per year' : 'Leaking, per year')+'</span>'
+    + '<span class="hero-figure'+(leakV.est?' band':'')+'">'+leakV.text+'</span>'
+    + '<span>'+prov(provKind())+'</span>'
+    + '<p>'+(est
+        ? 'of an estimated <b>'+val(TOTAL_SPEND,{short:true}).text+'</b> in annual supplier spend runs outside '
+          + 'any framework agreement, across <b>'+unrouted.length+' of 8 categories</b>. Routing all eight would '
+          + 'recover an estimated <b>'+val(TOTAL_POTENTIAL).text+'</b> a year in invoice discounts, plus a '
+          + 'customer bonus on the volume routed.'
+        : 'of <b>'+kr(TOTAL_SPEND)+'</b> in annual supplier spend still runs outside any framework agreement, '
+          + 'across <b>'+unrouted.length+' of 8 categories</b>'
+          + (unrouted.length ? ' — '+unrouted.map(c=>c.name.toLowerCase()).join(', ') : '')
+          + '. The <b>'+covV.text+'</b> that is covered returned <b>'+kr(d.value)+'</b> this year.')
+    + '</p>';
+
+  $('#flow').innerHTML = flowSvg(d, est);
+  $('#flowNote').innerHTML = est
+    ? 'Widths are proportional to modelled spend. The money beside each side is what that volume returns '
+      + '(covered) or withholds (leaking).'
+    : 'Widths are proportional to your actual spend. Activate an agreement in section 03 and volume moves '
+      + 'across this diagram.';
+
+  /* split bar */
+  const covPct = d.covered / TOTAL_SPEND * 100;
+  $('#splitLbl').innerHTML = 'Covered against leaking — scale: all '+kr(TOTAL_SPEND)+' of annual spend';
+  $('#segCov').style.flexBasis = covPct.toFixed(2)+'%';
+  $('#segLeak').style.flexBasis = (100-covPct).toFixed(2)+'%';
+  $('#segCovV').textContent = covPct >= 16 ? covV.text : '';
+  $('#segCovK').textContent = covPct >= 16 ? 'covered · '+pct(d.covered/TOTAL_SPEND,0) : '';
+  $('#segLeakV').textContent = (100-covPct) >= 16 ? leakV.text : '';
+  $('#segLeakK').textContent = (100-covPct) >= 16 ? 'leaking · '+pct(d.leaking/TOTAL_SPEND,0) : '';
+  $('#splitBar').setAttribute('aria-label', 'Of '+kr(TOTAL_SPEND)+' annual spend, '+kr(d.covered)
+    + ' is covered by a framework agreement and '+kr(d.leaking)+' is leaking outside one.');
+  $('#splitKey').innerHTML =
+    '<div><i class="kc"></i>Covered <b>'+covV.text+'</b></div>'
+    + '<div><i class="kl"></i>Leaking <b>'+leakV.text+'</b></div>'
+    + '<div>Covered + leaking = <b>'+kr(TOTAL_SPEND)+'</b></div>';
+
+  /* recovery bar — different scale, said out loud */
+  const gotPct = d.caught / TOTAL_POTENTIAL * 100;
+  $('#recGot').style.flexBasis = gotPct.toFixed(2)+'%';
+  $('#recLeft').style.flexBasis = (100-gotPct).toFixed(2)+'%';
+  $('#recGot').innerHTML = gotPct >= 18 ? '<span>'+val(d.caught).text+' caught</span>' : '';
+  $('#recLeft').innerHTML = (100-gotPct) >= 18 ? '<span>'+val(d.remaining).text+' on the table</span>' : '';
+  $('#recBar').setAttribute('aria-label', 'Of '+kr(TOTAL_POTENTIAL)+' identified as recoverable, '
+    + kr(d.caught)+' has been caught and '+kr(d.remaining)+' is still on the table.');
+  $('#recNote').innerHTML = 'Caught <b>'+fmt(d.caught)+'</b> + on the table <b>'+fmt(d.remaining)
+    + '</b> = <b>'+fmt(TOTAL_POTENTIAL)+' kr.</b> identified. This bar is the recoverable money inside the '
+    + 'spend above, not the spend itself.';
+
+  /* six stat cards, two rows of three */
+  const cards = [
+    {l:'Annual supplier spend', n:TOTAL_SPEND, k:provKind(),
+     f: est ? 'Modelled from the sector spend mix · 148 peers'
+            : fmt(TOTAL_INVOICES)+' invoices · '+fmt(TOTAL_SUPPLIERS)+' suppliers'},
+    {l:'Covered by an agreement', n:d.covered, cls:'pos', k:provKind(),
+     f: CATS.filter(c=>activeAgIn(c.id)).length+' of 8 categories · '+state.active.size+' agreements routed'},
+    {l:'Leaking', n:d.leaking, cls:'neg', k:provKind(),
+     f: unrouted.length ? unrouted.length+' categories with no framework price' : 'Nothing left leaking'},
+    {l: est ? 'Recoverable per year' : 'Caught per year', n:d.caught, cls:'pos', k:provKind(),
+     f: est ? 'What the covered side would return in discounts'
+            : pct(d.caught/TOTAL_POTENTIAL,0)+' of the '+kr(TOTAL_POTENTIAL)+' identified'},
+    {l:'Customer bonus', n:d.bonus, cls:'pos', k: est?'e':'m',
+     f:'Tiered on '+val(d.covered,{short:true}).text+' routed · paid annually'},
+    {l:'Still on the table', n:d.remaining, k: est?'e':'m',
+     f: unrouted.length+' unrouted categories · '+(AGS.length-state.active.size)+' of '+CATALOGUE+' agreements unused'}
+  ];
+  const card = c => {
+    const v = val(c.n);
+    return '<div class="tcard"><span class="tcard-l">'+c.l+' '+prov(c.k)+'</span>'
+      + '<b class="tcard-v'+(v.est?' band':'')+(c.cls?' '+c.cls:'')+'">'+v.text+'</b>'
+      + '<span class="tcard-f">'+c.f+'</span></div>';
+  };
+  $('#diagFigsA').innerHTML = cards.slice(0,3).map(card).join('');
+  $('#diagFigsB').innerHTML = cards.slice(3).map(card).join('');
+
+  renderSharpen();
+}
+
+/* proportional flow: total spend → covered / leaking, money attached to each */
+function flowSvg(d, est){
+  const W = 520, H = 210, T = 22, B = 22;
+  const ih = H - T - B;
+  const xL = 2, wL = 14, xR = 214, wR = 14, gap = 26;
+  const covShare = d.covered / TOTAL_SPEND;
+  const hCov = Math.max(2, (ih - gap) * covShare);
+  const hLeak = Math.max(2, (ih - gap) - hCov);
+  const yCov = T, yLeak = T + hCov + gap;
+  const splitY = T + (ih - gap) * covShare + gap * covShare;
+
+  const ribbon = (y0a, y0b, y1a, y1b) => {
+    const x0 = xL + wL, x1 = xR, m = (x0 + x1) / 2;
+    return 'M'+x0+','+y0a.toFixed(1)
+      + ' C'+m+','+y0a.toFixed(1)+' '+m+','+y1a.toFixed(1)+' '+x1+','+y1a.toFixed(1)
+      + ' L'+x1+','+y1b.toFixed(1)
+      + ' C'+m+','+y1b.toFixed(1)+' '+m+','+y0b.toFixed(1)+' '+x0+','+y0b.toFixed(1)+' Z';
+  };
+  const label = (x, y, k, v, m, colour) =>
+    '<text x="'+x+'" y="'+y+'" font-family="DM Sans, sans-serif" font-size="10.5" font-weight="700" '
+      + 'letter-spacing="1" fill="#707070">'+k+'</text>'
+    + '<text x="'+x+'" y="'+(y+21)+'" font-family="Rethink Sans, sans-serif" font-size="17" '
+      + 'font-weight="800" fill="'+colour+'">'+v+'</text>'
+    + '<text x="'+x+'" y="'+(y+38)+'" font-family="DM Sans, sans-serif" font-size="11" '
+      + 'fill="#707070">'+m+'</text>';
+
+  const covMoney = est
+    ? 'would return '+short(d.caught*(1-bandPct()))+'–'+short(d.caught*(1+bandPct()))+' kr.'
+    : 'returns '+kr(d.value)+'/yr';
+  const leakMoney = est
+    ? 'holds '+short(d.remaining*(1-bandPct()))+'–'+short(d.remaining*(1+bandPct()))+' kr.'
+    : 'holds '+kr(d.remaining)+' recoverable';
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Proportional flow: of '+kr(TOTAL_SPEND)
+    + ' in annual spend, '+kr(d.covered)+' flows through framework agreements and '+kr(d.leaking)
+    + ' flows outside them.">'
+    + '<defs>'
+    + '<linearGradient id="gcov" x1="0" y1="0" x2="1" y2="0">'
+      + '<stop offset="0" stop-color="#009689" stop-opacity=".14"/>'
+      + '<stop offset="1" stop-color="#009689" stop-opacity=".42"/></linearGradient>'
+    + '<pattern id="pleak" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">'
+      + '<rect width="8" height="8" fill="#f54a00" fill-opacity=".07"/>'
+      + '<line x1="0" y1="0" x2="0" y2="8" stroke="#f54a00" stroke-opacity=".34" stroke-width="3"/></pattern>'
+    + '</defs>'
+    + '<path d="'+ribbon(T, splitY, yCov, yCov+hCov)+'" fill="url(#gcov)"/>'
+    + '<path d="'+ribbon(splitY, T+ih, yLeak, yLeak+hLeak)+'" fill="url(#pleak)"/>'
+    + '<rect x="'+xL+'" y="'+T+'" width="'+wL+'" height="'+ih+'" rx="3" fill="#000a45"/>'
+    + '<text x="'+(xL)+'" y="'+(T-8)+'" font-family="DM Sans, sans-serif" font-size="10.5" '
+      + 'font-weight="700" letter-spacing="1" fill="#707070">ALL SPEND · '
+      + val(TOTAL_SPEND,{short:true}).text+'</text>'
+    + '<rect x="'+xR+'" y="'+yCov+'" width="'+wR+'" height="'+hCov+'" rx="3" fill="#009689"/>'
+    + '<rect x="'+xR+'" y="'+yLeak+'" width="'+wR+'" height="'+hLeak+'" rx="3" fill="#f54a00"/>'
+    + label(xR+wR+14, yCov+13, 'COVERED · '+pct(covShare,0), val(d.covered,{short:true}).text, covMoney, '#00786d')
+    + label(xR+wR+14, yLeak+13, 'LEAKING · '+pct(1-covShare,0), val(d.leaking,{short:true}).text, leakMoney, '#c23c00')
+    + '</svg>';
+}
+
+/* sharpening — offered as a lens, never a gate */
+function renderSharpen(){
+  const slot = $('#sharpenSlot');
+  if (state.account !== 'fanny'){ slot.innerHTML = ''; return; }
+  const b = bandPct();
+  slot.innerHTML =
+    '<div class="sharpen">'
+    + '<div class="sharpen-h"><h3>Sharpen these numbers</h3>'
+    + '<span class="est-chip">'+(b===0 ? 'now exact' : '±'+pct(b,0)+' band')+'</span></div>'
+    + '<p>You are already looking at the whole product. These three steps unlock nothing — they only make the '
+    + 'figures above less blurry. '+(b===0
+        ? 'You are now on verified data: the bands are gone and every figure traces to an invoice line.'
+        : 'Right now every figure carries a ±'+pct(b,0)+' band.')+'</p>'
+    + '<div class="steps">'+SHARPEN_STEPS.map(s=>{
+        const done = state.sharpen.has(s.id);
+        return '<div class="step'+(done?' done':'')+'"><span class="sn">'+s.n+(done?' · done':'')+'</span>'
+          + '<b>'+s.title+'</b><p>'+(done?s.done:s.desc)+'</p>'
+          + (done ? '' : '<button class="btn btn-primary btn-sm btn-block" data-sharpen="'+s.id+'">'
+                        + s.cta+'</button>')+'</div>';
+      }).join('')+'</div>'
+    + '<div class="band-meter"><span class="bl">Confidence</span>'
+    + '<span class="band-track"><span class="band-fill" style="width:'
+      + Math.max(3, b/.15*100).toFixed(1)+'%"></span></span>'
+    + '<span class="band-v">'+(b===0 ? 'exact' : '±'+pct(b,0))+'</span>'
+    + (state.sharpen.size ? '<button class="linkbtn" data-sharpen="reset">Reset</button>' : '')
+    + '</div></div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   02 · VALUE CAPTURED — invoice discount + customer bonus. Nothing else.
+   ═══════════════════════════════════════════════════════════════════════════ */
+function monthlySeries(){
+  const rows = []; let cum = 0;
+  for (let m = 1; m <= MONTHS_ELAPSED; m++){
+    let v = 0;
+    CATS.forEach(c => { const a = activeAgIn(c.id); if (a && a.live && a.live <= m) v += a.saving/12; });
+    cum += v;
+    rows.push({m, label:MONTHS[m-1], val:v, cum});
+  }
+  return rows;
+}
+
+function renderValue(){
+  const d = derive(), est = isEstimated();
+  const rows = monthlySeries(), last = rows[rows.length-1];
+
+  $('#valNote').innerHTML = est
+    ? 'Money comes back two ways, and both are estimated here: a lower price on the invoice line, and an annual '
+      + 'customer bonus paid on the volume routed through agreements. Nothing else changes — same supplier, '
+      + 'same delivery, only the price.'
+    : 'Money comes back two ways: a lower price on the invoice line, and an annual customer bonus paid on the '
+      + 'volume routed through agreements. Both move the moment you activate an agreement in section 03.';
+
+  const total = val(d.value);
+  $('#valLbl').innerHTML = (est ? 'Estimated return, per year ' : 'Returned per year ') + prov(est?'e':'v');
+  $('#valBig').innerHTML = '<b class="tcard-v pos'+(total.est?' band':'')+'">'+total.text+'</b>';
+  $('#valClaim').innerHTML = est
+    ? 'Invoice discounts of <b>'+val(d.caught).text+'</b> plus a customer bonus of <b>'+val(d.bonus).text
+      + '</b> on '+val(d.covered,{short:true}).text+' of routed volume — if you are typical for your sector '
+      + 'and size.'
+    : '<b>'+kr(d.caught)+'</b> in invoice discounts plus <b>'+kr(d.bonus)+'</b> of customer bonus on '
+      + kr(d.covered)+' of routed volume — <b>'+pct(d.value/TOTAL_SPEND,1)
+      + '</b> of your total supplier spend, returned.';
+  $('#valFrame').innerHTML = '<div class="methodline'+(est?' est':'')+'" style="padding:var(--s4)">'
+    + '<span class="methodline-v">'+(est
+        ? '<b>Why a range and not a number.</b> The mix is modelled from 148 comparable companies, so the low '
+          + 'edge (<b>'+fmt(d.value*(1-bandPct()))+' kr.</b>) is what to plan against, not the high one. '
+          + 'Every sharpening step above pulls these two edges together.'
+        : '<b>Realised to date: '+kr(last.cum)+'</b> of invoice discount actually landed during the year, '
+          + 'against an annual run-rate of <b>'+kr(d.caught)+'</b>. The two differ because four of the five '
+          + 'agreements went live during the year rather than on day one. The customer bonus of <b>'
+          + kr(d.bonus)+'</b> accrues on routed volume and pays out at year end.')
+    + '</span></div>';
+
+  const line = (label, amount, basis, o) => {
+    o = o || {};
+    const v = val(amount);
+    return '<tr'+(o.tot?' class="tot"':'')+'>'
+      + '<td>'+label+(o.note?'<small>'+o.note+'</small>':'')+'</td>'
+      + '<td class="v'+(o.cls?' '+o.cls:'')+'">'+(v.est?'':'+')+v.text+'</td>'
+      + '<td>'+basis+'</td></tr>';
+  };
+  $('#valBody').innerHTML =
+      line('Invoice discounts', d.caught, prov(provKind())+' '+state.active.size+' active agreements',
+           {cls:'pos', note:'Annual run-rate across '+CATS.filter(c=>activeAgIn(c.id)).length+' routed categories'})
+    + line('Customer bonus', d.bonus, prov(est?'e':'m')+' on '+val(d.covered,{short:true}).text+' routed',
+           {cls:'pos', note:'1,0% / 1,5% / 2,0% tiers · paid annually'})
+    + line('Total returned per year', d.value, prov(est?'e':'v')+' discounts + bonus', {tot:true, cls:'pos'})
+    + '<tr><td>Still on the table<small>'+CATS.filter(c=>!activeAgIn(c.id)).length
+      + ' unrouted categories, ranked in section 03</small></td>'
+      + '<td class="v neg">'+val(d.remaining).text+'</td>'
+      + '<td>'+prov(est?'e':'m')+' identified, not yet routed</td></tr>'
+    + '<tr><td>Return as a share of spend</td><td class="v">'+pct(d.value/TOTAL_SPEND,1)+'</td>'
+      + '<td>'+prov(est?'e':'m')+' '+short(d.value)+' ÷ '+short(TOTAL_SPEND)+'</td></tr>';
+
+  $('#chartLbl').textContent = est
+    ? 'Modelled first year — how the discount typically lands, month by month'
+    : 'Invoice discount realised, month by month · Sep 2025 – Aug 2026';
+  $('#chart').innerHTML = chartSvg(rows, d, est);
+}
+
+function chartSvg(rows, d, est){
+  const W = 700, H = 190, L = 52, R = 12, T = 12, B = 26;
+  const iw = W-L-R, ih = H-T-B;
+  const maxV = Math.max(rows[rows.length-1].cum + d.bonus, 1) * 1.12;
+  const x = i => L + iw * (i/(rows.length-1));
+  const y = v => T + ih - ih * (v/maxV);
+
+  const pts = rows.map((r,i)=> x(i).toFixed(1)+','+y(r.cum).toFixed(1));
+  const bon = rows.map((r,i)=> x(i).toFixed(1)+','+y(r.cum + d.bonus*(r.m/12)).toFixed(1));
+  const area = 'M'+x(0).toFixed(1)+','+y(0).toFixed(1)+' L'+pts.join(' L')
+             + ' L'+x(rows.length-1).toFixed(1)+','+y(0).toFixed(1)+' Z';
+
+  let grid = '';
+  for (let g=0; g<=4; g++){
+    const v = maxV*g/4, yy = y(v);
+    grid += '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy.toFixed(1)+'" y2="'+yy.toFixed(1)
+      + '" stroke="'+(g===0?'#e0e0e0':'#ececec')+'" stroke-width="1"/>'
+      + '<text x="'+(L-8)+'" y="'+(yy+3.5).toFixed(1)+'" text-anchor="end" '
+      + 'font-family="DM Sans, sans-serif" font-size="10" fill="#8f8f8f">'+short(v)+'</text>';
+  }
+  let ticks = '';
+  rows.forEach((r,i)=>{
+    if (i%2 === 0 || i === rows.length-1)
+      ticks += '<text x="'+x(i).toFixed(1)+'" y="'+(H-9)+'" text-anchor="middle" '
+        + 'font-family="DM Sans, sans-serif" font-size="10" fill="#8f8f8f">'+r.label+'</text>';
+  });
+  /* a dashed marker on every month an agreement went live — the steps are explained */
+  let marks = '';
+  CATS.forEach(c => {
+    const a = activeAgIn(c.id);
+    if (a && a.live && a.live > 1 && a.live <= MONTHS_ELAPSED){
+      const i = a.live-1;
+      marks += '<line x1="'+x(i).toFixed(1)+'" x2="'+x(i).toFixed(1)+'" y1="'+T+'" y2="'+(T+ih)
+        + '" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="2 3"/>';
+    }
+  });
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'
+    + (est ? 'Modelled cumulative invoice discount over the first twelve months, plus bonus accrual.'
+           : 'Cumulative invoice discount reached '+kr(rows[rows.length-1].cum)+' over twelve months, with '
+             + kr(d.bonus)+' of customer bonus accruing on top.')+'">'
+    + '<defs><linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="#009689" stop-opacity=".2"/>'
+    + '<stop offset="1" stop-color="#009689" stop-opacity=".02"/></linearGradient></defs>'
+    + grid + marks
+    + '<path d="'+area+'" fill="url(#vg)"/>'
+    + '<polyline points="'+bon.join(' ')+'" fill="none" stroke="#ff9b3d" stroke-width="1.6" stroke-dasharray="1 3"/>'
+    + '<polyline points="'+pts.join(' ')+'" fill="none" stroke="#009689" stroke-width="2.4"/>'
+    + ticks + '</svg>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   03 · CATEGORY LEDGER — ranked by gap, expands in place
+   ═══════════════════════════════════════════════════════════════════════════ */
+function renderCategories(){
+  const est = isEstimated();
+  const maxGap = Math.max.apply(null, CATS.map(c => c.rate));
+  $('#clRows').innerHTML = CATS.map((c,i) => {
+    const a = activeAgIn(c.id), covered = !!a;
+    const spendV = val(c.spend), saveV = val(covered ? a.saving : c.saving);
+    const open = state.open.has(c.id);
+    return '<div class="cl-item'+(open?' open':'')+(covered?' covered':'')+'" data-cat="'+c.id+'">'
+      + '<button class="cl-row" type="button" aria-expanded="'+open+'" aria-controls="exp-'+c.id+'">'
+        + '<span class="cl-rank">'+(i+1)+'</span>'
+        + '<span class="cl-name"><b>'+esc(c.name)+'</b><span>'
+          + (est ? 'est. '+c.suppliers+' suppliers' : c.suppliers+' suppliers · '+c.invoices+' invoices')
+          + (covered ? ' · '+esc(a.name) : '')+'</span></span>'
+        + '<span class="cl-num q c-spend">'+spendV.text+'</span>'
+        + '<span class="gapbar c-gap"><span class="gapbar-t"><span class="gapbar-f" style="width:'
+          + (c.rate/maxGap*100).toFixed(1)+'%"></span></span>'
+          + '<span class="gapbar-v" style="color:'
+          + (covered?'var(--sentiment-positive)':'var(--sentiment-negative)')+'">'
+          + pct(c.rate,0)+'</span></span>'
+        + '<span class="cl-num '+(covered?'pos':'neg')+'">'+saveV.text+'</span>'
+        + '<span class="c-st"><span class="chip '+(covered?'chip-good':'chip-leak')+'">'
+          + (covered?'Covered':'Leaking')+'</span></span>'
+        + '<svg class="cl-chev" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
+          + '<path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+          + 'stroke-linejoin="round"/></svg>'
+      + '</button>'
+      + '<div class="cl-exp" id="exp-'+c.id+'" role="region" aria-label="'+esc(c.name)+' detail">'
+        + (open ? expansion(c) : '')+'</div></div>';
+  }).join('');
+}
+
+const supplierNames = c => (EXTRA_SUP[c.id]||[]).slice(0, Math.min(6, c.suppliers));
+
+function expansion(c){
+  const est = isEstimated(), a = activeAgIn(c.id);
+  const spendV = val(c.spend), saveV = val(c.saving);
+  const groupPrice = c.spend * (1 - c.rate);
+
+  const logic = '<div class="ebox"><h4>Benchmark logic · rank '+(CATS.indexOf(c)+1)+' of 8 by gap</h4><div>'
+    + '<div class="calc-row"><span>Your annual spend here</span><b>'+spendV.text+'</b></div>'
+    + '<div class="calc-row"><span>Your blended price index</span><b>'+c.idx+'</b></div>'
+    + '<div class="calc-row"><span>Advantage group rate index</span><b>100</b></div>'
+    + '<div class="calc-row"><span>Same volume at the group rate</span><b>'+val(groupPrice).text+'</b></div>'
+    + '<div class="calc-row eq"><span>Gap = recoverable ('+pct(c.rate,0)+' of spend)</span><b>'+saveV.text+'</b></div>'
+    + '<p class="enote">'+esc(c.note)+'</p>'
+    + '<p class="enote">'+prov(provKind())+' '+(est
+        ? 'Modelled from the 148-company peer set — sector 43.21.00, 20–49 employees, Region Midtjylland. '
+          + 'Supplier price levels from published lists and web-scraped catalogues. Band ±'+pct(bandPct(),0)+'.'
+        : 'Matched from '+c.invoices+' invoices across '+c.suppliers+' suppliers'
+          + (c.itemised ? ' at article-line level.' : '; freight and service lines aggregated at invoice level.'))
+    + '</p></div></div>';
+
+  const sup = '<div class="ebox"><h4>Suppliers carrying this spend</h4><div>'
+    + '<div class="sup-list">'+supplierNames(c).map(s=>'<span class="sup">'+esc(s)+'</span>').join('')
+    + (c.suppliers > supplierNames(c).length
+        ? '<span class="sup" style="color:var(--general-muted-foreground)">+'
+          + (c.suppliers-supplierNames(c).length)+' more</span>' : '')+'</div>'
+    + '<div class="calc-row"><span>Suppliers in this category</span><b>'+(est?'est. ':'')+c.suppliers+'</b></div>'
+    + '<div class="calc-row"><span>Invoices read in twelve months</span><b>'
+      + (est?'none yet':fmt(c.invoices))+'</b></div>'
+    + '<div class="calc-row"><span>Share of total spend</span><b>'+pct(c.spend/TOTAL_SPEND,1)+'</b></div>'
+    + '<div class="calc-row"><span>Share of total recoverable</span><b>'
+      + pct(c.saving/TOTAL_POTENTIAL,1)+'</b></div>'
+    + '<p class="enote">Routing this category changes neither who delivers nor when. Same supplier, same lorry, '
+    + 'same site — only the price on the invoice changes.</p></div></div>';
+
+  const list = '<div class="ebox"><h4>Matched agreements · '+agsIn(c.id).length+' of '+CATALOGUE
+    + ' in the catalogue · one routing at a time</h4><div style="padding:0">'
+    + agsIn(c.id).map(x => {
+        const on = state.active.has(x.id), sv = val(x.saving);
+        const delta = a && !on ? x.saving - a.saving : 0;
+        return '<div class="agr-row'+(x.rec?' rec':'')+'">'
+          + logoTile(x,'agr-logo')
+          + '<span class="agr-id"><b>'+esc(x.name)+'</b><span class="sub">'+esc(x.sub)+'</span>'
+            + '<span class="meta">'+prov(on ? provKind() : (est?'e':'m'))
+            + (x.rec ? '<span class="chip chip-rec">Best match</span>' : '')
+            + (on ? '<span class="chip chip-good">Active</span>' : '')+'</span></span>'
+          + '<span class="agr-n" style="color:'+(on?'var(--sentiment-positive)':'inherit')+'">'+sv.text
+            + '<small>'+(on?'caught / yr':'if routed here')+'</small>'
+            + (delta ? '<span class="delta" style="color:'
+                + (delta<0?'var(--sentiment-negative)':'var(--sentiment-positive)')+'">'
+                + (delta<0?'−':'+')+fmt(Math.abs(delta))+' vs current</span>' : '')+'</span>'
+          + '<span class="agr-act">'
+            + '<button class="btn btn-secondary btn-sm" data-term="'+x.id+'">Term sheet</button>'
+            + (on ? '<button class="btn btn-secondary btn-sm" data-deact="'+x.id+'">Deactivate</button>'
+                  : '<button class="btn btn-primary btn-sm" data-act="'+x.id+'">Activate</button>')
+          + '</span></div>';
+      }).join('')+'</div></div>';
+
+  return '<div class="exp-grid"><div class="exp-col">'+logic+sup+'</div>'
+    + '<div class="exp-col">'+list+'</div></div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   04 · TERM SHEET
+   ═══════════════════════════════════════════════════════════════════════════ */
+const GENERIC_GET = () => [
+  'The tier discount above, applied on the invoice line — no rebate to claim afterwards.',
+  'Volume routed here counts toward the annual customer bonus.',
+  'Notice before any list-price change, and a named contact for disputes.',
+  'Advantage verifies the discount on your next invoice automatically.'
+];
+const GENERIC_MUST = () => [
+  'Buy on the company account so purchases are recognised under the framework.',
+  'Hold the volume band above — dropping a tier reprices the whole year at renewal.',
+  'Settle within the agreed payment terms; late settlement suspends the discount for that period.'
+];
+const GENERIC_STEPS = a => [
+  {t:'Confirm the account link',d:'1 day',o:'Owner',x:'Advantage sends your CVR and account number to '+a.name+'.'},
+  {t:'Framework price file loaded',d:'2–3 days',o:a.name+' account team',x:'The tier discount is attached to your account. No action from you.'},
+  {t:'Brief whoever buys',d:'15–30 minutes',o:'Site lead',x:'One rule: always buy on the account, never on cash or a private card.'},
+  {t:'Verify on the first invoice',d:'at next invoice',o:'Advantage (automatic)',x:'Advantage reads the invoice and confirms the discount line landed.'}
+];
+const tsCell = (k, v, q) => '<div class="ts-cell"><span class="k">'+k+'</span><p>'+v+'</p>'
+  + (q ? '<span class="q">'+q+'</span>' : '')+'</div>';
+
+function renderTerm(){
+  const sec = $('#sec-agreements');
+  if (!state.term){ sec.hidden = true; $('#termSheet').innerHTML = ''; return; }
+  sec.hidden = false;
+  const a = ag(state.term), c = cat(a.cat), est = isEstimated();
+  const on = state.active.has(a.id), cur = activeAgIn(c.id);
+  const sv = val(a.saving);
+  const get = a.get || GENERIC_GET(), must = a.must || GENERIC_MUST(), steps = a.steps || GENERIC_STEPS(a);
+
+  $('#termSheet').innerHTML =
+  '<div class="card ts">'
+  + '<div class="ts-top">'+logoTile(a,'ts-logo')
+    + '<div class="ts-id"><h3>'+esc(a.name)+'</h3>'
+      + '<p>'+esc(a.sub)+' · category: <b>'+esc(c.name)+'</b></p>'
+      + '<p>'+prov(on ? provKind() : (est?'e':'m'))+' '
+      + (a.rec ? '<span class="chip chip-rec">Best match</span> ' : '')
+      + (on ? '<span class="chip chip-good">Active since '+MONTHS[(a.live||1)-1]+'</span>' : '')
+      + '</p>'
+      + '<p class="q" style="font-size:13px;color:var(--general-muted-foreground)">'
+      + (on ? 'The figures below are what this agreement is actually returning.'
+            : 'The figures below are what it would return on your current volume.')+'</p></div>'
+    + '<div class="ts-fig"><span class="k">'+(on?'Caught per year':'Recoverable per year')+'</span>'
+      + '<span class="v'+(sv.est?' band':'')+'">'+sv.text+'</span>'
+      + '<span class="k">on '+val(c.spend,{short:true}).text+' of category volume</span></div>'
+  + '</div>'
+  + '<div class="ts-cols">'
+    + tsCell('Parties', esc(a.parties))
+    + tsCell('Validity window', esc(a.valid), 'Prices fixed for the period unless notice is given.')
+    + tsCell('Notice period', esc(a.notice), 'You can leave — the framework is not a lock-in.')
+    + tsCell('Exclusions', esc(a.excl))
+  + '</div>'
+  + '<div class="ts-sec"><h4>Discount tiers — the actual schedule</h4>'
+    + '<table class="tiers"><thead><tr><th>Volume band</th><th style="text-align:right">Discount off list</th>'
+    + '<th>Note</th></tr></thead><tbody>'
+    + a.tiers.map((t,i) => '<tr'+(i===a.hereTier?' class="here"':'')+'>'
+        + '<td>'+esc(t.band)
+        + (i===a.hereTier ? ' <span class="chip chip-rec" style="font-size:11px">You are here</span>' : '')
+        + '</td><td class="n">'+esc(t.d)+'</td><td class="q">'+esc(t.note||'')+'</td></tr>').join('')
+    + '</tbody></table>'
+    + '<p class="enote">'+prov(est?'e':'v')+' Your band is set by '+(est?'modelled':'measured')+' volume of '
+      + val(c.spend,{short:true}).text+' a year in '+esc(c.name.toLowerCase())+'. The blended effect on your '
+      + 'basket is <b>'+pct(a.saving/c.spend,1)+'</b>, which is the figure used everywhere else on this page.</p>'
+  + '</div>'
+  + '<div class="ts-sec"><h4>What you get against what you must do</h4><div class="getgive">'
+    + '<div class="gg gg-get"><h5>What you get</h5><ul>'
+      + get.map(g=>'<li><i>+</i><span>'+esc(g)+'</span></li>').join('')+'</ul></div>'
+    + '<div class="gg gg-give"><h5>What you must do</h5><ul>'
+      + must.map(g=>'<li><i>!</i><span>'+esc(g)+'</span></li>').join('')+'</ul></div>'
+    + '</div></div>'
+  + '<div class="ts-sec"><h4>Implementation — '+steps.length+' steps, owner and duration per step</h4>'
+    + '<ol class="impl">'+steps.map((s,i)=>'<li><span class="impl-no">'+(i+1)+'</span>'
+        + '<span class="impl-t"><b>'+esc(s.t)+'</b><p>'+esc(s.x)+'</p></span>'
+        + '<span class="impl-m"><span class="k">Duration</span><span class="v">'+esc(s.d)+'</span></span>'
+        + '<span class="impl-m"><span class="k">Owner</span><span class="v">'+esc(s.o)+'</span></span>'
+        + '</li>').join('')+'</ol></div>'
+  + '<div class="ts-foot">'
+    + (on ? '<button class="btn btn-secondary" data-deact="'+a.id+'">Deactivate this routing</button>'
+          : '<button class="btn btn-primary" data-act="'+a.id+'">Activate this agreement</button>')
+    + '<p>'+(on
+        ? 'Deactivating returns <b>'+val(c.spend,{short:true}).text+'</b> of volume to the leaking side of the '
+          + 'diagnosis and removes '+sv.text+' from what is caught — including the effect on the bonus tier.'
+        : (cur
+            ? 'This replaces <b>'+esc(cur.name)+'</b> as the routing for '+esc(c.name)+'. Net effect: <b>'
+              + (a.saving>=cur.saving?'+':'−')+fmt(Math.abs(a.saving-cur.saving))+' kr./yr</b>.'
+            : 'Activating moves <b>'+val(c.spend,{short:true}).text+'</b> from leaking to covered in section 01, '
+              + 'adds '+sv.text+' to what is caught, and recalculates the bonus tier — without leaving this page.'))
+    + '</p></div></div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   05 · SIGNALS  ·  06 · AUDIT
+   ═══════════════════════════════════════════════════════════════════════════ */
+function renderSignals(){
+  const est = isEstimated();
+  $('#sigNote').innerHTML = est
+    ? 'You have no history with us yet, so this is the signal feed from the peer set — the kind of events that '
+      + 'would land on your page, with the effect they had on comparable companies. It is labelled as such.'
+    : 'Every signal carries its effect on the diagnosis, which makes this an audit trail rather than a news ticker.';
+  $('#sigRows').innerHTML = SIGNALS.map(s => {
+    const sign = s.v > 0 ? '↑' : (s.v < 0 ? '↓' : '·');
+    const k = s.v > 0 ? 'up' : (s.v < 0 ? 'dn' : 'nu');
+    let v = '—';
+    if (s.v !== 0){
+      const abs = Math.abs(s.v);
+      v = (s.v<0?'−':'+') + (est ? short(abs*(1-bandPct()))+'–'+short(abs*(1+bandPct()))+' kr.' : kr(abs));
+    }
+    return '<div class="sig-row">'
+      + '<span class="sig-d">'+esc(s.d)+'</span>'
+      + '<span class="sig-i '+k+'" aria-hidden="true">'+sign+'</span>'
+      + '<span class="sig-t"><b>'+esc(s.t)+'</b><span>'+esc(s.s)+'</span></span>'
+      + '<span class="sig-v '+k+'">'+v+'</span>'
+      + '<span class="sig-p">'+prov(est?'e':'v')+'</span></div>';
+  }).join('');
+}
+
+function renderAudit(){
+  const d = derive(), bd = bonusBreakdown(d.covered);
+  const ok = (a,b) => Math.abs(a-b) < 1
+    ? '<span class="ok">✓</span>' : '<span style="color:var(--general-destructive)">✗</span>';
+  $('#audit').innerHTML =
+    '<div class="audit-c"><span class="k">Spend split</span><span class="eqn">'
+      + 'covered <b>'+fmt(d.covered)+'</b><br>+ leaking <b>'+fmt(d.leaking)+'</b><br>'
+      + '= total <b>'+fmt(TOTAL_SPEND)+'</b> '+ok(d.covered+d.leaking, TOTAL_SPEND)+'</span></div>'
+    + '<div class="audit-c"><span class="k">Recoverable split</span><span class="eqn">'
+      + 'caught <b>'+fmt(d.caught)+'</b><br>+ on the table <b>'+fmt(d.remaining)+'</b><br>'
+      + '= identified <b>'+fmt(d.identified)+'</b> '+ok(d.identified, TOTAL_POTENTIAL)
+      + '<br>catalogue maximum '+fmt(TOTAL_POTENTIAL)+'</span></div>'
+    + '<div class="audit-c"><span class="k">Customer bonus on routed volume</span><span class="eqn">'
+      + bd.map(t => pct(t.rate,1)+' × '+fmt(t.slice)+' ('+t.band+')<br>&nbsp;&nbsp;= <b>'+fmt(t.amount)+'</b>')
+          .join('<br>')
+      + '<br>= bonus <b>'+fmt(d.bonus)+'</b></span></div>'
+    + '<div class="audit-c"><span class="k">Total returned</span><span class="eqn">'
+      + 'discounts <b>'+fmt(d.caught)+'</b><br>+ bonus <b>'+fmt(d.bonus)+'</b><br>'
+      + '= returned <b>'+fmt(d.value)+'</b><br>'+pct(d.value/TOTAL_SPEND,1)+' of total spend</span></div>';
+
+  $('#colophon').innerHTML =
+    '<b>How to read this page.</b> Both accounts see the same six sections in the same order with the same '
+    + 'wording; only the confidence of the figures changes. <b>Verified</b> means matched to an invoice line in '
+    + 'your own accounting data. <b>Estimated</b> means modelled from the 148-company peer set with a stated '
+    + 'band. <b>Modelled</b> means arithmetic on top of other figures — a projection, not an observation. '
+    + CATALOGUE+' framework agreements in the catalogue, '+AGS.length+' of them matched to this spend profile, '
+    + state.active.size+' currently routed. Best single discount anywhere in the catalogue: <b>35,0%</b> on the '
+    + 'Lyreco core list. Money returns two ways only — a lower price on the invoice, and the annual customer '
+    + 'bonus on routed volume. Operationally nothing changes: same supplier, same delivery, only the price.';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ORCHESTRATION
+   ═══════════════════════════════════════════════════════════════════════════ */
+function renderAll(){
+  renderShell(); renderHead(); renderDiagnosis(); renderValue();
+  renderCategories(); renderTerm(); renderSignals(); renderAudit();
+}
+
+let toastTimer;
+function toast(html){
+  const t = $('#toast'); t.innerHTML = html; t.classList.add('on');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), 5400);
+}
+
+function activate(id){
+  const a = ag(id), c = cat(a.cat);
+  const before = derive(), prev = activeAgIn(c.id);
+  if (prev) state.active.delete(prev.id);
+  state.active.add(id);
+  if (!a.live){ a.live = MONTHS_ELAPSED; state.newlyActive.add(id); }
+  const after = derive();
+  renderAll();
+  const dv = after.value - before.value, dl = before.leaking - after.leaking;
+  toast('<span>'+esc(a.name)+(prev && prev.id !== id ? ' replaces '+esc(prev.name) : ' activated')+'.</span>'
+    + '<b>'+(dv>=0?'+':'−')+kr(Math.abs(dv))+'/yr</b>'
+    + '<span class="q">'+(dl>0 ? kr(dl)+' moved from leaking to covered · ' : '')
+    + 'leaking now '+kr(after.leaking)+' · caught '+kr(after.caught)+'</span>');
+}
+function deactivate(id){
+  const a = ag(id), before = derive();
+  state.active.delete(id);
+  if (state.newlyActive.has(id)){ delete a.live; state.newlyActive.delete(id); }
+  const after = derive();
+  renderAll();
+  toast('<span>'+esc(a.name)+' deactivated.</span><b>−'+kr(before.value-after.value)+'/yr</b>'
+    + '<span class="q">'+kr(cat(a.cat).spend)+' moved back to leaking · leaking now '+kr(after.leaking)+'</span>');
+}
+
+function closeUser(){ $('#userPop').classList.remove('on'); $('#userBtn').setAttribute('aria-expanded','false'); }
+function closeBell(){ $('#npop').classList.remove('on'); $('#bellBtn').classList.remove('on');
+  $('#bellBtn').setAttribute('aria-expanded','false'); }
+
+function goTo(targetId){
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  const canvas = $('#canvas');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const top = el.getBoundingClientRect().top - canvas.getBoundingClientRect().top + canvas.scrollTop - 20;
+  canvas.scrollTo({top:Math.max(0,top), behavior: reduce ? 'auto' : 'smooth'});
+}
+
+/* ── login / account ── */
+function applyAccount(key){
+  state.account = key;
+  state.term = null;
+  state.sharpen.clear();
+  state.readNotes.clear();
+}
+function enterApp(){
+  renderNav();
+  renderAll();
+  document.body.classList.add('in-app');
+  $('#app').classList.add('on');
+  $('#bannerwrap').style.display = '';
+  $('#pageTitle').focus();
+  $('#canvas').scrollTop = 0;
+}
+function loginAs(key){
+  applyAccount(key);
+  enterApp();
+  toast(key === 'fanny'
+    ? '<span>Signed in as Fanny Kristensen · Kristensen Elektro ApS.</span>'
+      + '<b>Estimated</b><span class="q">Nothing connected, so every figure is a modelled range.</span>'
+    : '<span>Signed in as Bob Iversen · Nordvik Byg A/S.</span>'
+      + '<b>Verified</b><span class="q">Visma.net connected — 1.284 invoices read.</span>');
+}
+function switchAccount(key){
+  closeUser();
+  if (key === state.account) return;
+  applyAccount(key);
+  renderAll();
+  $('#canvas').scrollTop = 0;
+  toast(key === 'fanny'
+    ? '<span>Switched to Kristensen Elektro ApS.</span><b>Same layout</b>'
+      + '<span class="q">Same six sections, same order, same words — the figures are now ranges.</span>'
+    : '<span>Switched to Nordvik Byg A/S.</span><b>Verified</b>'
+      + '<span class="q">Identical page — the ranges have collapsed to exact, invoice-matched figures.</span>');
+}
+function signOut(){
+  closeUser();
+  document.body.classList.remove('in-app');
+  $('#app').classList.remove('on');
+  window.scrollTo(0,0);
+  $('#loginBob').focus();
+}
+
+/* ── wiring ── */
+$('#loginBob').addEventListener('click', () => loginAs('bob'));
+$('#loginFanny').addEventListener('click', () => loginAs('fanny'));
+$('#personaBob').addEventListener('click', () => switchAccount('bob'));
+$('#personaFanny').addEventListener('click', () => switchAccount('fanny'));
+$('#signOutBtn').addEventListener('click', signOut);
+
+$('#userBtn').addEventListener('click', e => {
+  e.stopPropagation(); closeBell();
+  const on = $('#userPop').classList.toggle('on');
+  $('#userBtn').setAttribute('aria-expanded', String(on));
+});
+$('#bellBtn').addEventListener('click', e => {
+  e.stopPropagation(); closeUser();
+  const on = $('#npop').classList.toggle('on');
+  $('#bellBtn').classList.toggle('on', on);
+  $('#bellBtn').setAttribute('aria-expanded', String(on));
+});
+$('#npAll').addEventListener('click', () => {
+  SIGNALS.forEach((s,i) => state.readNotes.add(i)); renderNotes();
+});
+$('#npBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-note]');
+  if (!b) return;
+  state.readNotes.add(Number(b.dataset.note));
+  renderNotes(); closeBell(); goTo('sec-signals');
+});
+$('#erpPill').addEventListener('click', () => {
+  if (state.account === 'fanny' && bandPct() > 0){ goTo('sec-diagnosis'); }
+  else toast('<span>Visma.net is connected and read-only.</span>'
+    + '<b>'+fmt(TOTAL_INVOICES)+' invoices</b><span class="q">Last sync 21.08.2026, 06:14.</span>');
+});
+$('#bannerX').addEventListener('click', () => { $('#bannerwrap').style.display = 'none'; });
+$('#bannerGo').addEventListener('click', () => goTo('sec-diagnosis'));
+$('#agentBtn').addEventListener('click', () => toast(
+  '<span>The saving assistant is part of the shell, not of this approach.</span>'
+  + '<b>Not wired</b><span class="q">Approach A answers with one audited page instead of a conversation.</span>'));
+$('#railTog').addEventListener('click', () => {
+  state.railMini = !state.railMini;
+  $('#rail').classList.toggle('mini', state.railMini);
+  $('#railTog').setAttribute('aria-expanded', String(!state.railMini));
+  $('#railTog').setAttribute('aria-label', state.railMini ? 'Expand navigation' : 'Collapse navigation');
+});
+$('#nav').addEventListener('click', e => {
+  const b = e.target.closest('[data-nav]');
+  if (!b) return;
+  state.navAt = b.dataset.nav;
+  renderNav();
+  const item = NAV.find(n => n.id === state.navAt);
+  if (item) goTo(item.target);
+});
+$('#expandAll').addEventListener('click', () => {
+  const allOpen = state.open.size === CATS.length;
+  state.open = allOpen ? new Set() : new Set(CATS.map(c => c.id));
+  renderCategories();
+  $('#expandAll').textContent = allOpen ? 'Open every row' : 'Close every row';
+});
+$('#tsClose').addEventListener('click', () => {
+  state.term = null; renderTerm(); goTo('sec-categories');
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.userwrap')) closeUser();
+  if (!e.target.closest('.notif')) closeBell();
+
+  const btn = e.target.closest('button');
+  if (btn && btn.dataset.act){ activate(btn.dataset.act); return; }
+  if (btn && btn.dataset.deact){ deactivate(btn.dataset.deact); return; }
+  if (btn && btn.dataset.term){
+    state.term = btn.dataset.term;
+    renderTerm();
+    goTo('sec-agreements');
+    $('#h-ts').focus();
+    return;
+  }
+  if (btn && btn.dataset.sharpen){
+    const id = btn.dataset.sharpen;
+    if (id === 'reset'){
+      state.sharpen.clear(); renderAll();
+      toast('<span>Bands reset to ±15% — back to sector modelling only.</span>');
+      return;
+    }
+    const i = SHARPEN_STEPS.findIndex(s => s.id === id);
+    SHARPEN_STEPS.slice(0, i+1).forEach(s => state.sharpen.add(s.id));
+    const b = bandPct();
+    renderAll();
+    toast(b === 0
+      ? '<span>Visma.net connected — 1.104 invoices read.</span><b>Verified</b>'
+        + '<span class="q">Same page, same sections. The ranges are now exact figures.</span>'
+      : '<span>'+esc(SHARPEN_STEPS[i].title)+' — done.</span><b>±'+pct(b,0)+'</b>'
+        + '<span class="q">Bands narrowed. Nothing was unlocked; it was all already here.</span>');
+    return;
+  }
+
+  const row = e.target.closest('.cl-row');
+  if (row){
+    const id = row.closest('.cl-item').dataset.cat;
+    if (state.open.has(id)) state.open.delete(id); else state.open.add(id);
+    renderCategories();
+    const again = document.querySelector('.cl-item[data-cat="'+id+'"] .cl-row');
+    if (again) again.focus();
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){
+    if ($('#userPop').classList.contains('on')){ closeUser(); $('#userBtn').focus(); return; }
+    if ($('#npop').classList.contains('on')){ closeBell(); $('#bellBtn').focus(); return; }
+    if (state.term){ state.term = null; renderTerm(); }
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+    e.preventDefault();
+    const s = $('#appSearch'); if (s) s.focus();
+  }
+});
+$('#appSearch').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){
+    e.preventDefault();
+    toast('<span>Search is part of the shell, not of this approach.</span><b>Not wired</b>'
+      + '<span class="q">Everything this prototype knows is already on the page.</span>');
+  }
+});
+
+/* the login screen is the entry point; the app renders on sign-in */
+renderNav();
+</script>
+</body>
+</html>

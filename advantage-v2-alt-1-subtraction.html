@@ -1,0 +1,1270 @@
+<!doctype html>
+<!--
+  ADVANTAGE v2 — ALTERNATIVE 1: "THE SUBTRACTION"
+  ================================================================================
+  THESIS (2 sentences)
+  A first-time customer needs one number and one action, and every additional
+  surface on the current dashboard is a tax that number and that action have to
+  pay for. So this version ships three elements — the figure, the chosen action,
+  and an honest note about what is missing — and lets depth arrive one layer at a
+  time, only after the user has actually decided something.
+
+  REMOVED FROM v2 — and why
+  • Announcement banner — a permanent interruption advertising the product to
+    someone already inside the product.
+  • Search field — nothing to search on day one; it advertises a corpus that
+    does not exist yet.
+  • Notifications bell + panel — zero events for a new account; a badge that can
+    only ever say "0" trains people to ignore badges.
+  • ERP status pill — status is provenance, so it belongs inline under the figure
+    ("verified from 1.284 invoices" / "estimated from 148 peers"), not as chrome.
+  • The five-item left nav (+ Weekly discovery / Saving assistant hero buttons) —
+    five destinations for a user with one decision to make. Nav is a tax on every
+    page view; it returns nothing until there is history to navigate.
+  • Right-hand activity rail — it renders an empty state to a new customer. A
+    feature whose day-one job is to be empty is not a feature.
+  • The gauge — a hand-drawn semicircle encodes one number strictly worse than
+    the number does, and invites "is 87% good?" questions we cannot answer.
+  • Six-card benchmark tray — collapsed to the single figure that matters
+    (437.097 kr.); the six cards were one number cut into six pieces.
+  • Three assistant tips, "savings potential up to 35%", "benchmarked against 148
+    companies" as a standalone stat — the tips split one action into three, the
+    35% ceiling is a marketing number no user can act on, and the peer count is
+    provenance for the figure, not a figure.
+  • Six-card agreement grid — it asks for a decision the user cannot yet make and
+    replaces a recommendation with a shopping aisle. Now layer 3, all 22 of them.
+  • Welcome modal — an interstitial explaining a page simple enough not to need
+    explaining. Its content became the "why so little?" note, which is honest
+    about the subtraction instead of apologising for complexity.
+  • The savings drill-down, upload centre and category page as separate
+    destinations — folded into the reveal layers so nothing is lost, only deferred.
+
+  ADDED — and why
+  • ONE figure, stated once, with its uncertainty inline (372.000–503.000 kr.,
+    not a footnote asterisk). Uncertainty next to the number is what makes an
+    estimate usable instead of merely disclaimed.
+  • ONE next action, chosen by an explicit, stated rule (saving per invoice you
+    have to move) with the runner-up shown side by side — so the choice is
+    auditable rather than merely asserted. A recommendation that hides its
+    reasoning is indistinguishable from an ad.
+  • A commitment step: yes / not now. Both answers change the page — the figure
+    recomputes, a commitment strip appears, the bonus tier moves. A dashboard
+    that looks identical after you act has taught the user that acting is
+    pointless.
+  • Progressive reveal, one layer at a time, each announcing the next: the whole
+    removed product is still reachable, but you pay for depth only when you want
+    it. Depth is advertised (a "layer 1 of 3" meter) without being charged for.
+  • An explicit "why so little?" affordance naming every removed surface and the
+    condition that brings it back. Silence about a deliberate omission reads as
+    an unfinished product; saying it out loud reads as a decision.
+
+  STRONGEST OBJECTION TO THIS VERSION
+  It optimises the first four minutes and may starve the next four years. A
+  procurement manager who logs in weekly does not want to be re-onboarded: she
+  wants search, notifications, a supplier list and six categories on one screen,
+  and this design makes all of that two-to-four clicks deep behind a reveal stack
+  built for a stranger. It also concentrates all conversion risk in a single
+  recommendation — if our "saving per invoice" rule picks wrong (a user who
+  genuinely cannot switch stationery suppliers), we have removed every other path
+  she might have found on her own, and a menu she could ignore is at least a menu
+  she could use. The current dashboard's eighteen surfaces are an ugly answer to
+  a real problem: different customers arrive wanting different things.
+
+  NUMBER NOTE: the brief says "5 of 24 agreements"; the supplier list it supplies
+  enumerates 22. This file counts what it can render (AGREEMENTS.length = 22) so
+  the total on screen always matches the rows below it.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000a45">
+<title>Advantage — One number, one action</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap">
+<style>
+/* ==========================================================================
+   Advantage Design System — tokens copied verbatim from advantage-v2-visual.html
+   so the only variable between the two files is the feature set.
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+
+  --sidebar-border:#e0e0e0;
+
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  /* 8pt spacing scale — deliberately no --s5/--s7/--s9/--s10. In-between values
+     use the house convention var(--s5,20px) with an explicit fallback, because an
+     unresolved var() silently voids the whole declaration. */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+
+  --hairline:#ececec;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  --t-slow:.5s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{
+  font-family:var(--font-body);background:var(--surface);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-5xl);letter-spacing:-1.2px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active:not([disabled]){transform:translateY(1px)}
+.btn[disabled]{cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover:not([disabled]){background:#1553bb}
+.btn-primary[disabled]{background:var(--general-muted);color:#a3a3a3;box-shadow:none}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border)}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3);height:36px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs)}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.4}
+.chip svg{width:12px;height:12px}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-warn{background:#fff2e0;color:#a35c00}
+.chip-good{background:#d9f2ef;color:var(--sentiment-positive)}
+.est-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground);font-size:11px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase}
+.est-chip svg{width:11px;height:11px}
+.est-chip.ver{background:#d9f2ef;color:var(--sentiment-positive)}
+
+/* ==========================================================================
+   LOGIN — same pattern as v2 (.scr.on.mid > .login > .login-persona)
+   ========================================================================== */
+.flow{min-height:100vh;display:flex;flex-direction:column}
+.stage{flex:1 1 auto;display:flex;flex-direction:column}
+.scr{display:none;flex:1 1 auto}
+.scr.on{display:flex;flex-direction:column}
+.scr.on.mid{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;align-content:center;
+  padding:var(--s12) var(--s6)}
+.scr.on>*{animation:rise var(--t-slow) both;min-width:0}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-sm)}
+.login{width:400px;max-width:100%;text-align:center}
+.login .mark{height:40px;width:auto;margin:0 auto var(--s8)}
+.login h1{font-size:var(--text-5xl);letter-spacing:-2px}
+.login .lead{font-size:var(--text-base);margin:var(--s3) auto 0;max-width:34ch;text-align:center;
+  color:var(--general-muted-foreground);line-height:1.55}
+.login .card{margin-top:var(--s12);padding:var(--s8);text-align:left}
+.login-choice{display:flex;flex-direction:column;gap:var(--s3)}
+.login-persona{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  cursor:pointer;text-align:left;transition:var(--t-fast)}
+.login-persona:hover,.login-persona:focus-visible{border-color:var(--general-border);background:var(--brand-ice)}
+.login-persona-av{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.login-persona:hover .login-persona-av{background:var(--surface)}
+.login-persona-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.login-persona-txt b{font-size:var(--text-sm);font-weight:600}
+.login-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+.login-persona-go{flex:0 0 auto;width:16px;height:16px;color:#a3a3a3;transition:color var(--t-fast)}
+.login-persona:hover .login-persona-go,.login-persona:focus-visible .login-persona-go{color:var(--general-primary)}
+.tinyfoot{margin-top:var(--s6);font-size:var(--text-xs);color:#8f8f8f;text-align:center}
+
+/* ==========================================================================
+   APP SHELL — v2's .wrap > .appbar > .appbody > .canvas > .page, minus the
+   banner, the search field, the ERP pill, the bell, the rail and the panel.
+   ========================================================================== */
+body.in-app{background:var(--brand-midnight);overflow:hidden}
+body.in-app .flow{display:none}
+.app{display:none;flex-direction:column;height:100vh;height:100dvh;padding-top:var(--s3)}
+.app.on{display:flex;animation:rise var(--t-slow) both}
+.wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--surface);
+  border-radius:var(--rounded-2xl) var(--rounded-2xl) 0 0;overflow:hidden;
+  box-shadow:0 -1px 0 #ffffff1a,var(--shadow-xl)}
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:68px;padding:0 var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.appbar .brand{display:flex;align-items:center;flex:0 0 auto}
+.appbar .brand img{height:28px;width:auto;display:block}
+.appbar .spacer{flex:1}
+/* the only thing left in the appbar besides the logo: who you are, and how to
+   leave. Everything that used to live here is named in the "why so little" note. */
+.userwrap{position:relative;flex:0 0 auto}
+.user{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s2);background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);transition:var(--t-fast)}
+.user:hover{background:var(--general-muted)}
+.user .uav{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;color:#fff;font-family:var(--font-sans);font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,#2170ed,#0b00ab)}
+.user .un{font-size:var(--text-xs);font-weight:600;text-align:left;line-height:1.25;white-space:nowrap}
+.user .un span{display:block;font-weight:400;color:var(--general-muted-foreground)}
+.user .uc{width:14px;height:14px;color:var(--general-muted-foreground)}
+@media(max-width:700px){.user .un{display:none}}
+.upop{position:absolute;top:calc(100% + 8px);right:0;z-index:35;width:260px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.upop.on{opacity:1;transform:none;pointer-events:auto}
+.up-h{padding:var(--s4);border-bottom:1px solid var(--hairline)}
+.up-h b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.up-h span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:1px}
+.up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
+  background:none;border:none;cursor:pointer;text-align:left;font-size:var(--text-sm);
+  color:var(--general-foreground);transition:var(--t-fast)}
+.up-i:hover{background:var(--general-muted)}
+.up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.up-i[aria-current="true"]{background:var(--brand-ice)}
+.up-sep{padding:var(--s3) var(--s4) var(--s1);border-top:1px solid var(--hairline);margin-top:var(--s1)}
+.up-sep span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.up-persona-av{flex:0 0 auto;width:28px;height:28px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:12px;font-weight:600}
+.up-persona-txt{display:flex;flex-direction:column;min-width:0}
+.up-persona-txt b{font-weight:600}
+.up-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+
+.appbody{flex:1 1 auto;min-height:0;display:flex}
+.canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--surface)}
+/* narrower than v2's 1200px on purpose: with three elements on the page, a wide
+   column just stretches a paragraph to 140 characters. */
+.page{width:100%;max-width:760px;margin:0 auto;padding:var(--s16) var(--s8) var(--s24);
+  display:flex;flex-direction:column;gap:var(--s12)}
+@media(max-width:760px){.page{padding:var(--s12) var(--s4) var(--s16)}}
+
+/* ==========================================================================
+   ELEMENT 1 · THE FIGURE — stated once, uncertainty inline
+   ========================================================================== */
+.fig{display:flex;flex-direction:column;gap:var(--s4)}
+.fig-top{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.fig-label{font-size:var(--text-sm);font-weight:600;color:var(--general-muted-foreground)}
+.fig-num{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap}
+.fig-num b{font-family:var(--font-sans);font-weight:800;letter-spacing:-2.4px;
+  font-size:clamp(40px,8.5vw,72px);line-height:1;font-variant-numeric:tabular-nums}
+.fig-num small{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:600;
+  letter-spacing:-.4px;color:var(--general-muted-foreground)}
+/* the uncertainty sits on the same visual line as the number, not in a footnote:
+   an estimate you cannot see the width of is not an estimate, it's a claim */
+.fig-band{font-size:var(--text-base);line-height:1.55;max-width:56ch}
+.fig-band b{font-weight:600;font-variant-numeric:tabular-nums}
+.fig-prov{display:flex;align-items:flex-start;gap:var(--s2);font-size:var(--text-sm);
+  line-height:1.6;color:var(--general-muted-foreground);max-width:60ch}
+.fig-prov svg{width:15px;height:15px;flex:0 0 auto;margin-top:3px}
+.fig-rule{height:1px;background:var(--hairline)}
+
+/* commitment strip — the page's proof that acting changed something */
+.commit{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) var(--s6);
+  border-radius:var(--rounded-lg);background:#d9f2ef;color:#046a61;flex-wrap:wrap}
+.commit.parked{background:var(--general-muted);color:var(--general-muted-foreground)}
+.commit-ic{flex:0 0 auto;width:32px;height:32px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:#ffffffb3;color:var(--sentiment-positive)}
+.commit.parked .commit-ic{color:var(--general-muted-foreground)}
+.commit-ic svg{width:17px;height:17px}
+.commit-tx{flex:1 1 auto;min-width:0;font-size:var(--text-sm);line-height:1.55}
+.commit-tx b{font-family:var(--font-sans);font-weight:600;font-variant-numeric:tabular-nums}
+.commit .linkbtn{color:inherit;text-decoration:underline;flex:0 0 auto}
+
+/* ==========================================================================
+   ELEMENT 2 · THE ONE ACTION — chosen, with the reasoning on screen
+   ========================================================================== */
+.act{background:var(--surface);border:1px solid var(--general-border);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-md);overflow:hidden}
+.act-h{display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.act-logo{flex:0 0 auto;width:52px;height:52px;border-radius:var(--rounded-md);overflow:hidden;
+  display:grid;place-items:center;border:1px solid var(--hairline);background:var(--surface)}
+.act-logo img{width:100%;height:100%;object-fit:contain;padding:6px;display:block}
+.act-logo .ini{font-family:var(--font-sans);font-size:var(--text-base);font-weight:700;
+  color:var(--general-primary);letter-spacing:.02em}
+.act-hx{flex:1 1 auto;min-width:0}
+.act-eyebrow{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-primary);margin-bottom:var(--s1)}
+.act-name{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:600;letter-spacing:-.4px;
+  display:block}
+.act-sub{font-size:var(--text-sm);color:var(--general-muted-foreground);margin-top:2px}
+.act-amt{flex:0 0 auto;text-align:right}
+.act-amt b{display:block;font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:700;
+  letter-spacing:-.7px;color:var(--general-primary);font-variant-numeric:tabular-nums}
+.act-amt span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+@media(max-width:600px){.act-h{flex-wrap:wrap}.act-amt{text-align:left;width:100%}}
+.act-b{padding:var(--s6);display:flex;flex-direction:column;gap:var(--s6)}
+.act-why{font-size:var(--text-sm);line-height:1.65}
+.act-why b{font-weight:600}
+/* the comparison that makes the recommendation auditable */
+.cmp{width:100%;border-collapse:collapse}
+.cmp caption{text-align:left;padding-bottom:var(--s3);font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.cmp th,.cmp td{padding:var(--s3) var(--s3);border-bottom:1px solid var(--hairline);
+  font-size:var(--text-sm);text-align:right;vertical-align:middle}
+.cmp th:first-child,.cmp td:first-child{text-align:left;padding-left:0}
+.cmp th:last-child,.cmp td:last-child{padding-right:0}
+.cmp thead th{font-family:var(--font-mono);font-size:13px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--general-muted-foreground)}
+.cmp thead th.pick{color:var(--general-primary)}
+.cmp td.pick{background:var(--brand-ice);font-weight:600;font-variant-numeric:tabular-nums}
+.cmp td.alt{color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.cmp tbody tr:last-child td{border-bottom:none}
+.act-rule{font-size:var(--text-xs);line-height:1.6;color:var(--general-muted-foreground);
+  padding:var(--s3) var(--s4);background:var(--general-muted);border-radius:var(--rounded-md)}
+.act-rule b{color:var(--general-foreground);font-weight:600}
+.act-acts{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.act-acts .btn-primary{flex:1 1 auto;min-width:240px}
+.act-done{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-sm);
+  color:var(--general-muted-foreground)}
+.act-done b{color:var(--general-foreground);font-weight:600}
+
+/* ==========================================================================
+   ELEMENT 3 · PROGRESSIVE REVEAL — depth advertised, charged for on demand
+   ========================================================================== */
+.rv{display:flex;flex-direction:column;gap:var(--s4)}
+.rv-head{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap}
+.rv-head h2{font-size:var(--text-xl);letter-spacing:-.4px}
+.rv-meter{display:flex;align-items:center;gap:var(--s2);margin-left:auto}
+.rv-meter i{width:22px;height:3px;border-radius:2px;background:var(--general-muted);
+  transition:background-color var(--t)}
+.rv-meter i.on{background:var(--general-primary)}
+.rv-meter span{font-size:var(--text-xs);color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums}
+.rv-locked{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground);
+  padding:var(--s4) var(--s6);border:1px dashed var(--sidebar-border);border-radius:var(--rounded-lg)}
+.rv-locked b{color:var(--general-foreground);font-weight:600}
+.layer{border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  box-shadow:var(--shadow-2xs);overflow:hidden}
+.layer+.layer{margin-top:var(--s3)}
+.layer-btn{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4) var(--s6);
+  background:none;border:none;cursor:pointer;text-align:left;transition:background-color var(--t-fast)}
+.layer-btn:hover{background:#fcfcfd}
+.layer-n{flex:0 0 auto;width:26px;height:26px;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:13px;font-weight:700}
+.layer-t{flex:1 1 auto;min-width:0}
+.layer-t b{display:block;font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+  letter-spacing:-.2px}
+.layer-t span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:1px}
+.layer-ch{flex:0 0 auto;width:18px;height:18px;color:var(--general-muted-foreground);
+  transition:transform var(--t)}
+.layer-btn[aria-expanded="true"] .layer-ch{transform:rotate(180deg)}
+.layer-body{display:none;padding:0 var(--s6) var(--s6);border-top:1px solid var(--hairline);
+  padding-top:var(--s6)}
+.layer.open .layer-body{display:block;animation:rise var(--t) both}
+.layer-next{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--hairline);
+  font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
+/* data tables inside the layers — v2's table treatment, trimmed */
+.tbl-scroll{position:relative;overflow-x:auto;margin:0 calc(var(--s6) * -1);padding:0 var(--s6)}
+table.dt{width:100%;border-collapse:collapse;min-width:560px}
+table.dt th{text-align:left;padding:var(--s2) var(--s3);font-size:13px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.07em;color:var(--general-muted-foreground);
+  font-family:var(--font-mono);border-bottom:1px solid var(--hairline);white-space:nowrap}
+table.dt th.r,table.dt td.r{text-align:right}
+table.dt th:first-child,table.dt td:first-child{padding-left:0}
+table.dt th:last-child,table.dt td:last-child{padding-right:0}
+table.dt td{padding:var(--s3);border-bottom:1px solid #f5f5f5;font-size:var(--text-sm)}
+table.dt td.amt{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600;
+  white-space:nowrap}
+table.dt tfoot td{border-bottom:none;border-top:1px solid var(--hairline);font-weight:600;
+  padding-top:var(--s4)}
+table.dt tr.off td{color:var(--general-muted-foreground)}
+.pos{color:var(--sentiment-positive)}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--rounded-full);
+  font-size:12px;font-weight:600;background:var(--general-muted);color:var(--general-muted-foreground)}
+.tag.live{background:#d9f2ef;color:var(--sentiment-positive)}
+.tag.leak{background:#fff2e0;color:#a35c00}
+/* covered vs leaking, as one bar rather than two cards */
+.bar{margin-top:var(--s6)}
+.bar-t{display:flex;height:10px;border-radius:var(--rounded-full);overflow:hidden;
+  background:var(--general-muted)}
+.bar-t i{display:block;height:100%;transition:width var(--t)}
+.bar-t i.cov{background:var(--general-primary)}
+.bar-t i.leak{background:var(--general-accent)}
+.bar-l{display:flex;gap:var(--s6);margin-top:var(--s3);flex-wrap:wrap;font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.bar-l span{display:inline-flex;align-items:center;gap:6px}
+.bar-l em{font-style:normal;width:9px;height:9px;border-radius:2px;flex:0 0 auto}
+.bar-l em.cov{background:var(--general-primary)}
+.bar-l em.leak{background:var(--general-accent)}
+.bar-l b{color:var(--general-foreground);font-weight:600;font-variant-numeric:tabular-nums}
+.layer-note{font-size:var(--text-sm);line-height:1.65;color:var(--general-muted-foreground)}
+.layer-note+.tbl-scroll,.tbl-scroll+.layer-note{margin-top:var(--s6)}
+.layer-note b{color:var(--general-foreground);font-weight:600}
+
+/* the 22 agreements, as a plain list rather than a card grid */
+.agr-list{list-style:none;display:flex;flex-direction:column}
+.agr-grp{font-family:var(--font-mono);font-size:13px;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--general-muted-foreground);padding:var(--s4) 0 var(--s2)}
+.agr-row{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) 0;
+  border-bottom:1px solid #f5f5f5}
+.agr-chip{flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-sm);overflow:hidden;
+  display:grid;place-items:center;border:1px solid var(--hairline)}
+.agr-chip img{width:100%;height:100%;object-fit:contain;padding:4px;display:block}
+.agr-chip .ini{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--general-primary)}
+.agr-nm{flex:1 1 auto;min-width:0;font-size:var(--text-sm)}
+.agr-nm b{font-weight:600;display:block}
+.agr-nm span{display:block;font-size:12px;color:var(--general-muted-foreground)}
+
+/* ---------- the "why so little?" note ---------- */
+.why{border-top:1px solid var(--hairline);padding-top:var(--s6)}
+.why-btn{display:flex;align-items:center;gap:var(--s3);background:none;border:none;cursor:pointer;
+  padding:0;text-align:left;color:var(--general-foreground)}
+.why-btn b{font-family:var(--font-sans);font-size:var(--text-base);font-weight:600}
+.why-btn svg{width:16px;height:16px;color:var(--general-muted-foreground);transition:transform var(--t)}
+.why-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+.why-body{display:none;margin-top:var(--s4)}
+.why.open .why-body{display:block;animation:rise var(--t) both}
+.why-lead{font-size:var(--text-sm);line-height:1.7;color:var(--general-muted-foreground);max-width:62ch}
+.why-lead b{color:var(--general-foreground);font-weight:600}
+.why-list{list-style:none;margin-top:var(--s4);display:flex;flex-direction:column}
+.why-list li{display:flex;gap:var(--s4);padding:var(--s3) 0;border-bottom:1px solid #f5f5f5;
+  font-size:var(--text-sm);line-height:1.55}
+.why-list li b{flex:0 0 40%;font-weight:600}
+.why-list li span{flex:1 1 auto;color:var(--general-muted-foreground)}
+.why-foot{margin-top:var(--s6);font-size:var(--text-xs);line-height:1.7;color:#8f8f8f}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+<div class="flow">
+  <main class="stage">
+    <!-- ==================== LOGIN ==================== -->
+    <section class="scr on mid" id="s-login" aria-labelledby="h-login">
+      <div class="login">
+        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <h1 id="h-login">Welcome</h1>
+        <p class="lead">One number and one thing to do about it. Choose an account to sign in.</p>
+
+        <div class="card login-choice">
+          <button class="login-persona" id="loginBob" type="button">
+            <span class="login-persona-av">BI</span>
+            <span class="login-persona-txt">
+              <b>Bob Iversen</b>
+              <span>Nordvik Byg A/S · returning, invoices connected</span>
+            </span>
+            <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="login-persona" id="loginFanny" type="button">
+            <span class="login-persona-av">FK</span>
+            <span class="login-persona-txt">
+              <b>Fanny Kristensen</b>
+              <span>Kristensen Elektro ApS · new, nothing connected</span>
+            </span>
+            <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="tinyfoot">Prototype — the subtraction variant. Three elements, then depth on request.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div class="app" id="app">
+  <div class="wrap">
+
+    <header class="appbar">
+      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="spacer"></span>
+      <div class="userwrap">
+        <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
+          <span class="uav" id="userAv">BI</span>
+          <span class="un"><span id="userName">Bob Iversen</span><span id="userCo">Nordvik Byg A/S</span></span>
+          <svg class="uc" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="upop" id="userPop" role="region" aria-label="Account">
+          <div class="up-h"><b id="upName">Bob Iversen</b><span id="upCo">Nordvik Byg A/S</span></div>
+          <button class="up-i" id="restartBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Sign out and restart</button>
+          <div class="up-sep"><span>Demo as</span></div>
+          <button class="up-i up-persona" id="personaBob" type="button">
+            <span class="up-persona-av">BI</span>
+            <span class="up-persona-txt"><b>Bob Iversen</b><span>Returning · verified figures</span></span>
+          </button>
+          <button class="up-i up-persona" id="personaFanny" type="button">
+            <span class="up-persona-av">FK</span>
+            <span class="up-persona-txt"><b>Fanny Kristensen</b><span>New · estimated figures</span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="appbody">
+      <main class="canvas" id="canvas">
+        <div class="page">
+
+          <!-- 1 · the figure -->
+          <section class="fig" aria-labelledby="figH">
+            <div class="fig-top">
+              <h2 class="fig-label" id="figH">Loading…</h2>
+              <span id="figChip"></span>
+            </div>
+            <div class="fig-num"><small id="figPre" hidden>up to</small><b id="figNum">0</b> <small>kr. a year</small></div>
+            <p class="fig-band" id="figBand"></p>
+            <p class="fig-prov" id="figProv"></p>
+            <div id="commitSlot" aria-live="polite"></div>
+            <div class="fig-rule"></div>
+          </section>
+
+          <!-- 2 · the one action -->
+          <section id="actionSlot" aria-labelledby="actH"></section>
+
+          <!-- 3 · progressive reveal -->
+          <section class="rv" aria-labelledby="rvH">
+            <div class="rv-head">
+              <h2 id="rvH">Going deeper</h2>
+              <span class="rv-meter" id="rvMeter"></span>
+            </div>
+            <div id="rvSlot"></div>
+          </section>
+
+          <!-- the honesty note — always visible, never a modal -->
+          <section class="why" id="why">
+            <button class="why-btn" id="whyBtn" type="button" aria-expanded="false" aria-controls="whyBody">
+              <b>Why is there so little on this page?</b>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="why-body" id="whyBody"></div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+/* rounded to the nearest thousand — the honest precision for a benchmarked band.
+   "371.532" would imply we know the edge of an estimate to the krone. */
+const fmtK = n => fmt(Math.round(n / 1000) * 1000);
+const fmtM = n => (n / 1e6).toFixed(1).replace('.', ',') + 'M';
+
+const ICON = {
+  tick:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+  dash:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.4" stroke-dasharray="3 3.4"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  chev:'<svg class="layer-ch" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+
+/* ==========================================================================
+   THE DATA — one source of truth. Every figure on screen is derived from here
+   by a function, so a state change can never leave two numbers disagreeing.
+   spend sums to 4.820.000 · inv sums to 1.284 · save sums to 423.985
+   ========================================================================== */
+const CATS = [
+  {id:'mat',  n:'Building materials',        spend:2132300, rate:9,  save:191907, sup:18, inv:424,
+   agr:['Stark Byggecenter','Bygma Framework','Ahlsell Nordic','Optimera Erhverv','Saint-Gobain Frame'],
+   pick:'Stark Byggecenter', pitch:'Same timber and board, at group price'},
+  {id:'tool', n:'Tools & workwear',          spend:664800,  rate:11, save:73128,  sup:11, inv:178,
+   agr:['Hilti Erhverv','Würth Nordic','Engelbert Strauss'],
+   pick:'Hilti Erhverv', pitch:'Tools, workwear and repairs included'},
+  {id:'fuel', n:'Fuel & transport',          spend:530700,  rate:8,  save:42456,  sup:5,  inv:223,
+   agr:['Q8 Fuel Card','Circle K Business'],
+   pick:'Q8 Fuel Card', pitch:'Pump price fixed for twelve months'},
+  {id:'off',  n:'Office supplies',           spend:205000,  rate:19, save:38950,  sup:5,  inv:62,
+   agr:['Lyreco Erhverv','Contorland'],
+   pick:'Lyreco Erhverv', pitch:'The widest gap against list price'},
+  {id:'rent', n:'Machine & equipment rental',spend:500000,  rate:6,  save:30000,  sup:6,  inv:112,
+   agr:['Cramo Danmark','GSV Materieludlejning','Riwal Lifting'],
+   pick:'Cramo Danmark', pitch:'Machines and lifts at group rate'},
+  {id:'frg',  n:'Freight & delivery',        spend:328800,  rate:8,  save:26304,  sup:6,  inv:122,
+   agr:['DSV Road','GLS Erhverv','Danske Fragtmænd'],
+   pick:'DSV Road', pitch:'Freight on negotiated tariffs'},
+  {id:'tel',  n:'Telecom & IT',              spend:290400,  rate:5,  save:14520,  sup:4,  inv:100,
+   agr:['Telenor Erhverv','Dustin IT'],
+   pick:'Telenor Erhverv', pitch:'Lines and hardware on one bill'},
+  {id:'site', n:'Site services & waste',     spend:168000,  rate:4,  save:6720,   sup:4,  inv:63,
+   agr:['Ragn-Sells','Marius Pedersen'],
+   pick:'Marius Pedersen', pitch:'Waste and site services bundled'}
+];
+const catOf = id => CATS.find(c => c.id === id);
+const AGREEMENTS = CATS.flatMap(c => c.agr.map(n => ({n, cat:c.id})));
+
+/* logo artwork where we have it; initials tile otherwise. bg is the artwork's own
+   background so the tile reads as an extension of the mark, not a box around it. */
+const BRAND = {
+  'Stark Byggecenter': {f:'stark.jpeg',                         bg:'#f48222'},
+  'Bygma Framework':   {f:'bygma-logo-png_seeklogo-381076.png', bg:'#ffffff'},
+  'Ahlsell Nordic':    {f:'ahlsell.png',                        bg:'#ffffff'},
+  'Q8 Fuel Card':      {f:'q8.png',                             bg:'#ffffff'},
+  'Hilti Erhverv':     {f:'hilti.png',                          bg:'#d2091e'},
+  'Lyreco Erhverv':    {f:'lyreco.png',                         bg:'#2e2e88'}
+};
+const SUFFIX = /^(a\/s|aps|as|ab|ivs|k\/s|p\/s|oy|ltd|gmbh|inc)$/i;
+function initials(name){
+  const w = name.trim().split(/\s+/).filter(s => !SUFFIX.test(s));
+  return ((w[0] || name)[0] + (w[1] ? w[1][0] : '')).toUpperCase();
+}
+/* category and supplier names carry an ampersand ("Freight & delivery"); every
+   one of them lands in innerHTML, so escape at the point of interpolation */
+const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+function logoTile(name, cls){
+  const b = BRAND[name];
+  return b
+    ? `<span class="${cls}" style="background:${b.bg}"><img src="assets/company-logos/${b.f}" alt=""></span>`
+    : `<span class="${cls}"><span class="ini">${initials(name)}</span></span>`;
+}
+
+/* the customer bonus, paid annually on volume that actually runs through an
+   agreement. A function, not a constant, because the commitment step moves the
+   covered volume and the bonus has to move with it. */
+const BONUS_TIERS = [
+  {upTo:1000000,  rate:1.0, label:'1,0% on the first 1M'},
+  {upTo:3000000,  rate:1.5, label:'1,5% from 1M to 3M'},
+  {upTo:Infinity, rate:2.0, label:'2,0% above 3M'}
+];
+function bonusOn(volume){
+  let prev = 0, total = 0;
+  const lines = [];
+  for(const t of BONUS_TIERS){
+    if(volume <= prev) break;
+    const to = Math.min(volume, t.upTo);
+    const paid = Math.round((to - prev) * t.rate / 100);
+    lines.push({from:prev, to, vol:to - prev, rate:t.rate, paid, label:t.label});
+    total += paid;
+    prev = t.upTo;
+  }
+  return {total, lines};
+}
+/* ±15% around a benchmarked figure. Reproduces the published bands exactly:
+   376.441 -> 320.000–433.000 · 60.656 -> 52.000–70.000 · 4.820.000 -> 4,1M–5,5M */
+const band = n => [n * 0.85, n * 1.15];
+
+const TOTAL_SPEND   = CATS.reduce((s, c) => s + c.spend, 0);            /* 4.820.000 */
+const TOTAL_INV     = CATS.reduce((s, c) => s + c.inv, 0);              /* 1.284 */
+const FULL_POTENTIAL= CATS.reduce((s, c) => s + c.save, 0);             /* 423.985 */
+/* the five categories a company of this profile typically has covered — the
+   reference state both personas are measured against */
+const PEER_ACTIVE   = ['mat','tool','fuel','off','rent'];
+const PEER_SAVED    = PEER_ACTIVE.reduce((s, id) => s + catOf(id).save, 0);   /* 376.441 */
+const PEER_COVERED  = PEER_ACTIVE.reduce((s, id) => s + catOf(id).spend, 0);  /* 4.032.800 */
+const PEER_BONUS    = bonusOn(PEER_COVERED).total;                            /* 60.656 */
+const PEER_TOTAL    = PEER_SAVED + PEER_BONUS;                                /* 437.097 */
+const REMAINING     = FULL_POTENTIAL - PEER_SAVED;                            /* 47.544 */
+const LEAKING       = TOTAL_SPEND - PEER_COVERED;                             /* 787.200 */
+
+/* ==========================================================================
+   PERSONAS — same design, different depth unlocked
+   ========================================================================== */
+const PERSONAS = {
+  bob: {
+    key:'bob', user:'Bob Iversen', company:'Nordvik Byg A/S',
+    verified:true, active:PEER_ACTIVE.slice(), source:'Visma.net',
+    maxLayer:3
+  },
+  fanny: {
+    key:'fanny', user:'Fanny Kristensen', company:'Kristensen Elektro ApS',
+    verified:false, active:[], sector:'electrical contracting', size:'medium', peers:148,
+    /* layer 3 lists what each agreement covers of YOUR spend. We do not know
+       Fanny's spend per supplier, so the layer is shown as locked with the
+       condition that opens it, rather than filled with invented rows. */
+    maxLayer:2
+  }
+};
+let P = PERSONAS.bob;
+/* decision state, kept per persona so switching demo accounts doesn't lie */
+const DEC = {bob:{state:'pending', cat:null, override:null}, fanny:{state:'pending', cat:null, override:null}};
+let openLayers = {bob:0, fanny:0};   /* how many layers this persona has opened */
+let whyOpen = false;
+
+const dec = () => DEC[P.key];
+const activeCats = () => P.active.concat(dec().state === 'yes' && dec().cat ? [dec().cat] : []);
+const inactiveCats = () => CATS.filter(c => !activeCats().includes(c.id));
+const coveredNow = () => activeCats().reduce((s, id) => s + catOf(id).spend, 0);
+const savedNow   = () => activeCats().reduce((s, id) => s + catOf(id).save, 0);
+
+/* The reference state the deeper layers explain. For Bob that is his own account,
+   so it moves when he activates something. For Fanny the headline figure is the
+   peer figure, so the layers have to break down the SAME peer figure — showing
+   her own empty account here would contradict the number at the top of her page.
+   Her own commitment is reported separately, where it can't be mistaken for hers. */
+const refActive  = () => P.verified ? activeCats() : PEER_ACTIVE;
+const refCovered = () => refActive().reduce((s, id) => s + catOf(id).spend, 0);
+const refSaved   = () => refActive().reduce((s, id) => s + catOf(id).save, 0);
+
+/* ---------- the one action, chosen by a stated rule ----------
+   Rule: the largest saving per invoice you have to move. Value divided by
+   disruption — it is the only ranking that can prefer a 38.950 kr. category
+   over a 191.907 kr. one and still be defensible out loud. */
+const perInvoice = c => c.save / c.inv;
+function chosenCat(){
+  const d = dec();
+  if(d.override) return catOf(d.override);
+  const pool = inactiveCats();
+  if(!pool.length) return null;
+  return pool.slice().sort((a, b) => perInvoice(b) - perInvoice(a))[0];
+}
+/* the alternative we show beside it: the biggest absolute saving still on the
+   table that isn't the one we chose */
+function altCat(chosen){
+  const pool = inactiveCats().filter(c => c.id !== chosen.id);
+  if(!pool.length) return null;
+  return pool.slice().sort((a, b) => b.save - a.save)[0];
+}
+
+/* ==========================================================================
+   RENDER
+   ========================================================================== */
+function renderFigure(){
+  const verified = P.verified;
+  const runRate  = savedNow() + bonusOn(coveredNow()).total;
+  /* Bob's figure is his own run-rate, exact. Fanny's is the peer figure — what
+     companies of her sector and size actually get — with its band inline. */
+  const value = verified ? runRate : PEER_TOTAL;
+  const [lo, hi] = band(PEER_TOTAL);
+
+  $('#figH').textContent = verified
+    ? 'What Advantage is worth to you this year'
+    : 'What Advantage is worth to a company like yours';
+  $('#figChip').innerHTML = verified
+    ? `<span class="est-chip ver">${ICON.tick} Verified</span>`
+    : `<span class="est-chip">${ICON.dash} Estimated</span>`;
+  $('#figNum').textContent = fmt(value);
+  /* an estimate says "up to"; a figure read from invoices does not get to */
+  $('#figPre').hidden = verified;
+
+  $('#figBand').innerHTML = verified
+    ? `<b>${fmt(savedNow())} kr.</b> in agreement discounts plus a
+       <b>${fmt(bonusOn(coveredNow()).total)} kr.</b> customer bonus on the
+       <b>${fmt(coveredNow())} kr.</b> that runs through them. Exact, to the krone —
+       it is added up from your own invoices, not modelled.`
+    : `Realistically between <b>${fmtK(lo)}</b> and <b>${fmtK(hi)} kr.</b> — the
+       range is ±15%, which is how far your spend can sit from the peer average
+       before we have seen a single invoice of yours.`;
+
+  $('#figProv').innerHTML = verified
+    ? `${ICON.info}<span>Read from ${fmt(TOTAL_INV)} invoices in ${P.source} across the last
+        twelve months. Last read this morning.</span>`
+    : `${ICON.info}<span>Estimated from ${P.peers} ${P.sector} companies of medium size in your
+        region. Nothing of yours is connected yet, so every figure on this page is theirs,
+        not yours — connecting your invoices replaces the range with your own number.</span>`;
+
+  /* the commitment strip: the page's evidence that acting changed something */
+  const slot = $('#commitSlot');
+  const d = dec();
+  if(d.state === 'yes'){
+    const c = catOf(d.cat);
+    const bonusDelta = bonusOn(coveredNow()).total - bonusOn(coveredNow() - c.spend).total;
+    slot.innerHTML = `<div class="commit">
+        <span class="commit-ic">${ICON.tick}</span>
+        <span class="commit-tx">You said yes to <b>${c.pick}</b> — <b>${fmt(c.save)} kr.</b> of
+          discount and <b>${fmt(bonusDelta)} kr.</b> more bonus, so
+          <b>${fmt(c.save + bonusDelta)} kr.</b> of the figure above is now committed.
+          ${verified ? 'The figure above has moved.' : 'It counts from the first invoice you send through it.'}</span>
+        <button class="linkbtn" id="undoBtn" type="button">Undo</button>
+      </div>`;
+    $('#undoBtn').addEventListener('click', () => {
+      dec().state = 'pending'; dec().cat = null; render();
+      $('#figH').focus();
+    });
+  } else if(d.state === 'no'){
+    slot.innerHTML = `<div class="commit parked">
+        <span class="commit-ic">${ICON.clock}</span>
+        <span class="commit-tx">Parked. Nothing is committed, so the figure above has not moved.
+          We will ask once more in 30 days and not before.</span>
+        <button class="linkbtn" id="undoBtn" type="button">Change my mind</button>
+      </div>`;
+    $('#undoBtn').addEventListener('click', () => {
+      dec().state = 'pending'; dec().override = null; render();
+    });
+  } else {
+    slot.innerHTML = '';
+  }
+}
+
+function renderAction(){
+  const slot = $('#actionSlot');
+  const d = dec();
+  const c = chosenCat();
+
+  if(!c){
+    slot.innerHTML = `<div class="act"><div class="act-b">
+        <h2 id="actH">Nothing left to activate</h2>
+        <p class="act-why">All ${CATS.length} categories run through an agreement. The next thing
+          worth your attention is the annual price review, and that is in February.</p>
+      </div></div>`;
+    return;
+  }
+
+  const a = altCat(c);
+  const rate = c.rate;
+  const decided = d.state !== 'pending';
+  const isBiggest = a ? c.save >= a.save : true;
+
+  /* the reason, stated as a comparison the user can check rather than a claim */
+  const cmp = a ? `
+    <table class="cmp">
+      <caption>Why this one and not ${isBiggest ? "the next one" : "the biggest one"}</caption>
+      <thead><tr>
+        <th scope="col"></th>
+        <th scope="col" class="pick">${esc(c.n)}</th>
+        <th scope="col">${esc(a.n)}</th>
+      </tr></thead>
+      <tbody>
+        <tr><th scope="row">Saving a year</th>
+          <td class="pick">${fmt(c.save)} kr.</td><td class="alt">${fmt(a.save)} kr.</td></tr>
+        <tr><th scope="row">Invoices to move</th>
+          <td class="pick">${fmt(c.inv)}</td><td class="alt">${fmt(a.inv)}</td></tr>
+        <tr><th scope="row">Suppliers to tell</th>
+          <td class="pick">${c.sup}</td><td class="alt">${a.sup}</td></tr>
+        <tr><th scope="row">Saving per invoice moved</th>
+          <td class="pick">${fmt(perInvoice(c))} kr.</td>
+          <td class="alt">${fmt(perInvoice(a))} kr.</td></tr>
+      </tbody>
+    </table>` : '';
+
+  const why = isBiggest
+    ? `<b>${esc(c.n)}</b> is the biggest saving still on the table <em>and</em> the best return per
+       invoice you have to move: ${fmt(c.save)} kr. a year, ${fmt(perInvoice(c))} kr. for each of
+       its ${c.inv} invoices. ${a ? `${esc(a.n)} is a smaller job — ${a.inv} invoices and ${a.sup}
+       suppliers — but it is worth ${fmt(a.save)} kr., ${(c.save / a.save).toFixed(1).replace('.', ',')}×
+       less, and ${fmt(perInvoice(a))} kr. per invoice moved. Doing the small one first buys you
+       less and still costs you a conversation with every supplier in it.` : ''}`
+    : `We picked <b>${esc(c.n)}</b> because it returns <b>${fmt(perInvoice(c))} kr. for every invoice
+       you have to move</b> — more than any other category. ${esc(a.n)} is worth
+       ${Math.round(a.save / c.save)}× more in total, and we still did not pick it: it means
+       renegotiating ${a.sup} suppliers across ${fmt(a.inv)} invoices, which is a quarter of work,
+       not an afternoon. This one is ${c.sup} suppliers and ${c.inv} invoices, and it has the
+       widest gap against list price in your whole basket at ${rate}%.`;
+
+  slot.innerHTML = `
+    <div class="act">
+      <div class="act-h">
+        ${logoTile(c.pick, 'act-logo')}
+        <span class="act-hx">
+          <span class="act-eyebrow">${decided ? 'Your decision' : 'Do this one thing'}</span>
+          <span class="act-name" id="actH">${c.pick}</span>
+          <span class="act-sub">${esc(c.n)} · ${c.pitch} · −${rate}% against list</span>
+        </span>
+        <span class="act-amt">
+          <b>${P.verified ? '' : 'up to '}${fmt(c.save)}</b>
+          <span>kr. a year${P.verified ? '' : ', estimated'}</span>
+        </span>
+      </div>
+      <div class="act-b">
+        <p class="act-why">${why}</p>
+        ${cmp}
+        <p class="act-rule">One recommendation, one rule: <b>saving per invoice you have to move</b>.
+          You can check it in the table — the number we sorted on is the bottom row.</p>
+        ${decided
+          ? `<div class="act-done">${d.state === 'yes' ? ICON.tick : ICON.clock}
+               <span>${d.state === 'yes'
+                 ? `<b>Activated.</b> Paperwork goes out today; the price changes on your next order.`
+                 : `<b>Not now.</b> Parked for 30 days.`}</span>
+               ${d.state === 'no' && a ? `<button class="linkbtn" id="swapBtn" type="button">Show me ${esc(a.n)} instead</button>` : ''}
+             </div>`
+          : `<div class="act-acts">
+               <button class="btn btn-primary" id="yesBtn" type="button">Yes — activate ${c.pick}</button>
+               <button class="btn btn-secondary" id="noBtn" type="button">Not now</button>
+             </div>`}
+      </div>
+    </div>`;
+
+  if(!decided){
+    $('#yesBtn').addEventListener('click', () => {
+      const d2 = dec();
+      d2.state = 'yes'; d2.cat = c.id;
+      openLayers[P.key] = Math.max(openLayers[P.key], 1);
+      render();
+      $('#figNum').scrollIntoView({behavior:'smooth', block:'center'});
+    });
+    $('#noBtn').addEventListener('click', () => {
+      const d2 = dec();
+      d2.state = 'no'; d2.cat = null;
+      openLayers[P.key] = Math.max(openLayers[P.key], 1);
+      render();
+    });
+  } else if(d.state === 'no' && a){
+    const swap = $('#swapBtn');
+    if(swap) swap.addEventListener('click', () => {
+      const d2 = dec();
+      d2.override = a.id; d2.state = 'pending';
+      render();
+      $('#actH').scrollIntoView({behavior:'smooth', block:'center'});
+    });
+  }
+}
+
+/* ---------- layer bodies ---------- */
+function layer1Body(){
+  const active = refActive();
+  const cov = refCovered(), leak = TOTAL_SPEND - cov;
+  const mine = P.verified;
+  const rows = CATS.map(c => {
+    const on = active.includes(c.id);
+    return `<tr class="${on ? '' : 'off'}">
+      <td>${esc(c.n)}</td>
+      <td class="r amt">${fmt(c.spend)}</td>
+      <td class="r">${c.rate}%</td>
+      <td class="r amt ${on ? 'pos' : ''}">${on ? '+' : ''}${fmt(c.save)}</td>
+      <td class="r"><span class="tag ${on ? 'live' : 'leak'}">${on
+        ? (mine ? 'Covered' : 'Usually covered') : 'Leaking'}</span></td>
+    </tr>`;
+  }).join('');
+  const bandNote = mine ? '' : `
+    <p class="layer-note">Every figure in this table is the average for ${P.peers} ${P.sector} firms
+      of your size, ±15%: spend <b>${fmtM(band(TOTAL_SPEND)[0])}–${fmtM(band(TOTAL_SPEND)[1])} kr.</b>,
+      discount <b>${fmtK(band(PEER_SAVED)[0])}–${fmtK(band(PEER_SAVED)[1])} kr.</b>,
+      bonus <b>${fmtK(band(PEER_BONUS)[0])}–${fmtK(band(PEER_BONUS)[1])} kr.</b>
+      None of it is yours yet.</p>`;
+  return `
+    <p class="layer-note">Eight categories, ${fmt(TOTAL_INV)} invoices, ${fmt(TOTAL_SPEND)} kr. of
+      spend. The full discount available across all eight is <b>${fmt(FULL_POTENTIAL)} kr.</b>;
+      ${active.length} of them ${mine ? 'are covered today' : 'are typically covered'}, worth
+      <b>${fmt(refSaved())} kr.</b>, which leaves
+      <b>${fmt(FULL_POTENTIAL - refSaved())} kr.</b> on the table.</p>
+    <div class="tbl-scroll">
+      <table class="dt">
+        <thead><tr>
+          <th scope="col">Category</th><th scope="col" class="r">Spend, kr.</th>
+          <th scope="col" class="r">Rate</th><th scope="col" class="r">Saving, kr./yr</th>
+          <th scope="col" class="r">Status</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr>
+          <td>All eight</td>
+          <td class="r amt">${fmt(TOTAL_SPEND)}</td>
+          <td class="r">—</td>
+          <td class="r amt pos">+${fmt(refSaved())}</td>
+          <td class="r">of ${fmt(FULL_POTENTIAL)}</td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <div class="bar">
+      <div class="bar-t" role="img" aria-label="${fmt(cov)} kr. covered by an agreement, ${fmt(leak)} kr. leaking">
+        <i class="cov" style="width:${(cov / TOTAL_SPEND * 100).toFixed(2)}%"></i>
+        <i class="leak" style="width:${(leak / TOTAL_SPEND * 100).toFixed(2)}%"></i>
+      </div>
+      <div class="bar-l">
+        <span><em class="cov"></em>Covered <b>${fmt(cov)} kr.</b></span>
+        <span><em class="leak"></em>Leaking <b>${fmt(leak)} kr.</b></span>
+      </div>
+    </div>
+    ${bandNote}`;
+}
+
+function layer2Body(){
+  const mine = P.verified;
+  const cov = refCovered();
+  const b = bonusOn(cov);
+  const lines = b.lines.map(l => `<tr>
+      <td>${l.label}</td>
+      <td class="r amt">${fmt(l.vol)}</td>
+      <td class="r">${l.rate.toFixed(1).replace('.', ',')}%</td>
+      <td class="r amt pos">+${fmt(l.paid)}</td>
+    </tr>`).join('');
+  /* Fanny's own committed volume, computed the same way — so she can see that a
+     205.000 kr. commitment earns 2.050 kr., not the peer group's 60.656 kr. */
+  const own = !mine && dec().state === 'yes' ? bonusOn(coveredNow()) : null;
+  const bandNote = mine ? '' : `
+    <p class="layer-note">On the peer band that bonus is
+      <b>${fmtK(band(PEER_BONUS)[0])}–${fmtK(band(PEER_BONUS)[1])} kr.</b>${own
+      ? ` What <em>you</em> have committed so far is <b>${fmt(coveredNow())} kr.</b> of volume,
+          which earns <b>${fmt(own.total)} kr.</b> at the first tier — the peer figure is what it
+          grows into as the other categories come across.` : ''}</p>`;
+  return `
+    <p class="layer-note">The bonus is paid once a year on the volume that actually ran through an
+      agreement — <b>${fmt(cov)} kr.</b> ${mine ? 'today' : 'for a company like yours'}. It is
+      tiered, so covering one more category raises the rate on everything above the tier line,
+      which is why activating something small still moves this number.</p>
+    <div class="tbl-scroll">
+      <table class="dt">
+        <thead><tr>
+          <th scope="col">Tier</th><th scope="col" class="r">Volume in tier, kr.</th>
+          <th scope="col" class="r">Rate</th><th scope="col" class="r">Bonus, kr.</th>
+        </tr></thead>
+        <tbody>${lines}</tbody>
+        <tfoot><tr>
+          <td>Customer bonus</td>
+          <td class="r amt">${fmt(cov)}</td>
+          <td class="r">${cov ? (b.total / cov * 100).toFixed(2).replace('.', ',') + '%' : '—'}</td>
+          <td class="r amt pos">+${fmt(b.total)}</td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <p class="layer-note">Discount <b>${fmt(refSaved())} kr.</b> and bonus
+      <b>${fmt(b.total)} kr.</b> together: <b>${fmt(refSaved() + b.total)} kr.</b> a year —
+      the figure at the top of this page.</p>
+    ${bandNote}`;
+}
+
+function layer3Body(){
+  const active = activeCats();
+  const groups = CATS.map(c => {
+    const on = active.includes(c.id);
+    return `<li class="agr-grp">${esc(c.n)} · ${on ? 'covered' : 'not covered'}</li>` +
+      c.agr.map(n => `<li class="agr-row">
+          ${logoTile(n, 'agr-chip')}
+          <span class="agr-nm"><b>${n}</b><span>${n === c.pick
+            ? (on ? 'the one you run today' : 'the one we would recommend here')
+            : 'available, not recommended first'}${n === 'Lyreco Erhverv'
+            ? ' · 35% off core stationery lines, the deepest single discount in the catalogue' : ''}</span></span>
+          <span class="tag ${on && n === c.pick ? 'live' : ''}">${on && n === c.pick ? 'Active' : 'Available'}</span>
+        </li>`).join('');
+  }).join('');
+  return `
+    <p class="layer-note">All <b>${AGREEMENTS.length}</b> framework agreements that apply to your
+      sector, ${active.length} of them active. This is the six-card grid the old dashboard put on
+      the front page — as a list, three clicks in, where a catalogue belongs.</p>
+    <ul class="agr-list">${groups}</ul>`;
+}
+
+const LAYERS = [
+  {n:1, t:'Where the number comes from',
+   s:'Eight categories, what each one spends, and which are leaking', body:layer1Body},
+  {n:2, t:'The customer bonus',
+   s:'How the tiered bonus on covered volume is calculated', body:layer2Body},
+  {n:3, t:'Every agreement',
+   s:`All ${AGREEMENTS.length}, grouped by category, with what each one covers`, body:layer3Body}
+];
+
+/* a layer's contents plus the line that advertises the next one — one function so
+   collapsing and re-expanding a layer rebuilds exactly what was there */
+function layerHtml(i, cap){
+  const l = LAYERS[i];
+  let out = l.body();
+  if(i + 1 < cap){
+    out += `<p class="layer-next">Opening this unlocked layer ${l.n + 1}:
+      <b>${LAYERS[i + 1].t.toLowerCase()}</b>.</p>`;
+  } else if(P.maxLayer < LAYERS.length){
+    out += `<p class="layer-next">Layer 3 — every agreement and what it covers of <em>your</em>
+      spend — needs one invoice from you before it can say anything true. It appears the day your
+      first invoice arrives.</p>`;
+  } else {
+    out += `<p class="layer-next">That is all of it. There is no layer ${LAYERS.length + 1};
+      everything this product knows about your account is on this page or one click under it.</p>`;
+  }
+  return out;
+}
+
+function renderReveal(){
+  const slot = $('#rvSlot');
+  const d = dec();
+  const opened = openLayers[P.key];
+  const cap = Math.min(P.maxLayer, LAYERS.length);
+
+  /* meter: depth is advertised without being charged for */
+  $('#rvMeter').innerHTML = LAYERS.map((l, i) =>
+    `<i class="${i < opened && i < cap ? 'on' : ''}"></i>`).join('') +
+    `<span>${Math.min(opened, cap)} of ${cap} open</span>`;
+
+  if(d.state === 'pending'){
+    slot.innerHTML = `<div class="rv-locked">
+      There are <b>${cap} more layers</b> under this page: where the number comes from, how the
+      bonus is calculated${cap > 2 ? ', and all ' + AGREEMENTS.length + ' agreements' : ''}.
+      They open after you answer the question above — yes or not now, either counts. We are not
+      hiding them; we are just not charging you for them before you have decided anything.
+    </div>`;
+    return;
+  }
+
+  /* one layer at a time: layer n+1's button appears only once layer n is open */
+  const visible = Math.min(opened + 1, cap);
+  let html = '';
+  for(let i = 0; i < visible; i++){
+    const l = LAYERS[i];
+    const isOpen = i < opened;
+    html += `<div class="layer${isOpen ? ' open' : ''}">
+      <button class="layer-btn" type="button" aria-expanded="${isOpen}" aria-controls="lb${l.n}"
+        data-layer="${i}">
+        <span class="layer-n">${l.n}</span>
+        <span class="layer-t"><b>${l.t}</b><span>${l.s}</span></span>
+        ${ICON.chev}
+      </button>
+      <div class="layer-body" id="lb${l.n}">${isOpen ? layerHtml(i, cap) : ''}</div>
+    </div>`;
+  }
+  if(P.maxLayer < LAYERS.length && opened >= cap){
+    html += `<div class="rv-locked">
+      <b>Layer 3 · every agreement.</b> Locked, and honestly so: it lists what each of the
+      ${AGREEMENTS.length} agreements would cover of <em>your</em> spend, and we have not seen your
+      spend. Connect your invoices, or send us one month as a PDF, and it opens the same day.
+    </div>`;
+  }
+  slot.innerHTML = html;
+
+  $$('#rvSlot [data-layer]').forEach(btn => btn.addEventListener('click', () => {
+    const i = Number(btn.dataset.layer);
+    if(i < openLayers[P.key]){
+      /* collapsing a layer keeps the depth you've earned — it does not re-lock */
+      const wrapEl = btn.closest('.layer');
+      const isOpen = wrapEl.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+      wrapEl.querySelector('.layer-body').innerHTML = isOpen ? layerHtml(i, cap) : '';
+      return;
+    }
+    openLayers[P.key] = i + 1;
+    render();
+    const nb = $(`#rvSlot [data-layer="${i}"]`);
+    if(nb) nb.focus();
+  }));
+}
+
+/* ---------- the honesty note ---------- */
+const OMITTED = [
+  ['Notifications', 'Nothing has happened on your account yet. The bell appears with the first event that is actually about you.'],
+  ['Search', 'There is nothing to search until you have suppliers and invoices in here. It appears with your first month of data.'],
+  ['Weekly discovery', 'New agreements we negotiate for your sector. It starts on the Monday after your first activation.'],
+  ['Supplier list, reports, categories', 'Four navigation destinations that would all show the same empty table today. They appear as the data behind them arrives.'],
+  ['The activity feed', 'A column that would render "no activity yet" beside everything else on this page. It appears once there is a second event to list.'],
+  ['The 22-agreement grid', 'Moved, not removed: it is layer 3 above. A catalogue is for browsing, and browsing is not the first thing you came here to do.'],
+  ['The benchmark comparison', 'Six cards comparing you to the peer group. It becomes meaningful once your own figures are verified, so it appears when your invoices land.'],
+  ['The savings gauge', 'Deleted outright. It encoded one number worse than the number does, and we could not answer "is that arc good?" for anyone.']
+];
+function renderWhy(){
+  $('#whyBtn').setAttribute('aria-expanded', String(whyOpen));
+  $('#why').classList.toggle('open', whyOpen);
+  if(!whyOpen){ $('#whyBody').innerHTML = ''; return; }
+  $('#whyBody').innerHTML = `
+    <p class="why-lead">Because the previous version of this page had eighteen things on it, and
+      seventeen of them could not help you with the one decision actually in front of you.
+      ${P.verified
+        ? 'You have history with us, so you get one more layer than a new account does — but not a different page.'
+        : 'Nothing here is withheld to sell you something; it is withheld because it would be empty or made up.'}
+      Here is exactly what we are not showing yet, and what brings each one back.</p>
+    <ul class="why-list">
+      ${OMITTED.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('')}
+    </ul>
+    <p class="why-foot">If you would rather have all of it now, say so — that is a real setting we
+      should build, not a reason to give everyone the same crowded page on day one.</p>`;
+}
+
+/* ---------- shell ---------- */
+function render(){
+  $('#userName').textContent = P.user;
+  $('#userCo').textContent = P.company;
+  $('#userAv').textContent = initials(P.user);
+  $('#upName').textContent = P.user;
+  $('#upCo').textContent = P.company;
+  $('#personaBob').setAttribute('aria-current', String(P.key === 'bob'));
+  $('#personaFanny').setAttribute('aria-current', String(P.key === 'fanny'));
+  renderFigure();
+  renderAction();
+  renderReveal();
+  renderWhy();
+}
+
+function applyPersona(key){ P = PERSONAS[key]; }
+function enterApp(){
+  document.body.classList.add('in-app');
+  $('#app').classList.add('on');
+  render();
+  $('#figH').setAttribute('tabindex', '-1');
+  $('#figH').focus();
+}
+function loginAs(key){ applyPersona(key); enterApp(); }
+$('#loginBob').addEventListener('click', () => loginAs('bob'));
+$('#loginFanny').addEventListener('click', () => loginAs('fanny'));
+
+/* account menu */
+let userOpen = false;
+function setUser(on){
+  userOpen = on;
+  $('#userPop').classList.toggle('on', on);
+  $('#userBtn').setAttribute('aria-expanded', String(on));
+}
+$('#userBtn').addEventListener('click', e => { e.stopPropagation(); setUser(!userOpen); });
+document.addEventListener('click', e => {
+  if(userOpen && !e.target.closest('.userwrap')) setUser(false);
+});
+addEventListener('keydown', e => { if(e.key === 'Escape' && userOpen){ setUser(false); $('#userBtn').focus(); } });
+$('#personaBob').addEventListener('click', () => { setUser(false); applyPersona('bob'); render(); });
+$('#personaFanny').addEventListener('click', () => { setUser(false); applyPersona('fanny'); render(); });
+$('#restartBtn').addEventListener('click', () => {
+  setUser(false);
+  DEC.bob = {state:'pending', cat:null, override:null};
+  DEC.fanny = {state:'pending', cat:null, override:null};
+  openLayers = {bob:0, fanny:0};
+  whyOpen = false;
+  document.body.classList.remove('in-app');
+  $('#app').classList.remove('on');
+  $('#loginBob').focus();
+});
+
+$('#whyBtn').addEventListener('click', () => { whyOpen = !whyOpen; renderWhy(); });
+
+/* ---------- self-check: the model has to reconcile, so assert it once ---------- */
+(function selfCheck(){
+  const eq = (a, b, label) => { if(Math.round(a) !== Math.round(b)) console.warn('mismatch:', label, a, b); };
+  eq(TOTAL_SPEND, 4820000, 'total spend');
+  eq(TOTAL_INV, 1284, 'invoice count');
+  eq(FULL_POTENTIAL, 423985, 'full potential');
+  eq(PEER_SAVED, 376441, 'realised');
+  eq(PEER_COVERED, 4032800, 'covered');
+  eq(LEAKING, 787200, 'leaking');
+  eq(REMAINING, 47544, 'remaining');
+  eq(PEER_BONUS, 60656, 'bonus');
+  eq(PEER_TOTAL, 437097, 'discount + bonus');
+})();
+</script>
+</body>
+</html>

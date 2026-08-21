@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage — Dashboard</title>
+<!--
+  A simple dashboard.
+
+  Built from advantage-v2-visual.html (tokens, colours, type) and the structure of
+  advantage-v3.html (greeting, a few big numbers, a short list of things to do).
+
+  Rules I held to:
+   - one screen, no drill-downs, no modals, no second page
+   - five sections, top to bottom, in the order someone actually asks them:
+     how am I doing / where does my money go / what should I do / what happened
+   - plain words. "Saved this year", not "realised savings". "Deals", not
+     "framework agreements". No methodology, no provenance, no percentiles.
+   - every number is either big and important, or small and quiet. Nothing between.
+   - Fanny sees the same screen with one grey line of explanation, not a different product.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&display=swap">
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --ink:#0f0f0f; --ink-soft:#707070;
+  --primary:#1b64dc; --primary-ink:#ffffff; --ice:#edf5ff;
+  --good:#009689; --good-bg:#e6f5f3; --warn:#ff9b3d; --bad:#f54a00;
+  --line:#ececec; --line-mid:#e0e0e0;
+  --font:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --r-sm:8px; --r:12px; --r-lg:16px; --r-full:9999px;
+  --sh:0 1px 2px 0 #0000000d;
+  --sh-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s6:24px; --s8:32px; --s12:48px;
+  --rail:236px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:40px;padding:0 var(--s4);border-radius:var(--r-full);font-size:14px;font-weight:600;
+  transition:background .15s ease,border-color .15s ease}
+.btn-primary{background:var(--primary);color:var(--primary-ink)}
+.btn-primary:hover{background:#1553bb}
+.btn-ghost{border:1px solid var(--line-mid);background:var(--surface)}
+.btn-ghost:hover{background:var(--ice);border-color:var(--primary)}
+.btn-sm{height:34px;padding:0 var(--s3);font-size:13px}
+
+/* ---------- login ---------- */
+.login{min-height:100vh;display:grid;place-items:center;padding:var(--s6)}
+.login-box{width:100%;max-width:400px;text-align:center}
+.login-box img{height:30px;margin-bottom:var(--s8)}
+.login-box h1{font-size:26px;margin-bottom:var(--s2)}
+.login-box p{color:var(--ink-soft);margin:0 0 var(--s6)}
+.who{display:flex;flex-direction:column;gap:var(--s2)}
+.who button{display:flex;align-items:center;gap:var(--s3);text-align:left;
+  padding:var(--s3) var(--s4);background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);transition:border-color .15s ease,box-shadow .15s ease}
+.who button:hover{border-color:var(--primary);box-shadow:var(--sh-md)}
+.av{width:38px;height:38px;flex:0 0 auto;border-radius:var(--r-full);display:grid;
+  place-items:center;background:var(--primary);color:#fff;font-size:13px;font-weight:700}
+.who b{display:block;font-size:15px}
+.who span{display:block;font-size:13px;color:var(--ink-soft)}
+
+/* ---------- shell ---------- */
+.app{display:none}
+body.on .app{display:block}
+body.on .login{display:none}
+.top{position:sticky;top:0;z-index:10;height:60px;display:flex;align-items:center;
+  gap:var(--s4);padding:0 var(--s6);background:var(--surface);border-bottom:1px solid var(--line)}
+.top img{height:24px}
+.spacer{flex:1}
+.me{display:flex;align-items:center;gap:var(--s2);font-size:14px;font-weight:600}
+.me .av{width:30px;height:30px;font-size:11px}
+.body{display:flex;min-height:calc(100vh - 60px)}
+.rail{width:var(--rail);flex:0 0 auto;padding:var(--s6) var(--s3);background:var(--surface);
+  border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.rail a{display:flex;align-items:center;gap:var(--s3);padding:10px var(--s3);
+  border-radius:var(--r-sm);color:var(--ink-soft);text-decoration:none;font-size:14px;font-weight:500}
+.rail a svg{width:18px;height:18px}
+.rail a:hover{background:var(--bg);color:var(--ink)}
+.rail a.on{background:var(--ice);color:var(--primary);font-weight:600}
+main{flex:1;min-width:0;padding:var(--s8) var(--s6) var(--s12)}
+.inner{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:var(--s8)}
+
+/* ---------- greeting ---------- */
+.hi h1{font-size:30px}
+.hi p{margin:var(--s2) 0 0;color:var(--ink-soft)}
+
+/* ---------- 3 numbers ---------- */
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+@media(max-width:760px){.nums{grid-template-columns:1fr}}
+.num{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:var(--s6);box-shadow:var(--sh)}
+.num .lbl{font-size:14px;color:var(--ink-soft)}
+.num .big{margin-top:var(--s2);font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.num .big.green{color:var(--good)}
+.num .sub{margin-top:var(--s2);font-size:13px;color:var(--ink-soft)}
+.tag{display:inline-block;margin-top:var(--s3);padding:3px 9px;border-radius:var(--r-full);
+  font-size:12px;font-weight:600}
+.tag.ok{background:var(--good-bg);color:var(--good)}
+.tag.est{background:#fff4e8;color:#b4550a}
+
+/* ---------- section ---------- */
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--sh);overflow:hidden}
+.sec-h{display:flex;align-items:center;gap:var(--s3);padding:var(--s6) var(--s6) var(--s4)}
+.sec-h h2{font-size:19px}
+.sec-h .note{font-size:13px;color:var(--ink-soft)}
+
+/* ---------- money bars ---------- */
+.rows{padding:0 var(--s6) var(--s6)}
+.row{display:grid;grid-template-columns:170px 1fr 108px;align-items:center;gap:var(--s4);
+  padding:var(--s3) 0;border-top:1px solid var(--line)}
+@media(max-width:760px){.row{grid-template-columns:1fr 1fr;gap:var(--s2)}.row .bar{display:none}}
+.row .nm{font-size:14px;font-weight:600}
+.row .nm i{display:block;font-style:normal;font-size:12px;font-weight:400;color:var(--ink-soft)}
+.bar{height:26px;background:var(--bg);border-radius:var(--r-sm);overflow:hidden;display:flex}
+.bar span{display:block;height:100%}
+.bar .paid{background:#dbe4f5}
+.bar .save{background:var(--good)}
+.amt{text-align:right;font-size:14px;font-weight:700;color:var(--good);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.amt.off{color:var(--ink-soft);font-weight:600}
+.key{display:flex;gap:var(--s4);padding:0 var(--s6) var(--s6);font-size:12px;color:var(--ink-soft)}
+.key b{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+
+/* ---------- do next ---------- */
+.todo{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+@media(max-width:860px){.todo{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:var(--s6);box-shadow:var(--sh);display:flex;flex-direction:column;gap:var(--s3)}
+.card .logo{width:44px;height:44px;border-radius:var(--r);display:grid;place-items:center;
+  overflow:hidden;background:var(--bg);font-weight:700;font-size:13px}
+.card .logo img{width:100%;height:100%;object-fit:contain}
+.card h3{font-size:16px}
+.card .why{font-size:13px;color:var(--ink-soft)}
+.card .win{margin-top:auto;font-size:22px;font-weight:800;color:var(--good);letter-spacing:-.02em}
+.card .win small{font-size:13px;font-weight:600;color:var(--ink-soft)}
+.done{display:flex;align-items:center;gap:var(--s2);font-size:14px;font-weight:600;color:var(--good)}
+
+/* ---------- activity ---------- */
+.act{display:flex;flex-direction:column}
+.act div{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s6);
+  border-top:1px solid var(--line);font-size:14px}
+.act .dot{width:8px;height:8px;border-radius:var(--r-full);flex:0 0 auto}
+.act .t{flex:1;min-width:0}
+.act .t i{display:block;font-style:normal;font-size:12px;color:var(--ink-soft)}
+.act .v{font-weight:700;font-variant-numeric:tabular-nums}
+.act .v.up{color:var(--good)} .act .v.dn{color:var(--bad)}
+
+.toast{position:fixed;left:50%;bottom:var(--s6);transform:translateX(-50%) translateY(120%);
+  background:var(--ink);color:#fff;padding:var(--s3) var(--s6);border-radius:var(--r-full);
+  font-size:14px;font-weight:600;box-shadow:var(--sh-md);transition:transform .3s ease;z-index:50}
+.toast.up{transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ============ login ============ -->
+<div class="login">
+  <div class="login-box">
+    <img src="assets/advantage-logo.svg" alt="Advantage">
+    <h1>Welcome back</h1>
+    <p>Choose an account to continue.</p>
+    <div class="who">
+      <button type="button" onclick="signIn('bob')">
+        <span class="av">BI</span>
+        <span><b>Bob Iversen</b><span>Nordvik Byg A/S · everything connected</span></span>
+      </button>
+      <button type="button" onclick="signIn('fanny')">
+        <span class="av">FK</span>
+        <span><b>Fanny Kristensen</b><span>Kristensen Elektro ApS · new customer</span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ app ============ -->
+<div class="app">
+  <header class="top">
+    <img src="assets/advantage-logo.svg" alt="Advantage">
+    <span class="spacer"></span>
+    <button class="btn btn-ghost btn-sm" onclick="signOut()">Switch account</button>
+    <div class="me"><span class="av" id="meAv">BI</span><span id="meName">Bob</span></div>
+  </header>
+
+  <div class="body">
+    <nav class="rail">
+      <a href="#" class="on"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none"><path d="M4 10v9a1 1 0 001 1h14a1 1 0 001-1v-9M3 6.5L4.6 3.6A1 1 0 015.5 3h13a1 1 0 01.9.6L21 6.5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Deals</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Reports</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Settings</a>
+    </nav>
+
+    <main><div class="inner" id="view"></div></main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const nf = new Intl.NumberFormat('da-DK');
+const kr = n => nf.format(Math.round(n));
+
+/* Eight categories. spend = what they buy a year, rate = the discount our deal gets.
+   on = the deal is already running. */
+const CATS = [
+  {id:'mat',  name:'Building materials', spend:2132300, rate:9,  on:true,  deal:'Stark Byggecenter', logo:'stark.jpeg',                        bg:'#f48222'},
+  {id:'tool', name:'Tools & workwear',   spend:664800,  rate:11, on:true,  deal:'Hilti Erhverv',     logo:'hilti.png',                         bg:'#d2091e'},
+  {id:'fuel', name:'Fuel & transport',   spend:530700,  rate:8,  on:true,  deal:'Q8 Fuel Card',      logo:'q8.png',                            bg:'#ffffff'},
+  {id:'rent', name:'Machine rental',     spend:500000,  rate:6,  on:true,  deal:'Cramo Danmark',     logo:null,                                bg:'#1b64dc'},
+  {id:'off',  name:'Office supplies',    spend:205000,  rate:19, on:true,  deal:'Lyreco Erhverv',    logo:'lyreco.png',                        bg:'#2e2e88'},
+  {id:'frg',  name:'Freight & delivery', spend:328800,  rate:8,  on:false, deal:'DSV Road',          logo:null,                                bg:'#1b64dc'},
+  {id:'tel',  name:'Telecom & IT',       spend:290400,  rate:5,  on:false, deal:'Telenor Erhverv',   logo:null,                                bg:'#1b64dc'},
+  {id:'site', name:'Waste & site',       spend:168000,  rate:4,  on:false, deal:'Marius Pedersen',   logo:null,                                bg:'#1b64dc'}
+];
+const saveOf = c => Math.round(c.spend * c.rate / 100);
+
+/* Bonus: paid once a year on what runs through the deals. Steps up with volume. */
+function bonus(vol){
+  let left = vol, out = 0;
+  const tiers = [[1000000,1], [2000000,1.5], [Infinity,2]];
+  for(const [size, pct] of tiers){
+    if(left <= 0) break;
+    const take = Math.min(left, size);
+    out += take * pct / 100;
+    left -= take;
+  }
+  return Math.round(out);
+}
+
+const ACT = [
+  {t:'Q8 fuel price confirmed on your invoice', s:'Yesterday',  v:'+33.900', up:true},
+  {t:'Stark Byggecenter raised prices 4%',      s:'2 days ago', v:'−18.400', up:false},
+  {t:'1.284 invoices read from Visma.net',      s:'Last night', v:'', up:true}
+];
+
+let who = 'bob';
+const isNew = () => who === 'fanny';
+
+function signIn(k){ who = k; document.body.classList.add('on'); draw(); window.scrollTo(0,0); }
+function signOut(){ document.body.classList.remove('on'); CATS.forEach(c => c.on = ORIG[c.id]); }
+const ORIG = Object.fromEntries(CATS.map(c => [c.id, c.on]));
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('up');
+  clearTimeout(toast._x); toast._x = setTimeout(() => t.classList.remove('up'), 2600);
+}
+
+function turnOn(id){
+  const c = CATS.find(x => x.id === id);
+  c.on = true;
+  draw();
+  toast(`${c.deal} is on. You save ${kr(saveOf(c))} kr. a year.`);
+}
+
+function draw(){
+  const live   = CATS.filter(c => c.on);
+  const off    = CATS.filter(c => !c.on);
+  const spend  = CATS.reduce((s,c) => s + c.spend, 0);
+  const saved  = live.reduce((s,c) => s + saveOf(c), 0);
+  const more   = off.reduce((s,c) => s + saveOf(c), 0);
+  const covered= live.reduce((s,c) => s + c.spend, 0);
+  const bon    = bonus(covered);
+  const total  = saved + bon;
+  const maxSpend = Math.max(...CATS.map(c => c.spend));
+  const next   = [...off].sort((a,b) => saveOf(b) - saveOf(a)).slice(0,3);
+
+  /* Fanny hasn't connected anything, so her figures are what similar companies get.
+     Same screen, ranges instead of exact numbers, one line saying so. */
+  const band = n => `${kr(n*0.85)}–${kr(n*1.15)}`;
+  const est  = isNew();
+
+  document.getElementById('meAv').textContent  = est ? 'FK' : 'BI';
+  document.getElementById('meName').textContent = est ? 'Fanny' : 'Bob';
+
+  const num = (lbl, big, sub, green, tag) => `
+    <div class="num">
+      <div class="lbl">${lbl}</div>
+      <div class="big${green ? ' green' : ''}">${big}</div>
+      ${sub ? `<div class="sub">${sub}</div>` : ''}
+      ${tag || ''}
+    </div>`;
+
+  document.getElementById('view').innerHTML = `
+    <div class="hi">
+      <h1>${est ? 'Hi Fanny' : 'Good morning, Bob'}</h1>
+      <p>${est
+        ? 'Here’s what companies your size get with Advantage.'
+        : 'Here’s where you stand this year.'}</p>
+    </div>
+
+    <div class="nums">
+      ${est
+        ? num('You could save', band(total) + ' kr.', 'A year, once your deals are running', true,
+              '<span class="tag est">Estimate</span>')
+        : num('Saved this year', kr(total) + ' kr.', `${kr(saved)} kr. off prices + ${kr(bon)} kr. bonus`, true,
+              '<span class="tag ok">From your invoices</span>')}
+      ${num('Still on the table', kr(more) + ' kr.', `${off.length} deal${off.length === 1 ? '' : 's'} you haven’t turned on`, false)}
+      ${num('Deals running', `${live.length}<span style="font-size:20px;color:var(--ink-soft)"> of ${CATS.length}</span>`,
+            `You buy ${kr(spend)} kr. a year`, false)}
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">
+        <h2>Where your money goes</h2>
+        <span class="note">${est ? 'Typical for your trade' : 'Last 12 months'}</span>
+      </div>
+      <div class="rows">
+        ${CATS.map(c => {
+          const s = saveOf(c);
+          const w = c.spend / maxSpend * 100;
+          const sw = c.rate;               /* the saved slice, as % of that bar */
+          return `
+          <div class="row">
+            <div class="nm">${c.name}<i>${kr(c.spend)} kr.</i></div>
+            <div class="bar" role="img" aria-label="${c.name}: ${kr(c.spend)} kr. spent${c.on ? `, ${kr(s)} kr. saved` : ', no deal yet'}">
+              <span class="${c.on ? 'save' : 'paid'}" style="width:${w * sw / 100}%"></span>
+              <span class="paid" style="width:${w * (100 - sw) / 100}%"></span>
+            </div>
+            <div class="amt${c.on ? '' : ' off'}">${c.on ? '+' + kr(s) + ' kr.' : 'No deal'}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="key">
+        <span><b style="background:var(--good)"></b>Saved by a deal</span>
+        <span><b style="background:#dbe4f5"></b>What you pay</span>
+      </div>
+    </section>
+
+    ${next.length ? `
+    <div>
+      <div class="sec-h" style="padding-left:0;padding-right:0">
+        <h2>Do this next</h2>
+        <span class="note">Biggest first</span>
+      </div>
+      <div class="todo">
+        ${next.map(c => `
+        <div class="card">
+          <div class="logo" style="background:${c.logo ? c.bg : 'var(--ice)'};${c.logo ? '' : 'color:var(--primary)'}">
+            ${c.logo ? `<img src="assets/company-logos/${c.logo}" alt="">`
+                     : c.deal.split(' ').map(w => w[0]).slice(0,2).join('')}
+          </div>
+          <h3>${c.deal}</h3>
+          <p class="why">Same supplier, same delivery. Only the price changes.</p>
+          <div class="win">${est ? 'up to ' : ''}+${kr(saveOf(c))}<small> kr. a year</small></div>
+          <button class="btn btn-primary" onclick="turnOn('${c.id}')">Turn on this deal</button>
+        </div>`).join('')}
+      </div>
+    </div>` : `
+    <div class="sec" style="padding:var(--s8);text-align:center">
+      <div class="done" style="justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" style="width:20px;height:20px"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Every deal is on. You’re saving ${kr(total)} kr. a year.
+      </div>
+    </div>`}
+
+    ${est ? `
+    <section class="sec">
+      <div class="sec-h"><h2>Get your real numbers</h2></div>
+      <div style="padding:0 var(--s6) var(--s6);display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap">
+        <p style="margin:0;flex:1 1 320px;color:var(--ink-soft);font-size:14px">
+          These figures come from 148 companies like yours. Connect your accounting and we’ll
+          use your own invoices instead.</p>
+        <button class="btn btn-primary" onclick="toast('Demo only — this would open Visma.net.')">Connect Visma.net</button>
+      </div>
+    </section>` : `
+    <section class="sec">
+      <div class="sec-h"><h2>Recent activity</h2></div>
+      <div class="act">
+        ${ACT.map(a => `
+        <div>
+          <span class="dot" style="background:${a.up ? 'var(--good)' : 'var(--bad)'}"></span>
+          <span class="t">${a.t}<i>${a.s}</i></span>
+          <span class="v ${a.up ? 'up' : 'dn'}">${a.v}</span>
+        </div>`).join('')}
+      </div>
+    </section>`}
+  `;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage v3 — five concept directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&family=DM+Sans:wght@400..700&display=swap">
+<style>
+:root{
+  --fg:#0f0f0f;--bg:#fafafa;--primary:#1b64dc;--muted:#707070;--muted-bg:#f2f2f2;
+  --accent:#ff9b3d;--positive:#009689;--border:#bdd7ff;--ice:#edf5ff;--midnight:#000a45;
+  --surface:#fff;--hairline:#ececec;
+  --sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body);background:var(--bg);color:var(--fg);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--sans);font-weight:600;text-wrap:balance}
+.wrap{max-width:1180px;margin:0 auto;padding:48px 28px 72px}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--primary);margin-bottom:10px}
+.eyebrow i{width:6px;height:6px;border-radius:99px;background:var(--primary)}
+h1{font-size:36px;letter-spacing:-1.4px;line-height:1.08}
+.lead{color:var(--muted);font-size:15px;margin-top:10px;max-width:76ch}
+.lead b{color:var(--fg);font-weight:600}
+.shared{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+.shared span{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;
+  background:var(--ice);color:var(--primary)}
+.grid{margin-top:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+a.card{display:flex;flex-direction:column;gap:12px;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:20px;padding:26px;text-decoration:none;color:inherit;
+  box-shadow:0 1px 2px #0000000d;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+a.card:hover{transform:translateY(-3px);box-shadow:0 10px 15px -3px #0000001a;border-color:var(--border)}
+a.card:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+.num{display:flex;align-items:center;gap:10px}
+.num i{width:30px;height:30px;border-radius:99px;background:var(--midnight);color:#fff;
+  display:grid;place-items:center;font-family:var(--sans);font-size:13px;font-weight:700;font-style:normal}
+.num .file{font-family:var(--mono);font-size:11px;color:var(--muted)}
+a.card h2{font-size:21px;letter-spacing:-.5px}
+.stance{font-size:13.5px;line-height:1.55;color:var(--fg)}
+.stance em{font-style:normal;font-weight:600;color:var(--primary)}
+.challenge{font-size:12.5px;line-height:1.55;color:var(--muted);padding:10px 12px;
+  border-left:2px solid var(--accent);background:#fff9f2;border-radius:0 8px 8px 0}
+.challenge b{color:#a35c00;font-weight:600;display:block;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;margin-bottom:3px}
+.go{margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;
+  color:var(--primary)}
+.foot{margin-top:36px;padding-top:20px;border-top:1px solid var(--hairline);
+  font-size:13px;color:var(--muted);line-height:1.6;max-width:80ch}
+.foot b{color:var(--fg)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow"><i></i>Advantage · v3 concept series · 2026-08-21</span>
+  <h1>Five answers to “dashboard × catalogue”</h1>
+  <p class="lead">Same brief, same data, same design system — five different opinions about what the
+  product <b>is</b>. All five honor the agreed IA: <b>Categories</b> and <b>Agreements</b> as separate
+  sections, <b>Savings</b> and <b>Spending</b> as separate pages. Each challenges the brief from a
+  different angle. Every version is fully navigable with the <b>Bob ↔ Fanny</b> persona switch
+  (verified vs estimated data) in the account menu.</p>
+  <div class="shared">
+    <span>Overview · Categories · Agreements · Savings · Spending</span>
+    <span>Bob — verified</span><span>Fanny — estimated / cold start</span>
+    <span>Advantage tokens</span><span>Saving assistant</span>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="advantage-v3-1-marketplace.html">
+      <span class="num"><i>1</i><span class="file">advantage-v3-1-marketplace.html</span></span>
+      <h2>The Marketplace</h2>
+      <p class="stance"><em>A dashboard reports; a catalogue sells.</em> Savings are merchandised like
+      products — shelves, price tags, an “add to plan” tray. The overview is a storefront of
+      negotiated prices you're not using yet.</p>
+      <p class="challenge"><b>Challenges</b>If browsing is the core loop, the KPI dashboard can shrink
+      to a strip. Do we dare make it feel like shopping?</p>
+      <span class="go">Open prototype →</span>
+    </a>
+
+    <a class="card" href="advantage-v3-2-ledger.html">
+      <span class="num"><i>2</i><span class="file">advantage-v3-2-ledger.html</span></span>
+      <h2>The Ledger</h2>
+      <p class="stance"><em>Savings only mean something against spend.</em> The overview is one money
+      statement — spend flows in, savings and bonus flow out. Savings and Spending stay separate
+      pages but deliberately mirror each other, line by line.</p>
+      <p class="challenge"><b>Challenges</b>Splitting savings and spending into separate pages risks
+      hiding their causal link — this version keeps the split but refuses to break the connection.</p>
+      <span class="go">Open prototype →</span>
+    </a>
+
+    <a class="card" href="advantage-v3-3-category-spine.html">
+      <span class="num"><i>3</i><span class="file">advantage-v3-3-category-spine.html</span></span>
+      <h2>The Category Spine</h2>
+      <p class="stance"><em>Categories are the product's spine.</em> One expandable category board is
+      both dashboard and catalogue. Agreements keep their own section — but as a thin registry that
+      always deep-links back into category context.</p>
+      <p class="challenge"><b>Challenges</b>Categories and Agreements as equal siblings invites building
+      two catalogues. An agreement outside its category is just a PDF.</p>
+      <span class="go">Open prototype →</span>
+    </a>
+
+    <a class="card" href="advantage-v3-4-decision-queue.html">
+      <span class="num"><i>4</i><span class="file">advantage-v3-4-decision-queue.html</span></span>
+      <h2>The Decision Queue</h2>
+      <p class="stance"><em>Browsing is optional; deciding is the job.</em> The overview is an inbox of
+      prepared decisions with three commitment levels (approve · request offer · ask advisor). The
+      catalogue is reference material behind the queue.</p>
+      <p class="challenge"><b>Challenges</b>An SMB owner gives this 10 minutes a week. Is a catalogue to
+      explore actually what they need — or six decisions ready to go?</p>
+      <span class="go">Open prototype →</span>
+    </a>
+
+    <a class="card" href="advantage-v3-5-cfo-spend.html">
+      <span class="num"><i>5</i><span class="file">advantage-v3-5-cfo-spend.html</span></span>
+      <h2>The CFO View</h2>
+      <p class="stance"><em>SMBs think in spend, not savings.</em> Spending is the richest page; the
+      overview reads like a monthly management report with a generated headline. Savings is the audit
+      note that proves the story — screenshot-ready for the board meeting.</p>
+      <p class="challenge"><b>Challenges</b>Leading with the savings number is our framing, not the
+      customer's. Spend is the language they already speak.</p>
+      <span class="go">Open prototype →</span>
+    </a>
+  </div>
+
+  <p class="foot"><b>How to compare:</b> run the same errand in each — “office supplies looks expensive,
+  what do I do about it?” — and notice which version gets you from question to action fastest, then
+  switch to Fanny and see which one would convince a new customer to connect data. The journey spec in
+  <b>advantage-ux/journey.json</b> is the yardstick: stages 5–8 (discover → decide) are where these five
+  differ most.</p>
+</div>
+</body>
+</html>

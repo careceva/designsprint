@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — Customer journey v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&amp;family=DM+Sans:wght@400..700&amp;display=swap">
+<style>
+/* Advantage design tokens — same set as advantage-v2-visual.html */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;--general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;--general-muted:#f2f2f2;--general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;--general-destructive:#dc2626;--general-border:#bdd7ff;
+  --sentiment-positive:#009689;--sentiment-negative:#f54a00;
+  --surface:#ffffff;--brand-midnight:#000a45;--brand-ice:#edf5ff;--brand-cornflower:#73abff;
+  --font-sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;--rounded-xl:20px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --hairline:#ececec;
+  --t-fast:.15s ease;--t:.28s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+body{font-family:var(--font-body);background:var(--general-background);color:var(--general-foreground);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+button{font-family:inherit;font-size:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+.mono{font-family:var(--font-mono)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.wrap{max-width:1440px;margin:0 auto;padding:40px 28px 72px}
+
+/* ---------- header ---------- */
+header{display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;
+  padding-bottom:24px;border-bottom:1px solid var(--hairline);margin-bottom:24px}
+header img.logo{height:32px;width:auto;margin-top:6px}
+header .ht{flex:1;min-width:300px}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--general-primary);margin-bottom:8px}
+.eyebrow i{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--general-primary)}
+header h1{font-size:34px;letter-spacing:-1.3px;line-height:1.08}
+header p{color:var(--general-muted-foreground);font-size:14px;margin-top:8px;max-width:74ch}
+header p b{color:var(--general-foreground);font-weight:600}
+
+/* persona toggle */
+.ptoggle{display:inline-flex;gap:4px;padding:4px;border-radius:var(--rounded-full);
+  background:var(--general-muted);align-self:flex-start;margin-top:6px}
+.ptoggle button{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;
+  border:none;border-radius:var(--rounded-full);background:transparent;cursor:pointer;
+  font-size:13px;font-weight:600;color:var(--general-muted-foreground);
+  transition:background-color var(--t-fast),color var(--t-fast),box-shadow var(--t-fast)}
+.ptoggle button .av{width:24px;height:24px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:#e3e3e3;color:#8f8f8f;font-family:var(--font-sans);font-size:11px;font-weight:700}
+.ptoggle button[aria-pressed="true"]{background:var(--surface);color:var(--general-foreground);box-shadow:var(--shadow-sm)}
+.ptoggle button[aria-pressed="true"] .av{background:var(--brand-ice);color:var(--general-primary)}
+.ptoggle button span.sub{font-weight:400;color:var(--general-muted-foreground);font-size:12px}
+
+/* ---------- meta + legend ---------- */
+.metabar{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-bottom:26px;
+  font-size:12.5px;color:var(--general-muted-foreground)}
+.metabar .src b{color:var(--general-foreground);font-weight:600}
+.legend{display:inline-flex;gap:14px;flex-wrap:wrap;align-items:center;margin-left:auto;
+  font-size:12px;font-weight:600;letter-spacing:.02em}
+.legend span{display:inline-flex;align-items:center;gap:6px;color:var(--general-muted-foreground)}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.legend .built i{background:var(--sentiment-positive)}
+.legend .partial i{background:var(--general-accent)}
+.legend .missing i{background:var(--general-destructive)}
+
+/* ---------- emotion curve ---------- */
+.curve{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);padding:20px 22px 8px;margin-bottom:26px}
+.curve .chead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.curve h2{font-size:16px;letter-spacing:-.3px}
+.curve .chead span{font-size:12.5px;color:var(--general-muted-foreground)}
+.curve svg{display:block;width:100%;height:auto}
+.curve svg text{font-family:var(--font-body)}
+.curve .feelrow{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;padding:2px 0 14px}
+.curve .feelrow span{font-size:11px;line-height:1.35;color:var(--general-muted-foreground);text-align:center}
+.curve .feelrow span b{display:block;color:var(--general-foreground);font-weight:600;font-size:11.5px}
+
+/* ---------- phase band + track ---------- */
+.scroller{overflow-x:auto;margin:0 -28px;padding:0 28px 18px;scrollbar-width:thin}
+.phaseband,.track{display:grid;grid-auto-flow:column;grid-auto-columns:280px;gap:14px;min-width:min-content}
+.phaseband{margin-bottom:10px}
+.phase{grid-row:1;display:flex;align-items:center;gap:8px;padding:7px 14px;
+  border-radius:var(--rounded-full);background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.phase i{width:6px;height:6px;border-radius:99px;background:currentColor;flex:0 0 auto}
+
+/* stage card */
+.stage{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);padding:20px;display:flex;flex-direction:column;gap:14px;
+  transition:box-shadow var(--t),transform var(--t)}
+.stage:hover{box-shadow:var(--shadow-md)}
+.stage .shead{display:flex;align-items:center;gap:10px}
+.stage .idx{width:26px;height:26px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--brand-midnight);color:#fff;font-family:var(--font-sans);font-size:12.5px;font-weight:700}
+.stage h3{font-size:17px;letter-spacing:-.35px;line-height:1.2;flex:1}
+.cov{flex:0 0 auto;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 9px;border-radius:var(--rounded-full)}
+.cov.built{background:#d9f2ef;color:var(--sentiment-positive)}
+.cov.partial{background:#fff2e0;color:#a35c00}
+.cov.missing{background:#fde8e8;color:var(--general-destructive)}
+.goal{font-size:13.5px;line-height:1.5;color:var(--general-foreground);font-weight:500}
+.goal em{display:block;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:4px}
+.sec{border-top:1px solid var(--hairline);padding-top:12px}
+.sec .lbl{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.sec ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.sec li{font-size:12.5px;line-height:1.5;color:var(--general-muted-foreground);
+  padding-left:14px;position:relative}
+.sec li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;
+  border-radius:99px;background:var(--brand-cornflower)}
+.sec.sys li::before{background:var(--general-accent)}
+.sec.gaps li::before{background:var(--general-destructive)}
+.sec.gaps li{color:#8a3d3d}
+.sec .none{font-size:12.5px;color:var(--sentiment-positive);font-weight:500}
+
+/* prototype chips */
+.proto{display:flex;flex-direction:column;gap:6px}
+.pchip{display:flex;align-items:baseline;gap:8px;padding:7px 10px;border-radius:var(--rounded-sm);
+  background:var(--general-background);border:1px solid var(--hairline);font-size:12px;line-height:1.4}
+.pchip code{font-family:var(--font-mono);font-size:11px;color:var(--general-primary);
+  background:var(--brand-ice);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.pchip .pn{color:var(--general-muted-foreground)}
+.proto .pnote{font-size:11.5px;line-height:1.5;color:var(--general-muted-foreground);margin-top:2px;
+  padding-left:10px;border-left:2px solid var(--general-border)}
+
+/* persona note + feeling */
+.pnl{background:var(--brand-ice);border-radius:var(--rounded-md);padding:12px 14px;margin-top:auto}
+.pnl .who{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.pnl .who .av{width:22px;height:22px;border-radius:99px;display:grid;place-items:center;
+  background:var(--surface);color:var(--general-primary);font-family:var(--font-sans);font-size:10px;font-weight:700}
+.pnl .who b{font-size:12px;font-weight:600}
+.pnl .who .feel{margin-left:auto;display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;color:var(--general-primary)}
+.pnl .who .feel .dots{display:inline-flex;gap:2.5px}
+.pnl .who .feel .dots i{width:6px;height:6px;border-radius:99px;background:#c4dbff}
+.pnl .who .feel .dots i.on{background:var(--general-primary)}
+.pnl p{font-size:12.5px;line-height:1.5;color:var(--general-foreground)}
+
+/* ---------- footer ---------- */
+footer{margin-top:30px;padding-top:20px;border-top:1px solid var(--hairline);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+footer .f{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  padding:16px 18px;box-shadow:var(--shadow-xs)}
+footer .f h4{font-size:13px;margin-bottom:6px}
+footer .f p{font-size:12.5px;line-height:1.55;color:var(--general-muted-foreground)}
+footer .f code{font-family:var(--font-mono);font-size:11px;background:var(--general-muted);
+  padding:1px 5px;border-radius:4px}
+
+@media(max-width:700px){
+  .wrap{padding:28px 16px 56px}
+  .scroller{margin:0 -16px;padding:0 16px 18px}
+  header h1{font-size:27px}
+  .legend{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <img class="logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTcyNyIgaGVpZ2h0PSIzOTYiIHZpZXdCb3g9IjAgMCAxNzI3IDM5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxMjhfNjgpIj4KPHBhdGggZD0iTTU4LjYzMDcgMjIyLjYxN0M1Mi41ODcgMjIxLjAxIDQ3LjQ2MjkgMjE3LjgyOCA0Mi45OTU4IDIxMy4zNjdMNi42MzQ3OSAxNzcuMDU3Qy0wLjA2NTg4NDYgMTcwLjM2NiAtMS45NzA5OCAxNTkuODY5IDIuMjAwNTIgMTUwLjYyTDQxLjQxOTIgNTMuMTM2N0M0OC40NDgzIDM3LjIyODUgNjguODQ1OSAzMi43MzQ4IDgwLjY3MDcgNDQuNTQzTDE5MS4wMzUgMTUwLjk0OEwxNDcuMDIgMTk2LjUwOEMxMTAuMzMxIDIzMC41ODcgNzUuNTc5NSAyMjcuNDA2IDU4Ljk1OTIgMjIyLjYxN0g1OC42MzA3WiIgZmlsbD0idXJsKCNwYWludDBfbGluZWFyXzMxMjhfNjgpIi8+CjxwYXRoIGQ9Ik00ODEuOTU2IDg0LjAzNDhMMjUxLjYzNiAzMTguMTY0QzIyMi42IDM0Ny4xNiAxNzUuNCAzNDcuMTYgMTQ2LjY5MiAzMTcuODM2TDE0MC4zMiAzMTEuMTQ1TDEwMy42MyAyNzQuMTc5TDk2LjMwNTYgMjY2Ljg2NUw2Ni42NDUzIDIzNy4yNDZMNjYuMDIxMiAyMzYuNjIzQzcwLjgxNjggMjM4Ljg1MyAxMDkuNzA3IDI1My41MTUgMTU4LjIyMSAyMDguMjgzTDIwMi4yMzUgMTYyLjcyM0wzNDkuMjU2IDYuNjU4NDlDMzU1Ljk1NyAtMC4wMzI4MDU3IDM2Ni40NjggLTEuOTM1MjMgMzc1LjQwMiAyLjE5NzYzTDQ3My4wMjEgNDUuNTI3QzQ3NC4zMDIgNDYuMTUwMiA0NzUuNTgzIDQ2LjgwNjMgNDc2Ljg2NCA0Ny43NTc1QzQ4OS42NDIgNTYuMDIzMiA0OTIuMTcxIDc0LjE5NDYgNDgxLjY2IDg1LjAxODhMNDgxLjk4OCA4NC4wNjc2TDQ4MS45NTYgODQuMDM0OFoiIGZpbGw9InVybCgjcGFpbnQxX2xpbmVhcl8zMTI4XzY4KSIvPgo8cGF0aCBkPSJNNDU5LjYyIDMzNC43MjlMNTEwLjk1OSAxODMuMDkyQzUxMS4yODggMTgxLjgxMyA1MTIuNTY5IDE4MC44NjIgNTE0LjE0NSAxODAuODYySDU2Ny40MjJDNTY4LjcwMyAxODAuODYyIDU2OS45ODQgMTgxLjgxMyA1NzAuNjA4IDE4My4wOTJMNjIyLjI3NiAzMzQuNzI5QzYyMi45IDMzNi45NTkgNjIxLjMyMyAzMzkuMTkgNjE5LjA5IDMzOS4xOUg1ODUuNTg2QzU4NC4zMDUgMzM5LjE5IDU4My4wMjQgMzM4LjIzOCA1ODIuNCAzMzYuOTU5TDU3MS41NjEgMzA0LjQ4N0g1MTAuNjMxTDQ5OS40NjMgMzM2Ljk1OUM0OTkuMTM0IDMzOC4yMzggNDk3Ljg1MyAzMzkuMTkgNDk2LjI3NyAzMzkuMTlINDYyLjc3M0M0NjAuNTQgMzM5LjE5IDQ1OC45MyAzMzYuOTU5IDQ1OS41ODcgMzM0LjcyOUg0NTkuNjJaTTU2MC43MjIgMjcxLjM1OEw1NDAuNjE5IDIxMS43OTNMNTIwLjUxNyAyNzEuMzU4SDU2MC43MjJaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNNzI0LjM5NSAzMjIuMzNDNzIwLjI1NyAzMjguMzY1IDcxNC44MzcgMzMzLjE1NCA3MDguNDY1IDMzNi4zMzZDNzAxLjc2NCAzMzkuNTE4IDY5My43ODIgMzQxLjQ1MyA2ODQuMjI0IDM0MS40NTNDNjc0LjY2NiAzNDEuNDUzIDY2Ni4zNTYgMzM5Ljg0NiA2NTkuMDMxIDMzNi45OTJDNjUxLjcwNiAzMzQuMTM4IDY0NS4zMzQgMzI5Ljk3MyA2MzkuODgxIDMyNC41NkM2MzQuNzU3IDMxOS4xNDggNjMwLjYxOSAzMTIuNDU3IDYyNy43NjEgMzA0LjgxNUM2MjQuOTAzIDI5Ny4xNzIgNjIzLjYyMiAyODguMjUgNjIzLjYyMiAyNzguNzA1QzYyMy42MjIgMjY5LjE2MSA2MjQuOTAzIDI2MC41MzQgNjI3Ljc2MSAyNTIuODkxQzYzMC42MTkgMjQ1LjI0OSA2MzQuNDYyIDIzOC4yMyA2MzkuODgxIDIzMi40OUM2NDUuMDA1IDIyNi43NSA2NTEuMzc4IDIyMi4yODkgNjU5LjAzMSAyMTkuMTA3QzY2Ni42ODQgMjE1LjkyNSA2NzQuOTYxIDIxNC4zMTggNjg0LjIyNCAyMTQuMzE4QzY5My40ODcgMjE0LjMxOCA3MDEuMTQgMjE2LjIyMSA3MDguMTY5IDIxOS43M0M3MTQuODcgMjIzLjI0IDcyMC42MTggMjI4LjY1MiA3MjQuNzU2IDIzNS45NjZWMTY2LjUyOEM3MjQuNzU2IDE2NC42MjUgNzI2LjM2NiAxNjMuMzQ2IDcyNy45NDMgMTYzLjM0Nkg3NTYuMzIyQzc1OC4yMjcgMTYzLjM0NiA3NTkuNTA4IDE2NC45NTMgNzU5LjUwOCAxNjYuNTI4VjMzNS42OEM3NTkuNTA4IDMzNy41ODIgNzU3Ljg5OSAzMzguODYxIDc1Ni4zMjIgMzM4Ljg2MUg3MjcuOTQzQzcyNi4wMzcgMzM4Ljg2MSA3MjQuNzU2IDMzNy4yNTQgNzI0Ljc1NiAzMzUuNjhWMzIyLjI5N0g3MjQuNDI4TDcyNC4zOTUgMzIyLjMzWk03MjQuMzk1IDI3MC43MDJDNzIyLjc4NiAyNjMuMzg4IDcxOS4yNzEgMjU3LjMyIDcxMy44NTEgMjUzLjE4N0M3MDguMTAzIDI0OC43MjYgNzAxLjQwMyAyNDYuNDk1IDY5My4xMjUgMjQ2LjQ5NUM2ODQuODQ4IDI0Ni40OTUgNjg0LjE5MSAyNDcuMTE5IDY4MC4wNTIgMjQ4LjM5OEM2NzUuOTE0IDI0OS42NzcgNjcyLjM5OSAyNTEuNTc5IDY2OS41MDkgMjU0LjEzOEM2NjYuNjE4IDI1Ni42OTYgNjY0LjM4NSAyNjAuMTczIDY2Mi44MDggMjY0LjAxMUM2NjEuMjMxIDI2Ny44NDggNjYwLjU3NSAyNzIuNjA1IDY2MC41NzUgMjc4LjM0NUM2NjAuNTc1IDI4NC4wODUgNjYxLjE5OSAyODguNTQ2IDY2Mi44MDggMjkyLjM1QzY2NC40MTggMjk2LjE1NSA2NjYuNjUxIDI5OS4zNyA2NjkuNTA5IDMwMS44OTVDNjcyLjM2NiAzMDQuNDIxIDY3NS44ODEgMzA2LjM1NiA2ODAuMDUyIDMwNy4zMDdDNjg0LjE5MSAzMDguNTg3IDY4OC4zMyAzMDguOTE1IDY5My4xMjUgMzA4LjkxNUM2OTcuOTIxIDMwOC45MTUgNzAwLjE1NCAzMDguMjkxIDcwMy42NjkgMzA3LjMwN0M3MDcuMTg0IDMwNi4zMjMgNzEwLjA0MSAzMDQuNzQ5IDcxMi45MzIgMzAyLjg0N0M3MTUuODIyIDMwMC45NDQgNzE4LjA1NiAyOTguMzg2IDcxOS45NjEgMjk1LjgyN0M3MjEuODY2IDI5My4yNjkgNzIzLjQ3NSAyOTAuMDg3IDcyNC40MjggMjg2LjU3OFYyNzAuNjY5TDcyNC4zOTUgMjcwLjcwMloiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0xMDAwLjMxIDMyMi4zM0M5OTYuMTY3IDMyOC4zNjUgOTkwLjc0NyAzMzMuMTU0IDk4NC4zNzUgMzM2LjMzNkM5NzguMDAzIDMzOS41MTggOTY5LjY5MiAzNDEuNDUzIDk2MC4xMzQgMzQxLjQ1M0M5NTAuNTc2IDM0MS40NTMgOTQyLjI2NiAzMzkuODQ2IDkzNC45NDEgMzM2Ljk5MkM5MjcuNjE2IDMzNC4xMzggOTIxLjI0NCAzMjkuOTczIDkxNS43OTEgMzI0LjU2QzkxMC42NjcgMzE5LjE0OCA5MDYuNTI5IDMxMi40NTcgOTAzLjY3MSAzMDQuODE1QzkwMC44MTQgMjk3LjE3MiA4OTkuNTMyIDI4OC4yNSA4OTkuNTMyIDI3OC43MDVDODk5LjUzMiAyNjkuMTYxIDkwMC44MTQgMjYwLjUzNCA5MDMuNjcxIDI1Mi44OTFDOTA2LjUyOSAyNDUuMjQ5IDkxMC4zNzIgMjM4LjIzIDkxNS43OTEgMjMyLjQ5QzkyMS4yMTEgMjI2Ljc1IDkyNy4yODggMjIyLjI4OSA5MzQuOTQxIDIxOS4xMDdDOTQyLjU5NCAyMTUuOTI1IDk1MC44NzEgMjE0LjMxOCA5NjAuMTM0IDIxNC4zMThDOTY5LjM5NyAyMTQuMzE4IDk3Ny4wNSAyMTYuMjIxIDk4NC4wNzkgMjE5LjczQzk5MC43OCAyMjMuMjQgOTk2LjUyOCAyMjguNjUyIDEwMDAuNjcgMjM1Ljk2NlYyMTcuMTcyQzEwMDAuNjcgMjE1LjI2OSAxMDAyLjI4IDIxMy45OSAxMDAzLjg1IDIxMy45OUgxMDMyLjU2QzEwMzQuNDcgMjEzLjk5IDEwMzUuNzUgMjE1LjU5NyAxMDM1Ljc1IDIxNy4xNzJWMzM1Ljk3NUMxMDM1Ljc1IDMzNy44NzcgMTAzNC4xNCAzMzkuMTU3IDEwMzIuNTYgMzM5LjE1N0gxMDAzLjg1QzEwMDEuOTUgMzM5LjE1NyAxMDAwLjY3IDMzNy41NDkgMTAwMC42NyAzMzUuOTc1VjMyMi41OTJMMTAwMC4zNCAzMjIuMjY0TDEwMDAuMzEgMzIyLjMzWk0xMDAwLjMxIDI3MC43MDJDOTk4LjY5NiAyNjMuMzg4IDk5NS4xODEgMjU3LjMyIDk4OS43NjIgMjUzLjE4N0M5ODQuMDE0IDI0OC43MjYgOTc3LjMxMyAyNDYuNDk1IDk2OS4wMzYgMjQ2LjQ5NUM5NjAuNzU4IDI0Ni40OTUgOTYwLjEwMSAyNDcuMTE5IDk1NS45NjMgMjQ4LjM5OEM5NTEuODI0IDI0OS42NzcgOTQ4LjMwOSAyNTEuNTc5IDk0NS40MTkgMjU0LjEzOEM5NDIuNTI4IDI1Ni42OTYgOTQwLjI5NSAyNjAuMTczIDkzOC43MTggMjY0LjAxMUM5MzcuMTQyIDI2Ny44NDkgOTM2LjQ4NSAyNzIuNjA1IDkzNi40ODUgMjc4LjM0NUM5MzYuNDg1IDI4NC4wODUgOTM3LjEwOSAyODguNTQ2IDkzOC43MTggMjkyLjM1Qzk0MC4zMjggMjk2LjE1NSA5NDIuNTYxIDI5OS4zNyA5NDUuNDE5IDMwMS44OTVDOTQ4LjI3NyAzMDQuNDIxIDk1MS43OTEgMzA2LjM1NiA5NTUuOTYzIDMwNy4zMDdDOTYwLjEwMSAzMDguNTg3IDk2NC4yNCAzMDguOTE1IDk2OS4wMzYgMzA4LjkxNUM5NzMuODMxIDMwOC45MTUgOTc2LjA2NSAzMDguMjkxIDk3OS41NzkgMzA3LjMwN0M5ODMuMDk0IDMwNi4zMjMgOTg1Ljk1MSAzMDQuNzQ5IDk4OC44NDIgMzAyLjg0N0M5OTEuNzMyIDMwMC45NDQgOTkzLjk2NiAyOTguMzg2IDk5NS44NzEgMjk1LjgyN0M5OTcuNzc2IDI5My4yNjkgOTk5LjM4NiAyOTAuMDg3IDEwMDAuMzQgMjg2LjU3OFYyNzAuNjY5TDEwMDAuMzEgMjcwLjcwMloiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0xNDA0LjQ4IDMyMi4zM0MxNDAwLjM0IDMyOC4zNjUgMTM5NC45MiAzMzMuMTU0IDEzODguNTUgMzM2LjMzNkMxMzgyLjE4IDMzOS41MTggMTM3My44NyAzNDEuNDUzIDEzNjQuMzEgMzQxLjQ1M0MxMzU0Ljc1IDM0MS40NTMgMTM0Ni40NCAzMzkuODQ2IDEzMzkuMTIgMzM2Ljk5MkMxMzMxLjc5IDMzNC4xMzggMTMyNS40MiAzMjkuOTczIDEzMTkuOTcgMzI0LjU2QzEzMTQuODQgMzE5LjE0OCAxMzEwLjcgMzEyLjQ1NyAxMzA3Ljg1IDMwNC44MTVDMTMwNC45OSAyOTcuMTcyIDEzMDMuNzEgMjg4LjI1IDEzMDMuNzEgMjc4LjcwNUMxMzAzLjcxIDI2OS4xNjEgMTMwNC45OSAyNjAuNTM0IDEzMDcuODUgMjUyLjg5MUMxMzEwLjcgMjQ1LjI0OSAxMzE0LjU1IDIzOC4yMyAxMzE5Ljk3IDIzMi40OUMxMzI1LjA5IDIyNi43NSAxMzMxLjQ2IDIyMi4yODkgMTMzOS4xMiAyMTkuMTA3QzEzNDYuNzcgMjE1LjkyNSAxMzU1LjA1IDIxNC4zMTggMTM2NC4zMSAyMTQuMzE4QzEzNzMuNTcgMjE0LjMxOCAxMzgxLjIzIDIxNi4yMjEgMTM4OC4yNSAyMTkuNzNDMTM5NC45NiAyMjMuMjQgMTQwMC43IDIyOC42NTIgMTQwNC44NCAyMzUuOTY2VjIxNy4xNzJDMTQwNC44NCAyMTUuMjY5IDE0MDYuNDUgMjEzLjk5IDE0MDguMDMgMjEzLjk5SDE0MzYuNzRDMTQzOC42NCAyMTMuOTkgMTQzOS45MiAyMTUuNTk3IDE0MzkuOTIgMjE3LjE3MlYzMzUuOTc1QzE0MzkuOTIgMzM3Ljg3NyAxNDM4LjMxIDMzOS4xNTcgMTQzNi43NCAzMzkuMTU3SDE0MDguMDNDMTQwNi4xMiAzMzkuMTU3IDE0MDQuODQgMzM3LjU0OSAxNDA0Ljg0IDMzNS45NzVWMzIyLjU5MkwxNDA0LjUxIDMyMi4yNjRMMTQwNC40OCAzMjIuMzNaTTE0MDQuNDggMjcwLjcwMkMxNDAyLjg3IDI2My4zODggMTM5OS4zNiAyNTcuMzIgMTM5My45NCAyNTMuMTg3QzEzODguMTkgMjQ4LjcyNiAxMzgxLjQ5IDI0Ni40OTUgMTM3My4yMSAyNDYuNDk1QzEzNjQuOTMgMjQ2LjQ5NSAxMzY0LjI4IDI0Ny4xMTkgMTM2MC4xNCAyNDguMzk4QzEzNTYgMjQ5LjY3NyAxMzUyLjQ4IDI1MS41NzkgMTM0OS41OSAyNTQuMTM4QzEzNDYuNyAyNTYuNjk2IDEzNDQuNDcgMjYwLjE3MyAxMzQyLjg5IDI2NC4wMTFDMTM0MS4zMiAyNjcuODQ5IDEzNDAuNjYgMjcyLjYwNSAxMzQwLjY2IDI3OC4zNDVDMTM0MC42NiAyODQuMDg1IDEzNDEuMjggMjg4LjU0NiAxMzQyLjg5IDI5Mi4zNUMxMzQ0LjUgMjk2LjE1NSAxMzQ2Ljc0IDI5OS4zNyAxMzQ5LjU5IDMwMS44OTVDMTM1Mi40NSAzMDQuNDIxIDEzNTUuOTcgMzA2LjM1NiAxMzYwLjE0IDMwNy4zMDdDMTM2NC4yOCAzMDguNTg3IDEzNjguNDIgMzA4LjkxNSAxMzczLjIxIDMwOC45MTVDMTM3OC4wMSAzMDguOTE1IDEzODAuMjQgMzA4LjI5MSAxMzgzLjc1IDMwNy4zMDdDMTM4Ny4yNyAzMDYuMzIzIDEzOTAuMTMgMzA0Ljc0OSAxMzkzLjAyIDMwMi44NDdDMTM5NS45MSAzMDAuOTQ0IDEzOTguMTQgMjk4LjM4NiAxNDAwLjA1IDI5NS44MjdDMTQwMS45NSAyOTMuMjY5IDE0MDMuNTYgMjkwLjA4NyAxNDA0LjUxIDI4Ni41NzhWMjcwLjY2OUwxNDA0LjQ4IDI3MC43MDJaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNNzcxLjI2NyAyMTYuODc3SDgwMC45MjdDODAyLjUzNyAyMTYuODc3IDgwMy44MTggMjE3LjgyOCA4MDQuMTEzIDIxOS4xMDdMODMzLjQ3OCAzMTMuNzA0TDg2My40NjcgMjE4Ljc3OUM4NjMuNzk1IDIxNy41IDg2NS4wNzcgMjE2LjU0OSA4NjYuNjUzIDIxNi41NDlIODk1LjY4OUM4OTcuOTIzIDIxNi41NDkgODk5LjUzMiAyMTguNzc5IDg5OC44NzUgMjIwLjY4MUw4NjIuNTE0IDMzNi4zMzZDODYyLjE4NiAzMzcuNjE1IDg2MC45MDUgMzM4LjU2NiA4NTkuMzI4IDMzOC41NjZIODA4LjYxM0M4MDcuMDA0IDMzOC41NjYgODA2LjA1MSAzMzcuNjE1IDgwNS40MjcgMzM2LjMzNkw3NjguMTE0IDIyMC42ODFDNzY3LjQ5IDIxOC40NTEgNzY5LjA2NiAyMTYuNTQ5IDc3MS4zIDIxNi41NDlWMjE2Ljg3N0g3NzEuMjY3WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTEwNTIuMzMgMzM1LjcxM1YyMjAuMDU4QzEwNTIuMzMgMjE4LjE1NiAxMDUzLjk0IDIxNi44NzcgMTA1NS41MiAyMTYuODc3SDEwODQuMjNDMTA4Ni4xMyAyMTYuODc3IDEwODcuNDEgMjE4LjQ4NCAxMDg3LjQxIDIyMC4wNThWMjM2LjYyMkMxMDg5Ljk4IDIzMy4xMTMgMTA5Mi44MyAyMjkuOTMxIDEwOTYuMzUgMjI3LjA3OEMxMDk5Ljg2IDIyNC4yMjQgMTEwMy4zOCAyMjEuOTYxIDExMDcuMTkgMjIwLjA1OEMxMTExIDIxOC4xNTYgMTExNC44NCAyMTYuODc3IDExMTkuMzEgMjE1LjU5N0MxMTIzLjc4IDIxNC4zMTggMTEyNy41OSAyMTMuOTkgMTEzMS43NiAyMTMuOTlDMTE0MS45NyAyMTMuOTkgMTE1MC4yNSAyMTUuODkzIDExNTYuNjIgMjIwLjAyNUMxMTYyLjk5IDIyNC4xNTggMTE2OC4xMiAyMjkuMjc1IDExNzEuNiAyMzUuMzFDMTE3NS4wOCAyNDEuMzQ2IDExNzcuNjQgMjQ4LjM2NSAxMTc4LjYzIDI1NS43MTJDMTE3OS45MSAyNjMuMzU1IDExODAuNTMgMjcwLjY2OSAxMTgwLjUzIDI3Ny4zOTNWMzM1LjM4NUMxMTgwLjUzIDMzNy4yODcgMTE3OC45MiAzMzguNTY2IDExNzcuMzUgMzM4LjU2NkgxMTQ4LjY0QzExNDYuNzMgMzM4LjU2NiAxMTQ1LjQ1IDMzNi45NTkgMTE0NS40NSAzMzUuMzg1VjI3Ny4zOTNDMTE0NS40NSAyNzMuMjYxIDExNDUuMTMgMjY5LjQyMyAxMTQ0LjE3IDI2NS42MThDMTE0My4yMiAyNjEuODEzIDExNDEuOTQgMjU4LjU5OSAxMTM5LjcxIDI1NS43NDVDMTEzNy40NyAyNTIuODkyIDExMzQuOTEgMjUwLjYyOCAxMTMxLjcyIDI0OS4wNTRDMTEyOC41NCAyNDcuNDc5IDExMjQuNCAyNDYuNDk1IDExMTkuMjggMjQ2LjQ5NUMxMTE0LjE1IDI0Ni40OTUgMTEwOS43MiAyNDcuMTE5IDExMDUuODcgMjQ4LjcyNkMxMTAyLjAzIDI1MC4zMzMgMTA5OC41NSAyNTIuNTY0IDEwOTUuNjYgMjU1LjQxN0MxMDkyLjc3IDI1OC4zMDQgMTA5MC44NiAyNjEuNDUyIDEwODkuMjkgMjY1LjI5QzEwODguMDEgMjY5LjEyOCAxMDg3LjA1IDI3My4yNjEgMTA4Ny4wNSAyNzcuMzkzVjMzNS4zODVDMTA4Ny4wNSAzMzcuMjg3IDEwODUuNDQgMzM4LjU2NiAxMDgzLjg3IDMzOC41NjZIMTA1NS4xNkMxMDUzLjI1IDMzOC41NjYgMTA1MS45NyAzMzYuOTU5IDEwNTEuOTcgMzM1LjM4NUwxMDUyLjMgMzM1LjcxM0gxMDUyLjMzWiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTEyMzMuODEgMzM3LjI4N0MxMjI5LjAyIDMzNS42OCAxMjI0Ljg4IDMzMy4xNTQgMTIyMS4zNiAzMjkuNjQ1QzEyMTcuODUgMzI2LjEzNSAxMjE1LjMyIDMyMS42NzQgMTIxMy4zOCAzMTYuMjYyQzEyMTEuNDQgMzEwLjg1IDEyMTAuNDkgMzA0LjQ4NyAxMjEwLjQ5IDI5Ny4xMzlWMjQ3LjExOUgxMTkwLjA2QzExODguMTUgMjQ3LjExOSAxMTg2Ljg3IDI0NS41MTEgMTE4Ni44NyAyNDMuOTM3VjIxOS43M0MxMTg2Ljg3IDIxNy44MjggMTE4OC40OCAyMTYuNTQ5IDExOTAuMDYgMjE2LjU0OUgxMjEwLjQ5VjE4Mi4xNDFDMTIxMC40OSAxODAuMjM4IDEyMTIuMSAxNzguOTU5IDEyMTMuNjggMTc4Ljk1OUgxMjQyLjM4QzEyNDQuMjkgMTc4Ljk1OSAxMjQ1LjU3IDE4MC41NjcgMTI0NS41NyAxODIuMTQxVjIxNi41NDlIMTI5NC4zOEMxMjk1Ljk5IDIxNi41NDkgMTI5Ny41NyAyMTguMTU2IDEyOTcuNTcgMjE5LjczVjI0My45MzdDMTI5Ny41NyAyNDUuODM5IDEyOTUuOTYgMjQ3LjExOSAxMjk0LjM4IDI0Ny4xMTlIMTI0NS41N1YyOTYuMTg4QzEyNDUuNTcgMjk4Ljc0NyAxMjQ1LjkgMzAwLjk3NyAxMjQ2Ljg1IDMwMi4yMjNDMTI0Ny44IDMwMy44MzEgMTI0OS4wOCAzMDQuNzgyIDEyNTAuNjkgMzA1LjczM0MxMjUyLjMgMzA2LjY4NCAxMjUzLjg4IDMwNy4zNCAxMjU2LjExIDMwNy4zNEMxMjU4LjAyIDMwNy4zNCAxMjU5Ljk2IDMwNy42NjggMTI2MS44NiAzMDcuNjY4SDEyODkuOTVDMTI5MS44NSAzMDcuNjY4IDEyOTMuMTMgMzA5LjI3NiAxMjkzLjEzIDMxMC44NVYzMzUuNjhDMTI5My4xMyAzMzcuNTgyIDEyOTEuNTIgMzM4Ljg2MiAxMjg5Ljk1IDMzOC44NjJIMTI1MC4wN0MxMjQ0LjMyIDMzOC44NjIgMTIzOC45IDMzOC4yMzggMTIzNC4xNCAzMzYuNjMxTDEyMzMuODEgMzM3LjI1NFYzMzcuMjg3WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTE1MTEuOTkgMzkzLjM3NkwxNTAyLjQzIDM2OS43OTJDMTUwMS44IDM2Ny41NjIgMTUwMy4wNSAzNjUuMzMyIDE1MDUuNjEgMzY1LjMzMkgxNTE3Ljc0QzE1MjEuNTggMzY1LjMzMiAxNTI1LjM5IDM2NS4zMzIgMTUyOS41MyAzNjQuNzA4QzE1MzMuNjcgMzY0LjA4NSAxNTM3LjUxIDM2My4xMDEgMTU0MS4wMiAzNjEuMTk5QzE1NDQuNTQgMzU5LjI5NiAxNTQ3LjQgMzU2LjQxIDE1NDkuOTYgMzUyLjkzM0MxNTUyLjUyIDM0OS4wOTUgMTU1My40NyAzNDQuMDExIDE1NTMuNDcgMzM3LjY0OFYzMjMuMzE0QzE1NDkuMzMgMzI5LjM0OSAxNTQzLjkxIDMzMy44NDMgMTUzNy41NCAzMzYuOTkyQzE1MzEuMTcgMzQwLjE0MSAxNTIyLjg2IDM0Mi4xMDkgMTUxMy4zIDM0Mi4xMDlDMTUwMy43NCAzNDIuMTA5IDE0OTUuNDMgMzQwLjUwMiAxNDg4LjExIDMzNy42NDhDMTQ4MC43OCAzMzQuNzk0IDE0NzQuNDEgMzMwLjYyOSAxNDY4Ljk2IDMyNS4yMTdDMTQ2My44MyAzMTkuODA0IDE0NTkuNyAzMTMuMTEzIDE0NTYuODQgMzA1LjQ3MUMxNDUzLjk4IDI5Ny44MjggMTQ1Mi43IDI4OC45MDYgMTQ1Mi43IDI3OS4wMzRDMTQ1Mi43IDI2OS4xNjEgMTQ1My45OCAyNjEuMTkgMTQ1Ni44NCAyNTMuMjJDMTQ1OS43IDI0NS4yNDkgMTQ2My41NCAyMzguNTU4IDE0NjguOTYgMjMyLjgxOEMxNDc0LjA4IDIyNy4wNzggMTQ4MC40NSAyMjIuNjE3IDE0ODguMTEgMjE5LjQzNUMxNDk1LjQzIDIxNi4yNTMgMTUwMy43NCAyMTQuNjQ2IDE1MTIuOTcgMjE0LjY0NkMxNTIyLjIgMjE0LjY0NiAxNTMwLjE4IDIxNi41NDkgMTUzNi45MiAyMjAuMDU4QzE1NDMuNjUgMjIzLjU2OCAxNTQ5LjM3IDIyOC45OCAxNTUzLjUgMjM2LjYyM1YyMjAuNzE0QzE1NTMuNSAyMTguODEyIDE1NTUuMTEgMjE3LjUzMyAxNTU2LjY5IDIxNy41MzNIMTU4NS40QzE1ODcuMyAyMTcuNTMzIDE1ODguNTkgMjE5LjE0IDE1ODguNTkgMjIwLjcxNFYzMzcuNjE1QzE1ODguNTkgMzQ4Ljc2NyAxNTg2LjY4IDM1OC4wMTcgMTU4My4xNyAzNjUuNjZDMTU3OS42NSAzNzMuMzAyIDE1NzQuNTYgMzc5LjMzNyAxNTY3Ljg2IDM4NC4xMjZDMTU2MS40OSAzODguOTE1IDE1NTMuODMgMzkyLjA5NyAxNTQ1LjE5IDM5NC4zMjdDMTUzNi41OSAzOTYuNTU4IDE1MjcuMzMgMzk1LjkzNCAxNTE3LjQ0IDM5NS45MzRIMTUxNS41M0MxNTE0LjI1IDM5NS45MzQgMTUxMi45NyAzOTQuOTgzIDE1MTIuMzUgMzkzLjcwNEwxNTEyLjAyIDM5My4zNzZIMTUxMS45OVpNMTU1My4xNCAyNzAuNDA3QzE1NTIuNTIgMjY2Ljg5NyAxNTUxLjI0IDI2My4zODggMTU0OS4zIDI2MC41MzRDMTU0Ny4zNiAyNTcuNjggMTU0NS4xNiAyNTUuMTIyIDE1NDIuMjcgMjUyLjg5MkMxNTM5LjM4IDI1MC42NjEgMTUzNi41MiAyNDkuMDU0IDE1MzMuMDEgMjQ4LjEwM0MxNTI5LjQ5IDI0Ny4xNTEgMTUyNS45OCAyNDYuNDk1IDE1MjEuODQgMjQ2LjQ5NUMxNTE3LjcgMjQ2LjQ5NSAxNTEyLjU4IDI0Ny4xMTkgMTUwOC43NyAyNDguMzk4QzE1MDQuOTYgMjQ5LjY3NyAxNTAxLjExIDI1MS41OCAxNDk4LjIyIDI1NC4xMzhDMTQ5NS4zMyAyNTYuNjk2IDE0OTMuMSAyNjAuMTczIDE0OTEuNTIgMjY0LjAxMUMxNDg5Ljk1IDI2Ny44NDkgMTQ4OS4yOSAyNzIuOTMzIDE0ODkuMjkgMjc4LjY3M0MxNDg5LjI5IDI4NC40MTMgMTQ4OS45MSAyODguNTQ2IDE0OTEuNTIgMjkyLjM1QzE0OTMuMTMgMjk2LjE1NSAxNDk1LjM3IDI5OS4zNyAxNDk4LjIyIDMwMS44OTVDMTUwMS4wOCAzMDQuNDIxIDE1MDQuNiAzMDYuMzU2IDE1MDguNzcgMzA3LjMwOEMxNTEyLjkxIDMwOC41ODcgMTUxNy4wNSAzMDguOTE1IDE1MjEuODQgMzA4LjkxNUMxNTI4Ljg3IDMwOC45MTUgMTUzNS4yNCAzMDcuMDEyIDE1NDEuMjkgMzAyLjg3OUMxNTQ3LjAzIDI5OC43NDcgMTU1MS4xNyAyOTMuMzM1IDE1NTMuMDggMjg2LjMxNVYyNzAuMDc5VjI3MC40MDdIMTU1My4xNFoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0xNjM2LjQxIDMzNy42MTVDMTYyNy44IDMzNC43MjkgMTYyMC43NyAzMzAuNTk2IDE2MTUuMDYgMzI1LjE4NEMxNjA5LjM0IDMxOS43NzIgMTYwNC44NCAzMTMuMDggMTYwMS42NiAzMDUuMTFDMTU5OC40NyAyOTcuMTM5IDE1OTYuODYgMjg3LjkyMiAxNTk2Ljg2IDI3Ny43MjFDMTU5Ni44NiAyNjcuNTIxIDE1OTguNDcgMjU5LjU1IDE2MDEuMzMgMjUxLjYxMkMxNjA0LjIyIDI0My45NyAxNjA4LjY1IDIzNi45NSAxNjE0LjExIDIzMS41MzhDMTYxOS41NiAyMjYuMTI2IDE2MjYuNTYgMjIxLjY2NSAxNjM0LjgzIDIxOC43NzlDMTY0My4xMSAyMTUuODkzIDE2NTIuMzcgMjE0LjMxOCAxNjYzLjIxIDIxNC4zMThDMTY3NC4wNSAyMTQuMzE4IDE2ODEuNDEgMjE1LjU5NyAxNjg5LjA2IDIxOC40NTFDMTY5Ny4wNCAyMjEuMzM3IDE3MDMuNzQgMjI1LjQ3IDE3MDkuMTYgMjMwLjU1NEMxNzE0LjkxIDIzNS45NjYgMTcxOS4wNSAyNDIuMzMgMTcyMi4yNCAyNDkuOTcyQzE3MjUuNDIgMjU3LjYxNSAxNzI3LjAzIDI2Ni4yMDkgMTcyNy4wMyAyNzUuNzg2VjI4My40MjlDMTcyNy4wMyAyODQuMzggMTcyNi40MSAyODUuMDM2IDE3MjUuNDIgMjg1LjAzNkgxNjMzLjIyQzE2MzMuODUgMjg5LjE2OSAxNjM0LjgzIDI5My4zMDIgMTYzNi40MSAyOTYuNTE2QzE2MzguMDIgMzAwLjAyNiAxNjQwLjI1IDMwMi44NzkgMTY0Mi40NSAzMDUuMTFDMTY0NC42NSAzMDcuMzQgMTY0Ny44NyAzMDkuMjQzIDE2NTEuNzIgMzEwLjUyMkMxNjU1LjU2IDMxMS44MDEgMTY1OS4zNyAzMTIuNDI0IDE2NjQuMTYgMzEyLjQyNEMxNjcyLjE1IDMxMi40MjQgMTY3Ny44NiAzMTEuMTQ1IDE2ODIuMDMgMzA4LjU4N0MxNjg1Ljg4IDMwNi4zNTYgMTY4OC40MSAzMDMuMTc1IDE2OTAuMDEgMjk5LjMzN0MxNjkwLjAxIDI5OC43MTQgMTY5MC45NyAyOTguMzg2IDE2OTEuNjIgMjk4LjM4NkgxNzI0LjQ3QzE3MjUuNDIgMjk4LjM4NiAxNzI2LjM4IDI5OS4zMzcgMTcyNi4wOCAzMDAuMjg4QzE3MjUuNDYgMzA1LjcgMTcyMy41MiAzMTAuODE3IDE3MjAuOTYgMzE1LjU3M0MxNzE3Ljc3IDMyMC45ODUgMTcxMy42MyAzMjUuNDQ2IDE3MDguNTEgMzI5LjI1MUMxNzAzLjA5IDMzMy4wODkgMTY5Ny4wMSAzMzYuMjcgMTY4OS42OSAzMzguNTAxQzE2ODIuMzYgMzQwLjczMSAxNjc0LjM4IDM0Mi4wMSAxNjY1LjQ1IDM0Mi4wMUMxNjU2LjUxIDM0Mi4wMSAxNjQ0LjcyIDM0MC43MzEgMTYzNi40MSAzMzcuODc4VjMzNy41NVYzMzcuNjE1Wk0xNjg5Ljk4IDI2Mi40MzZDMTY4OS4wMyAyNTkuMjU1IDE2ODguMDggMjU2LjQwMSAxNjg2LjggMjU0LjE3MUMxNjg1LjUxIDI1MS45NCAxNjgzLjYxIDI0OS43MSAxNjgxLjM4IDI0Ny44MDdDMTY3OS4xNCAyNDUuOTA1IDE2NzYuNTggMjQ0LjYyNiAxNjczLjcyIDI0My42NzVDMTY3MC44NyAyNDIuNzIzIDE2NjcuMzUgMjQyLjA2NyAxNjYzLjE4IDI0Mi4wNjdDMTY1OS4wMSAyNDIuMDY3IDE2NTUuMiAyNDIuNjkxIDE2NTIuMDEgMjQzLjY3NUMxNjQ4LjgzIDI0NC42NTkgMTY0Ni4yNiAyNDYuMjMzIDE2NDQuMDMgMjQ3LjgwN0MxNjQxLjggMjQ5LjcxIDE2MzkuODkgMjUxLjY0NSAxNjM4LjYxIDI1NC4xNzFDMTYzNyAyNTYuNzI5IDE2MzYuMDUgMjU5LjU4MyAxNjM1LjEgMjYyLjQzNkgxNjg5Ljk4WiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyXzMxMjhfNjgiIHgxPSItNTUuODcyIiB5MT0iOS41MTIxMyIgeDI9IjE0MS4yOTEiIHkyPSIyMDYuOTUyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiM5MkJFRkYiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjE3MEVEIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQxX2xpbmVhcl8zMTI4XzY4IiB4MT0iNjUuOTU1NSIgeTE9IjE2OS45MzkiIHgyPSI0ODguNjIzIiB5Mj0iMTY5LjkzOSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMEIwMEFCIi8+CjxzdG9wIG9mZnNldD0iMC41MyIgc3RvcC1jb2xvcj0iIzA1MUJENSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDM3RkYiLz4KPC9saW5lYXJHcmFkaWVudD4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTI4XzY4Ij4KPHJlY3Qgd2lkdGg9IjE3MjciIGhlaWdodD0iMzk2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt="Advantage">
+    <div class="ht">
+      <span class="eyebrow"><i></i>Advantage UX · Journey v1</span>
+      <h1>Customer journey — what we landed on</h1>
+      <p>The 10-stage journey from the Miro alignment, mapped stage-by-stage against
+      <b>advantage-v2-visual.html</b>. Coverage chips show what the prototype already proves,
+      what's partial, and what's missing. <b>journey.json</b> is the source of truth — this page
+      renders from the same data.</p>
+    </div>
+    <div class="ptoggle" role="group" aria-label="Persona">
+      <button type="button" id="pbob" aria-pressed="true">
+        <span class="av">BI</span>Bob<span class="sub">· data connected</span>
+      </button>
+      <button type="button" id="pfanny" aria-pressed="false">
+        <span class="av">FK</span>Fanny<span class="sub">· new customer</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="metabar">
+    <span class="src">Sources: <b>Miro journey alignment</b> + <b>advantage-v2-visual.html</b> · 2026-08-21</span>
+    <div class="legend">
+      <span class="built"><i></i>Built in prototype</span>
+      <span class="partial"><i></i>Partial</span>
+      <span class="missing"><i></i>Missing</span>
+    </div>
+  </div>
+
+  <div class="curve">
+    <div class="chead">
+      <h2>Emotion over the journey</h2>
+      <span id="curvecap">Solid line — active persona · faint line — the other one. Peak at stage 4: the value reveal.</span>
+    </div>
+    <svg id="curvesvg" viewBox="0 0 1000 150" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="128" x2="1000" y2="128" stroke="#f0f0f0" stroke-width="1"></line><line x1="0" y1="100" x2="1000" y2="100" stroke="#f0f0f0" stroke-width="1"></line><line x1="0" y1="72" x2="1000" y2="72" stroke="#f0f0f0" stroke-width="1"></line><line x1="0" y1="44" x2="1000" y2="44" stroke="#f0f0f0" stroke-width="1"></line><line x1="0" y1="16" x2="1000" y2="16" stroke="#f0f0f0" stroke-width="1"></line><path d="M50.0 72.0 L150.0 100.0 L250.0 72.0 L350.0 44.0 L450.0 44.0 L550.0 72.0 L650.0 72.0 L750.0 72.0 L850.0 44.0 L950.0 44.0" fill="none" stroke="#c9ddff" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"></path><path d="M50.0 72.0 L150.0 44.0 L250.0 44.0 L350.0 16.0 L450.0 44.0 L550.0 44.0 L650.0 72.0 L750.0 72.0 L850.0 16.0 L950.0 44.0 " fill="none" stroke="#1b64dc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="50" cy="72" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="150" cy="44" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="250" cy="44" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="350" cy="16" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="450" cy="44" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="550" cy="44" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="650" cy="72" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="750" cy="72" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="850" cy="16" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><circle cx="950" cy="44" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"></circle><text x="50" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">1</text><text x="150" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">2</text><text x="250" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">3</text><text x="350" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">4</text><text x="450" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">5</text><text x="550" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">6</text><text x="650" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">7</text><text x="750" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">8</text><text x="850" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">9</text><text x="950" y="144" text-anchor="middle" font-size="10" fill="#a3a3a3">10</text></svg>
+    <div class="feelrow" id="feelrow"><span><b>3/5</b>purposeful</span><span><b>4/5</b>already done</span><span><b>4/5</b>oriented</span><span><b>5/5</b>value reveal — the peak</span><span><b>4/5</b>engaged</span><span><b>4/5</b>focused</span><span><b>3/5</b>deliberate, slightly skeptical</span><span><b>3/5</b>commitment tension</span><span><b>5/5</b>trust &amp; pride</span><span><b>4/5</b>confident, forward-looking</span></div>
+  </div>
+
+  <div class="scroller" aria-label="Journey stages">
+    <div class="phaseband" id="phaseband"><div class="phase" style="grid-column:span 2"><i></i>Get in &amp; connect</div><div class="phase" style="grid-column:span 2"><i></i>Understand</div><div class="phase" style="grid-column:span 4"><i></i>Act on savings</div><div class="phase" style="grid-column:span 2"><i></i>Sustain the loop</div></div>
+    <div class="track" id="track">
+  <article class="stage" aria-label="Stage 1: Log in">
+    <div class="shead">
+      <span class="idx">1</span>
+      <h3>Log in</h3>
+      <span class="cov partial">Partial</span>
+    </div>
+    <p class="goal"><em>User goal</em>Get into the portal quickly — driven by a specific need, a notification, or wanting an overview.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Logs into the portal because they have a specific need, received a notification, or want an overview.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>Notifications should deep-link into the relevant view (savings, opportunity, agreement change), not just to the dashboard.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>s-login</code><span class="pn">Login — persona choice</span></div>
+        <p class="pnote">Prototype login is a persona picker that lands straight on the right dashboard. Real authentication and notification deep-links are out of scope here.</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <ul><li>Notification → deep-link entry path is not demonstrated; every session starts at the dashboard.</li></ul>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span>
+          purposeful
+        </span>
+      </div>
+      <p>Returning with intent — often triggered by a notification.</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 2: Connect spend data">
+    <div class="shead">
+      <span class="idx">2</span>
+      <h3>Connect spend data</h3>
+      <span class="cov partial">Partial</span>
+    </div>
+    <p class="goal"><em>User goal</em>Give the product real data with the least effort and risk, so figures become exact instead of estimated.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Decides whether to connect to the ERP or upload a spend report.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>If connected to the ERP, the product can notice procurement made outside of agreements and suggest suppliers that fit.</li><li>Until data is connected, figures are peer-based estimates and clearly marked as such (estimated vs verified).</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewDataCenter</code><span class="pn">Data center — connect methods</span></div><div class="pchip"><code>viewNewCustomer</code><span class="pn">Rail action: 'Connect your accounting data'</span></div>
+        <p class="pnote">v2-visual still ships the CSS for the dedicated onboarding screens (Sources, Loading/analyzing, Data set confirm, CEO welcome) but their markup was removed — the full connect flow lives in advantage-onboarding.html. Here, connecting is reachable via the Data center only.</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <ul><li>End-to-end connect flow (choose source → analyze → confirm data set → value reveal) is not walkable in this file.</li><li>Off-agreement procurement detection (the ERP payoff) is described but not shown.</li></ul>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span>
+          already done
+        </span>
+      </div>
+      <p>Skips this stage — data already connected (all figures verified).</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 3: Understand current position">
+    <div class="shead">
+      <span class="idx">3</span>
+      <h3>Understand current position</h3>
+      <span class="cov built">Built</span>
+    </div>
+    <p class="goal"><em>User goal</em>See my procurement situation at a glance — agreements, suppliers, spend — without doing analysis myself.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Reviews the company's current agreements, suppliers, purchasing spend and overall procurement situation.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>Present what similar companies are doing based on AI analysis, so new customers never see a cold, empty start.</li><li>First login shows a one-time explainer for estimated vs verified data before a benchmark number can be mistaken for a real one.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewDash</code><span class="pn">Situation section + greeting</span></div><div class="pchip"><code>viewNewCustomer</code><span class="pn">Peer benchmark dashboard (148 peers)</span></div><div class="pchip"><code>viewSup</code><span class="pn">Suppliers</span></div><div class="pchip"><code>viewDash</code><span class="pn">Welcome modal — estimated vs verified</span></div>
+        <p class="pnote">The anti-cold-start decision from the sprint is implemented: Fanny lands on peer-based estimates for her industry and size.</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <p class="none">None — the Miro intent is covered.</p>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span>
+          oriented
+        </span>
+      </div>
+      <p>Verified agreements, suppliers and spend from his own invoices.</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 4: See realized &amp; potential value">
+    <div class="shead">
+      <span class="idx">4</span>
+      <h3>See realized &amp; potential value</h3>
+      <span class="cov built">Built</span>
+    </div>
+    <p class="goal"><em>User goal</em>Understand what Advantage has already saved me and what's still on the table.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Uses the Savings Dashboard to understand realized savings, potential savings, spend through agreements and accumulated customer bonus.</li><li>Reviews notifications about new savings opportunities, agreement changes, achieved savings or decisions requiring attention.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>Realized vs potential is always shown as one story (the sketches' '7 mil NOK' reveal).</li><li>Notifications are relevance-filtered: new opportunities, agreement changes, achieved savings, decisions pending.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewSavings</code><span class="pn">Savings dashboard</span></div><div class="pchip"><code>viewDash</code><span class="pn">Notifications drawer</span></div><div class="pchip"><code>viewDash</code><span class="pn">Savings toast</span></div>
+        <p class="pnote">Realized, potential, spend-through-agreements and customer bonus are all present.</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <p class="none">None — the Miro intent is covered.</p>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>
+          value reveal — the peak
+        </span>
+      </div>
+      <p>Peak moment of the journey — verified realized savings plus bonus.</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 5: Discover opportunity">
+    <div class="shead">
+      <span class="idx">5</span>
+      <h3>Discover opportunity</h3>
+      <span class="cov built">Built</span>
+    </div>
+    <p class="goal"><em>User goal</em>Find where we can cut costs or get better terms — without hunting for it.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Sees proactively identified categories where the company could reduce costs, improve terms or move more spend to Advantage agreements.</li><li>Uses the AI Procurement Agent to understand opportunities, ask questions and identify where to focus next.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>Opportunities are proactively surfaced and ranked, not searched for.</li><li>The agent answers 'where should we focus next?' with reasons grounded in the company's own data.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewDash</code><span class="pn">Opportunities section + viz</span></div><div class="pchip"><code>viewDash</code><span class="pn">Weekly discovery (nav hero: '4 new findings')</span></div><div class="pchip"><code>viewDash</code><span class="pn">Saving assistant panel</span></div>
+        <p class="pnote">Both discovery modes from the Miro board (proactive categories + conversational agent) are in the prototype.</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <p class="none">None — the Miro intent is covered.</p>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span>
+          engaged
+        </span>
+      </div>
+      <p>Weekly discovery cadence — findings since Monday.</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 6: Review business case">
+    <div class="shead">
+      <span class="idx">6</span>
+      <h3>Review business case</h3>
+      <span class="cov built">Built</span>
+    </div>
+    <p class="goal"><em>User goal</em>See the concrete case for one opportunity: what we spend, what we'd save, and why this is relevant to us.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Reviews potential savings, current spend, recommended agreement, expected value and why the opportunity is relevant.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>Every recommendation explains 'why relevant' — grounded in the company's spend, not generic.</li><li>Method and timeline are available but folded away once read, keeping the saving and agreements in front.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewOpp</code><span class="pn">Opportunity detail</span></div><div class="pchip"><code>viewOpp</code><span class="pn">Business case dialog (e.g. 1.2 mil NOK / yr)</span></div><div class="pchip"><code>viewCatTab</code><span class="pn">Category tab hero with saving</span></div>
+        <p class="pnote">Matches the sketches' business-case card ('1.2 mil NOK / yr' → 'Ready to decide?').</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <p class="none">None — the Miro intent is covered.</p>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span>
+          focused
+        </span>
+      </div>
+      <p>Case built on verified spend.</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 7: Evaluate">
+    <div class="shead">
+      <span class="idx">7</span>
+      <h3>Evaluate</h3>
+      <span class="cov partial">Partial</span>
+    </div>
+    <p class="goal"><em>User goal</em>Judge whether switching supplier or agreement actually makes business sense for us.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Assesses whether changing supplier or agreement makes business sense based on savings, terms, risk, effort and other business considerations.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>The agent should answer evaluation questions (terms, risk, effort) — not only savings math.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewOpp</code><span class="pn">Method &amp; timeline folds</span></div><div class="pchip"><code>viewDash</code><span class="pn">Assistant follow-up questions</span></div>
+        <p class="pnote">Savings and method are covered; the broader business considerations are only reachable by asking the agent.</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <ul><li>No explicit terms / risk / switching-effort comparison in the business case — the Miro board names these as decision inputs.</li><li>No side-by-side of current agreement vs recommended agreement.</li></ul>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span>
+          deliberate, slightly skeptical
+        </span>
+      </div>
+      <p>May involve colleagues — the case needs to be shareable/exportable eventually.</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 8: Decide">
+    <div class="shead">
+      <span class="idx">8</span>
+      <h3>Decide</h3>
+      <span class="cov partial">Partial</span>
+    </div>
+    <p class="goal"><em>User goal</em>Commit with an appropriate level of effort: proceed, get an offer, approve the switch — or hand it to an advisor.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Decides whether to proceed with the opportunity, request an offer, approve a switch or involve an Advantage advisor.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>Every decision path is low-risk framed: requesting an offer or involving an advisor commits to nothing.</li><li>Decisions requiring attention resurface via notifications (stage 4) if parked.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewOpp</code><span class="pn">Decision CTAs on opportunity</span></div><div class="pchip"><code>viewOpp</code><span class="pn">Advisor contact block</span></div>
+        <p class="pnote">CTAs and advisor path exist; what happens after the click is not shown.</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <ul><li>No post-decision state: confirmation, expected next steps, status tracking of a requested offer or switch.</li><li>No visible distinction in commitment level between 'request offer' and 'approve switch'.</li></ul>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span>
+          commitment tension
+        </span>
+      </div>
+      <p>Wants self-serve approval with a clear undo window.</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 9: Prove value">
+    <div class="shead">
+      <span class="idx">9</span>
+      <h3>Prove value</h3>
+      <span class="cov partial">Partial</span>
+    </div>
+    <p class="goal"><em>User goal</em>Show (to myself and internally) that the decisions paid off — and stay compliant while doing it.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Sees accumulated and paid customer bonus as an additional part of the value generated through the agreements.</li><li>Accesses relevant supplier and compliance documentation when needed, including documentation related to the Transparency Act.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>Bonus is presented as accumulated and paid — value beyond the price savings.</li><li>Compliance documentation (incl. Transparency Act / Åpenhetsloven) is retrievable per supplier when needed.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewSavings</code><span class="pn">Accumulated &amp; paid customer bonus</span></div>
+        <p class="pnote">Bonus is in the savings dashboard; documentation is not in this prototype (Reports nav item is a stub).</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <ul><li>Supplier &amp; compliance documentation (Transparency Act) has no screen anywhere in v2-visual.</li><li>No export/share of the value story for internal reporting.</li></ul>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>
+          trust &amp; pride
+        </span>
+      </div>
+      <p>Uses bonus + realized savings as the renewal argument.</p>
+    </div>
+  </article>
+  <article class="stage" aria-label="Stage 10: Prioritize next opportunity">
+    <div class="shead">
+      <span class="idx">10</span>
+      <h3>Prioritize next opportunity</h3>
+      <span class="cov partial">Partial</span>
+    </div>
+    <p class="goal"><em>User goal</em>Let results and recommendations tell me what to optimize next — keep the loop going without effort.</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul><li>Uses realized results and AI recommendations to decide which purchasing category or agreement to optimize next.</li></ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul><li>The customer gets notified when new suppliers matching their spending data are added.</li><li>The customer is notified when savings potential is registered that isn't being utilized.</li></ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        <div class="pchip"><code>viewDash</code><span class="pn">Next best actions rail</span></div><div class="pchip"><code>viewDash</code><span class="pn">Weekly discovery findings</span></div><div class="pchip"><code>viewDash</code><span class="pn">Notifications</span></div>
+        <p class="pnote">The ingredients exist; the loop (this realized result → therefore this next recommendation) is not made explicit.</p>
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      <ul><li>New-supplier-match and unused-potential notifications are named on the board but not simulated.</li><li>Recommendations don't visibly reference realized results ('office supplies saved 19% — flooring shows the same pattern').</li></ul>
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">BI</span>
+        <b>Bob</b>
+        <span class="feel">
+          <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span>
+          confident, forward-looking
+        </span>
+      </div>
+      <p>This stage closes his loop back to stage 4/5 on the next visit.</p>
+    </div>
+  </article></div>
+  </div>
+
+  <footer>
+    <div class="f"><h4>Use it in the prototype</h4>
+      <p>Every stage carries the prototype view id and JS hook (e.g. <code>viewSavings</code> /
+      <code>openSavings()</code>). Load <code>journey.json</code> in the prototype to drive a guided
+      tour or scenario mode — step through stages, call the hook, highlight the view.</p></div>
+    <div class="f"><h4>Use it as a backlog</h4>
+      <p>Filter stages by coverage. Every <b>partial</b> card lists its gaps — those are the next
+      prototype tasks (connect-data flow, evaluate comparison, post-decision state, compliance docs,
+      closing the loop).</p></div>
+    <div class="f"><h4>Keep it honest</h4>
+      <p>Edit <code>journey.json</code>, not this file's markup — the map renders from the embedded
+      copy of the same data. When the journey changes in Miro, change the JSON and re-embed (or ask
+      Claude to).</p></div>
+  </footer>
+
+</div>
+
+<script>
+const JOURNEY = {
+  "meta": {
+    "product": "Advantage",
+    "artifact": "Customer journey — v1",
+    "date": "2026-08-21",
+    "sources": [
+      "Miro — journey alignment board (design sprint, what the team landed on)",
+      "advantage-v2-visual.html — current interactive prototype"
+    ],
+    "prototype": {
+      "file": "../advantage-v2-visual.html",
+      "note": "Each stage lists the prototype views and JS hooks that cover it, so this spec can drive a guided-tour / scenario mode inside the prototype.",
+      "views": {
+        "s-login": "Login — persona choice",
+        "viewDash": "Overview dashboard (situation + opportunities + activity rail)",
+        "viewNewCustomer": "New-customer dashboard (peer benchmark, estimated figures)",
+        "viewSup": "Suppliers",
+        "viewOpp": "Opportunity detail / business case",
+        "viewCatTab": "Category tab (opens in new tab)",
+        "viewDataCenter": "Data center — connect spend data",
+        "viewSavings": "Savings dashboard"
+      },
+      "hooks": {
+        "login": "loginAs('bob'|'fanny')",
+        "openSavings": "openSavings()",
+        "openDataCenter": "openDataCenter()",
+        "openOpportunity": "openOpportunity(kind, catId, agrIdx)",
+        "businessCase": "openCase()",
+        "assistant": "askAssistant(question) / toggleAgent(true)",
+        "notifications": "renderNotes()",
+        "categoryTab": "catTabUrl(catId)"
+      }
+    },
+    "coverageScale": {
+      "built": "Fully represented in advantage-v2-visual.html",
+      "partial": "Present but incomplete — see gaps",
+      "missing": "Not in this prototype (may exist in another file)"
+    }
+  },
+  "personas": [
+    {
+      "id": "bob",
+      "name": "Bob Iversen",
+      "company": "Nordvik Byg A/S",
+      "type": "existing",
+      "summary": "Existing customer, all data connected. Sees verified figures from day one; his journey starts at stage 3–4 on most visits.",
+      "loginHook": "loginAs('bob')"
+    },
+    {
+      "id": "fanny",
+      "name": "Fanny Kristensen",
+      "company": "Kristensen Elektro ApS",
+      "type": "new",
+      "summary": "New customer, no data yet. Lands on peer-benchmark estimates (electrical contracting, 148 peers) — the anti-cold-start strategy. Stages 1–3 decide whether she connects data and stays.",
+      "loginHook": "loginAs('fanny')"
+    }
+  ],
+  "phases": [
+    { "id": "enter", "title": "Get in & connect", "stages": ["log-in", "connect-spend-data"] },
+    { "id": "understand", "title": "Understand", "stages": ["understand-current-position", "see-realized-potential-value"] },
+    { "id": "act", "title": "Act on savings", "stages": ["discover-opportunity", "review-business-case", "evaluate", "decide"] },
+    { "id": "sustain", "title": "Sustain the loop", "stages": ["prove-value", "prioritize-next-opportunity"] }
+  ],
+  "stages": [
+    {
+      "id": "log-in",
+      "index": 1,
+      "phase": "enter",
+      "title": "Log in",
+      "userGoal": "Get into the portal quickly — driven by a specific need, a notification, or wanting an overview.",
+      "doing": [
+        "Logs into the portal because they have a specific need, received a notification, or want an overview."
+      ],
+      "thinking": "I want to get to the thing that brought me here, not to a generic start page.",
+      "feeling": { "bob": { "score": 3, "label": "purposeful" }, "fanny": { "score": 3, "label": "curious" } },
+      "touchpoints": ["Portal login", "Email / push notification deep link"],
+      "systemBehavior": [
+        "Notifications should deep-link into the relevant view (savings, opportunity, agreement change), not just to the dashboard."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "s-login", "name": "Login — persona choice", "hook": "loginAs('bob'|'fanny')" }
+        ],
+        "notes": "Prototype login is a persona picker that lands straight on the right dashboard. Real authentication and notification deep-links are out of scope here."
+      },
+      "gaps": [
+        "Notification → deep-link entry path is not demonstrated; every session starts at the dashboard."
+      ],
+      "personaNotes": {
+        "bob": "Returning with intent — often triggered by a notification.",
+        "fanny": "First visit; the login promise ('your invoices already know where the money is going') sets expectations."
+      }
+    },
+    {
+      "id": "connect-spend-data",
+      "index": 2,
+      "phase": "enter",
+      "title": "Connect spend data",
+      "userGoal": "Give the product real data with the least effort and risk, so figures become exact instead of estimated.",
+      "doing": [
+        "Decides whether to connect to the ERP or upload a spend report."
+      ],
+      "thinking": "Is this worth the effort? What do I get if I connect, and what happens to my data?",
+      "feeling": { "bob": { "score": 4, "label": "already done" }, "fanny": { "score": 2, "label": "hesitant — effort & trust hurdle" } },
+      "touchpoints": ["Data center", "ERP connector", "Spend report upload"],
+      "systemBehavior": [
+        "If connected to the ERP, the product can notice procurement made outside of agreements and suggest suppliers that fit.",
+        "Until data is connected, figures are peer-based estimates and clearly marked as such (estimated vs verified)."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewDataCenter", "name": "Data center — connect methods", "hook": "openDataCenter()" },
+          { "view": "viewNewCustomer", "name": "Rail action: 'Connect your accounting data'", "hook": "railData()" }
+        ],
+        "notes": "v2-visual still ships the CSS for the dedicated onboarding screens (Sources, Loading/analyzing, Data set confirm, CEO welcome) but their markup was removed — the full connect flow lives in advantage-onboarding.html. Here, connecting is reachable via the Data center only."
+      },
+      "gaps": [
+        "End-to-end connect flow (choose source → analyze → confirm data set → value reveal) is not walkable in this file.",
+        "Off-agreement procurement detection (the ERP payoff) is described but not shown."
+      ],
+      "personaNotes": {
+        "bob": "Skips this stage — data already connected (all figures verified).",
+        "fanny": "The critical conversion moment: estimates must be compelling enough to justify connecting."
+      }
+    },
+    {
+      "id": "understand-current-position",
+      "index": 3,
+      "phase": "understand",
+      "title": "Understand current position",
+      "userGoal": "See my procurement situation at a glance — agreements, suppliers, spend — without doing analysis myself.",
+      "doing": [
+        "Reviews the company's current agreements, suppliers, purchasing spend and overall procurement situation."
+      ],
+      "thinking": "Does this picture match reality? Can I trust these numbers?",
+      "feeling": { "bob": { "score": 4, "label": "oriented" }, "fanny": { "score": 3, "label": "surprised it's not empty" } },
+      "touchpoints": ["Overview dashboard", "Suppliers view", "Category tabs", "Welcome modal (estimated vs verified)"],
+      "systemBehavior": [
+        "Present what similar companies are doing based on AI analysis, so new customers never see a cold, empty start.",
+        "First login shows a one-time explainer for estimated vs verified data before a benchmark number can be mistaken for a real one."
+      ],
+      "prototype": {
+        "coverage": "built",
+        "screens": [
+          { "view": "viewDash", "name": "Situation section + greeting", "hook": "renderSituation()" },
+          { "view": "viewNewCustomer", "name": "Peer benchmark dashboard (148 peers)", "hook": "renderNewCustomerDash()" },
+          { "view": "viewSup", "name": "Suppliers", "hook": "renderSup()" },
+          { "view": "viewDash", "name": "Welcome modal — estimated vs verified", "hook": "openWelcome()" }
+        ],
+        "notes": "The anti-cold-start decision from the sprint is implemented: Fanny lands on peer-based estimates for her industry and size."
+      },
+      "gaps": [],
+      "personaNotes": {
+        "bob": "Verified agreements, suppliers and spend from his own invoices.",
+        "fanny": "Everything is an estimate from her peer group — dashed/estimated styling carries the honesty."
+      }
+    },
+    {
+      "id": "see-realized-potential-value",
+      "index": 4,
+      "phase": "understand",
+      "title": "See realized & potential value",
+      "userGoal": "Understand what Advantage has already saved me and what's still on the table.",
+      "doing": [
+        "Uses the Savings Dashboard to understand realized savings, potential savings, spend through agreements and accumulated customer bonus.",
+        "Reviews notifications about new savings opportunities, agreement changes, achieved savings or decisions requiring attention."
+      ],
+      "thinking": "This is what the service is worth to us. What needs my attention?",
+      "feeling": { "bob": { "score": 5, "label": "value reveal — the peak" }, "fanny": { "score": 4, "label": "motivated by potential" } },
+      "touchpoints": ["Savings dashboard", "Notifications", "Savings toast"],
+      "systemBehavior": [
+        "Realized vs potential is always shown as one story (the sketches' '7 mil NOK' reveal).",
+        "Notifications are relevance-filtered: new opportunities, agreement changes, achieved savings, decisions pending."
+      ],
+      "prototype": {
+        "coverage": "built",
+        "screens": [
+          { "view": "viewSavings", "name": "Savings dashboard", "hook": "openSavings()" },
+          { "view": "viewDash", "name": "Notifications drawer", "hook": "renderNotes()" },
+          { "view": "viewDash", "name": "Savings toast", "hook": "showToast(amount)" }
+        ],
+        "notes": "Realized, potential, spend-through-agreements and customer bonus are all present."
+      },
+      "gaps": [],
+      "personaNotes": {
+        "bob": "Peak moment of the journey — verified realized savings plus bonus.",
+        "fanny": "Sees potential only; the number is the argument for connecting data."
+      }
+    },
+    {
+      "id": "discover-opportunity",
+      "index": 5,
+      "phase": "act",
+      "title": "Discover opportunity",
+      "userGoal": "Find where we can cut costs or get better terms — without hunting for it.",
+      "doing": [
+        "Sees proactively identified categories where the company could reduce costs, improve terms or move more spend to Advantage agreements.",
+        "Uses the AI Procurement Agent to understand opportunities, ask questions and identify where to focus next."
+      ],
+      "thinking": "Which of these is worth my limited time?",
+      "feeling": { "bob": { "score": 4, "label": "engaged" }, "fanny": { "score": 4, "label": "guided" } },
+      "touchpoints": ["Weekly discovery (hero nav)", "Dashboard opportunities section", "Saving assistant (AI agent)"],
+      "systemBehavior": [
+        "Opportunities are proactively surfaced and ranked, not searched for.",
+        "The agent answers 'where should we focus next?' with reasons grounded in the company's own data."
+      ],
+      "prototype": {
+        "coverage": "built",
+        "screens": [
+          { "view": "viewDash", "name": "Opportunities section + viz", "hook": "renderOppViz()" },
+          { "view": "viewDash", "name": "Weekly discovery (nav hero: '4 new findings')", "hook": "NAV[discover]" },
+          { "view": "viewDash", "name": "Saving assistant panel", "hook": "askAssistant(q) / toggleAgent(true)" }
+        ],
+        "notes": "Both discovery modes from the Miro board (proactive categories + conversational agent) are in the prototype."
+      },
+      "gaps": [],
+      "personaNotes": {
+        "bob": "Weekly discovery cadence — findings since Monday.",
+        "fanny": "'Easy first win' framing (widest rate gap in her trade) lowers the entry bar."
+      }
+    },
+    {
+      "id": "review-business-case",
+      "index": 6,
+      "phase": "act",
+      "title": "Review business case",
+      "userGoal": "See the concrete case for one opportunity: what we spend, what we'd save, and why this is relevant to us.",
+      "doing": [
+        "Reviews potential savings, current spend, recommended agreement, expected value and why the opportunity is relevant."
+      ],
+      "thinking": "Show me the numbers and the reasoning — is this credible?",
+      "feeling": { "bob": { "score": 4, "label": "focused" }, "fanny": { "score": 3, "label": "weighing credibility" } },
+      "touchpoints": ["Opportunity detail", "Business case dialog", "Category tab hero"],
+      "systemBehavior": [
+        "Every recommendation explains 'why relevant' — grounded in the company's spend, not generic.",
+        "Method and timeline are available but folded away once read, keeping the saving and agreements in front."
+      ],
+      "prototype": {
+        "coverage": "built",
+        "screens": [
+          { "view": "viewOpp", "name": "Opportunity detail", "hook": "openOpportunity(kind, catId, agrIdx)" },
+          { "view": "viewOpp", "name": "Business case dialog (e.g. 1.2 mil NOK / yr)", "hook": "openCase()" },
+          { "view": "viewCatTab", "name": "Category tab hero with saving", "hook": "catTabUrl(catId)" }
+        ],
+        "notes": "Matches the sketches' business-case card ('1.2 mil NOK / yr' → 'Ready to decide?')."
+      },
+      "gaps": [],
+      "personaNotes": {
+        "bob": "Case built on verified spend.",
+        "fanny": "Case built on estimates — needs the estimated-marking to stay honest here too."
+      }
+    },
+    {
+      "id": "evaluate",
+      "index": 7,
+      "phase": "act",
+      "title": "Evaluate",
+      "userGoal": "Judge whether switching supplier or agreement actually makes business sense for us.",
+      "doing": [
+        "Assesses whether changing supplier or agreement makes business sense based on savings, terms, risk, effort and other business considerations."
+      ],
+      "thinking": "Savings are one thing — what about terms, switching effort, delivery risk, existing relationships?",
+      "feeling": { "bob": { "score": 3, "label": "deliberate, slightly skeptical" }, "fanny": { "score": 3, "label": "needs reassurance" } },
+      "touchpoints": ["Opportunity detail (method / timeline folds)", "Saving assistant Q&A"],
+      "systemBehavior": [
+        "The agent should answer evaluation questions (terms, risk, effort) — not only savings math."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewOpp", "name": "Method & timeline folds", "hook": "opp-fold sections" },
+          { "view": "viewDash", "name": "Assistant follow-up questions", "hook": "agentAsk(text)" }
+        ],
+        "notes": "Savings and method are covered; the broader business considerations are only reachable by asking the agent."
+      },
+      "gaps": [
+        "No explicit terms / risk / switching-effort comparison in the business case — the Miro board names these as decision inputs.",
+        "No side-by-side of current agreement vs recommended agreement."
+      ],
+      "personaNotes": {
+        "bob": "May involve colleagues — the case needs to be shareable/exportable eventually.",
+        "fanny": "Evaluation doubles as evaluation of Advantage itself."
+      }
+    },
+    {
+      "id": "decide",
+      "index": 8,
+      "phase": "act",
+      "title": "Decide",
+      "userGoal": "Commit with an appropriate level of effort: proceed, get an offer, approve the switch — or hand it to an advisor.",
+      "doing": [
+        "Decides whether to proceed with the opportunity, request an offer, approve a switch or involve an Advantage advisor."
+      ],
+      "thinking": "What exactly happens when I press this? Can I undo it? Who does the work?",
+      "feeling": { "bob": { "score": 3, "label": "commitment tension" }, "fanny": { "score": 3, "label": "prefers the advisor" } },
+      "touchpoints": ["Opportunity CTAs", "Advisor contact section"],
+      "systemBehavior": [
+        "Every decision path is low-risk framed: requesting an offer or involving an advisor commits to nothing.",
+        "Decisions requiring attention resurface via notifications (stage 4) if parked."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewOpp", "name": "Decision CTAs on opportunity", "hook": "wireOppCommon(askText)" },
+          { "view": "viewOpp", "name": "Advisor contact block", "hook": "opp-contact section" }
+        ],
+        "notes": "CTAs and advisor path exist; what happens after the click is not shown."
+      },
+      "gaps": [
+        "No post-decision state: confirmation, expected next steps, status tracking of a requested offer or switch.",
+        "No visible distinction in commitment level between 'request offer' and 'approve switch'."
+      ],
+      "personaNotes": {
+        "bob": "Wants self-serve approval with a clear undo window.",
+        "fanny": "First decision will likely go through the advisor — that path builds trust."
+      }
+    },
+    {
+      "id": "prove-value",
+      "index": 9,
+      "phase": "sustain",
+      "title": "Prove value",
+      "userGoal": "Show (to myself and internally) that the decisions paid off — and stay compliant while doing it.",
+      "doing": [
+        "Sees accumulated and paid customer bonus as an additional part of the value generated through the agreements.",
+        "Accesses relevant supplier and compliance documentation when needed, including documentation related to the Transparency Act."
+      ],
+      "thinking": "I can defend this internally: here's what we saved, here's the bonus, here's the paperwork.",
+      "feeling": { "bob": { "score": 5, "label": "trust & pride" }, "fanny": { "score": 4, "label": "first proof point" } },
+      "touchpoints": ["Savings dashboard (bonus)", "Supplier / compliance documentation", "Reports"],
+      "systemBehavior": [
+        "Bonus is presented as accumulated and paid — value beyond the price savings.",
+        "Compliance documentation (incl. Transparency Act / Åpenhetsloven) is retrievable per supplier when needed."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewSavings", "name": "Accumulated & paid customer bonus", "hook": "renderSavings()" }
+        ],
+        "notes": "Bonus is in the savings dashboard; documentation is not in this prototype (Reports nav item is a stub)."
+      },
+      "gaps": [
+        "Supplier & compliance documentation (Transparency Act) has no screen anywhere in v2-visual.",
+        "No export/share of the value story for internal reporting."
+      ],
+      "personaNotes": {
+        "bob": "Uses bonus + realized savings as the renewal argument.",
+        "fanny": "Her first registered saving is the moment the estimates become real."
+      }
+    },
+    {
+      "id": "prioritize-next-opportunity",
+      "index": 10,
+      "phase": "sustain",
+      "title": "Prioritize next opportunity",
+      "userGoal": "Let results and recommendations tell me what to optimize next — keep the loop going without effort.",
+      "doing": [
+        "Uses realized results and AI recommendations to decide which purchasing category or agreement to optimize next."
+      ],
+      "thinking": "That worked — what's next? Keep them coming.",
+      "feeling": { "bob": { "score": 4, "label": "confident, forward-looking" }, "fanny": { "score": 4, "label": "converted to the loop" } },
+      "touchpoints": ["Weekly discovery", "Next best actions rail", "Notifications"],
+      "systemBehavior": [
+        "The customer gets notified when new suppliers matching their spending data are added.",
+        "The customer is notified when savings potential is registered that isn't being utilized."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewDash", "name": "Next best actions rail", "hook": "railData()" },
+          { "view": "viewDash", "name": "Weekly discovery findings", "hook": "NAV[discover]" },
+          { "view": "viewDash", "name": "Notifications", "hook": "renderNotes()" }
+        ],
+        "notes": "The ingredients exist; the loop (this realized result → therefore this next recommendation) is not made explicit."
+      },
+      "gaps": [
+        "New-supplier-match and unused-potential notifications are named on the board but not simulated.",
+        "Recommendations don't visibly reference realized results ('office supplies saved 19% — flooring shows the same pattern')."
+      ],
+      "personaNotes": {
+        "bob": "This stage closes his loop back to stage 4/5 on the next visit.",
+        "fanny": "Once here, she has become Bob."
+      }
+    }
+  ]
+};
+
+let persona = 'bob';
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- emotion curve ---------- */
+function drawCurve(){
+  const svg = $('#curvesvg');
+  const W = 1000, H = 150, padT = 16, padB = 22;
+  const n = JOURNEY.stages.length;
+  const colW = W / n;
+  const x = i => colW * i + colW / 2;
+  const y = v => padT + (5 - v) * ((H - padT - padB) / 4);
+  const pts = who => JOURNEY.stages.map((s, i) => [x(i), y(s.feeling[who].score)]);
+  const path = p => p.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ');
+  const other = persona === 'bob' ? 'fanny' : 'bob';
+  const a = pts(persona), b = pts(other);
+  svg.innerHTML =
+    [1,2,3,4,5].map(v => `<line x1="0" y1="${y(v)}" x2="${W}" y2="${y(v)}" stroke="#f0f0f0" stroke-width="1"/>`).join('') +
+    `<path d="${path(b)}" fill="none" stroke="#c9ddff" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>` +
+    `<path d="${path(a)} " fill="none" stroke="#1b64dc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>` +
+    a.map((q, i) => `<circle cx="${q[0]}" cy="${q[1]}" r="4.5" fill="#1b64dc" stroke="#fff" stroke-width="2"/>`).join('') +
+    a.map((q, i) => `<text x="${q[0]}" y="${H - 6}" text-anchor="middle" font-size="10" fill="#a3a3a3">${i + 1}</text>`).join('');
+}
+function drawFeelRow(){
+  $('#feelrow').innerHTML = JOURNEY.stages.map(s =>
+    `<span><b>${s.feeling[persona].score}/5</b>${esc(s.feeling[persona].label)}</span>`).join('');
+}
+
+/* ---------- phase band ---------- */
+function drawPhases(){
+  $('#phaseband').innerHTML = JOURNEY.phases.map(p =>
+    `<div class="phase" style="grid-column:span ${p.stages.length}"><i></i>${esc(p.title)}</div>`).join('');
+}
+
+/* ---------- stage cards ---------- */
+function covChip(c){
+  const t = {built:'Built', partial:'Partial', missing:'Missing'}[c] || c;
+  return `<span class="cov ${c}">${t}</span>`;
+}
+function drawTrack(){
+  $('#track').innerHTML = JOURNEY.stages.map(s => `
+  <article class="stage" aria-label="Stage ${s.index}: ${esc(s.title)}">
+    <div class="shead">
+      <span class="idx">${s.index}</span>
+      <h3>${esc(s.title)}</h3>
+      ${covChip(s.prototype.coverage)}
+    </div>
+    <p class="goal"><em>User goal</em>${esc(s.userGoal)}</p>
+
+    <div class="sec">
+      <div class="lbl">Doing</div>
+      <ul>${s.doing.map(d => `<li>${esc(d)}</li>`).join('')}</ul>
+    </div>
+
+    <div class="sec sys">
+      <div class="lbl">System / AI</div>
+      <ul>${s.systemBehavior.map(d => `<li>${esc(d)}</li>`).join('')}</ul>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">In the prototype</div>
+      <div class="proto">
+        ${s.prototype.screens.map(sc =>
+          `<div class="pchip"><code>${esc(sc.view)}</code><span class="pn">${esc(sc.name)}</span></div>`).join('')}
+        ${s.prototype.notes ? `<p class="pnote">${esc(s.prototype.notes)}</p>` : ''}
+      </div>
+    </div>
+
+    <div class="sec gaps">
+      <div class="lbl">Gaps</div>
+      ${s.gaps.length ? `<ul>${s.gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>`
+                      : `<p class="none">None — the Miro intent is covered.</p>`}
+    </div>
+
+    <div class="pnl">
+      <div class="who">
+        <span class="av">${persona === 'bob' ? 'BI' : 'FK'}</span>
+        <b>${persona === 'bob' ? 'Bob' : 'Fanny'}</b>
+        <span class="feel">
+          <span class="dots">${[1,2,3,4,5].map(v =>
+            `<i class="${v <= s.feeling[persona].score ? 'on' : ''}"></i>`).join('')}</span>
+          ${esc(s.feeling[persona].label)}
+        </span>
+      </div>
+      <p>${esc(s.personaNotes[persona])}</p>
+    </div>
+  </article>`).join('');
+}
+
+function setPersona(p){
+  persona = p;
+  $('#pbob').setAttribute('aria-pressed', p === 'bob');
+  $('#pfanny').setAttribute('aria-pressed', p === 'fanny');
+  drawCurve(); drawFeelRow(); drawTrack();
+}
+$('#pbob').addEventListener('click', () => setPersona('bob'));
+$('#pfanny').addEventListener('click', () => setPersona('fanny'));
+
+drawPhases(); setPersona('bob');
+</script>
+
+
+</body></html>

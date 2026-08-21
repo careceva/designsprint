@@ -1,0 +1,1686 @@
+<!doctype html>
+<!--
+  ============================================================================
+  ADVANTAGE — ALT 4 · "COLLECTIVE LEVERAGE"
+  ============================================================================
+
+  THESIS (2 sentences)
+  These discounts are not a catalogue of deals someone put on a shelf for you;
+  they exist because ~2.850 small companies buy as one bloc, and every rate in
+  the product is a function of that bloc's volume rather than of your own.
+  So the product should be the bargaining group made visible and operable —
+  what the pool bought, which volume tier it sits in, what is up for
+  renegotiation, and what you can pledge before the talks — not a browsable
+  shelf of fixed terms.
+
+  REMOVED from advantage-v2-visual.html, and why
+  · "Benchmarked against 148 companies" / peer benchmark banner. It spends the
+    single most valuable fact in the product — that thousands of firms are in
+    this together — on a yardstick. The peer group is the source of the rate,
+    not a scoreboard, so the comparison framing is deleted outright.
+  · All individual-only phrasing: "saved by companies like yours", "used by 66%
+    of similar companies". Same figures now read as participation ("1.880 of
+    2.850 members buy office supplies on the group agreement — that is what
+    holds −19%"), because that is what the number actually means.
+  · Static agreement cards as fixed take-it-or-leave-it terms. An agreement is
+    no longer a product tile with a price; it is an instrument attached to a
+    volume tier, so suppliers appear inside the tier they were negotiated under
+    and the rate is shown as conditional, with the condition stated.
+  · The savings gauge and the three generic assistant tips. The gauge measured
+    the wrong subject (one account's progress toward its own ceiling) and the
+    tips were advice with no counterparty. Replaced by tier ladders, which are
+    the real mechanism, and by the pledge, which is a real action.
+  · Weekly discovery, the activity rail's empty state, the announcement banner.
+    Three separate "something happened, look around" surfaces for a product
+    whose actual events are negotiation dates. Those now live in one place with
+    a date, a counterparty and a deadline.
+
+  ADDED, and why
+  · The pool, live: members, pooled annual spend, spend by category, and how
+    much of each category is actually consolidated onto the agreement. Without
+    this the customer cannot see why the rate is what it is.
+  · Volume tiers. Every rate is shown as a step on a ladder driven by GROUP
+    volume, with the next step, the volume still needed, and the resulting
+    discount. "−9%" becomes "−9% now, −10% at 5,0 mia. — 260 mio. to go".
+  · Your contribution — honestly tiny (0,035% of the pool) and stated as such.
+    The point of the number is the aggregate, not the ego.
+  · Upcoming renegotiations with a pledge mechanic. The next framework's tier
+    is set by volume pledged before the talks, not by last year's purchases —
+    so pledging is the one action a member can take that changes the price for
+    everyone, including themselves. This is the strongest feature here.
+  · Category campaigns where the group is under-consolidated (freight, telecom,
+    site services), because leaking volume is the group's problem, not just the
+    member's.
+  · The record: six negotiations won, rate before → after, date, and the member
+    volume behind each — the evidence that pledging pays.
+
+  STRONGEST OBJECTION TO THIS VERSION
+  Does a builder with 4,8 mio. kr. of annual spend actually care about group
+  volume? Probably not intrinsically. He came for a cheaper price on plasterboard
+  and this version asks him to hold a fact in his head — 13,7 mia. kr. pooled —
+  that he cannot act on alone, and to read a distance-to-tier figure (260 mio.)
+  that his own 2,1 mio. moves by 0,8%. There is a real risk this reads as the
+  buying group talking about itself: my contribution bar is honestly, uselessly
+  small, and the pledge is a promise about next year's purchasing made by
+  someone whose next year is uncertain. The catalogue at least answered "what do
+  I get today" in one screen. The defence is narrow but I think it holds: the
+  pledge converts a stat into a lever with a deadline and a counterparty, the
+  record shows the lever has moved the price six times before, and the tier
+  framing is simply true — hiding it does not make the customer's rate less
+  dependent on the group, it just makes the rate look arbitrary and unimprovable.
+  If the pledge failed in testing, the honest fallback would be the catalogue.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — Collective leverage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&display=swap">
+<style>
+/* ==========================================================================
+   Advantage Design System — tokens copied verbatim from advantage-v2-visual.html
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+
+  --sidebar-border:#e0e0e0;
+
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  /* 8pt spacing scale — NOTE: no --s5/--s7/--s9/--s10. In-between values are
+     written var(--s5,20px) with an explicit fallback (house convention). */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+
+  --hairline:#ececec;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  --t-slow:.5s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{font-family:var(--font-body);background:var(--surface);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-5xl);letter-spacing:-1.2px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+h4{font-size:var(--text-sm)}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active:not([disabled]){transform:translateY(1px)}
+.btn[disabled]{cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover:not([disabled]){background:#1553bb}
+.btn-primary[disabled]{background:var(--general-muted);color:#a3a3a3;box-shadow:none}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border)}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3);height:36px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.btn-done,.btn-done[disabled]{background:#d9f2ef;color:var(--sentiment-positive);
+  border-color:transparent;box-shadow:none;opacity:1;cursor:pointer}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs)}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.4}
+.chip svg{width:12px;height:12px}
+.chip-rec{background:var(--general-primary);color:var(--general-primary-foreground)}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-warn{background:#fff2e0;color:#a35c00}
+.chip-good{background:#d9f2ef;color:var(--sentiment-positive)}
+.est-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground);font-size:11px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase}
+.est-chip svg{width:11px;height:11px}
+
+/* ==========================================================================
+   1 · LOGIN
+   ========================================================================== */
+.flow{min-height:100vh;display:flex;flex-direction:column}
+.stage{flex:1 1 auto;display:flex;flex-direction:column}
+.scr{display:none;flex:1 1 auto}
+.scr.on{display:flex;flex-direction:column}
+.scr.on.mid{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;align-content:center;
+  padding:var(--s12) var(--s6)}
+.scr.on>*{animation:rise var(--t-slow) both;min-width:0}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.login{width:430px;max-width:100%;text-align:center}
+.login .mark{height:40px;width:auto;margin:0 auto var(--s8)}
+.login h1{font-size:var(--text-5xl);letter-spacing:-2px}
+.login .lead{font-size:var(--text-base);margin:var(--s3) auto 0;max-width:38ch;
+  color:var(--general-muted-foreground);line-height:1.55}
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-sm)}
+.login .card{margin-top:var(--s12);padding:var(--s8);text-align:left}
+.login-choice{display:flex;flex-direction:column;gap:var(--s3)}
+.login-persona{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  cursor:pointer;text-align:left;transition:var(--t-fast)}
+.login-persona:hover,.login-persona:focus-visible{border-color:var(--general-border);background:var(--brand-ice)}
+.login-persona-av{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.login-persona:hover .login-persona-av{background:var(--surface)}
+.login-persona-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.login-persona-txt b{font-size:var(--text-sm);font-weight:600}
+.login-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+.login-persona-go{flex:0 0 auto;width:16px;height:16px;color:#a3a3a3;transition:color var(--t-fast)}
+.login-persona:hover .login-persona-go,.login-persona:focus-visible .login-persona-go{color:var(--general-primary)}
+.login-pool{margin-top:var(--s6);padding-top:var(--s6);border-top:1px solid var(--hairline);
+  display:flex;gap:var(--s6);flex-wrap:wrap}
+.login-pool div{display:flex;flex-direction:column;gap:2px}
+.login-pool b{font-family:var(--font-sans);font-size:var(--text-lg);letter-spacing:-.4px;
+  font-variant-numeric:tabular-nums}
+.login-pool span{font-size:12px;color:var(--general-muted-foreground)}
+.tinyfoot{margin-top:var(--s6);font-size:var(--text-xs);color:#8f8f8f;text-align:center}
+
+/* ==========================================================================
+   2 · APP SHELL
+   ========================================================================== */
+body.in-app{background:var(--brand-midnight);overflow:hidden}
+body.in-app .flow{display:none}
+.app{display:none;flex-direction:column;height:100vh;height:100dvh}
+.app.on{display:flex;animation:rise var(--t-slow) both}
+.wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--surface);
+  border-radius:var(--rounded-2xl) var(--rounded-2xl) 0 0;overflow:hidden;
+  box-shadow:0 -1px 0 #ffffff1a,var(--shadow-xl);margin-top:var(--s4)}
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:68px;padding:0 var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.appbar .brand{display:flex;align-items:center;flex:0 0 auto}
+.appbar .brand img{height:28px;width:auto;display:block}
+.appbar .spacer{flex:1}
+/* the pool pill replaces v2's ERP pill: the shell's permanent readout is the
+   group's size, not this one account's connection status */
+.poolpill{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s4) 0 var(--s3);
+  background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  box-shadow:var(--shadow-2xs);cursor:pointer;transition:var(--t-fast)}
+.poolpill:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.poolpill .live{position:relative;width:8px;height:8px;flex:0 0 auto;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive)}
+.poolpill .live::after{content:"";position:absolute;inset:-4px;border-radius:var(--rounded-full);
+  border:1.5px solid var(--sentiment-positive);opacity:.45;animation:pip 2.4s ease-out infinite}
+@keyframes pip{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.5);opacity:0}}
+.poolpill .et{display:flex;flex-direction:column;line-height:1.25;text-align:left}
+.poolpill .et b{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
+.poolpill .et span{font-size:13px;color:var(--general-muted-foreground);font-family:var(--font-mono)}
+@media(max-width:1080px){.poolpill .et span{display:none}}
+.userwrap{position:relative;flex:0 0 auto}
+.user{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s2);background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);transition:var(--t-fast)}
+.user:hover{background:var(--general-muted)}
+.user .uav{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;color:#fff;font-family:var(--font-sans);font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,#2170ed,#0b00ab)}
+.user .un{font-size:var(--text-xs);font-weight:600;text-align:left;line-height:1.25;white-space:nowrap}
+.user .un span{display:block;font-weight:400;color:var(--general-muted-foreground)}
+.user .uc{width:14px;height:14px;color:var(--general-muted-foreground)}
+@media(max-width:1000px){.user .un{display:none}}
+.upop{position:absolute;top:calc(100% + 8px);right:0;z-index:35;width:260px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.upop.on{opacity:1;transform:none;pointer-events:auto}
+.up-h{padding:var(--s4);border-bottom:1px solid var(--hairline)}
+.up-h b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.up-h span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:1px}
+.up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
+  background:none;border:none;cursor:pointer;text-align:left;font-size:var(--text-sm);
+  color:var(--general-foreground);transition:var(--t-fast)}
+.up-i:hover{background:var(--general-muted)}
+.up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.up-sep{padding:var(--s3) var(--s4) var(--s1);border-top:1px solid var(--hairline);margin-top:var(--s1)}
+.up-sep span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.up-persona-av{flex:0 0 auto;width:28px;height:28px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:12px;font-weight:600}
+.up-persona-txt{display:flex;flex-direction:column;min-width:0}
+.up-persona-txt b{font-weight:600}
+.up-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+.up-f{padding:0 var(--s4) var(--s4);font-size:13px;color:#a3a3a3}
+
+/* --- body: rail + canvas --- */
+.appbody{flex:1 1 auto;min-height:0;display:flex}
+.rail{flex:0 0 auto;width:248px;display:flex;flex-direction:column;padding:var(--s4) var(--s3);
+  border-right:1px solid var(--hairline);transition:width var(--t)}
+.rail.mini{width:76px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-height:0}
+.ni{position:relative;display:flex;align-items:center;gap:var(--s3);width:100%;height:44px;
+  padding:0 var(--s3);background:none;border:none;cursor:pointer;border-radius:var(--rounded-md);
+  font-size:var(--text-sm);font-weight:500;text-align:left;
+  transition:background-color var(--t-fast),color var(--t-fast)}
+.ni:hover{background:var(--general-muted)}
+.ni.on{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
+.ni .nic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center}
+.ni .nic svg{width:20px;height:20px}
+.ni .nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:opacity var(--t-fast)}
+.ni .nb{flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--general-accent);color:var(--general-accent-foreground);
+  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.rail.mini .ni{justify-content:center;padding:0}
+.rail.mini .ni .nt{opacity:0;width:0;flex:0 0 0}
+.rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:13px}
+.ni.hero{height:auto;padding:var(--s3);margin-bottom:var(--s6);align-items:flex-start;
+  background:linear-gradient(160deg,#edf5ff,#f7fbff);border:1px solid var(--general-border);
+  color:var(--general-foreground)}
+.ni.hero:hover{border-color:var(--brand-cornflower);background:linear-gradient(160deg,#e4efff,#f2f8ff)}
+.ni.hero .nic{color:var(--general-primary)}
+.ni.hero .hb{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ni.hero .hb b{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
+.ni.hero .hb span{font-size:13px;color:var(--general-muted-foreground);line-height:1.4}
+.rail.mini .ni.hero{padding:0;height:44px;align-items:center;justify-content:center;
+  border-color:transparent;background:var(--brand-ice)}
+.rail.mini .ni.hero .hb{display:none}
+.rail.mini .ni::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
+  transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
+  white-space:nowrap;pointer-events:none;opacity:0;z-index:5;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.rail.mini .ni:hover::after,.rail.mini .ni:focus-visible::after{opacity:1;transform:translateY(-50%)}
+.railtog{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;height:40px;margin-top:var(--s3);
+  padding:0 var(--s3);background:none;border:none;border-top:1px solid var(--hairline);cursor:pointer;
+  color:var(--general-muted-foreground);font-size:var(--text-xs);font-weight:500;
+  border-radius:0 0 var(--rounded-md) var(--rounded-md);transition:color var(--t-fast)}
+.railtog:hover{color:var(--general-foreground)}
+.railtog svg{width:20px;height:20px;flex:0 0 auto;transition:transform var(--t)}
+.rail.mini .railtog{justify-content:center;padding:0}
+.rail.mini .railtog svg{transform:rotate(180deg)}
+.rail.mini .railtog span{display:none}
+
+.canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--surface)}
+.page{width:100%;max-width:1200px;margin:0 auto;padding:var(--s12) var(--s8) var(--s16);
+  display:flex;flex-direction:column;gap:var(--s12)}
+@media(max-width:760px){.page{padding:var(--s8) var(--s4) var(--s12)}}
+.page[hidden]{display:none!important}
+@media(max-width:900px){
+  .appbar{padding:0 var(--s4);gap:var(--s3)}
+  .rail{position:absolute;z-index:30;background:var(--surface);height:100%}
+}
+
+/* ---------- section scaffolding (hairlines, not boxes) ---------- */
+.sec{display:flex;flex-direction:column;gap:var(--s6)}
+.sec+.sec{padding-top:var(--s12);border-top:1px solid var(--hairline)}
+.sec-h{display:flex;flex-direction:column;gap:var(--s2)}
+.sec-h .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:var(--text-xs);font-weight:600;
+  letter-spacing:.02em;color:var(--general-primary)}
+.sec-h .eyebrow i{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--general-primary)}
+.sec-h p{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground);max-width:72ch}
+.sec-h p b{color:var(--general-foreground);font-weight:600}
+.hero-h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+.lede{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:72ch}
+.lede b{color:var(--general-foreground);font-weight:600}
+.lede .pos{color:var(--sentiment-positive);font-weight:600}
+
+/* ---------- big pool figures ---------- */
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:var(--s3)}
+.fig{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md);background:var(--surface);
+  box-shadow:var(--shadow-xs)}
+.fig .l{font-size:13px;line-height:1.2;color:var(--general-muted-foreground)}
+.fig .v{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:600;letter-spacing:-1px;
+  line-height:1;font-variant-numeric:tabular-nums}
+.fig .u{font-size:13px;line-height:1.35;color:var(--general-muted-foreground)}
+.fig.hi{background:linear-gradient(160deg,#edf5ff,#f8fbff);border-color:var(--general-border)}
+.fig.pos .v{color:var(--sentiment-positive)}
+
+/* ---------- pooled category mix ---------- */
+.mix{display:flex;flex-direction:column;gap:var(--s3)}
+.mix-row{display:grid;grid-template-columns:minmax(140px,1.1fr) minmax(0,3fr) minmax(120px,auto);
+  align-items:center;gap:var(--s4)}
+@media(max-width:760px){.mix-row{grid-template-columns:1fr;gap:var(--s1)}}
+.mix-n{font-size:var(--text-sm);font-weight:500;display:flex;align-items:center;gap:var(--s2)}
+.mix-n svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.mix-track{position:relative;height:22px;border-radius:var(--rounded-xs);background:var(--general-muted);
+  overflow:hidden}
+.mix-track i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#2170ed,#0b00ab);
+  border-radius:var(--rounded-xs) 0 0 var(--rounded-xs)}
+.mix-track u{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,
+  #dbe9ff 0 6px,#eef4ff 6px 12px);text-decoration:none}
+.mix-v{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;text-align:right;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.mix-v span{display:block;font-family:var(--font-body);font-size:12px;font-weight:400;
+  color:var(--general-muted-foreground)}
+.legend{display:flex;flex-wrap:wrap;gap:var(--s4);font-size:13px;color:var(--general-muted-foreground)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+.legend i.on{background:linear-gradient(90deg,#2170ed,#0b00ab)}
+.legend i.off{background:repeating-linear-gradient(135deg,#dbe9ff 0 4px,#eef4ff 4px 8px)}
+
+/* ---------- contribution dot grid ---------- */
+.contrib{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,340px);gap:var(--s8);
+  align-items:start}
+@media(max-width:900px){.contrib{grid-template-columns:1fr}}
+.dots{display:block;width:100%;height:auto}
+.dots circle{fill:var(--general-secondary)}
+.dots circle.me{fill:var(--general-primary)}
+.dots-cap{margin-top:var(--s3);font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
+.klist{list-style:none;display:flex;flex-direction:column}
+.klist li{display:flex;justify-content:space-between;gap:var(--s4);padding:var(--s3) 0;
+  font-size:var(--text-sm);border-bottom:1px solid var(--hairline)}
+.klist li:last-child{border-bottom:none}
+.klist li span{color:var(--general-muted-foreground)}
+.klist li b{font-family:var(--font-sans);font-weight:600;font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.klist li.tot b{color:var(--sentiment-positive)}
+
+/* ---------- tier ladder ---------- */
+.tiers{display:flex;flex-direction:column;gap:var(--s6)}
+.tier{padding:var(--s6);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  background:var(--surface);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:var(--s4)}
+.tier-top{display:flex;align-items:flex-start;gap:var(--s4);flex-wrap:wrap}
+.tier-top .ttx{flex:1 1 240px;min-width:0;display:flex;flex-direction:column;gap:var(--s1)}
+.tier-top h3{display:flex;align-items:center;gap:var(--s2)}
+.tier-top h3 svg{width:18px;height:18px;color:var(--general-muted-foreground);flex:0 0 auto}
+.tier-top .sub{font-size:13px;color:var(--general-muted-foreground)}
+.rate-now{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.rate-now b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:700;letter-spacing:-1px;
+  line-height:1;color:var(--general-primary);font-variant-numeric:tabular-nums}
+.rate-now span{font-size:12px;color:var(--general-muted-foreground)}
+.ladder{display:block;width:100%;height:auto;overflow:visible}
+.ladder .step{fill:var(--general-muted)}
+.ladder .step.done{fill:var(--general-secondary)}
+.ladder .step.cur{fill:url(#lg)}
+.ladder .step.next{fill:#ffffff;stroke:var(--general-border);stroke-width:1.4;stroke-dasharray:4 3}
+.ladder .lbl{font-family:var(--font-sans);font-size:12px;font-weight:600;fill:var(--general-foreground)}
+.ladder .lbl.mut{font-weight:500;fill:var(--general-muted-foreground)}
+.ladder .vol{font-family:var(--font-body);font-size:11px;fill:var(--general-muted-foreground)}
+.ladder .marker{stroke:var(--brand-midnight);stroke-width:1.6;stroke-dasharray:3 3}
+.ladder .mtx{font-family:var(--font-sans);font-size:11px;font-weight:700;fill:var(--brand-midnight)}
+.tier-gap{display:flex;flex-wrap:wrap;gap:var(--s4);padding:var(--s4);border-radius:var(--rounded-lg);
+  background:#f4fcfb;border:1px solid #00968930}
+.tier-gap.flat{background:var(--general-muted);border-color:var(--sidebar-border)}
+.tier-gap div{display:flex;flex-direction:column;gap:2px;min-width:120px}
+.tier-gap .l{font-size:12px;color:var(--general-muted-foreground)}
+.tier-gap .v{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;letter-spacing:-.4px;
+  font-variant-numeric:tabular-nums}
+.tier-gap .v.pos{color:var(--sentiment-positive)}
+.tier-note{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground)}
+.tier-note b{color:var(--general-foreground);font-weight:600}
+.sups{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}
+.sup{display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 4px;border-radius:var(--rounded-full);
+  border:1px solid var(--hairline);background:var(--surface);font-size:13px;font-weight:500}
+.sup .lg{width:24px;height:24px;flex:0 0 auto;border-radius:var(--rounded-full);overflow:hidden;
+  display:grid;place-items:center;background:var(--general-muted)}
+.sup .lg img{width:100%;height:100%;object-fit:contain;display:block}
+.sup .lg .ini{font-family:var(--font-sans);font-size:10px;font-weight:700;color:var(--general-primary)}
+.sups-l{font-size:12px;color:var(--general-muted-foreground);width:100%}
+
+/* ---------- pledge cards ---------- */
+.pl{padding:var(--s6);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  background:var(--surface);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:var(--s4)}
+.pl.mine{border-color:var(--general-border);box-shadow:var(--shadow-md)}
+.pl-top{display:flex;align-items:flex-start;gap:var(--s4);flex-wrap:wrap}
+.pl-top .ptx{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:var(--s1)}
+.pl-when{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.pl-when b{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.pl-when span{font-size:12px;color:var(--general-muted-foreground)}
+.pbar-wrap{display:flex;flex-direction:column;gap:var(--s2)}
+.pbar{position:relative;height:34px;border-radius:var(--rounded-sm);background:var(--general-muted);
+  overflow:hidden}
+.pbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#2170ed,#0b00ab);
+  transition:width var(--t)}
+.pbar u{position:absolute;top:0;bottom:0;width:2px;background:var(--brand-midnight);opacity:.35;
+  text-decoration:none}
+.pbar u.hold{background:var(--sentiment-positive);opacity:.9;width:3px}
+.pticks{position:relative;height:34px}
+.ptick{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;
+  align-items:center;gap:1px;font-size:11px;color:var(--general-muted-foreground);white-space:nowrap}
+.ptick b{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--general-foreground)}
+.ptick.hold b{color:var(--sentiment-positive)}
+.pl-state{display:flex;flex-wrap:wrap;gap:var(--s4);align-items:center;justify-content:space-between}
+.pl-state .st{display:flex;flex-direction:column;gap:2px}
+.pl-state .st .l{font-size:12px;color:var(--general-muted-foreground)}
+.pl-state .st .v{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:600;
+  letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.pl-state .st .v.warn{color:var(--sentiment-negative)}
+.pl-state .st .v.pos{color:var(--sentiment-positive)}
+.pl-acts{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+.sim{padding:var(--s4);border-radius:var(--rounded-lg);background:#f7f8fa;
+  display:flex;flex-direction:column;gap:var(--s3)}
+.sim-h{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
+.sim-h h4{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.sim-h span{font-size:12px;color:var(--general-muted-foreground)}
+.sim input[type=range]{width:100%;accent-color:var(--general-primary);height:24px}
+.sim-out{display:flex;flex-wrap:wrap;gap:var(--s6)}
+.sim-out div{display:flex;flex-direction:column;gap:2px}
+.sim-out .l{font-size:12px;color:var(--general-muted-foreground)}
+.sim-out .v{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;letter-spacing:-.4px;
+  font-variant-numeric:tabular-nums}
+.sim-out .v.pos{color:var(--sentiment-positive)}
+.pl-mine{display:flex;align-items:center;gap:var(--s2);font-size:13px;color:var(--sentiment-positive);
+  font-weight:600}
+.pl-mine svg{width:14px;height:14px}
+
+/* ---------- campaigns ---------- */
+.camps{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--s4)}
+.camp{padding:var(--s6);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  background:var(--surface);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:var(--s4)}
+.camp h3{display:flex;align-items:center;gap:var(--s2)}
+.camp-lead{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground)}
+.camp-lead b{color:var(--general-foreground);font-weight:600}
+.camp-bar{position:relative;height:10px;border-radius:var(--rounded-full);background:var(--general-muted);
+  overflow:hidden}
+.camp-bar i{position:absolute;inset:0 auto 0 0;background:var(--general-primary);transition:width var(--t)}
+.camp-bar u{position:absolute;inset:0 auto 0 0;background:var(--brand-cornflower);opacity:.45;
+  text-decoration:none;transition:width var(--t)}
+.camp-nums{display:flex;flex-wrap:wrap;gap:var(--s4)}
+.camp-nums div{display:flex;flex-direction:column;gap:2px}
+.camp-nums .l{font-size:12px;color:var(--general-muted-foreground)}
+.camp-nums .v{font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
+  font-variant-numeric:tabular-nums}
+.camp .foot{margin-top:auto;display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+
+/* ---------- record ---------- */
+.rec{list-style:none;display:flex;flex-direction:column}
+.rec li{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:var(--s4);
+  padding:var(--s4) 0;border-bottom:1px solid var(--hairline);align-items:center}
+.rec li:last-child{border-bottom:none}
+@media(max-width:760px){.rec li{grid-template-columns:1fr;gap:var(--s2)}}
+.rec .date{font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground)}
+.rec .body b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.rec .body span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:2px}
+.rec .move{display:flex;align-items:center;gap:var(--s2);justify-self:end}
+.rec .move .from{font-family:var(--font-sans);font-size:var(--text-sm);color:var(--general-muted-foreground);
+  text-decoration:line-through;font-variant-numeric:tabular-nums}
+.rec .move svg{width:14px;height:14px;color:var(--general-muted-foreground)}
+.rec .move .to{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;letter-spacing:-.4px;
+  color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.rec .worth{font-size:12px;color:var(--general-muted-foreground);text-align:right}
+.callout{padding:var(--s6);border-radius:var(--rounded-xl);background:#f4fcfb;border:1px solid #00968930;
+  display:flex;flex-direction:column;gap:var(--s2)}
+.callout .v{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:600;letter-spacing:-1px;
+  color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.callout p{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground);max-width:72ch}
+.callout p b{color:var(--general-foreground);font-weight:600}
+.note-soft{padding:var(--s4);border-radius:var(--rounded-lg);background:var(--general-muted);
+  font-size:13px;line-height:1.6;color:var(--general-muted-foreground)}
+.note-soft b{color:var(--general-foreground);font-weight:600}
+
+/* toast */
+.toastc{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:var(--s6);
+  pointer-events:none;background:#0f0f0f00;transition:background .3s ease}
+.toastc.show{background:#0f0f0f14;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.toastc-card{pointer-events:auto;display:flex;align-items:center;gap:var(--s6);
+  max-width:min(560px,94vw);padding:var(--s8);border-radius:var(--rounded-2xl);text-align:left;
+  background:var(--surface);border:1px solid var(--hairline);
+  box-shadow:var(--shadow-xl),0 0 0 6px #00968914;
+  opacity:0;transform:translateY(12px) scale(.9);
+  transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
+.toastc.show .toastc-card{opacity:1;transform:none}
+.toastc-ic{flex:0 0 auto;width:56px;height:56px;border-radius:var(--rounded-full);
+  background:#d9f2ef;color:var(--sentiment-positive);display:grid;place-items:center;
+  box-shadow:0 0 0 8px #00968912}
+.toastc-ic svg{width:28px;height:28px}
+.toastc-tx b{font-family:var(--font-sans);font-size:var(--text-xl);letter-spacing:-.3px}
+.toastc-tx p{margin-top:5px;font-size:var(--text-sm);line-height:1.5;color:var(--general-muted-foreground)}
+.toastc-tx p b{font-size:inherit;color:var(--general-foreground)}
+
+@media(prefers-reduced-motion:reduce){
+  .app.on,.scr.on>*{animation:none}
+  .pbar i,.camp-bar i,.camp-bar u,.rail,.ni,.btn{transition:none}
+  .poolpill .live::after{animation:none}
+  .toastc-card{transition:opacity .2s ease;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="flow">
+  <main class="stage">
+    <!-- ==================== 1 · LOGIN ==================== -->
+    <section class="scr on mid" id="s-login" aria-labelledby="h-login">
+      <div class="login">
+        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <h1 id="h-login">Welcome</h1>
+        <p class="lead">You are not buying alone. 2.850 companies pool their purchasing here — that pool is why your prices look the way they do.</p>
+
+        <div class="card login-choice">
+          <button class="login-persona" id="loginBob" type="button">
+            <span class="login-persona-av">BI</span>
+            <span class="login-persona-txt">
+              <b>Bob Iversen</b>
+              <span>Nordvik Byg A/S · contributing member, 2 volume pledges</span>
+            </span>
+            <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="login-persona" id="loginFanny" type="button">
+            <span class="login-persona-av">FK</span>
+            <span class="login-persona-txt">
+              <b>Fanny Kristensen</b>
+              <span>Kristensen Elektro ApS · new, not contributing volume yet</span>
+            </span>
+            <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div class="login-pool">
+            <div><b id="lgMembers">2.850</b><span>members</span></div>
+            <div><b id="lgPool">13,7 mia. kr.</b><span>pooled annual spend</span></div>
+            <div><b id="lgTalks">5</b><span>renegotiations open for pledges</span></div>
+          </div>
+        </div>
+        <p class="tinyfoot">Prototype — pick either account to sign in straight to the pool.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ==================== 2 · APP SHELL ==================== -->
+<div class="app" id="app">
+  <div class="wrap">
+
+    <header class="appbar">
+      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="spacer"></span>
+      <button class="poolpill" id="poolPill" type="button">
+        <span class="live" aria-hidden="true"></span>
+        <span class="et"><b id="ppTop">2.850 members buying together</b><span id="ppSub">13,7 mia. kr. pooled</span></span>
+      </button>
+      <div class="userwrap">
+        <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false" aria-haspopup="true">
+          <span class="uav" id="userAv">BI</span>
+          <span class="un"><span id="userName">Bob Iversen</span><span id="userCo">Nordvik Byg A/S</span></span>
+          <svg class="uc" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="upop" id="userPop" role="region" aria-label="Account">
+          <div class="up-h"><b id="upName">Bob Iversen</b><span id="upCo">Nordvik Byg A/S</span></div>
+          <button class="up-i" id="restartBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Restart prototype</button>
+          <div class="up-sep"><span>Demo as</span></div>
+          <button class="up-i" id="personaBob" type="button">
+            <span class="up-persona-av">BI</span>
+            <span class="up-persona-txt"><b>Bob Iversen</b><span>Contributing member · verified</span></span>
+          </button>
+          <button class="up-i" id="personaFanny" type="button">
+            <span class="up-persona-av">FK</span>
+            <span class="up-persona-txt"><b>Fanny Kristensen</b><span>New · nothing connected</span></span>
+          </button>
+          <p class="up-f">Progress is kept per browser tab.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="appbody">
+      <nav class="rail" id="rail" aria-label="Main">
+        <div class="nav" id="nav"></div>
+        <button class="railtog" id="railTog" aria-label="Collapse navigation" aria-expanded="true" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-6 7 6 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Collapse</span>
+        </button>
+      </nav>
+
+      <div class="canvas" id="canvas">
+        <div class="page" id="page"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="sr" id="liveMsg" role="status" aria-live="polite"></p>
+
+<script>
+"use strict";
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+const dk  = (n,d=1) => n.toLocaleString('da-DK',{minimumFractionDigits:d,maximumFractionDigits:d});
+/* Danish large-sum convention: 13,7 mia. kr. / 240 mio. kr. */
+function big(kr){
+  const a = Math.abs(kr);
+  if(a >= 1e9) return dk(kr/1e9,1) + ' mia. kr.';
+  if(a >= 1e6) return dk(kr/1e6, a >= 1e8 ? 0 : 1) + ' mio. kr.';
+  return fmt(kr) + ' kr.';
+}
+/* volumes inside the tier model are held in millions of kroner */
+const mioTxt = (m,d=1) => (Math.abs(m) >= 1000 ? dk(m/1000,1) + ' mia. kr.' : dk(m,d) + ' mio. kr.');
+const pct = (n,d=1) => dk(n,d).replace(/,0$/,'') + '%';
+/* rates can be fractional (9,5%): show a decimal only when there is one */
+const rt = r => dk(r, Number.isInteger(r) ? 0 : 1);
+const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const TICK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const DASH_CIRCLE = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/></svg>';
+
+/* ==========================================================================
+   THE NUMBER MODEL
+   --------------------------------------------------------------------------
+   ONE MEMBER (the median member, and Bob exactly):
+     8 categories, 4.820.000 kr./year of spend, 1.284 invoices.
+     Saving in a category = member spend x the GROUP rate for that category.
+     Full potential across all 8 = 423.985 kr.
+     Bob runs 5 of 24 agreements (mat/tool/fuel/off/rent):
+       covered 4.032.800 + leaking 787.200 = 4.820.000
+       realised 376.441 + remaining 47.544 = 423.985
+       customer bonus on covered volume, tiered 1,0% / 1,5% / 2,0% = 60.656
+       discount + bonus = 437.097
+   THE POOL — construction, stated:
+     MEMBERS = 2.850 members, each modelled at the median member's category
+     spend. So pooled category volume = 2.850 x that category's member spend,
+     and the pool's category mix is the member's mix, proportionally.
+       2.850 x 4.820.000 = 13.737.000.000 kr. = 13,7 mia. kr. pooled.
+     Not all pooled spend is consolidated onto the group agreement: each
+     category has a consolidation share (cons). Consolidated volume is what
+     the group actually bought, and THAT is what sets the volume tier.
+     Every stated group rate below is DERIVED from the tier ladder and the
+     consolidated volume — checkModel() asserts the derived rate equals the
+     published rate for all 8 categories.
+   ========================================================================== */
+const MEMBERS = 2850;
+const TODAY = new Date(2026, 7, 21);     /* 21 August 2026 */
+
+const CAT_ICON = {
+  mat:'<path d="M3 9.5L12 4l9 5.5M5 11v9h14v-9" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  tool:'<path d="M14 4l6 6-3 3-6-6 3-3zM10 10l-6 6v4h4l6-6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  fuel:'<path d="M6 21V5a2 2 0 012-2h5a2 2 0 012 2v16M6 12h9M15 8h2a2 2 0 012 2v6a2 2 0 002 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  off:'<path d="M6 3h9l3 3v15H6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 9h6M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  rent:'<path d="M4 18h10l4-4V8H9L4 14z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="19" r="2" stroke="currentColor" stroke-width="1.7"/><circle cx="16" cy="19" r="2" stroke="currentColor" stroke-width="1.7"/>',
+  frg:'<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="18" r="1.8" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18" r="1.8" stroke="currentColor" stroke-width="1.7"/>',
+  tel:'<rect x="7" y="3" width="10" height="18" rx="2.4" stroke="currentColor" stroke-width="1.7"/><path d="M11 18h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  site:'<path d="M5 7h14l-1.2 13H6.2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 7V4h6v3" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'
+};
+
+/* logos we actually have artwork for; bg = the artwork's own background */
+const SUP_ART = {
+  'Stark Byggecenter': {f:'stark.jpeg',                         bg:'#f48222'},
+  'Bygma Framework':   {f:'bygma-logo-png_seeklogo-381076.png', bg:'#ffffff'},
+  'Ahlsell Nordic':    {f:'ahlsell.png',                        bg:'#ffffff'},
+  'Q8 Fuel Card':      {f:'q8.png',                             bg:'#ffffff'},
+  'Hilti Erhverv':     {f:'hilti.png',                          bg:'#d2091e'},
+  'Lyreco Erhverv':    {f:'lyreco.png',                         bg:'#2e2e88'}
+};
+
+/* tier ladders: v = consolidated GROUP volume in mio. kr., r = the discount
+   the group holds at that volume. cons = share of pooled category spend that
+   is actually on the agreement today. */
+const BASE = [
+  {id:'mat', n:'Building materials', spend:2132300, sup:18, inv:424, cons:0.78,
+   tiers:[{v:3000,r:7},{v:4000,r:8},{v:4500,r:9},{v:5000,r:10},{v:6000,r:11}],
+   agr:['Stark Byggecenter','Bygma Framework','Ahlsell Nordic','Optimera Erhverv','Saint-Gobain Frame'],
+   talks:{date:'2026-10-14', pledged:4120, members:1780}},
+  {id:'tool', n:'Tools & workwear', spend:664800, sup:11, inv:178, cons:0.71,
+   tiers:[{v:800,r:9},{v:1100,r:10},{v:1300,r:11},{v:1600,r:12},{v:2000,r:13}],
+   agr:['Hilti Erhverv','Würth Nordic','Engelbert Strauss'],
+   talks:{date:'2026-11-03', pledged:1180, members:1520}},
+  {id:'fuel', n:'Fuel & transport', spend:530700, sup:5, inv:223, cons:0.84,
+   tiers:[{v:800,r:6},{v:1000,r:7},{v:1200,r:8},{v:1500,r:9},{v:1800,r:10}],
+   agr:['Q8 Fuel Card','Circle K Business'],
+   talks:{date:'2026-11-26', pledged:1090, members:1960}},
+  {id:'off', n:'Office supplies', spend:205000, sup:5, inv:62, cons:0.66,
+   tiers:[{v:200,r:15},{v:300,r:17},{v:350,r:19},{v:450,r:21},{v:600,r:23}],
+   agr:['Lyreco Erhverv','Contorland'],
+   talks:{date:'2027-02-09', pledged:338, members:1410}},
+  {id:'rent', n:'Machine & equipment rental', spend:500000, sup:6, inv:112, cons:0.62,
+   tiers:[{v:600,r:5},{v:800,r:6},{v:1000,r:7}],
+   agr:['Cramo Danmark','GSV Materieludlejning','Riwal Lifting'], talks:null},
+  {id:'frg', n:'Freight & delivery', spend:328800, sup:6, inv:122, cons:0.59,
+   tiers:[{v:400,r:7},{v:500,r:8},{v:700,r:9.5},{v:900,r:11}],
+   agr:['DSV Road','GLS Erhverv','Danske Fragtmænd'],
+   talks:{date:'2027-01-20', pledged:402, members:1020},
+   campaign:{target:620}},
+  {id:'tel', n:'Telecom & IT', spend:290400, sup:4, inv:100, cons:0.55,
+   tiers:[{v:300,r:4},{v:400,r:5},{v:600,r:6.5}],
+   agr:['Telenor Erhverv','Dustin IT'], talks:null, campaign:{target:520}},
+  {id:'site', n:'Site services & waste', spend:168000, sup:4, inv:63, cons:0.48,
+   tiers:[{v:150,r:3},{v:200,r:4},{v:320,r:5.5}],
+   agr:['Ragn-Sells','Marius Pedersen'], talks:null, campaign:{target:560}}
+];
+/* published rates, for the model self-check only */
+const PUBLISHED = {mat:9, tool:11, fuel:8, off:19, rent:6, frg:8, tel:5, site:4};
+
+/* negotiations already won by the group — rate before, after, date, volume behind */
+const WON = [
+  {cat:'mat',  date:'Mar 2024', from:7,  to:9,  vol:4740, members:2210, sup:'Stark Byggecenter + Bygma'},
+  {cat:'rent', date:'Nov 2024', from:4,  to:6,  vol:884,  members:1480, sup:'Cramo + GSV Materieludlejning'},
+  {cat:'tool', date:'Jan 2025', from:9,  to:11, vol:1345, members:1910, sup:'Hilti + Würth Nordic'},
+  {cat:'fuel', date:'Jun 2025', from:6,  to:8,  vol:1271, members:2320, sup:'Q8 Fuel Card'},
+  {cat:'off',  date:'Sep 2025', from:15, to:19, vol:386,  members:1640, sup:'Lyreco Erhverv'},
+  {cat:'tel',  date:'Feb 2026', from:4,  to:5,  vol:455,  members:1180, sup:'Telenor Erhverv'}
+];
+
+/* ---------------- mutable model ---------------- */
+let CATS = [];
+let ACTIVE = new Set();          /* agreements this member runs */
+let MINE = new Set();            /* categories this member has pledged */
+let persona = 'bob';
+let est = false;                 /* Fanny: estimated, ranges prefixed "up to" */
+let navAt = 'pool';
+let simPct = {};                 /* per-category participation simulator */
+
+const PERSONAS = {
+  bob:   {user:'Bob Iversen', company:'Nordvik Byg A/S', est:false,
+          active:['mat','tool','fuel','off','rent'], pledges:['tool','fuel']},
+  fanny: {user:'Fanny Kristensen', company:'Kristensen Elektro ApS', est:true,
+          active:[], pledges:[], industry:'Electrical contracting'}
+};
+const state = {user:'Bob Iversen', company:'Nordvik Byg A/S', invoices:1284};
+
+function resetModel(){
+  CATS = BASE.map(c => ({
+    ...c,
+    pooled: c.spend * MEMBERS,                             /* kr. */
+    consMio: c.spend * MEMBERS * c.cons / 1e6,             /* mio. kr. consolidated */
+    pledged: c.talks ? c.talks.pledged : 0,                /* mio. kr. pledged */
+    pledgeMembers: c.talks ? c.talks.members : 0,
+    campMembers: 0
+  }));
+  simPct = {};
+  CATS.forEach(c => { if(c.talks) simPct[c.id] = Math.round(c.pledgeMembers / MEMBERS * 100); });
+}
+const cat = id => CATS.find(c => c.id === id);
+
+/* rate is always derived from a volume and the ladder — never stored */
+function rateAt(c, volMio){
+  let r = c.tiers[0].r;
+  c.tiers.forEach(t => { if(volMio >= t.v) r = t.r; });
+  return r;
+}
+const rateOf = c => rateAt(c, c.consMio);
+function tierIdx(c, volMio){
+  let i = 0;
+  c.tiers.forEach((t,k) => { if(volMio >= t.v) i = k; });
+  return i;
+}
+const nextTier = (c, volMio) => c.tiers[tierIdx(c, volMio) + 1] || null;
+
+/* the member's own figures. Fanny is estimated: her band is +/-15% and we show
+   the top of it, prefixed "up to". */
+const EST_HI = 1.15, EST_LO = 0.85;
+const mySpend = c => c.spend * (est ? EST_HI : 1);
+const mySave  = c => mySpend(c) * rateOf(c) / 100;
+const myVolMio = c => mySpend(c) / 1e6;
+const poolTotal = () => CATS.reduce((s,c) => s + c.pooled, 0);
+const myTotalSpend = () => CATS.reduce((s,c) => s + mySpend(c), 0);
+const myPotential = () => CATS.reduce((s,c) => s + mySave(c), 0);
+const myRealised = () => CATS.filter(c => ACTIVE.has(c.id)).reduce((s,c) => s + mySave(c), 0);
+const myCovered = () => CATS.filter(c => ACTIVE.has(c.id)).reduce((s,c) => s + mySpend(c), 0);
+const myLeaking = () => CATS.filter(c => !ACTIVE.has(c.id)).reduce((s,c) => s + mySpend(c), 0);
+/* customer bonus on covered volume: 1,0% of the first 1M, 1,5% of 1–3M, 2,0% above 3M */
+function bonusOf(covered){
+  let b = Math.min(covered, 1e6) * 0.01;
+  if(covered > 1e6) b += (Math.min(covered, 3e6) - 1e6) * 0.015;
+  if(covered > 3e6) b += (covered - 3e6) * 0.02;
+  return b;
+}
+const myShare = () => myTotalSpend() / poolTotal() * 100;
+
+/* Fanny's reference figures are the five agreements most members run —
+   0,85 / 1,15 around the median member's 376.441 kr. gives 320K–433K. */
+const coreSave = () => ['mat','tool','fuel','off','rent'].reduce((s,id) => s + cat(id).spend * rateOf(cat(id)) / 100, 0);
+const bandTxt = n => `${fmt(n * EST_LO)}–${fmt(n * EST_HI)} kr.`;
+const upTo = n => (est ? 'up to ' : '') + fmt(n) + ' kr.';
+
+/* ---------------- model self-check (console only) ---------------- */
+function checkModel(){
+  const out = [];
+  CATS.forEach(c => {
+    const derived = rateOf(c);
+    if(derived !== PUBLISHED[c.id])
+      out.push(`rate mismatch ${c.id}: ladder says ${derived}%, published ${PUBLISHED[c.id]}%`);
+  });
+  const pool = poolTotal();
+  if(Math.round(pool) !== 13737000000) out.push('pool total ' + pool);
+  const spend = BASE.reduce((s,c) => s + c.spend, 0);
+  if(spend !== 4820000) out.push('member spend ' + spend);
+  const pot = BASE.reduce((s,c) => s + c.spend * PUBLISHED[c.id] / 100, 0);
+  if(Math.round(pot) !== 423985) out.push('potential ' + pot);
+  if(Math.round(bonusOf(4032800)) !== 60656) out.push('bonus ' + bonusOf(4032800));
+  if(out.length) console.warn('MODEL CHECK', out); else console.info('MODEL CHECK ok — pool ' + big(pool));
+}
+
+/* ---------------- small view helpers ---------------- */
+const SUFFIX = /^(a\/s|aps|as|ab|ivs|k\/s|p\/s|oy|ltd|gmbh|inc)$/i;
+function initials(name){
+  const w = name.trim().split(/\s+/).filter(s => !SUFFIX.test(s));
+  return ((w[0] || name)[0] + (w[1] ? w[1][0] : '')).toUpperCase();
+}
+function supChip(name){
+  const a = SUP_ART[name];
+  return `<span class="sup"><span class="lg"${a ? ` style="background:${a.bg}"` : ''}>${a
+    ? `<img src="assets/company-logos/${a.f}" alt="">`
+    : `<span class="ini">${initials(name)}</span>`}</span>${name}</span>`;
+}
+const icon = id => `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[id]}</svg>`;
+function daysTo(iso){
+  const [y,m,d] = iso.split('-').map(Number);
+  return Math.round((new Date(y, m-1, d) - TODAY) / 86400000);
+}
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function niceDate(iso){
+  const [y,m,d] = iso.split('-').map(Number);
+  return `${d} ${MONTHS[m-1]} ${y}`;
+}
+function announce(msg){ $('#liveMsg').textContent = msg; }
+function estChip(){ return est ? ` <span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''; }
+
+function showToast(title, body){
+  const wrap = document.createElement('div');
+  wrap.className = 'toastc';
+  wrap.setAttribute('role','status');
+  wrap.innerHTML = `<div class="toastc-card">
+      <span class="toastc-ic" aria-hidden="true">${TICK}</span>
+      <div class="toastc-tx"><b>${title}</b><p>${body}</p></div></div>`;
+  const dismiss = () => { wrap.classList.remove('show'); setTimeout(() => wrap.remove(), 450); };
+  document.body.appendChild(wrap);
+  requestAnimationFrame(() => wrap.classList.add('show'));
+  wrap.addEventListener('click', dismiss);
+  setTimeout(dismiss, 4200);
+}
+
+/* ==========================================================================
+   NAV + SHELL
+   ========================================================================== */
+const NAV = [
+  {id:'pool', n:'The pool', hero:true, sub:'Live · 2.850 members',
+   icon:'<circle cx="9" cy="9" r="3.2" stroke="currentColor" stroke-width="1.7"/><circle cx="16" cy="7" r="2.4" stroke="currentColor" stroke-width="1.7"/><circle cx="15" cy="16" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M11.6 10.6L13 14M11.4 8.2l2.3-.7" stroke="currentColor" stroke-width="1.6"/>'},
+  {id:'talks', n:'Renegotiations', badge:'5',
+   icon:'<path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="18" cy="16" r="3.2" stroke="currentColor" stroke-width="1.7"/>'},
+  {id:'tiers', n:'Volume tiers',
+   icon:'<path d="M4 20V14h4v6M10 20V9h4v11M16 20V4h4v16" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {id:'camp', n:'Category campaigns', badge:'3',
+   icon:'<path d="M5 10v4l12 4V6L5 10z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M5 10H3v4h2" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {id:'record', n:"What we've won",
+   icon:'<path d="M8 4h8v5a4 4 0 11-8 0V4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 13v4M8 21h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'},
+  {id:'me', n:'My contribution',
+   icon:'<circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c1.4-3.4 4-5 7-5s5.6 1.6 7 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
+];
+function renderNav(){
+  $('#nav').innerHTML = NAV.map(i => i.hero
+    ? `<button class="ni hero${navAt===i.id?' on':''}" data-nav="${i.id}" data-tip="${i.n}" type="button">
+         <span class="nic">${icon0(i.icon)}</span>
+         <span class="hb"><b>${i.n}</b><span>${i.sub}</span></span></button>`
+    : `<button class="ni${navAt===i.id?' on':''}" data-nav="${i.id}" data-tip="${i.n}" type="button"
+         ${navAt===i.id?'aria-current="page"':''}>
+         <span class="nic">${icon0(i.icon)}</span>
+         <span class="nt">${i.n}</span>
+         ${i.badge ? `<span class="nb">${i.badge}</span>` : ''}</button>`).join('');
+  $$('#nav [data-nav]').forEach(b => b.addEventListener('click', () => {
+    navAt = b.dataset.nav; renderNav(); render();
+    $('#canvas').scrollTop = 0;
+  }));
+}
+const icon0 = paths => `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${paths}</svg>`;
+
+function setRail(mini){
+  $('#rail').classList.toggle('mini', mini);
+  const t = $('#railTog');
+  t.setAttribute('aria-expanded', String(!mini));
+  t.setAttribute('aria-label', mini ? 'Expand navigation' : 'Collapse navigation');
+}
+let railTouched = false;
+$('#railTog').addEventListener('click', () => { railTouched = true; setRail(!$('#rail').classList.contains('mini')); });
+const NARROW = matchMedia('(max-width:900px)');
+const syncRail = () => { if(!railTouched) setRail(NARROW.matches); };
+NARROW.addEventListener('change', syncRail);
+
+/* account menu */
+function closeUser(){ $('#userPop').classList.remove('on'); $('#userBtn').setAttribute('aria-expanded','false'); }
+$('#userBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#userPop').classList.toggle('on');
+  $('#userBtn').setAttribute('aria-expanded', String(on));
+});
+document.addEventListener('click', closeUser);
+addEventListener('keydown', e => { if(e.key === 'Escape') closeUser(); });
+$('#restartBtn').addEventListener('click', () => location.reload());
+$('#personaBob').addEventListener('click', () => switchPersona('bob'));
+$('#personaFanny').addEventListener('click', () => switchPersona('fanny'));
+$('#poolPill').addEventListener('click', () => { navAt = 'pool'; renderNav(); render(); $('#canvas').scrollTop = 0; });
+
+function applyPersona(key){
+  const p = PERSONAS[key];
+  persona = key; est = p.est;
+  state.user = p.user; state.company = p.company;
+  resetModel();
+  ACTIVE = new Set(p.active);
+  MINE = new Set(p.pledges);
+}
+function switchPersona(key){ closeUser(); applyPersona(key); navAt = 'pool'; renderNav(); enterApp(); }
+function loginAs(key){ applyPersona(key); enterApp(); }
+$('#loginBob').addEventListener('click', () => loginAs('bob'));
+$('#loginFanny').addEventListener('click', () => loginAs('fanny'));
+
+function enterApp(){
+  $('#userCo').textContent = state.company;
+  $('#userName').textContent = state.user;
+  $('#userAv').textContent = initials(state.user);
+  $('#upName').textContent = state.user;
+  $('#upCo').textContent = state.company;
+  document.body.classList.add('in-app');
+  $('#app').classList.add('on');
+  renderNav();
+  syncRail();
+  render();
+}
+
+/* ==========================================================================
+   VIEW 1 · THE POOL
+   ========================================================================== */
+function viewPool(){
+  const pool = poolTotal();
+  const consolidated = CATS.reduce((s,c) => s + c.consMio, 0);            /* mio */
+  const openTalks = CATS.filter(c => c.talks).length;
+  const maxPooled = Math.max(...CATS.map(c => c.pooled));
+
+  const intro = est
+    ? `You get the group's rates on the day you sign — <b>−${rt(rateOf(cat('mat')))}%</b> on building materials,
+       <b>−${rt(rateOf(cat('off')))}%</b> on office supplies — not because of anything you have bought,
+       but because <b>${fmt(MEMBERS)} members</b> already put <b>${big(pool)}</b> a year behind those agreements.
+       Connect your invoices and your volume counts toward the next round.`
+    : `Your rates are not yours. They are what <b>${fmt(MEMBERS)} members</b> hold together with
+       <b>${big(pool)}</b> of annual spend, of which <b>${mioTxt(consolidated)}</b> is actually consolidated onto
+       group agreements. Every discount below is a step on a ladder that group volume climbs.`;
+
+  return `
+  <section class="sec">
+    <div class="sec-h">
+      <span class="eyebrow"><i></i>The pool · live</span>
+      <h1 class="hero-h1">We buy as one bloc</h1>
+      <p class="lede">${intro}</p>
+    </div>
+
+    <div class="figs">
+      <div class="fig hi"><span class="l">Members buying together</span>
+        <span class="v">${fmt(MEMBERS)}</span><span class="u">Danish SMEs, all industries</span></div>
+      <div class="fig"><span class="l">Pooled annual spend</span>
+        <span class="v">${dk(pool/1e9,1)}</span><span class="u">mia. kr. across 8 categories</span></div>
+      <div class="fig"><span class="l">Consolidated onto agreements</span>
+        <span class="v">${dk(consolidated/1000,1)}</span>
+        <span class="u">mia. kr. · ${pct(consolidated*1e6/pool*100,0)} of pooled spend — this is what sets the tiers</span></div>
+      <div class="fig"><span class="l">Renegotiations open for pledges</span>
+        <span class="v">${openTalks}</span><span class="u">next: ${niceDate(nextTalk().talks.date)}</span></div>
+    </div>
+
+    <p class="note-soft"><b>How the pool figure is built:</b> ${fmt(MEMBERS)} members, each modelled at the median
+      member's category spend of ${fmt(4820000)} kr./year — so ${fmt(MEMBERS)} × ${fmt(4820000)} kr. =
+      ${big(pool)} pooled, and the pool's category mix is the median member's mix, proportionally.
+      Consolidation shares are measured from members' invoice data.</p>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h">
+      <h2>Where the ${dk(pool/1e9,1)} mia. goes</h2>
+      <p>Solid bar = volume already consolidated onto a group agreement, and therefore counted in the
+        tier. Hatched = pooled spend the group is leaking to off-agreement suppliers.</p>
+    </div>
+    <div class="mix" role="list">
+      ${CATS.map(c => {
+        const w = c.pooled / maxPooled * 100;
+        const on = c.consMio * 1e6 / c.pooled;
+        return `<div class="mix-row" role="listitem">
+          <span class="mix-n">${icon(c.id)} ${c.n}</span>
+          <span class="mix-track" role="img"
+            aria-label="${c.n}: ${big(c.pooled)} pooled, ${mioTxt(c.consMio)} consolidated (${pct(on*100,0)})">
+            <i style="width:${w*on}%"></i>
+            <u style="left:${w*on}%;width:${w*(1-on)}%"></u>
+          </span>
+          <span class="mix-v">${big(c.pooled)}<span>${pct(on*100,0)} consolidated · −${rt(rateOf(c))}%</span></span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="legend">
+      <span><i class="on"></i>Consolidated — counts toward the tier</span>
+      <span><i class="off"></i>Off-agreement — leaking</span>
+    </div>
+  </section>
+
+  ${nextTalkCard()}
+
+  <section class="sec">
+    <div class="sec-h">
+      <h2>Your part of it</h2>
+      <p>${est
+        ? `You are not contributing volume yet. Here is what you would add.`
+        : `Honestly small, and that is the point — the aggregate is the product.`}</p>
+    </div>
+    ${contribBlock()}
+    <p><button class="linkbtn" data-go="me" type="button">See my full contribution ${ARROW}</button></p>
+  </section>`;
+}
+
+function nextTalk(){
+  return CATS.filter(c => c.talks).sort((a,b) => daysTo(a.talks.date) - daysTo(b.talks.date))[0];
+}
+function nextTalkCard(){
+  const c = nextTalk();
+  const implied = rateAt(c, c.pledged);
+  const now = rateOf(c);
+  const hold = c.tiers.find(t => t.r >= now && c.pledged < t.v);
+  const gap = hold ? hold.v - c.pledged : 0;
+  return `
+  <section class="sec">
+    <div class="sec-h">
+      <span class="eyebrow"><i></i>Closest deadline</span>
+      <h2>${c.n} reopens in ${daysTo(c.talks.date)} days</h2>
+      <p>The next framework's tier is set by the volume <b>pledged before the talks</b>, not by last year's
+        purchases. ${fmt(c.pledgeMembers)} members have pledged ${mioTxt(c.pledged)} so far — that argues for
+        <b>−${rt(implied)}%</b>. Today's rate is <b>−${rt(now)}%</b>.
+        ${gap > 0 ? `Holding it needs <b>${mioTxt(gap)}</b> more on the table.` : 'Today\'s rate is already covered.'}</p>
+    </div>
+    <p><button class="btn btn-primary" data-go="talks" type="button">Go to renegotiations ${ARROW}</button></p>
+  </section>`;
+}
+
+/* dot grid: 285 dots, 1 dot = 10 members — a full 2.850-node grid would be
+   DOM bloat for no extra truth, so the caption states the scale */
+function dotGrid(){
+  const cols = 30, rows = 10, r = 3.1, gap = 11;
+  let out = '';
+  for(let i = 0; i < cols*rows; i++){
+    const x = (i % cols) * gap + r + 1, y = Math.floor(i / cols) * gap + r + 1;
+    const me = i === 142;          /* the dot that contains this member */
+    out += `<circle class="${me ? 'me' : ''}" cx="${x}" cy="${y}" r="${me ? r+1.2 : r}"/>`;
+  }
+  return `<svg class="dots" viewBox="0 0 ${cols*gap+2} ${rows*gap+2}" role="img"
+    aria-label="${fmt(MEMBERS)} members, drawn as 300 dots of ten members each. One dot is highlighted: the ten members that include you.">${out}</svg>`;
+}
+function contribBlock(){
+  const share = myShare();
+  const spend = myTotalSpend();
+  const cov = myCovered();
+  const bon = bonusOf(cov);
+  return `
+  <div class="contrib">
+    <div>
+      ${dotGrid()}
+      <p class="dots-cap">Each dot is ten members. The blue dot holds you — ${est ? 'once you connect your data' : `1 of ${fmt(MEMBERS)} contributing members`}.</p>
+    </div>
+    <ul class="klist">
+      <li><span>Your annual spend</span><b>${upTo(spend)}</b></li>
+      <li><span>Share of the pool</span><b>${dk(share,3)}%</b></li>
+      <li><span>${est ? 'Volume you would consolidate' : 'Volume on group agreements'}</span><b>${upTo(cov)}</b></li>
+      <li><span>Volume pledged ahead of talks</span><b>${MINE.size ? upTo(pledgedByMe()) : '0 kr.'}</b></li>
+      <li class="tot"><span>${est ? 'Discount + bonus available' : 'Your discount + bonus'}</span><b>${upTo(myRealised() + bon)}</b></li>
+    </ul>
+  </div>`;
+}
+const pledgedByMe = () => CATS.filter(c => MINE.has(c.id)).reduce((s,c) => s + mySpend(c), 0);
+
+/* ==========================================================================
+   VIEW 2 · RENEGOTIATIONS + PLEDGES  (the core mechanic)
+   ========================================================================== */
+function viewTalks(){
+  const rows = CATS.filter(c => c.talks).sort((a,b) => daysTo(a.talks.date) - daysTo(b.talks.date));
+  const totalPledged = rows.reduce((s,c) => s + c.pledged, 0);
+  return `
+  <section class="sec">
+    <div class="sec-h">
+      <span class="eyebrow"><i></i>Renegotiations</span>
+      <h1 class="hero-h1">Pledge before the talks</h1>
+      <p class="lede">Advantage renegotiates on a cycle. What our negotiators can put on the table is
+        <b>pledged volume</b> — members committing next year's purchasing in a category before the meeting.
+        Right now <b>${mioTxt(totalPledged)}</b> is pledged across ${rows.length} open rounds. A pledge is a
+        commitment to buy on whatever terms the group signs; it is not a fee and it is not exclusivity.</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="tiers">${rows.map(pledgeCard).join('')}</div>
+  </section>`;
+}
+
+function pledgeCard(c){
+  const mine = MINE.has(c.id);
+  const now = rateOf(c);
+  const implied = rateAt(c, c.pledged);
+  const days = daysTo(c.talks.date);
+  const min = c.tiers[0].v, max = c.tiers[c.tiers.length-1].v;
+  /* clamped to 2–98% so the first/last tier tick labels stay inside the card;
+     bar markers and tick labels share this mapping, so they never disagree */
+  const posOf = v => Math.max(2, Math.min(98, (v - min) / (max - min) * 100));
+  /* the tier that keeps today's rate, and the one above it */
+  const hold = c.tiers.find(t => t.r >= now && c.pledged < t.v);
+  const better = c.tiers.find(t => t.r > now && c.pledged < t.v && (!hold || t.v > hold.v));
+  const gapHold = hold ? hold.v - c.pledged : 0;
+  const gapBetter = better ? better.v - c.pledged : 0;
+  const myV = myVolMio(c);
+  const memNeeded = gapHold > 0 ? Math.ceil(gapHold / myV) : 0;
+
+  /* simulator */
+  const p = simPct[c.id];
+  const simMembers = Math.round(MEMBERS * p / 100);
+  const extra = Math.max(0, simMembers - c.pledgeMembers) * (c.spend / 1e6);
+  const simVol = c.pledged + extra;
+  const simRate = rateAt(c, simVol);
+  const simSave = mySpend(c) * simRate / 100;
+  const delta = simSave - mySave(c);
+
+  return `
+  <article class="pl${mine ? ' mine' : ''}" data-cat="${c.id}">
+    <div class="pl-top">
+      <div class="ptx">
+        <h3>${icon(c.id)} ${c.n}</h3>
+        <span class="sub">Counterparties: ${c.agr.join(' · ')}</span>
+      </div>
+      <div class="pl-when">
+        <b>Talks open ${niceDate(c.talks.date)}</b>
+        <span>${days} days · pledges close 14 days before</span>
+      </div>
+    </div>
+
+    <div class="pbar-wrap">
+      <div class="pbar" role="img"
+        aria-label="${mioTxt(c.pledged)} pledged of a ${mioTxt(max)} ladder. On pledges so far the tier is minus ${rt(implied)} percent.">
+        <i style="width:${posOf(c.pledged)}%"></i>
+        ${c.tiers.map(t => `<u class="${hold && t.v === hold.v ? 'hold' : ''}" style="left:${posOf(t.v)}%"></u>`).join('')}
+      </div>
+      <div class="pticks">
+        ${c.tiers.map(t => `<span class="ptick${hold && t.v === hold.v ? ' hold' : ''}" style="left:${posOf(t.v)}%">
+            <b>−${rt(t.r)}%</b>${mioTxt(t.v,0)}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="pl-state">
+      <div class="st"><span class="l">Pledged so far</span>
+        <span class="v">${mioTxt(c.pledged)}</span></div>
+      <div class="st"><span class="l">Members pledging</span>
+        <span class="v">${fmt(c.pledgeMembers)} <span style="font-size:13px;font-weight:400;color:var(--general-muted-foreground)">of ${fmt(MEMBERS)}</span></span></div>
+      <div class="st"><span class="l">Tier on pledges so far</span>
+        <span class="v ${implied < now ? 'warn' : 'pos'}">−${rt(implied)}%</span></div>
+      <div class="st"><span class="l">Today's rate</span>
+        <span class="v">−${rt(now)}%</span></div>
+    </div>
+
+    <p class="tier-note">
+      ${implied < now
+        ? `Pledges are <b>${mioTxt(gapHold)} short</b> of holding −${rt(now)}%. That is
+           <b>${fmt(memNeeded)} members</b> the size of you.`
+        : `Pledges already cover −${rt(now)}%.`}
+      ${better ? ` Reaching <b>−${rt(better.r)}%</b> needs ${mioTxt(gapBetter)} —
+        worth <b>${fmt(mySpend(c) * better.r / 100 - mySave(c))} kr./year</b> more to you alone.` : ''}
+    </p>
+
+    <div class="pl-acts">
+      ${mine
+        ? `<span class="pl-mine">${TICK} You have pledged ${upTo(mySpend(c))}${estChip()}</span>
+           <button class="btn btn-secondary btn-sm" data-unpledge="${c.id}" type="button">Withdraw pledge</button>`
+        : `<button class="btn btn-primary" data-pledge="${c.id}" type="button">
+             Pledge my ${c.n.toLowerCase()} volume — ${upTo(mySpend(c))}</button>
+           ${est ? `<span class="est-chip">${DASH_CIRCLE} Estimated volume</span>` : ''}`}
+    </div>
+
+    <div class="sim">
+      <div class="sim-h">
+        <h4 id="simL-${c.id}">If more members pledge</h4>
+        <span>${pct(p,0)} of members · ${fmt(simMembers)} pledging</span>
+      </div>
+      <input type="range" min="${Math.round(c.pledgeMembers/MEMBERS*100)}" max="100" value="${p}"
+        data-sim="${c.id}" aria-labelledby="simL-${c.id}"
+        aria-valuetext="${pct(p,0)} of members pledging, tier minus ${rt(simRate)} percent">
+      <div class="sim-out">
+        <div><span class="l">Pledged volume</span><span class="v">${mioTxt(simVol)}</span></div>
+        <div><span class="l">Tier it argues for</span><span class="v ${simRate > now ? 'pos' : ''}">−${rt(simRate)}%</span></div>
+        <div><span class="l">${est ? 'Your saving here (up to)' : 'Your saving here'}</span>
+          <span class="v">${fmt(simSave)} kr.</span></div>
+        <div><span class="l">Versus today</span>
+          <span class="v ${delta > 0 ? 'pos' : ''}">${delta >= 0 ? '+' : ''}${fmt(delta)} kr.</span></div>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* ==========================================================================
+   VIEW 3 · VOLUME TIERS
+   ========================================================================== */
+function viewTiers(){
+  return `
+  <section class="sec">
+    <div class="sec-h">
+      <span class="eyebrow"><i></i>Volume tiers</span>
+      <h1 class="hero-h1">Every rate is a step, not a price</h1>
+      <p class="lede">A group discount is a function of the volume the group actually consolidates in that
+        category — never of what you buy alone. Below: the tier we hold today, the tier above it, the volume
+        still needed, and what crossing it does to your own invoice.</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="tiers">${CATS.map(tierCard).join('')}</div>
+  </section>`;
+}
+
+function tierCard(c){
+  const now = rateOf(c);
+  const nt = nextTier(c, c.consMio);
+  const gap = nt ? nt.v - c.consMio : 0;
+  const myNow = mySave(c);
+  const myNext = nt ? mySpend(c) * nt.r / 100 : myNow;
+  const membersNeeded = nt ? Math.ceil(gap / (c.spend / 1e6)) : 0;
+  const active = ACTIVE.has(c.id);
+  return `
+  <article class="tier">
+    <div class="tier-top">
+      <div class="ttx">
+        <h3>${icon(c.id)} ${c.n}</h3>
+        <span class="sub">${big(c.pooled)} pooled · ${mioTxt(c.consMio)} consolidated (${pct(c.consMio*1e6/c.pooled*100,0)}) ·
+          your spend ${upTo(mySpend(c))}${active ? '' : ' · you are off-agreement here'}</span>
+      </div>
+      <div class="rate-now"><b>−${rt(now)}%</b><span>group rate today</span></div>
+    </div>
+
+    ${ladderSVG(c)}
+
+    <div class="tier-gap${nt ? '' : ' flat'}">
+      ${nt ? `
+        <div><span class="l">Next tier</span><span class="v">−${rt(nt.r)}%</span></div>
+        <div><span class="l">At consolidated volume</span><span class="v">${mioTxt(nt.v,0)}</span></div>
+        <div><span class="l">Still needed</span><span class="v">${mioTxt(gap)}</span></div>
+        <div><span class="l">${est ? 'Worth to you (up to)' : 'Worth to you'}</span>
+          <span class="v pos">+${fmt(myNext - myNow)} kr./year</span></div>`
+      : `<div><span class="l">Top tier</span><span class="v">−${rt(now)}%</span></div>
+         <div><span class="l">Status</span><span class="v">The group holds the best tier in this ladder</span></div>`}
+    </div>
+
+    <p class="tier-note">
+      ${nt ? `−${rt(now)}% now, <b>−${rt(nt.r)}% when the group reaches ${mioTxt(nt.v,0)}</b> in this
+              category — ${mioTxt(gap)} to go, about <b>${fmt(membersNeeded)} members</b> like you.` : ''}
+      ${c.campaign ? ` ${pct((1-c.cons)*100,0)} of pooled ${c.n.toLowerCase()} spend is still off-agreement —
+        <button class="linkbtn" data-go="camp" type="button">see the campaign</button>.` : ''}
+      Your saving here today: <b>${upTo(myNow)}/year</b>${active ? '' : ' — available, not realised, because you buy off-agreement'}.
+    </p>
+
+    <div class="sups"><span class="sups-l">Agreements priced by this tier</span>
+      ${c.agr.map(supChip).join('')}</div>
+  </article>`;
+}
+
+/* hand-rolled staircase: one bar per tier, height by rate, a dashed marker at
+   the group's current consolidated volume */
+function ladderSVG(c){
+  const W = 720, H = 168, padL = 4, padB = 30, padT = 20;
+  const n = c.tiers.length;
+  const bw = (W - padL*2) / n - 12;
+  const maxR = Math.max(...c.tiers.map(t => t.r));
+  const cur = tierIdx(c, c.consMio);
+  const min = c.tiers[0].v, max = c.tiers[n-1].v;
+  /* marker x: linear across the ladder's volume span */
+  const mx = padL + Math.max(0.02, Math.min(1, (c.consMio - min) / (max - min))) * (W - padL*2);
+  const bars = c.tiers.map((t,i) => {
+    const h = (H - padB - padT) * (t.r / maxR);
+    const x = padL + i * ((W - padL*2) / n) + 6;
+    const y = H - padB - h;
+    const cls = i === cur ? 'cur' : i < cur ? 'done' : i === cur+1 ? 'next' : 'step';
+    return `<rect class="step ${cls}" x="${x}" y="${y}" width="${bw}" height="${h}" rx="6"/>
+      <text class="lbl${i > cur ? ' mut' : ''}" x="${x + bw/2}" y="${y - 6}" text-anchor="middle">−${rt(t.r)}%</text>
+      <text class="vol" x="${x + bw/2}" y="${H - padB + 15}" text-anchor="middle">${mioTxt(t.v,0)}</text>`;
+  }).join('');
+  const alt = `${c.n}: tier ladder. ` + c.tiers.map(t => `${mioTxt(t.v,0)} gives minus ${rt(t.r)} percent`).join('; ')
+    + `. The group is at ${mioTxt(c.consMio)}, so it holds minus ${rt(rateOf(c))} percent.`;
+  return `<svg class="ladder" viewBox="0 0 ${W} ${H}" role="img" aria-label="${alt}">
+    <defs><linearGradient id="lg" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#0b00ab"/><stop offset="1" stop-color="#2170ed"/></linearGradient></defs>
+    ${bars}
+    <line class="marker" x1="${mx}" y1="${padT - 14}" x2="${mx}" y2="${H - padB}"/>
+    <text class="mtx" x="${Math.min(mx + 6, W - 120)}" y="${padT - 6}">Group now · ${mioTxt(c.consMio)}</text>
+  </svg>`;
+}
+
+/* ==========================================================================
+   VIEW 4 · CATEGORY CAMPAIGNS
+   ========================================================================== */
+function viewCamp(){
+  const rows = CATS.filter(c => c.campaign);
+  return `
+  <section class="sec">
+    <div class="sec-h">
+      <span class="eyebrow"><i></i>Category campaigns</span>
+      <h1 class="hero-h1">Where the group is weak</h1>
+      <p class="lede">Three categories leak so much volume to off-agreement suppliers that the group is
+        stuck a tier below what its size should buy. Consolidating is the cheapest discount available to
+        anyone here: no negotiation, just volume moving onto agreements we already hold.</p>
+    </div>
+    <div class="camps">${rows.map(campCard).join('')}</div>
+  </section>`;
+}
+function campCard(c){
+  const off = 1 - c.consMio * 1e6 / c.pooled;
+  const nt = nextTier(c, c.consMio);
+  const perMember = c.spend / 1e6;
+  const target = c.campaign.target;
+  const projected = c.consMio + target * perMember;
+  const projRate = rateAt(c, projected);
+  const now = rateOf(c);
+  const joined = ACTIVE.has(c.id);
+  const gap = nt ? nt.v - c.consMio : 0;
+  const membersNeeded = nt ? Math.ceil(gap / perMember) : 0;
+  const maxScale = nt ? nt.v : c.tiers[c.tiers.length-1].v;
+  return `
+  <article class="camp">
+    <h3>${icon(c.id)} ${c.n}</h3>
+    <p class="camp-lead">${c.n} is one of our weakest categories — <b>${pct(off*100,0)} of pooled spend
+      is off-agreement</b>. Consolidating ${fmt(target)} members' volume would add
+      ${mioTxt(target*perMember)} and move us from <b>−${rt(now)}%</b> to
+      <b>−${rt(projRate)}%</b>.</p>
+    <div class="camp-bar" role="img"
+      aria-label="Consolidated ${mioTxt(c.consMio)}; campaign target ${mioTxt(projected)}; next tier at ${nt ? mioTxt(nt.v,0) : 'top tier'}.">
+      <u style="width:${Math.min(100, projected/maxScale*100)}%"></u>
+      <i style="width:${Math.min(100, c.consMio/maxScale*100)}%"></i>
+    </div>
+    <div class="camp-nums">
+      <div><span class="l">Consolidated now</span><span class="v">${mioTxt(c.consMio)}</span></div>
+      <div><span class="l">Next tier at</span><span class="v">${nt ? mioTxt(nt.v,0) : '—'}</span></div>
+      <div><span class="l">Members joined</span><span class="v">${fmt(c.campMembers)} / ${fmt(target)}</span></div>
+    </div>
+    <p class="camp-lead">${nt
+      ? `${mioTxt(gap)} still missing — about <b>${fmt(membersNeeded)} members</b> your size. Your own
+         ${upTo(mySpend(c))} is <b>${pct(mySpend(c)/(gap*1e6)*100,2)}</b> of it. Small; ${fmt(membersNeeded)} of
+         those closes it.`
+      : 'The group already holds the top tier here.'}</p>
+    <div class="foot">
+      ${joined
+        ? `<span class="pl-mine">${TICK} Your ${c.n.toLowerCase()} spend is on the agreement</span>`
+        : `<button class="btn btn-primary btn-sm" data-join="${c.id}" type="button">
+             Move my ${upTo(mySpend(c))} onto the agreement</button>`}
+      ${nt ? `<span class="chip chip-soft">Crossing = +${fmt(mySpend(c)*nt.r/100 - mySave(c))} kr./year to you</span>` : ''}
+    </div>
+  </article>`;
+}
+
+/* ==========================================================================
+   VIEW 5 · THE RECORD
+   ========================================================================== */
+function viewRecord(){
+  const worth = WON.reduce((s,w) => s + cat(w.cat).spend * (w.to - w.from) / 100, 0);
+  return `
+  <section class="sec">
+    <div class="sec-h">
+      <span class="eyebrow"><i></i>The record</span>
+      <h1 class="hero-h1">Six negotiations, six tier moves</h1>
+      <p class="lede">This is the evidence that pledging is worth doing: every rate the group holds today was
+        moved by a room full of member volume on a specific date.</p>
+    </div>
+    <div class="callout">
+      <span class="v">+${fmt(worth)} kr./year</span>
+      <p>What the last six rounds added to a <b>median member</b> (${fmt(4820000)} kr. of annual spend),
+        purely from tier movements — no change in what they buy or from whom.</p>
+    </div>
+    <ul class="rec">
+      ${WON.slice().reverse().map(w => {
+        const c = cat(w.cat);
+        return `<li>
+          <span class="date">${w.date}</span>
+          <span class="body"><b>${c.n} — ${w.sup}</b>
+            <span>${fmt(w.members)} members · ${mioTxt(w.vol,0)} of member volume behind the talks</span></span>
+          <span class="move">
+            <span class="from">−${rt(w.from)}%</span>${ARROW}
+            <span class="to">−${rt(w.to)}%</span>
+          </span>
+          <span class="worth">worth +${fmt(c.spend*(w.to-w.from)/100)} kr./year<br>to a median member</span>
+        </li>`;
+      }).join('')}
+    </ul>
+    <p class="note-soft">Rates hold until the next round. Three of these six frameworks are back on the table
+      within six months — <button class="linkbtn" data-go="talks" type="button">pledge before they are</button>.</p>
+  </section>`;
+}
+
+/* ==========================================================================
+   VIEW 6 · MY CONTRIBUTION
+   ========================================================================== */
+function viewMe(){
+  const spend = myTotalSpend();
+  const cov = myCovered();
+  const leak = myLeaking();
+  const realised = myRealised();
+  const potential = myPotential();
+  const remaining = potential - realised;
+  const bon = bonusOf(cov);
+  const share = myShare();
+
+  if(est){
+    const core = coreSave();
+    return `
+    <section class="sec">
+      <div class="sec-h">
+        <span class="eyebrow"><i></i>My contribution</span>
+        <h1 class="hero-h1">What your volume would add</h1>
+        <p class="lede">Nothing is connected yet, so every figure here is an estimate for an electrical
+          contractor of your size ${estChip()}. The reason to connect your invoices is not that your numbers
+          get tidier — it is that your volume starts counting in the ladders above.</p>
+      </div>
+      <div class="figs">
+        <div class="fig hi"><span class="l">Your annual spend</span>
+          <span class="v">up to ${dk(spend/1e6,1)}</span><span class="u">mio. kr. · band ${dk(spend*EST_LO/1e6,1)}–${dk(spend/1e6,1)} mio. kr.</span></div>
+        <div class="fig pos"><span class="l">Saving at today's group rates</span>
+          <span class="v">up to ${fmt(core*EST_HI)}</span><span class="u">kr./year · band ${bandTxt(core)}</span></div>
+        <div class="fig"><span class="l">Customer bonus on that volume</span>
+          <span class="v">up to ${fmt(bonusOf(4032800)*EST_HI)}</span><span class="u">kr./year · band ${bandTxt(bonusOf(4032800))}</span></div>
+        <div class="fig"><span class="l">Your share of the pool</span>
+          <span class="v">${dk(share,3)}%</span><span class="u">of ${big(poolTotal())} — the ${fmt(MEMBERS+1)}st contributing member</span></div>
+      </div>
+      <p class="note-soft">Bands are ±15% around a median member of your size and industry. They narrow to a
+        single verified figure the moment invoices arrive.</p>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h">
+        <h2>What each category of yours would add</h2>
+        <p>Your volume against the volume the ladders still need. These are small numbers, honestly
+          reported — the argument is that ${fmt(MEMBERS)} of them are what holds the rates you are about to get.</p>
+      </div>
+      <ul class="rec">
+        ${CATS.map(c => {
+          const nt = nextTier(c, c.consMio);
+          const gap = nt ? nt.v - c.consMio : 0;
+          const mine = mySpend(c);
+          return `<li>
+            <span class="date">−${rt(rateOf(c))}%</span>
+            <span class="body"><b>${c.n}</b>
+              <span>${nt
+                ? `you would add ${fmt(mine)} kr. to a ${mioTxt(gap)} gap — ${pct(mine/(gap*1e6)*100,2)} of it,
+                   and about ${fmt(Math.ceil(gap/(c.spend/1e6)))} members like you would close it`
+                : 'top tier already held by the group'}</span></span>
+            <span class="move"><span class="to">${fmt(mine*rateOf(c)/100)} kr.</span></span>
+            <span class="worth">your saving here<br>at today's group tier</span>
+          </li>`;
+        }).join('')}
+      </ul>
+      <p><button class="btn btn-primary" data-go="talks" type="button">Pledge your estimated volume ${ARROW}</button></p>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h"><h2>The pool you would be joining</h2></div>
+      ${contribBlock()}
+    </section>`;
+  }
+
+  return `
+  <section class="sec">
+    <div class="sec-h">
+      <span class="eyebrow"><i></i>My contribution</span>
+      <h1 class="hero-h1">${dk(share,3)}% of the pool</h1>
+      <p class="lede">${fmt(spend)} kr. of ${big(poolTotal())}. A tiny number, reported honestly — and one of
+        ${fmt(MEMBERS)} exactly like it. Verified from ${fmt(state.invoices)} invoices across
+        ${CATS.reduce((s,c) => s + c.sup, 0)} suppliers.</p>
+    </div>
+    <div class="figs">
+      <div class="fig hi"><span class="l">Volume you contribute</span>
+        <span class="v">${dk(spend/1e6,2)}</span><span class="u">mio. kr./year · ${dk(share,3)}% of the pool</span></div>
+      <div class="fig pos"><span class="l">Discount realised</span>
+        <span class="v">${fmt(realised)}</span><span class="u">kr./year on ${ACTIVE.size} of 24 agreements</span></div>
+      <div class="fig"><span class="l">Customer bonus</span>
+        <span class="v">${fmt(bon)}</span><span class="u">kr./year, tiered on ${fmt(cov)} kr. covered volume</span></div>
+      <div class="fig"><span class="l">Discount + bonus</span>
+        <span class="v">${fmt(realised + bon)}</span><span class="u">kr./year back to you</span></div>
+    </div>
+    <ul class="klist">
+      <li><span>Spend covered by agreements</span><b>${fmt(cov)} kr.</b></li>
+      <li><span>Spend still off-agreement</span><b>${fmt(leak)} kr.</b></li>
+      <li><span>Total annual spend</span><b>${fmt(spend)} kr.</b></li>
+      <li><span>Discount realised</span><b>${fmt(realised)} kr.</b></li>
+      <li><span>Discount still available</span><b>${fmt(remaining)} kr.</b></li>
+      <li class="tot"><span>Full potential at today's group tiers</span><b>${fmt(potential)} kr.</b></li>
+    </ul>
+    <p class="note-soft"><b>Bonus is tiered on covered volume:</b> 1,0% of the first 1 mio., 1,5% from 1–3 mio.,
+      2,0% above 3 mio. On ${fmt(cov)} kr. that is ${fmt(bon)} kr.</p>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h">
+      <h2>What your volume does to the ladders</h2>
+      <p>Per category: your volume, the gap to the next tier, and what your pledge is worth as leverage.</p>
+    </div>
+    <ul class="rec">
+      ${CATS.map(c => {
+        const nt = nextTier(c, c.consMio);
+        const gap = nt ? nt.v - c.consMio : 0;
+        const mine = mySpend(c);
+        const pledged = MINE.has(c.id);
+        return `<li>
+          <span class="date">−${rt(rateOf(c))}%</span>
+          <span class="body"><b>${c.n}${pledged ? ' · pledged' : ''}</b>
+            <span>${nt
+              ? `your ${fmt(mine)} kr. is ${pct(mine/(gap*1e6)*100,2)} of the ${mioTxt(gap)} still needed for −${rt(nt.r)}%`
+              : 'the group holds the top tier here'}${c.talks ? ` · talks ${niceDate(c.talks.date)}` : ''}</span></span>
+          <span class="move"><span class="to">${fmt(mySave(c))} kr.</span></span>
+          <span class="worth">${ACTIVE.has(c.id) ? 'realised' : 'available, not realised'}<br>at today's tier</span>
+        </li>`;
+      }).join('')}
+    </ul>
+    ${contribBlock()}
+  </section>`;
+}
+
+/* ==========================================================================
+   RENDER + INTERACTIONS
+   ========================================================================== */
+function render(){
+  const V = {pool:viewPool, talks:viewTalks, tiers:viewTiers, camp:viewCamp, record:viewRecord, me:viewMe};
+  $('#page').innerHTML = (V[navAt] || viewPool)();
+  $('#ppTop').textContent = `${fmt(MEMBERS)} members buying together`;
+  $('#ppSub').textContent = `${big(poolTotal())} pooled`;
+  bind();
+}
+
+function bind(){
+  $$('#page [data-go]').forEach(b => b.addEventListener('click', () => {
+    navAt = b.dataset.go; renderNav(); render(); $('#canvas').scrollTop = 0;
+  }));
+  $$('#page [data-pledge]').forEach(b => b.addEventListener('click', () => pledge(b.dataset.pledge, true)));
+  $$('#page [data-unpledge]').forEach(b => b.addEventListener('click', () => pledge(b.dataset.unpledge, false)));
+  $$('#page [data-join]').forEach(b => b.addEventListener('click', () => joinCampaign(b.dataset.join)));
+  $$('#page [data-sim]').forEach(r => r.addEventListener('input', () => {
+    simPct[r.dataset.sim] = Number(r.value);
+    /* re-render just this card so the slider keeps focus and position */
+    const c = cat(r.dataset.sim);
+    const card = r.closest('.pl');
+    card.outerHTML = pledgeCard(c);
+    bind();
+    const again = $(`#page [data-sim="${c.id}"]`);
+    if(again) again.focus();
+  }));
+}
+
+function pledge(id, on){
+  const c = cat(id);
+  const v = myVolMio(c);
+  if(on && !MINE.has(id)){
+    MINE.add(id); c.pledged += v; c.pledgeMembers += 1;
+  }else if(!on && MINE.has(id)){
+    MINE.delete(id); c.pledged -= v; c.pledgeMembers -= 1;
+  }
+  const now = rateOf(c);
+  const implied = rateAt(c, c.pledged);
+  const hold = c.tiers.find(t => t.r >= now && c.pledged < t.v);
+  const gap = hold ? hold.v - c.pledged : 0;
+  const msg = on
+    ? `Pledged ${fmt(mySpend(c))} kr. of ${c.n.toLowerCase()} volume. ${fmt(c.pledgeMembers)} members have now
+       pledged ${mioTxt(c.pledged)}. ${gap > 0
+        ? `${mioTxt(gap)} still needed to hold −${rt(now)}%.`
+        : `That covers the −${rt(implied)}% tier.`}`
+    : `Pledge withdrawn. Pledged volume back to ${mioTxt(c.pledged)} from ${fmt(c.pledgeMembers)} members.`;
+  announce(msg);
+  render();
+  if(on) showToast('Volume pledged',
+    `Your ${fmt(mySpend(c))} kr. is on the table for the ${niceDate(c.talks.date)} talks. Pledged total:
+     <b>${mioTxt(c.pledged)}</b> from ${fmt(c.pledgeMembers)} members.`);
+}
+
+function joinCampaign(id){
+  const c = cat(id);
+  const before = rateOf(c);
+  ACTIVE.add(id);
+  c.consMio += myVolMio(c);
+  c.campMembers += 1;
+  const after = rateOf(c);
+  const nt = nextTier(c, c.consMio);
+  announce(`Your ${fmt(mySpend(c))} kr. of ${c.n.toLowerCase()} spend joined the group agreement.
+    Consolidated volume is now ${mioTxt(c.consMio)}.
+    ${after > before ? `The group crossed a tier — the rate is now −${rt(after)}%.`
+      : nt ? `${mioTxt(nt.v - c.consMio)} still needed for −${rt(nt.r)}%.` : ''}`);
+  render();
+  showToast('Volume consolidated',
+    `You are now buying ${c.n.toLowerCase()} on the group agreement at <b>−${rt(after)}%</b>, worth
+     ${fmt(mySave(c))} kr./year to you — and ${mioTxt(myVolMio(c))} to the group's tier.`);
+}
+
+/* ---------------- boot ---------------- */
+applyPersona('bob');
+checkModel();
+$('#lgMembers').textContent = fmt(MEMBERS);
+$('#lgPool').textContent = big(poolTotal());
+$('#lgTalks').textContent = String(CATS.filter(c => c.talks).length);
+</script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+{
+  "meta": {
+    "product": "Advantage",
+    "artifact": "Customer journey — v1",
+    "date": "2026-08-21",
+    "sources": [
+      "Miro — journey alignment board (design sprint, what the team landed on)",
+      "advantage-v2-visual.html — current interactive prototype"
+    ],
+    "prototype": {
+      "file": "../advantage-v2-visual.html",
+      "note": "Each stage lists the prototype views and JS hooks that cover it, so this spec can drive a guided-tour / scenario mode inside the prototype.",
+      "views": {
+        "s-login": "Login — persona choice",
+        "viewDash": "Overview dashboard (situation + opportunities + activity rail)",
+        "viewNewCustomer": "New-customer dashboard (peer benchmark, estimated figures)",
+        "viewSup": "Suppliers",
+        "viewOpp": "Opportunity detail / business case",
+        "viewCatTab": "Category tab (opens in new tab)",
+        "viewDataCenter": "Data center — connect spend data",
+        "viewSavings": "Savings dashboard"
+      },
+      "hooks": {
+        "login": "loginAs('bob'|'fanny')",
+        "openSavings": "openSavings()",
+        "openDataCenter": "openDataCenter()",
+        "openOpportunity": "openOpportunity(kind, catId, agrIdx)",
+        "businessCase": "openCase()",
+        "assistant": "askAssistant(question) / toggleAgent(true)",
+        "notifications": "renderNotes()",
+        "categoryTab": "catTabUrl(catId)"
+      }
+    },
+    "coverageScale": {
+      "built": "Fully represented in advantage-v2-visual.html",
+      "partial": "Present but incomplete — see gaps",
+      "missing": "Not in this prototype (may exist in another file)"
+    }
+  },
+  "personas": [
+    {
+      "id": "bob",
+      "name": "Bob Iversen",
+      "company": "Nordvik Byg A/S",
+      "type": "existing",
+      "summary": "Existing customer, all data connected. Sees verified figures from day one; his journey starts at stage 3–4 on most visits.",
+      "loginHook": "loginAs('bob')"
+    },
+    {
+      "id": "fanny",
+      "name": "Fanny Kristensen",
+      "company": "Kristensen Elektro ApS",
+      "type": "new",
+      "summary": "New customer, no data yet. Lands on peer-benchmark estimates (electrical contracting, 148 peers) — the anti-cold-start strategy. Stages 1–3 decide whether she connects data and stays.",
+      "loginHook": "loginAs('fanny')"
+    }
+  ],
+  "phases": [
+    { "id": "enter", "title": "Get in & connect", "stages": ["log-in", "connect-spend-data"] },
+    { "id": "understand", "title": "Understand", "stages": ["understand-current-position", "see-realized-potential-value"] },
+    { "id": "act", "title": "Act on savings", "stages": ["discover-opportunity", "review-business-case", "evaluate", "decide"] },
+    { "id": "sustain", "title": "Sustain the loop", "stages": ["prove-value", "prioritize-next-opportunity"] }
+  ],
+  "stages": [
+    {
+      "id": "log-in",
+      "index": 1,
+      "phase": "enter",
+      "title": "Log in",
+      "userGoal": "Get into the portal quickly — driven by a specific need, a notification, or wanting an overview.",
+      "doing": [
+        "Logs into the portal because they have a specific need, received a notification, or want an overview."
+      ],
+      "thinking": "I want to get to the thing that brought me here, not to a generic start page.",
+      "feeling": { "bob": { "score": 3, "label": "purposeful" }, "fanny": { "score": 3, "label": "curious" } },
+      "touchpoints": ["Portal login", "Email / push notification deep link"],
+      "systemBehavior": [
+        "Notifications should deep-link into the relevant view (savings, opportunity, agreement change), not just to the dashboard."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "s-login", "name": "Login — persona choice", "hook": "loginAs('bob'|'fanny')" }
+        ],
+        "notes": "Prototype login is a persona picker that lands straight on the right dashboard. Real authentication and notification deep-links are out of scope here."
+      },
+      "gaps": [
+        "Notification → deep-link entry path is not demonstrated; every session starts at the dashboard."
+      ],
+      "personaNotes": {
+        "bob": "Returning with intent — often triggered by a notification.",
+        "fanny": "First visit; the login promise ('your invoices already know where the money is going') sets expectations."
+      }
+    },
+    {
+      "id": "connect-spend-data",
+      "index": 2,
+      "phase": "enter",
+      "title": "Connect spend data",
+      "userGoal": "Give the product real data with the least effort and risk, so figures become exact instead of estimated.",
+      "doing": [
+        "Decides whether to connect to the ERP or upload a spend report."
+      ],
+      "thinking": "Is this worth the effort? What do I get if I connect, and what happens to my data?",
+      "feeling": { "bob": { "score": 4, "label": "already done" }, "fanny": { "score": 2, "label": "hesitant — effort & trust hurdle" } },
+      "touchpoints": ["Data center", "ERP connector", "Spend report upload"],
+      "systemBehavior": [
+        "If connected to the ERP, the product can notice procurement made outside of agreements and suggest suppliers that fit.",
+        "Until data is connected, figures are peer-based estimates and clearly marked as such (estimated vs verified)."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewDataCenter", "name": "Data center — connect methods", "hook": "openDataCenter()" },
+          { "view": "viewNewCustomer", "name": "Rail action: 'Connect your accounting data'", "hook": "railData()" }
+        ],
+        "notes": "v2-visual still ships the CSS for the dedicated onboarding screens (Sources, Loading/analyzing, Data set confirm, CEO welcome) but their markup was removed — the full connect flow lives in advantage-onboarding.html. Here, connecting is reachable via the Data center only."
+      },
+      "gaps": [
+        "End-to-end connect flow (choose source → analyze → confirm data set → value reveal) is not walkable in this file.",
+        "Off-agreement procurement detection (the ERP payoff) is described but not shown."
+      ],
+      "personaNotes": {
+        "bob": "Skips this stage — data already connected (all figures verified).",
+        "fanny": "The critical conversion moment: estimates must be compelling enough to justify connecting."
+      }
+    },
+    {
+      "id": "understand-current-position",
+      "index": 3,
+      "phase": "understand",
+      "title": "Understand current position",
+      "userGoal": "See my procurement situation at a glance — agreements, suppliers, spend — without doing analysis myself.",
+      "doing": [
+        "Reviews the company's current agreements, suppliers, purchasing spend and overall procurement situation."
+      ],
+      "thinking": "Does this picture match reality? Can I trust these numbers?",
+      "feeling": { "bob": { "score": 4, "label": "oriented" }, "fanny": { "score": 3, "label": "surprised it's not empty" } },
+      "touchpoints": ["Overview dashboard", "Suppliers view", "Category tabs", "Welcome modal (estimated vs verified)"],
+      "systemBehavior": [
+        "Present what similar companies are doing based on AI analysis, so new customers never see a cold, empty start.",
+        "First login shows a one-time explainer for estimated vs verified data before a benchmark number can be mistaken for a real one."
+      ],
+      "prototype": {
+        "coverage": "built",
+        "screens": [
+          { "view": "viewDash", "name": "Situation section + greeting", "hook": "renderSituation()" },
+          { "view": "viewNewCustomer", "name": "Peer benchmark dashboard (148 peers)", "hook": "renderNewCustomerDash()" },
+          { "view": "viewSup", "name": "Suppliers", "hook": "renderSup()" },
+          { "view": "viewDash", "name": "Welcome modal — estimated vs verified", "hook": "openWelcome()" }
+        ],
+        "notes": "The anti-cold-start decision from the sprint is implemented: Fanny lands on peer-based estimates for her industry and size."
+      },
+      "gaps": [],
+      "personaNotes": {
+        "bob": "Verified agreements, suppliers and spend from his own invoices.",
+        "fanny": "Everything is an estimate from her peer group — dashed/estimated styling carries the honesty."
+      }
+    },
+    {
+      "id": "see-realized-potential-value",
+      "index": 4,
+      "phase": "understand",
+      "title": "See realized & potential value",
+      "userGoal": "Understand what Advantage has already saved me and what's still on the table.",
+      "doing": [
+        "Uses the Savings Dashboard to understand realized savings, potential savings, spend through agreements and accumulated customer bonus.",
+        "Reviews notifications about new savings opportunities, agreement changes, achieved savings or decisions requiring attention."
+      ],
+      "thinking": "This is what the service is worth to us. What needs my attention?",
+      "feeling": { "bob": { "score": 5, "label": "value reveal — the peak" }, "fanny": { "score": 4, "label": "motivated by potential" } },
+      "touchpoints": ["Savings dashboard", "Notifications", "Savings toast"],
+      "systemBehavior": [
+        "Realized vs potential is always shown as one story (the sketches' '7 mil NOK' reveal).",
+        "Notifications are relevance-filtered: new opportunities, agreement changes, achieved savings, decisions pending."
+      ],
+      "prototype": {
+        "coverage": "built",
+        "screens": [
+          { "view": "viewSavings", "name": "Savings dashboard", "hook": "openSavings()" },
+          { "view": "viewDash", "name": "Notifications drawer", "hook": "renderNotes()" },
+          { "view": "viewDash", "name": "Savings toast", "hook": "showToast(amount)" }
+        ],
+        "notes": "Realized, potential, spend-through-agreements and customer bonus are all present."
+      },
+      "gaps": [],
+      "personaNotes": {
+        "bob": "Peak moment of the journey — verified realized savings plus bonus.",
+        "fanny": "Sees potential only; the number is the argument for connecting data."
+      }
+    },
+    {
+      "id": "discover-opportunity",
+      "index": 5,
+      "phase": "act",
+      "title": "Discover opportunity",
+      "userGoal": "Find where we can cut costs or get better terms — without hunting for it.",
+      "doing": [
+        "Sees proactively identified categories where the company could reduce costs, improve terms or move more spend to Advantage agreements.",
+        "Uses the AI Procurement Agent to understand opportunities, ask questions and identify where to focus next."
+      ],
+      "thinking": "Which of these is worth my limited time?",
+      "feeling": { "bob": { "score": 4, "label": "engaged" }, "fanny": { "score": 4, "label": "guided" } },
+      "touchpoints": ["Weekly discovery (hero nav)", "Dashboard opportunities section", "Saving assistant (AI agent)"],
+      "systemBehavior": [
+        "Opportunities are proactively surfaced and ranked, not searched for.",
+        "The agent answers 'where should we focus next?' with reasons grounded in the company's own data."
+      ],
+      "prototype": {
+        "coverage": "built",
+        "screens": [
+          { "view": "viewDash", "name": "Opportunities section + viz", "hook": "renderOppViz()" },
+          { "view": "viewDash", "name": "Weekly discovery (nav hero: '4 new findings')", "hook": "NAV[discover]" },
+          { "view": "viewDash", "name": "Saving assistant panel", "hook": "askAssistant(q) / toggleAgent(true)" }
+        ],
+        "notes": "Both discovery modes from the Miro board (proactive categories + conversational agent) are in the prototype."
+      },
+      "gaps": [],
+      "personaNotes": {
+        "bob": "Weekly discovery cadence — findings since Monday.",
+        "fanny": "'Easy first win' framing (widest rate gap in her trade) lowers the entry bar."
+      }
+    },
+    {
+      "id": "review-business-case",
+      "index": 6,
+      "phase": "act",
+      "title": "Review business case",
+      "userGoal": "See the concrete case for one opportunity: what we spend, what we'd save, and why this is relevant to us.",
+      "doing": [
+        "Reviews potential savings, current spend, recommended agreement, expected value and why the opportunity is relevant."
+      ],
+      "thinking": "Show me the numbers and the reasoning — is this credible?",
+      "feeling": { "bob": { "score": 4, "label": "focused" }, "fanny": { "score": 3, "label": "weighing credibility" } },
+      "touchpoints": ["Opportunity detail", "Business case dialog", "Category tab hero"],
+      "systemBehavior": [
+        "Every recommendation explains 'why relevant' — grounded in the company's spend, not generic.",
+        "Method and timeline are available but folded away once read, keeping the saving and agreements in front."
+      ],
+      "prototype": {
+        "coverage": "built",
+        "screens": [
+          { "view": "viewOpp", "name": "Opportunity detail", "hook": "openOpportunity(kind, catId, agrIdx)" },
+          { "view": "viewOpp", "name": "Business case dialog (e.g. 1.2 mil NOK / yr)", "hook": "openCase()" },
+          { "view": "viewCatTab", "name": "Category tab hero with saving", "hook": "catTabUrl(catId)" }
+        ],
+        "notes": "Matches the sketches' business-case card ('1.2 mil NOK / yr' → 'Ready to decide?')."
+      },
+      "gaps": [],
+      "personaNotes": {
+        "bob": "Case built on verified spend.",
+        "fanny": "Case built on estimates — needs the estimated-marking to stay honest here too."
+      }
+    },
+    {
+      "id": "evaluate",
+      "index": 7,
+      "phase": "act",
+      "title": "Evaluate",
+      "userGoal": "Judge whether switching supplier or agreement actually makes business sense for us.",
+      "doing": [
+        "Assesses whether changing supplier or agreement makes business sense based on savings, terms, risk, effort and other business considerations."
+      ],
+      "thinking": "Savings are one thing — what about terms, switching effort, delivery risk, existing relationships?",
+      "feeling": { "bob": { "score": 3, "label": "deliberate, slightly skeptical" }, "fanny": { "score": 3, "label": "needs reassurance" } },
+      "touchpoints": ["Opportunity detail (method / timeline folds)", "Saving assistant Q&A"],
+      "systemBehavior": [
+        "The agent should answer evaluation questions (terms, risk, effort) — not only savings math."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewOpp", "name": "Method & timeline folds", "hook": "opp-fold sections" },
+          { "view": "viewDash", "name": "Assistant follow-up questions", "hook": "agentAsk(text)" }
+        ],
+        "notes": "Savings and method are covered; the broader business considerations are only reachable by asking the agent."
+      },
+      "gaps": [
+        "No explicit terms / risk / switching-effort comparison in the business case — the Miro board names these as decision inputs.",
+        "No side-by-side of current agreement vs recommended agreement."
+      ],
+      "personaNotes": {
+        "bob": "May involve colleagues — the case needs to be shareable/exportable eventually.",
+        "fanny": "Evaluation doubles as evaluation of Advantage itself."
+      }
+    },
+    {
+      "id": "decide",
+      "index": 8,
+      "phase": "act",
+      "title": "Decide",
+      "userGoal": "Commit with an appropriate level of effort: proceed, get an offer, approve the switch — or hand it to an advisor.",
+      "doing": [
+        "Decides whether to proceed with the opportunity, request an offer, approve a switch or involve an Advantage advisor."
+      ],
+      "thinking": "What exactly happens when I press this? Can I undo it? Who does the work?",
+      "feeling": { "bob": { "score": 3, "label": "commitment tension" }, "fanny": { "score": 3, "label": "prefers the advisor" } },
+      "touchpoints": ["Opportunity CTAs", "Advisor contact section"],
+      "systemBehavior": [
+        "Every decision path is low-risk framed: requesting an offer or involving an advisor commits to nothing.",
+        "Decisions requiring attention resurface via notifications (stage 4) if parked."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewOpp", "name": "Decision CTAs on opportunity", "hook": "wireOppCommon(askText)" },
+          { "view": "viewOpp", "name": "Advisor contact block", "hook": "opp-contact section" }
+        ],
+        "notes": "CTAs and advisor path exist; what happens after the click is not shown."
+      },
+      "gaps": [
+        "No post-decision state: confirmation, expected next steps, status tracking of a requested offer or switch.",
+        "No visible distinction in commitment level between 'request offer' and 'approve switch'."
+      ],
+      "personaNotes": {
+        "bob": "Wants self-serve approval with a clear undo window.",
+        "fanny": "First decision will likely go through the advisor — that path builds trust."
+      }
+    },
+    {
+      "id": "prove-value",
+      "index": 9,
+      "phase": "sustain",
+      "title": "Prove value",
+      "userGoal": "Show (to myself and internally) that the decisions paid off — and stay compliant while doing it.",
+      "doing": [
+        "Sees accumulated and paid customer bonus as an additional part of the value generated through the agreements.",
+        "Accesses relevant supplier and compliance documentation when needed, including documentation related to the Transparency Act."
+      ],
+      "thinking": "I can defend this internally: here's what we saved, here's the bonus, here's the paperwork.",
+      "feeling": { "bob": { "score": 5, "label": "trust & pride" }, "fanny": { "score": 4, "label": "first proof point" } },
+      "touchpoints": ["Savings dashboard (bonus)", "Supplier / compliance documentation", "Reports"],
+      "systemBehavior": [
+        "Bonus is presented as accumulated and paid — value beyond the price savings.",
+        "Compliance documentation (incl. Transparency Act / Åpenhetsloven) is retrievable per supplier when needed."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewSavings", "name": "Accumulated & paid customer bonus", "hook": "renderSavings()" }
+        ],
+        "notes": "Bonus is in the savings dashboard; documentation is not in this prototype (Reports nav item is a stub)."
+      },
+      "gaps": [
+        "Supplier & compliance documentation (Transparency Act) has no screen anywhere in v2-visual.",
+        "No export/share of the value story for internal reporting."
+      ],
+      "personaNotes": {
+        "bob": "Uses bonus + realized savings as the renewal argument.",
+        "fanny": "Her first registered saving is the moment the estimates become real."
+      }
+    },
+    {
+      "id": "prioritize-next-opportunity",
+      "index": 10,
+      "phase": "sustain",
+      "title": "Prioritize next opportunity",
+      "userGoal": "Let results and recommendations tell me what to optimize next — keep the loop going without effort.",
+      "doing": [
+        "Uses realized results and AI recommendations to decide which purchasing category or agreement to optimize next."
+      ],
+      "thinking": "That worked — what's next? Keep them coming.",
+      "feeling": { "bob": { "score": 4, "label": "confident, forward-looking" }, "fanny": { "score": 4, "label": "converted to the loop" } },
+      "touchpoints": ["Weekly discovery", "Next best actions rail", "Notifications"],
+      "systemBehavior": [
+        "The customer gets notified when new suppliers matching their spending data are added.",
+        "The customer is notified when savings potential is registered that isn't being utilized."
+      ],
+      "prototype": {
+        "coverage": "partial",
+        "screens": [
+          { "view": "viewDash", "name": "Next best actions rail", "hook": "railData()" },
+          { "view": "viewDash", "name": "Weekly discovery findings", "hook": "NAV[discover]" },
+          { "view": "viewDash", "name": "Notifications", "hook": "renderNotes()" }
+        ],
+        "notes": "The ingredients exist; the loop (this realized result → therefore this next recommendation) is not made explicit."
+      },
+      "gaps": [
+        "New-supplier-match and unused-potential notifications are named on the board but not simulated.",
+        "Recommendations don't visibly reference realized results ('office supplies saved 19% — flooring shows the same pattern')."
+      ],
+      "personaNotes": {
+        "bob": "This stage closes his loop back to stage 4/5 on the next visit.",
+        "fanny": "Once here, she has become Bob."
+      }
+    }
+  ]
+}

@@ -1,0 +1,2108 @@
+<!doctype html>
+<!--
+  ============================================================================
+  ADVANTAGE — ALT 2 · "THE TRUST MACHINE"
+  ============================================================================
+
+  THESIS (2 sentences)
+  Everything Advantage shows Fanny is a machine-generated claim about her own
+  business, made from sector, size, location and scraped industry data, so the
+  product's only real job is to make those claims checkable. Every pixel must
+  therefore either build trust or spend it: this version deletes the surface
+  that spends it and replaces it with an evidence system — provenance on every
+  number, the peer distribution instead of a median, error bars that visibly
+  narrow, a published track record of our own misses, and a first-class way for
+  the customer to say "that's wrong" and change the model.
+
+  REMOVED from advantage-v2-visual.html — and why
+  · The semicircle savings gauge. It renders a best-case ceiling (35%) with the
+    visual grammar of a forecast. A dial reads as "where you are"; this was
+    "where nobody is". It is the single most misleading element on v2.
+  · The "Easy deal — 35% discount" promo tile. Advertising inside a financial
+    statement. It taught the reader that some numbers here are being sold to
+    her, which retroactively taints the honest ones.
+  · "Savings potential up to 35%" as a headline stat. "Up to" hedges without
+    quantifying: it cannot be wrong, so it cannot be trusted. Replaced by a
+    confidence-weighted total with an explicit ± and a P25 option.
+  · The three generic saving-assistant tips (and the assistant panel that
+    carried them). Assertions with no evidence attached, in a product whose
+    whole problem is unattached assertions.
+  · Decorative supplier photography on the agreement/category cards. Stock
+    imagery of timber yards implies we have looked at her timber yard. Supplier
+    LOGOS stay — they are identity, not implied knowledge.
+  · The activity rail's empty state ("everything will show up here"), Weekly
+    discovery, the announcement banner and the notification bell. Four pieces
+    of chrome asking for attention on behalf of nothing.
+
+  ADDED — and why
+  · Provenance on every single figure. Every number is a real button: peer set
+    (n=, how selected), method, named inputs, and what specifically would make
+    it exact. No number without a source.
+  · The peer distribution instead of the median. A hand-authored SVG of the
+    148-company cohort with the IQR, the median tick and her own position, so a
+    range is what she reads first. A point estimate about a stranger's business
+    is a claim to knowledge we do not have.
+  · Error bars with the arithmetic exposed, that actually narrow: ±15% sector
+    only → ±8% with a spend report → ±3% with invoice history → ±0 once
+    realised and reconciled. The narrowing is the product's argument for
+    connecting data, made without a single persuasive adjective.
+  · A track record. Seven quarters of our own estimates against actual
+    outcomes, including the quarter we were 4,8% low and why. Mean absolute
+    error is computed on screen. This is the most powerful trust device
+    available and v2 has none of it.
+  · "Challenge this number" as a first-class affordance. She supplies the
+    correction, the model recomputes in front of her, the correction is logged
+    and reversible, and the category's error bar changes. Disagreement is data.
+  · Confidence-weighted totals with a median / conservative (P25) switch that
+    really recomputes — including the volume bonus, which is tiered and so does
+    not scale linearly. Verified personas cannot take a percentile of a
+    measurement, and the control says so.
+  · A method page in plain language that names the sources, including the
+    scraped ones (supplier web-shop list prices, crawled weekly) and the
+    minimum-cell rule that protects the cohort.
+
+  STRONGEST OBJECTION TO THIS VERSION
+  Nobody asked for an audit. Fanny opened a procurement product to find money,
+  and this page answers with quartiles, calibration error and a method page —
+  it is possible that honesty at this density reads as hedging, that showing
+  "we were 6,2% high in Q3 2024" simply teaches her the numbers are unreliable,
+  and that a cheerful gauge saying "35%" converts more people into connecting
+  their ERP, at which point they get exact numbers anyway and the deception was
+  temporary. The counter-argument is that this only holds for the first
+  session: the gauge's credibility is spent once, on someone who cannot yet
+  check it, and cannot be re-earned. But the objection is real, and it is an
+  empirical question this prototype does not settle.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — Evidence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap">
+<style>
+/* ==========================================================================
+   Advantage Design System — tokens copied verbatim from advantage-v2-visual.html
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+
+  --sidebar-border:#e0e0e0;
+
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  /* 8pt spacing scale — note there is deliberately no --s5/--s7/--s9/--s10:
+     in-between values are written var(--s5,20px) with an explicit fallback,
+     because an unresolved var() silently voids the whole declaration. */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+
+  --hairline:#ececec;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  --t-slow:.5s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{font-family:var(--font-body);background:var(--surface);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-5xl);letter-spacing:-1.2px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active:not([disabled]){transform:translateY(1px)}
+.btn[disabled]{cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover:not([disabled]){background:#1553bb}
+.btn-primary[disabled]{background:var(--general-muted);color:#a3a3a3;box-shadow:none}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border)}
+.btn-secondary[disabled]{background:var(--general-muted);border-color:transparent;color:#8f8f8f;box-shadow:none}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3);height:36px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs)}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.4}
+.chip svg{width:12px;height:12px}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-good{background:#d9f2ef;color:var(--sentiment-positive)}
+.chip-warn{background:#fff2e0;color:#a35c00}
+.est-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground);font-size:11px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.est-chip svg{width:11px;height:11px;flex:0 0 auto}
+.est-chip.est{background:#fff2e0;color:#a35c00}
+.est-chip.ver{background:#d9f2ef;color:var(--sentiment-positive)}
+.est-chip.dec{background:var(--general-secondary);color:#123f8c}
+
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-sm)}
+
+/* ==========================================================================
+   LOGIN — same pattern as v2
+   ========================================================================== */
+.flow{min-height:100vh;display:flex;flex-direction:column}
+.stage{flex:1 1 auto;display:flex;flex-direction:column}
+.scr{display:none;flex:1 1 auto}
+.scr.on{display:flex;flex-direction:column}
+.scr.on.mid{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;align-content:center;
+  padding:var(--s12) var(--s6)}
+.scr.on>*{animation:rise var(--t-slow) both;min-width:0}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.login{width:420px;max-width:100%;text-align:center}
+.login .mark{height:40px;width:auto;margin:0 auto var(--s8)}
+.login h1{font-size:var(--text-5xl);letter-spacing:-2px}
+.lead{font-size:var(--text-lg);color:var(--general-muted-foreground);line-height:1.55;
+  max-width:52ch;margin-top:var(--s3)}
+.login .lead{font-size:var(--text-base);margin:var(--s3) auto 0;max-width:36ch;text-align:center}
+.login .card{margin-top:var(--s12);padding:var(--s8);text-align:left}
+.login-choice{display:flex;flex-direction:column;gap:var(--s3)}
+.login-persona{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  cursor:pointer;text-align:left;transition:var(--t-fast)}
+.login-persona:hover,.login-persona:focus-visible{border-color:var(--general-border);background:var(--brand-ice)}
+.login-persona-av{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.login-persona:hover .login-persona-av{background:var(--surface)}
+.login-persona-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.login-persona-txt b{font-size:var(--text-sm);font-weight:600}
+.login-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+.login-persona-go{flex:0 0 auto;width:16px;height:16px;color:#a3a3a3;transition:color var(--t-fast)}
+.login-persona:hover .login-persona-go,.login-persona:focus-visible .login-persona-go{color:var(--general-primary)}
+.tinyfoot{margin-top:var(--s6);font-size:var(--text-xs);color:#8f8f8f;text-align:center}
+
+/* ==========================================================================
+   APP SHELL — wrap / appbar / rail / canvas / page, as v2
+   ========================================================================== */
+body.in-app{background:var(--brand-midnight);overflow:hidden}
+body.in-app .flow{display:none}
+.app{display:none;flex-direction:column;height:100vh;height:100dvh}
+.app.on{display:flex;animation:rise var(--t-slow) both}
+.wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--surface);
+  border-radius:var(--rounded-2xl) var(--rounded-2xl) 0 0;overflow:hidden;
+  box-shadow:0 -1px 0 #ffffff1a,var(--shadow-xl);margin-top:var(--s3)}
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s3);height:68px;padding:0 var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.appbar .brand{display:flex;align-items:center;flex:0 0 auto}
+.appbar .brand img{height:28px;width:auto;display:block}
+.appbar .spacer{flex:1}
+.basis{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s3);
+  background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  box-shadow:var(--shadow-2xs);cursor:pointer;transition:var(--t-fast);text-align:left}
+.basis:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.basis .dot{width:8px;height:8px;flex:0 0 auto;border-radius:var(--rounded-full);
+  background:var(--general-accent)}
+.basis.verified .dot{background:var(--sentiment-positive)}
+.basis .bt{display:flex;flex-direction:column;line-height:1.25}
+.basis .bt b{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
+.basis .bt span{font-size:13px;color:var(--general-muted-foreground);font-family:var(--font-mono);
+  white-space:nowrap}
+@media(max-width:1100px){.basis .bt span{display:none}}
+.userwrap{position:relative;flex:0 0 auto}
+.user{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s2);background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);transition:var(--t-fast)}
+.user:hover{background:var(--general-muted)}
+.user .uav{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;color:#fff;font-family:var(--font-sans);font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,#2170ed,#0b00ab)}
+.user .un{font-size:var(--text-xs);font-weight:600;text-align:left;line-height:1.25;white-space:nowrap}
+.user .un span{display:block;font-weight:400;color:var(--general-muted-foreground)}
+.user .uc{width:14px;height:14px;color:var(--general-muted-foreground)}
+@media(max-width:1000px){.user .un{display:none}}
+.upop{position:absolute;top:calc(100% + 8px);right:0;z-index:35;width:260px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.upop.on{opacity:1;transform:none;pointer-events:auto}
+.up-h{padding:var(--s4);border-bottom:1px solid var(--hairline)}
+.up-h b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.up-h span{display:block;font-size:13px;color:var(--general-muted-foreground);margin-top:1px}
+.up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
+  background:none;border:none;cursor:pointer;text-align:left;font-size:var(--text-sm);
+  transition:var(--t-fast)}
+.up-i:hover{background:var(--general-muted)}
+.up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.up-sep{padding:var(--s3) var(--s4) var(--s1);border-top:1px solid var(--hairline);margin-top:var(--s1)}
+.up-sep span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.up-persona-av{flex:0 0 auto;width:28px;height:28px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:12px;font-weight:600}
+.up-persona-txt{display:flex;flex-direction:column;min-width:0}
+.up-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+.up-f{padding:0 var(--s4) var(--s4);font-size:13px;color:#a3a3a3}
+
+.appbody{flex:1 1 auto;min-height:0;display:flex}
+.rail{flex:0 0 auto;width:236px;display:flex;flex-direction:column;padding:var(--s4) var(--s3);
+  border-right:1px solid var(--hairline);transition:width var(--t)}
+.rail.mini{width:76px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-height:0}
+.ni{position:relative;display:flex;align-items:center;gap:var(--s3);width:100%;height:44px;
+  padding:0 var(--s3);background:none;border:none;cursor:pointer;border-radius:var(--rounded-md);
+  font-size:var(--text-sm);font-weight:500;text-align:left;
+  transition:background-color var(--t-fast),color var(--t-fast)}
+.ni:hover{background:var(--general-muted)}
+.ni.on{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
+.ni .nic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center}
+.ni .nic svg{width:20px;height:20px}
+.ni .nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:opacity var(--t-fast)}
+.ni .nb{flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--general-secondary);color:#123f8c;
+  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.rail.mini .ni{justify-content:center;padding:0}
+.rail.mini .ni .nt{opacity:0;width:0;flex:0 0 0}
+.rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:13px}
+.rail.mini .ni::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
+  transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
+  white-space:nowrap;pointer-events:none;opacity:0;z-index:5;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.rail.mini .ni:hover::after,.rail.mini .ni:focus-visible::after{opacity:1;transform:translateY(-50%)}
+.railtog{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;height:40px;margin-top:var(--s3);
+  padding:0 var(--s3);background:none;border:none;border-top:1px solid var(--hairline);cursor:pointer;
+  color:var(--general-muted-foreground);font-size:var(--text-xs);font-weight:500;
+  transition:color var(--t-fast)}
+.railtog:hover{color:var(--general-foreground)}
+.railtog svg{width:20px;height:20px;flex:0 0 auto;transition:transform var(--t)}
+.rail.mini .railtog{justify-content:center;padding:0}
+.rail.mini .railtog svg{transform:rotate(180deg)}
+.rail.mini .railtog span{display:none}
+
+.canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--surface)}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:var(--s12) var(--s8) var(--s16);
+  display:flex;flex-direction:column;gap:var(--s12)}
+@media(max-width:760px){.page{padding:var(--s8) var(--s4) var(--s12)}}
+
+/* ==========================================================================
+   EVIDENCE COMPONENTS
+   ========================================================================== */
+.phead{display:flex;flex-direction:column;gap:var(--s3);align-items:flex-start}
+.phead h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+.phead p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:68ch}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:var(--text-xs);font-weight:600;
+  letter-spacing:.02em;color:var(--general-primary)}
+.eyebrow i{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--general-primary)}
+
+.sec{display:flex;flex-direction:column;gap:var(--s6)}
+.sec-h{display:flex;align-items:flex-end;gap:var(--s4);flex-wrap:wrap;
+  padding-bottom:var(--s3);border-bottom:1px solid var(--hairline)}
+.sec-h h2{font-size:var(--text-xl);letter-spacing:-.5px}
+.sec-h .spacer{flex:1}
+.sec-h p{flex:1 1 100%;font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground);
+  max-width:78ch}
+
+/* a figure that carries its provenance — the whole number is the button */
+.fig{display:inline-flex;align-items:baseline;gap:6px;padding:1px 2px;background:none;border:none;
+  cursor:pointer;font:inherit;color:inherit;border-radius:var(--rounded-xs);
+  border-bottom:1px dashed var(--general-border);transition:var(--t-fast)}
+.fig:hover{border-bottom-color:var(--general-primary);background:var(--brand-ice)}
+.fig[aria-expanded="true"]{background:var(--brand-ice);border-bottom-color:var(--general-primary)}
+.fig .fv{font-family:var(--font-sans);font-weight:600;font-variant-numeric:tabular-nums;
+  letter-spacing:-.3px}
+.fig .fu{font-size:var(--text-xs);color:var(--general-muted-foreground);font-weight:400}
+.fig .fi{align-self:center;width:13px;height:13px;flex:0 0 auto;color:var(--general-primary);opacity:.75}
+.fig-xl .fv{font-size:var(--text-5xl);letter-spacing:-1.8px;line-height:1.05}
+.fig-xl .fu{font-size:var(--text-base)}
+.fig-xl .fi{width:16px;height:16px}
+.fig-lg .fv{font-size:var(--text-2xl);letter-spacing:-.7px}
+.fig-md .fv{font-size:var(--text-lg)}
+.fig-sm .fv{font-size:var(--text-sm);font-family:var(--font-mono);letter-spacing:0}
+
+/* the confidence-weighted headline */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:var(--s8);
+  padding:var(--s8);border:1px solid var(--general-border);border-radius:var(--rounded-xl);
+  background:linear-gradient(160deg,#f7fbff,var(--surface) 60%);box-shadow:var(--shadow-xs)}
+@media(max-width:900px){.hero{grid-template-columns:1fr}}
+.hero-l{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
+.hero-lbl{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.hero-band{display:flex;align-items:baseline;gap:var(--s2);flex-wrap:wrap;font-size:var(--text-sm);
+  color:var(--general-muted-foreground)}
+.hero-band b{font-family:var(--font-mono);font-weight:600;color:var(--general-foreground)}
+.hero-note{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground);max-width:46ch}
+.hero-acts{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s2)}
+.hero-r{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
+.kv{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s4);
+  padding:var(--s3) 0;border-bottom:1px solid var(--hairline)}
+.kv:last-child{border-bottom:none}
+.kv .k{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.kv .v{display:flex;align-items:baseline;gap:var(--s2);white-space:nowrap}
+
+/* segmented control */
+.seg{display:inline-flex;padding:3px;gap:2px;border-radius:var(--rounded-full);
+  background:var(--general-muted)}
+.seg button{height:30px;padding:0 var(--s4);border:none;background:none;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-xs);font-weight:600;
+  color:var(--general-muted-foreground);transition:var(--t-fast)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--general-foreground);
+  box-shadow:var(--shadow-xs)}
+.seg button[disabled]{opacity:.45;cursor:not-allowed}
+
+/* plots */
+.plot{border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  box-shadow:var(--shadow-xs);padding:var(--s6);display:flex;flex-direction:column;gap:var(--s4)}
+.plot svg{display:block;width:100%;height:auto;overflow:visible}
+.plot-legend{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s6);font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.plot-legend span{display:inline-flex;align-items:center;gap:6px}
+.plot-legend i{width:14px;height:0;border-top-width:3px;border-top-style:solid;display:block}
+.plot-legend i.sw{height:10px;border:none;border-radius:2px}
+.plot-foot{font-size:var(--text-xs);line-height:1.6;color:var(--general-muted-foreground)}
+.plot-foot b{color:var(--general-foreground);font-weight:600}
+
+/* tables */
+.tbl-card{min-width:0;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);box-shadow:var(--shadow-xs);overflow:hidden}
+.tbl-scroll{position:relative;overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+table.wide{min-width:720px}
+caption{text-align:left;padding:var(--s3) var(--s6);font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+th{text-align:left;padding:var(--s3) var(--s4);font-size:13px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--general-muted-foreground);font-family:var(--font-mono);
+  border-bottom:1px solid var(--hairline);white-space:nowrap;background:var(--surface)}
+th.r,td.r{text-align:right}
+th:first-child,td:first-child{padding-left:var(--s6)}
+th:last-child,td:last-child{padding-right:var(--s6)}
+td{padding:var(--s3) var(--s4);border-bottom:1px solid #f5f5f5;font-size:var(--text-sm);
+  vertical-align:middle}
+tbody tr:hover{background:#fcfcfd}
+tfoot td{border-bottom:none;border-top:1px solid var(--hairline);background:#fcfcfd;font-weight:600}
+.amt{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.cellname{display:flex;align-items:center;gap:var(--s3);min-width:0}
+.cellname b{font-weight:600}
+.cellname span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:2px}
+.logo{flex:0 0 auto;width:28px;height:28px;border-radius:var(--rounded-sm);display:grid;
+  place-items:center;overflow:hidden;border:1px solid var(--hairline)}
+.logo img{width:100%;height:100%;object-fit:contain;padding:3px}
+.logo[data-initials]{background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:11px;font-weight:700}
+.err-txt{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600}
+.err-hi{color:var(--sentiment-negative)}
+.err-lo{color:var(--general-primary)}
+.err-ok{color:var(--sentiment-positive)}
+
+/* inputs that change the error bar */
+.inputs{display:flex;flex-direction:column;gap:var(--s3)}
+.inp{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s4);cursor:pointer;
+  border:1px solid var(--hairline);border-radius:var(--rounded-md);background:var(--surface);
+  transition:var(--t-fast)}
+.inp:hover{border-color:var(--general-border);background:#fcfdff}
+.inp:has(input:checked){border-color:var(--general-border);background:var(--brand-ice)}
+.inp:has(input:disabled){opacity:.7;cursor:default}
+.inp input{width:18px;height:18px;flex:0 0 auto;margin-top:2px;accent-color:var(--general-primary)}
+.inp .it{min-width:0;display:flex;flex-direction:column;gap:3px}
+.inp .it b{font-size:var(--text-sm);font-weight:600}
+.inp .it span{font-size:var(--text-xs);line-height:1.55;color:var(--general-muted-foreground)}
+.inp .ib{margin-left:auto;flex:0 0 auto;font-family:var(--font-mono);font-size:var(--text-sm);
+  font-weight:700;color:var(--general-foreground)}
+
+/* provenance popover */
+.pop{position:fixed;z-index:80;width:min(400px,calc(100vw - 24px));max-height:min(70vh,620px);
+  overflow-y:auto;background:var(--surface);border:1px solid var(--general-border);
+  border-radius:var(--rounded-lg);box-shadow:var(--shadow-xl);padding:var(--s6);
+  display:none;flex-direction:column;gap:var(--s4)}
+.pop.on{display:flex}
+.pop-h{display:flex;align-items:flex-start;gap:var(--s3)}
+.pop-h .pt{flex:1;min-width:0}
+.pop-h .pt .pl{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.pop-h .pt h3{margin-top:2px;font-size:var(--text-xl);letter-spacing:-.5px}
+.popx{flex:0 0 auto;width:30px;height:30px;display:grid;place-items:center;background:none;border:none;
+  cursor:pointer;border-radius:var(--rounded-sm);color:var(--general-muted-foreground)}
+.popx:hover{background:var(--general-muted);color:var(--general-foreground)}
+.popx svg{width:16px;height:16px}
+.pr{display:flex;flex-direction:column;gap:var(--s1);padding-top:var(--s3);
+  border-top:1px solid var(--hairline)}
+.pr dt{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.pr dd{font-size:var(--text-sm);line-height:1.6}
+.pr dd ul{list-style:none;display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.pr dd li{position:relative;padding-left:var(--s4);font-size:var(--text-sm);line-height:1.55}
+.pr dd li::before{content:"";position:absolute;left:4px;top:9px;width:5px;height:5px;
+  border-radius:var(--rounded-full);background:var(--general-border)}
+.pop-acts{display:flex;gap:var(--s2);flex-wrap:wrap;padding-top:var(--s3);
+  border-top:1px solid var(--hairline)}
+
+/* challenge dialog */
+.scrim{position:fixed;inset:0;z-index:90;background:#0f0f0f52;opacity:0;pointer-events:none;
+  transition:opacity var(--t)}
+.scrim.on{opacity:1;pointer-events:auto}
+.dlg{position:fixed;z-index:91;left:50%;top:50%;transform:translate(-50%,-46%) scale(.98);
+  width:min(560px,calc(100vw - 24px));max-height:86vh;overflow-y:auto;
+  background:var(--surface);border-radius:var(--rounded-2xl);box-shadow:var(--shadow-xl);
+  padding:var(--s8);opacity:0;pointer-events:none;
+  transition:opacity var(--t),transform var(--t)}
+.dlg.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+.dlg h2{font-size:var(--text-2xl)}
+.dlg .dsub{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.6;
+  color:var(--general-muted-foreground)}
+.fgroup{margin-top:var(--s6)}
+.flabel{display:block;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);
+  margin-bottom:6px}
+.field{position:relative;display:flex;align-items:center;gap:var(--s2);height:48px;padding:0 var(--s4);
+  background:var(--general-input);border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);
+  box-shadow:inset 0 1px 2px #0000000a;transition:var(--t-fast)}
+.field:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.field input,.field select{flex:1;min-width:0;border:none;outline:none;background:none;
+  font-size:var(--text-base)}
+.field .suf{font-size:var(--text-sm);color:var(--general-muted-foreground);flex:0 0 auto}
+.fhelp{margin-top:6px;font-size:var(--text-xs);line-height:1.55;color:var(--general-muted-foreground)}
+.ferr{margin-top:6px;font-size:var(--text-xs);font-weight:600;color:var(--general-destructive)}
+.ferr[hidden]{display:none}
+.dlg-preview{margin-top:var(--s6);padding:var(--s4);border-radius:var(--rounded-md);
+  background:var(--brand-ice);border:1px solid var(--general-border);font-size:var(--text-sm);
+  line-height:1.6}
+.dlg-preview b{font-family:var(--font-mono);font-weight:700}
+.dlg-acts{display:flex;gap:var(--s3);justify-content:flex-end;margin-top:var(--s8);flex-wrap:wrap}
+
+/* method page */
+.prose{display:flex;flex-direction:column;gap:var(--s4);max-width:72ch}
+.prose p{font-size:var(--text-base);line-height:1.7;color:#3d3d3d}
+.prose p b{color:var(--general-foreground);font-weight:600}
+.prose h3{margin-top:var(--s4)}
+.srclist{display:flex;flex-direction:column;gap:var(--s3)}
+.src{display:flex;gap:var(--s4);padding:var(--s4);border:1px solid var(--hairline);
+  border-radius:var(--rounded-md);background:var(--surface)}
+.src .sn{flex:0 0 auto;width:26px;height:26px;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:var(--general-muted);font-family:var(--font-mono);font-size:13px;
+  font-weight:700;color:var(--general-muted-foreground)}
+.src .sb{min-width:0}
+.src .sb b{display:block;font-size:var(--text-sm);font-weight:600}
+.src .sb p{margin-top:4px;font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground)}
+.src.scraped{border-color:#ffd9ad;background:#fffaf4}
+.src.scraped .sn{background:#fff2e0;color:#a35c00}
+
+.callout{display:flex;gap:var(--s4);padding:var(--s6);border-radius:var(--rounded-lg);
+  border:1px solid var(--hairline);background:#fcfcfd}
+.callout svg{width:20px;height:20px;flex:0 0 auto;color:var(--general-primary)}
+.callout .cb{min-width:0}
+.callout .cb b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.callout .cb p{margin-top:4px;font-size:var(--text-sm);line-height:1.6;
+  color:var(--general-muted-foreground)}
+
+.empty{padding:var(--s12) var(--s6);text-align:center;border:1px dashed var(--sidebar-border);
+  border-radius:var(--rounded-lg);color:var(--general-muted-foreground);font-size:var(--text-sm)}
+.corr{display:flex;flex-direction:column;gap:var(--s3)}
+.corr-row{display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md)}
+.corr-row .cb{flex:1;min-width:0}
+.corr-row .cb b{font-size:var(--text-sm);font-weight:600}
+.corr-row .cb p{margin-top:3px;font-size:var(--text-xs);line-height:1.6;
+  color:var(--general-muted-foreground)}
+.live-region{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}
+}
+</style>
+</head>
+<body>
+
+<div class="flow">
+  <main class="stage">
+    <!-- ==================== LOGIN ==================== -->
+    <section class="scr on mid" id="s-login" aria-labelledby="h-login">
+      <div class="login">
+        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <h1 id="h-login">Welcome</h1>
+        <p class="lead">Every figure in here can be traced to where it came from — including
+          the ones we had to estimate. Choose an account.</p>
+        <div class="card login-choice">
+          <button class="login-persona" id="loginBob" type="button">
+            <span class="login-persona-av">BI</span>
+            <span class="login-persona-txt">
+              <b>Bob Iversen</b>
+              <span>Nordvik Byg A/S · ERP connected, figures measured from 1.284 invoices</span>
+            </span>
+            <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="login-persona" id="loginFanny" type="button">
+            <span class="login-persona-av">FK</span>
+            <span class="login-persona-txt">
+              <b>Fanny Kristensen</b>
+              <span>Kristensen Elektro ApS · nothing connected, figures estimated from 148 peers</span>
+            </span>
+            <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="tinyfoot">Prototype — same evidence system, two levels of certainty.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div class="app" id="app">
+  <div class="wrap">
+    <header class="appbar">
+      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="spacer"></span>
+      <button class="basis" id="basisPill" type="button"></button>
+      <button class="btn btn-ghost btn-sm" id="methodTop" type="button">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        How we know this
+      </button>
+      <div class="userwrap">
+        <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
+          <span class="uav" id="userAv">FK</span>
+          <span class="un"><span id="userName">Fanny Kristensen</span><span id="userCo">Kristensen Elektro ApS</span></span>
+          <svg class="uc" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="upop" id="userPop" role="region" aria-label="Account">
+          <div class="up-h"><b id="upName">Fanny Kristensen</b><span id="upCo">Kristensen Elektro ApS</span></div>
+          <button class="up-i" id="restartBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Restart prototype</button>
+          <div class="up-sep"><span>Demo as</span></div>
+          <button class="up-i" id="personaBob" type="button">
+            <span class="up-persona-av">BI</span>
+            <span class="up-persona-txt"><b>Bob Iversen</b><span>Measured · ERP connected</span></span>
+          </button>
+          <button class="up-i" id="personaFanny" type="button">
+            <span class="up-persona-av">FK</span>
+            <span class="up-persona-txt"><b>Fanny Kristensen</b><span>Estimated · 148 peers</span></span>
+          </button>
+          <p class="up-f">Corrections are kept per browser tab.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="appbody">
+      <nav class="rail" id="rail" aria-label="Main">
+        <div class="nav" id="nav"></div>
+        <button class="railtog" id="railTog" type="button" aria-label="Collapse navigation" aria-expanded="true">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-6 7 6 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Collapse</span>
+        </button>
+      </nav>
+
+      <main class="canvas" id="canvas">
+        <div class="page" id="page"></div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- provenance popover — one element, re-filled per figure -->
+<div class="pop" id="pop" role="dialog" aria-modal="false" aria-labelledby="popT"></div>
+
+<!-- challenge dialog -->
+<div class="scrim" id="chalScrim"></div>
+<div class="dlg" id="chal" role="dialog" aria-modal="true" aria-labelledby="chalT" aria-hidden="true"></div>
+
+<p class="live-region" id="liveRegion" role="status" aria-live="polite"></p>
+
+<script>
+"use strict";
+/* ==========================================================================
+   0 · helpers
+   ========================================================================== */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+const kr  = n => fmt(n) + ' kr.';
+/* Danish decimal comma, used for every percentage on the page */
+const dec = (n, d = 1) => n.toFixed(d).replace('.', ',');
+const pct = (n, d = 1) => dec(n, d) + '%';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const say = msg => { const l = $('#liveRegion'); if(l) l.textContent = msg; };
+
+const ICON = {
+  info:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+  dash:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3"/></svg>',
+  tick:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+};
+
+/* ==========================================================================
+   1 · the number model — one source of truth, everything else is derived
+   --------------------------------------------------------------------------
+   Per category:  saving = spend x rate / 100  (all eight land on integers)
+   The five categories with an ACTIVE framework agreement have that agreement
+   covering the whole category spend, which is why "covered volume" equals
+   their summed spend and "realised" equals their summed saving. The three
+   without one are "leaking": their agreements are candidates, each covering a
+   named slice of the spend, and those slices sum to the category exactly.
+
+   Agreement count is DERIVED (agrCount()) rather than asserted: the named
+   catalogue below contains 22 agreements, of which 5 are active. A page whose
+   whole argument is "no number without a source" cannot print a count that
+   disagrees with the list underneath it.
+   ========================================================================== */
+const CATS = [
+  {id:'mat', n:'Building materials', spend:2132300, rate:9, sup:18, inv:424,
+   active:'Stark Byggecenter',
+   agr:[{n:'Stark Byggecenter'},{n:'Bygma Framework'},{n:'Ahlsell Nordic'},
+        {n:'Optimera Erhverv'},{n:'Saint-Gobain Frame'}]},
+  {id:'tool', n:'Tools & workwear', spend:664800, rate:11, sup:11, inv:178,
+   active:'Hilti Erhverv',
+   agr:[{n:'Hilti Erhverv'},{n:'Würth Nordic'},{n:'Engelbert Strauss'}]},
+  {id:'fuel', n:'Fuel & transport', spend:530700, rate:8, sup:5, inv:223,
+   active:'Q8 Fuel Card',
+   agr:[{n:'Q8 Fuel Card'},{n:'Circle K Business'}]},
+  {id:'off', n:'Office supplies', spend:205000, rate:19, sup:5, inv:62,
+   active:'Lyreco Erhverv',
+   agr:[{n:'Lyreco Erhverv'},{n:'Contorland'}]},
+  {id:'rent', n:'Machine & equipment rental', spend:500000, rate:6, sup:6, inv:112,
+   active:'Cramo Danmark',
+   agr:[{n:'Cramo Danmark'},{n:'GSV Materieludlejning'},{n:'Riwal Lifting'}]},
+  {id:'frg', n:'Freight & delivery', spend:328800, rate:8, sup:6, inv:122,
+   active:null,
+   agr:[{n:'DSV Road', slice:191000},{n:'GLS Erhverv', slice:81300},
+        {n:'Danske Fragtmænd', slice:56500}]},
+  {id:'tel', n:'Telecom & IT', spend:290400, rate:5, sup:4, inv:100,
+   active:null,
+   agr:[{n:'Telenor Erhverv', slice:266500},{n:'Dustin IT', slice:23900}]},
+  {id:'site', n:'Site services & waste', spend:168000, rate:4, sup:4, inv:63,
+   active:null,
+   agr:[{n:'Ragn-Sells', slice:40000},{n:'Marius Pedersen', slice:128000}]}
+];
+
+/* the volume bonus, paid annually on what actually runs through the agreements */
+const BONUS_TIERS = [
+  {upTo:1000000,  rate:1.0},
+  {upTo:3000000,  rate:1.5},
+  {upTo:Infinity, rate:2.0}
+];
+function bonusOn(volume){
+  let prev = 0, total = 0;
+  const lines = [];
+  for(const t of BONUS_TIERS){
+    if(volume <= prev) break;
+    const to = Math.min(volume, t.upTo);
+    const paid = Math.round((to - prev) * t.rate / 100);
+    lines.push({from:prev, to, rate:t.rate, paid});
+    total += paid; prev = to;
+  }
+  return {total, lines};
+}
+
+/* the peer cohort. Median is the observed cohort median and is never modelled;
+   the quartiles are the cohort's observed quartiles. Both are stated on the
+   method page together with how the cohort was selected. */
+const COHORT = {
+  n:148, median:376441, p25:318000, p75:441000,
+  select:['NACE 43.21 — electrical installation',
+          '20–100 employees (Kristensen Elektro: 34)',
+          'Region Midtjylland and Region Syddanmark',
+          'at least 12 months of invoice history with Advantage',
+          'consent to aggregated benchmarking; minimum cell size 8 companies']
+};
+/* the conservative case is the cohort's own P25/median ratio — stated, not invented */
+const P25_RATIO = COHORT.p25 / COHORT.median;      /* 0,845 */
+const P75_RATIO = COHORT.p75 / COHORT.median;      /* 1,172 */
+
+/* calibration: what we said, what happened. Deliberately includes the misses. */
+const CAL_PEER = {
+  unit:'Median saving per company in the cohort, per quarter',
+  rows:[
+    {q:'Q3 2024', est:84000, act:79100, why:'We assumed the whole cohort held a materials framework; a fifth of them did not.'},
+    {q:'Q4 2024', est:88000, act:91600, why:''},
+    {q:'Q1 2025', est:90500, act:86900, why:''},
+    {q:'Q2 2025', est:91200, act:94300, why:''},
+    {q:'Q3 2025', est:93500, act:92700, why:''},
+    {q:'Q4 2025', est:95000, act:99800, why:'We missed a diesel price drop, so fuel savings came in well above our estimate.'},
+    {q:'Q1 2026', est:92000, act:88400, why:'Materials volumes fell after a mild winter; our estimate still assumed a normal Q1.'}
+  ]
+};
+const CAL_OWN = {
+  unit:'What we predicted for Nordvik Byg, against what your invoices then showed',
+  rows:[
+    {q:'Q2 2024', est:84500, act:86200, why:''},
+    {q:'Q3 2024', est:87900, act:88800, why:''},
+    {q:'Q4 2024', est:90800, act:90100, why:''},
+    {q:'Q1 2025', est:91500, act:91900, why:''},
+    {q:'Q2 2025', est:93200, act:92600, why:''},
+    {q:'Q3 2025', est:93100, act:93400, why:''},
+    {q:'Q4 2025', est:94700, act:94700, why:'Reconciled to the krone against 318 invoices.'},
+    {q:'Q1 2026', est:95400, act:95741, why:''}
+  ]
+};
+
+/* supplier marks — identity, not implied knowledge. No decorative photography. */
+const LOGOS = {
+  'Stark Byggecenter': {f:'stark.jpeg', bg:'#f48222'},
+  'Bygma Framework':   {f:'bygma-logo-png_seeklogo-381076.png', bg:'#ffffff'},
+  'Ahlsell Nordic':    {f:'ahlsell.png', bg:'#ffffff'},
+  'Q8 Fuel Card':      {f:'q8.png', bg:'#ffffff'},
+  'Hilti Erhverv':     {f:'hilti.png', bg:'#d2091e'},
+  'Lyreco Erhverv':    {f:'lyreco.png', bg:'#2e2e88'}
+};
+function initialsOf(name){
+  return name.split(/[\s-]+/).filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join('');
+}
+function logoChip(name){
+  const l = LOGOS[name];
+  return l
+    ? `<span class="logo" style="background:${l.bg}"><img src="assets/company-logos/${l.f}" alt=""></span>`
+    : `<span class="logo" data-initials="1">${esc(initialsOf(name))}</span>`;
+}
+
+/* ==========================================================================
+   2 · session state
+   ========================================================================== */
+const PERSONAS = {
+  bob:   {key:'bob', user:'Bob Iversen', company:'Nordvik Byg A/S', verified:true,
+          source:'Visma.net', employees:41},
+  fanny: {key:'fanny', user:'Fanny Kristensen', company:'Kristensen Elektro ApS', verified:false,
+          source:null, employees:34}
+};
+let persona = PERSONAS.fanny;
+let inputs = new Set(['sector']);        /* which evidence Fanny has supplied */
+let conservative = false;                /* median vs P25 */
+let navAt = 'evidence';
+let railTouched = false;
+let inApp = false;
+/* corrections, keyed by category id: {spend, rate, reason, at, prevSpend, prevRate} */
+let corrections = {};
+
+const SKEY = 'advantage-trust-1';
+function persist(){
+  try{
+    sessionStorage.setItem(SKEY, JSON.stringify({
+      inApp, personaKey:persona.key, inputs:[...inputs], conservative, navAt, corrections
+    }));
+  }catch(e){ /* private mode — the prototype just will not remember */ }
+}
+function restore(){
+  let d = null;
+  try{ d = JSON.parse(sessionStorage.getItem(SKEY) || 'null'); }catch(e){ d = null; }
+  if(!d) return false;
+  if(d.personaKey && PERSONAS[d.personaKey]) persona = PERSONAS[d.personaKey];
+  if(Array.isArray(d.inputs)) inputs = new Set(d.inputs.length ? d.inputs : ['sector']);
+  conservative = !!d.conservative;
+  if(d.navAt) navAt = d.navAt;
+  if(d.corrections && typeof d.corrections === 'object') corrections = d.corrections;
+  return !!d.inApp;
+}
+
+/* ==========================================================================
+   3 · derived figures — every number on the page comes through here
+   ========================================================================== */
+const spendOf  = c => corrections[c.id] ? corrections[c.id].spend : c.spend;
+const rateOf   = c => (corrections[c.id] && corrections[c.id].rate != null)
+                        ? corrections[c.id].rate : c.rate;
+const savingOf = c => Math.round(spendOf(c) * rateOf(c) / 100);
+const isCovered = c => !!c.active;
+
+/* the agreement slices for a leaking category, scaled to the current spend so
+   they always sum to it exactly (last row absorbs the rounding) */
+function slicesOf(c){
+  if(isCovered(c)) return c.agr.map((a,i) => ({...a, covers:i === 0 ? spendOf(c) : 0, alt:i > 0}));
+  const base = c.agr.reduce((s,a) => s + a.slice, 0);
+  const spend = spendOf(c);
+  let used = 0;
+  return c.agr.map((a,i) => {
+    const covers = i === c.agr.length - 1 ? spend - used : Math.round(spend * a.slice / base);
+    used += covers;
+    return {...a, covers, alt:false};
+  });
+}
+
+/* ---- confidence ---------------------------------------------------------
+   Tier bands are the published accuracy of each input level. A category the
+   customer has corrected herself is "declared": better than a benchmark,
+   not audited, so it carries its own band. Verified figures are measured
+   after the fact and carry none. ------------------------------------------ */
+const TIERS = [
+  {k:'sector',   pct:15, label:'Sector, size and location only',
+   note:'Your NACE code, employee count and postcode from the public register, against the cohort.'},
+  {k:'report',   pct:8,  label:'A 12-month spend report',
+   note:'One PDF or spreadsheet of supplier totals. Fixes the category mix, which is the largest source of error.'},
+  {k:'invoices', pct:3,  label:'Full invoice history (ERP or accounting system)',
+   note:'Line-level spend per supplier. What is left is only the rate we will actually land in negotiation.'}
+];
+const DECLARED_PCT = 4;
+function tierPct(){
+  if(persona.verified) return 0;
+  if(inputs.has('invoices')) return 3;
+  if(inputs.has('report')) return 8;
+  return 15;
+}
+function bandPctOf(c){
+  if(persona.verified) return 0;
+  if(corrections[c.id]) return DECLARED_PCT;
+  return tierPct();
+}
+function basisOf(c){
+  if(persona.verified) return 'verified';
+  if(corrections[c.id]) return 'declared';
+  return 'estimated';
+}
+const BASIS_CHIP = {
+  verified:`<span class="est-chip ver">${ICON.tick} Verified</span>`,
+  declared:`<span class="est-chip dec">${ICON.pen} Your figure</span>`,
+  estimated:`<span class="est-chip est">${ICON.dash} Estimated</span>`
+};
+
+function totals(){
+  const scale = conservative ? P25_RATIO : 1;
+  const cats = CATS.map(c => ({
+    c, spend:Math.round(spendOf(c) * scale), rate:rateOf(c),
+    saving:Math.round(savingOf(c) * scale), covered:isCovered(c), band:bandPctOf(c)
+  }));
+  const sum = k => cats.reduce((s,x) => s + x[k], 0);
+  const spend = sum('spend'), saving = sum('saving');
+  const covered = cats.filter(x => x.covered).reduce((s,x) => s + x.spend, 0);
+  const leaking = spend - covered;
+  const realised = cats.filter(x => x.covered).reduce((s,x) => s + x.saving, 0);
+  const remaining = saving - realised;
+  const bonus = bonusOn(covered);
+  /* the total's band is the saving-weighted average of the per-category bands —
+     arithmetic we show rather than assert */
+  const wBand = saving ? cats.reduce((s,x) => s + x.saving * x.band, 0) / saving : 0;
+  return {cats, spend, saving, covered, leaking, realised, remaining, bonus,
+          value:realised + bonus.total, band:wBand, scale};
+}
+const invoiceCount = () => CATS.reduce((s,c) => s + c.inv, 0);
+const agrCount = () => CATS.reduce((s,c) => s + c.agr.length, 0);
+const activeCount = () => CATS.filter(isCovered).length;
+
+/* ==========================================================================
+   4 · provenance registry
+   Each figure on the page names a key here. Nothing renders a number without
+   one — that is the rule this whole variant exists to enforce.
+   ========================================================================== */
+const PEERSET = () => persona.verified
+  ? `Not a peer set. ${fmt(invoiceCount())} of your own invoices from ${esc(persona.source)}, ` +
+    `covering the last 12 months.`
+  : `${COHORT.n} companies, selected as: ` + COHORT.select.join('; ') + '.';
+
+const EXACT_NOW = () => persona.verified
+  ? 'Nothing. This figure is measured, not modelled — it is what your invoices and the agreement rate produced.'
+  : (inputs.has('invoices')
+      ? 'Only time. Once a full quarter has run through the agreements we reconcile against your invoices and the band closes to zero.'
+      : (inputs.has('report')
+          ? 'Connect your accounting system for line-level history — that takes the band from ±8% to ±3%.'
+          : 'Upload one 12-month spend report — that alone takes the band from ±15% to ±8%.'));
+
+function provFor(key, arg){
+  const t = totals();
+  const b = pct(t.band, t.band % 1 === 0 ? 0 : 1);
+  const range = v => `${kr(Math.round(v * (1 - t.band / 100)))} – ${kr(Math.round(v * (1 + t.band / 100)))}`;
+  const scaleNote = conservative
+    ? [`Conservative view is on: every figure is scaled by the cohort's P25/median ratio ` +
+       `${dec(P25_RATIO, 3)}, and the bonus is recomputed on the scaled volume rather than scaled itself.`]
+    : [];
+
+  if(key === 'value'){
+    return {
+      label:'Discount plus volume bonus, per year', title:kr(t.value),
+      method:[`Discount ${kr(t.realised)} + volume bonus ${kr(t.bonus.total)}.`,
+        `Discount is the sum of the ${activeCount()} categories that run on an active agreement.`,
+        `Bonus is tiered on the ${kr(t.covered)} that goes through those agreements: ` +
+        t.bonus.lines.map(l => `${dec(l.rate)}% on ${fmt(l.to - l.from)}`).join(', ') + '.',
+        ...scaleNote],
+      inputs:[`Category spend (${persona.verified ? 'your invoices' : 'cohort model'})`,
+        'Advantage agreement rate per category (our own signed contracts — exact)',
+        'Bonus tier table (contractual)'],
+      band:persona.verified ? 'None. Measured.' : `±${b} → ${range(t.value)}`,
+      exact:EXACT_NOW()
+    };
+  }
+  if(key === 'realised'){
+    return {
+      label:'Discount on covered spend, per year', title:kr(t.realised),
+      method:[`Sum over the ${activeCount()} covered categories of spend × agreement rate.`,
+        CATS.filter(isCovered).map(c => `${c.n} ${fmt(Math.round(spendOf(c) * t.scale))} × ` +
+          `${dec(rateOf(c), 0)}% = ${fmt(Math.round(savingOf(c) * t.scale))}`).join(' · '),
+        ...scaleNote],
+      inputs:['Category spend', 'Agreement rate per category'],
+      band:persona.verified ? 'None. Measured.' : `±${b} → ${range(t.realised)}`,
+      exact:EXACT_NOW()
+    };
+  }
+  if(key === 'remaining'){
+    return {
+      label:'Discount not being collected, per year', title:kr(t.remaining),
+      method:[`The ${CATS.filter(c => !isCovered(c)).length} categories with no active agreement: ` +
+        CATS.filter(c => !isCovered(c)).map(c => `${c.n} ${fmt(Math.round(savingOf(c) * t.scale))}`).join(' · ') + '.',
+        `Their combined spend of ${kr(t.leaking)} currently earns no discount and no bonus.`,
+        ...scaleNote],
+      inputs:['Category spend', 'Agreement rate available in each category'],
+      band:persona.verified ? 'None. Measured spend, contracted rate.' : `±${b} → ${range(t.remaining)}`,
+      exact:EXACT_NOW()
+    };
+  }
+  if(key === 'bonus'){
+    return {
+      label:'Volume bonus, per year', title:kr(t.bonus.total),
+      method:[`Tiered on the ${kr(t.covered)} that runs through active agreements:`,
+        ...t.bonus.lines.map(l => `${dec(l.rate)}% of ${fmt(l.to - l.from)} (${fmt(l.from)}–${fmt(l.to)}) = ${fmt(l.paid)} kr.`),
+        'The tiers are contractual, so the only uncertain input is the covered volume.',
+        ...scaleNote],
+      inputs:['Covered volume', 'Bonus tier table (contractual — 1,0% / 1,5% / 2,0%)'],
+      band:persona.verified ? 'None. Measured volume, contracted tiers.' : `±${b} → ${range(t.bonus.total)}`,
+      exact:EXACT_NOW()
+    };
+  }
+  if(key === 'spend'){
+    return {
+      label:'Purchasing spend, per year', title:kr(t.spend),
+      method:persona.verified
+        ? [`Summed from ${fmt(invoiceCount())} supplier invoices in ${esc(persona.source)} over 12 months, ` +
+           `classified into the eight categories by supplier and invoice line text.`]
+        : [`Cohort median spend per employee × your ${persona.employees} employees, ` +
+           `split by the cohort's category mix.`,
+           `We do not see your invoices, so this is a model of a company like yours, not of you.`,
+           ...scaleNote],
+      inputs:persona.verified
+        ? ['Your invoice ledger', 'Supplier master data', 'Category classifier']
+        : [`Employee count ${persona.employees} (public register)`,
+           'NACE code 43.21 (public register)', 'Postcode (public register)',
+           `Aggregated invoice lines from ${COHORT.n} consenting peers`,
+           'Danmarks Statistik cost-structure tables'],
+      band:persona.verified ? 'None. Measured.' : `±${b} → ${range(t.spend)}`,
+      exact:EXACT_NOW()
+    };
+  }
+  if(key === 'cohort'){
+    return {
+      label:'Cohort median saving, per year', title:kr(COHORT.median),
+      method:[`The middle value of the ${COHORT.n} companies' realised annual savings.`,
+        `Quartiles: P25 ${kr(COHORT.p25)}, P75 ${kr(COHORT.p75)}. ` +
+        `The curve drawn behind them is a lognormal fitted to exactly these three numbers ` +
+        `(σ = ln(P75/P25) / 1,349 = ${dec((Math.log(COHORT.p75 / COHORT.p25)) / 1.3490, 3)}).`,
+        'The median tick is the observed value. The curve is the only modelled part of that plot.'],
+      inputs:['Realised annual savings for each cohort member (measured, from their own invoices)'],
+      band:'None — this is a measurement of the cohort. The uncertainty is whether you resemble it.',
+      exact:'Nothing makes a cohort median exact for you. Only your own numbers can replace it.'
+    };
+  }
+  if(key === 'mae'){
+    const c = calStats();
+    return {
+      label:'How wrong we have been', title:pct(c.mae),
+      method:[`Mean absolute error over ${c.rows.length} quarters of published estimates ` +
+        `against the outcome that followed.`,
+        `Signed mean ${c.signed >= 0 ? '+' : ''}${pct(c.signed)} — ` +
+        `${c.signed > 0 ? 'we run slightly optimistic' : 'we run slightly conservative'}.`,
+        `Worst quarter: ${c.worst.q}, ${pct(Math.abs(c.worst.err))} ` +
+        `${c.worst.err > 0 ? 'high' : 'low'}.`],
+      inputs:['Our own published estimate for each quarter (archived at the time)',
+        persona.verified ? 'Your invoiced outcome for the same quarter'
+                         : 'The cohort’s realised outcome for the same quarter'],
+      band:'This is the band. Everything else on the page is a claim; this is the scoreboard.',
+      exact:'It stays approximate on purpose — a forecast error of exactly zero would mean we stopped measuring.'
+    };
+  }
+  if(key === 'cat'){
+    const c = arg;
+    const s = Math.round(savingOf(c) * t.scale);
+    const corr = corrections[c.id];
+    return {
+      label:`${c.n} — discount available per year`, title:kr(s),
+      method:[`${fmt(Math.round(spendOf(c) * t.scale))} kr. spend × ${dec(rateOf(c), 0)}% agreement rate = ${fmt(s)} kr.`,
+        isCovered(c)
+          ? `Active: ${esc(c.active)} covers the whole ${fmt(Math.round(spendOf(c) * t.scale))} kr., so this discount is being collected.`
+          : `No active agreement. ${c.agr.length} candidates, covering ` +
+            slicesOf(c).map(a => `${esc(a.n)} ${fmt(Math.round(a.covers * t.scale))}`).join(' · ') + '.',
+        corr ? `You corrected this on ${new Date(corr.at).toLocaleDateString('da-DK')}: ` +
+               `spend ${fmt(corr.prevSpend)} → ${fmt(corr.spend)} kr.` +
+               (corr.rate != null ? `, rate ${dec(corr.prevRate, 0)}% → ${dec(corr.rate, 0)}%` : '') +
+               (corr.reason ? ` (${esc(corr.reason)})` : '') : '',
+        ...scaleNote].filter(Boolean),
+      inputs:persona.verified
+        ? [`${fmt(c.inv)} invoices from ${fmt(c.sup)} suppliers`, 'Agreement rate (signed contract)']
+        : (corr
+            ? ['Your correction (declared, not audited)', 'Agreement rate (signed contract)']
+            : [`Cohort category share for ${c.n.toLowerCase()}`,
+               `Your ${persona.employees} employees (public register)`,
+               'Supplier list prices, crawled weekly (see method)',
+               'Agreement rate (signed contract)']),
+      band:(() => {
+        const bp = bandPctOf(c);
+        if(!bp) return 'None. Measured.';
+        return `±${pct(bp, 0)} → ${kr(Math.round(s * (1 - bp / 100)))} – ${kr(Math.round(s * (1 + bp / 100)))}` +
+          (basisOf(c) === 'declared' ? ' (declared by you, unaudited)' : '');
+      })(),
+      exact:corr
+        ? 'Attach the invoices behind your figure and it becomes verified rather than declared.'
+        : EXACT_NOW(),
+      cat:c
+    };
+  }
+  return {label:'Figure', title:'—', method:[], inputs:[], band:'', exact:''};
+}
+
+/* ==========================================================================
+   5 · the figure component — no number renders without a provenance key
+   ========================================================================== */
+let figSeq = 0;
+function fig(value, unit, key, opts){
+  const o = opts || {};
+  const id = 'fig' + (++figSeq);
+  return `<button class="fig ${o.size ? 'fig-' + o.size : 'fig-md'}" type="button" id="${id}"
+      data-prov="${key}"${o.cat ? ` data-cat="${o.cat}"` : ''}
+      aria-haspopup="dialog" aria-expanded="false"
+      aria-label="${esc(o.aria || (value + ' ' + (unit || '') + ' — show where this number comes from'))}">
+      <span class="fv">${esc(value)}</span>${unit ? `<span class="fu">${esc(unit)}</span>` : ''}
+      <span class="fi">${ICON.info}</span></button>`;
+}
+
+/* ==========================================================================
+   6 · SVG · the peer distribution (hand-authored, no libraries)
+   --------------------------------------------------------------------------
+   SVG presentation attributes (fill=, stroke=, font-family=) are not a safe
+   place for var() — support is patchy and a failed parse silently drops the
+   colour. So the plots read the same design tokens out of the stylesheet once,
+   at first paint, and interpolate the resolved values. Still one source of
+   truth; no hex is duplicated in this file.
+   ========================================================================== */
+const C = new Proxy({}, {
+  get(cache, name){
+    if(!(name in cache)){
+      cache[name] = getComputedStyle(document.documentElement)
+        .getPropertyValue(name).trim() || 'currentColor';
+    }
+    return cache[name];
+  }
+});
+function normCdf(z){
+  /* Abramowitz & Stegun 7.1.26, good to ~1e-7 — enough for bin counts */
+  const s = z < 0 ? -1 : 1, x = Math.abs(z) / Math.SQRT2;
+  const t = 1 / (1 + 0.3275911 * x);
+  const y = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t
+            - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return 0.5 * (1 + s * y);
+}
+const LN_MU = Math.log(COHORT.median);
+const LN_SIGMA = Math.log(COHORT.p75 / COHORT.p25) / 1.3490;   /* 2 × 0,6745 */
+const lnPdf = v => Math.exp(-Math.pow(Math.log(v) - LN_MU, 2) / (2 * LN_SIGMA * LN_SIGMA))
+                   / (v * LN_SIGMA * Math.sqrt(2 * Math.PI));
+const lnCdf = v => normCdf((Math.log(v) - LN_MU) / LN_SIGMA);
+
+const DIST = {x0:200000, x1:580000, W:760, H:250, padL:16, padR:16, padT:14, padB:56};
+function distSvg(){
+  const t = totals();
+  const d = DIST;
+  const X = v => d.padL + (v - d.x0) / (d.x1 - d.x0) * (d.W - d.padL - d.padR);
+  const baseY = d.H - d.padB, topY = d.padT + 26;
+  const samples = 140;
+  let maxP = 0;
+  const pts = [];
+  for(let i = 0; i <= samples; i++){
+    const v = d.x0 + (d.x1 - d.x0) * i / samples;
+    const p = lnPdf(v);
+    if(p > maxP) maxP = p;
+    pts.push([v, p]);
+  }
+  const Y = p => baseY - (p / maxP) * (baseY - topY);
+  const path = pts.map(([v, p], i) => `${i ? 'L' : 'M'}${X(v).toFixed(1)} ${Y(p).toFixed(1)}`).join(' ');
+  const area = `${path} L${X(d.x1).toFixed(1)} ${baseY} L${X(d.x0).toFixed(1)} ${baseY} Z`;
+
+  const you = t.realised;
+  const bp = t.band;
+  const lo = you * (1 - bp / 100), hi = you * (1 + bp / 100);
+  const youColor = persona.verified ? C['--sentiment-positive'] : C['--general-accent'];
+  const ticks = [250000, 300000, 350000, 400000, 450000, 500000, 550000];
+
+  const desc = persona.verified
+    ? `Distribution of realised annual savings across ${COHORT.n} peer companies. ` +
+      `Cohort median ${kr(COHORT.median)}, interquartile range ${kr(COHORT.p25)} to ${kr(COHORT.p75)}. ` +
+      `Your own measured figure is ${kr(you)}, with no uncertainty band because it is measured.`
+    : `Distribution of realised annual savings across ${COHORT.n} peer companies. ` +
+      `Cohort median ${kr(COHORT.median)}, interquartile range ${kr(COHORT.p25)} to ${kr(COHORT.p75)}. ` +
+      `Your estimated position is ${kr(you)}, plus or minus ${pct(bp)}, ` +
+      `a range from ${kr(Math.round(lo))} to ${kr(Math.round(hi))}.`;
+
+  return `
+  <svg viewBox="0 0 ${d.W} ${d.H}" role="img" aria-labelledby="distT distD" preserveAspectRatio="xMidYMid meet">
+    <title id="distT">Where you sit among ${COHORT.n} comparable companies</title>
+    <desc id="distD">${esc(desc)}</desc>
+    <rect x="${X(COHORT.p25).toFixed(1)}" y="${topY - 10}" width="${(X(COHORT.p75) - X(COHORT.p25)).toFixed(1)}"
+          height="${baseY - topY + 10}" fill="${C['--brand-ice']}"/>
+    <path d="${area}" fill="${C['--general-secondary']}" opacity=".85"/>
+    <path d="${path}" fill="none" stroke="${C['--brand-cornflower']}" stroke-width="2"/>
+    <line x1="${d.padL}" y1="${baseY}" x2="${d.W - d.padR}" y2="${baseY}"
+          stroke="${C['--sidebar-border']}" stroke-width="1"/>
+    ${ticks.map(v => `
+      <g>
+        <line x1="${X(v).toFixed(1)}" y1="${baseY}" x2="${X(v).toFixed(1)}" y2="${baseY + 5}"
+              stroke="${C['--sidebar-border']}" stroke-width="1"/>
+        <text x="${X(v).toFixed(1)}" y="${baseY + 20}" text-anchor="middle"
+              font-family="${C['--font-mono']}" font-size="11" fill="${C['--general-muted-foreground']}">${Math.round(v / 1000)}K</text>
+      </g>`).join('')}
+    <line x1="${X(COHORT.median).toFixed(1)}" y1="${topY - 10}" x2="${X(COHORT.median).toFixed(1)}" y2="${baseY}"
+          stroke="${C['--general-primary']}" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="${X(COHORT.median).toFixed(1)}" y="${topY - 16}" text-anchor="middle"
+          font-family="${C['--font-sans']}" font-size="12" font-weight="600" fill="${C['--general-primary']}">Median ${fmt(COHORT.median)}</text>
+    ${bp > 0 ? `<line x1="${X(lo).toFixed(1)}" y1="${baseY + 34}" x2="${X(hi).toFixed(1)}" y2="${baseY + 34}"
+          stroke="${youColor}" stroke-width="3" stroke-linecap="round"/>
+      <line x1="${X(lo).toFixed(1)}" y1="${baseY + 28}" x2="${X(lo).toFixed(1)}" y2="${baseY + 40}"
+          stroke="${youColor}" stroke-width="3"/>
+      <line x1="${X(hi).toFixed(1)}" y1="${baseY + 28}" x2="${X(hi).toFixed(1)}" y2="${baseY + 40}"
+          stroke="${youColor}" stroke-width="3"/>` : ''}
+    <line x1="${X(you).toFixed(1)}" y1="${baseY - 26}" x2="${X(you).toFixed(1)}" y2="${baseY + 42}"
+          stroke="${youColor}" stroke-width="2.5"/>
+    <circle cx="${X(you).toFixed(1)}" cy="${baseY + 34}" r="5" fill="${youColor}"/>
+    <text x="${X(you).toFixed(1)}" y="${baseY + 54}" text-anchor="middle"
+          font-family="${C['--font-sans']}" font-size="12" font-weight="700" fill="${youColor}">
+      ${persona.verified ? 'You, measured' : 'You, estimated'} ${fmt(you)}${bp > 0 ? ' ±' + pct(bp, 0) : ''}</text>
+  </svg>`;
+}
+
+/* the plot's data-table alternative: cohort counts per 25.000 kr. bin,
+   derived from the same fitted curve, so the picture and the table agree */
+function distTable(){
+  const step = 25000;
+  const rows = [];
+  let counted = 0;
+  for(let lo = 225000; lo < 525000; lo += step){
+    const n = Math.round(COHORT.n * (lnCdf(lo + step) - lnCdf(lo)));
+    counted += n;
+    rows.push(`<tr><td class="mono">${fmt(lo)} – ${fmt(lo + step)}</td>
+      <td class="r mono">${n}</td></tr>`);
+  }
+  rows.push(`<tr><td class="mono">outside 225.000 – 525.000</td>
+    <td class="r mono">${COHORT.n - counted}</td></tr>`);
+  return `<div class="tbl-card"><div class="tbl-scroll"><table>
+    <caption>Same data as the plot: how many of the ${COHORT.n} companies fall in each band,
+      from the fitted curve. Counts are rounded to whole companies.</caption>
+    <thead><tr><th scope="col">Realised annual saving</th><th scope="col" class="r">Companies</th></tr></thead>
+    <tbody>${rows.join('')}</tbody></table></div></div>`;
+}
+
+/* ==========================================================================
+   7 · SVG · the error-bar ladder that narrows as inputs arrive
+   ========================================================================== */
+function errSvg(){
+  const t = totals();
+  const centre = t.realised;
+  const rows = TIERS.map(tr => ({
+    ...tr, have:tr.k === 'sector' || inputs.has(tr.k) || persona.verified
+  }));
+  if(persona.verified) rows.push({k:'measured', pct:0, have:true,
+    label:'Realised and reconciled against your own invoices'});
+  const cur = tierPct();
+  const W = 760, rowH = 46, padT = 26, H = padT + rows.length * rowH + 22;
+  const maxPct = 18;
+  const cx = W * 0.56, half = W * 0.26;   /* leaves room for the row labels on the left */
+  const X = p => cx + (p / maxPct) * half;
+
+  const bars = rows.map((r, i) => {
+    const y = padT + i * rowH + rowH / 2;
+    const isCur = (!persona.verified && r.pct === cur) || (persona.verified && r.k === 'measured');
+    const col = isCur ? (persona.verified ? C['--sentiment-positive'] : C['--general-primary'])
+                      : C['--sidebar-border'];
+    const op = r.have ? 1 : .45;
+    const lo = X(-r.pct), hi = X(r.pct);
+    return `<g opacity="${op}">
+      <text x="0" y="${y - 6}" font-family="${C['--font-body']}" font-size="12.5"
+            fill="${C['--general-foreground']}" font-weight="${isCur ? 700 : 400}">${esc(r.label)}</text>
+      <text x="0" y="${y + 12}" font-family="${C['--font-mono']}" font-size="11"
+            fill="${C['--general-muted-foreground']}">±${dec(r.pct, 0)}% · ${fmt(Math.round(centre * (1 - r.pct / 100)))} – ${fmt(Math.round(centre * (1 + r.pct / 100)))} kr.</text>
+      ${r.pct === 0
+        ? `<circle cx="${cx}" cy="${y}" r="6" fill="${col}"/>`
+        : `<line x1="${lo.toFixed(1)}" y1="${y}" x2="${hi.toFixed(1)}" y2="${y}" stroke="${col}" stroke-width="${isCur ? 4 : 3}" stroke-linecap="round"/>
+           <line x1="${lo.toFixed(1)}" y1="${y - 8}" x2="${lo.toFixed(1)}" y2="${y + 8}" stroke="${col}" stroke-width="${isCur ? 4 : 3}"/>
+           <line x1="${hi.toFixed(1)}" y1="${y - 8}" x2="${hi.toFixed(1)}" y2="${y + 8}" stroke="${col}" stroke-width="${isCur ? 4 : 3}"/>
+           <circle cx="${cx}" cy="${y}" r="4" fill="${col}"/>`}
+      ${isCur ? `<text x="${(hi + 12).toFixed(1)}" y="${y + 4}" font-family="${C['--font-sans']}" font-size="11.5"
+            font-weight="700" fill="${col}">now</text>` : ''}
+    </g>`;
+  }).join('');
+
+  const desc = rows.map(r => `${r.label}: plus or minus ${dec(r.pct, 0)} percent, ` +
+    `${fmt(Math.round(centre * (1 - r.pct / 100)))} to ${fmt(Math.round(centre * (1 + r.pct / 100)))} kroner`).join('. ');
+
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="ebT ebD" preserveAspectRatio="xMidYMid meet">
+    <title id="ebT">How the uncertainty narrows as inputs arrive</title>
+    <desc id="ebD">${esc(desc + '. Centre line at ' + fmt(centre) + ' kroner.')}</desc>
+    <line x1="${cx}" y1="${padT - 12}" x2="${cx}" y2="${H - 16}" stroke="${C['--hairline']}" stroke-width="1"/>
+    <text x="${cx}" y="${padT - 18}" text-anchor="middle" font-family="${C['--font-mono']}"
+      font-size="11" fill="${C['--general-muted-foreground']}">${fmt(centre)} kr.</text>
+    ${bars}
+  </svg>`;
+}
+
+/* ==========================================================================
+   8 · SVG · the track record
+   ========================================================================== */
+function calSet(){ return persona.verified ? CAL_OWN : CAL_PEER; }
+function calStats(){
+  const rows = calSet().rows.map(r => ({...r, err:(r.est - r.act) / r.act * 100}));
+  const mae = rows.reduce((s, r) => s + Math.abs(r.err), 0) / rows.length;
+  const signed = rows.reduce((s, r) => s + r.err, 0) / rows.length;
+  const worst = rows.reduce((a, b) => Math.abs(b.err) > Math.abs(a.err) ? b : a);
+  return {rows, mae, signed, worst};
+}
+function calSvg(){
+  const {rows} = calStats();
+  const W = 760, H = 230, padL = 8, padR = 8, padB = 46;
+  const zero = 108, scale = 9;                     /* px per percentage point */
+  const colW = (W - padL - padR) / rows.length;
+  const bars = rows.map((r, i) => {
+    const x = padL + colW * i + colW / 2;
+    const h = Math.abs(r.err) * scale;
+    const up = r.err > 0;                          /* estimate above outcome */
+    const y = up ? zero - h : zero;
+    const col = Math.abs(r.err) < 1 ? C['--sentiment-positive']
+              : (up ? C['--sentiment-negative'] : C['--general-primary']);
+    return `<g>
+      <rect x="${(x - 7).toFixed(1)}" y="${y.toFixed(1)}" width="14" height="${Math.max(h, 2).toFixed(1)}"
+            rx="3" fill="${col}"/>
+      <text x="${x.toFixed(1)}" y="${(up ? y - 8 : y + h + 16).toFixed(1)}" text-anchor="middle"
+        font-family="${C['--font-mono']}" font-size="11" font-weight="700" fill="${col}">
+        ${r.err > 0 ? '+' : ''}${dec(r.err)}%</text>
+      <text x="${x.toFixed(1)}" y="${H - padB + 26}" text-anchor="middle" font-family="${C['--font-body']}"
+        font-size="11" fill="${C['--general-muted-foreground']}">${esc(r.q)}</text>
+    </g>`;
+  }).join('');
+  const desc = rows.map(r => `${r.q}: estimate ${fmt(r.est)}, outcome ${fmt(r.act)}, ` +
+    `${dec(Math.abs(r.err))} percent ${r.err > 0 ? 'high' : 'low'}`).join('. ');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="trT trD" preserveAspectRatio="xMidYMid meet">
+    <title id="trT">Our estimate against the outcome, by quarter</title>
+    <desc id="trD">${esc(desc + '.')}</desc>
+    <line x1="${padL}" y1="${zero}" x2="${W - padR}" y2="${zero}" stroke="${C['--general-foreground']}" stroke-width="1.4"/>
+    <text x="${padL}" y="${zero - 8}" font-family="${C['--font-mono']}" font-size="10.5"
+      fill="${C['--general-muted-foreground']}">we were high ↑</text>
+    <text x="${padL}" y="${zero + 18}" font-family="${C['--font-mono']}" font-size="10.5"
+      fill="${C['--general-muted-foreground']}">we were low ↓</text>
+    ${bars}
+  </svg>`;
+}
+
+/* ==========================================================================
+   9 · views
+   ========================================================================== */
+const NAV = [
+  {id:'evidence', n:'Evidence', tip:'Evidence',
+   icon:'<rect x="3" y="3" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/>'},
+  {id:'categories', n:'Categories', tip:'Categories',
+   icon:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/>'},
+  {id:'track', n:'Track record', tip:'Track record',
+   icon:'<path d="M4 18l5-6 4 3 7-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v16h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'},
+  {id:'corrections', n:'Your corrections', tip:'Your corrections',
+   icon:'<path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {id:'method', n:'Method', tip:'Method',
+   icon:'<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'}
+];
+function renderNav(){
+  const nCorr = Object.keys(corrections).length;
+  $('#nav').innerHTML = NAV.map(i => `
+    <button class="ni${navAt === i.id ? ' on' : ''}" type="button" data-nav="${i.id}" data-tip="${esc(i.tip)}"
+      ${navAt === i.id ? 'aria-current="page"' : ''}>
+      <span class="nic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${i.icon}</svg></span>
+      <span class="nt">${esc(i.n)}</span>
+      ${i.id === 'corrections' && nCorr ? `<span class="nb">${nCorr}</span>` : ''}
+    </button>`).join('');
+  $$('#nav [data-nav]').forEach(b => b.addEventListener('click', () => go(b.dataset.nav)));
+}
+function go(id){ navAt = id; closePop(); persist(); renderNav(); render(); $('#canvas').scrollTop = 0; }
+
+/* ---- shared bits -------------------------------------------------------- */
+function basisLine(){
+  const t = totals();
+  return persona.verified
+    ? `Measured from <b>${fmt(invoiceCount())}</b> invoices in ${esc(persona.source)}.`
+    : `Estimated from <b>${COHORT.n}</b> comparable companies. Nothing of yours is connected yet.`;
+}
+function scaleToggle(){
+  const dis = persona.verified;
+  return `<div class="seg" role="group" aria-label="Which case to show">
+    <button type="button" id="segMed" aria-pressed="${!conservative}" ${dis ? 'disabled' : ''}>Median case</button>
+    <button type="button" id="segP25" aria-pressed="${conservative}" ${dis ? 'disabled' : ''}>Conservative (P25)</button>
+  </div>${dis ? `<p class="plot-foot" style="margin-top:8px">Your figures are measured, not sampled —
+    there is no distribution to take a percentile of.</p>` : ''}`;
+}
+
+/* ---- EVIDENCE ---------------------------------------------------------- */
+function viewEvidence(){
+  const t = totals();
+  const bandTxt = t.band > 0 ? `±${pct(t.band, t.band % 1 === 0 ? 0 : 1)}` : 'exact';
+  const lo = Math.round(t.value * (1 - t.band / 100)), hi = Math.round(t.value * (1 + t.band / 100));
+  const cs = calStats();
+
+  return `
+  <header class="phead">
+    <span class="eyebrow"><i></i>${persona.verified ? 'Measured' : 'Estimated'} · ${esc(persona.company)}</span>
+    <h1>What we claim, and why you should believe it</h1>
+    <p>${basisLine()} Every figure below is a button. Press it and you get the peer set, the
+      method, the named inputs, and what it would take to make it exact.</p>
+  </header>
+
+  <section class="sec" aria-labelledby="ev-total-h">
+    <div class="sec-h">
+      <h2 id="ev-total-h">The total, with its confidence attached</h2>
+      <span class="spacer"></span>
+      ${scaleToggle()}
+    </div>
+    <div class="hero">
+      <div class="hero-l">
+        <span class="hero-lbl">Discount plus volume bonus, per year${conservative ? ' · conservative case' : ''}</span>
+        ${fig(kr(t.value), '', 'value', {size:'xl', aria:`${kr(t.value)} per year, ${bandTxt} — show provenance`})}
+        <p class="hero-band">Confidence <b>${bandTxt}</b>
+          ${t.band > 0 ? `<span>→ ${kr(lo)} – ${kr(hi)}</span>` : `<span>→ reconciled against your invoices</span>`}
+          ${BASIS_CHIP[persona.verified ? 'verified' : 'estimated']}</p>
+        <p class="hero-note">${persona.verified
+          ? `This is not a projection. It is what ${fmt(invoiceCount())} invoices and the signed agreement rates produced over the last twelve months.`
+          : `We have never seen an invoice of yours. Read the range, not the middle — and press any number to see exactly how thin the evidence under it is.`}</p>
+        <div class="hero-acts">
+          <button class="btn btn-secondary btn-sm" type="button" id="evChalTotal">${ICON.pen} Challenge this number</button>
+          <button class="btn btn-ghost btn-sm" type="button" data-goto="method">How we know this</button>
+        </div>
+      </div>
+      <div class="hero-r">
+        <div class="kv"><span class="k">Discount being collected</span>
+          <span class="v">${fig(kr(t.realised), '', 'realised', {size:'md'})}</span></div>
+        <div class="kv"><span class="k">Volume bonus on covered spend</span>
+          <span class="v">${fig(kr(t.bonus.total), '', 'bonus', {size:'md'})}</span></div>
+        <div class="kv"><span class="k">Discount not being collected</span>
+          <span class="v">${fig(kr(t.remaining), '', 'remaining', {size:'md'})}</span></div>
+        <div class="kv"><span class="k">Purchasing spend behind it</span>
+          <span class="v">${fig(kr(t.spend), '', 'spend', {size:'md'})}</span></div>
+        <div class="kv"><span class="k">Agreements active</span>
+          <span class="v"><span class="amt">${activeCount()} of ${agrCount()}</span></span></div>
+      </div>
+    </div>
+    <p class="plot-foot">Reconciles exactly: covered ${kr(t.covered)} + leaking ${kr(t.leaking)}
+      = ${kr(t.spend)} · discount ${kr(t.realised)} + remaining ${kr(t.remaining)} = ${kr(t.saving)}
+      · discount + bonus = <b>${kr(t.value)}</b>.</p>
+  </section>
+
+  <section class="sec" aria-labelledby="ev-dist-h">
+    <div class="sec-h">
+      <h2 id="ev-dist-h">Not a median — the whole spread</h2>
+      <span class="spacer"></span>
+      <button class="linkbtn" type="button" id="distTblTog" aria-expanded="false"
+        aria-controls="distTbl">View as table</button>
+      <p>A single median hides ${COHORT.n} different outcomes. Here is the cohort you are being
+        compared against, its interquartile range, its median, and where your own figure sits.
+        The curve is a lognormal fitted to the cohort's observed median and quartiles — the only
+        modelled thing in the picture; the median tick is measured.</p>
+    </div>
+    <div class="plot">
+      ${distSvg()}
+      <div class="plot-legend">
+        <span><i class="sw" style="background:var(--brand-ice)"></i>Middle half of the cohort (P25 ${fmt(COHORT.p25)} – P75 ${fmt(COHORT.p75)})</span>
+        <span><i style="border-top-color:var(--general-primary);border-top-style:dashed"></i>Cohort median ${fmt(COHORT.median)}</span>
+        <span><i style="border-top-color:${persona.verified ? 'var(--sentiment-positive)' : 'var(--general-accent)'}"></i>${persona.verified ? 'You, measured' : 'You, estimated, with band'}</span>
+      </div>
+      <p class="plot-foot">Construction, so you can argue with it: σ = ln(P75/P25) ÷ 1,349 =
+        <b>${dec(LN_SIGMA, 3)}</b>, μ = ln(median). ${fig(kr(COHORT.median), 'cohort median', 'cohort', {size:'sm'})}</p>
+    </div>
+    <div id="distTbl" hidden>${distTable()}</div>
+  </section>
+
+  <section class="sec" aria-labelledby="ev-eb-h">
+    <div class="sec-h">
+      <h2 id="ev-eb-h">What each piece of evidence is worth</h2>
+      <p>These are our published accuracy bands, not a sales ladder. Tick an input and watch the
+        bars close — that is the entire argument for connecting your data, with no adjectives in it.</p>
+    </div>
+    <div class="plot">${errSvg()}</div>
+    <div class="inputs">
+      ${TIERS.map(tr => `
+        <label class="inp">
+          <input type="checkbox" value="${tr.k}"
+            ${tr.k === 'sector' || inputs.has(tr.k) || persona.verified ? 'checked' : ''}
+            ${tr.k === 'sector' || persona.verified ? 'disabled' : ''}
+            data-input="${tr.k}">
+          <span class="it"><b>${esc(tr.label)}</b><span>${esc(tr.note)}</span></span>
+          <span class="ib">±${dec(tr.pct, 0)}%</span>
+        </label>`).join('')}
+      ${persona.verified ? `<label class="inp"><input type="checkbox" checked disabled>
+        <span class="it"><b>Realised and reconciled</b><span>The quarter has closed and your
+          invoices have been matched line by line against the agreement rate.</span></span>
+        <span class="ib">±0%</span></label>` : ''}
+    </div>
+    <p class="plot-foot">The total's band is the saving-weighted average of the eight category
+      bands, not a guess: ${totals().cats.map(x => `${esc(x.c.n.split(' ')[0].toLowerCase())} ${dec(x.band, 0)}%`).join(' · ')}
+      → <b>±${pct(totals().band, totals().band % 1 === 0 ? 0 : 1)}</b>.</p>
+  </section>
+
+  <section class="sec" aria-labelledby="ev-tr-h">
+    <div class="sec-h">
+      <h2 id="ev-tr-h">How wrong we have been</h2>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary btn-sm" type="button" data-goto="track">See all ${cs.rows.length} quarters</button>
+      <p>${persona.verified
+        ? 'What we predicted for you, against what your invoices then said.'
+        : `What we told companies like you, against what actually happened to them.`}</p>
+    </div>
+    <div class="hero" style="grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)">
+      <div class="hero-l">
+        <span class="hero-lbl">Mean absolute error, last ${cs.rows.length} quarters</span>
+        ${fig(pct(cs.mae), '', 'mae', {size:'xl'})}
+        <p class="hero-note">Signed mean ${cs.signed >= 0 ? '+' : ''}${pct(cs.signed)} —
+          ${cs.signed > 0 ? 'we lean slightly optimistic' : 'we lean slightly conservative'}.
+          Worst quarter ${esc(cs.worst.q)}, ${pct(Math.abs(cs.worst.err))}
+          ${cs.worst.err > 0 ? 'high' : 'low'}.</p>
+      </div>
+      <div class="hero-r">
+        <p class="plot-foot" style="margin-bottom:8px">${esc(calSet().unit)}</p>
+        ${calSvg()}
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ---- CATEGORIES -------------------------------------------------------- */
+function viewCategories(){
+  const t = totals();
+  const rows = t.cats.map(x => {
+    const c = x.c, basis = basisOf(c);
+    const active = isCovered(c);
+    return `<tr>
+      <td>
+        <div class="cellname">${logoChip(active ? c.active : slicesOf(c)[0].n)}
+          <div><b>${esc(c.n)}</b>
+            <span>${active ? esc(c.active) + ' · active' : c.agr.length + ' candidate agreements · no discount today'}</span>
+          </div>
+        </div>
+      </td>
+      <td class="r">${fig(fmt(x.spend), 'kr.', 'cat', {size:'sm', cat:c.id,
+        aria:`${c.n} spend ${kr(x.spend)} — show provenance`})}</td>
+      <td class="r mono">${dec(x.rate, 0)}%</td>
+      <td class="r">${fig(fmt(x.saving), 'kr.', 'cat', {size:'sm', cat:c.id,
+        aria:`${c.n} discount ${kr(x.saving)} — show provenance`})}</td>
+      <td class="r mono">${x.band ? '±' + dec(x.band, 0) + '%' : '—'}</td>
+      <td>${BASIS_CHIP[basis]}</td>
+      <td class="r"><button class="btn btn-secondary btn-sm" type="button"
+        data-chal="${c.id}">Challenge</button></td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <header class="phead">
+    <span class="eyebrow"><i></i>${activeCount()} of ${CATS.length} categories on an agreement</span>
+    <h1>Eight categories, eight sources</h1>
+    <p>Each row carries its own basis and its own error band, because they were not all learned
+      the same way. Anything you correct here changes the totals immediately and is logged
+      under Your corrections.</p>
+  </header>
+  <div class="tbl-card"><div class="tbl-scroll"><table class="wide">
+    <caption>${conservative ? 'Conservative (P25) case — every figure scaled by ' + dec(P25_RATIO, 3) + '. ' : ''}Press any figure for its provenance.</caption>
+    <thead><tr>
+      <th scope="col">Category</th><th scope="col" class="r">Spend / year</th>
+      <th scope="col" class="r">Rate</th><th scope="col" class="r">Discount / year</th>
+      <th scope="col" class="r">Band</th><th scope="col">Basis</th><th scope="col" class="r">Disagree?</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr>
+      <td>Total</td><td class="r amt">${fmt(t.spend)}</td><td class="r mono">—</td>
+      <td class="r amt">${fmt(t.saving)}</td>
+      <td class="r mono">±${dec(t.band, t.band % 1 === 0 ? 0 : 1)}%</td><td></td><td></td>
+    </tr></tfoot>
+  </table></div></div>
+
+  <section class="sec" aria-labelledby="cat-agr-h">
+    <div class="sec-h"><h2 id="cat-agr-h">The agreements behind those rows</h2>
+      <p>No supplier photography: we have never seen these yards, sites or vans. A logo is
+        identity; a photograph would be an implied claim to knowledge we do not have.</p></div>
+    <div class="tbl-card"><div class="tbl-scroll"><table class="wide">
+      <caption>${agrCount()} agreements, ${activeCount()} active. Slices in the three uncovered
+        categories sum to that category's spend exactly.</caption>
+      <thead><tr><th scope="col">Agreement</th><th scope="col">Category</th>
+        <th scope="col" class="r">Covers</th><th scope="col" class="r">Discount</th>
+        <th scope="col">Status</th></tr></thead>
+      <tbody>${CATS.map(c => slicesOf(c).map((a, i) => {
+        const cov = Math.round(a.covers * t.scale);
+        const sav = a.alt ? 0 : Math.round(cov * rateOf(c) / 100);
+        return `<tr>
+          <td><div class="cellname">${logoChip(a.n)}<div><b>${esc(a.n)}</b></div></div></td>
+          <td>${esc(c.n)}</td>
+          <td class="r mono">${a.alt ? '—' : fmt(cov)}</td>
+          <td class="r mono">${a.alt ? '—' : fmt(sav)}</td>
+          <td>${isCovered(c)
+            ? (i === 0 ? `<span class="est-chip ver">${ICON.tick} Active</span>`
+                       : `<span class="est-chip">${ICON.dash} Alternative — same spend, no extra discount</span>`)
+            : `<span class="est-chip est">${ICON.dash} Candidate</span>`}</td>
+        </tr>`;
+      }).join('')).join('')}</tbody>
+    </table></div></div>
+  </section>`;
+}
+
+/* ---- TRACK RECORD ----------------------------------------------------- */
+function viewTrack(){
+  const cs = calStats();
+  const rows = cs.rows.slice().reverse().map(r => `
+    <tr>
+      <td><b>${esc(r.q)}</b>${r.why ? `<span style="display:block;font-size:var(--text-xs);
+        color:var(--general-muted-foreground);margin-top:3px;line-height:1.55">${esc(r.why)}</span>` : ''}</td>
+      <td class="r mono">${fmt(r.est)}</td>
+      <td class="r mono">${fmt(r.act)}</td>
+      <td class="r err-txt ${Math.abs(r.err) < 1 ? 'err-ok' : (r.err > 0 ? 'err-hi' : 'err-lo')}">
+        ${r.err > 0 ? '+' : ''}${dec(r.err)}%</td>
+      <td>${Math.abs(r.err) < 1 ? 'on the number'
+            : (r.err > 0 ? 'we were high' : 'we were low')}</td>
+    </tr>`).join('');
+  const sumLast4 = cs.rows.slice(-4).reduce((s, r) => s + r.act, 0);
+
+  return `
+  <header class="phead">
+    <span class="eyebrow"><i></i>${persona.verified ? 'Predicted, then invoiced' : 'Published, then checked'}</span>
+    <h1>Our track record, including the misses</h1>
+    <p>${persona.verified
+      ? 'Every quarter we predict what your agreements will return, then reconcile against your own invoices. Both numbers are kept.'
+      : `Every quarter we publish an estimate for this cohort, then record what actually happened. We keep the quarters we got wrong, because a track record with the failures removed is not a track record.`}</p>
+  </header>
+
+  <section class="sec" aria-labelledby="tr-h">
+    <div class="sec-h"><h2 id="tr-h">${esc(calSet().unit)}</h2>
+      <span class="spacer"></span>
+      <span class="chip chip-soft">Mean absolute error ${pct(cs.mae)}</span></div>
+    <div class="plot">${calSvg()}
+      <div class="plot-legend">
+        <span><i class="sw" style="background:var(--sentiment-negative)"></i>Estimate above the outcome</span>
+        <span><i class="sw" style="background:var(--general-primary)"></i>Estimate below the outcome</span>
+        <span><i class="sw" style="background:var(--sentiment-positive)"></i>Within 1%</span>
+      </div>
+    </div>
+    <div class="tbl-card"><div class="tbl-scroll"><table class="wide">
+      <caption>Error is (estimate − outcome) ÷ outcome. ${persona.verified
+        ? `The last four quarters' invoiced savings sum to ${kr(sumLast4)} — the same figure the Evidence page reports as collected.`
+        : `Quarterly cohort medians do not sum to the annual median: re-taking a median on a
+           quarter of the data is not additive, and we would rather say so than tidy it up.`}</caption>
+      <thead><tr><th scope="col">Quarter</th><th scope="col" class="r">We estimated</th>
+        <th scope="col" class="r">${persona.verified ? 'Your invoices showed' : 'Outcome was'}</th>
+        <th scope="col" class="r">Error</th><th scope="col">Direction</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div></div>
+    <div class="callout">${ICON.info}
+      <div class="cb"><b>Why this is on the navigation, not in a footnote</b>
+        <p>It is the only thing on this site that can be checked without trusting us first.
+          ${persona.verified ? '' : `It is also the honest answer to "is your 35% real?" — over
+          ${cs.rows.length} quarters we have been out by ${pct(cs.mae)} on average, in both directions.`}</p></div>
+    </div>
+  </section>`;
+}
+
+/* ---- CORRECTIONS ------------------------------------------------------- */
+function viewCorrections(){
+  const keys = Object.keys(corrections);
+  const t = totals();
+  const body = keys.length ? `<div class="corr">${keys.map(id => {
+    const c = CATS.find(x => x.id === id), k = corrections[id];
+    const before = Math.round(k.prevSpend * (k.prevRate != null ? k.prevRate : c.rate) / 100);
+    const after = savingOf(c);
+    return `<div class="corr-row">
+      <span class="est-chip dec">${ICON.pen} Your figure</span>
+      <div class="cb"><b>${esc(c.n)}</b>
+        <p>Spend ${fmt(k.prevSpend)} → <b>${fmt(k.spend)}</b> kr.${k.rate != null
+          ? ` · rate ${dec(k.prevRate, 0)}% → <b>${dec(k.rate, 0)}%</b>` : ''}
+          · discount ${fmt(before)} → <b>${fmt(after)}</b> kr.
+          ${k.reason ? `<br>Reason given: ${esc(k.reason)}` : ''}
+          <br>Logged ${new Date(k.at).toLocaleString('da-DK')}. Band on this category is now
+          ±${dec(DECLARED_PCT, 0)}% — declared by you, not audited by us.</p></div>
+      <button class="btn btn-secondary btn-sm" type="button" data-undo="${id}">Undo</button>
+    </div>`;
+  }).join('')}</div>` : `<p class="empty">Nothing challenged yet. If a figure on this site is wrong
+    about your business, the Categories page has a Challenge button on every row — the model
+    changes, we log it, and you can undo it.</p>`;
+
+  return `
+  <header class="phead">
+    <span class="eyebrow"><i></i>${keys.length} correction${keys.length === 1 ? '' : 's'}</span>
+    <h1>Where you told us we were wrong</h1>
+    <p>Disagreement is data. A correction outranks our benchmark for that category, carries its
+      own ±${dec(DECLARED_PCT, 0)}% declared band, and is reversible — we do not quietly keep our
+      own number underneath.</p>
+  </header>
+  <section class="sec" aria-labelledby="corr-h">
+    <div class="sec-h"><h2 id="corr-h">Corrections on this account</h2>
+      <span class="spacer"></span>
+      <span class="chip chip-soft">Total now ${kr(t.value)}</span></div>
+    ${body}
+  </section>`;
+}
+
+/* ---- METHOD ------------------------------------------------------------ */
+function viewMethod(){
+  return `
+  <header class="phead">
+    <span class="eyebrow"><i></i>Plain language, no appendix</span>
+    <h1>How we know what we claim to know</h1>
+    <p>This page is reachable from the header on every screen and from every provenance
+      popover. If a source is not listed here, it did not go into any number you have seen.</p>
+  </header>
+
+  <section class="sec" aria-labelledby="m-src-h">
+    <div class="sec-h"><h2 id="m-src-h">Every source, named</h2></div>
+    <div class="srclist">
+      <div class="src"><span class="sn">1</span><div class="sb"><b>The public company register (CVR)</b>
+        <p>Your NACE industry code, employee count and postcode. Public, exact, and the only thing
+          we knew about you before you signed in.</p></div></div>
+      <div class="src"><span class="sn">2</span><div class="sb"><b>Our own signed agreements</b>
+        <p>The discount rate per category and the volume-bonus tiers (1,0% on the first million,
+          1,5% to three million, 2,0% above). These are contractual, so they are exact — the
+          uncertainty in any saving figure is never in the rate, only in the spend.</p></div></div>
+      <div class="src"><span class="sn">3</span><div class="sb"><b>Aggregated invoice lines from ${COHORT.n} consenting customers</b>
+        <p>Companies in the same industry code, size band and region that agreed to anonymous
+          benchmarking. We never publish a figure computed from fewer than 8 companies, which is
+          why some categories have wider bands than others.</p></div></div>
+      <div class="src"><span class="sn">4</span><div class="sb"><b>Danmarks Statistik cost-structure tables</b>
+        <p>Licensed industry statistics, used to sanity-check the category mix — if our cohort and
+          the national statistics disagree by more than a tenth, we widen the band instead of
+          picking a winner.</p></div></div>
+      <div class="src scraped"><span class="sn">5</span><div class="sb"><b>Supplier web-shop list prices, crawled weekly</b>
+        <p>Yes, scraped. A crawler reads the public web shops of the suppliers in our catalogue
+          every week so a price index exists for categories where the cohort is thin. List prices
+          are not the prices anyone actually pays, so this source only ever widens a band or
+          ranks a category — it never sets a saving figure on its own.</p></div></div>
+      <div class="src"><span class="sn">6</span><div class="sb"><b>Your corrections</b>
+        <p>Anything you challenge outranks sources 3 to 5 for that category, and is marked
+          "your figure" rather than "verified" until invoices back it.</p></div></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="m-how-h">
+    <div class="sec-h"><h2 id="m-how-h">How a number is built</h2></div>
+    <div class="prose">
+      <p><b>Spend.</b> For a customer with nothing connected we take the cohort's median spend per
+        employee, multiply by your employee count from the register, and split it using the
+        cohort's category mix. That is a model of a company like yours — not of you. Once invoices
+        arrive, this whole step is deleted and replaced by addition.</p>
+      <p><b>Discount.</b> Spend × the contracted rate for that category. Nothing else.</p>
+      <p><b>Bonus.</b> The tiers applied to the volume that actually runs through active
+        agreements. Because the tiers step, the bonus does not scale linearly — which is why the
+        conservative view recomputes it on the reduced volume instead of multiplying it.</p>
+      <p><b>The band.</b> ±15% with register data only, ±8% once a 12-month spend report fixes the
+        category mix, ±3% with line-level invoice history, ±0 once a quarter has closed and been
+        reconciled. A figure you have declared yourself carries ±${dec(DECLARED_PCT, 0)}%. The total's band
+        is the saving-weighted average of the eight category bands.</p>
+      <p><b>The distribution.</b> Cohort median and quartiles are measured. The curve behind them
+        is a lognormal fitted to those three numbers, σ = ln(P75/P25) ÷ 1,349 = ${dec(LN_SIGMA, 3)}.
+        The conservative case is the cohort's own P25/median ratio, ${dec(P25_RATIO, 3)} — not a
+        safety margin we invented.</p>
+      <p><b>The track record.</b> Each quarter's estimate is archived when it is published and
+        compared with the outcome when it lands. We do not restate old estimates.</p>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="m-not-h">
+    <div class="sec-h"><h2 id="m-not-h">What we deliberately do not show</h2></div>
+    <div class="prose">
+      <p><b>A savings gauge.</b> The best single category discount in our catalogue is 35%. Drawn
+        as a dial it reads as your position; it is nobody's position. A ceiling is not a forecast,
+        so it is not on this page.</p>
+      <p><b>"Up to" anything.</b> A hedge that cannot be wrong cannot be trusted. Every number
+        here carries a two-sided range instead.</p>
+      <p><b>Offers.</b> There is no promotional tile in this product. If a category is worth
+        acting on, the arithmetic says so; a badge would only teach you that some of these numbers
+        are being sold to you.</p>
+      <p><b>Tips without evidence.</b> An assistant that says "consider consolidating your freight
+        suppliers" without showing the ${COHORT.n}-company basis is asking for trust it has not
+        earned. Everything advisory in this version hangs off a figure with provenance.</p>
+    </div>
+  </section>`;
+}
+
+/* ---- render ------------------------------------------------------------ */
+function render(){
+  const page = $('#page');
+  page.innerHTML = navAt === 'evidence' ? viewEvidence()
+    : navAt === 'categories' ? viewCategories()
+    : navAt === 'track' ? viewTrack()
+    : navAt === 'corrections' ? viewCorrections()
+    : viewMethod();
+  wirePage();
+  renderBasisPill();
+  const h1 = page.querySelector('h1');
+  if(h1){ h1.tabIndex = -1; h1.focus({preventScroll:true}); }
+}
+
+function renderBasisPill(){
+  const p = $('#basisPill');
+  p.className = 'basis' + (persona.verified ? ' verified' : '');
+  p.innerHTML = `<span class="dot"></span><span class="bt">
+    <b>${persona.verified ? 'Verified · ' + esc(persona.source) : 'Estimated · nothing connected'}</b>
+    <span>${persona.verified ? fmt(invoiceCount()) + ' invoices' : '±' + pct(tierPct(), 0) + ' · n=' + COHORT.n}</span>
+  </span>`;
+  p.setAttribute('aria-label', persona.verified
+    ? `Data basis: verified from ${fmt(invoiceCount())} invoices in ${persona.source}. Opens the method page.`
+    : `Data basis: estimated, nothing connected, band plus or minus ${pct(tierPct(), 0)} from ${COHORT.n} peers. Opens the method page.`);
+}
+
+function wirePage(){
+  $$('.fig').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    openPop(b, b.dataset.prov, b.dataset.cat ? CATS.find(c => c.id === b.dataset.cat) : null);
+  }));
+  $$('[data-goto]').forEach(b => b.addEventListener('click', () => go(b.dataset.goto)));
+  $$('[data-chal]').forEach(b => b.addEventListener('click', () => openChal(b.dataset.chal)));
+  $$('[data-undo]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.undo, c = CATS.find(x => x.id === id);
+    delete corrections[id];
+    persist(); renderNav(); render();
+    say(`Correction on ${c.n} removed. Total is now ${kr(totals().value)}.`);
+  }));
+  $$('[data-input]').forEach(i => i.addEventListener('change', () => {
+    if(i.checked) inputs.add(i.dataset.input); else {
+      inputs.delete(i.dataset.input);
+      /* invoice history implies the spend report — dropping the report drops it too */
+      if(i.dataset.input === 'report') inputs.delete('invoices');
+    }
+    if(i.dataset.input === 'invoices' && i.checked) inputs.add('report');
+    persist(); render();
+    say(`Confidence band is now plus or minus ${pct(tierPct(), 0)}.`);
+  }));
+  const med = $('#segMed'), p25 = $('#segP25');
+  if(med) med.addEventListener('click', () => { conservative = false; persist(); render(); say('Showing the median case.'); });
+  if(p25) p25.addEventListener('click', () => { conservative = true; persist(); render();
+    say(`Showing the conservative P25 case, scaled by ${dec(P25_RATIO, 3)}.`); });
+  const tog = $('#distTblTog');
+  if(tog) tog.addEventListener('click', () => {
+    const tbl = $('#distTbl'), open = tbl.hidden;
+    tbl.hidden = !open;
+    tog.setAttribute('aria-expanded', String(open));
+    tog.textContent = open ? 'Hide table' : 'View as table';
+  });
+  const ct = $('#evChalTotal');
+  if(ct) ct.addEventListener('click', () => { go('categories');
+    say('Challenge any category row — the total is the sum of the eight.'); });
+}
+
+/* ==========================================================================
+   10 · provenance popover
+   ========================================================================== */
+let popOwner = null;
+function openPop(btn, key, cat){
+  const p = provFor(key, cat);
+  const el = $('#pop');
+  el.innerHTML = `
+    <div class="pop-h">
+      <div class="pt"><span class="pl">${esc(p.label)}</span><h3 id="popT">${esc(p.title)}</h3></div>
+      <button class="popx" type="button" id="popX" aria-label="Close provenance">${ICON.x}</button>
+    </div>
+    <dl class="pr" style="border-top:none;padding-top:0">
+      <dt>Peer set</dt><dd>${esc(PEERSET())}</dd>
+    </dl>
+    <dl class="pr"><dt>Method</dt><dd><ul>${p.method.map(m => `<li>${m}</li>`).join('')}</ul></dd></dl>
+    <dl class="pr"><dt>Inputs</dt><dd><ul>${p.inputs.map(m => `<li>${esc(m)}</li>`).join('')}</ul></dd></dl>
+    <dl class="pr"><dt>Uncertainty</dt><dd>${p.band}</dd></dl>
+    <dl class="pr"><dt>What would make it exact</dt><dd>${esc(p.exact)}</dd></dl>
+    <div class="pop-acts">
+      ${p.cat ? `<button class="btn btn-secondary btn-sm" type="button"
+        data-popchal="${p.cat.id}">${ICON.pen} Challenge this number</button>` : ''}
+      <button class="btn btn-ghost btn-sm" type="button" id="popMethod">Open method</button>
+    </div>`;
+  el.classList.add('on');
+  el.setAttribute('aria-labelledby', 'popT');
+  popOwner = btn;
+  btn.setAttribute('aria-expanded', 'true');
+
+  /* place under the trigger, clamped to the viewport */
+  const r = btn.getBoundingClientRect();
+  const w = el.offsetWidth, h = el.offsetHeight;
+  let left = Math.min(Math.max(12, r.left), innerWidth - w - 12);
+  let top = r.bottom + 10;
+  if(top + h > innerHeight - 12) top = Math.max(12, r.top - h - 10);
+  el.style.left = left + 'px';
+  el.style.top = top + 'px';
+
+  $('#popX').addEventListener('click', closePop);
+  $('#popMethod').addEventListener('click', () => { closePop(); go('method'); });
+  const pc = el.querySelector('[data-popchal]');
+  if(pc) pc.addEventListener('click', () => { const id = pc.dataset.popchal; closePop(); openChal(id); });
+  $('#popX').focus();
+}
+function closePop(){
+  const el = $('#pop');
+  if(!el.classList.contains('on')) return;
+  el.classList.remove('on');
+  if(popOwner){
+    popOwner.setAttribute('aria-expanded', 'false');
+    if(document.body.contains(popOwner)) popOwner.focus();
+  }
+  popOwner = null;
+}
+$('#pop').addEventListener('click', e => e.stopPropagation());
+document.addEventListener('click', () => { closePop(); closeUser(); });
+addEventListener('resize', closePop);
+$('#canvas').addEventListener('scroll', closePop);
+
+/* ==========================================================================
+   11 · challenge dialog — a correction that really changes the model
+   ========================================================================== */
+let chalCat = null, chalReturn = null;
+const parseKr = s => {
+  const clean = String(s).replace(/[^\d,.-]/g, '').replace(/\.(?=\d{3}\b)/g, '').replace(',', '.');
+  const v = parseFloat(clean);
+  return isFinite(v) ? v : NaN;
+};
+function openChal(catId){
+  const c = CATS.find(x => x.id === catId);
+  if(!c) return;
+  chalCat = c;
+  chalReturn = document.activeElement;
+  const cur = corrections[c.id];
+  $('#chal').innerHTML = `
+    <h2 id="chalT">That is not right for us</h2>
+    <p class="dsub">We estimated <b>${kr(spendOf(c))}</b> of ${esc(c.n.toLowerCase())} spend a year
+      at a <b>${dec(rateOf(c), 0)}%</b> agreement rate, which is where
+      ${kr(savingOf(c))} comes from. Tell us what is actually true and the model changes now —
+      not after a support ticket.</p>
+    <form id="chalForm" novalidate>
+      <div class="fgroup">
+        <label class="flabel" for="chalSpend">Your actual annual spend in this category</label>
+        <div class="field"><input id="chalSpend" type="text" inputmode="numeric"
+          value="${fmt(cur ? cur.spend : spendOf(c))}" autocomplete="off"
+          aria-describedby="chalSpendHelp"><span class="suf">kr.</span></div>
+        <p class="fhelp" id="chalSpendHelp">Round figures are fine. Enter 0 if you do not buy this
+          category at all — that is a correction too, and a common one.</p>
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="chalRate">Discount you already get here, if any</label>
+        <div class="field"><input id="chalRate" type="text" inputmode="decimal"
+          value="${cur && cur.rate != null ? dec(cur.rate, 0) : ''}" placeholder="${dec(c.rate, 0)}"
+          autocomplete="off" aria-describedby="chalRateHelp"><span class="suf">%</span></div>
+        <p class="fhelp" id="chalRateHelp">Leave blank to keep our contracted rate of ${dec(c.rate, 0)}%.
+          Anything above it and we will say so rather than quietly claim the difference.</p>
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="chalReason">Why we were wrong (optional, but it improves the cohort)</label>
+        <div class="field"><select id="chalReason">
+          <option value="">Choose a reason</option>
+          <option>We buy far less than that</option>
+          <option>We buy far more than that</option>
+          <option>We do not buy this category</option>
+          <option>Our own deal is already better</option>
+          <option>This spend sits in another category</option>
+        </select></div>
+      </div>
+      <p class="ferr" id="chalErr" hidden></p>
+      <div class="dlg-preview" id="chalPrev"></div>
+      <div class="dlg-acts">
+        ${cur ? `<button class="btn btn-ghost btn-sm" type="button" id="chalUndo">Remove my correction</button>` : ''}
+        <button class="btn btn-secondary" type="button" id="chalCancel">Cancel</button>
+        <button class="btn btn-primary" type="submit">Update the model</button>
+      </div>
+    </form>`;
+  $('#chalScrim').classList.add('on');
+  const d = $('#chal');
+  d.classList.add('on');
+  d.setAttribute('aria-hidden', 'false');
+  const spend = $('#chalSpend'), rate = $('#chalRate');
+  const preview = () => {
+    const s = parseKr(spend.value), rr = rate.value.trim() === '' ? rateOf(c) : parseKr(rate.value);
+    const prev = $('#chalPrev');
+    if(!isFinite(s) || s < 0 || !isFinite(rr)){ prev.textContent = 'Enter a spend figure to see the effect.'; return; }
+    const t0 = totals();
+    const newSaving = Math.round(s * rr / 100);
+    const delta = newSaving - savingOf(c);
+    const declared = ` The band on this category becomes ±${dec(DECLARED_PCT, 0)}% — your figure, unaudited.`;
+    const head = `This category's discount goes ${fmt(savingOf(c))} → <b>${fmt(newSaving)}</b> kr.`;
+    if(isCovered(c)){
+      /* a covered category moves the bonus too, because the tiers step —
+         so preview the real recomputation rather than a multiplication */
+      const covered = CATS.filter(isCovered).reduce((acc, x) => acc + (x === c ? s : spendOf(x)), 0);
+      const bonusAfter = bonusOn(Math.round(covered * (conservative ? P25_RATIO : 1))).total;
+      prev.innerHTML = head +
+        `, the volume bonus ${fmt(t0.bonus.total)} → <b>${fmt(bonusAfter)}</b> kr.,` +
+        ` and the headline total ${fmt(t0.value)} → <b>${fmt(t0.value + delta + bonusAfter - t0.bonus.total)}</b> kr.` +
+        declared;
+    } else {
+      /* nothing is being collected here, so this moves the "not collected"
+         figure — the headline is discount + bonus and does not move */
+      prev.innerHTML = head +
+        `, so the discount you are <em>not</em> collecting goes ${fmt(t0.remaining)} → ` +
+        `<b>${fmt(t0.remaining + delta)}</b> kr. The headline total stays ${fmt(t0.value)} kr.` +
+        ` until this category is on an agreement.` + declared;
+    }
+  };
+  spend.addEventListener('input', preview);
+  rate.addEventListener('input', preview);
+  preview();
+  $('#chalCancel').addEventListener('click', closeChal);
+  const undo = $('#chalUndo');
+  if(undo) undo.addEventListener('click', () => {
+    delete corrections[c.id]; closeChal(); persist(); renderNav(); render();
+    say(`Correction on ${c.n} removed.`);
+  });
+  $('#chalForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const err = $('#chalErr');
+    const s = parseKr(spend.value);
+    const rTxt = rate.value.trim();
+    const rr = rTxt === '' ? null : parseKr(rTxt);
+    if(!isFinite(s) || s < 0){
+      err.textContent = 'Enter your annual spend as a number — 0 is allowed.';
+      err.hidden = false; spend.focus(); return;
+    }
+    if(rr !== null && (!isFinite(rr) || rr < 0 || rr > 40)){
+      err.textContent = 'A discount rate between 0 and 40% please, or leave it blank.';
+      err.hidden = false; rate.focus(); return;
+    }
+    err.hidden = true;
+    corrections[c.id] = {
+      spend:Math.round(s), rate:rr, reason:$('#chalReason').value || '',
+      at:Date.now(), prevSpend:spendOf(c), prevRate:rateOf(c)
+    };
+    closeChal();
+    persist(); renderNav(); render();
+    say(`${c.n} updated to ${kr(Math.round(s))}. The total is now ${kr(totals().value)}.`);
+  });
+  setTimeout(() => spend.focus(), 60);
+}
+function closeChal(){
+  $('#chalScrim').classList.remove('on');
+  const d = $('#chal');
+  d.classList.remove('on');
+  d.setAttribute('aria-hidden', 'true');
+  chalCat = null;
+  if(chalReturn && document.body.contains(chalReturn)) chalReturn.focus();
+  chalReturn = null;
+}
+$('#chalScrim').addEventListener('click', closeChal);
+$('#chal').addEventListener('keydown', e => {
+  /* keep focus inside the dialog while it is open */
+  if(e.key !== 'Tab') return;
+  const f = $$('#chal button, #chal input, #chal select').filter(x => !x.disabled);
+  if(!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+});
+addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  if($('#chal').classList.contains('on')) closeChal();
+  else if($('#pop').classList.contains('on')) closePop();
+  else closeUser();
+});
+
+/* ==========================================================================
+   12 · shell plumbing
+   ========================================================================== */
+const SUFFIX = /^(a\/s|aps|as|ab|ivs|k\/s|p\/s|oy|ltd|gmbh|inc)$/i;
+function initials(name){
+  const w = name.trim().split(/\s+/).filter(s => !SUFFIX.test(s));
+  return (w.length > 1 ? w[0][0] + w[w.length - 1][0] : (w[0] || '?').slice(0, 2)).toUpperCase();
+}
+function setRail(mini){
+  $('#rail').classList.toggle('mini', mini);
+  const t = $('#railTog');
+  t.setAttribute('aria-expanded', String(!mini));
+  t.setAttribute('aria-label', mini ? 'Expand navigation' : 'Collapse navigation');
+}
+$('#railTog').addEventListener('click', () => {
+  railTouched = true;
+  setRail(!$('#rail').classList.contains('mini'));
+});
+const NARROW = matchMedia('(max-width:900px)');
+const syncRail = () => { if(!railTouched) setRail(NARROW.matches); };
+NARROW.addEventListener('change', syncRail);
+
+function closeUser(){
+  $('#userPop').classList.remove('on');
+  $('#userPop').inert = true;
+  $('#userBtn').setAttribute('aria-expanded', 'false');
+}
+$('#userBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#userPop').classList.toggle('on');
+  $('#userPop').inert = !on;
+  $('#userBtn').setAttribute('aria-expanded', String(on));
+});
+$('#userPop').addEventListener('click', e => e.stopPropagation());
+$('#restartBtn').addEventListener('click', () => {
+  try{ sessionStorage.removeItem(SKEY); }catch(e){}
+  location.href = location.pathname;
+});
+$('#methodTop').addEventListener('click', () => go('method'));
+$('#basisPill').addEventListener('click', () => go('method'));
+
+function applyPersona(key){
+  persona = PERSONAS[key];
+  inputs = new Set(['sector']);
+  corrections = {};
+  conservative = false;
+}
+function paintIdentity(){
+  $('#userName').textContent = persona.user;
+  $('#userCo').textContent = persona.company;
+  $('#upName').textContent = persona.user;
+  $('#upCo').textContent = persona.company;
+  $('#userAv').textContent = initials(persona.user);
+  document.title = `Advantage — Evidence · ${persona.company}`;
+}
+function enterApp(){
+  paintIdentity();
+  renderNav();
+  syncRail();
+  document.body.classList.add('in-app');
+  $('#app').classList.add('on');
+  inApp = true;
+  persist();
+  render();
+}
+$('#loginBob').addEventListener('click', () => { applyPersona('bob'); enterApp(); });
+$('#loginFanny').addEventListener('click', () => { applyPersona('fanny'); enterApp(); });
+$('#personaBob').addEventListener('click', () => { closeUser(); applyPersona('bob'); persist(); paintIdentity(); renderNav(); render(); });
+$('#personaFanny').addEventListener('click', () => { closeUser(); applyPersona('fanny'); persist(); paintIdentity(); renderNav(); render(); });
+
+/* ==========================================================================
+   13 · boot
+   ========================================================================== */
+$('#userPop').inert = true;
+if(restore()) enterApp();
+</script>
+</body>
+</html>

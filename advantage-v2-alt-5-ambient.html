@@ -1,0 +1,1769 @@
+<!doctype html>
+<!--
+  ============================================================================
+  ADVANTAGE — ALT 5 · "THE AMBIENT SERVICE"
+  ============================================================================
+
+  THESIS (2 sentences)
+  Nobody logs into a procurement dashboard: the owner of a 12-person contracting
+  firm has an actual job, and visiting a savings portal is not it. Advantage
+  should therefore be a background service that watches spend and interrupts
+  rarely, precisely, and in the places the customer already is — so the primary
+  artefact is a digest that arrives, not a destination that must be visited.
+
+  REMOVED FROM v2 — and why
+  · The dashboard as a destination. The six-card benchmark tray, the savings
+    gauge, the category savings list, the agreement grid, the savings
+    drill-down. Every one of them is an exploration surface, and exploration
+    presupposes a user who returns weekly to browse. That user is a fiction;
+    the features built for them are unread.
+  · The multi-item left nav. Navigation is the cost of having many places to
+    go. A service with one decision pending needs no map.
+  · Weekly discovery / "something new here" announcement banner. A banner that
+    invents novelty every week trains the customer to ignore the one week the
+    novelty is worth 42.500 kr.
+  · Search (suppliers, agreements, invoices). Search is a tool for a user who
+    already knows what they are looking for. If the service is working, the
+    customer should never have to look for anything — it should have been sent.
+  · The activity rail and its empty state. An empty rail is an apology for a
+    page that had no reason to exist.
+  · The greeting, the session framing, everything that measures success in
+    sessions per month. Success here is decisions per year: six digests, four
+    interruptions, one statement.
+
+  ADDED — and why
+  · The digest, rendered faithfully as mail. Sender, subject, preheader, one
+    decision above the fold, one figure, one action. This is the product; if
+    the subject line is wrong nothing downstream matters, so it is built at
+    full fidelity and made navigable back through the year.
+  · An explicit, user-controlled interrupt policy. A kroner threshold and a
+    monthly cap, with the honest consequence shown live: how many
+    interruptions a year that implies, and exactly which findings fall below
+    the line into the digest instead. Nobody ships this because it invites the
+    customer to turn the product down. It is the most honest feature here.
+  · Point-of-purchase intervention. The highest-value moment is not a visit;
+    it is the second before an off-framework order is placed. So the warning
+    lives inside the ERP invoice screen, dismissible and actionable there.
+  · Chat-tool alerts. For the two or three events a year that genuinely cannot
+    wait for the digest, a Teams-shaped card in the channel they already have
+    open.
+  · A one-page annual statement, print-ready. The single artefact a customer
+    reads, keeps, and shows their accountant.
+  · A deliberately thin check-in surface: three elements. Its thinness is a
+    stated position, printed on the page, not an omission.
+
+  THE STRONGEST OBJECTION TO MY OWN POSITION
+  If there is no dashboard, what does the customer think they are paying for?
+  A background service is invisible by construction, and invisible value is
+  value that gets cancelled. A dashboard is a bad decision-making tool but an
+  excellent receipt: logging in and seeing 437.097 kr. is how a customer
+  reassures themselves that the arrangement is working, and how they justify
+  it to a co-owner who was not on the call. Worse, "decisions per year" is a
+  metric no one inside a software company can be promoted on — six emails a
+  year looks, to a board, like a product that was never built. My answer is
+  the statement and the digest archive: a receipt you receive is stronger than
+  a receipt you must go and fetch, and a year of digests with the decisions
+  visibly taken is a better record than a gauge. But I concede this is a
+  wager, not a proof: I am betting that a trustworthy service beats a
+  reassuring interface, and if the customer's real need is reassurance rather
+  than savings, the version with the gauge wins and mine churns.
+
+  Money story: savings + customer volume bonus only. No subscription, fee, or
+  membership content anywhere.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — The Ambient Service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap">
+<style>
+/* ==========================================================================
+   Advantage Design System — tokens copied verbatim from advantage-v2-visual.html
+   Semantic tokens only. No raw hex in components.
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+
+  --sidebar-border:#e0e0e0;
+
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  /* 8pt spacing scale — note there is deliberately no --s5/--s7/--s9/--s10.
+     In-between values are written var(--s5,20px) with an explicit fallback,
+     because an unresolved var() silently voids the whole declaration. */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+
+  --hairline:#ececec;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  --t-slow:.5s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{
+  font-family:var(--font-body);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-4xl);letter-spacing:-1px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+h4{font-size:var(--text-sm)}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+
+/* ---------- buttons (same scale as v2) ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active:not([disabled]){transform:translateY(1px)}
+.btn[disabled]{cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover:not([disabled]){background:#1553bb}
+.btn-primary[disabled]{background:var(--general-muted);color:#a3a3a3;box-shadow:none}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border)}
+.btn-secondary[disabled]{background:var(--general-muted);border-color:transparent;color:#8f8f8f;box-shadow:none}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3);height:36px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs)}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.4}
+.chip svg{width:12px;height:12px}
+.chip-rec{background:var(--general-primary);color:var(--general-primary-foreground)}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-warn{background:#fff2e0;color:#a35c00}
+.chip-good{background:#d9f2ef;color:var(--sentiment-positive)}
+.est-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground);font-size:11px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase}
+.est-chip svg{width:11px;height:11px}
+.est-chip.ok{background:#d9f2ef;color:var(--sentiment-positive)}
+
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-sm)}
+.hair{height:1px;background:var(--hairline);border:none}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:var(--text-xs);font-weight:600;
+  letter-spacing:.02em;color:var(--general-primary)}
+.eyebrow i{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--general-primary)}
+.lead{font-size:var(--text-lg);color:var(--general-muted-foreground);line-height:1.55;max-width:60ch;
+  margin-top:var(--s3)}
+.pos{color:var(--sentiment-positive)}
+.neg{color:var(--sentiment-negative)}
+
+/* ---------- login (v2 pattern) ---------- */
+.flow{min-height:100vh;display:flex;flex-direction:column;background:var(--surface)}
+.stage{flex:1 1 auto;display:flex;flex-direction:column}
+.scr{display:none;flex:1 1 auto}
+.scr.on{display:flex;flex-direction:column}
+.scr.on.mid{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;align-content:center;
+  padding:var(--s12) var(--s6)}
+.scr.on>*{animation:rise var(--t-slow) both;min-width:0}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.login{width:420px;max-width:100%;text-align:center}
+.login .mark{height:40px;width:auto;margin:0 auto var(--s8);display:block}
+.login h1{font-size:var(--text-5xl);letter-spacing:-2px}
+.login .lead{font-size:var(--text-base);margin:var(--s3) auto 0;max-width:36ch;text-align:center}
+.login .card{margin-top:var(--s12);padding:var(--s8);text-align:left}
+.login-choice{display:flex;flex-direction:column;gap:var(--s3)}
+.login-persona{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);
+  cursor:pointer;text-align:left;transition:var(--t-fast)}
+.login-persona:hover,.login-persona:focus-visible{border-color:var(--general-border);background:var(--brand-ice)}
+.login-persona-av{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600}
+.login-persona:hover .login-persona-av{background:var(--surface)}
+.login-persona-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.login-persona-txt b{font-size:var(--text-sm);font-weight:600}
+.login-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
+.login-persona-go{flex:0 0 auto;width:16px;height:16px;color:#a3a3a3;transition:color var(--t-fast)}
+.login-persona:hover .login-persona-go,.login-persona:focus-visible .login-persona-go{color:var(--general-primary)}
+.tinyfoot{margin-top:var(--s6);font-size:var(--text-xs);color:#8f8f8f;text-align:center;line-height:1.6}
+
+/* ==========================================================================
+   SHELL — what survives: an appbar and one thin rail. Nothing else.
+   ========================================================================== */
+.app{display:none;min-height:100vh;flex-direction:column;background:var(--general-background)}
+.app.on{display:flex}
+body.in-app{background:var(--general-background)}
+.wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--surface)}
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:68px;padding:0 var(--s6);
+  border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:20;background:#ffffffe6;
+  backdrop-filter:blur(14px) saturate(180%)}
+.appbar .brand{display:flex;align-items:center;flex:0 0 auto}
+.appbar .brand img{height:28px;width:auto;display:block}
+.appbar .spacer{flex:1}
+.svc{display:inline-flex;align-items:center;gap:var(--s2);height:32px;padding:0 var(--s3);
+  border-radius:var(--rounded-full);background:var(--general-muted);font-size:12px;
+  color:var(--general-muted-foreground)}
+.svc .dot{width:8px;height:8px;border-radius:var(--rounded-full);background:var(--sentiment-positive);
+  position:relative;flex:0 0 auto}
+.svc .dot::after{content:"";position:absolute;inset:-4px;border-radius:var(--rounded-full);
+  border:1.5px solid var(--sentiment-positive);opacity:.45;animation:pip 2.4s ease-out infinite}
+.svc.off .dot{background:var(--sentiment-negative)}
+.svc.off .dot::after{border-color:var(--sentiment-negative);animation:none;opacity:.3}
+@keyframes pip{0%{transform:scale(.6);opacity:.6}70%{transform:scale(1.5);opacity:0}100%{opacity:0}}
+.userwrap{position:relative}
+.user{display:flex;align-items:center;gap:var(--s2);height:44px;padding:0 var(--s2) 0 var(--s2);
+  background:none;border:1px solid transparent;border-radius:var(--rounded-full);cursor:pointer}
+.user:hover{background:var(--general-muted)}
+.uav{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--brand-ice);color:var(--general-primary);font-family:var(--font-sans);
+  font-size:12px;font-weight:600}
+.un{display:none;flex-direction:column;line-height:1.25;text-align:left}
+@media(min-width:760px){.un{display:flex}}
+.un span:first-child{font-size:var(--text-xs);font-weight:600}
+.un span:last-child{font-size:11px;color:var(--general-muted-foreground)}
+.upop{position:absolute;top:52px;right:0;width:280px;z-index:40;padding:var(--s2);
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-lg);display:none}
+.upop.on{display:block}
+.up-h{padding:var(--s3);display:flex;flex-direction:column;gap:2px}
+.up-h b{font-family:var(--font-sans);font-size:var(--text-sm)}
+.up-h span{font-size:12px;color:var(--general-muted-foreground)}
+.up-sep{margin:var(--s2) 0;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);padding:0 var(--s3)}
+.up-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3);border:none;
+  background:none;cursor:pointer;text-align:left;border-radius:var(--rounded-md);font-size:var(--text-sm)}
+.up-i:hover{background:var(--brand-ice)}
+.up-i svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.up-persona-av{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:var(--general-muted);font-family:var(--font-sans);font-size:12px;font-weight:600}
+.up-persona-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.up-persona-txt b{font-size:var(--text-xs);font-weight:600}
+.up-persona-txt span{font-size:11px;color:var(--general-muted-foreground)}
+
+/* the one rail. Five artefacts; only the first is this app. */
+.rail{flex:0 0 auto;display:flex;align-items:stretch;gap:var(--s1);padding:0 var(--s6);
+  border-bottom:1px solid var(--hairline);overflow-x:auto;scrollbar-width:none;background:var(--surface)}
+.rail::-webkit-scrollbar{display:none}
+.rail-b{position:relative;display:inline-flex;align-items:center;gap:var(--s2);height:48px;
+  padding:0 var(--s3);background:none;border:none;cursor:pointer;white-space:nowrap;
+  font-size:var(--text-sm);color:var(--general-muted-foreground);border-radius:var(--rounded-xs)}
+.rail-b:hover{color:var(--general-foreground)}
+.rail-b[aria-current="true"]{color:var(--general-foreground);font-weight:600}
+.rail-b[aria-current="true"]::after{content:"";position:absolute;left:var(--s3);right:var(--s3);bottom:-1px;
+  height:2px;border-radius:2px;background:var(--general-primary)}
+.rail-b .rb-n{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;
+  border-radius:var(--rounded-full);background:var(--general-primary);color:var(--general-primary-foreground);
+  font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+.rail-tag{margin-left:auto;align-self:center;font-size:11px;color:#a3a3a3;padding-left:var(--s4);white-space:nowrap}
+@media(max-width:900px){.rail-tag{display:none}}
+
+.surface{display:none;flex:1 1 auto}
+.surface.on{display:block;animation:rise var(--t) both}
+.pad{width:100%;min-width:0;max-width:1080px;margin:0 auto;padding:var(--s12) var(--s8) var(--s24)}
+@media(max-width:700px){
+  .pad{padding:var(--s8) var(--s4) var(--s16)}
+  .appbar{padding:0 var(--s4)}
+  .rail{padding:0 var(--s4)}
+}
+.shead{display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s8)}
+.shead p{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.6;max-width:66ch}
+.position{margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid var(--hairline);
+  font-size:var(--text-xs);line-height:1.7;color:var(--general-muted-foreground);max-width:70ch}
+.position b{color:var(--general-foreground);font-weight:600}
+
+/* ==========================================================================
+   1 · CHECK IN — three elements. Thinness is the position.
+   ========================================================================== */
+.ci{max-width:640px}
+.ci-el{padding:var(--s8) 0}
+.ci-el+.ci-el{border-top:1px solid var(--hairline)}
+.ci-l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:var(--s3)}
+.ci-status{font-family:var(--font-sans);font-size:var(--text-xl);letter-spacing:-.4px;line-height:1.4}
+.ci-status b{font-weight:700}
+.ci-sub{margin-top:var(--s2);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.ci-fig{display:flex;align-items:baseline;gap:var(--s2);margin:var(--s2) 0 var(--s3)}
+.ci-fig b{font-family:var(--font-sans);font-size:var(--text-4xl);font-weight:700;letter-spacing:-1.4px;
+  color:var(--general-primary);font-variant-numeric:tabular-nums}
+.ci-fig small{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.ci-dec{font-size:var(--text-base);line-height:1.6}
+.ci-acts{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s6)}
+.ci-next{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;font-size:var(--text-base)}
+.ci-next b{font-family:var(--font-sans);font-weight:600}
+.ci-none{display:flex;gap:var(--s4);align-items:flex-start}
+.ci-none .ic{flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:#fff2e0;color:#a35c00}
+.ci-none .ic svg{width:18px;height:18px}
+
+/* ==========================================================================
+   2 · THE DIGEST — rendered as mail
+   ========================================================================== */
+.mail{display:grid;grid-template-columns:300px minmax(0,1fr);border:1px solid var(--hairline);
+  border-radius:var(--rounded-xl);overflow:hidden;box-shadow:var(--shadow-md);background:var(--surface)}
+@media(max-width:860px){.mail{grid-template-columns:minmax(0,1fr)}}
+.mail-list{border-right:1px solid var(--hairline);background:#fcfcfd;display:flex;flex-direction:column;min-width:0}
+@media(max-width:860px){.mail-list{border-right:none;border-bottom:1px solid var(--hairline)}}
+.mail-list-h{display:flex;align-items:center;gap:var(--s2);height:48px;padding:0 var(--s4);
+  border-bottom:1px solid var(--hairline);font-size:var(--text-xs);font-weight:600}
+.mail-list-h span{color:var(--general-muted-foreground);font-weight:400}
+.mail-row{display:block;width:100%;text-align:left;padding:var(--s3) var(--s4);border:none;
+  background:none;cursor:pointer;border-bottom:1px solid var(--hairline);border-left:3px solid transparent}
+.mail-row:hover{background:var(--brand-ice)}
+.mail-row[aria-current="true"]{background:var(--brand-ice);border-left-color:var(--general-primary)}
+.mail-row-t{display:flex;align-items:baseline;gap:var(--s2)}
+.mail-row-t b{font-size:var(--text-xs);font-weight:600;flex:1 1 auto;min-width:0}
+.mail-row-t time{font-size:11px;color:var(--general-muted-foreground);flex:0 0 auto}
+.mail-row-s{margin-top:2px;font-size:var(--text-xs);font-weight:600;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.mail-row-p{margin-top:1px;font-size:12px;color:var(--general-muted-foreground);overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.mail-row.unread .mail-row-s::before{content:"";display:inline-block;width:6px;height:6px;margin-right:6px;
+  border-radius:var(--rounded-full);background:var(--general-primary);vertical-align:1px}
+.mail-msg{min-width:0;display:flex;flex-direction:column}
+.mail-tb{display:flex;align-items:center;gap:var(--s2);height:48px;padding:0 var(--s4);
+  border-bottom:1px solid var(--hairline)}
+.mail-tb .sp{flex:1}
+.mail-ic{width:32px;height:32px;display:grid;place-items:center;border:none;background:none;cursor:pointer;
+  border-radius:var(--rounded-full);color:var(--general-muted-foreground)}
+.mail-ic:hover{background:var(--general-muted);color:var(--general-foreground)}
+.mail-ic svg{width:17px;height:17px}
+.mail-body{padding:var(--s8);min-width:0}
+@media(max-width:700px){.mail-body{padding:var(--s6) var(--s4)}}
+.mail-subj{font-size:var(--text-2xl);letter-spacing:-.6px;line-height:1.25}
+.mail-pre{margin-top:var(--s2);font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.6}
+.mail-from{display:flex;align-items:center;gap:var(--s3);margin:var(--s6) 0;padding:var(--s3) 0;
+  border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+.mail-av{width:38px;height:38px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:var(--brand-ice);overflow:hidden}
+.mail-av img{width:22px;height:22px;display:block}
+.mail-from-t{min-width:0;flex:1 1 auto;display:flex;flex-direction:column;gap:1px}
+.mail-from-t b{font-family:var(--font-sans);font-size:var(--text-sm)}
+.mail-from-t span{font-size:12px;color:var(--general-muted-foreground);word-break:break-word}
+.mail-from time{font-size:12px;color:var(--general-muted-foreground);flex:0 0 auto;align-self:flex-start}
+/* the fold: everything above it is one decision, one figure, one action */
+.fold{position:relative;padding-bottom:var(--s8);margin-bottom:var(--s6);
+  border-bottom:1px dashed var(--general-border)}
+.fold-mark{position:absolute;left:0;bottom:-9px;background:var(--surface);padding-right:var(--s2);
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a3a3a3}
+.dec-fig{display:flex;align-items:baseline;gap:var(--s2);margin:var(--s4) 0 var(--s3)}
+.dec-fig b{font-family:var(--font-sans);font-size:var(--text-5xl);font-weight:800;letter-spacing:-2px;
+  line-height:1;font-variant-numeric:tabular-nums}
+.dec-fig.up b{color:var(--sentiment-positive)}
+.dec-fig.down b{color:var(--sentiment-negative)}
+.dec-fig.flat b{color:var(--general-foreground)}
+.dec-fig small{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.dec-txt{font-size:var(--text-base);line-height:1.65;max-width:56ch}
+.dec-txt b{font-weight:600}
+.dec-sup{display:inline-flex;align-items:center;gap:var(--s2);margin-top:var(--s4);padding:var(--s2) var(--s3);
+  border:1px solid var(--hairline);border-radius:var(--rounded-full);font-size:var(--text-xs)}
+.logo{width:24px;height:24px;flex:0 0 auto;border-radius:var(--rounded-xs);display:grid;place-items:center;
+  overflow:hidden;background:var(--surface);border:1px solid var(--hairline)}
+.logo img{max-width:100%;max-height:100%;display:block;object-fit:contain}
+.logo.stark{background:#f48222;border-color:#f48222}
+.logo.hilti{background:#d2091e;border-color:#d2091e}
+.logo.lyreco{background:#2e2e88;border-color:#2e2e88}
+.logo.lg{width:34px;height:34px;border-radius:var(--rounded-sm)}
+.dec-act{margin-top:var(--s6);display:flex;flex-wrap:wrap;gap:var(--s3);align-items:center}
+.dec-act .why{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.below{font-size:var(--text-sm);line-height:1.7;color:var(--general-muted-foreground)}
+.below h4{font-family:var(--font-sans);font-size:var(--text-sm);color:var(--general-foreground);
+  margin-bottom:var(--s3)}
+.below ul{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.below li{display:flex;gap:var(--s3);align-items:baseline}
+.below li b{color:var(--general-foreground);font-weight:600;font-variant-numeric:tabular-nums;
+  flex:0 0 auto;min-width:96px;text-align:right}
+.mail-foot{margin-top:var(--s8);padding-top:var(--s4);border-top:1px solid var(--hairline);
+  font-size:12px;color:var(--general-muted-foreground);line-height:1.7}
+.mail-foot a,.mail-foot button{color:var(--general-primary)}
+.done-note{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);font-weight:600;
+  color:var(--sentiment-positive)}
+.done-note svg{width:14px;height:14px}
+
+/* ==========================================================================
+   3 · INTERRUPT POLICY
+   ========================================================================== */
+.pol{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:var(--s8);align-items:start}
+@media(max-width:960px){.pol{grid-template-columns:minmax(0,1fr)}}
+.pol-card{padding:var(--s8)}
+@media(max-width:700px){.pol-card{padding:var(--s6) var(--s4)}}
+.ctl+.ctl{margin-top:var(--s8);padding-top:var(--s8);border-top:1px solid var(--hairline)}
+.ctl label{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--s2)}
+.ctl .hint{font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.6}
+.thr{display:flex;align-items:baseline;gap:var(--s2);margin:var(--s3) 0}
+.thr b{font-family:var(--font-sans);font-size:var(--text-4xl);font-weight:700;letter-spacing:-1.2px;
+  font-variant-numeric:tabular-nums}
+.thr small{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+input[type=range]{width:100%;accent-color:var(--general-primary);height:24px;cursor:pointer}
+.scale{display:flex;justify-content:space-between;font-size:11px;color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums}
+.caps{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s3)}
+.cap{height:36px;padding:0 var(--s4);border-radius:var(--rounded-full);border:1px solid var(--sidebar-border);
+  background:var(--surface);cursor:pointer;font-size:var(--text-xs);font-weight:500}
+.cap:hover{background:var(--brand-ice);border-color:var(--general-border)}
+.cap[aria-pressed="true"]{background:var(--general-secondary);border-color:var(--general-border);
+  color:var(--general-primary);font-weight:600}
+.out{padding:var(--s6);border-radius:var(--rounded-lg);background:var(--brand-ice);
+  border:1px solid var(--general-border)}
+.out-n{display:flex;align-items:baseline;gap:var(--s2)}
+.out-n b{font-family:var(--font-sans);font-size:var(--text-5xl);font-weight:800;letter-spacing:-2px;
+  line-height:1;color:var(--general-primary);font-variant-numeric:tabular-nums}
+.out-n small{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.out p{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.6;color:var(--general-foreground)}
+.out .split{margin-top:var(--s4);padding-top:var(--s4);border-top:1px solid var(--general-border);
+  display:flex;flex-direction:column;gap:var(--s2);font-size:var(--text-xs);
+  color:var(--general-muted-foreground)}
+.out .split div{display:flex;justify-content:space-between;gap:var(--s3)}
+.out .split b{color:var(--general-foreground);font-variant-numeric:tabular-nums}
+.chan{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s4)}
+.chan-r{display:flex;gap:var(--s3);align-items:flex-start;font-size:var(--text-xs);line-height:1.6;
+  color:var(--general-muted-foreground)}
+.chan-r b{color:var(--general-foreground);font-weight:600}
+.chan-r .k{flex:0 0 auto;width:22px;height:22px;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:var(--general-muted);color:var(--general-muted-foreground)}
+.chan-r .k svg{width:12px;height:12px}
+.evs{margin-top:var(--s8);border-top:1px solid var(--hairline)}
+.ev{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) 0;border-bottom:1px solid var(--hairline)}
+.ev-t{flex:1 1 auto;min-width:0}
+.ev-t b{display:block;font-size:var(--text-sm);font-weight:600}
+.ev-t span{font-size:12px;color:var(--general-muted-foreground)}
+.ev-v{flex:0 0 auto;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;
+  font-variant-numeric:tabular-nums;text-align:right;min-width:104px}
+.ev-b{flex:0 0 auto;min-width:104px;text-align:right}
+.ev.muted-row{opacity:.55}
+@media(max-width:640px){
+  .ev{flex-wrap:wrap;gap:var(--s2)}
+  .ev-t{flex:1 1 100%}
+  .ev-v,.ev-b{min-width:0;text-align:left}
+}
+
+/* ==========================================================================
+   4 · WHERE IT REACHES YOU — ERP panel + chat card
+   ========================================================================== */
+.reach{display:flex;flex-direction:column;gap:var(--s12)}
+.erp-win{border:1px solid var(--sidebar-border);border-radius:var(--rounded-lg);overflow:hidden;
+  box-shadow:var(--shadow-lg);background:var(--surface)}
+.erp-tb{display:flex;align-items:center;gap:var(--s3);height:42px;padding:0 var(--s4);
+  background:var(--brand-midnight);color:#fff}
+.erp-tb .dots{display:flex;gap:6px}
+.erp-tb .dots i{width:9px;height:9px;border-radius:var(--rounded-full);background:#ffffff40}
+.erp-tb b{font-family:var(--font-sans);font-size:var(--text-xs);font-weight:600;letter-spacing:.01em}
+.erp-tb span{font-size:11px;color:#ffffffa6}
+.erp-sub{display:flex;align-items:center;gap:var(--s4);height:44px;padding:0 var(--s4);
+  border-bottom:1px solid var(--hairline);background:var(--general-muted);font-size:var(--text-xs);
+  color:var(--general-muted-foreground);overflow-x:auto;scrollbar-width:none}
+.erp-sub::-webkit-scrollbar{display:none}
+.erp-sub b{color:var(--general-foreground);font-weight:600;white-space:nowrap}
+.erp-sub span{white-space:nowrap}
+.erp-body{padding:var(--s6)}
+@media(max-width:700px){.erp-body{padding:var(--s4)}}
+.erp-h{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;
+  margin-bottom:var(--s6)}
+.erp-h h3{font-size:var(--text-xl)}
+.erp-h .erp-meta{font-size:12px;color:var(--general-muted-foreground);margin-top:2px}
+.erp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--s4);
+  padding:var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-md);background:#fcfcfd}
+.erp-f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.erp-f span{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.erp-f b{font-size:var(--text-sm);font-weight:600;font-variant-numeric:tabular-nums}
+.erp-tbl{width:100%;margin-top:var(--s6);border-collapse:collapse;font-size:var(--text-xs)}
+.erp-tbl th{text-align:left;padding:var(--s2) var(--s3);border-bottom:1px solid var(--sidebar-border);
+  font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.erp-tbl td{padding:var(--s3);border-bottom:1px solid var(--hairline);font-variant-numeric:tabular-nums}
+.erp-tbl td:last-child,.erp-tbl th:last-child{text-align:right}
+.erp-tbl tr.sum td{font-weight:700;border-bottom:none}
+.erp-acts{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s6);padding-top:var(--s6);
+  border-top:1px solid var(--hairline)}
+/* the embedded Advantage panel — Advantage's own design system, inside someone
+   else's screen. That is the whole point of it. */
+.adv-panel{margin-top:var(--s6);border:1px solid var(--general-border);border-radius:var(--rounded-lg);
+  background:var(--brand-ice);overflow:hidden}
+.adv-panel[hidden]{display:none}
+.adv-p-h{display:flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--general-border)}
+.adv-p-h img{height:16px;width:auto;display:block}
+.adv-p-h .sep{width:1px;height:14px;background:var(--general-border)}
+.adv-p-h .t{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--general-primary)}
+.adv-p-h .x{margin-left:auto}
+.adv-p-b{padding:var(--s4);display:flex;gap:var(--s6);flex-wrap:wrap;align-items:flex-start}
+.adv-p-fig{flex:0 0 auto}
+.adv-p-fig b{display:block;font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-1.2px;color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.adv-p-fig span{font-size:11px;color:var(--general-muted-foreground)}
+.adv-p-tx{flex:1 1 260px;min-width:0;font-size:var(--text-sm);line-height:1.6}
+.adv-p-tx b{font-weight:600}
+.adv-p-a{display:flex;flex-wrap:wrap;gap:var(--s2);padding:0 var(--s4) var(--s4)}
+.adv-resolved{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);font-size:var(--text-sm);
+  color:var(--general-muted-foreground)}
+.adv-resolved .ic{width:26px;height:26px;flex:0 0 auto;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:#d9f2ef;color:var(--sentiment-positive)}
+.adv-resolved .ic svg{width:14px;height:14px}
+
+/* chat */
+.chat-win{max-width:560px;border:1px solid var(--sidebar-border);border-radius:var(--rounded-lg);
+  overflow:hidden;box-shadow:var(--shadow-md);background:var(--surface)}
+.chat-tb{display:flex;align-items:center;gap:var(--s3);height:44px;padding:0 var(--s4);
+  border-bottom:1px solid var(--hairline);background:#f5f5f7}
+.chat-tb b{font-family:var(--font-sans);font-size:var(--text-xs)}
+.chat-tb span{font-size:11px;color:var(--general-muted-foreground)}
+.chat-b{padding:var(--s4);display:flex;flex-direction:column;gap:var(--s4)}
+.msg{display:flex;gap:var(--s3);align-items:flex-start}
+.msg-av{width:32px;height:32px;flex:0 0 auto;border-radius:var(--rounded-sm);display:grid;
+  place-items:center;background:var(--brand-ice);overflow:hidden}
+.msg-av img{width:20px;height:20px}
+.msg-c{flex:1 1 auto;min-width:0}
+.msg-h{display:flex;align-items:baseline;gap:var(--s2);flex-wrap:wrap}
+.msg-h b{font-family:var(--font-sans);font-size:var(--text-xs);font-weight:600}
+.msg-h .bot{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:1px 5px;border-radius:var(--rounded-xs);background:var(--general-muted);
+  color:var(--general-muted-foreground)}
+.msg-h time{font-size:11px;color:var(--general-muted-foreground)}
+.msg-card{margin-top:var(--s2);border:1px solid var(--hairline);border-left:3px solid var(--general-primary);
+  border-radius:var(--rounded-sm);padding:var(--s3) var(--s4);background:var(--surface);
+  box-shadow:var(--shadow-xs)}
+.msg-card h4{font-family:var(--font-sans);font-size:var(--text-sm);margin-bottom:var(--s1)}
+.msg-card .m-fig{display:flex;align-items:baseline;gap:6px;margin:var(--s2) 0}
+.msg-card .m-fig b{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:700;
+  letter-spacing:-.7px;font-variant-numeric:tabular-nums}
+.msg-card .m-fig small{font-size:11px;color:var(--general-muted-foreground)}
+.msg-card p{font-size:var(--text-xs);line-height:1.6;color:var(--general-muted-foreground)}
+.msg-card .m-a{display:flex;gap:var(--s2);margin-top:var(--s3);flex-wrap:wrap}
+.chat-empty{padding:var(--s8) var(--s4);text-align:center;font-size:var(--text-sm);
+  color:var(--general-muted-foreground);line-height:1.7}
+.chat-in{display:flex;align-items:center;gap:var(--s2);height:44px;padding:0 var(--s4);
+  border-top:1px solid var(--hairline);font-size:var(--text-xs);color:#a3a3a3}
+
+/* ==========================================================================
+   5 · ANNUAL STATEMENT — print is the real medium
+   ========================================================================== */
+.stmt-bar{display:flex;flex-wrap:wrap;gap:var(--s3);align-items:center;margin-bottom:var(--s6)}
+.stmt{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  box-shadow:var(--shadow-md);padding:var(--s12);max-width:820px;margin:0 auto}
+@media(max-width:700px){.stmt{padding:var(--s6) var(--s4)}}
+.stmt-h{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s6);
+  padding-bottom:var(--s6);border-bottom:2px solid var(--general-foreground);flex-wrap:wrap}
+.stmt-h img{height:26px;width:auto;display:block}
+.stmt-h .who{text-align:right;font-size:var(--text-xs);line-height:1.6;color:var(--general-muted-foreground)}
+.stmt-h .who b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);
+  color:var(--general-foreground)}
+.stmt-t{margin-top:var(--s8)}
+.stmt-t h2{font-size:var(--text-3xl);letter-spacing:-1px}
+.stmt-t p{margin-top:var(--s2);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.stmt-hero{margin-top:var(--s8);display:flex;flex-wrap:wrap;gap:var(--s8);align-items:flex-end;
+  padding:var(--s6) 0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+.stmt-hero .big{flex:1 1 260px}
+.stmt-hero .big span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);
+  margin-bottom:var(--s1)}
+.stmt-hero .big b{font-family:var(--font-sans);font-size:var(--text-5xl);font-weight:800;
+  letter-spacing:-2px;line-height:1;font-variant-numeric:tabular-nums}
+.stmt-hero .side{display:flex;gap:var(--s8);flex-wrap:wrap}
+.stmt-hero .side div span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.stmt-hero .side div b{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:600;
+  font-variant-numeric:tabular-nums}
+.stmt-s{margin-top:var(--s8)}
+.stmt-s h3{font-size:var(--text-sm);text-transform:uppercase;letter-spacing:.06em;
+  color:var(--general-muted-foreground);margin-bottom:var(--s3)}
+table.st{width:100%;border-collapse:collapse;font-size:var(--text-xs)}
+table.st th{text-align:left;padding:var(--s2) var(--s3);border-bottom:1px solid var(--general-foreground);
+  font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+table.st td{padding:var(--s3);border-bottom:1px solid var(--hairline);font-variant-numeric:tabular-nums;
+  vertical-align:middle}
+table.st td:not(:first-child),table.st th:not(:first-child){text-align:right}
+table.st tr.tot td{font-weight:700;border-bottom:none;border-top:2px solid var(--general-foreground)}
+.st-sup{display:flex;align-items:center;gap:var(--s2);min-width:0}
+.st-sup b{font-weight:600}
+.stmt-sign{margin-top:var(--s12);display:flex;gap:var(--s8);flex-wrap:wrap;align-items:flex-end;
+  justify-content:space-between}
+.sign-b{flex:1 1 240px;font-size:var(--text-xs);line-height:1.7;color:var(--general-muted-foreground)}
+.sign-b b{color:var(--general-foreground)}
+.sign-l{flex:0 0 220px;border-top:1px solid var(--general-foreground);padding-top:var(--s2);
+  font-size:11px;color:var(--general-muted-foreground)}
+.sign-mark{height:34px;width:auto;display:block;margin-bottom:var(--s2)}
+.stmt-note{margin-top:var(--s8);padding-top:var(--s4);border-top:1px solid var(--hairline);
+  font-size:11px;line-height:1.7;color:var(--general-muted-foreground)}
+
+@media print{
+  @page{size:A4;margin:14mm}
+  html,body{background:#fff}
+  .noprint,.appbar,.rail,.flow{display:none!important}
+  .surface{display:none!important}
+  #s-stmt{display:block!important}
+  .pad{padding:0;max-width:none}
+  .stmt{border:none;box-shadow:none;padding:0;max-width:none}
+  .app{display:block!important}
+  .wrap{box-shadow:none}
+  a[href]::after{content:""}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== LOGIN (v2 pattern) ==================== -->
+<div class="flow" id="flow">
+  <main class="stage">
+    <section class="scr on mid" id="s-login" aria-labelledby="h-login">
+      <div class="login">
+        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <h1 id="h-login" tabindex="-1">Welcome</h1>
+        <p class="lead">Advantage runs in the background and reads your invoices. Signing in is the rare
+          part — mostly it writes to you.</p>
+
+        <div class="card login-choice">
+          <button class="login-persona" id="loginBob" type="button">
+            <span class="login-persona-av">BI</span>
+            <span class="login-persona-txt">
+              <b>Bob Iversen</b>
+              <span>Nordvik Byg A/S · service running, 1.284 invoices read</span>
+            </span>
+            <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="login-persona" id="loginFanny" type="button">
+            <span class="login-persona-av">FK</span>
+            <span class="login-persona-txt">
+              <b>Fanny Kristensen</b>
+              <span>Kristensen Elektro ApS · nothing connected, nothing to digest</span>
+            </span>
+            <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="tinyfoot">Signing in lands on the <b>check-in</b> surface, which is deliberately thin.
+          The digest, the ERP warning and the chat alert are where this product actually lives — they are
+          shown here as the artefacts they are.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div class="app" id="app">
+  <div class="wrap">
+
+    <header class="appbar noprint">
+      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="spacer"></span>
+      <span class="svc" id="svcPill"><span class="dot"></span><span id="svcTxt">Watching</span></span>
+      <div class="userwrap">
+        <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
+          <span class="uav" id="userAv">BI</span>
+          <span class="un"><span id="userName">Bob Iversen</span><span id="userCo">Nordvik Byg A/S</span></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="upop" id="userPop" role="region" aria-label="Account">
+          <div class="up-h"><b id="upName">Bob Iversen</b><span id="upCo">Nordvik Byg A/S</span></div>
+          <hr class="hair">
+          <div class="up-sep">Signed in as</div>
+          <button class="up-i up-persona" id="personaBob" type="button">
+            <span class="up-persona-av">BI</span>
+            <span class="up-persona-txt"><b>Bob Iversen</b><span>Service running · verified</span></span>
+          </button>
+          <button class="up-i up-persona" id="personaFanny" type="button">
+            <span class="up-persona-av">FK</span>
+            <span class="up-persona-txt"><b>Fanny Kristensen</b><span>Not watching anything yet</span></span>
+          </button>
+          <hr class="hair">
+          <button class="up-i" id="signOut" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 17l5-5-5-5M20 12H9M12 4H6a2 2 0 00-2 2v12a2 2 0 002 2h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="rail noprint" id="rail" aria-label="Artefacts"></nav>
+
+    <!-- 1 · CHECK IN -->
+    <section class="surface" id="s-checkin" aria-labelledby="h-checkin">
+      <div class="pad">
+        <div class="shead">
+          <span class="eyebrow"><i></i>Check in</span>
+          <h1 id="h-checkin" tabindex="-1">Three things, then close the tab</h1>
+        </div>
+        <div class="ci card" id="ciBody" style="padding:0 var(--s8);box-shadow:none;border:none"></div>
+        <p class="position"><b>A stated position, not an omission.</b> This surface has three elements and
+          will never have more. Every additional element here is a bet that the customer will come looking,
+          and that bet loses: a 12-person contracting firm opens this maybe twice a year. Anything worth
+          knowing is sent — to mail, to the chat channel, or into the invoice screen at the moment it
+          matters. If something important is only discoverable here, we have failed to send it.</p>
+      </div>
+    </section>
+
+    <!-- 2 · DIGEST -->
+    <section class="surface" id="s-digest" aria-labelledby="h-digest">
+      <div class="pad">
+        <div class="shead">
+          <span class="eyebrow"><i></i>The primary artefact</span>
+          <h1 id="h-digest" tabindex="-1">The digest</h1>
+          <p>This is the product. It arrives on the first working day of the month, and on the rare day
+            something cannot wait. One decision above the fold, one figure, one action — everything else
+            is below it, where it belongs. Shown as it lands in a mail client, because that is the only
+            place it will ever be read.</p>
+        </div>
+        <div class="mail">
+          <div class="mail-list">
+            <div class="mail-list-h">Advantage <span id="digestCount"></span></div>
+            <div id="digestList" aria-label="Digests" style="overflow-y:auto"></div>
+          </div>
+          <article class="mail-msg" id="digestMsg" aria-live="polite"></article>
+        </div>
+        <p class="position"><b>What this replaces.</b> v2's dashboard, benchmark tray, savings gauge and
+          category drill-downs are all gone. Between them they answered questions nobody was asking on a
+          Tuesday. Six subject lines a year, each with a decision attached, is the same information
+          delivered to somebody who is not looking for it.</p>
+      </div>
+    </section>
+
+    <!-- 3 · INTERRUPT POLICY -->
+    <section class="surface" id="s-policy" aria-labelledby="h-policy">
+      <div class="pad">
+        <div class="shead">
+          <span class="eyebrow"><i></i>Interrupt policy</span>
+          <h1 id="h-policy" tabindex="-1">What is worth interrupting you for</h1>
+          <p>Set the number in kroner. Findings above it reach you the day we see them; findings below it
+            wait for the monthly digest — they are never thrown away. A 4% rise on your largest supplier
+            clears almost any threshold. A new agreement in a category you barely buy clears none of them,
+            and should not.</p>
+        </div>
+        <div class="pol">
+          <div class="card pol-card">
+            <div class="ctl">
+              <label for="thr">Interrupt me when one finding is worth at least</label>
+              <div class="thr"><b id="thrV" class="num">15.000</b><small>kr. a year</small></div>
+              <input type="range" id="thr" min="0" max="50000" step="1000" value="15000"
+                     aria-describedby="thrHint">
+              <div class="scale" aria-hidden="true"><span>0 kr.</span><span>25.000 kr.</span><span>50.000 kr.</span></div>
+              <p class="hint" id="thrHint">At 0 kr. everything interrupts, which is how alerting products
+                get muted. Move it up until the number on the right is one you would actually welcome.</p>
+            </div>
+            <div class="ctl">
+              <label id="capLbl">And never more often than</label>
+              <div class="caps" role="group" aria-labelledby="capLbl" id="caps"></div>
+              <p class="hint">A hard cap. If more findings clear the threshold in a month than the cap
+                allows, the largest goes out and the rest fall into the digest. The cap is the promise;
+                the threshold is only a filter.</p>
+            </div>
+            <div class="ctl">
+              <label>How each tier reaches you</label>
+              <div class="chan">
+                <div class="chan-r">
+                  <span class="k"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.8"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.8"/></svg></span>
+                  <span><b>Above the threshold</b> — a mail the same day, plus a card in the Teams channel.
+                    Two channels, one event, no digest wait.</span>
+                </div>
+                <div class="chan-r">
+                  <span class="k"><svg viewBox="0 0 24 24" fill="none"><path d="M5 5h14v14H5z" stroke="currentColor" stroke-width="1.8"/><path d="M8 10h8M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+                  <span><b>Below the threshold</b> — held for the monthly digest, listed under the fold.</span>
+                </div>
+                <div class="chan-r">
+                  <span class="k"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+                  <span><b>Worth 0 kr.</b> — sync reports, renewed terms with no price change, agreements
+                    added in categories you already cover. These never interrupt at any setting, and are
+                    not in the digest either. They are in the annual statement, once.</span>
+                </div>
+                <div class="chan-r">
+                  <span class="k"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l9 16H3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+                  <span><b>Exempt from the policy</b> — the warning inside your invoice screen. It is not an
+                    interruption: you were already placing the order, and it costs one glance.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="out" id="polOut" aria-live="polite"></div>
+        </div>
+        <div class="evs" id="evList"></div>
+        <p class="position" id="polFoot"></p>
+      </div>
+    </section>
+
+    <!-- 4 · WHERE IT REACHES YOU -->
+    <section class="surface" id="s-reach" aria-labelledby="h-reach">
+      <div class="pad">
+        <div class="shead">
+          <span class="eyebrow"><i></i>Point of purchase &amp; chat</span>
+          <h1 id="h-reach" tabindex="-1">Where it reaches you</h1>
+          <p>The most valuable second in the whole product is not a visit to this app. It is the second
+            before an order goes to the wrong supplier. So the intervention lives in the invoice screen,
+            and the small number of events that cannot wait land in the channel that is already open.</p>
+        </div>
+        <div class="reach">
+          <div>
+            <h2 style="margin-bottom:var(--s3)">1 · Inside the invoice, before it is posted</h2>
+            <p class="muted" style="font-size:var(--text-sm);max-width:66ch;margin-bottom:var(--s6)"
+               id="erpIntro"></p>
+            <div class="erp-win" id="erpWin"></div>
+          </div>
+          <div>
+            <h2 style="margin-bottom:var(--s3)">2 · In the channel, for the two or three a year</h2>
+            <p class="muted" style="font-size:var(--text-sm);max-width:66ch;margin-bottom:var(--s6)"
+               id="chatIntro"></p>
+            <div class="chat-win" id="chatWin"></div>
+          </div>
+        </div>
+        <p class="position"><b>Why not a dashboard notification.</b> A bell badge inside an app the customer
+          does not open is a notification that does not exist. Both surfaces here are places the customer
+          is already looking, for their own reasons, at the moment the information is worth something.</p>
+      </div>
+    </section>
+
+    <!-- 5 · ANNUAL STATEMENT -->
+    <section class="surface" id="s-stmt" aria-labelledby="h-stmt">
+      <div class="pad">
+        <div class="shead noprint">
+          <span class="eyebrow"><i></i>One page, once a year</span>
+          <h1 id="h-stmt" tabindex="-1">Annual statement</h1>
+          <p>The one artefact a customer reads end to end, keeps, and shows to a co-owner or an accountant.
+            It is built for paper: one page, no interaction, every figure traceable to invoices we read.</p>
+        </div>
+        <div class="stmt-bar noprint">
+          <button class="btn btn-primary btn-sm" id="printStmt" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 9V4h10v5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M5 9h14v7H5z" stroke="currentColor" stroke-width="1.8"/><path d="M8 16h8v4H8z" stroke="currentColor" stroke-width="1.8"/></svg>
+            Print statement</button>
+          <span class="muted" style="font-size:var(--text-xs)">Prints as a single A4 page — the app chrome
+            and every other surface are excluded from the print stylesheet.</span>
+        </div>
+        <div class="stmt" id="stmtBody"></div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+"use strict";
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+const fmtCompact = n => {
+  const abs = Math.abs(n);
+  if(abs >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '').replace('.', ',') + 'M';
+  if(abs >= 1e3) return Math.round(n / 1e3) + 'K';
+  return fmt(n);
+};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SUFFIX = /^(a\/s|aps|as|ab|ivs|k\/s|p\/s|oy|ltd|gmbh|inc)$/i;
+function initials(name){
+  const w = name.trim().split(/\s+/).filter(s => !SUFFIX.test(s));
+  return ((w[0] || name)[0] + (w[1] ? w[1][0] : '')).toUpperCase();
+}
+const TICK  = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const DASHC = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/></svg>';
+const WARN  = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l9 16H3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v4M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+
+/* ==========================================================================
+   THE NUMBER MODEL — one source, everything else derived
+   ========================================================================== */
+const CATS = [
+  {k:'mat',  n:'Building materials',         spend:2132300, rate:9,  save:191907, sup:18, inv:424, ag:'Stark Byggecenter',  logo:'stark.jpeg', cls:'stark'},
+  {k:'tool', n:'Tools & workwear',           spend:664800,  rate:11, save:73128,  sup:11, inv:178, ag:'Hilti Erhverv',      logo:'hilti.png',  cls:'hilti'},
+  {k:'fuel', n:'Fuel & transport',           spend:530700,  rate:8,  save:42456,  sup:5,  inv:223, ag:'Q8 Fuel Card',       logo:'q8.png',     cls:''},
+  {k:'off',  n:'Office supplies',            spend:205000,  rate:19, save:38950,  sup:5,  inv:62,  ag:'Lyreco Erhverv',     logo:'lyreco.png', cls:'lyreco'},
+  {k:'rent', n:'Machine & equipment rental', spend:500000,  rate:6,  save:30000,  ag:'Cramo Danmark'},
+  {k:'frg',  n:'Freight & delivery',         spend:328800,  rate:8,  save:26304,  ag:'DSV Road'},
+  {k:'tel',  n:'Telecom & IT',               spend:290400,  rate:5,  save:14520,  ag:'Telenor Erhverv'},
+  {k:'site', n:'Site services & waste',      spend:168000,  rate:4,  save:6720,   ag:'Ragn-Sells'}
+];
+const ACTIVE = ['mat','tool','fuel','off','rent'];
+const AG_COUNT = 24, AG_ACTIVE = 5;
+const cat = k => CATS.find(c => c.k === k);
+
+/* customer volume bonus, tiered on the volume actually routed through agreements */
+const BONUS_TIERS = [
+  {upTo:1000000,  rate:1.0},
+  {upTo:3000000,  rate:1.5},
+  {upTo:Infinity, rate:2.0}
+];
+function bonusOn(volume){
+  let prev = 0, total = 0;
+  const lines = [];
+  for(const t of BONUS_TIERS){
+    if(volume <= prev) break;
+    const to = Math.min(volume, t.upTo);
+    const paid = Math.round((to - prev) * t.rate / 100);
+    lines.push({from:prev, to, vol:to - prev, rate:t.rate, paid});
+    total += paid;
+    prev = t.upTo;
+  }
+  return {total, lines};
+}
+
+const M = (() => {
+  const spend    = CATS.reduce((s,c) => s + c.spend, 0);          /* 4.820.000 */
+  const full     = CATS.reduce((s,c) => s + c.save,  0);          /*   423.985 */
+  const covered  = CATS.filter(c =>  ACTIVE.includes(c.k)).reduce((s,c) => s + c.spend, 0);
+  const leaking  = CATS.filter(c => !ACTIVE.includes(c.k)).reduce((s,c) => s + c.spend, 0);
+  const realised = CATS.filter(c =>  ACTIVE.includes(c.k)).reduce((s,c) => s + c.save,  0);
+  const remain   = CATS.filter(c => !ACTIVE.includes(c.k)).reduce((s,c) => s + c.save,  0);
+  const bonus    = bonusOn(covered);
+  return {spend, full, covered, leaking, realised, remain, bonus,
+          total:realised + bonus.total, invoices:1284};
+})();
+/* self-check: if any of these ever drift the console says so rather than the page lying */
+console.assert(M.covered + M.leaking === M.spend, 'covered + leaking != spend');
+console.assert(M.realised + M.remain === M.full,  'realised + remaining != full potential');
+console.assert(M.bonus.total === 60656,           'bonus != 60.656');
+console.assert(M.total === 437097,                'discount + bonus != 437.097');
+
+/* Fanny: nothing verified. ±15% bands around the peer-derived figures. */
+const BAND = v => [Math.round(v * 0.85), Math.round(v * 1.15)];
+const bandTxt = v => { const [a,b] = BAND(v); return fmtCompact(a) + '–' + fmtCompact(b); };
+/* peers in electrical contracting hold agreements in exactly the five categories
+   that make up Bob's realised saving, so Fanny's estimate lands on 376.441 */
+const PEER_CATS = ACTIVE.slice();
+
+/* ==========================================================================
+   FINDINGS — the 12 months to August 2026. Every kroner figure comes from CATS.
+   ========================================================================== */
+const FINDINGS = [
+  {id:'frg', when:'Aug 2026', mon:8, cat:'frg', value:26304, kind:'open',
+   t:'Freight & delivery is not on an agreement',
+   d:'328.800 kr. a year across DSV Road, GLS Erhverv and Danske Fragtmænd, all at list price.'},
+  {id:'tel', when:'Aug 2026', mon:8, cat:'tel', value:14520, kind:'open',
+   t:'Telecom & IT is not on an agreement',
+   d:'290.400 kr. a year, Telenor Erhverv and Dustin IT, 5% below what you pay now.'},
+  {id:'site', when:'Aug 2026', mon:8, cat:'site', value:6720, kind:'open',
+   t:'Site services & waste is not on an agreement',
+   d:'168.000 kr. a year, Ragn-Sells and Marius Pedersen, a 4% gap.'},
+  {id:'stark', when:'Jun 2026', mon:6, cat:'mat', value:18400, kind:'risk',
+   t:'Stark Byggecenter raised prices 4%',
+   d:'Costs you 18.400 kr. a year on the current basket. Bygma Framework indexes at 91.'},
+  {id:'off', when:'Apr 2026', mon:4, cat:'off', value:38950, kind:'done',
+   t:'Office supplies: a 19% gap on 205.000 kr.',
+   d:'Lyreco Erhverv activated 8 April 2026. Now the largest discount rate you hold.'},
+  {id:'fuel', when:'Feb 2026', mon:2, cat:'fuel', value:42500, kind:'done',
+   t:'Fuel business case ready — Circle K',
+   d:'42.800 litres a year at 11,41 kr. instead of 12,40 kr. Approved 19 February 2026.'},
+  {id:'q8', when:'Nov 2025', mon:11, cat:'fuel', value:33900, kind:'confirm',
+   t:'Q8 rate confirmed on the latest invoice',
+   d:'The agreed card rate is being applied. 33.900 kr. of the fuel saving is now verified, not modelled.'},
+  {id:'riwal', when:'May 2026', mon:5, cat:'rent', value:0, kind:'noise',
+   t:'Riwal Lifting added to Machine & equipment rental',
+   d:'A category you already cover through Cramo Danmark. Your price does not change.'},
+  {id:'bygma', when:'Mar 2026', mon:3, cat:'mat', value:0, kind:'noise',
+   t:'Bygma Framework terms renewed',
+   d:'Your basket indexes the same as before. Nothing to do.'},
+  {id:'sync', when:'Sep 2025', mon:9, cat:null, value:0, kind:'noise',
+   t:'Visma.net sync completed',
+   d:'1.284 invoices read. This is plumbing, not a finding.'}
+];
+/* Fanny has no findings — only peer estimates of what the service would look for */
+const FANNY_FINDINGS = PEER_CATS.map((k, i) => {
+  const c = cat(k);
+  return {id:k, when:'Month ' + (i + 1), cat:k, value:c.save, kind:'est',
+          t:'Likely gap in ' + c.n,
+          d:'Peers your size run ' + c.ag + ' here. Up to ' + fmt(c.save) +
+            ' kr. a year on an estimated ' + fmt(c.spend) + ' kr. of spend.'};
+});
+
+/* ==========================================================================
+   DIGESTS — the primary artefact
+   ========================================================================== */
+const BOB_DIGESTS = [
+  {id:'aug26', date:'1 August 2026', short:'1 Aug',
+   subject:'Freight is costing you 26.304 kr. a year',
+   pre:'One decision: put Freight & delivery on an agreement. Everything else this month was quiet.',
+   dir:'up', fig:26304, figNote:'kr. a year',
+   dec:'<b>Freight & delivery is the last large category with no agreement.</b> You spent 328.800 kr. ' +
+       'across DSV Road, GLS Erhverv and Danske Fragtmænd in the last twelve months, all at list price. ' +
+       'The framework runs 8% under that.',
+   sup:{n:'DSV Road', sub:'Freight & delivery framework'},
+   cta:'Activate DSV Road', ctaWhy:'One click. We file the paperwork and read the next invoice to confirm the rate.',
+   held:[{t:'Telecom & IT has no agreement', v:14520},
+         {t:'Site services & waste has no agreement', v:6720}],
+   heldNote:'Both are under your 15.000 kr. threshold, so they waited for this digest instead of ' +
+            'interrupting you. Raise or lower the threshold and they move.'},
+  {id:'jul26', date:'1 July 2026', short:'1 Jul',
+   subject:'Nothing needs you this month',
+   pre:'No decision. 376.441 kr. of savings are running. Next digest 1 August.',
+   dir:'flat', fig:376441, figNote:'kr. a year, running',
+   dec:'<b>Nothing crossed your threshold in June, and nothing needs a decision.</b> Five agreements ran, ' +
+       '1.284 invoices were read, and the rates you agreed were the rates you were charged. This digest ' +
+       'exists so that a month with nothing in it still looks different from a month we missed.',
+   cta:null,
+   nothing:true,
+   held:[], heldNote:''},
+  {id:'jun26', date:'12 June 2026', short:'12 Jun', urgent:true,
+   subject:'Stark raised prices 4% — 18.400 kr. a year',
+   pre:'Sent the day we saw it. Your largest supplier moved; Bygma indexes 9% lower on the same basket.',
+   dir:'down', fig:-18400, figNote:'kr. a year, if you stay',
+   dec:'<b>Stark Byggecenter put 4% on the list your basket is priced from.</b> On 2.132.300 kr. of ' +
+       'building materials that is 18.400 kr. a year. Bygma Framework prices the identical basket at ' +
+       'an index of 91 against your 100.',
+   sup:{n:'Bygma Framework', sub:'Building materials · index 91 against your 100', logo:'bygma-logo-png_seeklogo-381076.png', cls:''},
+   cta:'Move the basket to Bygma', ctaWhy:'This one did not wait for the first of the month — it cleared your threshold on the day.',
+   held:[], heldNote:'Sent as an interruption, not a digest item: 18.400 kr. is above your threshold.'},
+  {id:'apr26', date:'1 April 2026', short:'1 Apr',
+   subject:'38.950 kr. sitting in office supplies',
+   pre:'The largest single gap we have found: 19% on 205.000 kr. across five suppliers.',
+   dir:'up', fig:38950, figNote:'kr. a year',
+   dec:'<b>You buy office supplies from five suppliers and hold no agreement with any of them.</b> ' +
+       '205.000 kr. a year, and the framework discount in this category is 19% — the highest rate ' +
+       'available to you anywhere.',
+   sup:{n:'Lyreco Erhverv', sub:'Office supplies · 19% framework discount', logo:'lyreco.png', cls:'lyreco'},
+   cta:'Activate Lyreco Erhverv', ctaWhy:'Activated 8 April 2026. The saving is in your annual statement.',
+   ctaDone:true,
+   held:[{t:'Riwal Lifting added in a category you already cover', v:0}],
+   heldNote:'Worth 0 kr. to you, so it is listed and nothing more.'},
+  {id:'feb26', date:'1 February 2026', short:'1 Feb',
+   subject:'Your fuel business case is ready',
+   pre:'42.800 litres a year. Circle K at 11,41 kr. against the 12,40 kr. you pay now.',
+   dir:'up', fig:42500, figNote:'kr. a year',
+   dec:'<b>We now have twelve months of fuel invoices, which is enough to price a switch honestly.</b> ' +
+       'You bought 42.800 litres. Circle K Business quotes 11,41 kr. per litre against the 12,40 kr. ' +
+       'on your current invoices.',
+   sup:{n:'Circle K Business', sub:'Fuel & transport · 42.800 litres a year'},
+   cta:'Approve the switch', ctaWhy:'Approved 19 February 2026.',
+   ctaDone:true,
+   held:[], heldNote:''},
+  {id:'nov25', date:'1 November 2025', short:'1 Nov',
+   subject:'Q8 rate confirmed — 33.900 kr. now verified',
+   pre:'No decision. The rate you agreed is the rate on the invoice, which is worth telling you once.',
+   dir:'up', fig:33900, figNote:'kr. verified, not modelled',
+   dec:'<b>The Q8 card rate on your latest invoice matches the agreement.</b> That moves 33.900 kr. of ' +
+       'the fuel saving from estimated to verified. We check this on every invoice and will only write ' +
+       'to you again about it if it stops being true.',
+   sup:{n:'Q8 Fuel Card', sub:'Fuel & transport · rate verified', logo:'q8.png', cls:''},
+   cta:null,
+   held:[], heldNote:''}
+];
+const FANNY_DIGESTS = [
+  {id:'setup', date:'1 August 2026', short:'1 Aug', unread:true,
+   subject:'Nothing to report yet — we cannot see your invoices',
+   pre:'One thing to do: connect your accounting system. Until then this digest has nothing honest to say.',
+   dir:'flat', fig:null,
+   dec:'<b>We are not watching anything for Kristensen Elektro yet.</b> Nothing is connected, so there ' +
+       'is no spend to read, no supplier to compare and no finding to send you. Rather than fill this ' +
+       'digest with figures from other people\'s invoices, here is the honest position: peers in ' +
+       'electrical contracting your size — 148 of them — save up to ' + fmtCompact(376441) +
+       ' kr. a year. That is a peer estimate and it is not yours until we have read your invoices.',
+   cta:'Connect Visma.net', ctaWhy:'Read-only access to purchase invoices. First digest with your own numbers about four weeks later.',
+   held:[], heldNote:'',
+   estimate:true}
+];
+
+/* ==========================================================================
+   PERSONAS
+   ========================================================================== */
+const PERSONAS = {
+  bob: {user:'Bob Iversen', company:'Nordvik Byg A/S', mail:'bob@nordvikbyg.dk',
+        connected:true, verified:true, source:'Visma.net',
+        industry:'Building contracting', peers:null},
+  fanny:{user:'Fanny Kristensen', company:'Kristensen Elektro ApS', mail:'fanny@kristensen-elektro.dk',
+        connected:false, verified:false, source:null,
+        industry:'Electrical contracting', size:'medium', peers:148}
+};
+let P = PERSONAS.bob, who = 'bob';
+let threshold = 15000, cap = 2;
+let erpState = 'open';        /* open | reordered | kept | never */
+let digestAt = 0;
+
+function findings(){ return who === 'bob' ? FINDINGS : FANNY_FINDINGS; }
+function digests(){ return who === 'bob' ? BOB_DIGESTS : FANNY_DIGESTS; }
+
+/* ==========================================================================
+   LOGIN
+   ========================================================================== */
+function applyPersona(key){
+  who = key; P = PERSONAS[key];
+  digestAt = 0; erpState = 'open';
+  $('#userName').textContent = P.user;
+  $('#userCo').textContent   = P.company;
+  $('#userAv').textContent   = initials(P.user);
+  $('#upName').textContent   = P.user;
+  $('#upCo').textContent     = P.company;
+  const pill = $('#svcPill');
+  pill.classList.toggle('off', !P.connected);
+  $('#svcTxt').textContent = P.connected
+    ? 'Watching ' + fmt(M.invoices) + ' invoices'
+    : 'Not watching anything yet';
+}
+function enterApp(){
+  $('#flow').style.display = 'none';
+  document.body.classList.add('in-app');
+  $('#app').classList.add('on');
+  renderAll();
+  go('checkin');
+}
+function loginAs(key){ applyPersona(key); enterApp(); }
+$('#loginBob').addEventListener('click', () => loginAs('bob'));
+$('#loginFanny').addEventListener('click', () => loginAs('fanny'));
+$('#personaBob').addEventListener('click', () => { closeUser(); applyPersona('bob'); renderAll(); go('checkin'); });
+$('#personaFanny').addEventListener('click', () => { closeUser(); applyPersona('fanny'); renderAll(); go('checkin'); });
+$('#signOut').addEventListener('click', () => {
+  closeUser();
+  $('#app').classList.remove('on');
+  document.body.classList.remove('in-app');
+  $('#flow').style.display = '';
+});
+
+function closeUser(){ $('#userPop').classList.remove('on'); $('#userBtn').setAttribute('aria-expanded','false'); }
+$('#userBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const on = $('#userPop').classList.toggle('on');
+  $('#userBtn').setAttribute('aria-expanded', String(on));
+});
+document.addEventListener('click', closeUser);
+$('#userPop').addEventListener('click', e => e.stopPropagation());
+addEventListener('keydown', e => { if(e.key === 'Escape') closeUser(); });
+
+/* ==========================================================================
+   RAIL — five artefacts, and the rail says which one is this app
+   ========================================================================== */
+const SURFACES = [
+  {k:'checkin', label:'Check in',         tag:'this app'},
+  {k:'digest',  label:'Digest',           tag:'mail'},
+  {k:'policy',  label:'Interrupt policy', tag:'settings'},
+  {k:'reach',   label:'Where it reaches you', tag:'ERP · chat'},
+  {k:'stmt',    label:'Annual statement', tag:'paper'}
+];
+let at = 'checkin';
+function renderRail(){
+  const open = openDecisions().length;
+  $('#rail').innerHTML = SURFACES.map(s => {
+    const n = s.k === 'digest' && who === 'bob' && open ? '<span class="rb-n">1</span>' : '';
+    return '<button class="rail-b" type="button" data-go="' + s.k + '" aria-current="' +
+      (at === s.k) + '">' + esc(s.label) + n + '</button>';
+  }).join('') +
+  '<span class="rail-tag">only the first of these is a page you visit</span>';
+  $$('#rail [data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
+}
+function go(k){
+  at = k;
+  $$('.surface').forEach(s => s.classList.toggle('on', s.id === 's-' + k));
+  renderRail();
+  const h = $('#s-' + k + ' h1');
+  if(h) h.focus({preventScroll:true});
+  window.scrollTo({top:0, behavior:'auto'});
+}
+
+/* ==========================================================================
+   1 · CHECK IN — three elements, no more
+   ========================================================================== */
+function openDecisions(){
+  if(who !== 'bob') return [];
+  return FINDINGS.filter(f => f.kind === 'open').sort((a,b) => b.value - a.value);
+}
+function renderCheckin(){
+  const el = $('#ciBody');
+  if(!P.connected){
+    el.innerHTML = `
+      <div class="ci-el">
+        <div class="ci-l">1 · Is the service running</div>
+        <div class="ci-none">
+          <span class="ic">${WARN}</span>
+          <div>
+            <div class="ci-status">No. <b>Nothing is connected</b>, so nothing is being watched.</div>
+            <p class="ci-sub">We can see no invoices for ${esc(P.company)}. There is no spend figure to
+              show you and we will not print somebody else's.</p>
+          </div>
+        </div>
+      </div>
+      <div class="ci-el">
+        <div class="ci-l">2 · The one thing to do</div>
+        <div class="ci-fig"><b>${bandTxt(M.realised)}</b><small>kr. a year — peer estimate, ±15%</small></div>
+        <p class="ci-dec">Connect your accounting system, read-only. ${P.peers} ${esc(P.industry.toLowerCase())}
+          firms your size are on framework agreements in five categories; they save in that range on
+          ${bandTxt(M.spend)} kr. of purchasing, plus ${bandTxt(M.bonus.total)} kr. of customer volume
+          bonus. <span class="est-chip">${DASHC} Estimated</span> None of it is your number yet.</p>
+        <div class="ci-acts">
+          <button class="btn btn-primary" type="button" id="ciConnect">Connect Visma.net</button>
+          <button class="btn btn-secondary" type="button" data-go2="policy">Set the interrupt policy first</button>
+        </div>
+      </div>
+      <div class="ci-el">
+        <div class="ci-l">3 · What happens next</div>
+        <div class="ci-next">
+          <span>About four weeks after connecting, the first digest with <b>your own</b> figures arrives.
+            Between now and then we send nothing, because we would have nothing true to say.</span>
+        </div>
+      </div>`;
+    $('#ciConnect').addEventListener('click', () => { go('digest'); });
+  } else {
+    const d = openDecisions()[0];
+    const qual = openDecisions().filter(f => f.value >= threshold).length;
+    el.innerHTML = `
+      <div class="ci-el">
+        <div class="ci-l">1 · Is the service running</div>
+        <div class="ci-status">Yes. <b>${fmt(M.invoices)} invoices</b> read from ${esc(P.source)},
+          ${AG_ACTIVE} of ${AG_COUNT} agreements active.</div>
+        <p class="ci-sub">${fmt(M.total)} kr. a year running — ${fmt(M.realised)} kr. of discount and
+          ${fmt(M.bonus.total)} kr. of customer volume bonus.
+          <span class="est-chip ok">${TICK} Verified</span></p>
+      </div>
+      <div class="ci-el">
+        <div class="ci-l">2 · The one decision waiting</div>
+        <div class="ci-fig"><b>${fmt(d.value)}</b><small>kr. a year</small></div>
+        <p class="ci-dec"><b>${esc(d.t)}.</b> ${esc(d.d)}</p>
+        <div class="ci-acts">
+          <button class="btn btn-primary" type="button" data-go2="digest">Open the August digest</button>
+          <button class="btn btn-secondary" type="button" data-go2="stmt">Annual statement</button>
+        </div>
+      </div>
+      <div class="ci-el">
+        <div class="ci-l">3 · When we will bother you next</div>
+        <div class="ci-next">
+          <span><b>1 September</b> — the monthly digest. Sooner only if a finding clears
+            ${fmt(threshold)} kr. on the day we see it. ${qual === 0
+              ? 'None of the ' + openDecisions().length + ' open findings would, at your current setting.'
+              : qual + ' of the ' + openDecisions().length + ' open findings ' + (qual === 1 ? 'does' : 'do') +
+                ', and ' + (qual === 1 ? 'it' : 'they') + ' went out with the August digest.'}</span>
+          <button class="linkbtn" type="button" data-go2="policy">Change that number</button>
+        </div>
+      </div>`;
+  }
+  $$('#ciBody [data-go2]').forEach(b => b.addEventListener('click', () => go(b.dataset.go2)));
+}
+
+/* ==========================================================================
+   2 · DIGEST
+   ========================================================================== */
+function renderDigest(){
+  const ds = digests();
+  $('#digestCount').textContent = '· ' + ds.length + (ds.length === 1 ? ' message' : ' messages, 12 months');
+  $('#digestList').innerHTML = ds.map((d,i) => `
+    <button class="mail-row ${i === 0 ? 'unread' : ''}" type="button"
+            aria-current="${i === digestAt}" data-d="${i}">
+      <span class="mail-row-t"><b>Advantage</b><time>${esc(d.short)}</time></span>
+      <span class="mail-row-s">${esc(d.subject)}</span>
+      <span class="mail-row-p">${esc(d.pre)}</span>
+    </button>`).join('');
+  $$('#digestList [data-d]').forEach(b => b.addEventListener('click', () => {
+    digestAt = +b.dataset.d; renderDigest();
+  }));
+
+  const d = ds[digestAt];
+  const figCls = d.dir === 'down' ? 'down' : d.dir === 'flat' ? 'flat' : 'up';
+  const figStr = d.fig === null ? '' :
+    `<div class="dec-fig ${figCls}"><b>${d.fig < 0 ? '−' : d.dir === 'up' ? '+' : ''}${fmt(Math.abs(d.fig))}</b>
+       <small>${esc(d.figNote || 'kr. a year')}</small></div>`;
+  const supStr = d.sup ? `<span class="dec-sup">
+      <span class="logo ${d.sup.cls || ''}">${d.sup.logo
+        ? `<img src="assets/company-logos/${d.sup.logo}" alt="">`
+        : `<b style="font-size:10px;font-weight:700">${esc(initials(d.sup.n))}</b>`}</span>
+      <span><b>${esc(d.sup.n)}</b> · <span class="muted">${esc(d.sup.sub)}</span></span></span>` : '';
+  const ctaStr = d.cta
+    ? `<div class="dec-act">
+         ${d.ctaDone
+           ? `<span class="done-note">${TICK} ${esc(d.cta)} — done</span>`
+           : `<button class="btn btn-primary" type="button" id="digestCta">${esc(d.cta)}</button>`}
+         <span class="why">${esc(d.ctaWhy || '')}</span>
+       </div>`
+    : `<div class="dec-act"><span class="why">No action in this digest. There was nothing to decide,
+         and inventing one would cost us the next six.</span></div>`;
+  const heldStr = d.held && d.held.length
+    ? `<div class="below"><h4>Held back for this digest — below your threshold</h4>
+         <ul>${d.held.map(h => `<li><b>${h.v ? fmt(h.v) + ' kr.' : '0 kr.'}</b><span>${esc(h.t)}</span></li>`).join('')}</ul>
+         <p style="margin-top:var(--s3)">${esc(d.heldNote)}</p></div>`
+    : (d.heldNote ? `<div class="below"><p>${esc(d.heldNote)}</p></div>` : '');
+
+  $('#digestMsg').innerHTML = `
+    <div class="mail-tb">
+      <button class="mail-ic" type="button" aria-label="Archive"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16v3H4z" stroke="currentColor" stroke-width="1.7"/><path d="M6 10v9h12v-9M10 14h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+      <button class="mail-ic" type="button" aria-label="Reply"><svg viewBox="0 0 24 24" fill="none"><path d="M9 7L4 12l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12h9a6 6 0 016 6v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <span class="sp"></span>
+      <button class="mail-ic" type="button" id="dPrev" aria-label="Newer message"><svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="mail-ic" type="button" id="dNext" aria-label="Older message"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="mail-body">
+      <h2 class="mail-subj">${esc(d.subject)}</h2>
+      <p class="mail-pre">${esc(d.pre)}</p>
+      <div class="mail-from">
+        <span class="mail-av"><img src="assets/sda-mark.svg" alt=""></span>
+        <span class="mail-from-t">
+          <b>Advantage</b>
+          <span>digest@advantage.dk → ${esc(P.mail)}</span>
+        </span>
+        <time>${esc(d.date)}</time>
+      </div>
+      <div class="fold">
+        <span class="fold-mark">the fold</span>
+        ${d.urgent ? '<span class="chip chip-warn" style="margin-bottom:var(--s3)">' + WARN + ' Sent outside the monthly digest</span>' : ''}
+        ${d.estimate ? '<span class="est-chip" style="margin-bottom:var(--s3)">' + DASHC + ' Estimated · nothing connected</span>' : ''}
+        ${figStr}
+        <p class="dec-txt">${d.dec}</p>
+        ${supStr}
+        ${ctaStr}
+      </div>
+      ${heldStr}
+      <p class="mail-foot">
+        You are receiving this because Advantage is watching
+        ${P.connected ? fmt(M.invoices) + ' invoices for ' + esc(P.company) : 'nothing yet for ' + esc(P.company)}.
+        Interrupt threshold: ${fmt(threshold)} kr. · cap ${cap} a month ·
+        <button class="linkbtn" type="button" id="dFootPolicy">change it</button> ·
+        <button class="linkbtn" type="button" id="dFootStop">stop all mail</button><br>
+        Advantage · Visma Danmark · savings and customer volume bonus only.
+      </p>
+    </div>`;
+  const prev = $('#dPrev'), next = $('#dNext');
+  prev.disabled = digestAt === 0;
+  next.disabled = digestAt === ds.length - 1;
+  prev.addEventListener('click', () => { if(digestAt > 0){ digestAt--; renderDigest(); } });
+  next.addEventListener('click', () => { if(digestAt < ds.length - 1){ digestAt++; renderDigest(); } });
+  $('#dFootPolicy').addEventListener('click', () => go('policy'));
+  $('#dFootStop').addEventListener('click', () => go('policy'));
+  const cta = $('#digestCta');
+  if(cta) cta.addEventListener('click', () => {
+    cta.outerHTML = '<span class="done-note">' + TICK + ' Sent — we will confirm on the next invoice</span>';
+  });
+}
+
+/* ==========================================================================
+   3 · INTERRUPT POLICY — the slider actually filters
+   ========================================================================== */
+const CAPS = [1, 2, 4, 12];
+function renderCaps(){
+  $('#caps').innerHTML = CAPS.map(c =>
+    `<button class="cap" type="button" data-cap="${c}" aria-pressed="${c === cap}">${
+      c === 12 ? 'no cap' : c + ' a month'}</button>`).join('');
+  $$('#caps [data-cap]').forEach(b => b.addEventListener('click', () => {
+    cap = +b.dataset.cap; renderPolicy(); renderCheckin(); renderReach();
+  }));
+}
+/* what the policy does to the last twelve months */
+function policyResult(){
+  const fs = findings();
+  const scored = fs.filter(f => f.value > 0);
+  const zero   = fs.filter(f => f.value === 0);
+  const over   = scored.filter(f => f.value >= threshold);
+  const under  = scored.filter(f => f.value <  threshold);
+  /* the cap bites per month: group the qualifying findings by the month they landed */
+  const byMonth = {};
+  over.forEach(f => { (byMonth[f.when] = byMonth[f.when] || []).push(f); });
+  let sent = 0, capped = 0;
+  Object.values(byMonth).forEach(list => {
+    list.sort((a,b) => b.value - a.value);
+    sent   += Math.min(list.length, cap);
+    capped += Math.max(0, list.length - cap);
+  });
+  return {over, under, zero, sent, capped, scored,
+          value:over.reduce((s,f) => s + f.value, 0),
+          heldValue:under.reduce((s,f) => s + f.value, 0)};
+}
+function renderPolicy(){
+  $('#thrV').textContent = fmt(threshold);
+  $('#thr').value = threshold;
+  renderCaps();
+  const r = policyResult();
+  const est = who !== 'bob';
+  $('#polOut').innerHTML = `
+    <div class="out-n"><b>${r.sent}</b><small>interruption${r.sent === 1 ? '' : 's'} a year</small></div>
+    <p>${est
+      ? `That is what a year like your peers' would have produced. Your own count is <b>0</b> — nothing
+         is connected, so nothing has been found.`
+      : r.sent === 0
+        ? `At ${fmt(threshold)} kr. nothing in the last twelve months would have reached you outside the
+           monthly digest. That is a defensible setting, and it is also the setting where we are least
+           useful.`
+        : `Over the last twelve months, ${r.sent} finding${r.sent === 1 ? '' : 's'} would have reached you
+           the day we saw ${r.sent === 1 ? 'it' : 'them'}. The other ${r.under.length + r.capped} waited
+           for a digest.`}</p>
+    <div class="split">
+      <div><span>Interrupts at ${fmt(threshold)} kr.</span><b>${r.over.length}</b></div>
+      <div><span>Suppressed by the ${cap === 12 ? 'no' : cap + '/month'} cap</span><b>${r.capped}</b></div>
+      <div><span>Held for the digest</span><b>${r.under.length}</b></div>
+      <div><span>Never interrupt (worth 0 kr.)</span><b>${r.zero.length}</b></div>
+      <div><span>Value that interrupts</span><b>${fmt(r.value)} kr.</b></div>
+      <div><span>Value that waits</span><b>${fmt(r.heldValue)} kr.</b></div>
+    </div>`;
+
+  const fs = findings().slice().sort((a,b) => b.value - a.value);
+  $('#evList').innerHTML = `
+    <div class="ev" style="border-bottom-width:2px">
+      <span class="ev-t"><b>${est ? 'What we would look for' : 'Every finding, twelve months to August 2026'}</b>
+        <span>${est ? 'Peer estimates for ' + P.peers + ' ' + P.industry.toLowerCase() + ' firms your size'
+                    : fmt(M.invoices) + ' invoices, ' + AG_COUNT + ' agreements watched'}</span></span>
+      <span class="ev-v muted" style="font-size:12px;font-weight:400">Worth</span>
+      <span class="ev-b muted" style="font-size:12px">At ${fmt(threshold)} kr.</span>
+    </div>` +
+    fs.map(f => {
+      const zero = f.value === 0;
+      const over = !zero && f.value >= threshold;
+      let badge;
+      if(zero)      badge = '<span class="chip chip-soft">Never</span>';
+      else if(over) badge = '<span class="chip chip-rec">Interrupts</span>';
+      else          badge = '<span class="chip chip-soft">Digest</span>';
+      const kindNote = f.kind === 'done'    ? ' · decided'
+                     : f.kind === 'confirm' ? ' · confirmation'
+                     : f.kind === 'risk'    ? ' · price risk'
+                     : f.kind === 'open'    ? ' · open'
+                     : f.kind === 'est'     ? ' · estimated'
+                     : ' · no value to you';
+      return `<div class="ev ${zero || !over ? 'muted-row' : ''}">
+        <span class="ev-t"><b>${esc(f.t)}</b><span>${esc(f.when)}${kindNote} — ${esc(f.d)}</span></span>
+        <span class="ev-v ${f.kind === 'risk' ? 'neg' : zero ? 'muted' : 'pos'}">${
+          zero ? '0 kr.' : (est ? 'up to ' : f.kind === 'risk' ? '−' : '+') + fmt(f.value) + ' kr.'}</span>
+        <span class="ev-b">${badge}</span>
+      </div>`;
+    }).join('');
+
+  $('#polFoot').innerHTML = est
+    ? `<b>Why you are setting this before there is any data.</b> Because the first month is when a service
+       like this earns or loses its permission to write to you. Peers your size produce about
+       ${policyResultAtDefault()} findings a year worth more than 15.000 kr.; you can decide now how many
+       of those you want to hear about the day we see them.`
+    : `<b>Why this control exists and nobody ships it.</b> Every alerting product optimises for
+       engagement, so every threshold defaults to zero and every customer eventually mutes the sender.
+       Publishing the trade-off — ${r.sent} interruptions a year, ${fmt(r.heldValue)} kr. of findings
+       deliberately delayed — is the only way the interruptions that do arrive stay credible. The honest
+       cost is real: at a high threshold we sit on ${fmt(r.heldValue)} kr. of your money for up to a month.`;
+}
+function policyResultAtDefault(){
+  return FANNY_FINDINGS.filter(f => f.value >= 15000).length;
+}
+$('#thr').addEventListener('input', e => {
+  threshold = +e.target.value;
+  renderPolicy(); renderCheckin(); renderReach();
+});
+
+/* ==========================================================================
+   4 · WHERE IT REACHES YOU — ERP panel + chat card
+   ========================================================================== */
+const ERP = {
+  no:'INV-2026-0841', supplier:'Jydsk Trælast A/S', date:'19 August 2026', due:'18 September 2026',
+  net:42180, vat:10545, cat:'Building materials', frame:'Bygma Framework',
+  lines:[
+    {d:'Konstruktionstræ C24 45×195 mm, 120 lgm', q:'120', u:'118,50', t:14220},
+    {d:'Gipsplade 13 mm, 240 stk.',               q:'240', u:'62,00',  t:14880},
+    {d:'Isolering 195 mm, 44 m²',                 q:'44',  u:'198,00', t:8712},
+    {d:'Skruer og beslag, diverse',               q:'1',   u:'4.368,00', t:4368}
+  ]
+};
+const ERP_PCT = 9;                                   /* the Building materials framework rate */
+const ERP_SAVE = Math.round(ERP.net * ERP_PCT / 100); /* 3.796 kr. on this invoice */
+function renderReach(){
+  const connected = P.connected;
+  $('#erpIntro').innerHTML = connected
+    ? `A purchase invoice in Visma.net Financials, one click from being posted. The supplier is outside
+       your Building materials framework, and Advantage has read the lines. The panel is ours; the screen
+       around it is not. It is exempt from the interrupt policy because it is not an interruption — the
+       customer is already here, doing this.`
+    : `Nothing is connected, so there is nothing to warn about. This is what the intervention will look
+       like once Visma.net is linked — the panel is shown inert, over sample lines, rather than pretending
+       to have read invoices we have not seen.`;
+
+  const linesHtml = ERP.lines.map(l => `<tr><td style="text-align:left">${esc(l.d)}</td>
+      <td>${esc(l.q)}</td><td>${esc(l.u)}</td><td>${fmt(l.t)}</td></tr>`).join('');
+
+  let panel;
+  if(!connected){
+    panel = `<div class="adv-panel">
+      <div class="adv-p-h"><img src="assets/advantage-logo.svg" alt="Advantage"><span class="sep"></span>
+        <span class="t">Inactive — nothing connected</span></div>
+      <div class="adv-resolved"><span class="ic">${DASHC}</span>
+        <span>Once your accounting system is connected, this panel checks every purchase invoice against
+        your framework agreements before it is posted, and says nothing at all when the supplier is
+        already the right one.</span></div>
+    </div>`;
+  } else if(erpState === 'open'){
+    panel = `<div class="adv-panel" id="advPanel">
+      <div class="adv-p-h"><img src="assets/advantage-logo.svg" alt="Advantage"><span class="sep"></span>
+        <span class="t">Off-agreement supplier</span>
+        <button class="mail-ic x" type="button" id="advX" aria-label="Dismiss this warning">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button></div>
+      <div class="adv-p-b">
+        <div class="adv-p-fig"><b>${fmt(ERP_SAVE)} kr.</b><span>on this invoice</span></div>
+        <div class="adv-p-tx"><span class="logo lg" style="float:left;margin:2px var(--s3) 0 0">
+            <img src="assets/company-logos/bygma-logo-png_seeklogo-381076.png" alt=""></span>
+          <b>${esc(ERP.supplier)} is off-agreement.</b> The same four lines through
+          ${esc(ERP.frame)} price ${ERP_PCT}% lower — ${fmt(ERP.net)} kr. becomes
+          ${fmt(ERP.net - ERP_SAVE)} kr. You hold that agreement already; this order simply did not go
+          through it. Volume routed through the framework also counts toward your customer bonus.</div>
+      </div>
+      <div class="adv-p-a">
+        <button class="btn btn-primary btn-sm" type="button" id="advReorder">Reorder from ${esc(ERP.frame)}</button>
+        <button class="btn btn-secondary btn-sm" type="button" id="advKeep">Post as is</button>
+        <button class="btn btn-secondary btn-sm" type="button" id="advNever">Never warn for this supplier</button>
+      </div>
+    </div>`;
+  } else {
+    const txt = erpState === 'reordered'
+      ? `Basket moved to ${ERP.frame}. ${fmt(ERP.net - ERP_SAVE)} kr. instead of ${fmt(ERP.net)} kr., and
+         ${fmt(ERP.net - ERP_SAVE)} kr. more counting toward your volume bonus. This decision will appear
+         as one line in your annual statement, and nowhere else.`
+      : erpState === 'kept'
+      ? `Posted as is. We record that you chose this supplier at ${fmt(ERP_SAVE)} kr. above framework —
+         one line in the digest under the fold, no follow-up, no second warning on this invoice.`
+      : `Warnings for ${ERP.supplier} are off. We will not raise it again, on any invoice, until you turn
+         it back on. Turning a warning off has to be as easy as this or the whole panel gets ignored.`;
+    panel = `<div class="adv-panel"><div class="adv-resolved">
+      <span class="ic">${TICK}</span><span>${esc(txt)}</span></div>
+      <div class="adv-p-a"><button class="btn btn-secondary btn-sm" type="button" id="advUndo">Undo</button></div>
+    </div>`;
+  }
+
+  $('#erpWin').innerHTML = `
+    <div class="erp-tb"><span class="dots"><i></i><i></i><i></i></span>
+      <b>Visma.net Financials</b><span>Purchase invoices · ${esc(P.company)}</span></div>
+    <div class="erp-sub"><b>Purchase invoice</b><span>Supplier ledger</span><span>Payments</span>
+      <span>Approvals</span><span>Reports</span></div>
+    <div class="erp-body">
+      <div class="erp-h">
+        <div><h3>${esc(ERP.no)}</h3>
+          <div class="erp-meta">${esc(ERP.supplier)} · received ${esc(ERP.date)} · due ${esc(ERP.due)}</div></div>
+        <span class="chip chip-warn">Awaiting approval</span>
+      </div>
+      <div class="erp-grid">
+        <span class="erp-f"><span>Supplier</span><b>${esc(ERP.supplier)}</b></span>
+        <span class="erp-f"><span>Category</span><b>${esc(ERP.cat)}</b></span>
+        <span class="erp-f"><span>Net</span><b>${fmt(ERP.net)} kr.</b></span>
+        <span class="erp-f"><span>VAT 25%</span><b>${fmt(ERP.vat)} kr.</b></span>
+        <span class="erp-f"><span>Total</span><b>${fmt(ERP.net + ERP.vat)} kr.</b></span>
+      </div>
+      <table class="erp-tbl">
+        <thead><tr><th style="text-align:left">Description</th><th>Qty</th><th>Unit</th><th>Amount</th></tr></thead>
+        <tbody>${linesHtml}<tr class="sum"><td style="text-align:left">Net total</td><td></td><td></td>
+          <td>${fmt(ERP.net)}</td></tr></tbody>
+      </table>
+      ${panel}
+      <div class="erp-acts">
+        <button class="btn btn-secondary btn-sm" type="button" disabled>Approve and post</button>
+        <button class="btn btn-secondary btn-sm" type="button" disabled>Hold</button>
+        <span class="muted" style="font-size:11px;align-self:center">ERP controls are inert in this
+          prototype — the Advantage panel is not.</span>
+      </div>
+    </div>`;
+  const bind = (id, fn) => { const b = $(id); if(b) b.addEventListener('click', fn); };
+  bind('#advX',       () => { erpState = 'kept';      renderReach(); });
+  bind('#advReorder', () => { erpState = 'reordered'; renderReach(); });
+  bind('#advKeep',    () => { erpState = 'kept';      renderReach(); });
+  bind('#advNever',   () => { erpState = 'never';     renderReach(); });
+  bind('#advUndo',    () => { erpState = 'open';      renderReach(); });
+
+  /* ---- chat: exactly the findings that clear threshold and cap ---- */
+  const r = policyResult();
+  const pushed = r.over.slice().sort((a,b) => b.value - a.value).slice(0, cap === 12 ? 99 : cap * 12);
+  $('#chatIntro').innerHTML = connected
+    ? `The same interrupt policy decides what appears here. At ${fmt(threshold)} kr. and a cap of
+       ${cap === 12 ? 'no limit' : cap + ' a month'}, ${pushed.length === 0 ? 'nothing' :
+       pushed.length + (pushed.length === 1 ? ' message' : ' messages')} would have been posted in the
+       last twelve months. Raise the threshold on the policy page and watch this channel go quiet.`
+    : `Nothing to push yet. Once connected, the findings that clear your threshold appear here as well as
+       in mail — the same event, two channels, no separate inbox to check.`;
+  const chatMsgs = connected && pushed.length
+    ? pushed.map(f => {
+        const c = f.cat ? cat(f.cat) : null;
+        const risk = f.kind === 'risk';
+        return `<div class="msg">
+          <span class="msg-av"><img src="assets/sda-mark.svg" alt=""></span>
+          <div class="msg-c">
+            <div class="msg-h"><b>Advantage</b><span class="bot">app</span><time>${esc(f.when)}</time></div>
+            <div class="msg-card">
+              <h4>${esc(f.t)}</h4>
+              <div class="m-fig"><b class="${risk ? 'neg' : 'pos'}">${risk ? '−' : '+'}${fmt(f.value)} kr.</b>
+                <small>a year${c ? ' · ' + esc(c.n) : ''}</small></div>
+              <p>${esc(f.d)}</p>
+              <div class="m-a">
+                <button class="btn btn-primary btn-sm" type="button">${risk ? 'See the comparison' : 'Activate ' + esc(c ? c.ag : 'agreement')}</button>
+                <button class="btn btn-secondary btn-sm" type="button">Not now</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')
+    : `<div class="chat-empty">${connected
+        ? 'Nothing has cleared ' + fmt(threshold) + ' kr. in the last twelve months. An empty channel is a correct outcome, not a broken integration.'
+        : 'Nothing connected, so nothing pushed.'}</div>`;
+  $('#chatWin').innerHTML = `
+    <div class="chat-tb">
+      <span class="msg-av" style="width:26px;height:26px;border-radius:var(--rounded-xs)">
+        <img src="assets/sda-mark.svg" alt="" style="width:16px;height:16px"></span>
+      <b>Indkøb</b><span>Teams channel · ${esc(P.company)}</span></div>
+    <div class="chat-b">${chatMsgs}</div>
+    <div class="chat-in">Write a message…</div>`;
+}
+
+/* ==========================================================================
+   5 · ANNUAL STATEMENT
+   ========================================================================== */
+function renderStatement(){
+  const est = !P.connected;
+  const rows = CATS.filter(c => ACTIVE.includes(c.k));
+  const logoFor = c => `<span class="logo ${c.cls || ''}">${c.logo
+      ? `<img src="assets/company-logos/${c.logo}" alt="">`
+      : `<b style="font-size:9px;font-weight:700">${esc(initials(c.ag))}</b>`}</span>`;
+
+  const catRows = rows.map(c => `
+    <tr><td style="text-align:left"><span class="st-sup">${logoFor(c)}
+        <span><b>${esc(c.n)}</b><br><span class="muted" style="font-size:11px">${esc(c.ag)}</span></span>
+      </span></td>
+      <td>${fmt(c.spend)}</td><td>${c.rate}%</td><td>${fmt(c.save)}</td></tr>`).join('');
+
+  const bonusRows = M.bonus.lines.map(l => `
+    <tr><td style="text-align:left">${fmtCompact(l.from)}–${l.to === M.covered ? fmt(l.to) : fmtCompact(l.to)} kr. of covered volume</td>
+      <td>${fmt(l.vol)}</td><td>${String(l.rate).replace('.', ',')}%</td><td>${fmt(l.paid)}</td></tr>`).join('');
+
+  const openRows = CATS.filter(c => !ACTIVE.includes(c.k)).map(c => `
+    <tr><td style="text-align:left"><b>${esc(c.n)}</b><br>
+      <span class="muted" style="font-size:11px">${esc(c.ag)} available</span></td>
+      <td>${fmt(c.spend)}</td><td>${c.rate}%</td><td>${fmt(c.save)}</td></tr>`).join('');
+
+  $('#stmtBody').innerHTML = `
+    <div class="stmt-h">
+      <img src="assets/advantage-logo.svg" alt="Advantage">
+      <div class="who"><b>${esc(P.company)}</b>${esc(P.user)}<br>${esc(P.industry)}</div>
+    </div>
+    <div class="stmt-t">
+      <h2>${est ? 'Projected annual statement' : 'Annual statement'}</h2>
+      <p>Twelve months to 31 July 2026 · ${est
+        ? 'projection from ' + P.peers + ' comparable ' + esc(P.industry.toLowerCase()) +
+          ' firms — nothing verified'
+        : fmt(M.invoices) + ' purchase invoices read from ' + esc(P.source) + ' · every figure verified against them'}
+        ${est ? '<span class="est-chip" style="margin-left:8px">' + DASHC + ' Estimated</span>'
+              : '<span class="est-chip ok" style="margin-left:8px">' + TICK + ' Verified</span>'}</p>
+    </div>
+
+    <div class="stmt-hero">
+      <div class="big"><span>${est ? 'What a firm your size saves' : 'What you saved'}</span>
+        <b>${est ? bandTxt(M.total) : fmt(M.total)}</b>
+        <span style="margin-top:var(--s2)">kroner${est ? ' a year, ±15%' : ''}</span></div>
+      <div class="side">
+        <div><span>Framework discount</span><b>${est ? bandTxt(M.realised) : fmt(M.realised)} kr.</b></div>
+        <div><span>Customer volume bonus</span><b>${est ? bandTxt(M.bonus.total) : fmt(M.bonus.total)} kr.</b></div>
+        <div><span>Purchasing covered</span><b>${est ? bandTxt(M.covered) : fmt(M.covered)} kr.</b></div>
+      </div>
+    </div>
+
+    <div class="stmt-s">
+      <h3>1 · Where the discount came from</h3>
+      <table class="st">
+        <thead><tr><th style="text-align:left">Category and agreement</th><th>Spend</th>
+          <th>Rate</th><th>Saved</th></tr></thead>
+        <tbody>${catRows}
+          <tr class="tot"><td style="text-align:left">${AG_ACTIVE} agreements active of ${AG_COUNT}</td>
+            <td>${fmt(M.covered)}</td><td></td><td>${fmt(M.realised)}</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="stmt-s">
+      <h3>2 · Customer volume bonus, paid once a year</h3>
+      <table class="st">
+        <thead><tr><th style="text-align:left">Tier on volume routed through agreements</th><th>Volume</th>
+          <th>Rate</th><th>Bonus</th></tr></thead>
+        <tbody>${bonusRows}
+          <tr class="tot"><td style="text-align:left">Bonus on ${fmt(M.covered)} kr. of covered volume</td>
+            <td>${fmt(M.covered)}</td><td>${(M.bonus.total / M.covered * 100).toFixed(2).replace('.', ',')}%</td>
+            <td>${fmt(M.bonus.total)}</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="stmt-s">
+      <h3>3 · Still open at 31 July 2026</h3>
+      <table class="st">
+        <thead><tr><th style="text-align:left">Category with no agreement</th><th>Spend</th>
+          <th>Rate</th><th>Available</th></tr></thead>
+        <tbody>${openRows}
+          <tr class="tot"><td style="text-align:left">Leaking out of ${fmt(M.spend)} kr. of total purchasing</td>
+            <td>${fmt(M.leaking)}</td><td></td><td>${fmt(M.remain)}</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="stmt-s">
+      <h3>4 · What the service did to earn it</h3>
+      <p style="font-size:var(--text-xs);line-height:1.8">
+        ${est
+          ? 'Nothing yet. Once your accounting system is connected we read every purchase invoice, ' +
+            'compare each supplier against ' + AG_COUNT + ' framework agreements, and write to you only ' +
+            'when a finding clears the threshold you set. Expect between four and six messages in the ' +
+            'first year, and one page like this at the end of it.'
+          : fmt(M.invoices) + ' purchase invoices read. ' + AG_COUNT + ' agreements watched. ' +
+            FINDINGS.filter(f => f.value > 0).length + ' findings, of which ' +
+            FINDINGS.filter(f => f.kind === 'done').length + ' were decided and ' +
+            FINDINGS.filter(f => f.kind === 'open').length + ' remain open. ' +
+            policyResult().sent + ' interruptions sent at your ' + fmt(threshold) +
+            ' kr. threshold; the rest waited for a monthly digest. Six digests, one price-rise alert, ' +
+            'and this page — that is the entire surface area of the product for the year.'}
+      </p>
+    </div>
+
+    <div class="stmt-sign">
+      <div class="sign-b">
+        <img class="sign-mark" src="assets/sda-mark.svg" alt="">
+        <b>Advantage · Visma Danmark</b><br>
+        ${est
+          ? 'This is a projection, not a statement. It carries no signature because there is nothing to attest to yet.'
+          : 'Prepared from ' + fmt(M.invoices) + ' invoices read from ' + esc(P.source) +
+            ' between 1 August 2025 and 31 July 2026. Discount figures are the difference between ' +
+            'invoiced prices and framework prices on the same lines. The volume bonus is calculated on ' +
+            'covered volume and paid in February.'}<br>
+        Savings and customer volume bonus only. No fees form part of this statement.
+      </div>
+      <div class="sign-l">${est ? 'No signature — projection' : 'Signed 1 August 2026 · Advantage, Visma Danmark'}</div>
+    </div>
+
+    <p class="stmt-note">${est
+      ? 'Bands are ±15% around the median of ' + P.peers + ' comparable firms: saved ' +
+        bandTxt(M.realised) + ' kr., bonus ' + bandTxt(M.bonus.total) + ' kr., purchasing ' +
+        bandTxt(M.spend) + ' kr.'
+      : 'Covered purchasing ' + fmt(M.covered) + ' kr. plus purchasing with no agreement ' +
+        fmt(M.leaking) + ' kr. equals total purchasing ' + fmt(M.spend) + ' kr. Discount realised ' +
+        fmt(M.realised) + ' kr. plus discount still available ' + fmt(M.remain) + ' kr. equals the full ' +
+        'potential of ' + fmt(M.full) + ' kr. Discount ' + fmt(M.realised) + ' kr. plus bonus ' +
+        fmt(M.bonus.total) + ' kr. equals ' + fmt(M.total) + ' kr.'}</p>`;
+}
+$('#printStmt').addEventListener('click', () => window.print());
+
+/* ========================================================================== */
+function renderAll(){
+  renderCheckin(); renderDigest(); renderPolicy(); renderReach(); renderStatement(); renderRail();
+}
+applyPersona('bob');
+</script>
+</body>
+</html>
