@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#ffffff">
 <title>Advantage — Onboarding</title>
+<!-- Rethink Sans was named in --font-sans but never loaded, so it only rendered on
+     machines with it installed locally and weight 800 was synthesised elsewhere.
+     400..800 covers the ExtraBold used on the headline figures. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap">
 <style>
 /* ==========================================================================
    Advantage Design System — tokens shared with advantage-autopilot.html
@@ -26,6 +32,9 @@
   --general-input:#ffffff;
 
   --sidebar-border:#e0e0e0;
+  /* referenced by the sync button, the bell and the rail nav labels, but never
+     declared — so all four of those colour declarations were silently void */
+  --sidebar-foreground:#1c1c1c;
 
   --sentiment-positive:#009689;
   --sentiment-negative:#f54a00;
@@ -36,7 +45,7 @@
   --brand-cornflower:#73abff;
 
   --font-sans:"Rethink Sans","Rethink Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  --font-body:"DM Sans","DM Sans Variable",-apple-sysr to tem,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
 
   --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
@@ -497,11 +506,11 @@ body.in-app .flow{display:none}
    space is left, and the action pinned right. The right padding clears the
    absolutely-positioned dismiss button so the CTA never sits under it. */
 .banner{flex:1 1 auto;width:100%;min-width:0;display:flex;align-items:center;gap:var(--s4);
-  min-height:46px;padding:var(--s2) calc(var(--s6) + 40px) var(--s2) var(--s6);
-  color:#dce6fb;font-size:var(--text-sm)}
+  min-height:60px;padding:var(--s3) calc(var(--s6) + 40px) var(--s3) var(--s6);
+  color:#dce6fb;font-size:var(--text-base)}
 .banner b{color:var(--surface);font-weight:600}
-.btitle{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
-  color:var(--surface);font-weight:600}
+.btitle{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
+  color:var(--surface);font-weight:700;font-size:var(--text-base);letter-spacing:-.2px}
 .btitle svg{width:14px;height:14px;opacity:.65}
 .banner .btxt{flex:1 1 auto;min-width:0;text-align:center}
 .bcta{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;height:28px;
@@ -995,31 +1004,77 @@ body.in-app .flow{display:none}
 .opp-list-bars{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
   gap:var(--s6);list-style:none}
 /* Fanny's dashboard fits 3 wider cards per row instead of the default auto-fill 4 */
-.nc-agr-grid{grid-template-columns:repeat(3,1fr);margin-top:var(--s8)}
-@media(max-width:860px){.nc-agr-grid{grid-template-columns:1fr}}
-.agr-card{position:relative;display:flex;flex-direction:column;gap:var(--s4);cursor:pointer;
-  padding:var(--s6);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
-  background:var(--surface);transition:border-color var(--t-fast),box-shadow var(--t-fast)}
-.agr-card:hover,.agr-card:focus-visible{border-color:var(--general-border);box-shadow:var(--shadow-sm)}
-.agr-card-top{display:flex;align-items:center;justify-content:space-between}
-.agr-logo{flex:0 0 auto;width:48px;height:48px;border-radius:var(--rounded-md);
-  display:grid;place-items:center;font-family:var(--font-sans);font-weight:600;
-  font-size:var(--text-sm);letter-spacing:.01em}
-.agr-card-disc{flex:0 0 auto;padding:4px 10px;border-radius:var(--rounded-full);
-  background:#0096891a;color:var(--sentiment-positive);font-size:13px;font-weight:700}
-.agr-card-name{font-size:var(--text-base);font-weight:600;letter-spacing:-.2px;
-  line-height:1.3;text-wrap:pretty}
-.agr-card-meta{font-size:13px;font-weight:500;color:#2B2B2B}
-.agr-card-why{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
-.agr-card-why li{position:relative;padding-left:16px;font-size:13px;line-height:1.5;
-  color:#2B2B2B}
-.agr-card-why li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;
-  border-radius:var(--rounded-full);background:var(--general-border)}
-.agr-card-foot{margin-top:auto;padding-top:var(--s4);border-top:1px solid var(--hairline);
-  display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s3)}
-.opp-amt-block{display:flex;flex-direction:column;gap:3px}
+.nc-agr-grid{grid-template-columns:repeat(4,1fr);gap:var(--s12) var(--s4);margin-top:var(--s8)}
+@media(max-width:1200px){.nc-agr-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.nc-agr-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.nc-agr-grid{grid-template-columns:1fr}}
+/* the supplier card, blended from the reference: a brand-tinted header band with
+   the logo chip overlapping its lower edge, then the name/meta/reasons, then the
+   saving footer kept as-is. --b is the supplier's predominant ink as an rgb
+   triplet (set inline per card), so one variable tints the band, the chip ring
+   and the initials fallback without a stylesheet entry per brand. */
+/* the supplier card: a photo header with the logo chip overlapping its lower
+   edge, the supplier name, one line carrying the discount and a single selling
+   point, then the saving footer. No outlines anywhere — elevation separates the
+   card from the page, and the chip reads as part of the logo rather than a box
+   drawn around it. */
+/* Airbnb listing-card anatomy: the photo IS the card — no container, no border,
+   no shadow. A status label sits top-left, a save toggle top-right, and the text
+   rows sit underneath on the page itself. Three rows only: name, what it is,
+   what it's worth — the same shape as title / host / price-and-rating. */
+.agr-card{position:relative;display:flex;flex-direction:column;gap:2px;cursor:pointer;
+  padding:0;border:none;background:none;box-shadow:none}
+.agr-card:focus-visible{outline:2px solid var(--general-primary);outline-offset:4px;
+  border-radius:var(--rounded-md)}
+.agr-card:hover .agr-card-band img{transform:scale(1.04)}
+.agr-card:hover .agr-card-name{text-decoration:underline;text-underline-offset:2px}
+/* the photo bleeds to the card's edges, so it sits outside the content padding */
+/* aspect-ratio rather than a fixed height, so the photo stays squarer as the
+   column width changes instead of flattening into a letterbox strip */
+.agr-card-band{position:relative;margin:0 0 var(--s3);aspect-ratio:4/3;flex:0 0 auto;
+  overflow:hidden;border-radius:var(--rounded-md);background:rgb(var(--b)/.10)}
+.agr-card-band img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform var(--t)}
+/* status label, top-left — the "Trending" slot */
+.agr-label{position:absolute;top:var(--s2);left:var(--s2);padding:4px 9px;
+  border-radius:var(--rounded-full);background:var(--surface);box-shadow:var(--shadow-sm);
+  font-size:11.5px;font-weight:650;color:var(--general-foreground);white-space:nowrap}
+.agr-label.on{background:var(--sentiment-positive);color:#fff}
+/* save toggle, top-right */
+.agr-fav{position:absolute;top:var(--s2);right:var(--s2);width:34px;height:34px;
+  display:grid;place-items:center;border:none;background:none;cursor:pointer;
+  color:#fff;transition:transform var(--t-fast)}
+.agr-fav svg{width:22px;height:22px;fill:#00000047;
+  filter:drop-shadow(0 1px 2px #0000004d);transition:fill var(--t-fast)}
+.agr-fav:hover{transform:scale(1.08)}
+.agr-fav.on svg{fill:var(--general-destructive);stroke:#fff}
+.agr-fav:focus-visible{outline:2px solid var(--surface);outline-offset:0;border-radius:var(--rounded-full)}
+/* the chip overlaps the photo by half its height, like the reference card */
+/* the supplier mark, bottom-left on the photo — Airbnb has no logo, but the
+   brand is the point here, so it sits on the image instead of pushing a row */
+.agr-chip{position:absolute;bottom:var(--s2);left:var(--s2);
+  flex:0 0 auto;width:30px;height:30px;border-radius:var(--rounded-sm);
+  display:grid;place-items:center;background:var(--surface);
+  box-shadow:0 2px 8px #0000002e;overflow:hidden}
+.agr-chip img{width:100%;height:100%;object-fit:contain;display:block}
+/* no artwork for this supplier: initials on a tint of its brand colour instead */
+.agr-chip[data-initials]{background:rgb(var(--b)/.10)}
+.agr-chip-i{font-weight:700;font-size:var(--text-sm);letter-spacing:.01em;color:rgb(var(--b))}
+/* the whole pitch: discount plus one reason, nothing else */
+/* the three text rows */
+.agr-card-meta{font-size:13px;line-height:1.4;color:var(--general-muted-foreground);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.agr-card-price{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s1);
+  font-size:13px;line-height:1.4;font-weight:600;color:var(--sentiment-positive)}
+.agr-card-price b{font-weight:700;color:var(--sentiment-positive);white-space:nowrap}
+.agr-card-price small{font-weight:600;color:var(--general-muted-foreground)}
+.agr-card-price .agr-card-go{margin-left:auto;width:26px;height:26px}
+.agr-card-price .agr-card-go svg{width:14px;height:14px}
+.agr-card-name{font-size:14px;font-weight:650;letter-spacing:-.1px;line-height:1.35;
+  text-wrap:pretty;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden}
 .opp-amt-label{font-size:13px;font-weight:600;color:var(--sentiment-positive)}
-.opp-amt-big{font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;
+.opp-amt-big{font-size:var(--text-base);font-weight:700;letter-spacing:-.2px;
   color:var(--sentiment-positive);white-space:nowrap}
 .opp-amt-big small{margin-left:3px;font-size:13px;font-weight:600}
 .agr-card-go{flex:0 0 auto;width:30px;height:30px;display:grid;place-items:center;
@@ -1447,7 +1502,10 @@ body.in-app .flow{display:none}
   box-shadow:var(--shadow-md);transform:translateY(-1px)}
 .cat-agr-row.clickable:hover .agr-card-go{background:var(--general-primary);color:#fff}
 .cat-agr-row.on{background:#f4fcfb;box-shadow:none;border:1px solid #00968930}
-.cat-agr-row .agr-logo{width:40px;height:40px;font-size:var(--text-xs)}
+/* in a row there's no band to overlap, so the chip loses its offset */
+.cat-agr-row .agr-chip{margin:0;width:40px;height:40px}
+.cat-agr-row .agr-chip img{padding:5px}
+.cat-agr-row .agr-chip-i{font-size:var(--text-xs)}
 .cat-agr-row-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
 .cat-agr-row-name{font-size:var(--text-sm);font-weight:600;letter-spacing:-.1px}
 .cat-agr-row-disc{font-size:var(--text-xs);font-weight:600;color:var(--sentiment-positive)}
@@ -1628,16 +1686,25 @@ body.in-app .flow{display:none}
    radius steps UP from the cards' --rounded-lg by the 8px inset, per the nested-
    radius rule. */
 .nc-ov{display:flex;flex-direction:column;gap:var(--s2);
-  padding:var(--s2);border-radius:var(--rounded-2xl);background:var(--general-muted)}
+  padding:var(--s2);border-radius:var(--rounded-2xl);background:var(--brand-ice)}
 .nc-ov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2)}
 .nc-ov-card{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s6);
   border:1px solid var(--hairline);border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:var(--shadow-xs)}
 @media(max-width:720px){.nc-ov-grid{grid-template-columns:1fr}}
+/* --brand-muted is not a defined token, so this silently resolved to nothing and
+   the label inherited body ink instead of going grey */
 .nc-ov-card-l{min-height:20px;font-size:16px;color:var(--general-muted-foreground)}
-.nc-ov-card-v{min-height:38px;display:flex;align-items:center;
-  font-size:var(--text-3xl);font-weight:700;letter-spacing:-.5px}
-.nc-ov-card-v small{margin-left:3px;font-size:var(--text-base);font-weight:600;color:var(--general-muted-foreground)}
+/* the figures are the point of this block: Rethink Sans ExtraBold, one step up the
+   scale, all in ink so nothing reads as ranked above its neighbours. baseline +
+   wrap lets the unit drop under a long range instead of being squeezed. */
+.nc-ov-card-v{min-height:44px;display:flex;flex-wrap:wrap;align-items:baseline;
+  font-size:var(--text-4xl);font-weight:800;letter-spacing:-1px;
+  color:var(--general-foreground)}
+.nc-ov-card-v small{margin-left:4px;font-size:var(--text-base);font-weight:600;color:var(--general-muted-foreground)}
+/* the headline saving. Only this figure is coloured — colouring all three would
+   remove the emphasis rather than create it. */
+.nc-ov-card-v.brand{color:var(--general-primary)}
 .nc-ov-card-v.accent{color:var(--sentiment-positive)}
 /* the "how we got these numbers" banner: sits inside the grey tray as its first
    row, so the 8px gutter frames it exactly like the cards below. A dark band
@@ -1654,14 +1721,14 @@ body.in-app .flow{display:none}
 .nc-calc-txt>span{font-size:15px;line-height:1.45;color:var(--general-muted-foreground)}
 /* the CTA is a stock .btn.btn-primary — this class only adds the chevron nudge,
    so hover/active/disabled all come from the design system */
-.nc-calc-btn{flex:0 0 auto}
+.nc-calc-btn{display:none; flex:0 0 auto}
 .nc-calc-btn svg{transition:transform var(--t-fast)}
 .nc-calc-btn:hover svg{transform:translateX(2px)}
 /* the second row is the same grid, so all six cards align on one set of columns
    — the previous full-width band couldn't line its figures up with the cards
    above and left a void where a third figure belongs. One step down in value
    size keeps these reading as supporting context, not headline numbers. */
-.nc-ov-card.is-sub .nc-ov-card-v{font-size:var(--text-2xl);letter-spacing:-.4px}
+.nc-ov-card.is-sub .nc-ov-card-v{font-size:var(--text-3xl);letter-spacing:-.7px}
 
 /* ---------- Savings drill-down ---------- */
 /* tables, not cards: these are columns of figures that have to be compared and
@@ -1800,19 +1867,60 @@ body.activity-on .canvas{padding-right:calc(320px + var(--s10,40px))}
 /* collapsed: an icon-width strip, exactly like .rail.mini on the left */
 .nc-activity.mini{width:76px;padding-left:0;padding-right:0}
 body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
-.nc-activity.mini .nc-activity-head,
-.nc-activity.mini .nc-activity-empty p{display:none}
-.nc-activity.mini .nc-activity-empty{padding:0;border:none;background:none}
-.nc-activity.mini .nc-activity-ill{margin:0 auto;width:44px;height:44px}
-.nc-activity.mini .nc-activity-ill svg{width:22px;height:22px}
+.nc-activity.mini .nc-activity-body{display:none}
+.nc-activity.mini .act-mini{display:flex}
 .nc-activity-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s4)}
 .nc-activity-head h3{font-size:var(--text-lg);font-weight:600}
-.nc-activity-empty{padding:var(--s10,40px) var(--s5,20px);border:1px solid var(--hairline);
-  border-radius:var(--rounded-lg);background:var(--surface);text-align:center}
-.nc-activity-ill{position:relative;width:64px;height:64px;margin:0 auto var(--s5,20px);
-  border-radius:var(--rounded-full);display:grid;place-items:center;background:var(--brand-ice)}
-.nc-activity-ill svg{width:30px;height:30px;color:var(--general-primary)}
-.nc-activity-empty p{font-size:16px;line-height:1.55;color:var(--general-muted-foreground)}
+/* ---- the rail's contents: what to do next, then what just happened ---- */
+.act-eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.act-head{display:flex;align-items:center;gap:var(--s3);margin:var(--s1) 0 var(--s4)}
+.act-head h3{flex:1 1 auto;font-size:var(--text-xl);letter-spacing:-.3px}
+.act-count{flex:0 0 auto;min-width:26px;height:26px;padding:0 7px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--general-secondary);
+  color:var(--general-primary);font-size:13px;font-weight:700}
+/* next-best-action cards. The first is the one we'd pick, so it carries the tint */
+.act-nba{display:flex;flex-direction:column;gap:var(--s2)}
+.act-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:var(--s3);
+  width:100%;text-align:left;padding:var(--s4);border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);background:var(--surface);cursor:pointer;
+  transition:border-color var(--t-fast),box-shadow var(--t-fast),transform .1s ease}
+.act-card:hover{border-color:var(--general-border);box-shadow:var(--shadow-sm)}
+.act-card:active{transform:translateY(1px)}
+.act-card.lead{background:var(--brand-ice);border-color:#bdd7ff}
+.act-card-lbl{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.act-card.lead .act-card-lbl{color:var(--general-primary)}
+.act-card-lbl i{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--sentiment-positive)}
+.act-card b{display:block;margin-top:var(--s2);font-size:15px;font-weight:650;letter-spacing:-.2px}
+.act-card span.sub{display:block;margin-top:2px;font-size:13px;color:var(--general-muted-foreground)}
+.act-card svg{width:18px;height:18px;color:var(--general-primary);flex:0 0 auto}
+/* recent activity */
+.act-recent{display:flex;align-items:baseline;gap:var(--s3);margin:var(--s8) 0 var(--s2)}
+.act-recent h3{flex:1 1 auto;font-size:var(--text-lg);letter-spacing:-.2px}
+.act-log{display:flex;flex-direction:column}
+.act-row{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s3) 0;
+  border-top:1px solid var(--hairline)}
+.act-row:first-child{border-top:none}
+.act-ic{flex:0 0 auto;width:32px;height:32px;border-radius:var(--rounded-md);
+  display:grid;place-items:center;font-size:14px;font-weight:700}
+.act-ic svg{width:15px;height:15px}
+.act-ic.ok{background:#e6f5f3;color:var(--sentiment-positive)}
+.act-ic.info{background:var(--brand-ice);color:var(--general-primary)}
+.act-ic.warn{background:#fff4e8;color:#b4550a}
+.act-tx{flex:1 1 auto;min-width:0}
+.act-tx b{display:block;font-size:14px;font-weight:650;line-height:1.35}
+.act-tx span{display:block;font-size:13px;color:var(--general-muted-foreground)}
+.act-v{flex:0 0 auto;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.act-v.up{color:var(--sentiment-positive)} .act-v.dn{color:var(--sentiment-negative)}
+/* collapsed rail: icons only */
+.act-mini{display:none;flex-direction:column;align-items:center;gap:var(--s3);padding-top:var(--s2)}
+.act-mini-ic{position:relative;width:44px;height:44px;border-radius:var(--rounded-md);
+  display:grid;place-items:center;background:var(--general-muted);color:var(--general-foreground)}
+.act-mini-ic svg{width:20px;height:20px}
+.act-mini-ic b{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;
+  border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--general-primary);color:#fff;font-size:11px;font-weight:700}
 /* the collapse control: reuses .railtog wholesale, mirrored to sit at the rail's
    own foot and rotate the opposite way */
 .activity-tog{margin-top:auto;position:sticky;bottom:0;background:var(--surface)}
@@ -1826,6 +1934,22 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   color:#fff;font-size:13px;font-weight:500;white-space:nowrap;pointer-events:none;
   opacity:0;transition:opacity var(--t-fast),transform var(--t-fast)}
 .nc-activity.mini .nc-activity-ill:hover::after{opacity:1;transform:translateY(-50%)}
+
+/* collapsible supporting sections: the method and the timeline are read once,
+   so they fold away and leave the agreements and the saving in front */
+.opp-fold{padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.opp-fold>summary{display:flex;align-items:center;gap:var(--s3);cursor:pointer;
+  list-style:none;color:var(--general-muted-foreground);transition:color var(--t-fast)}
+.opp-fold>summary::-webkit-details-marker{display:none}
+.opp-fold>summary:hover{color:var(--general-foreground)}
+.opp-fold>summary h3{font-size:var(--text-lg);letter-spacing:-.3px;color:var(--general-foreground)}
+.opp-fold>summary::after{content:"";flex:0 0 auto;width:8px;height:8px;margin-left:auto;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(45deg);transition:transform var(--t-fast)}
+.opp-fold[open]>summary::after{transform:rotate(225deg)}
+.opp-fold[open]>summary{margin-bottom:var(--s4)}
+.opp-fold>summary:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px;
+  border-radius:var(--rounded-xs)}
 
 /* ---------- welcome: a one-time modal explaining estimated vs verified data ---------- */
 .wms{position:fixed;inset:0;z-index:50;background:#000a4552;opacity:0;pointer-events:none;
@@ -2139,20 +2263,9 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
              inline-size, which implies contain:layout and would turn it into the
              fixed-position containing block instead of the viewport). -->
         <aside id="activityRail" class="nc-activity" hidden>
-          <div class="nc-activity-body">
-            <div class="nc-activity-head">
-              <h3>Advantage activity</h3>
-            </div>
-            <div class="nc-activity-empty">
-              <div class="nc-activity-ill" data-tip="Advantage activity">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H9l-4 4v-4H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                  <path d="M8 9.5h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <p>Every request, upload and reply with Advantage will show up here.</p>
-            </div>
-          </div>
+          <div class="nc-activity-body" id="activityBody"></div>
+          <!-- collapsed: the icons only, so the rail still reports state at 76px -->
+          <div class="act-mini" id="activityMini" aria-hidden="true"></div>
           <!-- same collapse affordance as the left nav's #railTog, mirrored: chevron +
                label at the foot of the rail, collapsing to an icon-width strip -->
           <button type="button" class="railtog activity-tog" id="activityTog" aria-expanded="true" aria-label="Collapse Advantage activity">
@@ -2404,6 +2517,7 @@ function setView(){
   if(sup) syncRows();               /* rows measure 0 while hidden */
   if(ncDash) renderNewCustomerDash();
   updateActivityRail();
+  renderActivityRail();
   renderErpPill();
   renderBanner();
 }
@@ -2738,8 +2852,14 @@ function enterAppShell(){
   renderNav();
   syncRail();
   renderNotes();
+  /* the rail belongs to the shell, so it is set up here rather than in setView()
+     — that way the category tab (which boots straight through enterAppShell and
+     never calls setView) gets the same rail as every other page */
+  renderActivityRail();
   document.body.classList.add('in-app');
   $('#app').classList.add('on');
+  /* after .on — the appbar has no measurable height while #app is display:none */
+  updateActivityRail();
   inApp = true;
   persist();
   if(!seenWelcome) openWelcome();
@@ -2828,38 +2948,27 @@ function renderDash(){
   $('#oppAgrTotal').textContent = agrOpps.length
     ? `${fmt(agrTotalSave)} kr./year across ${agrOpps.length}` : 'all activated';
   $('#oppByAgr').innerHTML = agrOpps.slice(0, 8).map(({r,a,i}) => {
-    const shade = CAT_SHADE[r.id] || '#999';
-    const tint = avatarTint(shade);
     const rate = Math.round(a.save / a.covers * 100);
-    const why = agrWhy(r, a);
     return `
     <li class="agr-card" data-cat="${r.id}" data-idx="${i}" tabindex="0" role="button"
-      aria-label="See the ${a.n} opportunity">
-      <div class="agr-card-top">
-        <span class="agr-logo" style="background:${tint.bg};color:${tint.fg}" aria-hidden="true">${initialsOf(a.n)}</span>
-        <span class="agr-card-disc">−${rate}%</span>
+      style="--b:${brandOf(a.n)}" aria-label="See the ${a.n} opportunity">
+      <div class="agr-card-band">
+        <img src="${agrPhotoUrl(a.n, r.id)}" alt="" loading="lazy">
+        ${agrLabel(!!a.req)}
+        ${agrFav(a.n)}
+        ${agrLogoChip(a.n)}
       </div>
-      <span class="agr-card-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}${isEstimated(a)
-        ? ` <span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}</span>
-      <span class="agr-card-meta">${r.n} · covers ${fmt(a.covers)} kr. of your spend</span>
-      <ul class="agr-card-why">
-        ${why.slice(0, 2).map(w => `<li>${w}</li>`).join('')}
-      </ul>
-      <div class="agr-card-foot">
-        <span class="opp-amt-block">
-          <span class="opp-amt-label">Yearly saving</span>
-          <b class="opp-amt-big">${saveFig(a.save, isEstimated(a))}<small>kr./year</small></b>
-        </span>
-        <span class="agr-card-go" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
+      <span class="agr-card-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</span>
+      <span class="agr-card-meta">${r.n} · −${rate}%</span>
+      <span class="agr-card-price"><b>${saveFig(a.save, isEstimated(a))} kr.</b><small>/ year</small>
+        <span class="agr-card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
     </li>`;
   }).join('') || `<p class="opp-empty">Every agreement is already active — nothing open right now.</p>`;
 
   /* opens the same category-tab page (in a new tab) that a category click does,
      landing straight on this one agreement instead of the category overview */
   const gotoAgr = li => window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
+  wireAgrFav('#oppByAgr');
   $$('#oppByAgr .agr-card').forEach(li => {
     li.addEventListener('click', () => gotoAgr(li));
     li.addEventListener('keydown', e => {
@@ -2898,6 +3007,34 @@ const CAT_PHOTO = {
   tel:'photo-1558494949-ef010cbdcc31',      // server room / network cabling
   site:'photo-1751688220612-e9cae6486014'   // construction site alley with a dumpster
 };
+/* One photo per agreement. The category map below stays as the fallback, but
+   sibling agreements in the same category need distinct imagery or the row reads
+   as the same deal three times. Pinned Unsplash ids, all verified to resolve. */
+const AGR_PHOTO = {
+  'Stark Byggecenter':'photo-1541888946425-d81bb19240f5',
+  'Bygma Framework':'photo-1504307651254-35680f356dfd',
+  'Ahlsell Nordic':'photo-1503387762-592deb58ef4e',
+  'Optimera Erhverv':'photo-1487958449943-2429e8be8625',
+  'Saint-Gobain Frame':'photo-1524230572899-a752b3835840',
+  'Hilti Erhverv':'photo-1572981779307-38b8cabb2407',
+  'Würth Nordic':'photo-1530124566582-a618bc2615dc',
+  'Engelbert Strauss':'photo-1558618666-fcd25c85cd64',
+  'Q8 Fuel Card':'photo-1545262810-77515befe149',
+  'Circle K Business':'photo-1487754180451-c456f719a1fc',
+  'Lyreco Erhverv':'photo-1454165804606-c3d57bc86b40',
+  'Contorland':'photo-1517048676732-d65bc937f952',
+  'Cramo Danmark':'photo-1516110833967-0b5716ca1387',
+  'GSV Materieludlejning':'photo-1590247813693-5541d1c609fd',
+  'Riwal Lifting':'photo-1553413077-190dd305871c',
+  'DSV Road':'photo-1613690399151-65ea69478674',
+  'GLS Erhverv':'photo-1595246140625-573b715d11dc',
+  'Danske Fragtmænd':'photo-1587293852726-70cdb56c2866',
+  'Telenor Erhverv':'photo-1581094794329-c8112a89af12',
+  'Dustin IT':'photo-1581092918056-0c4c3acd3789'
+};
+const agrPhotoUrl = (name, catId) => AGR_PHOTO[name]
+  ? `https://images.unsplash.com/${AGR_PHOTO[name]}?w=600&q=75&auto=format&fit=crop`
+  : catPhotoUrl(catId);
 const catPhotoUrl = id => `https://images.unsplash.com/${CAT_PHOTO[id] || CAT_PHOTO.mat}?w=900&q=80&auto=format&fit=crop`;
 
 /* "Circle K" -> "CK" — no logo files exist for these suppliers, so a tidy initials tile
@@ -2909,10 +3046,67 @@ function initialsOf(name){
 }
 /* a very light tint of the given hsl(...) shade — the avatar reads as identity, not
    as another loud, saturated block competing with the chart it's borrowed its hue from */
-function avatarTint(hsl){
-  const m = hsl.match(/hsl\(([\d.]+) /);
-  const h = m ? m[1] : 217;
-  return { bg:`hsl(${h} 45% 95%)`, fg:`hsl(${h} 30% 40%)` };
+/* Supplier marks, with each brand's predominant ink sampled from the artwork
+   itself (dominant non-white, non-grey cluster). The rgb triplet is space-
+   separated so CSS can composite it at any alpha — rgb(var(--b)/.18) — which is
+   what tints the card header and the logo chip's ring per supplier.
+   Only some suppliers have artwork; the rest fall back to an initials chip, so
+   adding a file to assets/company-logos/ is all it takes to upgrade one. */
+const AGR_BRAND = {
+  /* b  = predominant ink, as an rgb triplet so CSS can composite it at any alpha
+     bg = the artwork's OWN background, sampled from its edge pixels, so the chip
+          becomes an extension of the logo instead of a white box around it
+          (Stark's tile is amber because Stark's mark is white-on-amber) */
+  'Stark Byggecenter': {f:'stark.jpeg',                         b:'243 130 35', bg:'#f48222'},
+  'Bygma Framework':   {f:'bygma-logo-png_seeklogo-381076.png', b:'158 0 24',   bg:'#ffffff'},
+  'Ahlsell Nordic':    {f:'ahlsell.png',                        b:'0 115 182',  bg:'#ffffff'},
+  'Q8 Fuel Card':      {f:'q8.png',                             b:'29 64 155',  bg:'#ffffff'},
+  'Hilti Erhverv':     {f:'hilti.png',                          b:'210 9 30',   bg:'#d2091e'},
+  'Lyreco Erhverv':    {f:'lyreco.png',                         b:'46 46 136',  bg:'#2e2e88'}
+};
+/* one short reason per category — the card carries a single selling point now,
+   not a bullet list */
+const CAT_PITCH = {
+  mat:'Same timber and board, at group price',
+  tool:'Tools, workwear and repairs included',
+  fuel:'Pump price fixed for twelve months',
+  off:'The widest gap against list price',
+  rent:'Machines and lifts at group rate',
+  frg:'Freight on negotiated tariffs',
+  tel:'Lines and hardware on one bill',
+  site:'Waste and site services bundled'
+};
+const AGR_FALLBACK_B = '33 112 237';        /* brand blue, for suppliers with no mark */
+const brandOf = n => (AGR_BRAND[n] || {}).b || AGR_FALLBACK_B;
+/* the chip that overlaps the card header: real artwork where we have it, the
+   supplier's initials where we don't */
+/* the two things that sit on the photo, Airbnb-style: a status label top-left
+   and a save toggle top-right */
+const agrLabel = inUse => `<span class="agr-label${inUse ? ' on' : ''}">${inUse ? 'In use' : 'Ready to use'}</span>`;
+const agrFav = name => `<button type="button" class="agr-fav${savedAgr.has(name) ? ' on' : ''}"
+  data-fav="${name}" aria-pressed="${savedAgr.has(name)}" aria-label="Save ${name}">
+  <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.7-7.5-9.7A4.3 4.3 0 0 1 12 8.2a4.3 4.3 0 0 1 7.5 2.6c0 5-7.5 9.7-7.5 9.7z"
+    stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>`;
+
+/* one delegated handler for every grid — the toggle must not open the card */
+function wireAgrFav(root){
+  $$(`${root} .agr-fav`).forEach(btn => btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const n = btn.dataset.fav;
+    savedAgr.has(n) ? savedAgr.delete(n) : savedAgr.add(n);
+    btn.classList.toggle('on', savedAgr.has(n));
+    btn.setAttribute('aria-pressed', String(savedAgr.has(n)));
+    persist();
+  }));
+}
+
+function agrLogoChip(name){
+  const brand = AGR_BRAND[name];
+  return `<span class="agr-chip"${brand
+    ? ` style="background:${brand.bg}"`
+    : ' data-initials="1"'}>${brand
+    ? `<img src="assets/company-logos/${brand.f}" alt="">`
+    : `<span class="agr-chip-i">${initialsOf(name)}</span>`}</span>`;
 }
 /* two curated reasons where we have them (CDET); a still-true, still-specific fallback
    for the rest, so every card says something real about that agreement */
@@ -2940,38 +3134,24 @@ const NC_SIZE_LABEL = {small:'small (under 20 employees)', medium:'medium (20–
 
 /* stand-in for what would really be an aggregate across the peer group — derived
    from the category's own discount rate so it varies plausibly, not randomly */
-const peerPct = rate => Math.min(92, Math.round(38 + rate * 3.1));
 
 /* the agreement-level cut of the same story: not "what you already spend with
    them" (unknown) but "how many companies like you already use this one" */
 function ncAgreementCard(r, a, idx){
   const rate = Math.round(a.save / a.covers * 100);
-  const tint = avatarTint('hsl(217 45% 40%)');
-  const pct = peerPct(rate);
-  const d = CDET[a.n];
-  const why = (d && d.why && d.why.length) ? d.why : [
-    `A ${rate}% saving versus list price once it's activated.`,
-    `Same supplier, same delivery — only the price on the invoice changes.`
-  ];
   return `
     <li class="agr-card" data-cat="${r.id}" data-idx="${idx}" tabindex="0" role="button"
-      aria-label="See the ${a.n} opportunity">
-      <div class="agr-card-top">
-        <span class="agr-logo" style="background:${tint.bg};color:${tint.fg}" aria-hidden="true">${initialsOf(a.n)}</span>
-        <span class="agr-card-disc">−${rate}%</span>
+      style="--b:${brandOf(a.n)}" aria-label="See the ${a.n} opportunity">
+      <div class="agr-card-band">
+        <img src="${agrPhotoUrl(a.n, r.id)}" alt="" loading="lazy">
+        ${agrLabel(false)}
+        ${agrFav(a.n)}
+        ${agrLogoChip(a.n)}
       </div>
       <span class="agr-card-name">${a.n}</span>
-      <span class="agr-card-meta">${r.n} · used by ${pct}% of similar companies</span>
-      <ul class="agr-card-why">${why.slice(0, 2).map(w => `<li>${w}</li>`).join('')}</ul>
-      <div class="agr-card-foot">
-        <span class="opp-amt-block">
-          <span class="opp-amt-label">Typical yearly saving</span>
-          <b class="opp-amt-big">${saveFig(a.save, true)}<small>kr./year</small></b>
-        </span>
-        <span class="agr-card-go" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
+      <span class="agr-card-meta">${r.n} · −${rate}%</span>
+      <span class="agr-card-price"><b>typically +${fmt(a.save)} kr.</b><small>/ year</small>
+        <span class="agr-card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
     </li>`;
 }
 
@@ -3004,6 +3184,104 @@ function renderErpPill(){
        <span class="et"><b>Connect your data</b></span>`;
 }
 
+/* What the rail says depends on the account. Fanny's is a setup queue — she has
+   no history, so inventing events would be a lie; her log is the three things
+   that have genuinely happened (account made, peer group matched, data still
+   missing). Bob's is real traffic: a price rise to answer, a rate confirmed on
+   an invoice, a sync. Note there is no peer COUNT anywhere here — publishing
+   "148 companies" invites "is that a lot?" and gives away customer numbers. */
+function railData(){
+  if(newCustomer) return {
+    kicker:'Getting started', title:'Next best actions',
+    actions:[
+      {lbl:'Best next step', lead:true, t:'Connect your accounting data',
+       s:'Replace estimates with your own figures', go:openDataCenter},
+      {lbl:'Easy first win', t:'Explore office supply terms',
+       s:'19% — the widest rate gap in your trade',
+       go:() => window.open(catTabUrl('off'), '_blank')},
+      {lbl:'Guided setup', t:'Plan your first 30 days',
+       s:'Ask the saving assistant', go:() => askAssistant(
+         `What should ${state.company} do in its first 30 days?`)}
+    ],
+    log:[
+      {k:'ok',   t:'Account created',    s:`${state.company} · today`},
+      {k:'info', t:'Peer group matched', s:'Electrical contracting, your size · today'},
+      {k:'warn', t:'Data not connected', s:'Connect to unlock exact figures'}
+    ]
+  };
+  return {
+    kicker:'Today', title:'Next best actions',
+    actions:[
+      {lbl:'Needs attention', lead:true, t:'Stark Byggecenter raised prices 4%',
+       s:'Costing you 18.400 kr. a year',
+       go:() => window.open(catTabUrl('mat'), '_blank')},
+      {lbl:'Ready to use', t:'Telecom & IT is still off-agreement',
+       s:'Typically +14.520 kr. a year',
+       go:() => window.open(catTabUrl('tel'), '_blank')},
+      {lbl:'Business case ready', t:'Circle K fuel agreement',
+       s:'42.800 litres a year · +42.500 kr.',
+       go:() => window.open(catTabUrl('fuel'), '_blank')}
+    ],
+    log:[
+      {k:'ok',   t:'Q8 rate confirmed on your invoice', s:'Yesterday',  v:'+33.900', up:true},
+      {k:'warn', t:'Stark Byggecenter raised prices 4%', s:'2 days ago', v:'−18.400', up:false},
+      {k:'info', t:'Visma.net sync completed',           s:'1.284 invoices read · last night'}
+    ]
+  };
+}
+const RAIL_ICON = {
+  ok:'<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 9h16M4 15h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
+};
+
+function askAssistant(q){ toggleAgent(true); agentAsk(q); }
+
+function renderActivityRail(){
+  const body = $('#activityBody'), mini = $('#activityMini');
+  if(!body) return;
+  const d = railData();
+  body.innerHTML = `
+    <span class="act-eyebrow">${d.kicker}</span>
+    <div class="act-head">
+      <h3>${d.title}</h3>
+      <span class="act-count">${d.actions.length}</span>
+    </div>
+    <div class="act-nba">
+      ${d.actions.map((a, i) => `
+      <button type="button" class="act-card${a.lead ? ' lead' : ''}" data-act="${i}">
+        <span>
+          <span class="act-card-lbl">${a.lead ? '<i></i>' : ''}${a.lbl}</span>
+          <b>${a.t}</b>
+          <span class="sub">${a.s}</span>
+        </span>
+        ${ARROW}
+      </button>`).join('')}
+    </div>
+
+    <div class="act-recent">
+      <h3>Recent activity</h3>
+      <button type="button" class="linkbtn" id="actAll">See all</button>
+    </div>
+    <div class="act-log">
+      ${d.log.map(l => `
+      <div class="act-row">
+        <span class="act-ic ${l.k}">${RAIL_ICON[l.k]}</span>
+        <span class="act-tx"><b>${l.t}</b><span>${l.s}</span></span>
+        ${l.v ? `<span class="act-v ${l.up ? 'up' : 'dn'}">${l.v}</span>` : ''}
+      </div>`).join('')}
+    </div>
+`;
+
+  $$('#activityBody .act-card').forEach(b =>
+    b.addEventListener('click', () => d.actions[+b.dataset.act].go()));
+  $('#actAll').addEventListener('click', () => $('#bellBtn').click());
+
+  if(mini) mini.innerHTML = `
+    <span class="act-mini-ic" title="${d.actions.length} actions">
+      ${RAIL_ICON.info}<b>${d.actions.length}</b></span>`;
+}
+
 function updateActivityRail(){
   const rail = $('#activityRail');
   if(!rail) return;
@@ -3017,7 +3295,15 @@ function updateActivityRail(){
   t.setAttribute('aria-label', activityMini ? 'Expand Advantage activity' : 'Collapse Advantage activity');
   if(show){
     const bar = $('.appbar');
-    rail.style.top = (bar ? Math.round(bar.getBoundingClientRect().bottom) : 68) + 'px';
+    const bottom = bar ? Math.round(bar.getBoundingClientRect().bottom) : 0;
+    if(bottom > 0){
+      rail.style.top = bottom + 'px';
+    }else{
+      /* the app is still hidden, so there is nothing to measure yet — leave the
+         CSS default in place and try again once it has been laid out */
+      rail.style.removeProperty('top');
+      requestAnimationFrame(updateActivityRail);
+    }
   }
 }
 addEventListener('resize', updateActivityRail);
@@ -3026,7 +3312,7 @@ function ncMiniCatRow(r){
   const estAmt = Math.round(r.amt * NC_SIZE_MULT[ncSize]);
   const estSave = Math.round(estAmt * r.rate / 100);
   return `
-    <li class="opp-legend-item" data-cat="${r.id}" tabindex="0" role="button" aria-label="${r.n}: up to ${fmt(estSave)} kr./year">
+    <li class="opp-legend-item" data-cat="${r.id}" tabindex="0" role="button" aria-label="${r.n}: typically ${fmt(estSave)} kr./year">
       <span class="opp-legend-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
       <span class="opp-legend-txt">${r.n}</span>
       <b class="opp-legend-amt">${saveFig(estSave, true)} kr.</b>
@@ -3049,14 +3335,13 @@ function renderNewCustomerDash(){
   const spendTotal = p.spend, saveTotal = p.saved;
   const [spendLow, spendHigh] = band(p.spend);
   const [saveLow,  saveHigh]  = band(p.saved);
-  const [bonusLow, bonusHigh] = band(p.bonus.total);
-  const peerAgrCount = p.inUse.length;
+  const peerAgrCount = p.agrInUse;
 
   const byRate = [...ROWS].sort((a,b) => b.rate - a.rate);
   const topCat = byRate[0], secondCat = byRate[1];
   const sixCats = byRate.slice(0, 6);
   const topAgrs = ROWS.flatMap(r => r.agr.map((a,i) => ({r, a, i})))
-    .sort((x,y) => y.a.save - x.a.save).slice(0, 6);
+    .sort((x,y) => y.a.save - x.a.save).slice(0, 8);
 
   const uploadedDocs = manualVerified.size > 0;
   const gsDone = 1 + (uploadedDocs ? 1 : 0) + (ncErpConnected ? 1 : 0);
@@ -3124,29 +3409,23 @@ function renderNewCustomerDash(){
                 </span>
                 <span class="nc-calc-txt">
                   <b>Savings made by other companies in your industry</b>
-                  <span>Every figure comes from real invoices in your industry — see the
-                    method, the peer group and the agreements behind it.</span>
+                  <span>Electrical contracting, 10–49 employees, your region. Figures come from
+                    real invoices — see the method and the agreements behind them.</span>
                 </span>
                 <button class="btn btn-primary btn-sm nc-calc-btn" id="ncDeepDive">Show me the method
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
               </div>
               <div class="nc-ov-grid">
-                <div class="nc-ov-card"><span class="nc-ov-card-l">Saved by companies like yours</span>
-                  <b class="nc-ov-card-v">${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}<small> kr. / year</small></b></div>
-                <div class="nc-ov-card"><span class="nc-ov-card-l">Agreements they have in use</span>
-                  <b class="nc-ov-card-v">${peerAgrCount}<small> of 24</small></b></div>
-                <div class="nc-ov-card"><span class="nc-ov-card-l">Customer bonus they earn</span>
-                  <b class="nc-ov-card-v">${fmtCompact(bonusLow)}–${fmtCompact(bonusHigh)}<small> kr. / year</small></b></div>
-              </div>
-
-              <div class="nc-ov-grid">
-                <div class="nc-ov-card is-sub"><span class="nc-ov-card-l">Typical spend</span>
-                  <b class="nc-ov-card-v">${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}<small> kr./yr</small></b></div>
-                <div class="nc-ov-card is-sub"><span class="nc-ov-card-l">Savings potential</span>
-                  <b class="nc-ov-card-v accent">up to ${BEST_CAT_DISCOUNT}%</b></div>
-                <div class="nc-ov-card is-sub"><span class="nc-ov-card-l">Benchmarked against</span>
-                  <b class="nc-ov-card-v">${ncPeers}<small> companies</small></b></div>
+                <div class="nc-ov-card"><span class="nc-ov-card-l">They save</span>
+                  <b class="nc-ov-card-v brand">${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}<small> kr. / year</small></b>
+                  <span class="nc-ov-card-c">Can be more or less than this</span></div>
+                <div class="nc-ov-card"><span class="nc-ov-card-l">They buy</span>
+                  <b class="nc-ov-card-v">${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}<small> kr. / year</small></b>
+                  <span class="nc-ov-card-c">Across ${ROWS.length} purchasing categories</span></div>
+                <div class="nc-ov-card"><span class="nc-ov-card-l">Agreements in use</span>
+                  <b class="nc-ov-card-v">${peerAgrCount}</b>
+                  <span class="nc-ov-card-c">${AGR_TOTAL - peerAgrCount} more are open to you</span></div>
               </div>
             </div>
           </section>
@@ -3213,6 +3492,7 @@ function renderNewCustomerDash(){
       </div>
     </div>`;
 
+  wireAgrFav('#viewNewCustomer');
   $$('#viewNewCustomer .opp-legend-item, #viewNewCustomer .agr-card').forEach(el => {
     const go = () => window.open(catTabUrl(el.dataset.cat, el.dataset.idx ? +el.dataset.idx : undefined), '_blank');
     el.addEventListener('click', go);
@@ -3248,6 +3528,7 @@ function openSavings(){
   const nc = $('#viewNewCustomer'); if(nc) nc.hidden = true;
   $('#viewSavings').hidden = false;
   renderSavings();
+  updateActivityRail();
   $('#canvas').scrollTop = 0;
 }
 function closeSavings(){
@@ -3377,13 +3658,13 @@ function renderSavings(){
                   <td>${c.inUse ? c.rate + '%' : '—'}</td>
                   <td class="${c.inUse ? 'pos' : 'muted'}">${c.inUse
                         ? '+' + fmt(c.saved) + ' kr.'
-                        : 'up to +' + fmt(c.potential) + ' kr.'}</td>
+                        : 'typically +' + fmt(c.potential) + ' kr.'}</td>
                 </tr>`).join('')}
               </tbody>
               <tfoot><tr>
                 <td>Total</td>
                 <td>${fmt(p.spend)} kr.</td>
-                <td>${p.inUse.length} of 24 agreements</td>
+                <td>${p.agrInUse} of ${AGR_TOTAL} agreements</td>
                 <td>${rate}%</td>
                 <td class="pos">+${fmt(p.saved)} kr.</td>
               </tr></tfoot>
@@ -3400,9 +3681,10 @@ function renderSavings(){
 
           <!-- 2 · the agreements -->
           <section class="nc-sec">
-            <h2>The ${p.inUse.length} agreements they use</h2>
-            <p class="nc-sub">${p.inUse.length} of the 24 Advantage agreements, covering
-              ${fmt(p.covered)} kr. of spend between them.</p>
+            <h2>Where they have agreements</h2>
+            <p class="nc-sub">${p.agrInUse} of the ${AGR_TOTAL} Advantage agreements, across
+              ${p.inUse.length} categories, covering ${fmt(p.covered)} kr. of spend. The lead
+              supplier in each category is shown below.</p>
 
             <ol class="sv-agr-list">
               ${p.inUse.slice().sort((a, b) => b.saved - a.saved).map((c, i) => `
@@ -3731,8 +4013,9 @@ const NC_SIZE_MULT = {small:0.4, medium:1, large:2.2};
 /* the best single category discount currently on offer. The existing-customer
    dashboard advertises this same figure on its "Easy deal" tile, so it lives in
    one place rather than being hard-coded twice and drifting apart. It's the
-   "up to" ceiling on the new customer's benchmark — a best case, not the
-   blended average, which is why the label says "potential". */
+   best single rate available, not the blended average — which is why it is no
+   longer shown as a headline figure on the dashboard: a best case presented as a
+   forecast is exactly the "roof" the team pushed back on. */
 const BEST_CAT_DISCOUNT = 35;
 
 /* ---------- the peer benchmark profile: one source of truth ----------
@@ -3740,18 +4023,22 @@ const BEST_CAT_DISCOUNT = 35;
    Savings drill-down — is summed from this, so the two can never disagree.
 
    The median peer in Fanny's industry + size band has agreements in five of the
-   eight categories ("5 of 24 agreements in use"). Those five carry the spend
+   eight categories ("5 of N agreements in use", N derived from the catalogue). Those five carry the spend
    that earns a discount; the other three are still off-agreement, which is
    exactly the remaining opportunity. The cards show ±15% ranges around these
    medians (variation across the 148 peers), the drill-down shows the medians
    themselves, and both add up:
      covered + off-agreement            = total spend
      saved   + remaining opportunity    = total opportunity                  */
-const PEER_IN_USE = ['mat', 'tool', 'fuel', 'off', 'rent'];
+const PEER_IN_USE = ['mat', 'tool', 'fuel', 'off', 'rent', 'frg'];
+/* The UI used to print "of 24" in three places while ROWS actually holds 21
+   agreements. Derive it, so a page about verifiable numbers can't contradict
+   its own catalogue — and so adding an agreement never needs a copy change. */
+const AGR_TOTAL = ROWS.reduce((n, r) => n + r.agr.length, 0);
 /* the one agreement peers actually hold in each of those categories */
 const PEER_AGREEMENT = {
   mat:'Stark Byggecenter', tool:'Hilti Erhverv', fuel:'Q8 Fuel Card',
-  off:'Lyreco Erhverv',    rent:'Cramo Danmark'
+  off:'Lyreco Erhverv',    rent:'Cramo Danmark',  frg:'DSV Road'
 };
 /* volume bonus, paid annually on what actually goes through the agreements */
 const BONUS_TIERS = [
@@ -3801,6 +4088,8 @@ function peerProfile(){
           offAgreement: spend - covered,
           invoices: cats.reduce((s, c) => s + c.inv, 0),
           bonus: bonusOn(covered),
+          agrInUse: ROWS.filter(r => PEER_IN_USE.includes(r.id))
+                       .reduce((n, r) => n + r.agr.length, 0),
           inUse: cats.filter(c => c.inUse),
           idle: cats.filter(c => !c.inUse)};
 }
@@ -3809,11 +4098,14 @@ let ncPeers = 148;
 let ncErpConnected = false;
 let ncGettingStartedHidden = false;
 let activityMini = false;
-/* a verified figure is a fact: "+12.400". An estimated one is a ceiling until the
-   real number replaces it: "up to +12.400" — never a bare precise-looking number,
-   which is what let the estimated/verified copy contradict itself */
+/* saved agreements. Anette asked for a way to "select one or more that you want
+   to check into or read more about" — this is that, as the card's fav toggle. */
+let savedAgr = new Set();
+/* a verified figure is a fact: "+12.400". An estimated one is a typical outcome,
+   not a cap: "typically +12.400". It used to read "up to", which the team rejected
+   — "up to" puts a roof on a number that can just as easily come out higher. */
 const saveFig = (amount, estimated) =>
-  estimated ? `up to +${fmt(amount)}` : `+${fmt(amount)}`;
+  estimated ? `typically +${fmt(amount)}` : `+${fmt(amount)}`;
 
 /* the dashboard's welcome line — orients the user and sums up where they stand today */
 /* the dashboard's welcome line — short, and pointed at whatever is new */
@@ -3958,6 +4250,7 @@ function openDataCenter(){
   const ct = $('#viewCatTab'); if(ct) ct.hidden = true;
   $('#viewDataCenter').hidden = false;
   renderDataCenter();
+  updateActivityRail();
   $('#canvas').scrollTop = 0;
 }
 function closeDataCenter(){
@@ -4103,7 +4396,7 @@ const oppHeroHTML = (tag, title, save, sub) => `
 
 const oppTermsHTML = () => `
   <section class="opp-sec">
-    <h3>Terms &amp; conditions</h3>
+    <h3>What you get</h3>
     <ul class="opp-terms">
       <li>${TICK} No change of supplier — your existing account moves onto Advantage group terms.</li>
       <li>${TICK} Cancel any time before the supplier confirms, at no cost.</li>
@@ -4113,15 +4406,15 @@ const oppTermsHTML = () => `
   </section>`;
 
 const oppTimelineHTML = () => `
-  <section class="opp-sec">
-    <h3>Activation timeline</h3>
+  <details class="opp-fold">
+    <summary><h3>What happens after you activate</h3></summary>
     <ol class="tline">
       <li><span class="tn">1</span><span><b>Today</b> — we send the request with your volumes and CVR<br>
         <span>Nothing changes on your side yet</span></span></li>
       <li><span class="tn">2</span><span><b>Within 5 working days</b> — the supplier confirms your account is on group terms</span></li>
       <li><span class="tn">3</span><span><b>~2 weeks</b> — the new price appears on an invoice. We check it matches and confirm the saving is real</span></li>
     </ol>
-  </section>`;
+  </details>`;
 
 const oppContactHTML = () => `
   <section class="opp-sec opp-contact">
@@ -4187,7 +4480,7 @@ function renderOppAgreement(r, idx){
       <footer class="opp-cta">
         <span class="opp-cta-note">Category <b>${r.n}</b> · Effort <b>low</b> · Switch time <b>~2 weeks</b></span>
         ${a.req
-          ? `<span class="inuse">${TICK} Activated</span>`
+          ? `<span class="inuse">${TICK} In use</span>`
           : `<button class="btn btn-primary" id="oppActivate">Activate</button>`}
       </footer>
     </div>`;
@@ -4222,7 +4515,7 @@ function renderOppCategory(r){
         </ol>
       </section>
       <section class="opp-sec">
-        <h3>Agreements that would deliver it</h3>
+        <h3>Agreements that deliver this saving</h3>
         <ul class="agrs">
           ${r.agr.map((a,i) => `
             <li class="agr${a.req ? ' on' : ' clickable'}"${a.req ? '' : ` data-agr="${i}" tabindex="0" role="button"`}>
@@ -4230,7 +4523,7 @@ function renderOppCategory(r){
               <span class="am">covers ${fmt(a.covers)} kr. of your spend</span>
               <span class="sv">+${fmt(a.save)}</span>
               <span class="act">${a.req
-                ? `<span class="inuse">${TICK} Activated</span>`
+                ? `<span class="inuse">${TICK} In use</span>`
                 : `<span class="agr-more">Read more ${ARROW}</span>`}</span>
             </li>`).join('')}
         </ul>
@@ -4352,10 +4645,9 @@ function renderCatTab(r){
   const pot = potOf(r);
   const rows = r.agr.map((a,i) => {
     const rate = Math.round(a.save / a.covers * 100);
-    const tint = avatarTint('hsl(217 45% 40%)');
     return `
-    <li class="cat-agr-row${a.req ? ' on' : ' clickable'}"${a.req ? '' : ` data-agr="${i}" tabindex="0" role="button"`}>
-      <span class="agr-logo" style="background:${tint.bg};color:${tint.fg}" aria-hidden="true">${initialsOf(a.n)}</span>
+    <li class="cat-agr-row${a.req ? ' on' : ' clickable'}" style="--b:${brandOf(a.n)}"${a.req ? '' : ` data-agr="${i}" tabindex="0" role="button"`}>
+      ${agrLogoChip(a.n)}
       <span class="cat-agr-row-main">
         <span class="cat-agr-row-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</span>
         <span class="cat-agr-row-disc">−${rate}% vs. today${isEstimated(a)
@@ -4364,7 +4656,7 @@ function renderCatTab(r){
       <span class="cat-agr-row-end">
         <b class="cat-agr-row-save">${saveFig(a.save, isEstimated(a))}<small>kr./yr</small></b>
         ${a.req
-          ? `<span class="inuse">${TICK} Activated</span>`
+          ? `<span class="inuse">${TICK} In use</span>`
           : `<span class="agr-card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`}
       </span>
     </li>`;
@@ -4372,7 +4664,7 @@ function renderCatTab(r){
 
   const agreementsHTML = `
     <section class="cat-tab-agrs">
-      <h3>Agreements that would deliver it</h3>
+      <h3>Agreements that deliver this saving</h3>
       <ul class="cat-agr-list">${rows}</ul>
       <p class="agr-note">Open an agreement to see how it compares to what you pay today, and activate
         it from there.</p>
@@ -4385,9 +4677,10 @@ function renderCatTab(r){
       `Every agreement below was matched to a supplier you already buy from — nothing changes
        operationally, only the price once it's activated.`, agreementsHTML, catEstimated),
     `
+    ${catTabContactHTML()}
     ${oppTermsHTML()}
-    <section class="opp-sec">
-      <h3>How we calculate this</h3>
+    <details class="opp-fold">
+      <summary><h3>How we calculate this</h3></summary>
       <ol class="steps2">
         <li><span class="sn">1</span><span>Read <b>${fmt(r.inv)} invoices</b> from
           <b>${state.source}</b> across <b>${r.sup} suppliers</b> in this category, over 12 months.</span></li>
@@ -4401,9 +4694,8 @@ function renderCatTab(r){
           = <b>${fmt(pot)} kr./year</b>. Cross-checked against 3 sample invoices per supplier —
           variance under 2%.</span></li>
       </ol>
-    </section>
-    ${oppTimelineHTML()}
-    ${catTabContactHTML()}`
+    </details>
+    ${oppTimelineHTML()}`
   );
   wireCatTabHeroFoot(r.n);
   wireCatTabContact(`Tell me more about the ${r.n} opportunity`);
@@ -4432,7 +4724,7 @@ function renderCatTabAgreement(r, idx){
   /* the decision (activate, or see that it's already active) sits right under the
      number it's justified by, instead of in a footer far below the fold */
   const activateHTML = a.req
-    ? `<div class="cat-tab-activate"><span class="inuse">${TICK} Activated</span></div>`
+    ? `<div class="cat-tab-activate"><span class="inuse">${TICK} In use</span></div>`
     : `<div class="cat-tab-activate"><button class="btn btn-primary btn-block" id="catTabActivate">Activate this agreement</button></div>`;
   catTabShell(
     catTabHeroHTML(r.id, r.n, a.n, a.save,
@@ -4600,7 +4892,8 @@ function persist(){
       req: ROWS.flatMap(r => r.agr.map((a,i) => a.req ? r.id + ':' + i : null)).filter(Boolean),
       unread: NOTES.map(n => n.unread ? 1 : 0),
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
-      newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityMini
+      newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityMini,
+      savedAgr: [...savedAgr]
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
 }
@@ -4634,6 +4927,7 @@ function applySaved(d){
   if(typeof d.ncErpConnected === 'boolean') ncErpConnected = d.ncErpConnected;
   if(typeof d.ncGettingStartedHidden === 'boolean') ncGettingStartedHidden = d.ncGettingStartedHidden;
   if(typeof d.activityMini === 'boolean') activityMini = d.activityMini;
+  if(Array.isArray(d.savedAgr)) savedAgr = new Set(d.savedAgr);
 }
 
 function startOver(){
