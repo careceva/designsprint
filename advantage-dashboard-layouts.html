@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f5f7">
+<title>Five Dashboard Layouts</title>
+<style>
+:root{
+  --white:#ffffff; --canvas:#f5f5f7; --ink:#1d1d1f; --soft:#86868b;
+  --accent:#0071e3; --positive:#00845a;
+  --hair:#0000000f; --hair2:#00000014;
+  --wire:#e8e8ed; --wire2:#dededf; --wire3:#c9c9ce;
+  --r-sm:8px; --r:12px; --r-lg:16px; --r-xl:22px; --r-full:999px;
+  --sh-1:0 1px 2px rgba(0,0,0,.04), 0 4px 14px rgba(0,0,0,.045);
+  --sh-2:0 2px 6px rgba(0,0,0,.05), 0 12px 36px rgba(0,0,0,.07);
+  --sf:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sf);background:var(--canvas);color:var(--ink);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+h1,h2,h3,h4{letter-spacing:-.028em;text-wrap:balance;font-weight:600}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.page{max-width:1180px;margin:0 auto;padding:88px 32px 120px}
+@media(max-width:700px){.page{padding:56px 20px 80px}}
+
+/* ---------- masthead ---------- */
+.mast{text-align:center;max-width:760px;margin:0 auto 88px}
+.kicker{font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--accent);
+  text-transform:uppercase;margin-bottom:20px}
+.mast h1{font-size:56px;line-height:1.05;letter-spacing:-.035em;font-weight:700}
+@media(max-width:700px){.mast h1{font-size:36px}}
+.mast p{margin-top:22px;font-size:19px;color:var(--soft);line-height:1.5}
+.mast p b{color:var(--ink);font-weight:600}
+
+/* ---------- shared content requirements strip ---------- */
+.reqs{background:var(--white);border-radius:var(--r-xl);padding:32px 36px;
+  box-shadow:var(--sh-1);margin-bottom:96px}
+.reqs h4{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:20px}
+.reqs ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 28px}
+.reqs li{font-size:15px;color:var(--ink);display:flex;gap:10px;align-items:baseline;line-height:1.45}
+.reqs li span{color:var(--accent);font-weight:700;flex:0 0 auto}
+
+/* ---------- layout section ---------- */
+.layout{margin-bottom:104px}
+.lhead{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+.lnum{font-size:13px;font-weight:600;color:var(--soft);font-variant-numeric:tabular-nums;
+  flex:0 0 auto;padding-top:10px}
+.layout h2{font-size:34px;line-height:1.14}
+@media(max-width:700px){.layout h2{font-size:26px}}
+.tagline{font-size:19px;color:var(--soft);margin-bottom:36px;max-width:62ch;line-height:1.5}
+.tagline b{color:var(--ink);font-weight:600}
+
+/* ---------- wireframe frame ---------- */
+.frame{background:var(--white);border-radius:var(--r-xl);padding:20px;box-shadow:var(--sh-2);margin-bottom:12px}
+.wire{background:var(--canvas);border-radius:var(--r-lg);overflow:hidden;
+  display:flex;flex-direction:column;min-height:420px}
+.cap{font-size:13px;color:var(--soft);text-align:center;margin-bottom:40px}
+
+/* wireframe primitives */
+.wb{background:var(--wire);border-radius:var(--r-sm)}
+.wb.d{background:var(--wire2)}
+.wb.dd{background:var(--wire3)}
+.wb.acc{background:color-mix(in srgb,var(--accent) 16%,var(--white))}
+.wb.card{background:var(--white);box-shadow:0 1px 2px rgba(0,0,0,.04);border-radius:var(--r)}
+.lbl{font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--soft);
+  text-transform:uppercase;line-height:1.3}
+.lbl.on{color:var(--accent)}
+.txt{font-size:11px;color:var(--soft);line-height:1.4}
+.big{font-weight:700;letter-spacing:-.04em;color:var(--ink)}
+
+/* generic chrome pieces */
+.topbar{height:46px;flex:0 0 auto;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:12px;padding:0 18px}
+.dot{width:22px;height:22px;border-radius:var(--r-full);background:var(--wire2);flex:0 0 auto}
+.pill{height:22px;border-radius:var(--r-full);background:var(--wire);flex:0 0 auto}
+.spacer{flex:1}
+.body{flex:1;display:flex;min-height:0}
+.railI{width:56px;flex:0 0 auto;border-right:1px solid var(--hair);
+  display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 0}
+.railI i{width:26px;height:26px;border-radius:var(--r-sm);background:var(--wire2);display:block}
+.railI i.on{background:color-mix(in srgb,var(--accent) 22%,var(--white))}
+.sideN{width:168px;flex:0 0 auto;border-right:1px solid var(--hair);padding:16px 14px;
+  display:flex;flex-direction:column;gap:8px}
+.sideN .nrow{height:26px;border-radius:var(--r-sm);background:var(--wire);
+  display:flex;align-items:center;padding:0 9px;gap:8px}
+.sideN .nrow.on{background:color-mix(in srgb,var(--accent) 14%,var(--white))}
+.sideN .nrow em{width:12px;height:12px;border-radius:3px;background:var(--wire3);flex:0 0 auto}
+.main{flex:1;min-width:0;padding:22px;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+
+/* ---------- breakdown grid ---------- */
+.brk{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:32px}
+@media(max-width:800px){.brk{grid-template-columns:1fr}}
+.bx{background:var(--white);border-radius:var(--r-lg);padding:24px 26px;box-shadow:var(--sh-1)}
+.bx h4{font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:12px}
+.bx p{font-size:15px;line-height:1.6;color:var(--ink)}
+.bx p+p{margin-top:12px}
+.bx b{font-weight:600}
+.bx ol,.bx ul{margin:0;padding-left:19px;font-size:15px;line-height:1.6}
+.bx li+li{margin-top:7px}
+.bx.wide{grid-column:1/-1}
+.bx .warn{color:var(--soft);font-size:14px;line-height:1.55}
+.bx .warn b{color:var(--ink)}
+
+/* verdict */
+.verdict{background:var(--ink);color:#f5f5f7;border-radius:var(--r-xl);padding:44px 46px;margin-top:24px}
+.verdict h3{font-size:26px;color:#fff;margin-bottom:18px;letter-spacing:-.03em}
+.verdict p{font-size:16px;line-height:1.65;color:#c7c7cc;max-width:76ch}
+.verdict p+p{margin-top:14px}
+.verdict b{color:#fff;font-weight:600}
+.verdict table{width:100%;border-collapse:collapse;margin-top:26px;font-size:14px}
+.verdict th{text-align:left;font-weight:600;color:#8e8e93;font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;padding:0 14px 10px 0;border-bottom:1px solid #ffffff1f}
+.verdict td{padding:13px 14px 13px 0;border-bottom:1px solid #ffffff12;color:#d1d1d6;vertical-align:top}
+.verdict td:first-child{color:#fff;font-weight:600;white-space:nowrap}
+@media(max-width:700px){
+  .verdict{padding:30px 24px}
+  .verdict table,.verdict thead,.verdict tbody,.verdict tr,.verdict th,.verdict td{display:block}
+  .verdict thead{display:none}
+  .verdict tr{padding:14px 0;border-bottom:1px solid #ffffff12}
+  .verdict td{border:none;padding:2px 0}
+}
+.note{margin-top:64px;padding-top:32px;border-top:1px solid var(--hair2)}
+.note h4{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:14px}
+.note p{font-size:15px;color:var(--soft);line-height:1.65;max-width:80ch}
+.note p+p{margin-top:12px}
+.note b{color:var(--ink);font-weight:600}
+.note code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+  background:var(--white);padding:2px 7px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="mast">
+    <p class="kicker">Procurement portal · dashboard exploration</p>
+    <h1>Five ways to hold the same numbers.</h1>
+    <p>Five structural layouts for the SME owner's dashboard — each carrying the identical content set,
+    each taking a <b>genuinely different position</b> on how spend is visualised and how you travel from
+    the macro savings figure to the micro act of activating one supplier agreement.</p>
+  </div>
+
+  <div class="reqs">
+    <h4>Present in all five</h4>
+    <ul>
+      <li><span>1</span>Total realised savings — hero metric</li>
+      <li><span>2</span>Savings by category</li>
+      <li><span>3</span>Active vs. available agreements</li>
+      <li><span>4</span>Recommended / missed savings</li>
+      <li><span>5</span>Path into category browsing</li>
+    </ul>
+  </div>
+
+  <!-- ============================================ 1 -->
+  <section class="layout">
+    <div class="lhead"><span class="lnum">01</span><h2>The Vault</h2></div>
+    <p class="tagline">A vertical narrative with no sidebar at all. The savings figure is treated like a
+    <b>product hero</b> — one number, enormous, alone on white — and everything else is discovered by
+    scrolling down through it.</p>
+
+    <div class="frame">
+      <div class="wire">
+        <div class="topbar">
+          <div class="dot"></div>
+          <div class="spacer"></div>
+          <div class="pill" style="width:52px"></div><div class="pill" style="width:44px"></div>
+          <div class="pill" style="width:58px"></div><div class="pill" style="width:40px"></div>
+          <div class="spacer"></div>
+          <div class="dot" style="border-radius:999px"></div>
+        </div>
+        <div style="flex:1;overflow:hidden;background:var(--white)">
+          <!-- hero -->
+          <div style="padding:44px 24px 40px;text-align:center;border-bottom:1px solid var(--hair)">
+            <div class="lbl" style="margin-bottom:14px">Realised savings · year to date</div>
+            <div class="big" style="font-size:62px;line-height:1">kr 1,240,000</div>
+            <div class="txt" style="margin-top:14px">verified against 2,431 invoices · <span style="color:var(--positive);font-weight:600">↑ 18% vs last year</span></div>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:24px">
+              <div class="wb acc" style="width:132px;height:34px;border-radius:999px"></div>
+              <div class="wb" style="width:112px;height:34px;border-radius:999px"></div>
+            </div>
+          </div>
+          <!-- horizontal category shelf -->
+          <div style="padding:22px 24px 8px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+              <div class="lbl">Browse by category</div><div class="txt">14 categories ›</div>
+            </div>
+            <div style="display:flex;gap:12px">
+              <div class="wb card" style="width:150px;height:92px;flex:0 0 auto;padding:12px">
+                <div class="wb dd" style="width:22px;height:22px;border-radius:6px"></div>
+                <div class="txt" style="margin-top:10px">Fuel &amp; fleet</div>
+                <div class="big" style="font-size:15px;margin-top:2px">+kr 34K</div>
+              </div>
+              <div class="wb card" style="width:150px;height:92px;flex:0 0 auto;padding:12px">
+                <div class="wb dd" style="width:22px;height:22px;border-radius:6px"></div>
+                <div class="txt" style="margin-top:10px">Office</div>
+                <div class="big" style="font-size:15px;margin-top:2px">+kr 118K</div>
+              </div>
+              <div class="wb card" style="width:150px;height:92px;flex:0 0 auto;padding:12px">
+                <div class="wb dd" style="width:22px;height:22px;border-radius:6px"></div>
+                <div class="txt" style="margin-top:10px">Travel</div>
+                <div class="big" style="font-size:15px;margin-top:2px">+kr 47K</div>
+              </div>
+              <div class="wb card" style="width:112px;height:92px;flex:0 0 auto;opacity:.55"></div>
+              <div class="wb card" style="width:60px;height:92px;flex:0 0 auto;opacity:.3"></div>
+            </div>
+          </div>
+          <!-- editorial band -->
+          <div style="margin-top:20px;padding:24px;background:var(--canvas);display:flex;gap:22px;align-items:center">
+            <div style="flex:1">
+              <div class="lbl on" style="margin-bottom:8px">Missed savings</div>
+              <div class="big" style="font-size:22px">kr 840,000 is still on the table</div>
+              <div class="txt" style="margin-top:8px;max-width:44ch">Seven agreements you have not activated. The widest single gap is office supplies at −19%.</div>
+            </div>
+            <div class="wb acc" style="width:118px;height:36px;border-radius:999px;flex:0 0 auto"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">No chrome competing with the number. Nav is text-only, top-centred; depth comes from scroll.</p>
+
+    <div class="brk">
+      <div class="bx">
+        <h4>Structure</h4>
+        <ol>
+          <li><b>Header</b> — translucent, 46px, logo left, five plain text nav links centred, avatar right. No search field, no icons.</li>
+          <li><b>Hero</b> — full-bleed white, the savings figure at ~62px/700 weight, a single verification line, two pill buttons.</li>
+          <li><b>Category shelf</b> — horizontally scrolling row of tiles, each a category with its savings figure. Bleeds off the right edge deliberately.</li>
+          <li><b>Missed savings band</b> — full-width tinted band, editorial two-column: claim + one CTA.</li>
+          <li><b>Agreement ledger</b> — below the fold: active vs. available as two stacked lists.</li>
+        </ol>
+      </div>
+      <div class="bx">
+        <h4>Visual flow &amp; why it works</h4>
+        <p>This is the <b>Apple product-page rhetoric</b> applied to a dashboard: one claim per screen,
+        arrived at in sequence. The eye has nowhere to go but the number, because there is literally
+        nothing else above the fold — no sidebar, no widgets, no chart.</p>
+        <p>Macro to micro is <b>the scroll itself</b>. You descend from the total, to the categories that
+        compose it, to the specific gap, to the agreement list. Each band answers the question the
+        previous one provokes.</p>
+        <p>The shelf bleeding off-screen is a deliberate Apple TV borrowing: it signals abundance
+        (“there is more catalogue than fits”) without a count badge.</p>
+      </div>
+      <div class="bx">
+        <h4>Data visualisation</h4>
+        <p><b>Almost none, on purpose.</b> Typography carries the data: one giant figure, per-category
+        figures on tiles, and a delta arrow. The only graphical mark is an optional hairline sparkline
+        under the hero.</p>
+      </div>
+      <div class="bx">
+        <h4>Navigation model</h4>
+        <p>Text links + horizontal shelves. Clicking a tile is a full page transition to the category —
+        no drawers, no split panes. Back is browser-back.</p>
+        <p class="warn"><b>Risk:</b> returning daily users must scroll past the marketing-feeling hero
+        every visit. Mitigate by compacting the hero to a 96px band on second visit.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ 2 -->
+  <section class="layout">
+    <div class="lhead"><span class="lnum">02</span><h2>The Bento Grid</h2></div>
+    <p class="tagline">A modular grid of unequal tiles, each a self-contained answer and a doorway —
+    the <b>widget stack</b> logic of iPadOS, where the largest tile is simply the most important one.</p>
+
+    <div class="frame">
+      <div class="wire">
+        <div class="topbar">
+          <div class="dot"></div><div class="pill" style="width:96px"></div>
+          <div class="spacer"></div>
+          <div class="pill" style="width:74px"></div><div class="dot" style="border-radius:999px"></div>
+        </div>
+        <div class="body">
+          <div class="railI">
+            <i class="on"></i><i></i><i></i><i></i><i></i>
+            <div class="spacer"></div><i></i>
+          </div>
+          <div class="main" style="background:var(--canvas)">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:auto auto;gap:14px;flex:1">
+              <!-- hero tile spans 2 cols -->
+              <div class="wb card" style="grid-column:1/3;padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+                <div>
+                  <div class="lbl">Realised savings</div>
+                  <div class="big" style="font-size:40px;line-height:1.1;margin-top:8px">kr 1.24M</div>
+                  <div class="txt" style="margin-top:6px">year to date · verified</div>
+                </div>
+                <svg viewBox="0 0 260 46" style="width:100%;height:46px;margin-top:14px" aria-hidden="true">
+                  <polyline points="0,40 34,36 68,33 102,26 136,24 170,17 204,13 238,7 260,4"
+                    fill="none" stroke="#0071e3" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <!-- donut tile -->
+              <div class="wb card" style="padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                <div class="lbl" style="align-self:flex-start">By category</div>
+                <svg viewBox="0 0 76 76" style="width:76px;height:76px;margin:8px 0" aria-hidden="true">
+                  <circle cx="38" cy="38" r="30" fill="none" stroke="#e8e8ed" stroke-width="11"/>
+                  <circle cx="38" cy="38" r="30" fill="none" stroke="#0071e3" stroke-width="11"
+                    stroke-dasharray="188.5" stroke-dashoffset="66" transform="rotate(-90 38 38)" stroke-linecap="round"/>
+                </svg>
+                <div class="txt">4 categories = 78%</div>
+              </div>
+              <!-- coverage tile -->
+              <div class="wb card" style="padding:16px;display:flex;flex-direction:column;justify-content:space-between">
+                <div class="lbl">Agreements</div>
+                <div>
+                  <div class="big" style="font-size:26px">8<span style="color:var(--soft);font-weight:400;font-size:15px"> / 112</span></div>
+                  <div class="txt" style="margin-top:4px">active · available</div>
+                </div>
+                <div style="display:flex;gap:3px">
+                  <div class="wb acc" style="height:5px;flex:8;border-radius:9px"></div>
+                  <div class="wb d" style="height:5px;flex:14;border-radius:9px"></div>
+                </div>
+              </div>
+              <!-- missed savings wide tile -->
+              <div class="wb card" style="grid-column:1/4;padding:18px 20px;display:flex;align-items:center;gap:18px">
+                <div style="flex:0 0 auto">
+                  <div class="lbl on">Recommended for you</div>
+                  <div class="big" style="font-size:19px;margin-top:6px">kr 840K still available</div>
+                </div>
+                <div style="display:flex;gap:10px;flex:1;min-width:0">
+                  <div class="wb" style="flex:1;height:52px;border-radius:10px;background:var(--white);box-shadow:0 1px 2px #0000000a"></div>
+                  <div class="wb" style="flex:1;height:52px;border-radius:10px;background:var(--white);box-shadow:0 1px 2px #0000000a"></div>
+                  <div class="wb" style="flex:1;height:52px;border-radius:10px;background:var(--white);box-shadow:0 1px 2px #0000000a"></div>
+                </div>
+                <div class="wb acc" style="width:78px;height:32px;border-radius:999px;flex:0 0 auto"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">Unequal tiles on a 3-column grid. Size is the only hierarchy device — no colour ranking.</p>
+
+    <div class="brk">
+      <div class="bx">
+        <h4>Structure</h4>
+        <ol>
+          <li><b>Header</b> — 46px, breadcrumb left, notification bell + avatar right.</li>
+          <li><b>Icon rail</b> — 56px, glyphs only, labels on hover. Buys back ~180px of grid width.</li>
+          <li><b>Grid</b> — 3 columns × n rows, 14px gutters. Hero savings tile spans 2×1; category donut 1×1; agreements coverage 1×1; recommended savings 3×1 full-bleed row.</li>
+          <li><b>Rows below</b> — further 1×1 tiles: bonus, benchmark, expiring soon. Reorderable.</li>
+        </ol>
+      </div>
+      <div class="bx">
+        <h4>Visual flow &amp; why it works</h4>
+        <p>The eye lands top-left on the largest tile — <b>Fitts + Gestalt working together</b>: biggest
+        area, most padding, most contrast in its number. It then reads rightward across the two smaller
+        tiles, which are deliberately the same size as each other so neither wins.</p>
+        <p>The Apple lineage is the <b>widget</b>: each tile is a glanceable summary that is also a
+        tappable doorway. Nothing needs a “view more” link, because the whole tile is the link.</p>
+        <p>Macro to micro is a <b>zoom</b>: tap the category donut and it expands into the category
+        grid; tap a category and it expands into agreements. Same grammar at every depth.</p>
+      </div>
+      <div class="bx">
+        <h4>Data visualisation</h4>
+        <p>Diverse but each mark is small and singular: a <b>sparkline</b> in the hero, a
+        <b>single-arc donut</b> for concentration, a <b>two-segment bar</b> for active vs. available.
+        One mark per tile — never two.</p>
+      </div>
+      <div class="bx">
+        <h4>Navigation model</h4>
+        <p>Icon rail for sections, tiles for drill-down, zoom transitions between depths.</p>
+        <p class="warn"><b>Risk:</b> the most familiar dashboard pattern here, so it is the least
+        distinctive — and bento grids rot as tiles accumulate. Cap it at seven tiles and make the
+        eighth a deliberate design decision.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ 3 -->
+  <section class="layout">
+    <div class="lhead"><span class="lnum">03</span><h2>The Ledger</h2></div>
+    <p class="tagline">Three panes, macOS Mail. A labelled sidebar, a scannable middle list of categories
+    with the data <b>inside the rows</b>, and a detail pane that fills without ever leaving the page.</p>
+
+    <div class="frame">
+      <div class="wire">
+        <div class="topbar">
+          <div class="pill" style="width:64px"></div>
+          <div class="spacer"></div>
+          <div class="pill" style="width:120px;background:var(--wire2)"></div>
+          <div class="spacer"></div>
+          <div class="dot" style="border-radius:999px"></div>
+        </div>
+        <div class="body">
+          <div class="sideN">
+            <div class="nrow on"><em></em><span class="lbl on">Overview</span></div>
+            <div class="nrow"><em></em><span class="lbl">Categories</span></div>
+            <div class="nrow"><em></em><span class="lbl">Agreements</span></div>
+            <div class="nrow"><em></em><span class="lbl">Savings</span></div>
+            <div class="nrow"><em></em><span class="lbl">Spending</span></div>
+            <div style="height:1px;background:var(--hair);margin:6px 0"></div>
+            <div class="nrow"><em></em><span class="lbl">Inbox</span></div>
+          </div>
+          <!-- list column -->
+          <div style="width:236px;flex:0 0 auto;border-right:1px solid var(--hair);background:var(--white);
+                      display:flex;flex-direction:column">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--hair)">
+              <div class="lbl">Realised savings</div>
+              <div class="big" style="font-size:26px;margin-top:4px">kr 1.24M</div>
+              <div class="txt">8 of 112 agreements active</div>
+            </div>
+            <div style="padding:8px">
+              <div style="padding:9px 10px;border-radius:9px;background:color-mix(in srgb,var(--accent) 10%,var(--white))">
+                <div style="display:flex;justify-content:space-between;align-items:baseline">
+                  <span class="lbl on">Office supplies</span><span class="big" style="font-size:12px">+118K</span>
+                </div>
+                <div style="display:flex;gap:3px;margin-top:7px">
+                  <div class="wb acc" style="height:4px;flex:22;border-radius:9px"></div>
+                  <div class="wb d" style="height:4px;flex:78;border-radius:9px"></div>
+                </div>
+              </div>
+              <div style="padding:9px 10px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline">
+                  <span class="lbl">Electrical</span><span class="big" style="font-size:12px">+160K</span>
+                </div>
+                <div style="display:flex;gap:3px;margin-top:7px">
+                  <div class="wb dd" style="height:4px;flex:44;border-radius:9px"></div>
+                  <div class="wb" style="height:4px;flex:56;border-radius:9px"></div>
+                </div>
+              </div>
+              <div style="padding:9px 10px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline">
+                  <span class="lbl">Fuel &amp; fleet</span><span class="big" style="font-size:12px">+40K</span>
+                </div>
+                <div style="display:flex;gap:3px;margin-top:7px">
+                  <div class="wb dd" style="height:4px;flex:78;border-radius:9px"></div>
+                  <div class="wb" style="height:4px;flex:22;border-radius:9px"></div>
+                </div>
+              </div>
+              <div style="padding:9px 10px;opacity:.5">
+                <div style="display:flex;justify-content:space-between;align-items:baseline">
+                  <span class="lbl">Travel</span><span class="big" style="font-size:12px">+47K</span>
+                </div>
+                <div style="display:flex;gap:3px;margin-top:7px">
+                  <div class="wb dd" style="height:4px;flex:31;border-radius:9px"></div>
+                  <div class="wb" style="height:4px;flex:69;border-radius:9px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- detail pane -->
+          <div style="flex:1;min-width:0;padding:22px;background:var(--white);display:flex;flex-direction:column;gap:14px">
+            <div>
+              <div class="lbl">Office supplies · 9 agreements in catalogue</div>
+              <div class="big" style="font-size:24px;margin-top:6px">kr 118K is the gap</div>
+              <div class="txt" style="margin-top:6px;max-width:46ch">You run 22% of this category on agreement. Construction firms your size run 58%.</div>
+            </div>
+            <div style="display:flex;gap:12px">
+              <div class="wb card" style="flex:1;height:96px;padding:12px">
+                <div class="wb dd" style="width:30px;height:30px;border-radius:8px"></div>
+                <div class="txt" style="margin-top:9px">Lyreco · −19%</div>
+                <div class="wb acc" style="width:66px;height:22px;border-radius:999px;margin-top:9px"></div>
+              </div>
+              <div class="wb card" style="flex:1;height:96px;padding:12px">
+                <div class="wb dd" style="width:30px;height:30px;border-radius:8px"></div>
+                <div class="txt" style="margin-top:9px">Staples · −14%</div>
+                <div class="wb" style="width:66px;height:22px;border-radius:999px;margin-top:9px;background:var(--wire2)"></div>
+              </div>
+            </div>
+            <div class="wb" style="height:1px;background:var(--hair)"></div>
+            <div class="lbl">Where your money goes today</div>
+            <div class="wb" style="height:44px;border-radius:10px"></div>
+            <div class="wb" style="height:44px;border-radius:10px;opacity:.6"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">Data lives in the list rows as inline bars — no chart panel anywhere on the screen.</p>
+
+    <div class="brk">
+      <div class="bx">
+        <h4>Structure</h4>
+        <ol>
+          <li><b>Header</b> — 46px, centred search field (⌘K), avatar right.</li>
+          <li><b>Sidebar</b> — 168px, labelled sections, one hairline divider grouping primary from secondary.</li>
+          <li><b>List column</b> — 236px, pinned summary block at top (the hero metric, compact), then every category as a row: name, savings figure, and a two-segment coverage bar.</li>
+          <li><b>Detail pane</b> — fluid, shows the selected category: diagnosis, agreement cards, current suppliers.</li>
+        </ol>
+      </div>
+      <div class="bx">
+        <h4>Visual flow &amp; why it works</h4>
+        <p>Left-to-right reading order maps exactly onto <b>increasing specificity</b>: where am I,
+        what are the parts, what is this part. The eye never jumps back.</p>
+        <p>The Apple reference is <b>Mail and Finder column view</b> — persistent selection, no page
+        loads, arrow keys move down the list while the right pane keeps pace. It feels like an
+        application rather than a website, which is the correct register for a tool opened weekly.</p>
+        <p>Macro to micro happens <b>without navigation</b>. Comparing two categories costs two
+        keystrokes, which is the cheapest comparison of any layout here.</p>
+      </div>
+      <div class="bx">
+        <h4>Data visualisation</h4>
+        <p><b>Inline, in-row, tiny.</b> A two-segment bar per row (on-agreement vs. off) and a figure.
+        Denser than any other option and the only one where you can compare all fourteen categories
+        in a single glance without a chart.</p>
+      </div>
+      <div class="bx">
+        <h4>Navigation model</h4>
+        <p>Persistent three-pane selection; keyboard-first (↑↓ to move, ↵ to open the agreement page).</p>
+        <p class="warn"><b>Risk:</b> the least emotional of the five. The hero metric is demoted to a
+        sidebar block, which undersells the product's core promise on first visit. Best for the
+        returning power user, weakest at first impression.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ 4 -->
+  <section class="layout">
+    <div class="lhead"><span class="lnum">04</span><h2>The Focus Card</h2></div>
+    <p class="tagline">An anti-dashboard. One narrow centred column, one decision at a time, paged like
+    a deck of cards — the logic of <b>Apple Fitness rings</b>: a single closable goal, not a report.</p>
+
+    <div class="frame">
+      <div class="wire">
+        <div class="topbar" style="justify-content:center;gap:0">
+          <div style="display:flex;gap:3px;padding:3px;background:var(--wire);border-radius:999px">
+            <div class="pill" style="width:62px;height:24px;background:var(--white);box-shadow:0 1px 2px #00000014"></div>
+            <div class="pill" style="width:62px;height:24px;background:transparent"></div>
+            <div class="pill" style="width:62px;height:24px;background:transparent"></div>
+            <div class="pill" style="width:62px;height:24px;background:transparent"></div>
+          </div>
+        </div>
+        <div style="flex:1;background:var(--canvas);display:flex;justify-content:center;padding:26px 24px;overflow:hidden">
+          <div style="width:100%;max-width:520px;display:flex;flex-direction:column;gap:16px">
+            <!-- compact hero with ring -->
+            <div style="display:flex;align-items:center;gap:18px">
+              <svg viewBox="0 0 72 72" style="width:72px;height:72px;flex:0 0 auto" aria-hidden="true">
+                <circle cx="36" cy="36" r="29" fill="none" stroke="#e8e8ed" stroke-width="8"/>
+                <circle cx="36" cy="36" r="29" fill="none" stroke="#0071e3" stroke-width="8"
+                  stroke-dasharray="182" stroke-dashoffset="69" transform="rotate(-90 36 36)" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <div class="lbl">Realised savings</div>
+                <div class="big" style="font-size:30px;line-height:1.1">kr 1.24M</div>
+                <div class="txt">62% of your spend runs on agreement</div>
+              </div>
+            </div>
+            <!-- the one card -->
+            <div class="wb card" style="padding:20px;box-shadow:var(--sh-2)">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div class="wb dd" style="width:36px;height:36px;border-radius:9px"></div>
+                <div style="flex:1">
+                  <div class="lbl on">Decision 1 of 6</div>
+                  <div class="big" style="font-size:17px;margin-top:2px">Activate the Lyreco office agreement</div>
+                </div>
+              </div>
+              <div class="big" style="font-size:32px;margin-top:16px;color:var(--accent)">+kr 118K<span style="font-size:15px;color:var(--soft);font-weight:400"> / year</span></div>
+              <div class="txt" style="margin-top:8px;line-height:1.5">You buy kr 620K of office supplies a year, 78% of it at list price. Member terms are 19% below what you paid last quarter.</div>
+              <div class="wb" style="height:1px;background:var(--hair);margin:16px 0"></div>
+              <div style="display:flex;gap:9px;align-items:center">
+                <div class="wb acc" style="width:104px;height:34px;border-radius:999px"></div>
+                <div class="wb" style="width:96px;height:34px;border-radius:999px;background:var(--wire)"></div>
+                <div class="spacer"></div>
+                <div class="txt">Skip</div>
+              </div>
+            </div>
+            <!-- pagination + peek -->
+            <div style="display:flex;justify-content:center;gap:6px">
+              <div style="width:7px;height:7px;border-radius:999px;background:var(--accent)"></div>
+              <div style="width:7px;height:7px;border-radius:999px;background:var(--wire3)"></div>
+              <div style="width:7px;height:7px;border-radius:999px;background:var(--wire3)"></div>
+              <div style="width:7px;height:7px;border-radius:999px;background:var(--wire3)"></div>
+              <div style="width:7px;height:7px;border-radius:999px;background:var(--wire3)"></div>
+              <div style="width:7px;height:7px;border-radius:999px;background:var(--wire3)"></div>
+            </div>
+            <div class="wb card" style="height:44px;opacity:.55;transform:scale(.97)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">One column, ~520px. The next card peeks below at reduced scale, so the queue is felt, not listed.</p>
+
+    <div class="brk">
+      <div class="bx">
+        <h4>Structure</h4>
+        <ol>
+          <li><b>Header</b> — a single centred <b>segmented control</b> as the entire navigation: Overview · Categories · Agreements · Savings. No sidebar at any breakpoint.</li>
+          <li><b>Compact hero</b> — a progress ring (share of spend on agreement) beside the savings figure. The ring is the chart; the figure is the headline.</li>
+          <li><b>The focus card</b> — one recommendation at full attention: supplier, the figure, the reasoning, and a commitment ladder of actions.</li>
+          <li><b>Pagination dots + peeking card</b> — six decisions, one visible.</li>
+          <li><b>Category grid</b> — reached via the segmented control, not shown here.</li>
+        </ol>
+      </div>
+      <div class="bx">
+        <h4>Visual flow &amp; why it works</h4>
+        <p>Attention is <b>allocated, not competed for</b>. There is exactly one hero element, and
+        everything on screen is subordinate to it — the purest reading of the Apple principle that a
+        design should have one job per view.</p>
+        <p>This layout takes the strongest position on the user: an SME owner has ten minutes a week
+        and does not want a report, they want <b>six things to be done with</b>. The dots turn the work
+        into a finite, closable set — the Fitness-ring trick of making progress feel completable.</p>
+        <p>Macro to micro is <b>collapsed into one screen</b>: the ring is the macro, the card is
+        already the micro. The agreement page is one tap deeper for terms and how-to-buy.</p>
+      </div>
+      <div class="bx">
+        <h4>Data visualisation</h4>
+        <p><b>Deliberately impoverished:</b> one progress ring, one figure per card. There is no
+        category chart on the default view at all — category breakdown lives one tab across. That is
+        the trade this layout makes on purpose.</p>
+      </div>
+      <div class="bx">
+        <h4>Navigation model</h4>
+        <p>Segmented control for breadth; card pagination (swipe, arrow keys, J/K) for depth.</p>
+        <p class="warn"><b>Risk:</b> it withholds the overview. A user who wants to browse rather than
+        decide will feel managed rather than served — and the “Savings by category” requirement is
+        satisfied only on a second tab, which some stakeholders will read as non-compliance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ 5 -->
+  <section class="layout">
+    <div class="lhead"><span class="lnum">05</span><h2>The Atlas</h2></div>
+    <p class="tagline">Spend rendered as territory. A mosaic where every category is a tile
+    <b>sized by spend and tinted by coverage</b>, with a Keynote-style inspector on the right — the gaps
+    become visible as pale, large shapes before you read a single word.</p>
+
+    <div class="frame">
+      <div class="wire">
+        <div class="topbar">
+          <div class="dot"></div><div class="pill" style="width:88px"></div>
+          <div class="spacer"></div>
+          <div style="display:flex;gap:3px;padding:3px;background:var(--wire);border-radius:999px">
+            <div class="pill" style="width:48px;height:22px;background:var(--white);box-shadow:0 1px 2px #00000014"></div>
+            <div class="pill" style="width:48px;height:22px;background:transparent"></div>
+          </div>
+          <div class="spacer"></div>
+          <div class="dot" style="border-radius:999px"></div>
+        </div>
+        <div class="body">
+          <div class="main" style="gap:12px;background:var(--white)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between">
+              <div>
+                <div class="lbl">Realised savings · all categories</div>
+                <div class="big" style="font-size:28px;margin-top:2px">kr 1.24M<span style="font-size:14px;color:var(--soft);font-weight:400"> of kr 2.08M possible</span></div>
+              </div>
+              <div class="txt">Tile size = spend · fill = on agreement</div>
+            </div>
+            <!-- treemap -->
+            <div style="flex:1;display:grid;grid-template-columns:1.7fr 1fr 1fr;grid-template-rows:1.35fr 1fr;gap:8px;min-height:0">
+              <div style="background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 74%,white) 0 71%,#eef0f4 71%);
+                          border-radius:10px;padding:12px;color:#fff">
+                <div style="font-size:10.5px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;opacity:.9">Building materials</div>
+                <div style="font-size:17px;font-weight:700;letter-spacing:-.03em;margin-top:2px">kr 4.6M</div>
+                <div style="font-size:10.5px;opacity:.85;margin-top:1px">71% covered</div>
+              </div>
+              <div style="background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 70%,white) 0 64%,#eef0f4 64%);
+                          border-radius:10px;padding:11px;color:#fff">
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;opacity:.9">Tools</div>
+                <div style="font-size:14px;font-weight:700;margin-top:2px">kr 1.9M</div>
+              </div>
+              <div style="background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 70%,white) 0 78%,#eef0f4 78%);
+                          border-radius:10px;padding:11px;color:#fff">
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;opacity:.9">Fuel</div>
+                <div style="font-size:14px;font-weight:700;margin-top:2px">kr 1.6M</div>
+              </div>
+              <div style="background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 62%,white) 0 44%,#eef0f4 44%);
+                          border-radius:10px;padding:11px">
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--soft)">Electrical</div>
+                <div style="font-size:14px;font-weight:700;margin-top:2px">kr 1.4M</div>
+                <div style="font-size:10px;color:var(--soft)">44% — under-used</div>
+              </div>
+              <div style="background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 62%,white) 0 22%,#eef0f4 22%);
+                          border-radius:10px;padding:11px;outline:2px solid var(--accent);outline-offset:-2px">
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--soft)">Office</div>
+                <div style="font-size:14px;font-weight:700;margin-top:2px">kr 620K</div>
+                <div style="font-size:10px;color:var(--accent);font-weight:600">22% — widest gap</div>
+              </div>
+              <div style="display:grid;grid-template-rows:1fr 1fr;gap:8px">
+                <div style="background:#eef0f4;border-radius:10px;padding:9px">
+                  <div style="font-size:9.5px;font-weight:600;text-transform:uppercase;color:var(--soft)">Waste</div>
+                  <div style="font-size:12px;font-weight:700">540K</div>
+                </div>
+                <div style="background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 62%,white) 0 58%,#eef0f4 58%);border-radius:10px;padding:9px">
+                  <div style="font-size:9.5px;font-weight:600;text-transform:uppercase;color:var(--soft)">Telecom</div>
+                  <div style="font-size:12px;font-weight:700">480K</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- inspector -->
+          <div style="width:214px;flex:0 0 auto;border-left:1px solid var(--hair);padding:18px 16px;
+                      display:flex;flex-direction:column;gap:12px;background:var(--canvas)">
+            <div class="lbl">Inspector · Office supplies</div>
+            <div>
+              <div class="big" style="font-size:22px;color:var(--accent)">+kr 118K</div>
+              <div class="txt">available per year</div>
+            </div>
+            <div class="wb" style="height:1px;background:var(--hair)"></div>
+            <div class="lbl">Agreements here</div>
+            <div class="wb card" style="height:58px;padding:10px">
+              <div class="wb dd" style="width:24px;height:24px;border-radius:7px"></div>
+              <div class="txt" style="margin-top:6px">Lyreco · −19%</div>
+            </div>
+            <div class="wb card" style="height:58px;padding:10px;opacity:.65">
+              <div class="wb dd" style="width:24px;height:24px;border-radius:7px"></div>
+              <div class="txt" style="margin-top:6px">Staples · −14%</div>
+            </div>
+            <div class="spacer"></div>
+            <div class="wb acc" style="height:34px;border-radius:999px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">The pale left-hand portion of each tile <em>is</em> the missed saving. Gaps read pre-verbally.</p>
+
+    <div class="brk">
+      <div class="bx">
+        <h4>Structure</h4>
+        <ol>
+          <li><b>Header</b> — 46px with a centred segmented control switching the mosaic metric: <b>Spend</b> / <b>Savings</b>.</li>
+          <li><b>Summary line</b> — realised against total possible, one line, no card.</li>
+          <li><b>Mosaic</b> — the whole main area. Tiles sized by annual spend, each filled left-to-right by coverage percentage; the remaining pale area is literally the gap. Selected tile gets a 2px accent outline.</li>
+          <li><b>Inspector</b> — 214px right panel, contextual to selection: the gap figure, the agreements in that category, one primary action. Never a drawer — always present.</li>
+        </ol>
+      </div>
+      <div class="bx">
+        <h4>Visual flow &amp; why it works</h4>
+        <p>This is the only layout where the answer arrives <b>before reading</b>. Large-and-pale means
+        “big spend, badly covered”, so the eye finds the opportunity by shape and value alone. Office
+        supplies wins attention not because we ranked it but because it looks emptiest.</p>
+        <p>The Apple lineage is <b>direct manipulation</b> plus the Keynote/Pages inspector: the canvas
+        is the content, the right panel is always about whatever is selected, and selection never
+        navigates away.</p>
+        <p>Macro to micro is <b>spatial</b>: the mosaic is the estate, clicking a tile fills the
+        inspector, and clicking an agreement in the inspector opens its page. Optionally the tile
+        itself zooms into a sub-mosaic of its agreements.</p>
+      </div>
+      <div class="bx">
+        <h4>Data visualisation</h4>
+        <p>A <b>treemap with an embedded part-to-whole fill</b> — two variables (magnitude, coverage) in
+        one mark. The most information-dense visual of the five, and the most distinctive.</p>
+      </div>
+      <div class="bx">
+        <h4>Navigation model</h4>
+        <p>Spatial selection with a persistent inspector; optional zoom into a category's sub-mosaic.</p>
+        <p class="warn"><b>Risk:</b> treemaps have a learning curve, and the encoding must be taught in
+        one line (“tile size = spend, fill = on agreement”). With fourteen categories it sings; with
+        forty it becomes confetti. Needs a table view as an accessible equivalent, not an afterthought.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ verdict -->
+  <div class="verdict">
+    <h3>Which one, and why</h3>
+    <p>The five are not five styles of the same idea — they take <b>different positions on what the user
+    came to do</b>. That is the real choice in front of you, and it should be settled with users rather
+    than in a review.</p>
+    <table>
+      <thead><tr><th>Layout</th><th>Position it takes</th><th>Strongest for</th></tr></thead>
+      <tbody>
+        <tr><td>The Vault</td><td>The number is the product; awe first, detail later</td><td>First login, sales demo, renewal moment</td></tr>
+        <tr><td>The Bento Grid</td><td>Everything glanceable, every tile a door</td><td>Broad weekly check-in; safest default</td></tr>
+        <tr><td>The Ledger</td><td>This is a tool, not a report</td><td>Returning power user; comparing categories</td></tr>
+        <tr><td>The Focus Card</td><td>You came to decide, not to browse</td><td>Ten-minute repeat visits; conversion</td></tr>
+        <tr><td>The Atlas</td><td>See the whole estate; the gap is a shape</td><td>Diagnosis, advisor-led review, board show-and-tell</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:24px">My recommendation: <b>prototype 04 and 05 as the pair</b>. They sit at
+    opposite ends — maximum focus versus maximum overview — so testing them together tells you which
+    instinct your users actually have. The Bento Grid is the safe fallback if the answer is “both,
+    a bit”. And whichever wins, steal the Ledger's <b>inline row bars</b>: fourteen categories comparable
+    at a glance, with no chart, is the single most efficient element in this set.</p>
+  </div>
+
+  <div class="note">
+    <h4>Two notes on the brief</h4>
+    <p><b>Palette divergence.</b> These wireframes use the Apple-reference palette you specified —
+    <code>#0071E3</code>, <code>#1D1D1F</code>, <code>#86868B</code>, <code>#F5F5F7</code>. Your actual
+    Advantage design system resolves to a different blue (<code>#1b64dc</code>), foreground
+    <code>#0f0f0f</code>, muted <code>#707070</code>, background <code>#fafafa</code>, with radii of
+    16/24px and Rethink Sans + DM&nbsp;Sans rather than SF Pro. The layouts are palette-independent, but
+    before any of this is built it is worth deciding deliberately whether we are matching Apple's
+    literal values or applying Apple's <i>method</i> to your own tokens. My advice is the latter — the
+    tokens are already good, and a second blue in the codebase will cost you more than it buys.</p>
+    <p><b>Supplier logos.</b> The brief names Circle&nbsp;K and Scandic; the asset folder actually holds
+    Q8, Lyreco, Hilti, Ahlsell, Stark and Bygma. Wireframes here use neutral placeholder marks, and
+    any high-fidelity pass should use the logos that exist plus initials chips at identical geometry
+    for suppliers without one — mixed logo shapes are the fastest way to make a clean grid look untidy.</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1003,45 +1003,40 @@ body.in-app .flow{display:none}
    closes the card so no one has to already know "+61.300" means "kr. every year" */
 .opp-list-bars{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
   gap:var(--s6);list-style:none}
-/* Fanny's dashboard fits 3 wider cards per row instead of the default auto-fill 4 */
+/* Fanny's dashboard: 4 per row, 48px between rows and 16px between columns */
 .nc-agr-grid{grid-template-columns:repeat(4,1fr);gap:var(--s12) var(--s4);margin-top:var(--s8)}
 @media(max-width:1200px){.nc-agr-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){.nc-agr-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.nc-agr-grid{grid-template-columns:1fr}}
-/* the supplier card, blended from the reference: a brand-tinted header band with
-   the logo chip overlapping its lower edge, then the name/meta/reasons, then the
-   saving footer kept as-is. --b is the supplier's predominant ink as an rgb
-   triplet (set inline per card), so one variable tints the band, the chip ring
-   and the initials fallback without a stylesheet entry per brand. */
-/* the supplier card: a photo header with the logo chip overlapping its lower
-   edge, the supplier name, one line carrying the discount and a single selling
-   point, then the saving footer. No outlines anywhere — elevation separates the
-   card from the page, and the chip reads as part of the logo rather than a box
-   drawn around it. */
-/* Airbnb listing-card anatomy: the photo IS the card — no container, no border,
-   no shadow. A status label sits top-left, a save toggle top-right, and the text
-   rows sit underneath on the page itself. Three rows only: name, what it is,
-   what it's worth — the same shape as title / host / price-and-rating. */
+/* the marketplace card: a rounded photo with a status label and a save toggle on
+   it, the supplier mark at double size overlapping its lower edge, then name,
+   category and the green saving row. No container and no border — the photo is
+   the card. The blue arrow at the end of the saving row is the only clickability
+   cue, because the whole <li> is the target and a card that is a button must not
+   contain one. --b is the supplier's predominant ink as an rgb triplet, set
+   inline per card, so one variable tints the band and the initials fallback
+   without a stylesheet entry per brand. */
 .agr-card{position:relative;display:flex;flex-direction:column;gap:2px;cursor:pointer;
   padding:0;border:none;background:none;box-shadow:none}
 .agr-card:focus-visible{outline:2px solid var(--general-primary);outline-offset:4px;
   border-radius:var(--rounded-md)}
 .agr-card:hover .agr-card-band img{transform:scale(1.04)}
 .agr-card:hover .agr-card-name{text-decoration:underline;text-underline-offset:2px}
+.agr-card:hover .agr-go{transform:translateX(3px)}
 /* the photo bleeds to the card's edges, so it sits outside the content padding */
 /* aspect-ratio rather than a fixed height, so the photo stays squarer as the
    column width changes instead of flattening into a letterbox strip */
-.agr-card-band{position:relative;margin:0 0 var(--s3);aspect-ratio:4/3;flex:0 0 auto;
+.agr-card-band{position:relative;margin:0;aspect-ratio:16/9;flex:0 0 auto;
   overflow:hidden;border-radius:var(--rounded-md);background:rgb(var(--b)/.10)}
 .agr-card-band img{width:100%;height:100%;object-fit:cover;display:block;
   transition:transform var(--t)}
 /* status label, top-left — the "Trending" slot */
-.agr-label{position:absolute;top:var(--s2);left:var(--s2);padding:4px 9px;
+.agr-label{position:absolute;top:var(--s3);left:var(--s3);padding:4px 9px;
   border-radius:var(--rounded-full);background:var(--surface);box-shadow:var(--shadow-sm);
   font-size:11.5px;font-weight:650;color:var(--general-foreground);white-space:nowrap}
 .agr-label.on{background:var(--sentiment-positive);color:#fff}
 /* save toggle, top-right */
-.agr-fav{position:absolute;top:var(--s2);right:var(--s2);width:34px;height:34px;
+.agr-fav{position:absolute;top:var(--s2);right:var(--s2);width:32px;height:32px;
   display:grid;place-items:center;border:none;background:none;cursor:pointer;
   color:#fff;transition:transform var(--t-fast)}
 .agr-fav svg{width:22px;height:22px;fill:#00000047;
@@ -1052,10 +1047,10 @@ body.in-app .flow{display:none}
 /* the chip overlaps the photo by half its height, like the reference card */
 /* the supplier mark, bottom-left on the photo — Airbnb has no logo, but the
    brand is the point here, so it sits on the image instead of pushing a row */
-.agr-chip{position:absolute;bottom:var(--s2);left:var(--s2);
-  flex:0 0 auto;width:30px;height:30px;border-radius:var(--rounded-sm);
-  display:grid;place-items:center;background:var(--surface);
-  box-shadow:0 2px 8px #0000002e;overflow:hidden}
+.agr-chip{position:relative;z-index:1;align-self:flex-start;
+  margin:-30px 0 var(--s2) var(--s3);flex:0 0 auto;width:60px;height:60px;
+  border-radius:var(--rounded-md);display:grid;place-items:center;background:var(--surface);
+  border:1px solid var(--hairline);box-shadow:var(--shadow-sm);overflow:hidden}
 .agr-chip img{width:100%;height:100%;object-fit:contain;display:block}
 /* no artwork for this supplier: initials on a tint of its brand colour instead */
 .agr-chip[data-initials]{background:rgb(var(--b)/.10)}
@@ -1064,13 +1059,17 @@ body.in-app .flow{display:none}
 /* the three text rows */
 .agr-card-meta{font-size:13px;line-height:1.4;color:var(--general-muted-foreground);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.agr-card-price{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s1);
-  font-size:13px;line-height:1.4;font-weight:600;color:var(--sentiment-positive)}
+/* the green saving row, with a blue arrow at its right as the only clickability
+   cue — no button, since the whole card is the target */
+.agr-card-price{display:flex;align-items:center;margin-top:var(--s1);
+  font-size:var(--text-base);line-height:1.3;font-weight:700;color:var(--sentiment-positive)}
 .agr-card-price b{font-weight:700;color:var(--sentiment-positive);white-space:nowrap}
-.agr-card-price small{font-weight:600;color:var(--general-muted-foreground)}
-.agr-card-price .agr-card-go{margin-left:auto;width:26px;height:26px}
-.agr-card-price .agr-card-go svg{width:14px;height:14px}
-.agr-card-name{font-size:14px;font-weight:650;letter-spacing:-.1px;line-height:1.35;
+.agr-card-price small{margin-left:2px;font-size:13px;font-weight:600;
+  color:var(--general-muted-foreground)}
+.agr-go{margin-left:auto;flex:0 0 auto;display:grid;place-items:center;
+  color:var(--general-primary);transition:transform var(--t-fast)}
+.agr-go svg{width:19px;height:19px}
+.agr-card-name{font-size:15px;font-weight:700;letter-spacing:-.2px;line-height:1.3;
   text-wrap:pretty;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
   overflow:hidden}
 .opp-amt-label{font-size:13px;font-weight:600;color:var(--sentiment-positive)}
@@ -1082,6 +1081,59 @@ body.in-app .flow{display:none}
   transition:background var(--t-fast)}
 .agr-card-go svg{width:16px;height:16px}
 .agr-card:hover .agr-card-go{background:var(--general-primary);color:#fff}
+
+/* ---------- section header with a view toggle ---------- */
+.nc-sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s6);
+  flex-wrap:wrap}
+.seg{display:inline-flex;gap:2px;padding:3px;border-radius:var(--rounded-full);
+  background:var(--general-muted)}
+.seg button{height:32px;padding:0 var(--s4);border:none;border-radius:var(--rounded-full);
+  background:none;cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--general-muted-foreground);transition:background var(--t-fast),color var(--t-fast)}
+.seg button:hover{color:var(--general-foreground)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--general-foreground);
+  box-shadow:var(--shadow-xs)}
+
+/* ---------- agreement card, "detail" variant ---------- */
+/* Two per row: this one argues a case, so it needs a readable measure. It is
+   deliberately NOT one big click target — a card with two buttons shouldn't also
+   be a button, which is the trap the reference fell into. */
+.agr-det-grid{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);
+  gap:var(--s4);margin-top:var(--s8)}
+@media(max-width:1100px){.agr-det-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.agr-det-grid{grid-template-columns:1fr}}
+.agr-det{position:relative;display:flex;flex-direction:column;gap:var(--s3);
+  padding:var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:var(--shadow-xs)}
+/* the first card is the recommendation, so it is the only tinted one */
+.agr-det.lead{background:var(--brand-ice);border-color:#bdd7ff}
+.agr-det-eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-primary)}
+.agr-det-top{display:flex;align-items:center;gap:var(--s3)}
+/* the chip is absolutely placed on the photo card, so it needs resetting here */
+.agr-det .agr-chip{position:static;inset:auto;width:34px;height:34px;
+  border-radius:var(--rounded-md);box-shadow:none;border:1px solid var(--hairline)}
+.agr-det-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.agr-det-id b{font-size:var(--text-base);font-weight:700;letter-spacing:-.2px}
+.agr-det-id span{font-size:13px;color:var(--general-muted-foreground)}
+.agr-det .agr-fav{position:static;width:30px;height:30px;color:var(--general-muted-foreground)}
+.agr-det .agr-fav svg{fill:none;filter:none;width:20px;height:20px}
+.agr-det .agr-fav.on svg{fill:var(--general-destructive);stroke:var(--general-destructive)}
+/* the money, and the basis it rests on */
+.agr-det-fig{display:flex;flex-direction:column;gap:2px}
+.agr-det-fig b{font-size:var(--text-xl);font-weight:800;letter-spacing:-.4px;
+  color:var(--sentiment-positive)}
+.agr-det-fig b small{font-size:14px;font-weight:600;color:var(--general-muted-foreground)}
+.agr-det-fig>span{font-size:13px;color:var(--general-muted-foreground)}
+.agr-det-why{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.agr-det-why li{position:relative;padding-left:16px;font-size:14px;line-height:1.45}
+.agr-det-why li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;
+  border-radius:var(--rounded-full);background:var(--general-border)}
+.agr-det-note{display:flex;gap:var(--s2);font-size:13px;line-height:1.45;
+  color:var(--general-muted-foreground)}
+.agr-det-note svg{flex:0 0 auto;width:15px;height:15px;margin-top:2px;color:var(--general-accent)}
+.agr-det-act{margin-top:auto;padding-top:var(--s3);border-top:1px solid var(--hairline);
+  display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
 
 /* ---------- opportunity detail (full page) ---------- */
 .opp-page{display:flex;flex-direction:column;gap:var(--s6);max-width:760px;margin:0 auto;width:100%}
@@ -1438,85 +1490,53 @@ body.in-app .flow{display:none}
 
 /* ---------- category page (opens in a new tab) ----------
    Reached from an Opportunities category click. Keeps the real app chrome (top bar +
-   left nav) so it never feels orphaned, then — Airbnb-listing style — a wide white
-   content wrapper holds two columns: a hero CARD on the left (picture, the numbers,
-   and the agreements that deliver them — everything you need to act, in one place)
-   that stays in view while the supporting reading (terms, calculation, timeline,
-   contact) scrolls past on the right, each of those separated by a quiet hairline
-   instead of its own box.
+   left nav) so it never feels orphaned, then two stark-white columns: a sticky
+   typographic panel on the left — eyebrow, large title, one sentence, the money,
+   the actions — and the agreements plus the supporting reading on the right, each
+   separated by a quiet hairline rather than a box of its own. No photography: the
+   whitespace and the type carry the page.
    Spacing here uses only the 8pt tokens already defined in :root (s1–s24) — no
    one-off values — so every gap in this page is a multiple of 4px by design. */
-.cat-tab-wrap{max-width:1134px;margin:0 auto;background:var(--surface);
-  border:1px solid var(--hairline);border-radius:var(--rounded-xl);box-shadow:var(--shadow-sm);
-  padding:var(--s12)}
+/* Apple-style: stark white, no card around the page, and one accent. The blue is
+   scoped here rather than changed globally, so every button, chip and link on this
+   page inherits it while the rest of the app keeps the Visma blue. Green stays
+   reserved for money and nothing else. */
+.cat-tab-wrap{--general-primary:#0071e3;--brand-ice:#f0f7ff;--general-secondary:#e8f2ff;
+  max-width:1180px;margin:0 auto;background:var(--surface);
+  border:none;border-radius:0;box-shadow:none;padding:var(--s16) var(--s4) var(--s16)}
 /* no align-items:start — the hero column needs to STRETCH to the full height of the
    (much taller) right column, so its sticky child has room to stay pinned for the
    whole scroll instead of releasing almost immediately. This is what actually makes
    a sticky sidebar behave like one. */
-.cat-tab-grid{display:grid;grid-template-columns:380px 1fr;gap:var(--s16)}
+/* two columns kept: a sticky typographic panel on the left, the agreements and
+   the reading on the right. The left column is deliberately narrow, so the title
+   sets large against a short measure — that ratio is what makes it read as an
+   Apple page rather than just a big heading. */
+.cat-tab-grid{display:grid;grid-template-columns:320px 1fr;gap:var(--s12);align-items:start}
+/* the panel: eyebrow, title, one sentence, the money, the actions. No photo, no
+   box, no tint — the whitespace around it is doing the design work. */
+.cat-mast{position:sticky;top:var(--s8);display:flex;flex-direction:column;
+  padding:var(--s8) 0}
+.cat-mast-eyebrow{display:block;margin-bottom:var(--s4);font-size:12px;font-weight:650;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--general-primary)}
+.cat-mast h1{font-family:var(--font-sans);font-size:clamp(34px,3.4vw,44px);font-weight:800;
+  letter-spacing:-1.6px;line-height:1.05;text-wrap:balance}
+.cat-mast-sub{margin-top:var(--s4);font-size:var(--text-base);line-height:1.55;
+  color:var(--general-muted-foreground)}
+/* the money, given room rather than a tinted box */
+.cat-mast-fig{margin-top:var(--s12);display:flex;flex-direction:column;gap:var(--s1)}
+.cat-mast-fig b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-1.2px;line-height:1.1;color:var(--sentiment-positive)}
+.cat-mast-fig span{font-size:13px;color:var(--general-muted-foreground)}
+.cat-mast-note{margin-top:var(--s6);padding-top:var(--s6);border-top:1px solid var(--hairline);
+  font-size:13px;line-height:1.6;color:var(--general-muted-foreground)}
+.cat-mast-act{margin-top:var(--s8);display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+/* the agreement page's two actions stack in a 320px column, with the icon
+   buttons on their own row underneath */
+.cat-mast-act .btn-block{flex:1 1 100%}
+.cat-mast-act .btn{height:42px;padding:0 var(--s5,20px);border-radius:var(--rounded-full);
+  font-size:var(--text-sm)}
 
-/* no boxed container here — just the image, then the info, sitting directly in the
-   column. The image scrolls with the page like normal content; once it scrolls out
-   and .cat-tab-hero-body's top would pass the sticky offset, THAT locks in place —
-   so the eye reads it as "the picture scrolled away, then the panel caught" rather
-   than the whole thing being pinned from the first pixel of scroll. */
-.cat-tab-hero{display:flex;flex-direction:column}
-.cat-tab-hero-img{position:relative;height:220px;border-radius:var(--rounded-lg);
-  background-size:cover;background-position:center;overflow:hidden;flex:0 0 auto}
-/* fades the photo into the page's own background instead of a hard-edged crop —
-   "blend into the background" */
-.cat-tab-hero-img::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 35%,var(--surface) 100%)}
-/* each of the 4 groups below (identity, saving, agreements, actions) gets a full
-   32px apart — noticeably more than the 16-20px used *within* a group, so the eye
-   can tell "new section" from "next line of the same thing" at a glance */
-.cat-tab-hero-body{position:sticky;top:var(--s8);background:var(--surface);
-  padding-top:var(--s6);display:flex;flex-direction:column;gap:var(--s8)}
-.cat-tab-identity{display:flex;flex-direction:column;gap:var(--s3)}
-.cat-tab-chip{align-self:flex-start}
-.cat-tab-title{font-size:var(--text-2xl);letter-spacing:-.6px;line-height:1.2}
-.cat-tab-sub{font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground)}
-.cat-tab-save{padding:var(--s5,20px);border-radius:var(--rounded-md);background:#f4fcfb;
-  border:1px solid #00968930;display:flex;flex-direction:column;gap:var(--s1)}
-.cat-tab-save-l{font-size:var(--text-xs);font-weight:600;color:var(--sentiment-positive)}
-.cat-tab-save-v{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:700;
-  letter-spacing:-1px;color:var(--sentiment-positive)}
-.cat-tab-save-v small{margin-left:var(--s1);font-size:var(--text-sm);font-weight:600}
-.cat-tab-save-d{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid #00968924;
-  font-size:var(--text-xs);line-height:1.6;color:var(--general-muted-foreground)}
-
-/* the agreements list, now living inside the hero card's narrow column: still a
-   each one a small elevated card (shadow, not a hairline) so it pops off the page,
-   with a gap between cards doing the separating instead of a divider line. Content
-   is cut to the minimum: name, discount, saving — coverage amount now lives one
-   click away, on the agreement's own page. */
-.cat-tab-agrs{padding-top:var(--s6);border-top:1px solid var(--hairline)}
-.cat-tab-agrs h3{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:var(--s4)}
-.cat-agr-list{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
-.cat-agr-row{display:flex;align-items:center;gap:var(--s3);
-  padding:var(--s4);border-radius:var(--rounded-md);background:var(--surface);
-  box-shadow:var(--shadow-xs);transition:box-shadow var(--t-fast),transform var(--t-fast)}
-.cat-agr-row.clickable{cursor:pointer}
-.cat-agr-row.clickable:hover,.cat-agr-row.clickable:focus-visible{
-  box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.cat-agr-row.clickable:hover .agr-card-go{background:var(--general-primary);color:#fff}
-.cat-agr-row.on{background:#f4fcfb;box-shadow:none;border:1px solid #00968930}
-/* in a row there's no band to overlap, so the chip loses its offset */
-.cat-agr-row .agr-chip{margin:0;width:40px;height:40px}
-.cat-agr-row .agr-chip img{padding:5px}
-.cat-agr-row .agr-chip-i{font-size:var(--text-xs)}
-.cat-agr-row-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
-.cat-agr-row-name{font-size:var(--text-sm);font-weight:600;letter-spacing:-.1px}
-.cat-agr-row-disc{font-size:var(--text-xs);font-weight:600;color:var(--sentiment-positive)}
-.cat-agr-row-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:var(--s2)}
-.cat-agr-row-save{font-family:var(--font-sans);font-size:var(--text-sm);font-weight:700;
-  color:var(--sentiment-positive);white-space:nowrap}
-.cat-agr-row-save small{margin-left:2px;font-size:12px;font-weight:600}
-.cat-agr-row .agr-card-go{width:26px;height:26px}
-.cat-agr-row .agr-card-go svg{width:14px;height:14px}
-
-.cat-tab-hero-foot{display:flex;gap:var(--s3);padding-top:var(--s6);border-top:1px solid var(--hairline)}
 .cat-tab-icon-btn{width:38px;height:38px;display:grid;place-items:center;border-radius:var(--rounded-full);
   border:1px solid var(--hairline);background:var(--surface);color:var(--general-muted-foreground);
   cursor:pointer;transition:background var(--t-fast),color var(--t-fast),border-color var(--t-fast)}
@@ -1528,12 +1548,210 @@ body.in-app .flow{display:none}
    the flex container — no ad-hoc margin rules, and nothing here reaches outside
    .cat-tab-main to affect the shared .opp-sec class used by the original in-page
    opportunity views */
-.cat-tab-main{display:flex;flex-direction:column;gap:var(--s12);min-width:0}
-@media(max-width:860px){
-  .cat-tab-wrap{padding:var(--s6) var(--s4)}
-  .cat-tab-grid{grid-template-columns:1fr;gap:var(--s8)}
-  .cat-tab-hero-body{position:static}
+.cat-tab-main{display:flex;flex-direction:column;gap:var(--s16);min-width:0}
+/* container, not viewport: the canvas loses ~600px to the left nav and the
+   activity rail, so a 1500px window can still leave this page under 800px — a
+   media query never fires for that, a container query does */
+@container page (max-width:1000px){
+  /* the right column is too narrow for paired facts long before the page is */
+  .ac-feats{grid-template-columns:1fr}
+  .iv-stats{grid-template-columns:repeat(2,1fr)}
+  .iv-vs-row{grid-template-columns:1fr;gap:var(--s2)}
+  .pc-reasons,.cmp{grid-template-columns:1fr}
 }
+@container page (max-width:780px){
+  .cat-tab-grid{grid-template-columns:1fr;gap:var(--s8)}
+  .cat-mast{position:static;padding:0 0 var(--s8);
+    border-bottom:1px solid var(--hairline);margin-bottom:var(--s4)}
+}
+
+/* ---------- category page: the agreements ARE the page ----------
+   They used to be a shadow-xs list inside the narrow hero column — white on white,
+   which is why they read as background. Now they're bordered cards in the main
+   column, each carrying what actually decides the question: the money, the status,
+   four key facts, and two actions (open it, or push back on the price). */
+.cat-agrs-head{display:flex;align-items:flex-end;justify-content:space-between;
+  gap:var(--s4);margin-bottom:var(--s6);flex-wrap:wrap}
+.cat-agrs-head h3{font-size:var(--text-xl);letter-spacing:-.4px}
+.cat-agrs-head p{margin-top:var(--s1);font-size:var(--text-sm);line-height:1.5;
+  color:var(--general-muted-foreground);max-width:52ch}
+.cat-agr-cards{list-style:none;display:flex;flex-direction:column;gap:var(--s4)}
+.ac{border:1px solid var(--general-border);border-radius:var(--rounded-lg);
+  background:var(--surface);overflow:hidden;
+  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.ac:hover{border-color:#c3c8d0;box-shadow:var(--shadow-sm)}
+.ac.on{border-color:#00968947}
+.ac-h{display:flex;align-items:center;gap:var(--s4);padding:var(--s5,20px);flex-wrap:wrap}
+.ac-h .ac-id{flex:1 1 200px}
+.ac-h .agr-chip{margin:0;width:44px;height:44px;box-shadow:none}
+.ac-h .agr-chip img{padding:5px}
+.ac-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+.ac-id b{font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px}
+.ac-badges{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.ac-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;
+  border-radius:var(--rounded-full);font-size:12px;font-weight:650;white-space:nowrap}
+.ac-pill.live{background:#d9f2ef;color:var(--sentiment-positive)}
+.ac-pill.ready{background:var(--general-secondary);color:var(--general-primary)}
+.ac-pill.rate{background:var(--general-muted);color:var(--general-foreground)}
+.ac-pill svg{width:12px;height:12px}
+.ac-fig{flex:0 0 auto;text-align:right}
+.ac-fig b{display:block;font-size:var(--text-xl);font-weight:800;letter-spacing:-.5px;
+  color:var(--sentiment-positive);white-space:nowrap}
+.ac-fig span{font-size:12px;color:var(--general-muted-foreground)}
+/* the key facts — two columns so four of them cost one band, not four rows */
+.ac-feats{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);
+  gap:var(--s3) var(--s6);padding:var(--s4) var(--s5,20px);
+  border-top:1px solid var(--hairline);background:#fcfcfd}
+@media(max-width:760px){.ac-feats{grid-template-columns:1fr}}
+.ac-feats li{display:flex;gap:var(--s2);font-size:var(--text-sm);line-height:1.45}
+.ac-feats svg{flex:0 0 auto;width:16px;height:16px;margin-top:2px;color:var(--general-primary)}
+.ac-f{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;
+  padding:var(--s4) var(--s5,20px);border-top:1px solid var(--hairline)}
+.ac-f .spacer{flex:1 1 auto}
+/* the leverage line: the one number that makes a price challenge credible */
+.ac-lev{display:flex;align-items:center;gap:var(--s2);font-size:12.5px;
+  color:var(--general-muted-foreground)}
+.ac-lev svg{width:14px;height:14px;color:var(--general-accent)}
+.ac-lev b{color:var(--general-foreground);font-weight:650}
+
+/* ---------- price challenge: ask a supplier you already use for a better rate ----------
+   The real-world trigger is "a competitor quoted my mate less" — so the flow leads
+   with the reason, shows the evidence we can already put behind it, drafts the
+   request, and only then sends. Nothing is sent until the last step. */
+.pc-sup{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);margin-bottom:var(--s6)}
+.pc-sup .agr-chip{margin:0;width:40px;height:40px;box-shadow:none}
+.pc-sup-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.pc-sup-id b{font-size:var(--text-base);font-weight:700}
+.pc-sup-id span{font-size:13px;color:var(--general-muted-foreground)}
+.pc-q{font-size:var(--text-sm);font-weight:650;margin-bottom:var(--s3)}
+.pc-reasons{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s2)}
+@media(max-width:600px){.pc-reasons{grid-template-columns:1fr}}
+.pc-reason{display:flex;align-items:flex-start;gap:var(--s3);text-align:left;
+  padding:var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  background:var(--surface);cursor:pointer;transition:var(--t-fast)}
+.pc-reason:hover{border-color:var(--general-border);background:#fcfdff}
+.pc-reason[aria-pressed="true"]{border-color:var(--general-primary);background:var(--brand-ice);
+  box-shadow:0 0 0 1px var(--general-primary)}
+.pc-reason svg{flex:0 0 auto;width:18px;height:18px;margin-top:1px;color:var(--general-primary)}
+.pc-reason span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pc-reason b{font-size:var(--text-sm);font-weight:650}
+.pc-reason em{font-style:normal;font-size:12.5px;line-height:1.4;color:var(--general-muted-foreground)}
+/* the competitor fields only exist for the reason that needs them */
+.pc-quote{margin-top:var(--s4);padding:var(--s4);border-radius:var(--rounded-md);
+  background:var(--general-muted);display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+@media(max-width:600px){.pc-quote{grid-template-columns:1fr}}
+.pc-quote label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;
+  color:var(--general-muted-foreground)}
+.pc-quote input{height:38px;padding:0 var(--s3);border:1px solid var(--sidebar-border);
+  border-radius:var(--rounded-sm);background:var(--surface);font:inherit;font-size:var(--text-sm)}
+.pc-quote input:focus-visible{outline:2px solid var(--general-primary);outline-offset:-1px}
+/* what Advantage already knows — the material the AI drafts the request from */
+.pc-eviq{margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.pc-evi-h{display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s3);
+  font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.pc-evi-h img{width:15px;height:15px}
+.pc-evi{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+.pc-evi li{display:flex;gap:var(--s3);font-size:var(--text-sm);line-height:1.5;
+  color:var(--general-muted-foreground)}
+.pc-evi li b{color:var(--general-foreground);font-weight:650}
+.pc-evi-ic{flex:0 0 auto;width:22px;height:22px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary)}
+.pc-evi-ic svg{width:12px;height:12px}
+/* the drafted request */
+.pc-draft{border:1px solid var(--hairline);border-radius:var(--rounded-lg);overflow:hidden}
+.pc-draft-h{display:flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--hairline);background:#fcfcfd;font-size:12.5px;
+  color:var(--general-muted-foreground)}
+.pc-draft-h img{width:15px;height:15px}
+.pc-draft-h .spacer{flex:1 1 auto}
+.pc-draft textarea{display:block;width:100%;min-height:230px;padding:var(--s4);border:none;
+  resize:vertical;font:inherit;font-size:var(--text-sm);line-height:1.6;color:var(--general-foreground)}
+.pc-draft textarea:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
+.pc-next{margin-top:var(--s6)}
+.pc-next h4{font-size:var(--text-sm);font-weight:650;margin-bottom:var(--s3)}
+
+/* ---------- agreement page: three ways to see what it's worth ----------
+   Same hero, three interchangeable bodies behind a segmented control: the money
+   over time, the basket it comes from, and where the price sits against the market. */
+.agr-view-head{display:flex;align-items:flex-end;justify-content:space-between;
+  gap:var(--s4);margin-bottom:var(--s6);flex-wrap:wrap}
+.agr-view-head h3{font-size:var(--text-xl);letter-spacing:-.4px}
+.agr-view-head p{margin-top:var(--s1);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
+/* — variant 1: impact — the money, over time */
+.iv-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-bottom:var(--s8);
+  background:var(--hairline);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  overflow:hidden}
+@media(max-width:760px){.iv-stats{grid-template-columns:repeat(2,1fr)}}
+.iv-stat{display:flex;flex-direction:column;gap:var(--s1);padding:var(--s4) var(--s5,20px);
+  background:var(--surface)}
+.iv-stat span{font-size:12.5px;color:var(--general-muted-foreground)}
+.iv-stat b{font-size:var(--text-xl);font-weight:800;letter-spacing:-.5px;
+  font-variant-numeric:tabular-nums}
+.iv-stat b.pos{color:var(--sentiment-positive)}
+.iv-stat b small{font-size:12.5px;font-weight:600;color:var(--general-muted-foreground)}
+.iv-chart{margin-bottom:var(--s8)}
+.iv-chart figcaption{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s4);
+  font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.iv-chart figcaption b{font-size:var(--text-base);font-weight:650;color:var(--general-foreground)}
+.iv-svg{display:block;width:100%;height:auto;overflow:visible}
+.iv-x{display:flex;justify-content:space-between;margin-top:var(--s2);
+  font-size:11.5px;color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+/* the year, as two bars — what it costs now against what it would cost */
+.iv-vs{display:flex;flex-direction:column;gap:var(--s4)}
+.iv-vs-row{display:grid;grid-template-columns:150px 1fr auto;align-items:center;gap:var(--s4)}
+@media(max-width:600px){.iv-vs-row{grid-template-columns:1fr;gap:var(--s2)}}
+.iv-vs-l{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.iv-vs-l b{display:block;color:var(--general-foreground);font-weight:650}
+.iv-vs-bar{height:34px;border-radius:var(--rounded-sm);background:var(--general-muted)}
+.iv-vs-bar i{display:block;height:100%;border-radius:var(--rounded-sm);background:#c9ced6}
+.iv-vs-row.win .iv-vs-bar i{background:var(--sentiment-positive)}
+.iv-vs-v{font-size:var(--text-base);font-weight:700;font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.iv-vs-row.win .iv-vs-v{color:var(--sentiment-positive)}
+
+/* — variant 2: basket — where the saving actually comes from */
+.bk-tbl{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+.bk-tbl th{padding:0 var(--s3) var(--s3);text-align:left;font-size:12px;font-weight:650;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--general-muted-foreground);
+  border-bottom:1px solid var(--hairline)}
+.bk-tbl th:not(:first-child),.bk-tbl td:not(:first-child){text-align:right}
+.bk-tbl td{padding:var(--s3);border-bottom:1px solid var(--hairline);
+  font-variant-numeric:tabular-nums}
+.bk-tbl tbody tr:hover{background:#fcfdff}
+.bk-name{display:flex;flex-direction:column;gap:var(--s2);text-align:left}
+.bk-name b{font-weight:600;font-variant-numeric:normal}
+/* the per-line bar: full width is today's spend, the green stub is what comes off */
+.bk-bar{position:relative;height:6px;border-radius:3px;background:var(--general-muted);
+  max-width:220px}
+.bk-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;
+  background:var(--sentiment-positive)}
+.bk-tbl .pos{color:var(--sentiment-positive);font-weight:650}
+.bk-tbl tfoot td{border-bottom:none;border-top:2px solid var(--general-border);
+  padding-top:var(--s4);font-weight:700}
+.bk-note{margin-top:var(--s4);font-size:12.5px;line-height:1.55;
+  color:var(--general-muted-foreground)}
+
+/* — variant 3: position — where your price sits against the market */
+.pp{margin-bottom:var(--s8);padding:var(--s6) var(--s5,20px) var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg)}
+.pp-track{position:relative;height:10px;border-radius:5px;
+  background:linear-gradient(90deg,#d9f2ef,#e8eaee 55%,#ffe4d6)}
+.pp-mark{position:absolute;top:50%;transform:translate(-50%,-50%);width:3px;height:26px;
+  border-radius:2px;background:var(--general-foreground)}
+.pp-mark.you{background:var(--sentiment-negative)}
+.pp-mark.deal{background:var(--sentiment-positive)}
+.pp-lbl{position:absolute;transform:translateX(-50%);white-space:nowrap;
+  font-size:12px;font-weight:650}
+.pp-lbl small{display:block;font-weight:500;color:var(--general-muted-foreground)}
+.pp-top{position:relative;height:46px}
+.pp-bot{position:relative;height:46px;margin-top:var(--s2)}
+.pp-lbl.you{transform:translateX(-100%);text-align:right;color:var(--sentiment-negative)}
+.pp-lbl.deal{color:var(--sentiment-positive)}
+.pp-scale{display:flex;justify-content:space-between;margin-top:var(--s2);
+  font-size:11.5px;color:var(--general-muted-foreground)}
 
 /* ---------- data confidence: estimated vs verified numbers ----------
    A number is either VERIFIED (from the customer's own invoices/agreement — solid,
@@ -1555,11 +1773,6 @@ body.in-app .flow{display:none}
   background:var(--general-muted);color:var(--general-muted-foreground);font-size:11px;font-weight:700;
   letter-spacing:.04em;text-transform:uppercase}
 .est-chip svg{width:11px;height:11px}
-.cat-tab-save.estimated{background:var(--general-muted);border-color:var(--sidebar-border)}
-.cat-tab-save.estimated .cat-tab-save-l,.cat-tab-save.estimated .cat-tab-save-v{color:var(--general-foreground)}
-.cat-tab-save-link{margin-top:var(--s1);display:inline-block;font-size:12px;font-weight:600;
-  color:var(--general-primary);text-decoration:none}
-.cat-tab-save-link:hover{text-decoration:underline}
 
 /* ---------- data center: one place to see and fix every estimated number ---------- */
 .dc-page{display:flex;flex-direction:column;gap:var(--s10,40px);max-width:820px;margin:0 auto;width:100%}
@@ -1717,7 +1930,8 @@ body.in-app .flow{display:none}
   display:none;place-items:center;background:var(--brand-ice);color:var(--general-primary)}
 .nc-calc-ic svg{width:20px;height:20px; display:none;}
 .nc-calc-txt{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:2px}
-.nc-calc-txt b{color:var(--general-foreground);font-size:16px;font-weight:600}
+.nc-calc-txt b{font-family:var(--font-sans);color:var(--general-foreground);
+  font-size:var(--text-lg);font-weight:700;letter-spacing:-.2px}
 .nc-calc-txt>span{font-size:15px;line-height:1.45;color:var(--general-muted-foreground)}
 /* the CTA is a stock .btn.btn-primary — this class only adds the chevron nudge,
    so hover/active/disabled all come from the design system */
@@ -1815,6 +2029,128 @@ body.in-app .flow{display:none}
 .nc-mini-list .opp-legend-txt{font-size:16px}
 .nc-mini-list .opp-legend-amt{font-size:16px}
 
+/* ---------- "savings by category", four ways ----------
+   The same six figures, read four different ways. The list is a menu — good for
+   getting somewhere. The other three each answer a question the list can't:
+   where is the money concentrated (Bars), what shape is the whole (Split), and
+   what do I do first (Focus). One green, stepped by rank, carries all three. */
+.cv-head{display:flex;justify-content:flex-end;margin:var(--s4) 0 var(--s6)}
+.cv-note{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--hairline);
+  font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
+
+/* — bars: ranked by money, the bar IS the comparison so the icons come off — */
+.cv-bars{list-style:none;display:flex;flex-direction:column;gap:var(--s5,20px)}
+.cv-bar-row{display:grid;grid-template-columns:1fr auto;gap:var(--s2) var(--s4);
+  cursor:pointer;background:none;border:none;padding:0;text-align:left;width:100%}
+.cv-bar-row:hover .cv-bar-n{text-decoration:underline;text-underline-offset:3px}
+.cv-bar-n{font-size:16px;font-weight:600;letter-spacing:-.2px}
+.cv-bar-v{font-size:16px;font-weight:700;color:var(--sentiment-positive);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.cv-bar-track{grid-column:1 / -1;height:2px;border-radius:1px;background:var(--general-muted)}
+.cv-bar-track i{display:block;height:100%;border-radius:1px;
+  background:var(--sentiment-positive);transition:width var(--t-slow)}
+
+/* — split: one strip showing the whole, then the parts — */
+.cv-split-bar{display:flex;height:52px;border-radius:var(--rounded-md);overflow:hidden;
+  gap:2px;background:var(--surface)}
+.cv-split-seg{position:relative;background:var(--sentiment-positive);cursor:pointer;
+  border:none;padding:0;transition:filter var(--t-fast)}
+.cv-split-seg:hover{filter:brightness(1.12)}
+.cv-split-seg:first-child{border-radius:var(--rounded-md) 0 0 var(--rounded-md)}
+.cv-split-seg:last-child{border-radius:0 var(--rounded-md) var(--rounded-md) 0}
+.cv-split-legend{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);
+  gap:var(--s3) var(--s6);margin-top:var(--s6)}
+@container page (max-width:900px){.cv-split-legend{grid-template-columns:1fr}}
+.cv-split-legend li{display:flex;align-items:baseline;gap:var(--s2);
+  font-size:15px;line-height:1.4}
+.cv-split-dot{flex:0 0 auto;width:9px;height:9px;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive);transform:translateY(-1px)}
+.cv-split-n{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cv-split-v{flex:0 0 auto;font-weight:700;font-variant-numeric:tabular-nums}
+.cv-split-pct{flex:0 0 auto;min-width:34px;text-align:right;font-size:13px;
+  color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+
+/* — focus: the biggest one gets the room, the rest stay a quiet list — */
+.cv-focus-lead{display:block;width:100%;text-align:left;background:none;border:none;
+  padding:0 0 var(--s6);cursor:pointer;border-bottom:1px solid var(--hairline)}
+.cv-focus-eyebrow{display:block;font-size:12px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.cv-focus-v{display:block;margin-top:var(--s3);font-family:var(--font-sans);
+  font-size:var(--text-4xl);font-weight:800;letter-spacing:-1.4px;line-height:1;
+  color:var(--sentiment-positive)}
+.cv-focus-n{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s3);
+  font-size:var(--text-lg);font-weight:650;letter-spacing:-.2px}
+.cv-focus-n svg{width:17px;height:17px;color:var(--general-primary)}
+.cv-focus-sub{display:block;margin-top:var(--s2);font-size:14px;line-height:1.5;
+  color:var(--general-muted-foreground)}
+.cv-rest{list-style:none;display:flex;flex-direction:column;margin-top:var(--s2)}
+.cv-rest-row{display:flex;align-items:center;gap:var(--s3);width:100%;
+  padding:var(--s3) 0;background:none;border:none;border-bottom:1px solid var(--hairline);
+  cursor:pointer;text-align:left}
+.cv-rest-row:last-child{border-bottom:none}
+.cv-rest-row:hover .cv-rest-n{text-decoration:underline;text-underline-offset:3px}
+.cv-rest-n{flex:1 1 auto;min-width:0;font-size:15px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.cv-rest-v{flex:0 0 auto;font-size:15px;font-weight:650;color:var(--sentiment-positive);
+  font-variant-numeric:tabular-nums}
+.cv-rest-go{flex:0 0 auto;width:15px;height:15px;color:var(--general-muted-foreground)}
+
+/* ---------- agreement card, "simple" variant ----------
+   One sentence per card: the supplier's mark, the money, and a single round
+   affordance. No photo, no bullets, no second action — the whole card is the
+   button. White cards on a tinted tray (the same 8px-inset pattern the summary
+   block uses, so the radii stay concentric), laid out as ONE horizontal
+   scrolling row: the section costs one row of height however many agreements
+   there are, instead of two grid rows that push everything below the fold. */
+.agr-simple-tray{margin-top:var(--s8);padding:var(--s2);
+  border-radius:var(--rounded-2xl);background:var(--brand-ice)}
+/* wheel, trackpad and touch all still scroll — only the bar is hidden, same as
+   the supplier shelves */
+.agr-simple-row{--aw:344px;list-style:none;display:flex;gap:var(--s2);
+  overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.agr-simple-row::-webkit-scrollbar{display:none}
+/* the <li> wrappers default to flex:0 1 auto, i.e. shrinkable — the cards only
+   held their width because the button inside is fixed. Make the intent explicit
+   so the row overflows (and therefore scrolls) rather than compressing. */
+.agr-simple-row>li{flex:0 0 auto;display:block}
+/* prev/next, because the scrollbar is hidden and a mouse has no horizontal
+   wheel — same control the supplier shelves use, so it behaves identically */
+.agr-simple-nav{display:flex;gap:var(--s2)}
+@container page (max-width:700px){.agr-simple-row{--aw:82%}}
+.agr-simple{flex:0 0 auto;width:var(--aw);min-height:264px;scroll-snap-align:start;
+  display:flex;flex-direction:column;gap:var(--s4);text-align:left;cursor:pointer;
+  padding:var(--s6);border:none;border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:var(--shadow-xs);
+  transition:box-shadow var(--t-fast),transform .12s ease}
+.agr-simple:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.agr-simple:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+/* mark and name on one line: the supplier is the first thing to identify, and
+   putting the name here frees the footer to carry the category alone */
+.agr-simple-h{display:flex;align-items:center;gap:var(--s3);min-width:0}
+.agr-simple-n{flex:1 1 auto;min-width:0;font-family:var(--font-sans);font-size:var(--text-base);
+  font-weight:700;letter-spacing:-.2px;line-height:1.25;text-wrap:pretty;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* the chip is absolutely placed on the photo card, so it needs resetting here */
+.agr-simple .agr-chip{position:static;margin:0;width:56px;height:56px;box-shadow:none}
+/* the statement carries the whole pitch, with the money set in green inside the
+   sentence rather than pulled out as a separate figure — that is what makes it
+   read as one line of plain speech instead of another stat tile */
+.agr-simple-t{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:700;
+  letter-spacing:-.4px;line-height:1.28;text-wrap:pretty}
+.agr-simple-t b{font-weight:700;color:var(--sentiment-positive)}
+.agr-simple-f{margin-top:auto;display:flex;align-items:center;gap:var(--s3)}
+.agr-simple-c{flex:1 1 auto;min-width:0;font-size:14px;line-height:1.35;
+  color:var(--general-muted-foreground);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+/* an arrow, not a plus: this opens the agreement, it doesn't add anything.
+   The nudge on hover is the same cue the photo card's .agr-go uses. */
+.agr-simple-go{flex:0 0 auto;width:36px;height:36px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--general-foreground);color:var(--surface);
+  transition:background var(--t-fast),transform var(--t-fast)}
+.agr-simple-go svg{width:17px;height:17px}
+.agr-simple:hover .agr-simple-go{background:var(--general-primary);transform:translateX(3px)}
+
 /* the saving-assistant advisory card: a semicircle gauge, a short recommended-
    actions list (icon + text + value), and a full-bleed primary button pinned
    to the bottom of the card */
@@ -1832,7 +2168,7 @@ body.in-app .flow{display:none}
 .nc-advisory-title{margin-top:var(--s1);text-align:center}
 .nc-rec-list{margin-top:var(--s5,20px);list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
 .nc-rec-row{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);
-  border-radius:var(--rounded-md);background:var(--general-muted)}
+  border-radius:var(--rounded-md);background:var(--brand-ice)}
 .nc-rec-ic{flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-md);
   display:grid;place-items:center;background:var(--surface);color:var(--general-primary)}
 .nc-rec-ic svg{width:17px;height:17px}
@@ -2956,12 +3292,11 @@ function renderDash(){
         <img src="${agrPhotoUrl(a.n, r.id)}" alt="" loading="lazy">
         ${agrLabel(!!a.req)}
         ${agrFav(a.n)}
-        ${agrLogoChip(a.n)}
       </div>
+      ${agrLogoChip(a.n)}
       <span class="agr-card-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</span>
       <span class="agr-card-meta">${r.n} · −${rate}%</span>
-      <span class="agr-card-price"><b>${saveFig(a.save, isEstimated(a))} kr.</b><small>/ year</small>
-        <span class="agr-card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+      <span class="agr-card-price"><b>${saveFig(a.save, isEstimated(a))} kr.</b><small>/ year</small><span class="agr-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
     </li>`;
   }).join('') || `<p class="opp-empty">Every agreement is already active — nothing open right now.</p>`;
 
@@ -3137,6 +3472,112 @@ const NC_SIZE_LABEL = {small:'small (under 20 employees)', medium:'medium (20–
 
 /* the agreement-level cut of the same story: not "what you already spend with
    them" (unknown) but "how many companies like you already use this one" */
+/* The "recommendation" card. Redrawn from a reference that had four competing
+   actions and no real number. What changed and why:
+     · "Explore / evaluate" appeared twice (a pill AND the primary button) —
+       one primary action now, with terms as a quiet secondary.
+     · the two pills read as tabs but behaved as buttons — removed.
+     · "Up to 70% savings" is a roof on an unknown; replaced with the actual
+       money and the basis it rests on.
+     · "Advantage agreement" as a subtitle said nothing — every agreement here is
+       one. The category is useful, so that's the subtitle instead.
+     · "Strong published savings potential" is marketing, not information.
+     · the four-line "HOW TO GET STARTED" panel is one honest line: setup is
+       needed, and we only send the request once you agree it fits. */
+function ncAgreementCardDetail(r, a, idx, pos){
+  const rate = Math.round(a.save / a.covers * 100);
+  const lead = pos === 0;
+  return `
+    <li class="agr-det${lead ? ' lead' : ''}" data-cat="${r.id}" data-idx="${idx}"
+      style="--b:${brandOf(a.n)}">
+      ${lead ? '<span class="agr-det-eyebrow">Worth reviewing first</span>' : ''}
+      <div class="agr-det-top">
+        ${agrLogoChip(a.n)}
+        <span class="agr-det-id"><b>${a.n}</b><span>${r.n}</span></span>
+        ${agrFav(a.n)}
+      </div>
+      <div class="agr-det-fig">
+        <b>typically +${fmt(a.save)} kr.<small> / year</small></b>
+        <span>−${rate}% on the ${fmt(a.covers)} kr. you already buy here</span>
+      </div>
+      <ul class="agr-det-why">
+        <li>${CAT_PITCH[r.id] || 'Group price on what you already buy'}</li>
+        <li>Same supplier, same delivery — only the invoice price changes</li>
+      </ul>
+      <p class="agr-det-note">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Needs setup before first use. We only send the request once you agree it fits.</span>
+      </p>
+      <div class="agr-det-act">
+        <button type="button" class="btn btn-primary btn-sm" data-open="${idx}">Explore this agreement</button>
+        <button type="button" class="linkbtn" data-open="${idx}">What you get</button>
+      </div>
+    </li>`;
+}
+
+/* One line per agreement, written for that agreement. A shared template
+   ("Typically +X kr. a year on <category>") made the top three cards read as the
+   same sentence three times over with only the figure changing — and since the
+   top three are all building materials, even the category repeated. Each line
+   names what is actually different about this one; {m} is where the money goes. */
+const AGR_PITCH = {
+  'Stark Byggecenter':     'Your biggest materials supplier — the same timber and board, {m} a year cheaper.',
+  'Bygma Framework':       'Every line on their invoices is at list price. Group terms are worth {m} a year.',
+  'Ahlsell Nordic':        'One switch covers materials and installation lines — {m} a year across both.',
+  'Optimera Erhverv':      'Small, frequent orders at the group rate: {m} a year.',
+  'Saint-Gobain Frame':    'Newly negotiated — insulation and board at group price, {m} a year.',
+  'Hilti Erhverv':         'Tools with service and calibration inside the agreement, {m} a year.',
+  'Würth Nordic':          'Consumables bought in small batches, where list price hurts most — {m} a year.',
+  'Engelbert Strauss':     'Workwear reorders on a fixed cycle, so the {m} a year is steady.',
+  'Q8 Fuel Card':          'Pump price fixed for twelve months — {m} a year, whatever the market does.',
+  'Circle K Business':     'Moves the account you already have onto group terms: {m} a year.',
+  'Shell Fleet Nordic':    'A second fuel card on the same group terms, {m} a year.',
+  'Lyreco Erhverv':        'The widest gap against list price in your trade — {m} a year.',
+  'Contorland':            'Everyday office supplies at the group rate, {m} a year.',
+  'Cramo Danmark':         'Machines and lifts by the day at group rate — {m} a year.',
+  'GSV Materieludlejning': 'Site plant hire with no volume commitment, {m} a year.',
+  'Riwal Lifting':         'Lifts and platforms on negotiated tariffs: {m} a year.',
+  'DSV Road':              'Pallets and parcels on group tariffs — {m} a year.',
+  'GLS Erhverv':           'Parcel freight, {m} a year under what your invoices show.',
+  'Danske Fragtmænd':      'Domestic freight at the group rate, {m} a year.',
+  'Telenor Erhverv':       'Lines and hardware on one bill — {m} a year cheaper.',
+  'Dustin IT':             'Laptops and docks at group price, {m} a year.',
+  'Snickers Workwear':     'Newly negotiated workwear terms, worth {m} a year.',
+  'Marius Pedersen':       'Containers and site services bundled — {m} a year.',
+  'Ragn-Sells':            'Sorting and disposal at the group rate, {m} a year.'
+};
+/* seeded off the name, not the position, so a card keeps its wording whatever
+   order the list ends up in */
+const AGR_PITCH_FALLBACK = [
+  'Group price on what you already buy — {m} a year.',
+  '{m} a year off the prices on your invoices today.',
+  'Same supplier, same delivery, {m} a year cheaper.'
+];
+const agrLine = a =>
+  (AGR_PITCH[a.n] || AGR_PITCH_FALLBACK[seedOf(a.n) % AGR_PITCH_FALLBACK.length])
+    .replace('{m}', `<b>+${fmt(a.save)} kr.</b>`);
+
+/* the simplified card: one sentence, one affordance. Deliberately says less
+   than either of the other two — no photo, no status label, no fav toggle, no
+   second action — so a row of eight stays scannable in a single sweep. */
+function ncAgreementCardSimple(r, a, idx){
+  return `
+    <li><button type="button" class="agr-simple" data-cat="${r.id}" data-idx="${idx}"
+      style="--b:${brandOf(a.n)}" aria-label="See the ${a.n} agreement, typically ${fmt(a.save)} kroner a year">
+      <span class="agr-simple-h">
+        ${agrLogoChip(a.n)}
+        <span class="agr-simple-n">${a.n}</span>
+      </span>
+      <span class="agr-simple-t">${agrLine(a)}</span>
+      <span class="agr-simple-f">
+        <span class="agr-simple-c">${r.n}</span>
+        <span class="agr-simple-go" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </span>
+    </button></li>`;
+}
+
 function ncAgreementCard(r, a, idx){
   const rate = Math.round(a.save / a.covers * 100);
   return `
@@ -3146,12 +3587,11 @@ function ncAgreementCard(r, a, idx){
         <img src="${agrPhotoUrl(a.n, r.id)}" alt="" loading="lazy">
         ${agrLabel(false)}
         ${agrFav(a.n)}
-        ${agrLogoChip(a.n)}
       </div>
+      ${agrLogoChip(a.n)}
       <span class="agr-card-name">${a.n}</span>
       <span class="agr-card-meta">${r.n} · −${rate}%</span>
-      <span class="agr-card-price"><b>typically +${fmt(a.save)} kr.</b><small>/ year</small>
-        <span class="agr-card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+      <span class="agr-card-price"><b>typically +${fmt(a.save)} kr.</b><small>/ year</small><span class="agr-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
     </li>`;
 }
 
@@ -3320,6 +3760,108 @@ function ncMiniCatRow(r){
     </li>`;
 }
 
+/* the four category views. ncMiniCatRow (the menu) already exists above; these
+   three take the same rows and answer a different question with them. Each is
+   sorted by MONEY, not by discount rate — a ranking that isn't ranked by the
+   figure it prints would be a lie about what matters. */
+const CAT_VIEWS = [
+  {k:'list',  n:'List'},
+  {k:'bars',  n:'Bars'},
+  {k:'split', n:'Split'},
+  {k:'focus', n:'Focus'}
+];
+
+function catRowsByMoney(rows){
+  return rows.map(r => ({r, save: Math.round(r.amt * NC_SIZE_MULT[ncSize] * r.rate / 100)}))
+             .sort((a, b) => b.save - a.save);
+}
+
+/* ranked rows with a 2px rule under each: the rule is the category's share of the
+   TOTAL, not of the largest category. Against-the-largest gave a shape but no fact —
+   "tools is 38% of materials" is not something anyone acts on. Share of the whole is.
+   The icons come off: two visual systems in one row makes neither of them read. */
+function catViewBars(rows){
+  const items = catRowsByMoney(rows);
+  const total = items.reduce((s, x) => s + x.save, 0);
+  return `
+    <ul class="cv-bars">
+      ${items.map(({r, save}, i) => `
+      <li><button type="button" class="cv-bar-row" data-cat="${r.id}">
+        <span class="cv-bar-n">${r.n}</span>
+        <span class="cv-bar-v">${saveFig(save, true).replace('typically ', '')} kr.</span>
+        <span class="cv-bar-track"><i style="width:${(save / total * 100).toFixed(1)}%;
+          opacity:${(1 - i * 0.11).toFixed(2)}"></i></span>
+      </button></li>`).join('')}
+    </ul>
+    <p class="cv-note">Ranked biggest first. Each rule is that category's share of the whole
+      ${fmt(total)} kr. — the grey behind it is everything else.</p>`;
+}
+
+/* one strip for the whole, then the parts — the only view that answers
+   "how much of the opportunity is in one place?" */
+function catViewSplit(rows){
+  const items = catRowsByMoney(rows);
+  const total = items.reduce((s, x) => s + x.save, 0);
+  return `
+    <div class="cv-split-bar">
+      ${items.map(({r, save}, i) => `
+        <button type="button" class="cv-split-seg" data-cat="${r.id}"
+          style="flex:${save};opacity:${(1 - i * 0.13).toFixed(2)}"
+          title="${r.n} — ${fmt(save)} kr."
+          aria-label="${r.n}, ${fmt(save)} kroner, ${Math.round(save / total * 100)} percent"></button>`).join('')}
+    </div>
+    <ul class="cv-split-legend">
+      ${items.map(({r, save}, i) => `
+      <li>
+        <span class="cv-split-dot" style="opacity:${(1 - i * 0.13).toFixed(2)}"></span>
+        <span class="cv-split-n">${r.n}</span>
+        <span class="cv-split-v">${fmtCompact(save)}</span>
+        <span class="cv-split-pct">${Math.round(save / total * 100)}%</span>
+      </li>`).join('')}
+    </ul>
+    <p class="cv-note">The strip is the whole ${fmt(total)} kr. opportunity, split by category.
+      <b>${items[0].r.n}</b> alone is ${Math.round(items[0].save / total * 100)}% of it.</p>`;
+}
+
+/* the biggest one gets the room, the rest stay a quiet list — for someone who
+   wants one answer rather than six */
+function catViewFocus(rows){
+  const items = catRowsByMoney(rows);
+  const [lead, ...rest] = items;
+  return `
+    <button type="button" class="cv-focus-lead" data-cat="${lead.r.id}">
+      <span class="cv-focus-eyebrow">Start here</span>
+      <span class="cv-focus-v">${saveFig(lead.save, true).replace('typically ', '')} kr.</span>
+      <span class="cv-focus-n">${lead.r.n}
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="cv-focus-sub">Your largest opportunity — ${lead.r.rate}% under list price on
+        what companies your size buy here every year.</span>
+    </button>
+    <ul class="cv-rest">
+      ${rest.map(({r, save}) => `
+      <li><button type="button" class="cv-rest-row" data-cat="${r.id}">
+        <span class="cv-rest-n">${r.n}</span>
+        <span class="cv-rest-v">+${fmt(save)} kr.</span>
+        <svg class="cv-rest-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button></li>`).join('')}
+    </ul>`;
+}
+
+/* the list keeps its own column header; the other three don't need one */
+function catViewBody(rows){
+  if(catViewStyle === 'bars')  return catViewBars(rows);
+  if(catViewStyle === 'split') return catViewSplit(rows);
+  if(catViewStyle === 'focus') return catViewFocus(rows);
+  return `
+    <div class="nc-mini-colhead">
+      <span class="nc-mini-colhead-sp"></span>
+      <span class="nc-mini-colhead-amt">Savings</span>
+      <span class="nc-mini-colhead-go"></span>
+    </div>
+    <ul class="opp-legend nc-mini-list">${rows.map(r => ncMiniCatRow(r)).join('')}</ul>`;
+}
+
 /* the getting-started checklist is parked, not deleted — the markup below still
    works and the account/upload/ERP state still feeds it, so flipping this back to
    true restores the widget exactly as it was. */
@@ -3435,12 +3977,13 @@ function renderNewCustomerDash(){
               <div class="nc-bento-cell">
                 <h2>Savings opportunity within categories</h2>
                 <p class="nc-sub nc-mini-sub">What peers like you save per year, in each category</p>
-                <div class="nc-mini-colhead">
-                  <span class="nc-mini-colhead-sp"></span>
-                  <span class="nc-mini-colhead-amt">Savings</span>
-                  <span class="nc-mini-colhead-go"></span>
+                  <div class="cv-head">
+                  <div class="seg" role="group" aria-label="How to show the categories">
+                    ${CAT_VIEWS.map(v => `<button type="button" data-cv="${v.k}"
+                      aria-pressed="${catViewStyle === v.k}">${v.n}</button>`).join('')}
+                  </div>
                 </div>
-                <ul class="opp-legend nc-mini-list">${sixCats.map(r => ncMiniCatRow(r)).join('')}</ul>
+                ${catViewBody(sixCats)}
               </div>
               <div class="nc-bento-cell nc-advisory">
                 <span class="nc-advisory-eyebrow">Saving assistant</span>
@@ -3484,15 +4027,77 @@ function renderNewCustomerDash(){
           </section>
 
           <section class="nc-sec">
-            <h2>Opportunities by agreement</h2>
-            <p class="nc-sub">What other companies use and save.</p>
-            <ol class="opp-list opp-list-bars nc-agr-grid">${topAgrs.map(({r,a,i}) => ncAgreementCard(r, a, i)).join('')}</ol>
+            <div class="nc-sec-head">
+              <div>
+                <h2>Opportunities by agreement</h2>
+                <p class="nc-sub">What other companies use and save.</p>
+              </div>
+              <div class="agr-simple-nav">
+                ${agrCardStyle === 'simple' ? `
+                  <button type="button" class="snav" data-ascroll="-1"
+                    aria-controls="agrSimpleRow" aria-label="Previous agreements" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button type="button" class="snav" data-ascroll="1"
+                    aria-controls="agrSimpleRow" aria-label="More agreements">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>` : ''}
+                <div class="seg" role="group" aria-label="Card style">
+                  <button type="button" data-style="simple" aria-pressed="${agrCardStyle === 'simple'}">Simple</button>
+                  <button type="button" data-style="photo" aria-pressed="${agrCardStyle === 'photo'}">Photo</button>
+                  <button type="button" data-style="detail" aria-pressed="${agrCardStyle === 'detail'}">Detail</button>
+                </div>
+              </div>
+            </div>
+            ${agrCardStyle === 'detail'
+              ? `<ol class="agr-det-grid">${topAgrs.map(({r,a,i}, pos) => ncAgreementCardDetail(r, a, i, pos)).join('')}</ol>`
+              : agrCardStyle === 'simple'
+              ? `<div class="agr-simple-tray"><ol class="agr-simple-row" id="agrSimpleRow">${topAgrs.map(({r,a,i}) => ncAgreementCardSimple(r, a, i)).join('')}</ol></div>`
+              : `<ol class="opp-list opp-list-bars nc-agr-grid">${topAgrs.map(({r,a,i}) => ncAgreementCard(r, a, i)).join('')}</ol>`}
           </section>
         </div>
       </div>
     </div>`;
 
   wireAgrFav('#viewNewCustomer');
+  $$('#viewNewCustomer .seg [data-style]').forEach(b => b.addEventListener('click', () => {
+    agrCardStyle = b.dataset.style; persist(); renderNewCustomerDash();
+  }));
+  $$('#viewNewCustomer .seg [data-cv]').forEach(b => b.addEventListener('click', () => {
+    catViewStyle = b.dataset.cv; persist(); renderNewCustomerDash();
+  }));
+  /* the three non-list category views use real <button>s, so they wire straight
+     rather than going through the .opp-legend-item keyboard handling below */
+  $$('#viewNewCustomer .cv-bar-row, #viewNewCustomer .cv-split-seg, ' +
+     '#viewNewCustomer .cv-focus-lead, #viewNewCustomer .cv-rest-row')
+    .forEach(b => b.addEventListener('click', () =>
+      window.open(catTabUrl(b.dataset.cat), '_blank')));
+  $$('#viewNewCustomer .agr-simple').forEach(b => b.addEventListener('click', () =>
+    window.open(catTabUrl(b.dataset.cat, +b.dataset.idx), '_blank')));
+  /* the row's scrollbar is hidden, so the arrows are the only mouse path along
+     it — one visible page per press, disabled at each end */
+  const aRow = $('#agrSimpleRow');
+  if(aRow){
+    const navs = $$('#viewNewCustomer [data-ascroll]');
+    const syncNav = () => {
+      const max = aRow.scrollWidth - aRow.clientWidth;
+      navs.forEach(b => b.disabled = +b.dataset.ascroll < 0
+        ? aRow.scrollLeft <= 1
+        : max <= 1 || aRow.scrollLeft >= max - 1);
+    };
+    navs.forEach(b => b.addEventListener('click', () => aRow.scrollBy({
+      left:+b.dataset.ascroll * Math.max(200, aRow.clientWidth - 56),
+      behavior:RM ? 'auto' : 'smooth'
+    })));
+    aRow.addEventListener('scroll', syncNav, {passive:true});
+    if(window.ResizeObserver) new ResizeObserver(syncNav).observe(aRow);
+    syncNav();
+  }
+  /* the detail card is not one big hit area — only its two actions open it */
+  $$('#viewNewCustomer .agr-det [data-open]').forEach(b => b.addEventListener('click', () => {
+    const li = b.closest('.agr-det');
+    window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
+  }));
   $$('#viewNewCustomer .opp-legend-item, #viewNewCustomer .agr-card').forEach(el => {
     const go = () => window.open(catTabUrl(el.dataset.cat, el.dataset.idx ? +el.dataset.idx : undefined), '_blank');
     el.addEventListener('click', go);
@@ -4101,6 +4706,14 @@ let activityMini = false;
 /* saved agreements. Anette asked for a way to "select one or more that you want
    to check into or read more about" — this is that, as the card's fav toggle. */
 let savedAgr = new Set();
+/* three ways to show an agreement: 'simple' is the one-sentence scrolling card
+   (the default), 'photo' is the marketplace card, 'detail' argues the case.
+   Toggled per user, remembered. */
+let agrCardStyle = 'simple';
+/* which of the three agreement-page bodies is showing */
+let agrViewStyle = 'impact';
+/* four readings of the category figures: a menu, a ranking, a whole, a first move */
+let catViewStyle = 'list';
 /* a verified figure is a fact: "+12.400". An estimated one is a typical outcome,
    not a cap: "typically +12.400". It used to read "up to", which the team rejected
    — "up to" puts a roof on a number that can just as easily come out higher. */
@@ -4567,7 +5180,7 @@ function catTabShell(heroHTML, mainHTML){
   $('#viewCatTab').innerHTML = `
     <div class="cat-tab-wrap">
       <div class="cat-tab-grid">
-        <aside class="cat-tab-hero">${heroHTML}</aside>
+        <aside class="cat-mast">${heroHTML}</aside>
         <div class="cat-tab-main">${mainHTML}</div>
       </div>
     </div>`;
@@ -4597,30 +5210,25 @@ function wireCatTabContact(askText){
   if(ai) ai.addEventListener('click', () => alert(`Not part of this prototype — the AI assistant would open here to answer: "${askText}"`));
 }
 
-/* no boxed card — just a photo (real Unsplash image, faded into the page background)
-   above the numbers, then the info panel that turns sticky once the photo scrolls
-   past. extraHTML — the agreements list — is optional, since the single-agreement
-   page reuses this same shape without it. */
+/* Type, not photography. A category page opens on an eyebrow, one very large
+   title, one sentence of context and the money — everything else is whitespace.
+   The share/favourite controls sit as quiet icon buttons beside the primary
+   action rather than in a footer of their own. */
 function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML, estimated){
   return `
-    <div class="cat-tab-hero-img" style="background-image:url('${catPhotoUrl(catId)}')" aria-hidden="true"></div>
-    <div class="cat-tab-hero-body">
-      <div class="cat-tab-identity">
-        <span class="chip chip-soft cat-tab-chip">${tag}</span>
-        <h1 class="cat-tab-title">${title}</h1>
-        <p class="cat-tab-sub">${sub}</p>
-      </div>
-      <div class="cat-tab-save${estimated ? ' estimated' : ''}">
-        <span class="cat-tab-save-l">Potential yearly saving</span>
-        <b class="cat-tab-save-v">${saveFig(save, estimated)} <small>kr./year</small></b>
-        <p class="cat-tab-save-d">${desc}</p>
-      </div>
+    <span class="cat-mast-eyebrow">${tag}</span>
+    <h1 class="cat-tab-title">${title}</h1>
+    <p class="cat-mast-sub">${sub}</p>
+    <div class="cat-mast-fig">
+      <b>${saveFig(save, estimated)} kr.</b>
+      <span>potential saving a year${estimated ? ' · benchmark estimate' : ''}</span>
+    </div>
+    <p class="cat-mast-note">${desc}</p>
+    <div class="cat-mast-act">
       ${extraHTML || ''}
-      <footer class="cat-tab-hero-foot">
-        <button class="cat-tab-icon-btn" id="catTabShare" aria-label="Share this page" data-tip="Share">${catTabShareSvg}</button>
-        <button class="cat-tab-icon-btn${catTabFavs.has(title) ? ' on' : ''}" id="catTabFav"
-          aria-label="Save to favourites" aria-pressed="${catTabFavs.has(title)}" data-tip="Favourite">${catTabFavSvg}</button>
-      </footer>
+      <button class="cat-tab-icon-btn" id="catTabShare" aria-label="Share this page" data-tip="Share">${catTabShareSvg}</button>
+      <button class="cat-tab-icon-btn${catTabFavs.has(title) ? ' on' : ''}" id="catTabFav"
+        aria-label="Save to favourites" aria-pressed="${catTabFavs.has(title)}" data-tip="Favourite">${catTabFavSvg}</button>
     </div>`;
 }
 
@@ -4638,46 +5246,337 @@ function wireCatTabHeroFoot(title){
   });
 }
 
+/* ============ shared: deterministic figures for the visual pages ============
+   Charts must not reshuffle every time the page re-renders, and Math.random()
+   would do exactly that — so every generated series is seeded off the
+   agreement's own name. Same agreement, same chart, every time. */
+function seedOf(str){
+  let h = 2166136261;
+  for(let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function rngOf(str){
+  let x = seedOf(str) || 1;
+  return () => { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; };
+}
+const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+/* twelve monthly weights summing to 1 — trade is seasonal, so a flat line would
+   look synthetic; the variance is small enough that the shape stays readable */
+function monthlyShares(key){
+  const rnd = rngOf(key);
+  const w = Array.from({length:12}, () => 0.72 + rnd() * 0.56);
+  const sum = w.reduce((s,x) => s + x, 0);
+  return w.map(x => x / sum);
+}
+
+/* the four facts that decide an agreement, in the order they get asked about:
+   what it covers, how much under today, what comes on top, what changes. */
+const FEAT_SVG = {
+  cover:'<path d="M12 3l8 4v10l-8 4-8-4V7l8-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v10" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  price:'<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v10M9 14l3 3 3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  bonus:'<path d="M12 3l2.3 4.9 5.2.7-3.8 3.7 1 5.2-4.7-2.6-4.7 2.6 1-5.2L4.5 8.6l5.2-.7L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  same:'<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
+  clock:'<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5.3l3.2 1.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  up:'<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 17V7M9 10l3-3 3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  group:'<circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3 19v-.8A4.2 4.2 0 017.2 14h3.6A4.2 4.2 0 0115 18.2V19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16.2 5.4a3 3 0 010 5.2M21 19v-.9a4.2 4.2 0 00-2.6-3.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
+};
+const featIcon = k => `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${FEAT_SVG[k]}</svg>`;
+
+function agrFeatures(r, a){
+  const d = CDET[a.n] || {};
+  const rate = Math.round(a.save / a.covers * 100);
+  const bonus = d.bonus && d.bonus !== 'Standard terms'
+    ? d.bonus : 'Group terms — no volume commitment to sign';
+  return [
+    {k:'cover', t:`Covers <b>${fmt(a.covers)} kr.</b> of your ${r.n.toLowerCase()} spend`},
+    {k:'price', t:`<b>${rate}%</b> under the price on your invoices today`},
+    {k:'bonus', t:bonus},
+    {k:'same',  t:'Same account, branch and delivery — only the price changes'}
+  ];
+}
+
+/* how many Advantage members already buy from this supplier. Invented, but stable
+   per supplier, and it is the number that gives a price challenge its weight:
+   one customer asking is a complaint, ninety asking is a negotiation. */
+const memberCount = name => 40 + Math.floor(rngOf('members:' + name)() * 180);
+
+/* ============ price challenge ============
+   "I already buy from them, a competitor is getting a better rate, get me that
+   rate." Three steps: why, the drafted request, sent. Nothing leaves until step 3. */
+const PC_REASONS = [
+  {k:'competitor', i:'price', t:'A competitor offers less', s:'Someone quoted a lower price for the same goods'},
+  {k:'volume',     i:'cover', t:'Our volume has grown',     s:'We buy more from them than when the price was set'},
+  {k:'renewal',    i:'clock', t:'Renewal is coming up',     s:'Good moment to re-open the terms'},
+  {k:'increase',   i:'up',    t:'They put their price up',  s:'A recent increase we did not agree to'}
+];
+let pcState = null;
+
+function pcEnsureDom(){
+  if($('#pc')) return;
+  const scrim = document.createElement('div');
+  scrim.className = 'bcs'; scrim.id = 'pcs';
+  const dlg = document.createElement('div');
+  dlg.className = 'bc'; dlg.id = 'pc';
+  dlg.setAttribute('role', 'dialog');
+  dlg.setAttribute('aria-modal', 'true');
+  dlg.setAttribute('aria-labelledby', 'pcT');
+  dlg.setAttribute('aria-hidden', 'true');
+  dlg.innerHTML = `
+    <header class="bc-h">
+      <div>
+        <div class="bc-eyebrow"><span class="chip chip-soft">Price challenge</span>
+          <span id="pcStep">Step 1 of 2</span></div>
+        <h2 id="pcT" tabindex="-1">Ask for a better price</h2>
+      </div>
+      <button class="dwx" id="pcX" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="bc-b" id="pcBody"></div>
+    <footer class="bc-f" id="pcFoot"></footer>`;
+  document.body.append(scrim, dlg);
+  $('#pcX').addEventListener('click', pcClose);
+  scrim.addEventListener('click', pcClose);
+  addEventListener('keydown', e => {
+    if(e.key === 'Escape' && $('#pc').classList.contains('on')) pcClose();
+  });
+}
+function pcClose(){
+  $('#pcs').classList.remove('on');
+  $('#pc').classList.remove('on');
+  $('#pc').setAttribute('aria-hidden', 'true');
+}
+function openPriceChallenge(r, a){
+  pcEnsureDom();
+  pcState = {r, a, step:1, reason:'competitor', rival:'', rivalPrice:'', draft:null};
+  renderPriceChallenge();
+  $('#pcs').classList.add('on');
+  $('#pc').classList.add('on');
+  $('#pc').setAttribute('aria-hidden', 'false');
+  setTimeout(() => $('#pcT').focus(), 100);
+}
+
+/* the AI's material: three things we can already assert on the customer's behalf,
+   pulled from data the app genuinely holds rather than invented at send time */
+function pcEvidence(r, a){
+  const rate = Math.round(a.save / a.covers * 100);
+  const members = memberCount(a.n);
+  return [
+    `You put <b>${fmt(a.covers)} kr.</b> a year through ${a.n} across <b>${r.inv} invoices</b> — enough volume to negotiate on.`,
+    `<b>${members} Advantage members</b> buy from ${a.n}. We go in with their volume behind yours, not yours alone.`,
+    `The group rate for ${r.n.toLowerCase()} is <b>${rate}% under</b> what your invoices show you paying.`
+  ];
+}
+
+function pcDraft(){
+  const {r, a, reason, rival, rivalPrice} = pcState;
+  const rate = Math.round(a.save / a.covers * 100);
+  const members = memberCount(a.n);
+  const opening = {
+    competitor: rival
+      ? `We have been quoted a lower price by ${rival}${rivalPrice ? ` (${rivalPrice})` : ''} for the same goods, and we would rather stay with you.`
+      : `We have been quoted a lower price elsewhere for the same goods, and we would rather stay with you.`,
+    volume:   `Our volume with you has grown well past the level the current price was set at.`,
+    renewal:  `Our terms are up for renewal, and we would like to re-open the price before they roll over.`,
+    increase: `Your recent price increase was not something we agreed to, and it does not match what the market is doing.`
+  }[reason];
+  return `To the ${a.n} sales team,
+
+${state.company} buys roughly ${fmt(a.covers)} kr. a year from you, across ${r.n.toLowerCase()}.
+
+${opening}
+
+We are asking you to match the Advantage framework rate, which is ${rate}% below the prices on our current invoices. Advantage represents ${members} companies buying from you, and this request is made through them.
+
+Nothing else needs to change — same account, same branch, same delivery. We are only asking about price.
+
+Could you come back to us within ten working days?
+
+${state.user}
+${state.company}`;
+}
+
+function renderPriceChallenge(){
+  const {r, a, step} = pcState;
+  const body = $('#pcBody'), foot = $('#pcFoot');
+  $('#pcStep').textContent = step === 3 ? 'Sent' : `Step ${step} of 2`;
+
+  if(step === 1){
+    body.innerHTML = `
+      <div class="pc-sup">
+        ${agrLogoChip(a.n)}
+        <span class="pc-sup-id"><b>${a.n}</b><span>${r.n} · you already buy here</span></span>
+      </div>
+      <p class="pc-q">Why are you asking for a better price?</p>
+      <div class="pc-reasons">
+        ${PC_REASONS.map(x => `
+          <button type="button" class="pc-reason" data-reason="${x.k}"
+            aria-pressed="${pcState.reason === x.k}">
+            <svg viewBox="0 0 24 24" fill="none">${FEAT_SVG[x.i]}</svg>
+            <span><b>${x.t}</b><em>${x.s}</em></span>
+          </button>`).join('')}
+      </div>
+      <div id="pcQuoteWrap">${pcQuoteHTML()}</div>
+      <div class="pc-eviq">
+        <div class="pc-evi-h"><img src="assets/sda-mark.svg" alt="">What we can put behind this</div>
+        <ul class="pc-evi">
+          ${pcEvidence(r, a).map(e => `<li><span class="pc-evi-ic">${TICK}</span><span>${e}</span></li>`).join('')}
+        </ul>
+      </div>`;
+    foot.innerHTML = `
+      <span class="fnote">Nothing is sent yet.</span>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary" id="pcCancel">Cancel</button>
+      <button class="btn btn-primary" id="pcNext">Draft the request →</button>`;
+    $$('#pcBody .pc-reason').forEach(b => b.addEventListener('click', () => {
+      pcState.reason = b.dataset.reason;
+      $$('#pcBody .pc-reason').forEach(x =>
+        x.setAttribute('aria-pressed', String(x.dataset.reason === pcState.reason)));
+      $('#pcQuoteWrap').innerHTML = pcQuoteHTML();
+      wirePcQuote();
+    }));
+    wirePcQuote();
+    $('#pcCancel').addEventListener('click', pcClose);
+    $('#pcNext').addEventListener('click', () => {
+      pcState.draft = pcDraft(); pcState.step = 2; renderPriceChallenge(); body.scrollTop = 0;
+    });
+
+  } else if(step === 2){
+    body.innerHTML = `
+      <div class="pc-draft">
+        <div class="pc-draft-h"><img src="assets/sda-mark.svg" alt="">
+          Drafted for you — edit anything before it goes
+          <span class="spacer"></span>
+          <button type="button" class="linkbtn" id="pcRedraft">Start over</button>
+        </div>
+        <textarea id="pcText" aria-label="Request to ${a.n}">${pcState.draft}</textarea>
+      </div>
+      <div class="pc-next">
+        <h4>What happens after you send</h4>
+        <ol class="steps2">
+          <li><span class="sn">1</span><span>Advantage sends this to ${a.n} <b>on behalf of the group</b>,
+            not as a single customer complaint.</span></li>
+          <li><span class="sn">2</span><span>We chase at day five if they go quiet, and tell you we did.</span></li>
+          <li><span class="sn">✓</span><span>Whatever they come back with lands in
+            <b>Advantage activity</b>, with the old and new price side by side.</span></li>
+        </ol>
+      </div>`;
+    foot.innerHTML = `
+      <button class="btn btn-ghost" id="pcBack">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="pcSend">Send to ${a.n}</button>`;
+    $('#pcRedraft').addEventListener('click', () => { $('#pcText').value = pcDraft(); });
+    $('#pcBack').addEventListener('click', () => {
+      pcState.draft = $('#pcText').value; pcState.step = 1; renderPriceChallenge(); body.scrollTop = 0;
+    });
+    $('#pcSend').addEventListener('click', () => {
+      const btn = $('#pcSend');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      setTimeout(() => { pcState.step = 3; renderPriceChallenge(); body.scrollTop = 0; }, RM ? 300 : 1100);
+    });
+
+  } else {
+    const ref = 'PC-' + String(seedOf(a.n + state.company) % 100000).padStart(5, '0');
+    body.innerHTML = `
+      <div class="bc-done">
+        <div class="ring">${TICK}</div>
+        <h3>Sent to ${a.n}</h3>
+        <p>Reference <b>${ref}</b>. You don't need to chase them — we will, and we'll tell you
+          the moment they answer.</p>
+        <ol class="tline">
+          <li><span class="tn">1</span><span><b>Today</b> — request sent with your volumes and the group's<br>
+            <span>Nothing changes on your side</span></span></li>
+          <li><span class="tn">2</span><span><b>Day 5</b> — we chase if they haven't replied</span></li>
+          <li><span class="tn">3</span><span><b>Within 10 working days</b> — their answer lands in
+            Advantage activity, with the old and new price side by side</span></li>
+        </ol>
+      </div>`;
+    foot.innerHTML = `
+      <span class="fnote">You can withdraw the request from Agreements at any time.</span>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="pcDone">Done</button>`;
+    $('#pcDone').addEventListener('click', pcClose);
+  }
+}
+
+/* the competitor fields belong to exactly one reason, so they are markup that
+   comes and goes rather than a permanently-disabled pair of inputs */
+function pcQuoteHTML(){
+  if(pcState.reason !== 'competitor') return '';
+  return `<div class="pc-quote">
+    <label>Who quoted you?<input id="pcRival" type="text" placeholder="e.g. Costa Byg"
+      value="${pcState.rival}"></label>
+    <label>Their price <span style="font-weight:500">(optional)</span>
+      <input id="pcRivalPrice" type="text" placeholder="e.g. 11,40 kr./unit" value="${pcState.rivalPrice}"></label>
+  </div>`;
+}
+function wirePcQuote(){
+  const a = $('#pcRival'), b = $('#pcRivalPrice');
+  if(a) a.addEventListener('input', () => pcState.rival = a.value.trim());
+  if(b) b.addEventListener('input', () => pcState.rivalPrice = b.value.trim());
+}
+
 /* the whole category: a sticky hero CARD on the left — picture, the numbers, and
    the agreements that deliver them, all in one place — while the supporting
    sections (terms, calculation, timeline, contact) scroll past on the right */
 function renderCatTab(r){
   const pot = potOf(r);
-  const rows = r.agr.map((a,i) => {
+  const cards = r.agr.map((a,i) => {
     const rate = Math.round(a.save / a.covers * 100);
     return `
-    <li class="cat-agr-row${a.req ? ' on' : ' clickable'}" style="--b:${brandOf(a.n)}"${a.req ? '' : ` data-agr="${i}" tabindex="0" role="button"`}>
-      ${agrLogoChip(a.n)}
-      <span class="cat-agr-row-main">
-        <span class="cat-agr-row-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</span>
-        <span class="cat-agr-row-disc">−${rate}% vs. today${isEstimated(a)
-          ? ` <span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}</span>
-      </span>
-      <span class="cat-agr-row-end">
-        <b class="cat-agr-row-save">${saveFig(a.save, isEstimated(a))}<small>kr./yr</small></b>
-        ${a.req
-          ? `<span class="inuse">${TICK} In use</span>`
-          : `<span class="agr-card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`}
-      </span>
+    <li class="ac${a.req ? ' on' : ''}" style="--b:${brandOf(a.n)}">
+      <div class="ac-h">
+        ${agrLogoChip(a.n)}
+        <span class="ac-id">
+          <b>${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</b>
+          <span class="ac-badges">
+            ${a.req
+              ? `<span class="ac-pill live">${TICK} In use</span>`
+              : `<span class="ac-pill ready">Ready to use</span>`}
+            <span class="ac-pill rate">−${rate}% vs. today</span>
+            ${isEstimated(a) ? `<span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}
+          </span>
+        </span>
+        <span class="ac-fig">
+          <b>${saveFig(a.save, isEstimated(a))} kr.</b>
+          <span>per year</span>
+        </span>
+      </div>
+      <ul class="ac-feats">
+        ${agrFeatures(r, a).map(f => `<li>${featIcon(f.k)}<span>${f.t}</span></li>`).join('')}
+      </ul>
+      <div class="ac-f">
+        <button type="button" class="btn btn-primary btn-sm" data-agr="${i}">
+          ${a.req ? 'See the agreement' : 'See how it compares'}</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-challenge="${i}">
+          Ask for a better price</button>
+        <span class="spacer"></span>
+        <span class="ac-lev">${featIcon('group')}<b>${memberCount(a.n)}</b> members buy here</span>
+      </div>
     </li>`;
   }).join('');
 
-  const agreementsHTML = `
-    <section class="cat-tab-agrs">
-      <h3>Agreements that deliver this saving</h3>
-      <ul class="cat-agr-list">${rows}</ul>
-      <p class="agr-note">Open an agreement to see how it compares to what you pay today, and activate
-        it from there.</p>
-    </section>`;
-
+  const inUse = r.agr.filter(a => a.req).length;
   const catEstimated = r.agr.some(a => !a.req && isEstimated(a));
   catTabShell(
+    /* the hero no longer carries the agreement list: it was a white-on-white list
+       inside a 380px column, which is precisely why the agreements disappeared.
+       They are the decision, so they now lead the main column instead. */
     catTabHeroHTML(r.id, 'Purchasing category', r.n, pot,
       `${r.rate}% of ${fmt(r.amt)} kr. spent in this category, across ${r.sup} suppliers.`,
-      `Every agreement below was matched to a supplier you already buy from — nothing changes
-       operationally, only the price once it's activated.`, agreementsHTML, catEstimated),
+      `Every agreement here was matched to a supplier you already buy from — nothing changes
+       operationally, only the price once it's activated.`, '', catEstimated),
     `
-    ${catTabContactHTML()}
+    <section>
+      <div class="cat-agrs-head">
+        <div>
+          <h3>${r.agr.length} agreements in ${r.n.toLowerCase()}</h3>
+          <p>${inUse ? `${inUse} already in use. ` : ''}Open one to see how it compares with what you
+            pay today — or push back on a supplier's price without leaving them.</p>
+        </div>
+      </div>
+      <ul class="cat-agr-cards">${cards}</ul>
+    </section>
     ${oppTermsHTML()}
     <details class="opp-fold">
       <summary><h3>How we calculate this</h3></summary>
@@ -4695,74 +5594,232 @@ function renderCatTab(r){
           variance under 2%.</span></li>
       </ol>
     </details>
-    ${oppTimelineHTML()}`
+    ${oppTimelineHTML()}
+    ${catTabContactHTML()}`
   );
   wireCatTabHeroFoot(r.n);
   wireCatTabContact(`Tell me more about the ${r.n} opportunity`);
-  $$('.cat-agr-row[data-agr]').forEach(li => {
-    const go = () => renderCatTabAgreement(r, +li.dataset.agr);
-    li.addEventListener('click', go);
-    li.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
-  });
+  $$('#viewCatTab [data-agr]').forEach(b => b.addEventListener('click',
+    () => renderCatTabAgreement(r, +b.dataset.agr)));
+  $$('#viewCatTab [data-challenge]').forEach(b => b.addEventListener('click',
+    () => openPriceChallenge(r, r.agr[+b.dataset.challenge])));
 }
 
-/* a single agreement inside the tab: same shell, the price comparison + why bullets,
-   and an Activate button that mutates state and re-renders in place */
+/* ---------- the agreement page, in three views ----------
+   One hero, three interchangeable bodies behind a segmented control. They answer
+   three different questions people actually ask at this point: how much is this
+   worth to me, where does it come from, and am I being had. */
+const AGR_VIEWS = [
+  {k:'impact',  n:'Impact',   h:'What this is worth to you'},
+  {k:'basket',  n:'Basket',   h:'Where the saving comes from'},
+  {k:'compare', n:'Compare',  h:'Where your price sits'}
+];
+
+/* five plausible line items per category — enough to make the basket concrete
+   without pretending we have a real product catalogue behind it */
+const BASKET_ITEMS = {
+  mat: ['Structural timber 45×95', 'Plasterboard 13 mm', 'Insulation batts 95 mm', 'Concrete screws 5×60', 'OSB board 12 mm'],
+  tool:['Cordless drill kits', 'Safety boots S3', 'Work trousers', 'Diamond blades 230 mm', 'Hearing protection'],
+  fuel:['Diesel, bulk delivery', 'Diesel, fuel card', 'AdBlue 10 L', 'Petrol 95', 'Vehicle wash'],
+  off: ['A4 paper, boxes', 'Toner cartridges', 'Notebooks and pads', 'Desk chairs', 'Coffee and kitchen'],
+  rent:['Mini excavator, daily', 'Scissor lift, weekly', 'Plate compactor, daily', 'Site fencing, monthly', 'Generator, daily'],
+  frg: ['Pallets, domestic', 'Parcels under 20 kg', 'Express delivery', 'Pallets, Nordic', 'Fuel surcharge'],
+  tel: ['Mobile subscriptions', 'Data SIMs', 'Laptops, mid-range', 'Docking stations', 'Cloud backup'],
+  site:['Container, 8 m³', 'Waste sorting, per tonne', 'Site toilet, monthly', 'Site clean, per visit', 'Hazardous disposal']
+};
+/* spend and saving per line, scaled so the lines add back to the agreement's own
+   covers and save — the table has a total row, so it has to reconcile exactly */
+function basketRows(r, a){
+  const names = BASKET_ITEMS[r.id] || BASKET_ITEMS.mat;
+  const rnd = rngOf('basket:' + a.n);
+  const w = names.map(() => 0.5 + rnd());
+  const wsum = w.reduce((x,y) => x + y, 0);
+  const v = names.map(() => 0.55 + rnd() * 0.95);      /* per-line discount varies */
+  const spends = w.map(x => Math.round(a.covers * x / wsum));
+  spends[spends.length - 1] += a.covers - spends.reduce((x,y) => x + y, 0);
+  const raw = spends.map((sp, i) => sp * v[i]);
+  const k = a.save / raw.reduce((x,y) => x + y, 0);
+  const saves = raw.map(x => Math.round(x * k));
+  saves[saves.length - 1] += a.save - saves.reduce((x,y) => x + y, 0);
+  return names.map((n, i) => ({n, spend:spends[i], save:saves[i]}));
+}
+
+/* view 1 — the money, over twelve months */
+function agrViewImpact(r, a){
+  const shares = monthlyShares('impact:' + a.n);
+  const perMonth = Math.round(a.save / 12);
+  const pct = Math.round(a.save / a.covers * 100);
+  const W = 620, H = 180;
+  let acc = 0;
+  const pts = shares.map(sh => (acc += sh));
+  const px = i => (i / 11) * W;
+  const py = v => H - 6 - v * (H - 26);
+  const line = pts.map((v, i) => `${px(i).toFixed(1)},${py(v).toFixed(1)}`).join(' ');
+  const grid = [0.25, 0.5, 0.75, 1].map(g =>
+    `<line x1="0" y1="${py(g).toFixed(1)}" x2="${W}" y2="${py(g).toFixed(1)}"
+       stroke="var(--hairline)" stroke-width="1"/>`).join('');
+  return `
+    <div class="iv-stats">
+      <div class="iv-stat"><span>Every year</span><b class="pos">+${fmt(a.save)}<small> kr.</small></b></div>
+      <div class="iv-stat"><span>Every month</span><b class="pos">+${fmt(perMonth)}<small> kr.</small></b></div>
+      <div class="iv-stat"><span>Over three years</span><b class="pos">+${fmt(a.save * 3)}<small> kr.</small></b></div>
+      <div class="iv-stat"><span>Off this supplier's bill</span><b>${pct}%</b></div>
+    </div>
+
+    <figure class="iv-chart">
+      <figcaption><b>It builds up month by month</b>
+        <span>reaching ${fmt(a.save)} kr. by the twelfth month</span></figcaption>
+      <svg class="iv-svg" viewBox="0 0 ${W} ${H}" role="img"
+        aria-label="Cumulative saving over twelve months, reaching ${fmt(a.save)} kroner">
+        <defs><linearGradient id="ivg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--sentiment-positive)" stop-opacity=".22"/>
+          <stop offset="100%" stop-color="var(--sentiment-positive)" stop-opacity="0"/>
+        </linearGradient></defs>
+        ${grid}
+        <polygon points="0,${H - 6} ${line} ${W},${H - 6}" fill="url(#ivg)"/>
+        <polyline points="${line}" fill="none" stroke="var(--sentiment-positive)"
+          stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="${W}" cy="${py(1).toFixed(1)}" r="5" fill="var(--sentiment-positive)"/>
+        <circle cx="${W}" cy="${py(1).toFixed(1)}" r="9" fill="var(--sentiment-positive)" opacity=".18"/>
+      </svg>
+      <div class="iv-x">${MONTH_ABBR.map(m => `<span>${m}</span>`).join('')}</div>
+    </figure>
+
+    <div class="iv-vs">
+      <div class="iv-vs-row">
+        <span class="iv-vs-l"><b>Today</b>what you pay ${a.n}</span>
+        <span class="iv-vs-bar"><i style="width:100%"></i></span>
+        <span class="iv-vs-v">${fmt(a.covers)} kr.</span>
+      </div>
+      <div class="iv-vs-row win">
+        <span class="iv-vs-l"><b>On the agreement</b>same goods, same delivery</span>
+        <span class="iv-vs-bar"><i style="width:${(100 - pct).toFixed(1)}%"></i></span>
+        <span class="iv-vs-v">${fmt(a.covers - a.save)} kr.</span>
+      </div>
+    </div>`;
+}
+
+/* view 2 — the basket the saving is made of */
+function agrViewBasket(r, a){
+  const rows = basketRows(r, a);
+  const max = Math.max(...rows.map(x => x.spend));
+  return `
+    <table class="bk-tbl">
+      <thead><tr>
+        <th scope="col">What you buy</th>
+        <th scope="col">You spend</th>
+        <th scope="col">Discount</th>
+        <th scope="col">You save</th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(x => {
+          const pct = Math.round(x.save / x.spend * 100);
+          return `<tr>
+            <td><span class="bk-name"><b>${x.n}</b>
+              <span class="bk-bar" style="width:${(x.spend / max * 100).toFixed(1)}%">
+                <i style="width:${pct}%"></i></span></span></td>
+            <td>${fmt(x.spend)} kr.</td>
+            <td>−${pct}%</td>
+            <td class="pos">+${fmt(x.save)} kr.</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+      <tfoot><tr>
+        <td>Total, twelve months</td>
+        <td>${fmt(a.covers)} kr.</td>
+        <td>−${Math.round(a.save / a.covers * 100)}%</td>
+        <td class="pos">+${fmt(a.save)} kr.</td>
+      </tr></tfoot>
+    </table>
+    <p class="bk-note">The bar behind each line is what you spend on it; the green part is what
+      comes off. Lines are grouped from your invoices — the discount is not flat, so the
+      biggest line is not always the biggest saving.</p>`;
+}
+
+/* view 3 — where the price sits between the group rate and list price */
+function agrViewCompare(r, a){
+  const rate = Math.round(a.save / a.covers * 100);
+  const est = isEstimated(a);
+  const spread = Math.max(6, Math.round(rate * 0.7));
+  const d = CDET[a.n] || {ulabel:'price index · your basket = 100',
+    a:`${100 - spread}–${100 + spread}`, b:String(100 - rate), bonus:'Standard terms', why:[]};
+  /* the track runs from the best rate any member has (left) to list price (right);
+     "you" sit at list, the agreement sits at the group rate */
+  const best = Math.min(38, rate + 4);
+  const posOf = off => (100 - (off / best) * 100);
+  return `
+    <div class="pp">
+      <div class="pp-top">
+        <span class="pp-lbl you" style="left:${posOf(0).toFixed(1)}%;top:0">You today
+          <small>list price</small></span>
+      </div>
+      <div class="pp-track">
+        <span class="pp-mark deal" style="left:${posOf(rate).toFixed(1)}%"></span>
+        <span class="pp-mark you" style="left:${posOf(0).toFixed(1)}%"></span>
+      </div>
+      <div class="pp-bot">
+        <span class="pp-lbl deal" style="left:${posOf(rate).toFixed(1)}%;top:6px">This agreement
+          <small>−${rate}%</small></span>
+      </div>
+      <div class="pp-scale"><span>Best rate in the group (−${best}%)</span><span>List price</span></div>
+    </div>
+
+    <div class="cmp">
+      <div class="cmp-c${est ? ' estimated' : ''}">
+        <div class="ct">Today${est ? ' · estimated' : ''}</div>
+        <div class="cmp-sup">${a.n}</div>
+        <div class="price">${d.a}</div>
+        <div class="unit">${d.ulabel}</div>
+        <div class="bonus">No agreement</div>
+      </div>
+      <div class="cmp-arrow">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <b>−${rate}%</b>
+      </div>
+      <div class="cmp-c win">
+        <div class="ct">${TICK} Advantage agreement</div>
+        <div class="cmp-sup">${a.n}</div>
+        <div class="price">${d.b}</div>
+        <div class="unit">${d.ulabel}</div>
+        <div class="bonus">${d.bonus}</div>
+      </div>
+    </div>
+    ${est ? `<p class="cmp-note">${DASH_CIRCLE} Today's price is an industry-benchmark
+      estimate — we don't have your ${a.n} agreement or invoices yet.
+      <a href="#" id="cmpUploadLink">Upload it to see your exact number →</a></p>` : ''}
+    ${d.why.length ? `<div class="bc-why"><h4>Why this one</h4>
+      <ul>${d.why.map(w => `<li><span class="tick">${TICK}</span><span>${w}</span></li>`).join('')}</ul></div>` : ''}`;
+}
+
 function renderCatTabAgreement(r, idx){
   const a = r.agr[idx];
   const rate = Math.round(a.save / a.covers * 100);
   const est = isEstimated(a);
-  /* we're always confident in OUR side of the comparison (it's the deal we're
-     offering); "today" is the uncertain side when there's no curated CDET entry —
-     so it's the "today" card, not the whole comparison, that goes dashed */
-  const spread = Math.max(6, Math.round(rate * 0.7));
-  const d = CDET[a.n] || {
-    ulabel:'price index · your basket = 100',
-    a: `${100 - spread}–${100 + spread}`,
-    b: String(100 - rate), bonus:'Standard terms', why:[]
-  };
-  /* the decision (activate, or see that it's already active) sits right under the
-     number it's justified by, instead of in a footer far below the fold */
+  const view = AGR_VIEWS.find(v => v.k === agrViewStyle) || AGR_VIEWS[0];
+  const bodyFor = {impact:agrViewImpact, basket:agrViewBasket, compare:agrViewCompare}[view.k];
+
   const activateHTML = a.req
-    ? `<div class="cat-tab-activate"><span class="inuse">${TICK} In use</span></div>`
-    : `<div class="cat-tab-activate"><button class="btn btn-primary btn-block" id="catTabActivate">Activate this agreement</button></div>`;
+    ? `<span class="inuse">${TICK} In use</span>`
+    : `<button class="btn btn-primary btn-block" id="catTabActivate">Activate this agreement</button>
+       <button class="btn btn-secondary btn-block" id="catTabChallenge">Ask for a better price</button>`;
+
   catTabShell(
     catTabHeroHTML(r.id, r.n, a.n, a.save,
       `${rate}% below what you pay today, on the ${fmt(a.covers)} kr. you already spend with them.`,
-      /* one specific, invoice-grounded reason per agreement (agrWhy's curated
-         line when we have one) instead of the same generic sentence on every card */
       agrWhy(r, a)[0], activateHTML, est),
     `
     <p class="opp-back"><button class="btn btn-ghost btn-sm" id="catTabBack">
       <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H6M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Back to ${r.n}</button></p>
     <section class="opp-sec" style="padding-top:0;border-top:none">
-      <h3>How we calculate this</h3>
-      <div class="cmp">
-        <div class="cmp-c${est ? ' estimated' : ''}">
-          <div class="ct">Today${est ? ' · estimated' : ''}</div>
-          <div class="cmp-sup">${a.n}</div>
-          <div class="price">${d.a}</div>
-          <div class="unit">${d.ulabel}</div>
-          <div class="bonus">No agreement</div>
-        </div>
-        <div class="cmp-arrow">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <b>−${rate}%</b>
-        </div>
-        <div class="cmp-c win">
-          <div class="ct">${TICK} Advantage agreement</div>
-          <div class="cmp-sup">${a.n}</div>
-          <div class="price">${d.b}</div>
-          <div class="unit">${d.ulabel}</div>
-          <div class="bonus">${d.bonus}</div>
+      <div class="agr-view-head">
+        <div><h3>${view.h}</h3><p>Three ways to look at the same agreement.</p></div>
+        <div class="seg" role="group" aria-label="How to show this agreement">
+          ${AGR_VIEWS.map(v => `<button type="button" data-view="${v.k}"
+            aria-pressed="${v.k === view.k}">${v.n}</button>`).join('')}
         </div>
       </div>
-      ${est ? `<p class="cmp-note">${DASH_CIRCLE} Today's price is an industry-benchmark
-        estimate — we don't have your ${a.n} agreement or invoices yet.
-        <a href="#" id="cmpUploadLink">Upload it to see your exact number →</a></p>` : ''}
-      ${d.why.length ? `<div class="bc-why"><h4>Why this one</h4>
-        <ul>${d.why.map(w => `<li><span class="tick">${TICK}</span><span>${w}</span></li>`).join('')}</ul></div>` : ''}
+      ${bodyFor(r, a)}
     </section>
     ${oppTermsHTML()}
     ${oppTimelineHTML()}
@@ -4772,8 +5829,13 @@ function renderCatTabAgreement(r, idx){
   wireCatTabHeroFoot(a.n);
   wireCatTabContact(`Tell me more about the ${a.n} agreement`);
   $('#catTabBack').addEventListener('click', () => renderCatTab(r));
+  $$('#viewCatTab .seg [data-view]').forEach(b => b.addEventListener('click', () => {
+    agrViewStyle = b.dataset.view; persist(); renderCatTabAgreement(r, idx);
+  }));
   const upLink = $('#cmpUploadLink');
   if(upLink) upLink.addEventListener('click', e => { e.preventDefault(); openDataCenter(); });
+  const chal = $('#catTabChallenge');
+  if(chal) chal.addEventListener('click', () => openPriceChallenge(r, a));
   const actBtn = $('#catTabActivate');
   if(actBtn) actBtn.addEventListener('click', () => {
     actBtn.disabled = true; actBtn.textContent = 'Sending…';
@@ -4893,7 +5955,7 @@ function persist(){
       unread: NOTES.map(n => n.unread ? 1 : 0),
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
       newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityMini,
-      savedAgr: [...savedAgr]
+      savedAgr: [...savedAgr], agrCardStyle, agrViewStyle, catViewStyle
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
 }
@@ -4928,6 +5990,9 @@ function applySaved(d){
   if(typeof d.ncGettingStartedHidden === 'boolean') ncGettingStartedHidden = d.ncGettingStartedHidden;
   if(typeof d.activityMini === 'boolean') activityMini = d.activityMini;
   if(Array.isArray(d.savedAgr)) savedAgr = new Set(d.savedAgr);
+  if(['photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
+  if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
+  if(['list','bars','split','focus'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
 }
 
 function startOver(){
