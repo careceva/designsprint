@@ -2287,6 +2287,228 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .opp-fold>summary:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px;
   border-radius:var(--rounded-xs)}
 
+
+/* ==========================================================================
+   AFFINITY-MAP GAPS — five features the map asks for that the prototype
+   didn't have: an agreements page with real status (T6), notification
+   preferences incl. channel + "sound level" + the email itself (T4), a
+   savings calculator (T2), human hand-off inside the assistant (T1), and a
+   portal walk-through (T3).
+   ========================================================================== */
+
+/* ---------- T6 · Agreements: status, dormant agreements, timelines ---------- */
+.ag-page{width:100%;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;
+  gap:var(--s12);padding:var(--s4) 0 var(--s16)}
+.ag-hero h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+.ag-hero p{margin-top:var(--s3);font-size:var(--text-lg);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:62ch}
+/* the three counts that describe the portfolio, as one hairline strip rather
+   than three more cards — this page already has cards doing real work below */
+.ag-stats{display:flex;flex-wrap:wrap;gap:var(--s8);margin-top:var(--s6);
+  padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.ag-stat{display:flex;flex-direction:column;gap:var(--s1)}
+.ag-stat b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-1px;line-height:1}
+.ag-stat b.warn{color:var(--sentiment-negative)}
+.ag-stat b.pos{color:var(--sentiment-positive)}
+.ag-stat span{font-size:14px;color:var(--general-muted-foreground)}
+.ag-sec h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
+.ag-sec>p{margin-top:var(--s2);font-size:16px;line-height:1.5;
+  color:var(--general-muted-foreground);max-width:64ch}
+.ag-list{list-style:none;display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s6)}
+.ag-row{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s5,20px);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface)}
+.ag-row.alert{border-color:#b4550a30;background:#fff4e8}
+.ag-row-h{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+.ag-row .agr-chip{position:static;margin:0;width:40px;height:40px;box-shadow:none}
+.ag-row-id{flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ag-row-id b{font-size:var(--text-base);font-weight:700;letter-spacing:-.2px}
+.ag-row-id span{font-size:13px;color:var(--general-muted-foreground)}
+.ag-row-fig{flex:0 0 auto;text-align:right;font-size:var(--text-lg);font-weight:800;
+  letter-spacing:-.4px;color:var(--sentiment-positive);white-space:nowrap}
+.ag-row-fig small{display:block;font-size:12px;font-weight:600;
+  color:var(--general-muted-foreground);letter-spacing:0}
+/* the progress bar the map asks for: four named steps, so "where is this?" is
+   answerable without opening anything. The rail is one track, not four pills,
+   because the steps are sequential — pills would imply they can be done in any
+   order. */
+.ag-prog{display:flex;flex-direction:column;gap:var(--s2)}
+.ag-prog-track{position:relative;height:4px;border-radius:2px;background:var(--general-muted)}
+.ag-prog-fill{height:100%;border-radius:2px;background:var(--sentiment-positive);
+  transition:width var(--t-slow)}
+.ag-prog-steps{display:flex;justify-content:space-between;gap:var(--s2)}
+.ag-prog-steps span{flex:1 1 0;font-size:12px;line-height:1.3;
+  color:var(--general-muted-foreground)}
+.ag-prog-steps span:not(:first-child){text-align:center}
+.ag-prog-steps span:last-child{text-align:right}
+.ag-prog-steps span.done{color:var(--sentiment-positive);font-weight:650}
+.ag-prog-steps span.now{color:var(--general-foreground);font-weight:700}
+.ag-row-f{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;
+  padding-top:var(--s3);border-top:1px solid var(--hairline)}
+.ag-row-f .spacer{flex:1 1 auto}
+.ag-note{display:flex;align-items:flex-start;gap:var(--s2);font-size:13.5px;line-height:1.5;
+  color:var(--general-muted-foreground)}
+.ag-note svg{flex:0 0 auto;width:16px;height:16px;margin-top:2px;color:var(--sentiment-negative)}
+.ag-note b{color:var(--general-foreground);font-weight:650}
+/* the twelve-month renewal track: one row per supplier, a dot where its terms
+   come up. This is the "quick overview of timelines" — a calendar, not a list,
+   because the question is "what lands close together?" */
+.ag-tl{margin-top:var(--s6);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  padding:var(--s5,20px);overflow-x:auto}
+.ag-tl-grid{min-width:640px}
+.ag-tl-head,.ag-tl-row{display:grid;grid-template-columns:170px 1fr;gap:var(--s4);
+  align-items:center}
+.ag-tl-row{padding:var(--s2) 0}
+.ag-tl-row+.ag-tl-row{border-top:1px solid var(--hairline)}
+.ag-tl-months{display:grid;grid-template-columns:repeat(12,1fr);font-size:11px;
+  color:var(--general-muted-foreground);text-align:center;padding-bottom:var(--s2);
+  border-bottom:1px solid var(--hairline)}
+.ag-tl-n{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ag-tl-bar{position:relative;height:26px;display:grid;grid-template-columns:repeat(12,1fr);
+  align-items:center}
+.ag-tl-bar::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;
+  background:var(--general-muted)}
+.ag-tl-dot{position:relative;grid-row:1;justify-self:center;width:11px;height:11px;
+  border-radius:var(--rounded-full);background:var(--general-primary);
+  box-shadow:0 0 0 3px var(--surface)}
+.ag-tl-dot.soon{background:var(--sentiment-negative)}
+.ag-tl-key{display:flex;gap:var(--s6);margin-top:var(--s4);padding-top:var(--s4);
+  border-top:1px solid var(--hairline);font-size:12.5px;color:var(--general-muted-foreground)}
+.ag-tl-key span{display:flex;align-items:center;gap:6px}
+.ag-tl-key i{width:9px;height:9px;border-radius:var(--rounded-full);background:var(--general-primary)}
+.ag-tl-key i.soon{background:var(--sentiment-negative)}
+
+/* ---------- T4 · notification preferences: channel, volume, the email ---------- */
+.np-h .npgear{display:grid;place-items:center;width:26px;height:26px;border:none;
+  background:none;cursor:pointer;border-radius:var(--rounded-sm);
+  color:var(--general-muted-foreground)}
+.np-h .npgear:hover{background:var(--general-muted);color:var(--general-foreground)}
+.np-h .npgear svg{width:16px;height:16px}
+.np-h .npgear[aria-pressed="true"]{background:var(--general-secondary);color:var(--general-primary)}
+.np-prefs{padding:var(--s4);border-top:1px solid var(--hairline);background:#fcfcfd;
+  display:flex;flex-direction:column;gap:var(--s5,20px)}
+.np-prefs h4{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:var(--s3)}
+.np-chans{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.np-chan{display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s3);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md);background:var(--surface);
+  cursor:pointer;font-size:13px;font-weight:600;text-align:left;transition:var(--t-fast)}
+.np-chan svg{width:15px;height:15px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.np-chan[aria-pressed="true"]{border-color:var(--general-primary);background:var(--brand-ice);
+  color:var(--general-primary)}
+.np-chan[aria-pressed="true"] svg{color:var(--general-primary)}
+/* the "sound level" from the map — three volumes, not a checkbox per event type.
+   Naming them by what arrives (everything / money only / one digest) is the
+   difference between a preference someone can set and a form they abandon. */
+.np-vol{display:flex;flex-direction:column;gap:var(--s2)}
+.np-vol-opt{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s3);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md);background:var(--surface);
+  cursor:pointer;text-align:left;transition:var(--t-fast)}
+.np-vol-opt[aria-pressed="true"]{border-color:var(--general-primary);background:var(--brand-ice)}
+.np-vol-bars{flex:0 0 auto;display:flex;align-items:flex-end;gap:2px;height:16px;margin-top:2px}
+.np-vol-bars i{width:3px;border-radius:1px;background:var(--general-border)}
+.np-vol-bars i:nth-child(1){height:6px}
+.np-vol-bars i:nth-child(2){height:11px}
+.np-vol-bars i:nth-child(3){height:16px}
+.np-vol-opt[aria-pressed="true"] .np-vol-bars i.on{background:var(--general-primary)}
+.np-vol-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.np-vol-txt b{font-size:13px;font-weight:650}
+.np-vol-txt span{font-size:12px;line-height:1.4;color:var(--general-muted-foreground)}
+/* what the email actually looks like — the map asked for "trigger email with
+   CTA", and a preference screen that never shows the artefact is guesswork */
+.np-mail{border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  background:var(--surface);overflow:hidden}
+.np-mail-h{display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s3);
+  border-bottom:1px solid var(--hairline);background:var(--general-muted);
+  font-size:11.5px;color:var(--general-muted-foreground)}
+.np-mail-b{padding:var(--s3)}
+.np-mail-b b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.1px}
+.np-mail-b p{margin-top:4px;font-size:12.5px;line-height:1.45;color:var(--general-muted-foreground)}
+.np-mail-cta{display:inline-flex;align-items:center;gap:5px;margin-top:var(--s3);
+  padding:6px 12px;border-radius:var(--rounded-full);background:var(--general-primary);
+  color:#fff;font-size:12px;font-weight:650}
+.np-mail-cta svg{width:12px;height:12px}
+.np-prefs-f{font-size:11.5px;color:var(--general-muted-foreground)}
+
+/* ---------- T2 · savings calculator ---------- */
+.sc-intro{font-size:var(--text-sm);line-height:1.55;color:var(--general-muted-foreground);
+  margin-bottom:var(--s6)}
+.sc-rows{display:flex;flex-direction:column}
+.sc-row{display:grid;grid-template-columns:1fr 150px 90px 120px;gap:var(--s4);
+  align-items:center;padding:var(--s3) 0;border-top:1px solid var(--hairline)}
+@container page (max-width:700px){
+  .sc-row{grid-template-columns:1fr 1fr;gap:var(--s2) var(--s4)}
+}
+.sc-row:first-child{border-top:none}
+.sc-row-n{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-sm);font-weight:600}
+.sc-row-n svg{width:18px;height:18px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.sc-in{display:flex;align-items:center;gap:6px;height:38px;padding:0 var(--s3);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-sm);background:var(--surface)}
+.sc-in input{width:100%;min-width:0;border:none;background:none;font:inherit;
+  font-size:var(--text-sm);text-align:right;font-variant-numeric:tabular-nums}
+.sc-in input:focus{outline:none}
+.sc-in:focus-within{outline:2px solid var(--general-primary);outline-offset:-1px}
+.sc-in span{flex:0 0 auto;font-size:12px;color:var(--general-muted-foreground)}
+.sc-rate{font-size:var(--text-sm);color:var(--general-muted-foreground);text-align:right;
+  font-variant-numeric:tabular-nums}
+.sc-out{font-size:var(--text-base);font-weight:700;text-align:right;
+  color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.sc-total{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  flex-wrap:wrap;margin-top:var(--s6);padding:var(--s5,20px);border-radius:var(--rounded-lg);
+  background:var(--brand-midnight);color:#dce6fb}
+.sc-total span{font-size:var(--text-sm)}
+.sc-total b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-1px;color:#fff}
+.sc-total b small{font-size:var(--text-sm);font-weight:600;color:#dce6fb}
+.sc-note{margin-top:var(--s4);font-size:12.5px;line-height:1.55;
+  color:var(--general-muted-foreground)}
+
+/* ---------- T1 · a person, not only the assistant ---------- */
+.ap-human{margin-top:var(--s4);padding:var(--s4);border-radius:var(--rounded-lg);
+  border:1px solid var(--hairline);background:var(--surface)}
+.ap-human-h{display:flex;align-items:center;gap:var(--s3)}
+.ap-human-av{flex:0 0 auto;width:38px;height:38px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-midnight);color:#fff;
+  font-family:var(--font-sans);font-size:13px;font-weight:700}
+.ap-human-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.ap-human-id b{font-size:var(--text-sm);font-weight:650}
+.ap-human-id span{font-size:12.5px;color:var(--general-muted-foreground)}
+.ap-human-live{flex:0 0 auto;display:flex;align-items:center;gap:5px;font-size:12px;
+  font-weight:650;color:var(--sentiment-positive)}
+.ap-human-live i{width:7px;height:7px;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive)}
+.ap-human p{margin-top:var(--s3);font-size:13px;line-height:1.5;
+  color:var(--general-muted-foreground)}
+.ap-human-act{display:flex;gap:var(--s2);margin-top:var(--s3);flex-wrap:wrap}
+
+/* ---------- T3 · portal walk-through ---------- */
+/* a spotlight, not a modal: the point of a tour is that the real UI stays
+   visible behind it. Four fixed panels make the hole rather than one element
+   with a giant box-shadow, so the cut-out stays crisp at any size. */
+.tour-mask{position:fixed;inset:0;z-index:60;pointer-events:none;
+  opacity:0;transition:opacity var(--t)}
+.tour-mask.on{opacity:1;pointer-events:auto}
+/* pointer-events must be scoped to .on. Setting it to auto on the children
+   unconditionally overrides the parent's none, so a closed tour kept swallowing
+   every click on the page underneath — invisible at opacity 0, still hit-testable. */
+.tour-mask i{position:fixed;background:#000a4570;pointer-events:none}
+.tour-mask.on i{pointer-events:auto}
+.tour-ring{position:fixed;border:2px solid var(--general-primary);border-radius:var(--rounded-md);
+  box-shadow:0 0 0 4px #1b64dc33;pointer-events:none;transition:all var(--t)}
+.tour-pop{position:fixed;z-index:61;width:min(330px,calc(100vw - 32px));
+  padding:var(--s5,20px);border-radius:var(--rounded-lg);background:var(--surface);
+  box-shadow:var(--shadow-xl);transition:top var(--t),left var(--t)}
+.tour-step{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-primary)}
+.tour-pop h3{margin-top:var(--s2);font-size:var(--text-lg);letter-spacing:-.3px}
+.tour-pop p{margin-top:var(--s2);font-size:14px;line-height:1.55;
+  color:var(--general-muted-foreground)}
+.tour-f{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s5,20px)}
+.tour-f .spacer{flex:1 1 auto}
+.tour-dots{display:flex;gap:5px}
+.tour-dots i{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--general-border)}
+.tour-dots i.on{background:var(--general-primary);width:16px;border-radius:3px}
+
 /* ---------- welcome: a one-time modal explaining estimated vs verified data ---------- */
 .wms{position:fixed;inset:0;z-index:50;background:#000a4552;opacity:0;pointer-events:none;
   transition:opacity var(--t)}
@@ -2394,7 +2616,11 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
             <b>Notifications</b>
             <span class="spacer"></span>
             <button class="linkbtn" id="npAll">Mark all read</button>
+            <button class="npgear" id="npGear" aria-pressed="false" aria-label="Notification settings">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1A1.7 1.7 0 008.9 19a1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1A1.7 1.7 0 004.6 8.9a1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            </button>
           </div>
+          <div class="np-prefs" id="npPrefs" hidden></div>
           <div class="np-b" id="npBody"></div>
         </div>
       </div>
@@ -2409,6 +2635,12 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
         <button class="up-i" id="restartBtn">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 4L9 7M12 4l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Restart prototype</button>
+        <button class="up-i" id="tourBtn">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.1 4.7 4.9.6-3.6 3.4.9 5-4.3-2.5-4.3 2.5.9-5L5 8.3l4.9-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          Show me around</button>
+        <button class="up-i" id="calcBtn">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 7h8M8 12h3M8 16h3M14 12h2M15 11v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          Savings calculator</button>
         <button class="up-i" id="replayWelcomeBtn">
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/></svg>
           Data confidence intro</button>
@@ -2474,6 +2706,23 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
               <div class="ap-sug">
                 <p>Create a price request for a better deal on <b>car rental</b>?</p>
                 <button class="btn btn-dark btn-sm" id="apSug">Send request</button>
+              </div>
+            </div>
+
+            <!-- the map asks for the AI and a person in the same place, not a
+                 support link buried elsewhere. The advisor is named and has a
+                 presence state, so "talk to a human" is a person, not a queue. -->
+            <div class="ap-human">
+              <div class="ap-human-h">
+                <span class="ap-human-av" aria-hidden="true">PL</span>
+                <span class="ap-human-id"><b>Peter Lund</b><span>Your procurement advisor</span></span>
+                <span class="ap-human-live"><i></i>Online</span>
+              </div>
+              <p>Rather talk it through? Peter has your account open and can answer
+                anything the assistant can't — or take a negotiation on for you.</p>
+              <div class="ap-human-act">
+                <button class="btn btn-secondary btn-sm" id="apChat">Message Peter</button>
+                <button class="btn btn-secondary btn-sm" id="apCall">Book 15 minutes</button>
               </div>
             </div>
           </div>
@@ -2576,6 +2825,12 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
              every single card -->
         <section id="viewDataCenter" hidden></section>
 
+        <!-- AGREEMENTS — the portfolio view the left nav has always pointed at but
+             never had: where each activated agreement actually is (requested →
+             confirmed → live → verified), which live ones aren't being bought
+             through, and when every supplier's terms come up. -->
+        <section id="viewAgreements" hidden></section>
+
         </div>
 
         <!-- a genuinely different first view for a brand-new customer: no invoice
@@ -2653,7 +2908,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
           <span><b>Estimated</b> — benchmark data, shown as a range until you upload</span></div>
       </div>
       <div class="wm-actions">
-        <button class="btn btn-secondary" id="wmLater">Continue to dashboard</button>
+        <button class="btn btn-secondary" id="wmLater">Show me around</button>
         <button class="btn btn-primary" id="wmUpload">Upload agreements</button>
       </div>
     </div>
@@ -2801,7 +3056,7 @@ const NAV = [
    icon:'<rect x="4" y="3" width="16" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h8M8 16h4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'},
   {id:'categories', n:'Categories',
    icon:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/>'},
-  {id:'agreements', n:'Agreements', badge:'3',
+  {id:'agreements', n:'Agreements', badge:'',
    icon:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 16c1.5-2.5 2.5-2.5 3 0s1.5 1 3-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
 ];
 /* the rail reads as two groups: the two highlighted cards (Saving assistant + Weekly
@@ -2815,6 +3070,13 @@ let fwd6 = true;
 let seenWelcome = false;
 
 function renderNav(){
+  /* the badge is the number of activated agreements that still need something to
+     happen — a hard-coded "3" would go stale the first time one is activated */
+  const ag = NAV.find(i => i.id === 'agreements');
+  if(ag){
+    const n = ROWS.flatMap(r => r.agr).filter(a => a.req && (agStage(a) < 4 || agDormant(a))).length;
+    ag.badge = n ? String(n) : '';
+  }
   $('#nav').innerHTML = NAV.map(i => i.hero
     ? `<button class="ni hero${navAt===i.id?' on':''}" data-nav="${i.id}" data-tip="${i.n}">
          <span class="nic"><svg viewBox="0 0 24 24" fill="none">${i.icon}</svg></span>
@@ -2843,14 +3105,19 @@ function renderNav(){
    Categories and Agreements keep showing the dashboard, as they did before. */
 function setView(){
   const sup = navAt === 'suppliers';
-  const ncDash = newCustomer && !sup;
+  /* Agreements is the one page both personas share — Fanny needs it the moment
+     she activates her first one, so it is not gated behind newCustomer */
+  const ags = navAt === 'agreements';
+  const ncDash = newCustomer && !sup && !ags;
   $('.page').hidden = ncDash;
   const sv = $('#viewSavings'); if(sv) sv.hidden = true;
+  const ag = $('#viewAgreements'); if(ag) ag.hidden = !ags;
   $('#viewSup').hidden = !sup;
-  $('#viewDash').hidden = sup || ncDash;
+  $('#viewDash').hidden = sup || ncDash || ags;
   const nc = $('#viewNewCustomer'); if(nc) nc.hidden = !ncDash;
   $('#canvas').scrollTop = 0;
   if(sup) syncRows();               /* rows measure 0 while hidden */
+  if(ags) renderAgreements();
   if(ncDash) renderNewCustomerDash();
   updateActivityRail();
   renderActivityRail();
@@ -2906,6 +3173,12 @@ function agentAsk(text){
 $$('#apPrompts .pchip').forEach(c => c.addEventListener('click', () => agentAsk(c.textContent.trim())));
 $('#apSug').addEventListener('click', () =>
   agentAsk('Create a price request for a better deal on car rental'));
+/* both drop into the same composer the AI uses — one thread, one place, which is
+   the point of putting the person inside the assistant rather than beside it */
+$('#apChat').addEventListener('click', () =>
+  agentAsk('Peter — can you take a look at my account and call me back?'));
+$('#apCall').addEventListener('click', () =>
+  agentAsk('Peter — can we book 15 minutes this week to go through my agreements?'));
 $('#apInput').addEventListener('input', e => {
   e.target.style.height = 'auto';
   e.target.style.height = Math.min(120, e.target.scrollHeight) + 'px';
@@ -3135,8 +3408,16 @@ $('#bellBtn').addEventListener('click', e => {
   $('#bellBtn').setAttribute('aria-expanded', String(on));
 });
 $('#npop').addEventListener('click', e => e.stopPropagation());
-$('#npAll').addEventListener('click', () => {
+$('#npAll').addEventListener('click', e => {
+  e.stopPropagation();
   NOTES.forEach(n => n.unread = false); persist(); renderNotes(); });
+$('#npGear').addEventListener('click', e => {
+  e.stopPropagation();
+  const box = $('#npPrefs'), open = box.hidden;
+  box.hidden = !open;
+  $('#npGear').setAttribute('aria-pressed', String(open));
+  if(open) renderNotifPrefs();
+});
 document.addEventListener('click', closeNotes);
 addEventListener('keydown', e => { if(e.key === 'Escape') closeNotes(); });
 
@@ -3226,10 +3507,17 @@ function closeWelcome(){
   persist();
 }
 $('#wms').addEventListener('click', closeWelcome);
-$('#wmLater').addEventListener('click', closeWelcome);
+/* the walk-through is the natural second beat after the welcome modal — it was
+   the one place the map's "portal tips" could go without adding another prompt */
+$('#wmLater').addEventListener('click', () => {
+  closeWelcome();
+  if(!seenTour) setTimeout(tourStart, 260);
+});
 $('#wmUpload').addEventListener('click', () => { closeWelcome(); openDataCenter(); });
 addEventListener('keydown', e => { if(e.key === 'Escape' && $('#wm').classList.contains('on')) closeWelcome(); });
 $('#replayWelcomeBtn').addEventListener('click', () => { closeUser(); openWelcome(); });
+$('#tourBtn').addEventListener('click', () => { closeUser(); setTimeout(tourStart, 120); });
+$('#calcBtn').addEventListener('click', () => { closeUser(); openCalculator(); });
 
 /* two named demo personas instead of a bare "preview" toggle — the same override
    plumbing (forceVerified/forceEstimated), but switching who's logged in makes the
@@ -4130,6 +4418,7 @@ function renderNewCustomerDash(){
    peerProfile() so this page and the dashboard cards always reconcile. */
 function openSavings(){
   $('.page').hidden = true;
+  const ag = $('#viewAgreements'); if(ag) ag.hidden = true;
   const nc = $('#viewNewCustomer'); if(nc) nc.hidden = true;
   $('#viewSavings').hidden = false;
   renderSavings();
@@ -4714,6 +5003,11 @@ let agrCardStyle = 'simple';
 let agrViewStyle = 'impact';
 /* four readings of the category figures: a menu, a ranking, a whole, a first move */
 let catViewStyle = 'list';
+/* where notifications land and how loud they are. In-app is always on — it is
+   the floor the "urgent always reaches you" promise rests on, not a choice. */
+let notifPrefs = {channels:['app', 'email'], volume:'money'};
+/* the walk-through is offered once, then only on request from the account menu */
+let seenTour = false;
 /* a verified figure is a fact: "+12.400". An estimated one is a typical outcome,
    not a cap: "typically +12.400". It used to read "up to", which the team rejected
    — "up to" puts a roof on a number that can just as easily come out higher. */
@@ -4851,6 +5145,7 @@ function closeOpportunity(){
 const DASH_CIRCLE = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3"/></svg>';
 
 function openDataCenter(){
+  const ag = $('#viewAgreements'); if(ag) ag.hidden = true;
   /* the data centre lives inside .page, which setView() hides outright on the
      new-customer dashboard — so un-hide it (and stand the new-customer view
      down) or this would open onto a blank canvas for Fanny */
@@ -5932,6 +6227,574 @@ function renderOppFunnel(){
 }
 
 
+
+/* ============================================================================
+   T6 · AGREEMENTS — the portfolio page
+   The left nav has pointed at "Agreements" since day one and shown the
+   dashboard. Three things from the affinity map live here and nowhere else:
+   a status bar with progress, active agreements that aren't being spent
+   through (with a way to reach the buyer), and a timeline of when every
+   supplier's terms come up.
+   ========================================================================= */
+const AG_STEPS = ['Requested', 'Supplier confirmed', 'Price live', 'Saving verified'];
+/* Hand-authored, not hashed. Seeding the stage off the name was tidier but it
+   is a lottery: the six agreements this prototype opens with all landed below
+   stage 4, so "live but unused" — the whole point of this page — rendered empty.
+   These five states are chosen to show the real spread, and anything activated
+   during the demo correctly starts at Requested rather than teleporting. */
+const AG_STAGE_SET = {
+  'Stark Byggecenter':4, 'Q8 Fuel Card':4, 'Hilti Erhverv':4,
+  'Lyreco Erhverv':4,    'Cramo Danmark':2
+};
+const agStage = a => AG_STAGE_SET[a.n] || 1;
+/* the two that are live and idle. Both are the classic case: a category ordered
+   ad hoc by whoever needs it, so nobody ever switched the default account. */
+const AG_DORMANT_SET = new Set(['Hilti Erhverv', 'Lyreco Erhverv']);
+const agDormant = a => !!a.req && AG_DORMANT_SET.has(a.n);
+const agRenewMonth = a => seedOf('renew:' + a.n) % 12;
+/* days since the last invoice came through a dormant agreement */
+const agQuietDays = a => 95 + (seedOf('quiet:' + a.n) % 180);
+
+const AG_WARN = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4.5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10.3 3.9L2.7 17a2 2 0 001.7 3h15.2a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+
+function agProgHTML(stage){
+  return `
+    <div class="ag-prog">
+      <div class="ag-prog-track">
+        <div class="ag-prog-fill" style="width:${(stage / AG_STEPS.length * 100).toFixed(0)}%"></div>
+      </div>
+      <div class="ag-prog-steps">
+        ${AG_STEPS.map((t, i) => `<span class="${i + 1 <= stage && stage === AG_STEPS.length ? 'done' : i + 1 < stage ? 'done' : i + 1 === stage ? 'now' : ''}">${t}</span>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderAgreements(){
+  const all = ROWS.flatMap(r => r.agr.map((a, i) => ({r, a, i})));
+  const live = all.filter(x => x.a.req);
+  const dormant = live.filter(x => agDormant(x.a));
+  const moving = live.filter(x => !agDormant(x.a));
+  const inFlight = live.filter(x => agStage(x.a) < 4).length;
+  const yearly = live.reduce((n, x) => n + x.a.save, 0);
+  const mNow = new Date().getMonth();
+  /* "soon" = the next three months, wrapped across the year boundary */
+  const soon = m => ((m - mNow) + 12) % 12 <= 2;
+
+  const row = ({r, a, i}, alert) => {
+    const stage = agStage(a);
+    return `
+    <li class="ag-row${alert ? ' alert' : ''}" style="--b:${brandOf(a.n)}">
+      <div class="ag-row-h">
+        ${agrLogoChip(a.n)}
+        <span class="ag-row-id"><b>${a.n}</b><span>${r.n}</span></span>
+        <span class="ag-row-fig">+${fmt(a.save)} kr.<small>a year</small></span>
+      </div>
+      ${alert ? `
+      <p class="ag-note">${AG_WARN}<span>Live since your request, but <b>no invoices have come
+        through it in ${agQuietDays(a)} days</b>. The rate is agreed — it just isn't being used,
+        so the saving is not landing.</span></p>` : agProgHTML(stage)}
+      <div class="ag-row-f">
+        ${alert
+          ? `<button type="button" class="btn btn-primary btn-sm" data-buyer="${r.id}:${i}">Contact the buyer</button>
+             <button type="button" class="btn btn-secondary btn-sm" data-agopen="${r.id}:${i}">See the agreement</button>`
+          : `<button type="button" class="btn btn-secondary btn-sm" data-agopen="${r.id}:${i}">See the agreement</button>`}
+        <span class="spacer"></span>
+        <span class="ac-lev">${featIcon('clock')}Terms up in <b>${MONTH_ABBR[agRenewMonth(a)]}</b></span>
+      </div>
+    </li>`;
+  };
+
+  $('#viewAgreements').innerHTML = `
+    <div class="ag-page">
+      <header class="ag-hero">
+        <h1 id="agT" tabindex="-1">Agreements</h1>
+        <p>Every agreement you have activated, where it has got to, and whether it is
+          actually earning. An agreement only saves money once invoices start going
+          through it — this page is where that gets checked.</p>
+        <div class="ag-stats">
+          <div class="ag-stat"><b>${live.length}</b><span>Activated</span></div>
+          <div class="ag-stat"><b>${inFlight}</b><span>Still being set up</span></div>
+          <div class="ag-stat"><b class="${dormant.length ? 'warn' : 'pos'}">${dormant.length}</b>
+            <span>Live but unused</span></div>
+          <div class="ag-stat"><b class="pos">+${fmt(yearly)}</b><span>kr. a year at stake</span></div>
+        </div>
+      </header>
+
+      ${dormant.length ? `
+      <section class="ag-sec">
+        <h2>Active, but nothing is going through them</h2>
+        <p>The price is agreed and waiting. Something on the buying side hasn't
+          switched over — usually an old supplier account still set as default, or a
+          site that never got told. One message to the buyer normally fixes it.</p>
+        <ul class="ag-list">${dormant.map(x => row(x, true)).join('')}</ul>
+      </section>` : ''}
+
+      <section class="ag-sec">
+        <h2>Where the rest have got to</h2>
+        <p>Four steps from request to a verified saving. We only call it verified once
+          the new price has actually appeared on an invoice we've read.</p>
+        <ul class="ag-list">${moving.map(x => row(x, false)).join('')}</ul>
+      </section>
+
+      <section class="ag-sec">
+        <h2>When terms come up</h2>
+        <p>Twelve months ahead. Renewals that land close together are worth taking to
+          the supplier as one conversation rather than three.</p>
+        <div class="ag-tl">
+          <div class="ag-tl-grid">
+            <div class="ag-tl-head">
+              <span></span>
+              <div class="ag-tl-months">${MONTH_ABBR.map((m, i) =>
+                `<span${i === mNow ? ' style="font-weight:700;color:var(--general-foreground)"' : ''}>${m}</span>`).join('')}</div>
+            </div>
+            ${live.slice(0, 10).map(({a}) => {
+              const m = agRenewMonth(a);
+              return `<div class="ag-tl-row">
+                <span class="ag-tl-n">${a.n}</span>
+                <div class="ag-tl-bar">
+                  <span class="ag-tl-dot${soon(m) ? ' soon' : ''}" style="grid-column:${m + 1}"
+                    title="${a.n} — terms up in ${MONTH_ABBR[m]}"></span>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+          <div class="ag-tl-key">
+            <span><i class="soon"></i>Within three months</span>
+            <span><i></i>Later this year</span>
+          </div>
+        </div>
+      </section>
+    </div>`;
+
+  const pick = v => { const [id, i] = v.split(':'); const r = ROWS.find(x => x.id === id); return {r, a:r.agr[+i], i:+i}; };
+  $$('#viewAgreements [data-agopen]').forEach(b => b.addEventListener('click', () => {
+    const {r, i} = pick(b.dataset.agopen);
+    window.open(catTabUrl(r.id, i), '_blank');
+  }));
+  $$('#viewAgreements [data-buyer]').forEach(b => b.addEventListener('click', () => {
+    const {r, a} = pick(b.dataset.buyer);
+    openContactBuyer(r, a);
+  }));
+  setTimeout(() => { const h = $('#agT'); if(h) h.focus({preventScroll:true}); }, 50);
+}
+
+/* ---------- contact the buyer about a dormant agreement ----------
+   Deliberately internal, not another supplier email: the supplier has already
+   done their part. The person who needs telling is whoever still orders the old
+   way, so the draft is addressed inside the company. */
+let cbState = null;
+function cbEnsureDom(){
+  if($('#cb')) return;
+  const scrim = document.createElement('div');
+  scrim.className = 'bcs'; scrim.id = 'cbs';
+  const dlg = document.createElement('div');
+  dlg.className = 'bc'; dlg.id = 'cb';
+  dlg.setAttribute('role', 'dialog');
+  dlg.setAttribute('aria-modal', 'true');
+  dlg.setAttribute('aria-labelledby', 'cbT');
+  dlg.innerHTML = `
+    <header class="bc-h">
+      <div>
+        <div class="bc-eyebrow"><span class="chip chip-soft">Unused agreement</span></div>
+        <h2 id="cbT" tabindex="-1">Contact the buyer</h2>
+      </div>
+      <button class="dwx" id="cbX" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="bc-b" id="cbBody"></div>
+    <footer class="bc-f" id="cbFoot"></footer>`;
+  document.body.append(scrim, dlg);
+  $('#cbX').addEventListener('click', cbClose);
+  scrim.addEventListener('click', cbClose);
+  addEventListener('keydown', e => {
+    if(e.key === 'Escape' && $('#cb').classList.contains('on')) cbClose();
+  });
+}
+function cbClose(){
+  $('#cbs').classList.remove('on');
+  $('#cb').classList.remove('on');
+}
+function openContactBuyer(r, a){
+  cbEnsureDom();
+  cbState = {r, a, sent:false};
+  renderContactBuyer();
+  $('#cbs').classList.add('on');
+  $('#cb').classList.add('on');
+  setTimeout(() => $('#cbT').focus(), 100);
+}
+function renderContactBuyer(){
+  const {r, a, sent} = cbState;
+  const days = agQuietDays(a);
+  if(sent){
+    $('#cbBody').innerHTML = `
+      <div class="bc-done">
+        <div class="ring">${TICK}</div>
+        <h3>Message sent</h3>
+        <p>We'll watch the next invoices from ${a.n}. The moment one comes through at the
+          agreement price, this agreement moves to <b>verified</b> and the saving starts
+          counting on your dashboard.</p>
+      </div>`;
+    $('#cbFoot').innerHTML = `<span class="spacer"></span>
+      <button class="btn btn-primary" id="cbDone">Done</button>`;
+    $('#cbDone').addEventListener('click', cbClose);
+    return;
+  }
+  $('#cbBody').innerHTML = `
+    <div class="pc-sup">
+      ${agrLogoChip(a.n)}
+      <span class="pc-sup-id"><b>${a.n}</b><span>${r.n} · agreed, but unused for ${days} days</span></span>
+    </div>
+    <div class="pc-eviq" style="margin-top:0;padding-top:0;border-top:none">
+      <div class="pc-evi-h">What we can see</div>
+      <ul class="pc-evi">
+        <li><span class="pc-evi-ic">${TICK}</span><span>The agreement is <b>live</b> — ${a.n}
+          confirmed your account is on group terms.</span></li>
+        <li><span class="pc-evi-ic">${TICK}</span><span>No invoice has arrived at the agreement
+          price in <b>${days} days</b>, so the <b>${fmt(a.save)} kr.</b> a year isn't landing.</span></li>
+        <li><span class="pc-evi-ic">${TICK}</span><span>Most often the old supplier account is
+          still the default in ordering, or one site was never told.</span></li>
+      </ul>
+    </div>
+    <div class="pc-draft" style="margin-top:var(--s6)">
+      <div class="pc-draft-h"><img src="assets/sda-mark.svg" alt="">
+        Drafted for you — edit anything before it goes</div>
+      <textarea id="cbText" aria-label="Message to the buyer">Hi,
+
+We have an Advantage agreement live with ${a.n} for ${r.n.toLowerCase()}, but nothing has been ordered through it for ${days} days.
+
+The price is already agreed — it is roughly ${Math.round(a.save / a.covers * 100)}% below what we were paying, worth about ${fmt(a.save)} kr. a year. We just need orders to go through the account that is on the agreement.
+
+Could you check whether the old account is still set as the default, and let me know if anything is blocking the switch?
+
+Thanks,
+${state.user}</textarea>
+    </div>`;
+  $('#cbFoot').innerHTML = `
+    <span class="fnote">Sent internally — nothing goes to ${a.n}.</span>
+    <span class="spacer"></span>
+    <button class="btn btn-secondary" id="cbCancel">Cancel</button>
+    <button class="btn btn-primary" id="cbSend">Send to the buyer</button>`;
+  $('#cbCancel').addEventListener('click', cbClose);
+  $('#cbSend').addEventListener('click', () => {
+    const b = $('#cbSend'); b.disabled = true; b.textContent = 'Sending…';
+    setTimeout(() => { cbState.sent = true; renderContactBuyer(); }, RM ? 300 : 1000);
+  });
+}
+
+/* ============================================================================
+   T4 · NOTIFICATION PREFERENCES — channel, volume, and the email itself
+   ========================================================================= */
+const NP_CHANNELS = [
+  {k:'app',   n:'In-app',  i:'<path d="M6 9.5a6 6 0 1112 0c0 4.7 1.9 5.7 1.9 5.7H4.1S6 14.2 6 9.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {k:'email', n:'Email',   i:'<rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {k:'slack', n:'Slack',   i:'<rect x="4" y="4" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.7"/><rect x="13" y="13" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M11 8h6a3 3 0 013 3M13 16H7a3 3 0 01-3-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'},
+  {k:'sms',   n:'SMS',     i:'<rect x="6" y="3" width="12" height="18" rx="2.4" stroke="currentColor" stroke-width="1.7"/><path d="M10.5 18h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
+];
+/* the "sound level" the map asks for. Three volumes named by what arrives, not
+   by event type — a checkbox per event is a form people abandon. */
+const NP_VOLUMES = [
+  {k:'all',    n:'Everything',      s:'Every price change, sync and confirmation', bars:3},
+  {k:'money',  n:'Only the money',  s:'Savings found, prices raised, agreements live', bars:2},
+  {k:'digest', n:'Monthly digest',  s:'One summary on the first working day',      bars:1}
+];
+/* what the trigger email actually looks like, per volume — a preference screen
+   that never shows the artefact is guesswork */
+const NP_MAIL = {
+  all:    {sub:'3 updates on your Advantage account', line:'Stark Byggecenter raised prices 4%, your Q8 rate was confirmed, and 1.284 invoices were read overnight.', cta:'Open your dashboard'},
+  money:  {sub:'Stark Byggecenter raised prices 4%',  line:'That is 18.400 kr. a year off your saving. We have a group rate that covers the same lines.', cta:'See what it costs you'},
+  digest: {sub:'August at Advantage: +117.142 kr.',   line:'Your realised saving, what changed, and the three agreements worth activating next month.', cta:'Read the summary'}
+};
+
+function renderNotifPrefs(){
+  const box = $('#npPrefs');
+  if(!box) return;
+  const mail = NP_MAIL[notifPrefs.volume] || NP_MAIL.money;
+  box.innerHTML = `
+    <div>
+      <h4>Where we reach you</h4>
+      <div class="np-chans">
+        ${NP_CHANNELS.map(c => `
+          <button type="button" class="np-chan" data-chan="${c.k}"
+            aria-pressed="${notifPrefs.channels.includes(c.k)}">
+            <svg viewBox="0 0 24 24" fill="none">${c.i}</svg>${c.n}
+          </button>`).join('')}
+      </div>
+    </div>
+    <div>
+      <h4>How much</h4>
+      <div class="np-vol">
+        ${NP_VOLUMES.map(v => `
+          <button type="button" class="np-vol-opt" data-vol="${v.k}"
+            aria-pressed="${notifPrefs.volume === v.k}">
+            <span class="np-vol-bars" aria-hidden="true">
+              ${[1,2,3].map(n => `<i class="${n <= v.bars ? 'on' : ''}"></i>`).join('')}
+            </span>
+            <span class="np-vol-txt"><b>${v.n}</b><span>${v.s}</span></span>
+          </button>`).join('')}
+      </div>
+    </div>
+    ${notifPrefs.channels.includes('email') ? `
+    <div>
+      <h4>What the email looks like</h4>
+      <div class="np-mail">
+        <div class="np-mail-h">
+          <svg viewBox="0 0 24 24" fill="none" style="width:13px;height:13px"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          Advantage · to ${state.user.split(' ')[0].toLowerCase()}@${state.company.split(' ')[0].toLowerCase()}.dk
+        </div>
+        <div class="np-mail-b">
+          <b>${mail.sub}</b>
+          <p>${mail.line}</p>
+          <span class="np-mail-cta">${mail.cta}
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </div>
+    </div>` : ''}
+    <p class="np-prefs-f">Anything urgent — a price rise that is costing you money — always
+      reaches you in-app, whatever is set here.</p>`;
+
+  $$('#npPrefs [data-chan]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const k = b.dataset.chan;
+    const i = notifPrefs.channels.indexOf(k);
+    /* in-app can't be switched off — see the footnote; it is the floor, not a choice */
+    if(i >= 0 && k !== 'app') notifPrefs.channels.splice(i, 1);
+    else if(i < 0) notifPrefs.channels.push(k);
+    persist(); renderNotifPrefs();
+  }));
+  $$('#npPrefs [data-vol]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    notifPrefs.volume = b.dataset.vol; persist(); renderNotifPrefs();
+  }));
+}
+
+/* ============================================================================
+   T2 · SAVINGS CALCULATOR
+   The dashboard answers "what do we think you'd save". This answers "what would
+   I save if I spent X" — the same rates, but the customer's own numbers, typed
+   in, before any data is connected.
+   ========================================================================= */
+let scState = null;
+function scEnsureDom(){
+  if($('#sc')) return;
+  const scrim = document.createElement('div');
+  scrim.className = 'bcs'; scrim.id = 'scs';
+  const dlg = document.createElement('div');
+  dlg.className = 'bc'; dlg.id = 'sc';
+  dlg.setAttribute('role', 'dialog');
+  dlg.setAttribute('aria-modal', 'true');
+  dlg.setAttribute('aria-labelledby', 'scT');
+  dlg.innerHTML = `
+    <header class="bc-h">
+      <div>
+        <div class="bc-eyebrow"><span class="chip chip-soft">Calculator</span></div>
+        <h2 id="scT" tabindex="-1">What would you save?</h2>
+      </div>
+      <button class="dwx" id="scX" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="bc-b" id="scBody"></div>
+    <footer class="bc-f" id="scFoot"></footer>`;
+  document.body.append(scrim, dlg);
+  $('#scX').addEventListener('click', scClose);
+  scrim.addEventListener('click', scClose);
+  addEventListener('keydown', e => {
+    if(e.key === 'Escape' && $('#sc').classList.contains('on')) scClose();
+  });
+}
+function scClose(){
+  $('#scs').classList.remove('on');
+  $('#sc').classList.remove('on');
+}
+function openCalculator(){
+  scEnsureDom();
+  /* prefilled from what we already believe about this account, so it opens on a
+     real answer rather than an empty form — every field is still editable */
+  if(!scState) scState = Object.fromEntries(
+    ROWS.map(r => [r.id, Math.round(r.amt * (newCustomer ? NC_SIZE_MULT[ncSize] : 1))]));
+  renderCalculator();
+  $('#scs').classList.add('on');
+  $('#sc').classList.add('on');
+  setTimeout(() => $('#scT').focus(), 100);
+}
+function scTotals(){
+  let spend = 0, save = 0;
+  ROWS.forEach(r => {
+    const v = Math.max(0, scState[r.id] || 0);
+    spend += v; save += v * r.rate / 100;
+  });
+  return {spend, save:Math.round(save), bonus:bonusOn(spend).total};
+}
+function renderCalculator(){
+  const t = scTotals();
+  $('#scBody').innerHTML = `
+    <p class="sc-intro">Type what you spend a year in each category. The rate beside it is the
+      Advantage group discount for that category — the same one every figure on your
+      dashboard uses. Nothing here is saved or sent.</p>
+    <div class="sc-rows">
+      ${ROWS.map(r => {
+        const v = Math.max(0, scState[r.id] || 0);
+        return `
+        <div class="sc-row">
+          <span class="sc-row-n"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg>${r.n}</span>
+          <label class="sc-in">
+            <input type="number" min="0" step="1000" value="${v}" data-sc="${r.id}"
+              aria-label="Annual spend on ${r.n}, kroner">
+            <span>kr.</span>
+          </label>
+          <span class="sc-rate">−${r.rate}%</span>
+          <span class="sc-out" data-scout="${r.id}">+${fmt(v * r.rate / 100)} kr.</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="sc-total">
+      <span>On <b id="scSpend" style="color:#fff">${fmt(t.spend)} kr.</b> of annual spend,
+        you would save</span>
+      <b id="scSave">+${fmt(t.save)}<small> kr. a year</small></b>
+    </div>
+    <p class="sc-note">Plus a volume bonus of about <b id="scBonus">${fmt(t.bonus)} kr.</b>, paid
+      once a year on whatever goes through the agreements. Rates are the group rates
+      in force today; your own figures replace these estimates the moment you connect
+      your accounting data.</p>`;
+  $('#scFoot').innerHTML = `
+    <span class="fnote">Estimate only — nothing is saved.</span>
+    <span class="spacer"></span>
+    <button class="btn btn-secondary" id="scReset">Reset</button>
+    <button class="btn btn-primary" id="scUpload">Use my real numbers</button>`;
+
+  $$('#scBody [data-sc]').forEach(inp => inp.addEventListener('input', () => {
+    const r = ROWS.find(x => x.id === inp.dataset.sc);
+    scState[r.id] = Math.max(0, +inp.value || 0);
+    $(`[data-scout="${r.id}"]`).textContent = `+${fmt(scState[r.id] * r.rate / 100)} kr.`;
+    const n = scTotals();
+    $('#scSpend').textContent = `${fmt(n.spend)} kr.`;
+    $('#scSave').innerHTML = `+${fmt(n.save)}<small> kr. a year</small>`;
+    $('#scBonus').textContent = `${fmt(n.bonus)} kr.`;
+  }));
+  $('#scReset').addEventListener('click', () => { scState = null; openCalculator(); });
+  $('#scUpload').addEventListener('click', () => { scClose(); openDataCenter(); });
+}
+
+/* ============================================================================
+   T3 · PORTAL WALK-THROUGH
+   A spotlight tour rather than a modal, so the real interface stays visible
+   behind it. Steps whose target isn't on screen are skipped, which is what lets
+   one tour serve both personas without two scripts.
+   ========================================================================= */
+let tourAt = -1, tourSteps = [];
+function tourEnsureDom(){
+  if($('#tourMask')) return;
+  const mask = document.createElement('div');
+  mask.className = 'tour-mask'; mask.id = 'tourMask';
+  mask.innerHTML = '<i data-t="top"></i><i data-t="bottom"></i><i data-t="left"></i><i data-t="right"></i><div class="tour-ring" id="tourRing"></div>';
+  const pop = document.createElement('div');
+  pop.className = 'tour-pop'; pop.id = 'tourPop';
+  pop.setAttribute('role', 'dialog');
+  pop.setAttribute('aria-live', 'polite');
+  pop.style.display = 'none';
+  document.body.append(mask, pop);
+  mask.addEventListener('click', e => { if(e.target.tagName === 'I') tourEnd(); });
+  addEventListener('keydown', e => {
+    if(tourAt < 0) return;
+    if(e.key === 'Escape') tourEnd();
+    if(e.key === 'ArrowRight') tourGo(tourAt + 1);
+    if(e.key === 'ArrowLeft') tourGo(tourAt - 1);
+  });
+  addEventListener('resize', () => { if(tourAt >= 0) tourPaint(); });
+}
+function tourScript(){
+  return [
+    {sel:'#nav', t:'Everything lives here',
+     b:'Six places, and you will use two of them. Overview is where the money is; Agreements is where you check it is actually landing.'},
+    {sel:'#agentBtn', t:'Ask instead of hunting',
+     b:'Type a question in plain Danish or English — or ask for a person. Peter has your account open and answers in the same panel.'},
+    newCustomer
+      ? {sel:'#viewNewCustomer .nc-ov', t:'These are benchmarks, not your numbers',
+         b:'Until you connect your accounting data, every figure here is what companies your size and trade actually achieve. Connect once and they become yours.'}
+      : {sel:'#sitnGrid', t:'What you have saved so far',
+         b:'Year to date, straight from your invoices. Hover any tile to see which agreements it came from.'},
+    newCustomer
+      ? {sel:'#viewNewCustomer .nc-bento-row', t:'Where the opportunity sits',
+         b:'Categories on the left, the assistant’s three recommended moves on the right. Both open the detail in a new tab.'}
+      : {sel:'#oppByAgr', t:'What to do next',
+         b:'Every agreement you have not activated, biggest saving first. Opening one shows how we worked the number out before you commit to anything.'},
+    {sel:'#activityRail', t:'What just happened',
+     b:'Next best actions at the top, then a log of everything we did on your behalf. Collapse it any time from the bottom of the rail.'}
+  ];
+}
+function tourStart(){
+  tourEnsureDom();
+  tourSteps = tourScript().filter(st => {
+    const el = document.querySelector(st.sel);
+    return el && el.offsetParent !== null && el.getBoundingClientRect().width > 0;
+  });
+  if(!tourSteps.length) return;
+  $('#tourMask').classList.add('on');
+  $('#tourPop').style.display = '';
+  tourGo(0);
+}
+function tourEnd(){
+  tourAt = -1;
+  const m = $('#tourMask'), p = $('#tourPop');
+  if(m) m.classList.remove('on');
+  if(p) p.style.display = 'none';
+  seenTour = true; persist();
+}
+function tourGo(i){
+  if(i < 0) return;
+  if(i >= tourSteps.length){ tourEnd(); return; }
+  tourAt = i;
+  const st = tourSteps[i];
+  const el = document.querySelector(st.sel);
+  if(el) el.scrollIntoView({block:'center', behavior:RM ? 'auto' : 'smooth'});
+  $('#tourPop').innerHTML = `
+    <span class="tour-step">Step ${i + 1} of ${tourSteps.length}</span>
+    <h3>${st.t}</h3>
+    <p>${st.b}</p>
+    <div class="tour-f">
+      <span class="tour-dots" aria-hidden="true">
+        ${tourSteps.map((_, n) => `<i class="${n === i ? 'on' : ''}"></i>`).join('')}
+      </span>
+      <span class="spacer"></span>
+      ${i ? '<button class="btn btn-ghost btn-sm" id="tourPrev">Back</button>' :
+            '<button class="btn btn-ghost btn-sm" id="tourSkip">Skip</button>'}
+      <button class="btn btn-primary btn-sm" id="tourNext">${i === tourSteps.length - 1 ? 'Got it' : 'Next'}</button>
+    </div>`;
+  const on = (id, fn) => { const b = $(id); if(b) b.addEventListener('click', fn); };
+  on('#tourPrev', () => tourGo(i - 1));
+  on('#tourSkip', tourEnd);
+  on('#tourNext', () => tourGo(i + 1));
+  setTimeout(tourPaint, RM ? 0 : 320);
+}
+/* four panels around the target rather than one huge box-shadow: the cut-out
+   stays crisp whatever the element's size, and each panel is its own click
+   target for "tap outside to leave" */
+function tourPaint(){
+  if(tourAt < 0) return;
+  const st = tourSteps[tourAt];
+  const el = document.querySelector(st.sel);
+  if(!el) return;
+  const r = el.getBoundingClientRect();
+  const pad = 6;
+  const box = {t:r.top - pad, l:r.left - pad, w:r.width + pad * 2, h:r.height + pad * 2};
+  const set = (n, css) => Object.assign($(`#tourMask [data-t="${n}"]`).style, css);
+  set('top',    {top:'0px', left:'0px', width:'100%', height:Math.max(0, box.t) + 'px'});
+  set('bottom', {top:(box.t + box.h) + 'px', left:'0px', width:'100%', height:Math.max(0, innerHeight - box.t - box.h) + 'px'});
+  set('left',   {top:box.t + 'px', left:'0px', width:Math.max(0, box.l) + 'px', height:box.h + 'px'});
+  set('right',  {top:box.t + 'px', left:(box.l + box.w) + 'px', width:Math.max(0, innerWidth - box.l - box.w) + 'px', height:box.h + 'px'});
+  Object.assign($('#tourRing').style,
+    {top:box.t + 'px', left:box.l + 'px', width:box.w + 'px', height:box.h + 'px'});
+
+  const pop = $('#tourPop'), pr = pop.getBoundingClientRect();
+  const below = box.t + box.h + 14;
+  const top = below + pr.height < innerHeight - 12 ? below
+            : Math.max(12, box.t - pr.height - 14);
+  const left = Math.min(Math.max(12, box.l), innerWidth - pr.width - 12);
+  Object.assign(pop.style, {top:top + 'px', left:left + 'px'});
+}
+
 /* ---------------- persistence ----------------
    A reload used to dump you back at the login screen. Progress now lives in
    sessionStorage, so reloading — or editing the file while it's open — keeps you where
@@ -5955,7 +6818,8 @@ function persist(){
       unread: NOTES.map(n => n.unread ? 1 : 0),
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
       newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityMini,
-      savedAgr: [...savedAgr], agrCardStyle, agrViewStyle, catViewStyle
+      savedAgr: [...savedAgr], agrCardStyle, agrViewStyle, catViewStyle,
+      notifPrefs, seenTour
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
 }
@@ -5993,6 +6857,8 @@ function applySaved(d){
   if(['photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
   if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
   if(['list','bars','split','focus'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
+  if(d.notifPrefs && Array.isArray(d.notifPrefs.channels)) notifPrefs = d.notifPrefs;
+  if(typeof d.seenTour === 'boolean') seenTour = d.seenTour;
 }
 
 function startOver(){
