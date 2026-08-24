@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F4F6F6">
+<title>Advantage prototypes — brief</title>
+<style>
+:root{--white:#fff;--canvas:#F4F6F6;--ink:#1d1d1f;--soft:#6e6e73;--faint:#a1a1a6;
+ --accent:#0071e3;--good:#00734d;--hair:#e6e7e8;
+ --r:14px;--r-lg:20px;--r-full:999px;
+ --sf:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+ --mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:var(--sf);background:var(--canvas);color:var(--ink);font-size:17px;
+ line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+h1,h2,h3,h4{letter-spacing:-.028em;font-weight:650;line-height:1.2;text-wrap:balance}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+.mono{font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.04em;
+ text-transform:uppercase;padding:5px 11px;border-radius:var(--r-full);
+ background:var(--canvas);color:var(--soft);white-space:nowrap}
+.tag.current{background:#e3f1e9;color:var(--good)}
+.tag.yours{background:#fdf0e2;color:#95591a}
+
+.page{max-width:1080px;margin:0 auto;padding:64px 32px 96px;display:grid;
+ grid-template-columns:220px 1fr;gap:56px;align-items:start}
+@media(max-width:900px){.page{grid-template-columns:1fr;gap:32px;padding:40px 18px 64px}}
+nav.side{position:sticky;top:32px}
+@media(max-width:900px){nav.side{position:static}}
+nav.side h4{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+ color:var(--faint);margin-bottom:12px}
+nav.side ol{list-style:none;counter-reset:n}
+nav.side li{counter-increment:n;padding:6px 0;font-size:15px;line-height:1.35}
+nav.side li a{color:var(--ink);font-weight:500;display:flex;gap:9px}
+nav.side li a::before{content:counter(n);color:var(--faint);font-variant-numeric:tabular-nums;
+ font-size:12.5px;padding-top:2px}
+nav.side li a:hover{color:var(--accent);text-decoration:none}
+main{min-width:0}
+h1{font-size:38px;letter-spacing:-.032em}
+.exec{background:var(--white);border-radius:var(--r-lg);padding:32px 36px;margin:24px 0 12px}
+.exec h4{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+ color:var(--accent);margin-bottom:14px}
+.exec p{font-size:17.5px;line-height:1.6}
+.exec p+p{margin-top:13px}
+.exec p b{font-weight:650}
+.figs{display:flex;gap:34px;flex-wrap:wrap;margin-top:22px;padding-top:20px;
+ border-top:1px solid var(--hair)}
+.figs div b{display:block;font-size:26px;font-weight:700;letter-spacing:-.03em;line-height:1.15}
+.figs div span{font-size:12.5px;color:var(--soft)}
+.ch{margin-top:52px;scroll-margin-top:24px}
+.ch>.hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:3px}
+.ch>.hd .no{font-family:var(--mono);font-size:13px;color:var(--faint)}
+.ch>.hd h2{font-size:26px}
+.ch>.mono{margin-bottom:16px}
+.ch .body{background:var(--white);border-radius:var(--r-lg);padding:28px 32px}
+.ch .body .one{font-size:18.5px;font-weight:600;line-height:1.45;margin-bottom:14px}
+.ch .body p{font-size:16px;color:var(--soft);line-height:1.65}
+.ch .body p+p{margin-top:11px}
+.ch .body .go{margin-top:20px;padding-top:18px;border-top:1px solid var(--hair)}
+.ch .body .go a{font-size:16px;font-weight:600}
+@media(max-width:640px){.ch .body{padding:22px 20px}h1{font-size:29px}.exec{padding:24px 20px}}
+
+.appx{margin-top:64px}
+.appx>h2{font-size:26px;margin-bottom:8px}
+.appx>p{color:var(--soft);font-size:16px;margin-bottom:24px;max-width:74ch}
+.ag{background:var(--white);border-radius:var(--r-lg);padding:26px 30px}
+.ag+.ag{margin-top:14px}
+.ag h4{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+ color:var(--faint);margin-bottom:16px}
+.ag ul{list-style:none}
+.ag li{padding:9px 0;font-size:15.5px;line-height:1.5}
+.ag li+li{border-top:1px solid var(--hair)}
+.ag li a{font-weight:600;color:var(--ink)}
+.ag li a:hover{color:var(--accent)}
+.ag li span{color:var(--soft)}
+@media(max-width:640px){.ag{padding:20px 20px}}
+</style>
+</head>
+<body>
+<div class="page"><nav class="side"><h4>Contents</h4><ol><li><a href="#c1">The Worklist</a></li><li><a href="#c2">The Scorecard</a></li><li><a href="#c3">The Letter</a></li><li><a href="#c4">The Ledger</a></li><li><a href="#c5">The Bento</a></li><li><a href="#c6">Today</a></li><li><a href="#c7">Five layout options</a></li><li><a href="#c8">Journey map</a></li><li><a href="#c9">Gap analysis</a></li><li><a href="#c10">The connect flow</a></li><li><a href="#c11">Your working prototype</a></li><li><a href="#appx">Everything else</a></li></ol></nav><main><h1>Advantage prototypes</h1><div class="exec"><h4>Executive summary</h4><p><b>What this is.</b> A procurement portal for small and mid-sized Nordic firms. It reads their supplier invoices, shows what they already save through negotiated agreements, and points at money they are still leaving on the table.</p><p><b>Where we are.</b> Nine generations of prototypes, from first sprint sketches to five builds that work end to end. Two questions are still open: which navigation model ships, and how plain the language needs to be.</p><p><b>What I would do next.</b> Test the Worklist against the Scorecard with a real procurement manager. Those two make opposite bets on what he wants first, and no amount of internal review will settle it.</p><div class="figs"><div><b>5</b><span>builds that work end to end</span></div><div><b>9</b><span>generations</span></div><div><b>2</b><span>open questions</span></div><div><b>45</b><span>files in the folder</span></div></div></div><section class="ch" id="c1"><div class="hd"><span class="no">01</span><h2>The Worklist</h2><span class="tag current">Works end to end</span></div><p class="mono">advantage-v9-worklist.html</p><div class="body"><p class="one">The month's work as a numbered list of things to do.</p><p>Treats procurement as a job with tasks rather than a dashboard to interpret. The front page says “3 things to do. About 10 minutes.” Each row gives a plain heading, what it is worth in kroner per year, one paragraph of why, and two labelled buttons. Finishing one moves it to a Done list with a running total, so the pile visibly shrinks.</p><p>Written for a 61-year-old procurement manager: no software jargon, 18px body text, every figure written out as “118 000 kr a year”, every icon paired with a word. Four sections instead of seven.</p><p>Strongest bet if he wants to be handed his work. Weakest if he wants to understand his position before acting.</p><div class="go"><a href="advantage-v9-worklist.html">Open The Worklist &rarr;</a></div></div></section><section class="ch" id="c2"><div class="hd"><span class="no">02</span><h2>The Scorecard</h2><span class="tag current">Works end to end</span></div><p class="mono">advantage-v9-scorecard.html</p><div class="body"><p class="one">Answers “am I doing well or badly” before anything else.</p><p>Opens with three labelled bars: You, Firms like yours, The best firms in your trade. Each figure is written twice, in kroner and in plain words (“you buy 62 of every 100 kroner at an agreed price”). Underneath: what the best firms do that you do not, as three things you can act on.</p><p>Because the comparison supplies the motivation, the word “potential” never appears. The bars are told apart by label and fill pattern, not colour, so they survive a black-and-white printout.</p><p>Strongest bet if he is a professional who wants his score first. For the new customer with no data, the comparison is the entire story, which makes this the best cold-start of the three.</p><div class="go"><a href="advantage-v9-scorecard.html">Open The Scorecard &rarr;</a></div></div></section><section class="ch" id="c3"><div class="hd"><span class="no">03</span><h2>The Letter</h2><span class="tag current">Works end to end</span></div><p class="mono">advantage-v9-letter.html</p><div class="body"><p class="one">A letter from his advisor, in full sentences.</p><p>No charts, no tiles, no status markers. Mette writes to him: what she read, what she found, and one question at a time with a clear yes and a clear not-now. Answering reveals the next paragraph. Signed with a name and a phone number.</p><p>The most radical departure and the cheapest to test. Worth showing even if it loses, because his reaction tells you how much explaining the product actually needs.</p><div class="go"><a href="advantage-v9-letter.html">Open The Letter &rarr;</a></div></div></section><section class="ch" id="c4"><div class="hd"><span class="no">04</span><h2>The Ledger</h2><span class="tag current">Works end to end</span></div><p class="mono">advantage-v8-ledger.html</p><div class="body"><p class="one">Three panes, keyboard driven, everything comparable at a glance.</p><p>Sidebar, then a list of all 14 categories with the data inside the rows as coverage bars, then a detail pane. No chart on the overview at all. Arrow keys move the selection with the detail pane keeping pace and no page reload, Enter opens the agreement, ⌘K filters live.</p><p>The complete feature set: agreement pages with how-to-buy, category pages, notifications with editable rules, the advisor inbox, the activity feed. The better tool of the two v8 builds.</p><p>Its main advantage is invisible if nobody touches the keyboard. Worth watching for in testing.</p><div class="go"><a href="advantage-v8-ledger.html">Open The Ledger &rarr;</a></div></div></section><section class="ch" id="c5"><div class="hd"><span class="no">05</span><h2>The Bento</h2><span class="tag current">Works end to end</span></div><p class="mono">advantage-v8-bento.html</p><div class="body"><p class="one">Seven tiles where size is the only ranking device.</p><p>A 3-column grid of unequal tiles, each a link into its section, with drill-down animating from the tile's own position. Exactly one data mark per tile and each mark type used once. A reorder mode with keyboard controls.</p><p>Same complete feature set as the Ledger. The better first impression of the two; the weaker tool. Missing global search and keyboard navigation, which exist only in the Ledger.</p><div class="go"><a href="advantage-v8-bento.html">Open The Bento &rarr;</a></div></div></section><section class="ch" id="c6"><div class="hd"><span class="no">06</span><h2>Today</h2><span class="tag ">Worth opening</span></div><p class="mono">advantage-v7-4-today.html</p><div class="body"><p class="one">A queue of prepared decisions, and the only build where rules create work.</p><p>Six decisions, each stating exactly what it commits you to, with three levels: approve, request an offer, or ask the advisor. Advisor time is metered against the plan.</p><p>Worth opening for one thing: change the expiry rule from 90 to 120 days and a real new decision card appears. That causal link between a setting and tomorrow's work is the most convincing single mechanic anyone built here, and it did not survive into the v8 builds. It should.</p><div class="go"><a href="advantage-v7-4-today.html">Open Today &rarr;</a></div></div></section><section class="ch" id="c7"><div class="hd"><span class="no">07</span><h2>Five layout options</h2><span class="tag ">Design reference</span></div><p class="mono">advantage-dashboard-layouts.html</p><div class="body"><p class="one">Wireframes and reasoning for five ways to structure the overview.</p><p>Vault, Bento, Ledger, Focus Card and Atlas, each with its structural breakdown and an argument for how it moves the user from the total savings figure to one agreement. Not interactive.</p><p>Bento and Ledger were built. Three remain unbuilt: the scroll narrative, the single-decision card, and the spend treemap. The Atlas in particular is the only one that makes the gap visible as a shape before you read anything.</p><div class="go"><a href="advantage-dashboard-layouts.html">Open Five layout options &rarr;</a></div></div></section><section class="ch" id="c8"><div class="hd"><span class="no">08</span><h2>Journey map</h2><span class="tag ">Read first</span></div><p class="mono">advantage-ux/journey-map.html</p><div class="body"><p class="one">Ten stages, each flagged against what the prototypes actually cover.</p><p>The journey the team agreed in Miro, mapped stage by stage with a built / partial / missing flag and the specific gap named per stage. Persona toggle and emotion curves.</p><p>Read this before opening any prototype. It is the fastest way to see that stage 2, connecting accounting data, is stubbed everywhere despite being the whole conversion path.</p><div class="go"><a href="advantage-ux/journey-map.html">Open Journey map &rarr;</a></div></div></section><section class="ch" id="c9"><div class="hd"><span class="no">09</span><h2>Gap analysis</h2><span class="tag ">Read first</span></div><p class="mono">advantage-GAP-ANALYSIS.md</p><div class="body"><p class="one">What the competitors ship, and the sixteen gaps ranked.</p><p>Vinst and Seiva both sell breadth, a named human and proof. Neither shows any evidence of notifications, messaging, document storage, roles and permissions, ordering workflows, or reporting. Four of those are now built here; the rest are open.</p><p>Top of the remaining list: multi-user roles and approvals, because every build still assumes one person is the company.</p><div class="go"><a href="advantage-GAP-ANALYSIS.md">Open Gap analysis &rarr;</a></div></div></section><section class="ch" id="c10"><div class="hd"><span class="no">10</span><h2>The connect flow</h2><span class="tag ">Unique content</span></div><p class="mono">advantage-onboarding.html</p><div class="body"><p class="one">The only place the data connection journey exists.</p><p>Choose a source, watch it analyse, confirm the data set, see the value revealed. Every later build stubs this with a placeholder modal.</p><p>Start here if you prototype the connection journey, because the pieces are already worked out.</p><div class="go"><a href="advantage-onboarding.html">Open The connect flow &rarr;</a></div></div></section><section class="ch" id="c11"><div class="hd"><span class="no">11</span><h2>Your working prototype</h2><span class="tag yours">Yours</span></div><p class="mono">advantage-v2-visual.html</p><div class="body"><p class="one">Still being edited, and the source of three patterns everything else uses.</p><p>Favourite and saved agreements, the card-style switch, and the persistent activity rail all started here. It is also the reference for how agreement copy should sound: “Same supplier, same delivery, only the invoice price changes.”</p><p>Later work builds on this rather than replacing it.</p><div class="go"><a href="advantage-v2-visual.html">Open Your working prototype &rarr;</a></div></div></section><div id="appx"><section class="appx"><h2>Everything else in the folder</h2>
+<p>Kept because it shows the reasoning. You do not need to open any of these unless you are curious how a decision got made.</p>
+<div class="ag"><h4>Earlier full builds</h4><ul>
+<li><a href="advantage-v7-1-storefront.html">advantage-v7-1-storefront.html</a><br><span>Catalogue-led. Live search across the agreement catalogue, saved shelf as its own page.</span></li>
+<li><a href="advantage-v7-3-spine.html">advantage-v7-3-spine.html</a><br><span>Category-led. A 14-row board; adds the quartile comparison scale.</span></li>
+<li><a href="advantage-v6-1-storefront.html">advantage-v6-1-storefront.html</a><br><span>Same idea as v7 storefront, before standalone pages existed.</span></li>
+<li><a href="advantage-v6-2-statement.html">advantage-v6-2-statement.html</a><br><span>Spend in, savings out, with a reconciliation line that visibly balances. Line ended, but that idea is worth taking.</span></li>
+<li><a href="advantage-v6-3-spine.html">advantage-v6-3-spine.html</a><br><span>Category board, superseded by v7.</span></li>
+<li><a href="advantage-v6-4-today.html">advantage-v6-4-today.html</a><br><span>Decision queue, superseded by v7.</span></li>
+<li><a href="advantage-v6-5-report.html">advantage-v6-5-report.html</a><br><span>A monthly management report with a generated headline and a copy-for-board button. Line ended.</span></li>
+</ul></div>
+<div class="ag"><h4>First pass on the real design system</h4><ul>
+<li><a href="advantage-v4-1-marketplace.html">advantage-v4-1-marketplace.html</a><br><span>Catalogue.</span></li>
+<li><a href="advantage-v4-2-ledger.html">advantage-v4-2-ledger.html</a><br><span>Where the reconciliation line first appeared.</span></li>
+<li><a href="advantage-v4-3-category-spine.html">advantage-v4-3-category-spine.html</a><br><span>Category board.</span></li>
+<li><a href="advantage-v4-4-decision-queue.html">advantage-v4-4-decision-queue.html</a><br><span>Where the three commitment levels were worked out.</span></li>
+<li><a href="advantage-v4-5-cfo-spend.html">advantage-v4-5-cfo-spend.html</a><br><span>Spend-first, management report framing.</span></li>
+</ul></div>
+<div class="ag"><h4>Five product definitions</h4><ul>
+<li><a href="_advantage-v3-1-marketplace.html">_advantage-v3-1-marketplace.html</a><br><span>A dashboard reports; a catalogue sells.</span></li>
+<li><a href="advantage-v3-2-ledger.html">advantage-v3-2-ledger.html</a><br><span>Savings only mean something against spend.</span></li>
+<li><a href="advantage-v3-3-category-spine.html">advantage-v3-3-category-spine.html</a><br><span>An agreement outside its category is just a PDF.</span></li>
+<li><a href="advantage-v3-4-decision-queue.html">advantage-v3-4-decision-queue.html</a><br><span>Browsing is optional; deciding is the job.</span></li>
+<li><a href="advantage-v3-5-cfo-spend.html">advantage-v3-5-cfo-spend.html</a><br><span>Firms think in spend, not savings.</span></li>
+</ul></div>
+<div class="ag"><h4>Tone studies and early work</h4><ul>
+<li><a href="advantage-v2-alt-1-subtraction.html">advantage-v2-alt-1-subtraction.html</a><br><span>One number, one action.</span></li>
+<li><a href="_(Corrections)advantage-v2-alt-2-trust-machine.html">_(Corrections)advantage-v2-alt-2-trust-machine.html</a><br><span>Evidence and proof. Your note: corrections.</span></li>
+<li><a href="advantage-v2-alt-3-money-movement.html">advantage-v2-alt-3-money-movement.html</a><br><span>Money movement.</span></li>
+<li><a href="_(Category_bar)advantage-v2-alt-4-collective.html">_(Category_bar)advantage-v2-alt-4-collective.html</a><br><span>Collective leverage. Your note: category bar.</span></li>
+<li><a href="_(Interrupt)advantage-v2-alt-5-ambient.html">_(Interrupt)advantage-v2-alt-5-ambient.html</a><br><span>The ambient service. Your note: interrupt.</span></li>
+<li><a href="advantage-v5-advisor.html">advantage-v5-advisor.html</a><br><span>Your own advisor-led direction, outside the numbered series.</span></li>
+<li><a href="advantage-autopilot.html">advantage-autopilot.html</a><br><span>Where the assistant behaviour was worked out.</span></li>
+<li><a href="advantage-approach-a-diagnostic-ledger.html">advantage-approach-a-diagnostic-ledger.html</a><br><span>Financial diagnosis framing.</span></li>
+<li><a href="advantage-approach-b-savings-pipeline.html">advantage-approach-b-savings-pipeline.html</a><br><span>Savings pipeline framing.</span></li>
+<li><a href="advantage-v2.html">advantage-v2.html</a><br><span>Early onboarding.</span></li>
+<li><a href="advantage-prototype.html">advantage-prototype.html</a><br><span>The first dashboard.</span></li>
+<li><a href="advantage-v4-simple.html">advantage-v4-simple.html</a><br><span>A stripped-back dashboard.</span></li>
+</ul></div>
+<div class="ag"><h4>Research and sprint material</h4><ul>
+<li><a href="advantage-ux/executive-summary.md">advantage-ux/executive-summary.md</a><br><span>One page on the product and where it stands, for leadership.</span></li>
+<li><a href="advantage-ux/journey.json">advantage-ux/journey.json</a><br><span>The journey as data, with the prototype hook for each stage.</span></li>
+<li><a href="advantage-ux/README.md">advantage-ux/README.md</a><br><span>How to use and update the journey files.</span></li>
+<li><a href="pain-map.html">pain-map.html</a><br><span>Where the money leaks, by customer type.</span></li>
+<li><a href="interview-field-kit.html">interview-field-kit.html</a><br><span>Run every interview the same way.</span></li>
+<li><a href="sales-rep-interview.html">sales-rep-interview.html</a><br><span>Sales rep interview.</span></li>
+<li><a href="sprint-prep-brief.html">sprint-prep-brief.html</a><br><span>Sprint prep brief.</span></li>
+<li><a href="discover-opportunity.html">discover-opportunity.html</a><br><span>Where the group landed.</span></li>
+<li><a href="journey-map.html">journey-map.html</a><br><span>The earlier 12-step journey. Superseded.</span></li>
+<li><a href="Advantage%20Nordic%20-%20AI%20design%20sprint%20plan.docx">Advantage%20Nordic%20-%20AI%20design%20sprint%20plan.docx</a><br><span>Sprint plan.</span></li>
+<li><a href="Design%20sprint%20pre-planning%20deck.pdf">Design%20sprint%20pre-planning%20deck.pdf</a><br><span>Pre-planning deck.</span></li>
+</ul></div>
+</section></div></main></div>
+</body>
+</html>
