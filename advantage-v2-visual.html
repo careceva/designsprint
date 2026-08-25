@@ -1139,6 +1139,9 @@ body.in-app .flow{display:none}
 .opp-page{display:flex;flex-direction:column;gap:var(--s6);max-width:760px;margin:0 auto;width:100%}
 .opp-back{margin-bottom:var(--s2)}
 .opp-back svg{width:16px;height:16px}
+/* breadcrumb above the agreement hero: nudged left so the label's text edge — not
+   the ghost button's padding box — aligns with the title under it */
+.cat-tab-back{margin:0 0 var(--s4) calc(var(--s3) * -1)}
 .opp-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s6);
   flex-wrap:wrap;padding-bottom:var(--s6);border-bottom:1px solid var(--hairline)}
 .opp-hero h1{margin-top:var(--s2);font-size:var(--text-3xl);letter-spacing:-.8px}
@@ -1213,6 +1216,45 @@ body.in-app .flow{display:none}
    Fanny's dashboard still leaves its top/bottom padding rendering as an empty
    112px box above #viewNewCustomer even though every child inside is hidden. */
 .page[hidden]{display:none!important}
+
+/* ---------- suppliers: page head + search & filter ----------
+   The catalogue used to start at the first shelf with no way to reach a NAMED
+   supplier except scrolling three rows. The head gives the page a name, the
+   search reaches any supplier in two keystrokes, and the chips are the same
+   pill language the rest of the app selects with. */
+.sup-head h1{font-size:var(--text-2xl);letter-spacing:-.8px}
+.sup-head p{margin-top:var(--s1);font-size:var(--text-sm);line-height:1.5;
+  color:var(--general-muted-foreground)}
+.sup-tools{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s6)}
+.sup-search{position:relative;max-width:440px}
+.sup-search>svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;color:var(--general-muted-foreground);pointer-events:none}
+.sup-search input{width:100%;height:44px;padding:0 46px 0 42px;
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  background:var(--general-input);font-size:var(--text-sm);box-shadow:var(--shadow-xs)}
+.sup-search input::placeholder{color:var(--general-muted-foreground)}
+.sup-search input:focus-visible{outline:2px solid var(--general-primary);outline-offset:-1px}
+.sup-search-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  width:28px;height:28px;display:grid;place-items:center;border:none;cursor:pointer;
+  border-radius:var(--rounded-full);background:var(--general-muted);
+  color:var(--general-muted-foreground);transition:color var(--t-fast)}
+.sup-search-x:hover{color:var(--general-foreground)}
+.sup-search-x svg{width:11px;height:11px}
+.sup-search-x[hidden]{display:none!important}
+.sup-cats{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.sup-cats .pill-opt{height:34px;font-size:13px}
+/* the found suppliers, flat — the shelves answer "what is there?", this answers
+   "where is the one I mean?", so it drops the sideways scroll entirely */
+.sup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--s4)}
+.sup-grid .sup{width:auto}
+.sup-empty{padding:var(--s16) var(--s4);text-align:center}
+.sup-empty h3{font-size:var(--text-lg);letter-spacing:-.3px}
+.sup-empty p{margin:var(--s2) auto 0;max-width:44ch;font-size:var(--text-sm);
+  line-height:1.55;color:var(--general-muted-foreground)}
+.sup-empty .btn{margin-top:var(--s6)}
+/* the body wraps the shelves now, so it re-creates the view's own rhythm */
+#supBody{display:flex;flex-direction:column;gap:var(--s8);min-width:0}
+
 .shelf{min-width:0}
 .sh-head{display:flex;align-items:flex-end;gap:var(--s4);margin-bottom:var(--s3)}
 .sh-head>div{flex:1;min-width:0}
@@ -1396,6 +1438,14 @@ body.in-app .flow{display:none}
   border-radius:0 0 var(--rounded-2xl) var(--rounded-2xl)}
 .bc-f .spacer{flex:1}
 .bc-f .fnote{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+/* narrow: the buttons already go full-width at 600px further down, so the flex
+   spacer only leaves an empty row behind it. Note takes the first line instead.
+   Same breakpoint as that rule — one dialog breakpoint, not two. */
+@media(max-width:600px){
+  .bc-f{gap:var(--s3)}
+  .bc-f .spacer{display:none}
+  .bc-f .fnote{flex:1 1 100%;order:-1}
+}
 /* hero */
 .bc-hero{text-align:center;padding:var(--s4) 0 var(--s6)}
 .bc-hero .big{font-family:var(--font-sans);font-size:var(--text-5xl);font-weight:600;
@@ -1512,7 +1562,14 @@ body.in-app .flow{display:none}
    the reading on the right. The left column is deliberately narrow, so the title
    sets large against a short measure — that ratio is what makes it read as an
    Apple page rather than just a big heading. */
-.cat-tab-grid{display:grid;grid-template-columns:320px 1fr;gap:var(--s12);align-items:start}
+.cat-tab-grid{display:grid;grid-template-columns:320px 1fr;gap:var(--s16);align-items:start}
+/* very large displays (5k): let the page breathe a little wider — same ratio,
+   slightly more room for both columns */
+@media(min-width:1800px){
+  body.cat-tab-mode .page{max-width:1480px}
+  .cat-tab-wrap{max-width:1416px}
+  .cat-tab-grid{grid-template-columns:380px 1fr}
+}
 /* the panel: eyebrow, title, one sentence, the money, the actions. No photo, no
    box, no tint — the whitespace around it is doing the design work. */
 .cat-mast{position:sticky;top:var(--s8);display:flex;flex-direction:column;
@@ -1531,18 +1588,10 @@ body.in-app .flow{display:none}
 .cat-mast-note{margin-top:var(--s6);padding-top:var(--s6);border-top:1px solid var(--hairline);
   font-size:13px;line-height:1.6;color:var(--general-muted-foreground)}
 .cat-mast-act{margin-top:var(--s8);display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
-/* the agreement page's two actions stack in a 320px column, with the icon
-   buttons on their own row underneath */
+/* the panel's actions stack in the narrow column, full width each */
 .cat-mast-act .btn-block{flex:1 1 100%}
 .cat-mast-act .btn{height:42px;padding:0 var(--s5,20px);border-radius:var(--rounded-full);
   font-size:var(--text-sm)}
-
-.cat-tab-icon-btn{width:38px;height:38px;display:grid;place-items:center;border-radius:var(--rounded-full);
-  border:1px solid var(--hairline);background:var(--surface);color:var(--general-muted-foreground);
-  cursor:pointer;transition:background var(--t-fast),color var(--t-fast),border-color var(--t-fast)}
-.cat-tab-icon-btn svg{width:17px;height:17px}
-.cat-tab-icon-btn:hover{border-color:var(--general-border);color:var(--general-foreground)}
-.cat-tab-icon-btn.on{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
 
 /* the right column: every direct child (each opp-sec) gets one consistent gap from
    the flex container — no ad-hoc margin rules, and nothing here reaches outside
@@ -1671,6 +1720,144 @@ body.in-app .flow{display:none}
 .pc-draft textarea:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
 .pc-next{margin-top:var(--s6)}
 .pc-next h4{font-size:var(--text-sm);font-weight:650;margin-bottom:var(--s3)}
+
+/* ---------- shared dialog bits ----------
+   The close button had no style at all in this file, so every dialog's × rendered
+   as a default form button. */
+.dwx{flex:0 0 auto;width:34px;height:34px;display:grid;place-items:center;background:none;
+  border:none;border-radius:var(--rounded-full);cursor:pointer;color:var(--general-muted-foreground);
+  transition:background var(--t-fast),color var(--t-fast)}
+.dwx:hover{background:var(--general-muted);color:var(--general-foreground)}
+.dwx svg{width:17px;height:17px}
+/* the dialog body scrolls often enough that the browser's default bar is part of
+   the design whether we draw it or not */
+.bc-b{scrollbar-width:thin;scrollbar-color:#d3dae6 transparent}
+.bc-b::-webkit-scrollbar{width:10px}
+.bc-b::-webkit-scrollbar-track{background:transparent}
+.bc-b::-webkit-scrollbar-thumb{border:3px solid transparent;background-clip:content-box;
+  border-radius:var(--rounded-full);background-color:#d3dae6}
+.bc-b::-webkit-scrollbar-thumb:hover{background-color:#b9c4d6}
+/* one small selectable pill, used for the terms, the channel, the day and the time */
+.pill-row{display:flex;gap:var(--s2);flex-wrap:wrap}
+.pill-opt{height:38px;padding:0 var(--s4);display:inline-flex;align-items:center;gap:7px;
+  border:1px solid var(--hairline);border-radius:var(--rounded-full);background:var(--surface);
+  cursor:pointer;font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background var(--t-fast),color var(--t-fast),border-color var(--t-fast)}
+.pill-opt:hover{border-color:var(--general-border);background:#fcfdff}
+.pill-opt[aria-pressed="true"]{background:var(--general-primary);border-color:var(--general-primary);
+  color:var(--general-primary-foreground)}
+/* a taken slot reads as taken, not as broken: the app's own disabled-button
+   colours plus a strike, rather than a faded pill you'd try to click */
+.pill-opt[disabled]{background:var(--general-muted);border-color:transparent;color:#8f8f8f;
+  cursor:not-allowed;text-decoration:line-through;text-decoration-thickness:1px}
+.pill-opt.ctr{justify-content:center;padding:0 var(--s3)}
+.pill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:var(--s2)}
+/* a labelled block inside a dialog step. Margin on every block, zeroed on the
+   first, so a step can open on any component and still space the same. */
+.fld{margin-top:var(--s8)}
+.bc-b>.fld:first-child{margin-top:0}
+.fld-h{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s3)}
+.fld-h .pc-q{margin:0}
+.fld-h .spacer{flex:1 1 auto}
+.fld-hint{font-size:12.5px;color:var(--general-muted-foreground)}
+.dlg-note label{display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:600;
+  color:var(--general-muted-foreground)}
+/* the label and its "(optional)" are one line: as bare inline text they became
+   separate flex items and stacked */
+.dlg-note .lbl{display:block}
+.dlg-note .lbl em{font-style:normal;font-weight:500}
+.dlg-note textarea{display:block;width:100%;min-height:74px;padding:var(--s3);resize:vertical;
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);background:var(--general-input);
+  font:inherit;font-size:var(--text-sm);line-height:1.55;font-weight:400;color:var(--general-foreground)}
+.dlg-note textarea:focus-visible{outline:2px solid var(--general-primary);outline-offset:-1px}
+
+/* ---------- a sent request, on the page that sent it ----------
+   The rail says a request exists; this says it exists HERE. Same pill, same
+   wording, so the two read as one thing seen from two places. */
+/* no bottom margin: this is a direct child of .cat-tab-main, whose own gap already
+   separates it from the section below */
+.rq-open{display:flex;flex-direction:column;gap:var(--s2)}
+.rq-card{display:flex;align-items:center;gap:var(--s4);width:100%;text-align:left;
+  padding:var(--s4) var(--s5,20px);border:1px solid #bdd7ff;border-radius:var(--rounded-lg);
+  background:var(--brand-ice);cursor:pointer;
+  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.rq-card:hover{border-color:var(--general-primary);box-shadow:var(--shadow-sm)}
+.rq-ic{flex:0 0 auto;width:38px;height:38px;display:grid;place-items:center;
+  border-radius:var(--rounded-md);background:var(--surface);color:var(--general-primary)}
+.rq-ic svg{width:19px;height:19px}
+.rq-tx{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.rq-tx b{font-size:var(--text-sm);font-weight:650}
+.rq-tx span{font-size:12.5px;line-height:1.45;color:#4a6795}
+.rq-go{flex:0 0 auto;display:flex;align-items:center;gap:var(--s3)}
+.rq-go>svg{width:16px;height:16px;color:var(--general-primary)}
+/* the status sheet's own recap of what went out */
+.rq-what{list-style:none;display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s3)}
+.rq-what li{padding:4px 10px;border-radius:var(--rounded-full);background:var(--general-muted);
+  font-size:12.5px;font-weight:600;color:var(--general-foreground)}
+
+/* ---------- custom request: who receives it ----------
+   The recipient list is the point of this flow, so it's a real checkable list of
+   suppliers rather than a "send to all" toggle. */
+.rcp{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.rcp-row{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md);background:var(--surface);
+  cursor:pointer;text-align:left;transition:border-color var(--t-fast),background var(--t-fast)}
+.rcp-row:hover{border-color:var(--general-border);background:#fcfdff}
+.rcp-row[aria-pressed="true"]{border-color:var(--general-primary);background:var(--brand-ice)}
+.rcp-box{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;
+  border-radius:var(--rounded-xs);
+  border:1.5px solid var(--sidebar-border);background:var(--surface);color:transparent;
+  transition:background var(--t-fast),border-color var(--t-fast),color var(--t-fast)}
+.rcp-box svg{width:12px;height:12px}
+.rcp-row[aria-pressed="true"] .rcp-box{background:var(--general-primary);
+  border-color:var(--general-primary);color:#fff}
+.rcp-row .agr-chip{margin:0;width:34px;height:34px;box-shadow:none}
+.rcp-row .agr-chip img{padding:4px}
+.rcp-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.rcp-id b{font-size:var(--text-sm);font-weight:650}
+.rcp-id span{font-size:12.5px;color:var(--general-muted-foreground)}
+/* on the selected row the ground is tinted, so the secondary text is tinted from
+   the same hue — #707070 drops under 4.5:1 on brand-ice */
+.rcp-row[aria-pressed="true"] .rcp-id span,
+.rcp-row[aria-pressed="true"] .rcp-tag{color:#4a6795}
+.rcp-tag{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--general-muted-foreground)}
+.rcp-grp{width:34px;height:34px;flex:0 0 auto;display:grid;place-items:center;
+  border-radius:var(--rounded-md);background:var(--general-muted);color:var(--general-muted-foreground)}
+.rcp-grp svg{width:17px;height:17px}
+/* the category this request is about, in the same shape as the price challenge's
+   supplier row — the two flows should open on the same kind of header. The tint
+   stays reserved for selection, so it can only ever mean one thing in here. */
+.cat-ic{flex:0 0 auto;width:40px;height:40px;display:grid;place-items:center;
+  border-radius:var(--rounded-md);background:var(--brand-ice);color:var(--general-primary)}
+.cat-ic svg{width:21px;height:21px}
+/* a quiet informational row: what is about to happen, stated once */
+.dlg-info{display:flex;align-items:flex-start;gap:var(--s3);margin-bottom:var(--s4);
+  padding:var(--s3) var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  background:#fcfcfd;font-size:12.5px;line-height:1.55;color:var(--general-muted-foreground)}
+.dlg-info>svg{flex:0 0 auto;width:16px;height:16px;margin-top:1px;color:var(--general-primary)}
+.dlg-info b{font-weight:650;color:var(--general-foreground)}
+
+/* ---------- meeting: the advisor is a named person, not a queue ---------- */
+.ms-who{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:#fcfcfd;
+  margin-bottom:var(--s6)}
+.ms-av{flex:0 0 auto;width:46px;height:46px;border-radius:var(--rounded-full);display:grid;
+  place-items:center;background:var(--brand-midnight);color:#fff;font-size:var(--text-sm);
+  font-weight:650;letter-spacing:.02em}
+.ms-who-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.ms-who-id b{font-size:var(--text-base);font-weight:700}
+.ms-who-id span{font-size:12.5px;color:var(--general-muted-foreground)}
+.ms-live{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-size:12px;
+  font-weight:600;color:var(--sentiment-positive)}
+.ms-live i{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--sentiment-positive)}
+/* no rule above it: the advisor card it follows already has its own border, and a
+   hairline 24px under a bordered box is a line for the sake of a line */
+.ms-recap{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+.ms-recap li{display:grid;grid-template-columns:132px 1fr;gap:var(--s4);font-size:var(--text-sm);
+  line-height:1.5}
+@media(max-width:600px){.ms-recap li{grid-template-columns:1fr;gap:2px}}
+.ms-recap li>span:first-child{color:var(--general-muted-foreground)}
+.ms-recap li>span:last-child{font-weight:600}
 
 /* ---------- agreement page: three ways to see what it's worth ----------
    Same hero, three interchangeable bodies behind a segmented control: the money
@@ -2000,7 +2187,10 @@ body.in-app .flow{display:none}
 .sv-total-v small{font-size:16px;font-weight:600;color:#dce6fb}
 
 /* bento: categories list + saving-assistant advisory, side by side */
-.nc-bento-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6)}
+/* minmax(0,…), not bare 1fr: a bare 1fr track still respects min-content, so a
+   long unwrappable line in either cell silently steals width from the other and
+   the two "equal" cells change size depending on which view is showing */
+.nc-bento-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s6)}
 @media(max-width:860px){.nc-bento-row{grid-template-columns:1fr}}
 .nc-bento-cell{border:1px solid var(--hairline);border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s8)}
@@ -2095,6 +2285,73 @@ body.in-app .flow{display:none}
   font-variant-numeric:tabular-nums}
 .cv-rest-go{flex:0 0 auto;width:15px;height:15px;color:var(--general-muted-foreground)}
 
+/* seven views share one segmented control now — tighter buttons so it stays a
+   single row inside the half-width cell, wrapping as the safety net */
+.cv-head .seg{flex-wrap:wrap;justify-content:flex-end}
+.cv-head .seg button{padding:0 var(--s2)}
+
+/* — view 5: brands — same ranking, told through who you'd actually buy from.
+   The logos are the concrete half of the promise, and this section never used
+   them: "Building materials" is abstract, Stark's amber tile is not. */
+.cv-brands{list-style:none;display:flex;flex-direction:column}
+.cv-brand-row{display:flex;align-items:center;gap:var(--s4);width:100%;
+  padding:var(--s5,20px) 0;background:none;border:none;
+  border-bottom:1px solid var(--hairline);cursor:pointer;text-align:left}
+.cv-brands li:last-child .cv-brand-row{border-bottom:none}
+.cv-brand-row:hover .cv-brand-n{text-decoration:underline;text-underline-offset:3px}
+/* an avatar-style stack, but z-ordered so the FIRST mark — the category's biggest
+   supplier — sits on top fully visible, and the others peek out behind it.
+   Fixed width (three chips: 30 + 2 × 21): rows with two chips reserve the same
+   column, so every category name starts at the same x */
+.cv-brand-stack{display:flex;flex:0 0 auto;width:72px}
+.cv-bchip{position:relative}
+.cv-brand-stack .cv-bchip:nth-child(1){z-index:3}
+.cv-brand-stack .cv-bchip:nth-child(2){z-index:2}
+.cv-brand-stack .cv-bchip:nth-child(3){z-index:1}
+.cv-bchip + .cv-bchip{margin-left:-9px}
+.cv-bchip .agr-chip{margin:0;width:30px;height:30px;border-radius:var(--rounded-sm);
+  box-shadow:0 0 0 2px var(--surface)}
+.cv-bchip .agr-chip img{padding:3px}
+.cv-bchip .agr-chip-i{font-size:11px}
+.cv-brand-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.cv-brand-n{font-size:16px;font-weight:600;letter-spacing:-.2px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.cv-brand-sub{font-size:13px;color:var(--general-muted-foreground);overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.cv-brand-v{flex:0 0 auto;font-size:16px;font-weight:700;color:var(--sentiment-positive);
+  font-variant-numeric:tabular-nums}
+
+/* — view 6: why — every row earns its place with a reason, not just a number.
+   Six identical money rows read as noise; six different sentences read as six
+   different decisions. */
+.cv-why{list-style:none;display:flex;flex-direction:column}
+.cv-why-row{display:flex;align-items:center;gap:var(--s6);width:100%;
+  padding:var(--s4) var(--s1);background:none;border:none;
+  border-bottom:1px solid var(--hairline);cursor:pointer;text-align:left}
+.cv-why li:last-child .cv-why-row{border-bottom:none}
+.cv-why-row:hover .cv-why-txt b{text-decoration:underline;text-underline-offset:3px}
+.cv-why-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.cv-why-txt b{font-size:16px;font-weight:600;letter-spacing:-.2px}
+.cv-why-txt span{font-size:13px;line-height:1.45;color:var(--general-muted-foreground)}
+.cv-why-fig{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.cv-why-fig b{font-size:16px;font-weight:700;color:var(--sentiment-positive);
+  font-variant-numeric:tabular-nums}
+.cv-why-fig span{font-size:12px;color:var(--general-muted-foreground);white-space:nowrap}
+
+/* — view 7: story — the same figures as three written sentences. Prose is the
+   one form that can say which numbers matter; a list can only repeat them. */
+.cv-story{padding:var(--s2) 0}
+.cv-story p{font-size:15px;line-height:1.65;color:var(--general-muted-foreground)}
+.cv-story p + p{margin-top:var(--s4)}
+.cv-story .cv-story-lead{font-size:var(--text-lg);line-height:1.5;
+  color:var(--general-foreground)}
+.cv-story .cv-story-lead b{font-weight:750;color:var(--sentiment-positive)}
+.cv-story p b{font-weight:650;color:var(--general-foreground)}
+.cv-story-link{background:none;border:none;padding:0;cursor:pointer;font:inherit;
+  font-weight:650;color:var(--general-foreground);text-decoration:underline;
+  text-underline-offset:3px;text-decoration-color:var(--general-border)}
+.cv-story-link:hover{color:var(--general-primary);text-decoration-color:currentColor}
+
 /* ---------- agreement card, "simple" variant ----------
    One sentence per card: the supplier's mark, the money, and a single round
    affordance. No photo, no bullets, no second action — the whole card is the
@@ -2181,9 +2438,9 @@ body.in-app .flow{display:none}
 /* full-bleed footer: the negative margin has to match .nc-bento-cell's padding
    (--s8 each side, so --s16 of extra width) or it won't reach the card edges */
 .nc-advisory-foot{display:flex;align-items:center;justify-content:center;gap:var(--s2);
-  width:calc(100% + var(--s16));margin:0 calc(var(--s8) * -1);
+  width:calc(100% + var(--s16));margin:auto calc(var(--s8) * -1) 0;
   padding:var(--s4) var(--s8);border-top:1px solid var(--hairline);
-  background:var(--general-muted);font-size:13px;color:var(--general-muted-foreground)}
+  font-size:13px;color:var(--general-muted-foreground)}
 .nc-advisory-foot .sda{width:16px;height:16px}
 
 /* the activity rail: truly pinned to the browser window's right edge and the
@@ -2198,6 +2455,10 @@ body.in-app .flow{display:none}
   border-left:1px solid var(--hairline);background:var(--surface);
   padding:var(--s8) var(--s6) 0;overflow-y:auto;z-index:5;
   display:flex;flex-direction:column;transition:width var(--t)}
+/* same trap as .page[hidden] below: this display:flex overrides the [hidden] UA
+   rule, so updateActivityRail's rail.hidden did nothing and the fixed rail sat
+   on top of the content on every window under 1440px */
+.nc-activity[hidden]{display:none!important}
 .nc-activity-body{flex:1 1 auto;min-height:0}
 body.activity-on .canvas{padding-right:calc(320px + var(--s10,40px))}
 /* collapsed: an icon-width strip, exactly like .rail.mini on the left */
@@ -2249,6 +2510,30 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .act-tx span{display:block;font-size:13px;color:var(--general-muted-foreground)}
 .act-v{flex:0 0 auto;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
 .act-v.up{color:var(--sentiment-positive)} .act-v.dn{color:var(--sentiment-negative)}
+/* sent requests: live state, so they sit above the log rather than inside it —
+   the log is history, these are still running */
+.act-reqs{display:flex;flex-direction:column;gap:var(--s2)}
+/* name and pill share the top line, the detail gets the full width underneath —
+   at 320px the rail cannot fit all three side by side without shredding the name */
+.act-req{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
+  gap:2px var(--s3);width:100%;text-align:left;
+  padding:var(--s3) var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  background:var(--surface);cursor:pointer;
+  transition:border-color var(--t-fast),box-shadow var(--t-fast),transform .1s ease}
+.act-req:hover{border-color:var(--general-border);box-shadow:var(--shadow-sm)}
+.act-req:active{transform:translateY(1px)}
+.act-req>b{min-width:0;font-size:14px;font-weight:650;line-height:1.35;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.act-req-s{grid-column:1 / -1;font-size:13px;color:var(--general-muted-foreground);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* one status pill, used in the rail and on the page so a request looks the same
+   in both places */
+.req-pill{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:var(--rounded-full);font-size:12px;font-weight:650;
+  white-space:nowrap;background:#fff2e0;color:#a35c00}
+.req-pill.chase{background:var(--general-secondary);color:var(--general-primary)}
+.req-pill::before{content:"";width:6px;height:6px;border-radius:var(--rounded-full);
+  background:currentColor}
 /* collapsed rail: icons only */
 .act-mini{display:none;flex-direction:column;align-items:center;gap:var(--s3);padding-top:var(--s2)}
 .act-mini-ic{position:relative;width:44px;height:44px;border-radius:var(--rounded-md);
@@ -2279,8 +2564,10 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .opp-fold>summary::-webkit-details-marker{display:none}
 .opp-fold>summary:hover{color:var(--general-foreground)}
 .opp-fold>summary h3{font-size:var(--text-lg);letter-spacing:-.3px;color:var(--general-foreground)}
+/* 2px right margin: the 45° rotation grows the 8px box to an ~11px diagonal, and
+   flush against the right edge those corners registered as 2px of scroll overflow */
 .opp-fold>summary::after{content:"";flex:0 0 auto;width:8px;height:8px;margin-left:auto;
-  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  margin-right:2px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;
   transform:rotate(45deg);transition:transform var(--t-fast)}
 .opp-fold[open]>summary::after{transform:rotate(225deg)}
 .opp-fold[open]>summary{margin-bottom:var(--s4)}
@@ -3479,7 +3766,10 @@ function enterAppShell(){
   updateActivityRail();
   inApp = true;
   persist();
-  if(!seenWelcome) openWelcome();
+  /* not on the category tab: that page opens in its own tab, so a direct load has
+     no carried-over sessionStorage and the dashboard's "your dashboard is live"
+     modal would open over a page that isn't the dashboard */
+  if(!seenWelcome && !new URLSearchParams(location.search).has('catView')) openWelcome();
 }
 
 function enterApp(){
@@ -3918,6 +4208,71 @@ function renderErpPill(){
    missing). Bob's is real traffic: a price rise to answer, a rate confirmed on
    an invoice, a sync. Note there is no peer COUNT anywhere here — publishing
    "148 companies" invites "is that a lot?" and gives away customer numbers. */
+/* ============ sent requests: one store, three places ============
+   A request the user sends has to be findable afterwards, in the rail and on the
+   page where they sent it. localStorage rather than sessionStorage: the category
+   page opens in its OWN tab, so a request created there must reach the dashboard
+   tab — sessionStorage would hand each tab a private copy that never syncs, and
+   only localStorage fires a cross-tab `storage` event. */
+const RKEY = 'advantage-requests-v1';
+let REQS = [];
+function readReqs(){
+  try{ const v = JSON.parse(localStorage.getItem(RKEY) || '[]'); return Array.isArray(v) ? v : []; }
+  catch(e){ return []; }
+}
+function saveReqs(){
+  try{ localStorage.setItem(RKEY, JSON.stringify(REQS)); }catch(e){ /* private mode */ }
+}
+REQS = readReqs();
+
+/* every request in a category — the custom (terms) request plus any per-agreement
+   price challenges */
+const reqsFor = catId => REQS.filter(q => q.catId === catId);
+const reqForAgr = (catId, agrName) =>
+  REQS.find(q => q.catId === catId && q.agr === agrName);
+const reqTerms = catId => REQS.find(q => q.catId === catId && q.kind === 'terms');
+
+function addReq(q){
+  REQS = [{...q, at:Date.now()}, ...readReqs()];   /* re-read: another tab may have added one */
+  saveReqs();
+  refreshRequestViews();
+}
+function dropReq(id){
+  REQS = readReqs().filter(q => q.id !== id);
+  saveReqs();
+  refreshRequestViews();
+}
+/* days since it went out, as the label people actually use */
+const reqDays = q => Math.max(0, Math.floor((Date.now() - q.at) / 86400000));
+const reqWhen = q => { const d = reqDays(q);
+  return d === 0 ? 'sent today' : d === 1 ? 'sent yesterday' : `sent ${d} days ago`; };
+/* we chase at day five — that is a real thing the product does, so it is the only
+   stage change we assert. An ANSWER is the supplier's move, never inferred here. */
+const reqStage = q => reqDays(q) >= 5 ? 'Chasing' : 'Awaiting reply';
+const reqTitle = q => q.agr
+  ? `Better price · ${q.agr}`
+  : `Better terms · ${q.catName}`;
+const reqSub = q => q.agr
+  ? `Better price · ${reqWhen(q)}`
+  : `Better terms · ${q.count} supplier${q.count > 1 ? 's' : ''} · ${reqWhen(q)}`;
+
+/* one refresh for every surface a request shows on, so the store stays the only
+   source of truth and no caller has to remember the list */
+function refreshRequestViews(){
+  renderActivityRail();
+  const ct = $('#viewCatTab');
+  if(ct && !ct.hidden && catTabAt){
+    if(catTabAt.agrIdx === null) renderCatTab(catTabAt.r);
+    else renderCatTabAgreement(catTabAt.r, catTabAt.agrIdx);
+  }
+}
+/* another tab sent or withdrew one — pick it up without a reload */
+addEventListener('storage', e => {
+  if(e.key !== RKEY) return;
+  REQS = readReqs();
+  refreshRequestViews();
+});
+
 function railData(){
   if(newCustomer) return {
     kicker:'Getting started', title:'Next best actions',
@@ -3987,6 +4342,20 @@ function renderActivityRail(){
       </button>`).join('')}
     </div>
 
+    ${REQS.length ? `
+    <div class="act-recent">
+      <h3>Your requests</h3>
+      <span class="act-count">${REQS.length}</span>
+    </div>
+    <div class="act-reqs">
+      ${REQS.map(q => `
+      <button type="button" class="act-req" data-req="${q.id}">
+        <b>${q.agr || q.catName}</b>
+        <span class="req-pill${reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
+        <span class="act-req-s">${reqSub(q)}</span>
+      </button>`).join('')}
+    </div>` : ''}
+
     <div class="act-recent">
       <h3>Recent activity</h3>
       <button type="button" class="linkbtn" id="actAll">See all</button>
@@ -4004,6 +4373,15 @@ function renderActivityRail(){
   $$('#activityBody .act-card').forEach(b =>
     b.addEventListener('click', () => d.actions[+b.dataset.act].go()));
   $('#actAll').addEventListener('click', () => $('#bellBtn').click());
+  /* a request opens its status. Already on that category's page? Open the sheet
+     in place — sending the user to a second tab of the page they're reading is
+     the kind of thing that makes a prototype feel broken. */
+  $$('#activityBody .act-req').forEach(b => b.addEventListener('click', () => {
+    const q = REQS.find(x => x.id === b.dataset.req);
+    if(!q) return;
+    if(catTabAt && catTabAt.r.id === q.catId) openReqStatus(q.id);
+    else window.open(catTabUrl(q.catId), '_blank');
+  }));
 
   if(mini) mini.innerHTML = `
     <span class="act-mini-ic" title="${d.actions.length} actions">
@@ -4053,10 +4431,13 @@ function ncMiniCatRow(r){
    sorted by MONEY, not by discount rate — a ranking that isn't ranked by the
    figure it prints would be a lie about what matters. */
 const CAT_VIEWS = [
-  {k:'list',  n:'List'},
-  {k:'bars',  n:'Bars'},
-  {k:'split', n:'Split'},
-  {k:'focus', n:'Focus'}
+  {k:'list',   n:'List'},
+  {k:'bars',   n:'Bars'},
+  {k:'split',  n:'Split'},
+  {k:'focus',  n:'Focus'},
+  {k:'brands', n:'Brands'},
+  {k:'why',    n:'Why'},
+  {k:'story',  n:'Story'}
 ];
 
 function catRowsByMoney(rows){
@@ -4136,11 +4517,75 @@ function catViewFocus(rows){
     </ul>`;
 }
 
-/* the list keeps its own column header; the other three don't need one */
+/* the same ranking, told through who you'd actually buy from: the recognisable
+   supplier marks ARE the content here, and the money confirms them */
+function catViewBrands(rows){
+  const items = catRowsByMoney(rows);
+  return `
+    <ul class="cv-brands">
+      ${items.map(({r, save}) => `
+      <li><button type="button" class="cv-brand-row" data-cat="${r.id}">
+        <span class="cv-brand-stack">
+          ${[...r.agr].sort((a, b) => b.covers - a.covers).slice(0, 3).map(a =>
+            `<span class="cv-bchip" style="--b:${brandOf(a.n)}">${agrLogoChip(a.n)}</span>`).join('')}
+        </span>
+        <span class="cv-brand-id">
+          <span class="cv-brand-n">${r.n}</span>
+          <span class="cv-brand-sub">${r.agr.length} agreement${r.agr.length > 1 ? 's' : ''} ·
+            −${r.rate}% vs list</span>
+        </span>
+        <b class="cv-brand-v">+${fmt(save)} kr.</b>
+      </button></li>`).join('')}
+    </ul>
+    <p class="cv-note">These are the suppliers behind each figure — most of them you already know,
+      some you already buy from.</p>`;
+}
+
+/* every row earns its place with a reason: six different sentences instead of
+   six identical money rows */
+function catViewWhy(rows){
+  const items = catRowsByMoney(rows);
+  return `
+    <ul class="cv-why">
+      ${items.map(({r, save}) => `
+      <li><button type="button" class="cv-why-row" data-cat="${r.id}">
+        <span class="cv-why-txt"><b>${r.n}</b><span>${CAT_PITCH[r.id] || ''}</span></span>
+        <span class="cv-why-fig"><b>+${fmt(save)} kr.</b><span>${r.rate}% under list</span></span>
+      </button></li>`).join('')}
+    </ul>`;
+}
+
+/* the same figures as three written sentences — prose can say which numbers
+   matter, a list can only repeat them */
+function catViewStory(rows){
+  const items = catRowsByMoney(rows);
+  const total = items.reduce((s, x) => s + x.save, 0);
+  const [top, second, third] = items;
+  /* the fastest win is the widest price gap outside the biggest pile of money */
+  const quick = items.slice(1).reduce((a, b) => b.r.rate > a.r.rate ? b : a, items[1]);
+  const link = r => `<button type="button" class="cv-story-link" data-cat="${r.id}">${r.n}</button>`;
+  return `
+    <div class="cv-story">
+      <p class="cv-story-lead">Companies like yours typically save <b>${fmt(total)} kr.</b> a year
+        across these six categories.</p>
+      <p>${Math.round(top.save / total * 100)}% of it sits in one place: ${link(top.r)},
+        typically <b>${fmt(top.save)} kr.</b> a year at ${top.r.rate}% under the list prices
+        peers were paying. ${link(second.r)} and ${link(third.r)} add another
+        <b>${fmt(second.save + third.save)} kr.</b> between them.</p>
+      <p>The fastest win is ${link(quick.r)} — the widest gap of the six
+        (<b>${quick.r.rate}% under list</b>) on small, frequent orders, and switching
+        takes about two weeks.</p>
+    </div>`;
+}
+
+/* the list keeps its own column header; the others don't need one */
 function catViewBody(rows){
-  if(catViewStyle === 'bars')  return catViewBars(rows);
-  if(catViewStyle === 'split') return catViewSplit(rows);
-  if(catViewStyle === 'focus') return catViewFocus(rows);
+  if(catViewStyle === 'bars')   return catViewBars(rows);
+  if(catViewStyle === 'split')  return catViewSplit(rows);
+  if(catViewStyle === 'focus')  return catViewFocus(rows);
+  if(catViewStyle === 'brands') return catViewBrands(rows);
+  if(catViewStyle === 'why')    return catViewWhy(rows);
+  if(catViewStyle === 'story')  return catViewStory(rows);
   return `
     <div class="nc-mini-colhead">
       <span class="nc-mini-colhead-sp"></span>
@@ -4357,7 +4802,9 @@ function renderNewCustomerDash(){
   /* the three non-list category views use real <button>s, so they wire straight
      rather than going through the .opp-legend-item keyboard handling below */
   $$('#viewNewCustomer .cv-bar-row, #viewNewCustomer .cv-split-seg, ' +
-     '#viewNewCustomer .cv-focus-lead, #viewNewCustomer .cv-rest-row')
+     '#viewNewCustomer .cv-focus-lead, #viewNewCustomer .cv-rest-row, ' +
+     '#viewNewCustomer .cv-brand-row, #viewNewCustomer .cv-why-row, ' +
+     '#viewNewCustomer .cv-story-link')
     .forEach(b => b.addEventListener('click', () =>
       window.open(catTabUrl(b.dataset.cat), '_blank')));
   $$('#viewNewCustomer .agr-simple').forEach(b => b.addEventListener('click', () =>
@@ -4765,27 +5212,68 @@ const SUPPLIERS = [
     {n:'Ragn-Sells',        cat:'Waste',              pct:12, leaf:true, ic:'waste', tone:'teal'},
     {n:'Engelbert Strauss', cat:'Workwear',           pct:11, ic:'wear',   tone:'ink'}
   ]},
-  /* per the sketch: no category label here, and the logo tile sits on the image */
+  /* per the sketch: no category label on THIS shelf's cards (inimg hides it) —
+     the cat field still exists so search and the category filter can find them */
   {id:'pop', eye:'Popular', spark:true, title:() => 'Popular', inimg:true,
    note:'Most activated by companies of your size and trade.', cards:[
-    {n:'Lyreco',          pct:12, ic:'office', tone:'blue'},
-    {n:'Gifted',          pct:23, ic:'gift',   tone:'amber',
+    {n:'Lyreco',          cat:'Office',   pct:12, ic:'office', tone:'blue'},
+    {n:'Gifted',          cat:'Gifts',    pct:23, ic:'gift',   tone:'amber',
      w:'Group rate and free delivery'},
-    {n:'Make',            pct:12, ic:'tools',  tone:'corn'},
-    {n:'Euroflorist',     pct:75, leaf:true, ic:'flower', tone:'teal'},
-    {n:'Exide',           pct:45, ic:'bolt',   tone:'ink',
+    {n:'Make',            cat:'Tools',    pct:12, ic:'tools',  tone:'corn'},
+    {n:'Euroflorist',     cat:'Flowers',  pct:75, leaf:true, ic:'flower', tone:'teal'},
+    {n:'Exide',           cat:'Batteries',pct:45, ic:'bolt',   tone:'ink',
      w:'Fixed price and a volume bonus'},
-    {n:'VikingWorkforce', pct:12, ic:'people', tone:'blue'}
+    {n:'VikingWorkforce', cat:'Staffing', pct:12, ic:'people', tone:'blue'}
   ]}
 ];
 
 
 const SUP_ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-function renderSup(){
-  $('#viewSup').innerHTML = SUPPLIERS.map(sh => {
-    const t = sh.title();
-    return `
+/* one card, everywhere — the shelves and the search results must not drift apart.
+   hideCat keeps the Popular shelf's no-label look; results always name the category. */
+function supCardHTML(c, {inimg = false, hideCat = false} = {}){
+  return `
+    <button type="button" class="sup${inimg ? ' inimg' : ''}" data-tone="${c.tone}"
+      data-sup="${c.n}">
+      <span class="sup-img">
+        <span class="sup-ph" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">${SUP_ICON[c.ic]}</svg>
+        </span>
+      </span>
+      <span class="sup-b">
+        ${c.cat && !hideCat ? `<span class="sup-cat">${c.cat}</span>` : ''}
+        <span class="sup-n">${c.n}</span>
+        <span class="sup-save"><b>${c.pct}%</b> average saving ·
+          ${c.w || 'Reduced unit price and fixed price'}</span>
+        <span class="sup-more">Read more ${SUP_ARROW}</span>
+      </span>
+    </button>`;
+}
+
+/* search + category filter over the whole catalogue */
+let supQuery = '', supCat = 'all';
+const SUP_CATS = () => [...new Set(SUPPLIERS.flatMap(sh => sh.cards.map(c => c.cat)).filter(Boolean))];
+
+/* the flat pool behind the search: every card once — Lyreco sits on two shelves,
+   and finding it twice would read as a bug */
+function supPool(){
+  const seen = new Set();
+  return SUPPLIERS.flatMap(sh => sh.cards).filter(c => {
+    if(seen.has(c.n)) return false;
+    seen.add(c.n); return true;
+  });
+}
+function supMatches(){
+  const q = supQuery.trim().toLowerCase();
+  return supPool().filter(c =>
+    (supCat === 'all' || c.cat === supCat) &&
+    (!q || c.n.toLowerCase().includes(q) || (c.cat || '').toLowerCase().includes(q)));
+}
+
+const supShelfHTML = sh => {
+  const t = sh.title();
+  return `
     <section class="shelf" aria-labelledby="sh-${sh.id}">
       <div class="sh-head">
         <div>
@@ -4805,27 +5293,97 @@ function renderSup(){
         </div>
       </div>
       <div class="suprow" id="row-${sh.id}">
-        ${sh.cards.map(c => `
-          <button type="button" class="sup${sh.inimg ? ' inimg' : ''}" data-tone="${c.tone}"
-            data-sup="${c.n}">
-            <span class="sup-img">
-              <span class="sup-ph" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none">${SUP_ICON[c.ic]}</svg>
-              </span>
-            </span>
-            <span class="sup-b">
-              ${c.cat ? `<span class="sup-cat">${c.cat}</span>` : ''}
-              <span class="sup-n">${c.n}</span>
-              <span class="sup-save"><b>${c.pct}%</b> average saving ·
-                ${c.w || 'Reduced unit price and fixed price'}</span>
-              <span class="sup-more">Read more ${SUP_ARROW}</span>
-            </span>
-          </button>`).join('')}
+        ${sh.cards.map(c => supCardHTML(c, {inimg:sh.inimg, hideCat:sh.inimg})).join('')}
       </div>
     </section>`;
-  }).join('');
+};
 
-  SUPPLIERS.forEach(sh => wireRow($('#row-' + sh.id)));
+function renderSupBody(){
+  const body = $('#supBody');
+  const filtering = supQuery.trim() || supCat !== 'all';
+
+  if(!filtering){
+    rowSyncs.length = 0;                    /* drop syncs for rows we just replaced */
+    body.innerHTML = SUPPLIERS.map(supShelfHTML).join('');
+    SUPPLIERS.forEach(sh => wireRow($('#row-' + sh.id)));
+  }else{
+    rowSyncs.length = 0;
+    const hits = supMatches();
+    const what = supQuery.trim()
+      ? `matching “${supQuery.trim()}”${supCat !== 'all' ? ` in ${supCat.toLowerCase()}` : ''}`
+      : `in ${supCat.toLowerCase()}`;
+    body.innerHTML = hits.length ? `
+      <section class="shelf" aria-labelledby="sh-hits">
+        <div class="sh-head">
+          <div>
+            <div class="sh-eyebrow">Search results</div>
+            <h2 id="sh-hits">${hits.length} supplier${hits.length > 1 ? 's' : ''} ${what}</h2>
+          </div>
+        </div>
+        <div class="sup-grid">${hits.map(c => supCardHTML(c)).join('')}</div>
+      </section>` : `
+      <div class="sup-empty">
+        <h3>No supplier ${what}</h3>
+        <p>Check the spelling, or clear the filters and browse the shelves —
+          new agreements land every quarter.</p>
+        <button class="btn btn-secondary" id="supReset">Clear search &amp; filters</button>
+      </div>`;
+    const reset = $('#supReset');
+    if(reset) reset.addEventListener('click', () => {
+      supQuery = ''; supCat = 'all';
+      $('#supQ').value = '';
+      renderSupTools(); renderSupBody();
+      $('#supQ').focus();
+    });
+  }
+  /* the chips and the clear button live outside the body — just sync their state */
+  $$('#viewSup [data-supcat]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.supcat === supCat)));
+  $('#supQX').hidden = !supQuery;
+}
+
+function renderSupTools(){
+  $$('#viewSup [data-supcat]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.supcat === supCat)));
+}
+
+function renderSup(){
+  supQuery = ''; supCat = 'all';
+  $('#viewSup').innerHTML = `
+    <header class="sup-head">
+      <h1>Suppliers</h1>
+      <p>Every supplier with an Advantage agreement. Search for one you already buy from,
+        or browse the shelves.</p>
+      <div class="sup-tools">
+        <div class="sup-search">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.2 16.2L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="supQ" type="text" autocomplete="off" spellcheck="false"
+            placeholder="Search suppliers or categories…" aria-label="Search suppliers">
+          <button class="sup-search-x" id="supQX" aria-label="Clear search" hidden>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="sup-cats" role="group" aria-label="Filter by category">
+          <button type="button" class="pill-opt" data-supcat="all" aria-pressed="true">All</button>
+          ${SUP_CATS().map(c => `
+            <button type="button" class="pill-opt" data-supcat="${c}" aria-pressed="false">${c}</button>`).join('')}
+        </div>
+      </div>
+    </header>
+    <div id="supBody"></div>`;
+
+  const q = $('#supQ');
+  q.addEventListener('input', () => { supQuery = q.value; renderSupBody(); });
+  q.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && q.value){ e.stopPropagation(); q.value = ''; supQuery = ''; renderSupBody(); }
+  });
+  $('#supQX').addEventListener('click', () => {
+    q.value = ''; supQuery = ''; renderSupBody(); q.focus();
+  });
+  $$('#viewSup [data-supcat]').forEach(b => b.addEventListener('click', () => {
+    supCat = b.dataset.supcat; renderSupBody();
+  }));
+  renderSupBody();
 }
 
 /* one shelf: the arrows move roughly one visible page, and they disable at the ends */
@@ -5466,10 +6024,9 @@ function renderOppCategory(r){
 const catTabUrl = (id, agrIdx) => `${location.pathname}?catView=${encodeURIComponent(id)}`
   + (agrIdx === undefined ? '' : `&agr=${agrIdx}`);
 
-const catTabShareSvg = '<svg viewBox="0 0 24 24" fill="none"><circle cx="18" cy="5" r="2.6" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.6" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="19" r="2.6" stroke="currentColor" stroke-width="1.7"/><path d="M8.3 10.7l7.4-4.4M8.3 13.3l7.4 4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
-const catTabFavSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 4.5c1.7-2.6 7.5-2 7.5 2.7 0 3.7-4.4 7-7.5 9.8-3.1-2.8-7.5-6.1-7.5-9.8 0-4.7 5.8-5.3 7.5-2.7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
-
-const catTabFavs = new Set();
+/* what the category tab is currently showing, so a request sent (or withdrawn in
+   another tab) can re-render exactly this view rather than guessing */
+let catTabAt = null;
 
 function catTabShell(heroHTML, mainHTML){
   $('#viewCatTab').innerHTML = `
@@ -5479,7 +6036,10 @@ function catTabShell(heroHTML, mainHTML){
         <div class="cat-tab-main">${mainHTML}</div>
       </div>
     </div>`;
-  const h1 = $('.cat-tab-title'); if(h1){ h1.tabIndex = -1; setTimeout(() => h1.focus({preventScroll:true}), 50); }
+  /* not while a dialog is open: sending a request re-renders this page behind the
+     sheet, and moving focus to the page title would pull the user out of it */
+  const h1 = $('.cat-tab-title');
+  if(h1 && !$('.bc.on')){ h1.tabIndex = -1; setTimeout(() => h1.focus({preventScroll:true}), 50); }
 }
 
 /* its own contact markup — not oppContactHTML — so #oppHuman/#oppAI in the (possibly
@@ -5498,17 +6058,19 @@ const catTabContactHTML = () => `
     </div>
   </section>`;
 
-function wireCatTabContact(askText){
+/* the "talk to a specialist" button is the same person as the panel's "contact your
+   sales person", so it opens the same booking flow rather than an alert */
+function wireCatTabContact(askText, r){
   const human = $('#catTabHuman'), ai = $('#catTabAI');
-  if(human) human.addEventListener('click', () =>
-    alert('Not part of this prototype — a procurement specialist would be looped in here.'));
+  if(human) human.addEventListener('click', () => r
+    ? openAdvisorMeeting(r)
+    : alert('Not part of this prototype — a procurement specialist would be looped in here.'));
   if(ai) ai.addEventListener('click', () => alert(`Not part of this prototype — the AI assistant would open here to answer: "${askText}"`));
 }
 
 /* Type, not photography. A category page opens on an eyebrow, one very large
    title, one sentence of context and the money — everything else is whitespace.
-   The share/favourite controls sit as quiet icon buttons beside the primary
-   action rather than in a footer of their own. */
+   The panel's actions stack full-width under the note. */
 function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML, estimated){
   return `
     <span class="cat-mast-eyebrow">${tag}</span>
@@ -5519,26 +6081,7 @@ function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML, estimated
       <span>potential saving a year${estimated ? ' · benchmark estimate' : ''}</span>
     </div>
     <p class="cat-mast-note">${desc}</p>
-    <div class="cat-mast-act">
-      ${extraHTML || ''}
-      <button class="cat-tab-icon-btn" id="catTabShare" aria-label="Share this page" data-tip="Share">${catTabShareSvg}</button>
-      <button class="cat-tab-icon-btn${catTabFavs.has(title) ? ' on' : ''}" id="catTabFav"
-        aria-label="Save to favourites" aria-pressed="${catTabFavs.has(title)}" data-tip="Favourite">${catTabFavSvg}</button>
-    </div>`;
-}
-
-function wireCatTabHeroFoot(title){
-  $('#catTabShare').addEventListener('click', async () => {
-    try{ await navigator.clipboard.writeText(location.href); alert('Link copied.'); }
-    catch(e){ alert(location.href); }
-  });
-  $('#catTabFav').addEventListener('click', () => {
-    if(catTabFavs.has(title)) catTabFavs.delete(title); else catTabFavs.add(title);
-    const b = $('#catTabFav');
-    const on = catTabFavs.has(title);
-    b.classList.toggle('on', on);
-    b.setAttribute('aria-pressed', String(on));
-  });
+    ${extraHTML ? `<div class="cat-mast-act">${extraHTML}</div>` : ''}`;
 }
 
 /* ============ shared: deterministic figures for the visual pages ============
@@ -5767,7 +6310,15 @@ function renderPriceChallenge(){
     $('#pcSend').addEventListener('click', () => {
       const btn = $('#pcSend');
       btn.disabled = true; btn.textContent = 'Sending…';
-      setTimeout(() => { pcState.step = 3; renderPriceChallenge(); body.scrollTop = 0; }, RM ? 300 : 1100);
+      setTimeout(() => {
+        addReq({
+          id:'pc-' + r.id + '-' + a.n + '-' + Date.now(), kind:'price',
+          catId:r.id, catName:r.n, agr:a.n, count:1,
+          ref:'PC-' + String(seedOf(a.n + state.company) % 100000).padStart(5, '0'),
+          terms:[PC_REASONS.find(x => x.k === pcState.reason).t]
+        });
+        pcState.step = 3; renderPriceChallenge(); body.scrollTop = 0;
+      }, RM ? 300 : 1100);
     });
 
   } else {
@@ -5787,7 +6338,7 @@ function renderPriceChallenge(){
         </ol>
       </div>`;
     foot.innerHTML = `
-      <span class="fnote">You can withdraw the request from Agreements at any time.</span>
+      <span class="fnote">It's now in <b>Your requests</b>, in the activity rail and on this page.</span>
       <span class="spacer"></span>
       <button class="btn btn-primary" id="pcDone">Done</button>`;
     $('#pcDone').addEventListener('click', pcClose);
@@ -5811,10 +6362,564 @@ function wirePcQuote(){
   if(b) b.addEventListener('input', () => pcState.rivalPrice = b.value.trim());
 }
 
+/* ============ shared dialog scaffold ============
+   The custom request and the meeting booking have the same shape as the price
+   challenge — choose, confirm, done — so they share one scrim/dialog builder
+   instead of each cloning pcEnsureDom. */
+function flowDom(key, eyebrow, title){
+  /* already built: refresh the header rather than returning with a stale title —
+     the status sheet is opened for many different requests */
+  if($('#' + key)){
+    $('#' + key + 'Eyebrow').textContent = eyebrow;
+    $('#' + key + 'T').textContent = title;
+    return;
+  }
+  const scrim = document.createElement('div');
+  scrim.className = 'bcs'; scrim.id = key + 's';
+  const dlg = document.createElement('div');
+  dlg.className = 'bc'; dlg.id = key;
+  dlg.setAttribute('role', 'dialog');
+  dlg.setAttribute('aria-modal', 'true');
+  dlg.setAttribute('aria-labelledby', key + 'T');
+  dlg.setAttribute('aria-hidden', 'true');
+  dlg.innerHTML = `
+    <header class="bc-h">
+      <div>
+        <div class="bc-eyebrow"><span class="chip chip-soft" id="${key}Eyebrow">${eyebrow}</span>
+          <span id="${key}Step"></span></div>
+        <h2 id="${key}T" tabindex="-1">${title}</h2>
+      </div>
+      <button class="dwx" id="${key}X" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="bc-b" id="${key}Body"></div>
+    <footer class="bc-f" id="${key}Foot"></footer>`;
+  document.body.append(scrim, dlg);
+  const close = () => flowClose(key);
+  $('#' + key + 'X').addEventListener('click', close);
+  scrim.addEventListener('click', close);
+  addEventListener('keydown', e => {
+    if(e.key === 'Escape' && $('#' + key).classList.contains('on')) close();
+  });
+}
+function flowOpen(key){
+  $('#' + key + 's').classList.add('on');
+  $('#' + key).classList.add('on');
+  $('#' + key).setAttribute('aria-hidden', 'false');
+  setTimeout(() => $('#' + key + 'T').focus(), 100);
+}
+function flowClose(key){
+  $('#' + key + 's').classList.remove('on');
+  $('#' + key).classList.remove('on');
+  $('#' + key).setAttribute('aria-hidden', 'true');
+}
+const CHECK_SM = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* ============ custom request ============
+   Deliberately NOT a price challenge: this asks a whole category's suppliers for
+   better TERMS — delivery, payment days, rebates, service — and the thing that
+   makes it worth its own flow is the recipient list. You tick who it goes to, so
+   one request covers every supplier in the category at once instead of four
+   separate conversations. */
+/* the four FEAT_SVG glyphs that actually mean the right thing here, plus two drawn
+   for this list — a padlock for a held price and a return arrow — at the same 1.7
+   stroke on the same 24 grid, so the six read as one family */
+const CR_ICON = {
+  delivery:CAT_ICON.frg,
+  payment:FEAT_SVG.clock,
+  rebate:FEAT_SVG.bonus,
+  service:FEAT_SVG.group,
+  fixed:'<rect x="4.5" y="10.5" width="15" height="9.5" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8.2 10.5V7.8a3.8 3.8 0 017.6 0v2.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12 14v2.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  returns:'<path d="M4 9h11.5a4.5 4.5 0 010 9H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 5.5L4 9l3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'
+};
+const CR_TERMS = [
+  {k:'delivery', t:'Delivery',            s:'Free or next-day delivery, no minimum order'},
+  {k:'payment',  t:'Payment terms',       s:'30 days out to 60, or invoiced per project'},
+  {k:'rebate',   t:'Volume rebate',       s:'An annual bonus once we pass a threshold'},
+  {k:'service',  t:'Service & support',   s:'Repairs, loan units and a named contact'},
+  {k:'fixed',    t:'Fixed for 12 months', s:'No mid-year increases on the agreed list'},
+  {k:'returns',  t:'Returns',             s:'Free returns on unused stock and wrong orders'}
+];
+let crState = null;
+
+/* every supplier in the category we can actually address. The ones Advantage has
+   an agreement with are named; the rest of the category's supplier count goes as
+   one group row, so "all of them" really does mean all of them. */
+function crSuppliers(r){
+  const list = r.agr.map((a,i) => ({k:'a' + i, n:a.n,
+    sub:`${fmt(a.covers)} kr./year with them`, tag:a.req ? 'In use' : 'Agreement', count:1}));
+  const rest = Math.max(0, r.sup - list.length);
+  if(rest) list.push({k:'rest', n:`The other ${rest} suppliers in this category`,
+    sub:'No Advantage agreement yet — goes as a direct approach', group:true, count:rest});
+  return list;
+}
+const crRecipients = () => crSuppliers(crState.r)
+  .filter(s => crState.to.has(s.k)).reduce((n, s) => n + s.count, 0);
+
+function openCustomRequest(r){
+  flowDom('cr', 'Custom request', 'Ask for better terms');
+  crState = {r, step:1, terms:new Set(['delivery', 'payment']),
+    to:new Set(crSuppliers(r).map(s => s.k)), note:'', draft:null};
+  renderCustomRequest();
+  flowOpen('cr');
+}
+
+function crDraft(){
+  const {r, terms, note} = crState;
+  const chosen = CR_TERMS.filter(t => terms.has(t.k));
+  const members = memberCount(r.n);
+  /* each line carries only what the heading doesn't already say — repeating the
+     label back at the supplier is how drafted letters start sounding generated */
+  const asks = {
+    delivery: 'Free on standard orders with no minimum order value, and next day on stocked items.',
+    payment:  'Extended to 60 days, or invoiced per project rather than per delivery.',
+    rebate:   'Settled at year end, once our spend passes a threshold we agree in advance.',
+    service:  'Repairs and loan units included, with a named contact who knows our sites.',
+    fixed:    'The price list we agree now held for the full term, with no mid-year increases.',
+    returns:  'Unused stock and anything sent in error taken back, without a restocking fee.'
+  };
+  return `To the sales team,
+
+${state.company} buys roughly ${fmt(r.amt)} kr. a year in ${r.n.toLowerCase()}, across ${r.sup} suppliers and ${r.inv} invoices.
+
+We are not asking you to move on price. We are asking about terms:
+
+${chosen.map(t => `· ${t.t} — ${asks[t.k]}`).join('\n')}
+${note ? `\n${note}\n` : ''}
+This request is made through Advantage, which represents ${members} companies buying in this category. We would rather improve the terms with the suppliers we already use than move our volume.
+
+Could you come back to us within ten working days?
+
+${state.user}
+${state.company}`;
+}
+
+function renderCustomRequest(){
+  const {r, step} = crState;
+  const body = $('#crBody'), foot = $('#crFoot');
+  const sups = crSuppliers(r);
+  const n = crRecipients();
+  $('#crStep').textContent = step === 3 ? 'Sent' : `Step ${step} of 2`;
+
+  if(step === 1){
+    body.innerHTML = `
+      <div class="pc-sup">
+        <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
+        <span class="pc-sup-id"><b>${r.n}</b>
+          <span>${fmt(r.amt)} kr. a year · ${r.sup} suppliers · ${r.inv} invoices</span></span>
+      </div>
+      <div class="fld">
+        <div class="fld-h"><p class="pc-q">What do you want to ask for?</p>
+          <span class="spacer"></span><span class="fld-hint">Pick as many as apply</span></div>
+        <div class="pc-reasons">
+          ${CR_TERMS.map(t => `
+            <button type="button" class="pc-reason" data-term="${t.k}"
+              aria-pressed="${crState.terms.has(t.k)}">
+              <svg viewBox="0 0 24 24" fill="none">${CR_ICON[t.k]}</svg>
+              <span><b>${t.t}</b><em>${t.s}</em></span>
+            </button>`).join('')}
+        </div>
+      </div>
+      <div class="fld">
+        <div class="fld-h"><p class="pc-q">Who receives it?</p>
+          <span class="spacer"></span>
+          <button type="button" class="linkbtn" id="crAll">${n ? 'Clear all' : 'Select all'}</button></div>
+        <ul class="rcp">
+          ${sups.map(s => `
+            <li><button type="button" class="rcp-row" data-to="${s.k}"
+              aria-pressed="${crState.to.has(s.k)}">
+              <span class="rcp-box">${CHECK_SM}</span>
+              ${s.group
+                ? `<span class="rcp-grp"><svg viewBox="0 0 24 24" fill="none">${FEAT_SVG.group}</svg></span>`
+                : agrLogoChip(s.n)}
+              <span class="rcp-id"><b>${s.n}</b><span>${s.sub}</span></span>
+              ${s.tag ? `<span class="rcp-tag">${s.tag}</span>` : ''}
+            </button></li>`).join('')}
+        </ul>
+      </div>
+      <div class="fld dlg-note">
+        <label><span class="lbl">Anything specific to add? <em>(optional)</em></span>
+          <textarea id="crNote" placeholder="e.g. we need pallet delivery straight to site, not to the yard.">${crState.note}</textarea>
+        </label>
+      </div>`;
+    foot.innerHTML = `
+      <span class="fnote">${n ? `Goes to ${n} supplier${n > 1 ? 's' : ''}. Nothing is sent yet.`
+        : 'Pick at least one supplier.'}</span>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary" id="crCancel">Cancel</button>
+      <button class="btn btn-primary" id="crNext"${n && crState.terms.size ? '' : ' disabled'}>Draft the request →</button>`;
+    $$('#crBody .pc-reason').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.term;
+      if(crState.terms.has(k)) crState.terms.delete(k); else crState.terms.add(k);
+      crState.note = $('#crNote').value;
+      renderCustomRequest();
+    }));
+    $$('#crBody .rcp-row').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.to;
+      if(crState.to.has(k)) crState.to.delete(k); else crState.to.add(k);
+      crState.note = $('#crNote').value;
+      renderCustomRequest();
+    }));
+    $('#crAll').addEventListener('click', () => {
+      crState.note = $('#crNote').value;
+      if(n) crState.to.clear(); else sups.forEach(s => crState.to.add(s.k));
+      renderCustomRequest();
+    });
+    $('#crNote').addEventListener('input', () => crState.note = $('#crNote').value);
+    $('#crCancel').addEventListener('click', () => flowClose('cr'));
+    const next = $('#crNext');
+    if(!next.disabled) next.addEventListener('click', () => {
+      crState.note = $('#crNote').value;
+      crState.draft = crDraft(); crState.step = 2; renderCustomRequest(); body.scrollTop = 0;
+    });
+
+  } else if(step === 2){
+    const named = sups.filter(s => crState.to.has(s.k) && !s.group).map(s => s.n);
+    const grp = sups.find(s => s.group && crState.to.has(s.k));
+    body.innerHTML = `
+      <div class="dlg-info">
+        <svg viewBox="0 0 24 24" fill="none">${FEAT_SVG.group}</svg>
+        <span>One copy goes to each of the <b>${n} supplier${n > 1 ? 's' : ''}</b> you picked,
+          addressed to them: ${named.join(', ')}${grp
+            ? `${named.length ? ', and ' : ''}${grp.count} more without an agreement` : ''}.</span>
+      </div>
+      <div class="pc-draft">
+        <div class="pc-draft-h"><img src="assets/sda-mark.svg" alt="">
+          Drafted for you — edit anything before it goes
+          <span class="spacer"></span>
+          <button type="button" class="linkbtn" id="crRedraft">Start over</button>
+        </div>
+        <textarea id="crText" aria-label="Custom request">${crState.draft}</textarea>
+      </div>
+      <div class="pc-next">
+        <h4>What happens after you send</h4>
+        <ol class="steps2">
+          <li><span class="sn">1</span><span>Advantage sends it <b>on behalf of the group</b>,
+            one copy per supplier — they don't see each other's names.</span></li>
+          <li><span class="sn">2</span><span>We chase at day five, and tell you who has answered
+            and who hasn't.</span></li>
+          <li><span class="sn">✓</span><span>Every answer lands in <b>Advantage activity</b>, so you can
+            compare what each supplier offered on the same terms.</span></li>
+        </ol>
+      </div>`;
+    foot.innerHTML = `
+      <button class="btn btn-ghost" id="crBack">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="crSend">Send to ${n} supplier${n > 1 ? 's' : ''}</button>`;
+    $('#crRedraft').addEventListener('click', () => { $('#crText').value = crDraft(); });
+    $('#crBack').addEventListener('click', () => {
+      crState.draft = $('#crText').value; crState.step = 1; renderCustomRequest(); body.scrollTop = 0;
+    });
+    $('#crSend').addEventListener('click', () => {
+      const btn = $('#crSend');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      setTimeout(() => {
+        crState.sent = {
+          id:'cr-' + r.id + '-' + Date.now(), kind:'terms', catId:r.id, catName:r.n, agr:null,
+          ref:'CR-' + String(seedOf(r.n + state.company) % 100000).padStart(5, '0'),
+          count:n, terms:CR_TERMS.filter(t => crState.terms.has(t.k)).map(t => t.t)
+        };
+        addReq(crState.sent);
+        crState.step = 3; renderCustomRequest(); body.scrollTop = 0;
+      }, RM ? 300 : 1100);
+    });
+
+  } else {
+    const ref = 'CR-' + String(seedOf(r.n + state.company) % 100000).padStart(5, '0');
+    body.innerHTML = `
+      <div class="bc-done">
+        <div class="ring">${TICK}</div>
+        <h3>Sent to ${n} supplier${n > 1 ? 's' : ''}</h3>
+        <p>Reference <b>${ref}</b>. Same request, same terms, same deadline for all of them —
+          which is what makes the answers comparable.</p>
+        <ol class="tline">
+          <li><span class="tn">1</span><span><b>Today</b> — sent with your volumes and the group's<br>
+            <span>Nothing changes on your side</span></span></li>
+          <li><span class="tn">2</span><span><b>Day 5</b> — we chase whoever hasn't replied</span></li>
+          <li><span class="tn">3</span><span><b>Within 10 working days</b> — the answers land in
+            Advantage activity, side by side</span></li>
+        </ol>
+      </div>`;
+    foot.innerHTML = `
+      <span class="fnote">It's now in <b>Your requests</b>, in the activity rail and on this page.</span>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="crDone">Done</button>`;
+    $('#crDone').addEventListener('click', () => flowClose('cr'));
+  }
+}
+
+/* ============ a sent request, seen again ============
+   Same three beats the send screen promised, now with today marked on them, plus
+   the one action the send screen said would be available: withdraw. */
+const RQ_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5h16M4 12h16M4 17.5h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+
+/* the card that says "you already asked, here" — one per open request */
+function reqCardsHTML(list){
+  if(!list.length) return '';
+  return `<div class="rq-open">
+    ${list.map(q => `
+    <button type="button" class="rq-card" data-reqopen="${q.id}">
+      <span class="rq-ic">${RQ_ICON}</span>
+      <span class="rq-tx">
+        <b>${q.agr ? `You asked ${q.agr} for a better price` : `You asked for better terms`}</b>
+        <span>${q.agr
+          ? `${reqWhen(q).replace('sent', 'Sent')} · reference ${q.ref}`
+          : `${q.count} supplier${q.count > 1 ? 's' : ''} · ${reqWhen(q).replace('sent', 'sent')} · reference ${q.ref}`}</span>
+      </span>
+      <span class="rq-go">
+        <span class="req-pill${reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </button>`).join('')}
+  </div>`;
+}
+/* every .rq-card in the current view opens its status */
+function wireReqCards(root){
+  $$(`${root} [data-reqopen]`).forEach(b =>
+    b.addEventListener('click', () => openReqStatus(b.dataset.reqopen)));
+}
+
+function openReqStatus(id){
+  const q = REQS.find(x => x.id === id);
+  if(!q) return;
+  flowDom('rq', 'Your request', q.agr ? 'Better price requested' : 'Better terms requested');
+  const body = $('#rqBody'), foot = $('#rqFoot');
+  $('#rqStep').textContent = reqStage(q);
+  const d = reqDays(q);
+  const chased = d >= 5;
+  body.innerHTML = `
+    <div class="pc-sup">
+      <span class="rq-ic">${RQ_ICON}</span>
+      <span class="pc-sup-id"><b>${q.agr || q.catName}</b>
+        <span>${q.agr
+          ? `${q.catName} · reference ${q.ref}`
+          : `${q.count} supplier${q.count > 1 ? 's' : ''} in ${q.catName.toLowerCase()} · reference ${q.ref}`}</span></span>
+      <span class="req-pill${chased ? ' chase' : ''}">${reqStage(q)}</span>
+    </div>
+    ${q.terms && q.terms.length ? `
+    <div class="fld">
+      <div class="fld-h"><p class="pc-q">What you asked for</p></div>
+      <ul class="rq-what">${q.terms.map(t => `<li>${t}</li>`).join('')}</ul>
+    </div>` : ''}
+    <div class="fld">
+      <div class="fld-h"><p class="pc-q">Where it stands</p></div>
+      <ol class="tline">
+        <li><span class="tn">${TICK}</span><span><b>${d === 0 ? 'Today' : `${d} day${d > 1 ? 's' : ''} ago`}</b>
+          — ${q.agr ? 'sent to ' + q.agr : `sent to ${q.count} supplier${q.count > 1 ? 's' : ''}`}, with your
+          volumes and the group's<br><span>Nothing changed on your side</span></span></li>
+        <li><span class="tn">${chased ? TICK : '2'}</span><span><b>Day 5</b> —
+          ${chased ? 'we chased the ones who had not replied' : `we chase whoever has not replied (in ${5 - d} day${5 - d > 1 ? 's' : ''})`}</span></li>
+        <li><span class="tn">3</span><span><b>Within 10 working days</b> — the answer lands in
+          Advantage activity${q.agr ? ', with the old and new price side by side' : ', so you can compare what each supplier offered'}</span></li>
+      </ol>
+    </div>`;
+  foot.innerHTML = `
+    <span class="fnote">Withdrawing tells the supplier${q.count > 1 && !q.agr ? 's' : ''} the request is off the table.</span>
+    <span class="spacer"></span>
+    <button class="btn btn-secondary" id="rqDrop">Withdraw</button>
+    <button class="btn btn-primary" id="rqDone">Done</button>`;
+  $('#rqDone').addEventListener('click', () => flowClose('rq'));
+  $('#rqDrop').addEventListener('click', () => {
+    dropReq(q.id);          /* re-renders the rail and the page behind the sheet */
+    flowClose('rq');
+  });
+  flowOpen('rq');
+}
+
+/* ============ book a meeting with your sales person ============
+   "Contact your sales person" is a person, not a support queue: Peter Lund already
+   has the account open. Two steps — when and how, then confirm — because a meeting
+   only needs a slot and a subject, not a drafted letter. */
+const ADVISOR = {n:'Peter Lund', role:'Your Advantage sales person', init:'PL',
+  mail:'peter.lund@advantage.dk', tel:'+45 38 41 22 07'};
+/* drawn for these three, same 1.7 stroke: the FEAT_SVG set has no camera, handset
+   or building, and a tick standing in for "video call" means nothing */
+const MS_CHANS = [
+  {k:'video', t:'Video call', ic:'<rect x="3" y="6" width="12.5" height="12" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M15.5 11l5-2.8v7.6l-5-2.8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {k:'phone', t:'Phone', ic:'<path d="M7.6 3.8h-.8A2 2 0 004.8 6c.5 6.9 6.3 12.7 13.2 13.2a2 2 0 002.2-2v-.8a1.6 1.6 0 00-1.2-1.55l-2.6-.65a1.6 1.6 0 00-1.6.55l-.8 1a12.6 12.6 0 01-5.55-5.55l1-.8a1.6 1.6 0 00.55-1.6l-.65-2.6A1.6 1.6 0 007.6 3.8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
+  {k:'site',  t:'At your office', ic:'<path d="M4 20V6.2a1.4 1.4 0 011-1.35l7-2a1.4 1.4 0 011.8 1.35V20" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.8 9.5H19a1.4 1.4 0 011.4 1.4V20" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M2.8 20h18.4M7.4 9h3M7.4 13h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
+];
+const MS_LENS = [15, 30, 45];
+const MS_TIMES = ['09:00', '10:30', '13:00', '14:30', '15:30'];
+let msState = null;
+
+/* the next four working days, as {k, label} — real dates, so the slot list reads
+   like a calendar rather than a mock */
+function msDays(){
+  const out = [];
+  const d = new Date();
+  while(out.length < 4){
+    d.setDate(d.getDate() + 1);
+    if(d.getDay() === 0 || d.getDay() === 6) continue;
+    out.push({k:d.toISOString().slice(0, 10),
+      label:d.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short'}),
+      long:d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'})});
+  }
+  return out;
+}
+/* a plausible half-full calendar: the same slots are always busy for a given day,
+   so the picker doesn't reshuffle on every re-render */
+const msBusy = (dayK, time) => rngOf(dayK + time)() < 0.3;
+
+function openAdvisorMeeting(r){
+  flowDom('ms', 'Your sales person', `Book time with ${ADVISOR.n.split(' ')[0]}`);
+  const days = msDays();
+  msState = {r, step:1, days, day:days[0].k, time:'', chan:'video', len:30, note:''};
+  /* open on the first slot that is actually free */
+  msState.time = MS_TIMES.find(t => !msBusy(msState.day, t)) || '';
+  renderMeeting();
+  flowOpen('ms');
+}
+
+const msDay = () => msState.days.find(d => d.k === msState.day);
+const msChan = () => MS_CHANS.find(c => c.k === msState.chan);
+
+function renderMeeting(){
+  const {r, step} = msState;
+  const body = $('#msBody'), foot = $('#msFoot');
+  $('#msStep').textContent = step === 3 ? 'Booked' : `Step ${step} of 2`;
+  const whoHTML = `
+    <div class="ms-who">
+      <span class="ms-av" aria-hidden="true">${ADVISOR.init}</span>
+      <span class="ms-who-id"><b>${ADVISOR.n}</b><span>${ADVISOR.role} · ${ADVISOR.tel}</span></span>
+      <span class="ms-live"><i></i>Online</span>
+    </div>`;
+
+  if(step === 1){
+    body.innerHTML = `
+      ${whoHTML}
+      <div class="fld">
+        <div class="fld-h"><p class="pc-q">How do you want to meet?</p></div>
+        <div class="pill-row">
+          ${MS_CHANS.map(c => `
+            <button type="button" class="pill-opt" data-chan="${c.k}" aria-pressed="${msState.chan === c.k}">
+              <svg viewBox="0 0 24 24" fill="none">${c.ic}</svg>${c.t}</button>`).join('')}
+        </div>
+      </div>
+      <div class="fld">
+        <div class="fld-h"><p class="pc-q">How long?</p></div>
+        <div class="pill-row">
+          ${MS_LENS.map(l => `
+            <button type="button" class="pill-opt" data-len="${l}" aria-pressed="${msState.len === l}">
+              ${l} min</button>`).join('')}
+        </div>
+      </div>
+      <div class="fld">
+        <div class="fld-h"><p class="pc-q">When?</p><span class="spacer"></span>
+          <span class="fld-hint">${ADVISOR.n.split(' ')[0]}'s open slots, next four working days</span></div>
+        <div class="pill-row" style="margin-bottom:var(--s3)">
+          ${msState.days.map(d => `
+            <button type="button" class="pill-opt" data-day="${d.k}" aria-pressed="${msState.day === d.k}">
+              ${d.label}</button>`).join('')}
+        </div>
+        <div class="pill-grid">
+          ${MS_TIMES.map(t => {
+            const busy = msBusy(msState.day, t);
+            return `<button type="button" class="pill-opt ctr" data-time="${t}"
+              aria-pressed="${msState.time === t}"${busy ? ' disabled' : ''}>${t}</button>`;
+          }).join('')}
+        </div>
+      </div>`;
+    foot.innerHTML = `
+      <span class="fnote">${msState.time
+        ? `${msDay().label} at ${msState.time} · ${msState.len} min`
+        : 'Pick a time — the greyed-out ones are already taken.'}</span>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary" id="msCancel">Cancel</button>
+      <button class="btn btn-primary" id="msNext"${msState.time ? '' : ' disabled'}>Continue →</button>`;
+    const pick = (sel, key, cast) => $$('#msBody [' + sel + ']').forEach(b =>
+      b.addEventListener('click', () => {
+        msState[key] = cast ? cast(b.getAttribute(sel)) : b.getAttribute(sel);
+        /* changing the day can invalidate the chosen time */
+        if(key === 'day' && msBusy(msState.day, msState.time))
+          msState.time = MS_TIMES.find(t => !msBusy(msState.day, t)) || '';
+        renderMeeting();
+      }));
+    pick('data-chan', 'chan'); pick('data-len', 'len', Number);
+    pick('data-day', 'day');   pick('data-time', 'time');
+    $('#msCancel').addEventListener('click', () => flowClose('ms'));
+    const next = $('#msNext');
+    if(!next.disabled) next.addEventListener('click', () => {
+      msState.step = 2; renderMeeting(); body.scrollTop = 0;
+    });
+
+  } else if(step === 2){
+    const pot = potOf(r);
+    body.innerHTML = `
+      ${whoHTML}
+      <ul class="ms-recap">
+        <li><span>When</span><span>${msDay().long}, ${msState.time}</span></li>
+        <li><span>How long</span><span>${msState.len} minutes</span></li>
+        <li><span>How</span><span>${msChan().t}${msState.chan === 'video'
+          ? ' — link in the invite' : msState.chan === 'phone'
+          ? ` — ${ADVISOR.n.split(' ')[0]} calls you` : ` — ${state.company}`}</span></li>
+        <li><span>About</span><span>${r.n}</span></li>
+      </ul>
+      <div class="fld">
+        <div class="fld-h"><p class="pc-q">What ${ADVISOR.n.split(' ')[0]} brings</p></div>
+        <ul class="pc-evi">
+          <li><span class="pc-evi-ic">${TICK}</span><span>Your ${r.n.toLowerCase()} numbers:
+            <b>${fmt(r.amt)} kr.</b> across <b>${r.sup} suppliers</b>, and where the
+            <b>${fmt(pot)} kr.</b> comes from.</span></li>
+          <li><span class="pc-evi-ic">${TICK}</span><span>The ${r.agr.length} agreements in this category and
+            what each one would actually change on your invoices.</span></li>
+          <li><span class="pc-evi-ic">${TICK}</span><span>What comparable members negotiated on terms —
+            not just price — in the same category.</span></li>
+        </ul>
+      </div>
+      <div class="fld dlg-note">
+        <label><span class="lbl">Anything you want ${ADVISOR.n.split(' ')[0]} to prepare? <em>(optional)</em></span>
+          <textarea id="msNote" placeholder="e.g. we're re-tendering workwear in the autumn — I want to know what the group can do.">${msState.note}</textarea>
+        </label>
+      </div>`;
+    foot.innerHTML = `
+      <button class="btn btn-ghost" id="msBack">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="msBook">Book it</button>`;
+    $('#msNote').addEventListener('input', () => msState.note = $('#msNote').value);
+    $('#msBack').addEventListener('click', () => {
+      msState.note = $('#msNote').value; msState.step = 1; renderMeeting(); body.scrollTop = 0;
+    });
+    $('#msBook').addEventListener('click', () => {
+      const btn = $('#msBook');
+      msState.note = $('#msNote').value;
+      btn.disabled = true; btn.textContent = 'Booking…';
+      setTimeout(() => { msState.step = 3; renderMeeting(); body.scrollTop = 0; }, RM ? 300 : 900);
+    });
+
+  } else {
+    body.innerHTML = `
+      <div class="bc-done">
+        <div class="ring">${TICK}</div>
+        <h3>Booked with ${ADVISOR.n}</h3>
+        <p><b>${msDay().long}, ${msState.time}</b> · ${msState.len} min · ${msChan().t}<br>
+          The invite is in your inbox and on ${ADVISOR.n.split(' ')[0]}'s calendar, with your
+          ${r.n.toLowerCase()} figures already attached.</p>
+        <ol class="tline">
+          <li><span class="tn">1</span><span><b>Now</b> — invite sent to you and ${ADVISOR.n.split(' ')[0]}<br>
+            <span>${ADVISOR.mail}</span></span></li>
+          <li><span class="tn">2</span><span><b>Day before</b> — a short agenda arrives,
+            so you know what the ${msState.len} minutes cover</span></li>
+          <li><span class="tn">3</span><span><b>${msDay().label}, ${msState.time}</b> —
+            ${msState.chan === 'video' ? 'the link opens from the invite'
+              : msState.chan === 'phone' ? `${ADVISOR.n.split(' ')[0]} calls you`
+              : `${ADVISOR.n.split(' ')[0]} comes to you`}</span></li>
+        </ol>
+      </div>`;
+    foot.innerHTML = `
+      <span class="fnote">Need to move it? Reply to the invite — or call ${ADVISOR.tel}.</span>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="msDone">Done</button>`;
+    $('#msDone').addEventListener('click', () => flowClose('ms'));
+  }
+}
+
 /* the whole category: a sticky hero CARD on the left — picture, the numbers, and
    the agreements that deliver them, all in one place — while the supporting
    sections (terms, calculation, timeline, contact) scroll past on the right */
 function renderCatTab(r){
+  catTabAt = {r, agrIdx:null};
   const pot = potOf(r);
   const cards = r.agr.map((a,i) => {
     const rate = Math.round(a.save / a.covers * 100);
@@ -5843,8 +6948,12 @@ function renderCatTab(r){
       <div class="ac-f">
         <button type="button" class="btn btn-primary btn-sm" data-agr="${i}">
           ${a.req ? 'See the agreement' : 'See how it compares'}</button>
-        <button type="button" class="btn btn-secondary btn-sm" data-challenge="${i}">
-          Ask for a better price</button>
+        ${reqForAgr(r.id, a.n)
+          ? `<button type="button" class="btn btn-secondary btn-sm" data-reqopen="${reqForAgr(r.id, a.n).id}">
+               <span class="req-pill${reqDays(reqForAgr(r.id, a.n)) >= 5 ? ' chase' : ''}">${reqStage(reqForAgr(r.id, a.n))}</span>
+               Price request</button>`
+          : `<button type="button" class="btn btn-secondary btn-sm" data-challenge="${i}">
+               Ask for a better price</button>`}
         <span class="spacer"></span>
         <span class="ac-lev">${featIcon('group')}<b>${memberCount(a.n)}</b> members buy here</span>
       </div>
@@ -5860,8 +6969,15 @@ function renderCatTab(r){
     catTabHeroHTML(r.id, 'Purchasing category', r.n, pot,
       `${r.rate}% of ${fmt(r.amt)} kr. spent in this category, across ${r.sup} suppliers.`,
       `Every agreement here was matched to a supplier you already buy from — nothing changes
-       operationally, only the price once it's activated.`, '', catEstimated),
+       operationally, only the price once it's activated.`,
+      `<button class="btn btn-secondary btn-block" id="catTabSales">Contact your sales person</button>
+       ${reqTerms(r.id)
+         ? `<button class="btn btn-secondary btn-block" data-reqopen="${reqTerms(r.id).id}">
+              Track your terms request</button>`
+         : `<button class="btn btn-secondary btn-block" id="catTabCustomReq">Create a custom request</button>`}`,
+      catEstimated),
     `
+    ${reqCardsHTML(reqsFor(r.id))}
     <section>
       <div class="cat-agrs-head">
         <div>
@@ -5892,8 +7008,12 @@ function renderCatTab(r){
     ${oppTimelineHTML()}
     ${catTabContactHTML()}`
   );
-  wireCatTabHeroFoot(r.n);
-  wireCatTabContact(`Tell me more about the ${r.n} opportunity`);
+  const sales = $('#catTabSales');
+  if(sales) sales.addEventListener('click', () => openAdvisorMeeting(r));
+  const customReq = $('#catTabCustomReq');
+  if(customReq) customReq.addEventListener('click', () => openCustomRequest(r));
+  wireReqCards('#viewCatTab');
+  wireCatTabContact(`Tell me more about the ${r.n} opportunity`, r);
   $$('#viewCatTab [data-agr]').forEach(b => b.addEventListener('click',
     () => renderCatTabAgreement(r, +b.dataset.agr)));
   $$('#viewCatTab [data-challenge]').forEach(b => b.addEventListener('click',
@@ -6087,25 +7207,36 @@ function agrViewCompare(r, a){
 }
 
 function renderCatTabAgreement(r, idx){
+  catTabAt = {r, agrIdx:idx};
   const a = r.agr[idx];
   const rate = Math.round(a.save / a.covers * 100);
   const est = isEstimated(a);
   const view = AGR_VIEWS.find(v => v.k === agrViewStyle) || AGR_VIEWS[0];
   const bodyFor = {impact:agrViewImpact, basket:agrViewBasket, compare:agrViewCompare}[view.k];
 
+  /* a price request already out to this supplier replaces the ask: sending a
+     second one would be the app forgetting what the user just did */
+  const mine = reqForAgr(r.id, a.n);
+  const challengeHTML = mine
+    ? `<button class="btn btn-secondary btn-block" data-reqopen="${mine.id}">Track your price request</button>`
+    : `<button class="btn btn-secondary btn-block" id="catTabChallenge">Ask for a better price</button>`;
   const activateHTML = a.req
     ? `<span class="inuse">${TICK} In use</span>`
     : `<button class="btn btn-primary btn-block" id="catTabActivate">Activate this agreement</button>
-       <button class="btn btn-secondary btn-block" id="catTabChallenge">Ask for a better price</button>`;
+       ${challengeHTML}`;
 
   catTabShell(
+    /* the way back sits ABOVE the title, breadcrumb-style — it used to open the
+       main column, which in the single-column layout put it mid-page, after the
+       hero's own call to action */
+    `<p class="opp-back cat-tab-back"><button class="btn btn-ghost btn-sm" id="catTabBack">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H6M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to ${r.n}</button></p>` +
     catTabHeroHTML(r.id, r.n, a.n, a.save,
       `${rate}% below what you pay today, on the ${fmt(a.covers)} kr. you already spend with them.`,
       agrWhy(r, a)[0], activateHTML, est),
     `
-    <p class="opp-back"><button class="btn btn-ghost btn-sm" id="catTabBack">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H6M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Back to ${r.n}</button></p>
+    ${reqCardsHTML(mine ? [mine] : [])}
     <section class="opp-sec" style="padding-top:0;border-top:none">
       <div class="agr-view-head">
         <div><h3>${view.h}</h3><p>Three ways to look at the same agreement.</p></div>
@@ -6121,8 +7252,8 @@ function renderCatTabAgreement(r, idx){
     ${catTabContactHTML()}
     <p class="opp-cta-note">Category <b>${r.n}</b> · Effort <b>low</b> · Switch time <b>~2 weeks</b></p>`
   );
-  wireCatTabHeroFoot(a.n);
-  wireCatTabContact(`Tell me more about the ${a.n} agreement`);
+  wireCatTabContact(`Tell me more about the ${a.n} agreement`, r);
+  wireReqCards('#viewCatTab');
   $('#catTabBack').addEventListener('click', () => renderCatTab(r));
   $$('#viewCatTab .seg [data-view]').forEach(b => b.addEventListener('click', () => {
     agrViewStyle = b.dataset.view; persist(); renderCatTabAgreement(r, idx);
@@ -6146,6 +7277,7 @@ function bootCatTab(id){
      rendered, not even briefly hidden in the background (see enterAppShell) */
   enterAppShell();
   shellOnly = true;
+  document.body.classList.add('cat-tab-mode');
   $('#viewDash').hidden = true;
   $('#viewSup').hidden = true;
   $('#viewOpp').hidden = true;
@@ -6856,7 +7988,7 @@ function applySaved(d){
   if(Array.isArray(d.savedAgr)) savedAgr = new Set(d.savedAgr);
   if(['photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
   if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
-  if(['list','bars','split','focus'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
+  if(['list','bars','split','focus','brands','why','story'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
   if(d.notifPrefs && Array.isArray(d.notifPrefs.channels)) notifPrefs = d.notifPrefs;
   if(typeof d.seenTour === 'boolean') seenTour = d.seenTour;
 }
