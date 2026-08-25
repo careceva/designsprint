@@ -8760,14 +8760,54 @@ html,body,.app,.wrap{background:var(--e0)!important}
 .opp-bento,.cat-tab-wrap,.page-wrap{
   background:var(--e0)!important;border:none!important;box-shadow:none!important}
 
-/* --- GROUP PANEL: a section that groups cards. It goes deeper than the ground
-   so the cards inside it read as the raised white plane. Same relationship the
-   dark theme uses, with grey standing in for the blue tint. --- */
-.nc-ov,.nc-sec,.grp,.section-panel{
-  background:#E9E9EE!important;border:1px solid #00000012!important;box-shadow:none!important}
-.nc-ov .nc-ov-grid>*,.nc-ov .card,.nc-ov .hw-t,.nc-sec .card,.nc-sec .hw-t{
+/* --- GROUP PANEL ----------------------------------------------------------
+   ONE painted surface per grouping.
+
+   .nc-sec is a layout section — heading plus content, full width, no padding
+   of its own. Painting it as well as the panel inside it drew a box around a
+   box: an outer square-cornered grey band, then a rounded grey panel with its
+   own hairline, then the cards. Where a section had no inner panel the grey
+   collapsed to a 1px halo, which reads as a stray outline, not a grouping.
+   So the section returns to the ground and only the panel is painted.
+
+   The panel is whatever actually HOLDS cards, and it needs padding to read as
+   a container. At 8px it was a picture frame around its own contents. --- */
+.nc-sec,.nc-bento-row{background:transparent!important;border:none!important;
+  box-shadow:none!important;border-radius:0!important}
+/* .nc-sec carries the author's own section rule (border-top + 32px). Blanking
+   the border to unpaint the panel took that with it, so it goes back. */
+.nc-sec{border-top:1px solid #0000000f!important}
+.nc-sec:first-child{border-top:none!important}
+
+.nc-ov,.agr-simple-tray,.grp,.section-panel{
+  background:#E9E9EE!important;border:1px solid #00000012!important;
+  box-shadow:none!important;border-radius:20px!important;padding:16px!important}
+.nc-ov{gap:12px!important}
+
+/* cards inside a panel are the raised white plane — same inversion as dark */
+.nc-ov .nc-ov-grid>*,.nc-ov .card,.nc-ov .hw-t,.nc-sec .card,.nc-sec .hw-t,
+.agr-simple-row>li>*{
   background:var(--e1)!important;border:1px solid #00000010!important;
   box-shadow:0 1px 2px #0f172a0d!important}
+
+/* The agreement tray is a horizontal scroller, so its last card is cut off
+   mid-sentence at the edge. A hard cut reads as broken layout; a fade reads as
+   "there is more to the right", which is what it actually means. */
+.agr-simple-tray{position:relative!important}
+.agr-simple-tray::after{content:"";position:absolute;top:1px;right:1px;bottom:1px;
+  width:64px;pointer-events:none;border-radius:0 19px 19px 0;
+  background:linear-gradient(90deg,#E9E9EE00,#E9E9EEe6 55%,#E9E9EE)}
+
+/* The view switcher wrapped onto a second line at narrower widths, stranding
+   "Story" on a row of its own inside the pill. Seven options need 353px in a
+   336px column, so: trim the tab padding (that alone buys 28px and it fits),
+   and if it ever overflows again, scroll instead of wrapping. It was also
+   justified flex-end, which is why the overflow clipped "List" at the LEFT
+   edge — the unreachable side. Overflow has to run toward the scrollable end. */
+.seg{flex-wrap:nowrap!important;justify-content:flex-start!important;
+  overflow-x:auto;max-width:100%;scrollbar-width:none;-ms-overflow-style:none}
+.seg::-webkit-scrollbar{display:none}
+.seg>*{flex:0 0 auto;padding-left:6px!important;padding-right:6px!important}
 
 /* --- L2: a well inside a card, or a card sitting on the chrome --- */
 .act-card,.ap-card,.np-prefs,.bc-steps,.bc-f,.search,.searchbox,
