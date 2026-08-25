@@ -1142,56 +1142,42 @@ body.in-app .flow{display:none}
 /* Two per row: this one argues a case, so it needs a readable measure. It is
    deliberately NOT one big click target — a card with two buttons shouldn't also
    be a button, which is the trap the reference fell into. */
-/* two up, not three: a 64px tile beside a text column needs ~460px to stop the
-   name and the figure both wrapping. Three-up gave 299px and broke each of them. */
-.agr-det-grid{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+.agr-det-grid{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);
   gap:var(--s4);margin-top:var(--s8)}
-@container page (max-width:720px){.agr-det-grid{grid-template-columns:minmax(0,1fr)}}
-/* the card IS the grid — no inner containers. The tile spans every row on the left,
-   the text stacks in the middle, the save toggle holds the top-right corner. */
-.agd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
-  grid-template-areas:
-    "tile eye  fav"
-    "tile name fav"
-    "tile fig  fig"
-    "why  why  why";
-  column-gap:var(--s4);align-items:start;
-  padding:var(--s5,20px);cursor:pointer;
-  border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
-  background:var(--surface);
-  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
-.agd:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
-.agd:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
-/* the recommendation is the only tinted card, and its eyebrow is the only blue one */
-.agd.lead{background:var(--brand-ice);border-color:#bdd7ff}
-.agd.lead:hover{background:#e4eeff}
-.agd.lead .agd-eye{color:var(--general-primary)}
-.agd .agc-logo{grid-area:tile;width:64px;height:64px}
-.agd-eye{grid-area:eye;font-size:12px;font-weight:700;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--general-muted-foreground)}
-.agd-name{grid-area:name;margin-top:2px;font-family:var(--font-sans);
-  font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.25}
-/* the range is one unit: it drops "a year" to the next line before it ever splits
-   the number across two. "typically" is dropped here — the word earns its space
-   when the figure is a page headline, not when it is one of eight cards. */
-.agd-fig{grid-area:fig;margin-top:var(--s2);display:flex;align-items:baseline;gap:6px;
-  flex-wrap:wrap;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:800;
-  letter-spacing:-.4px;color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
-.agd-fig b{font-weight:800;white-space:nowrap}
-.agd-fig em{font-style:normal;font-family:var(--font-body);font-size:12.5px;
-  font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
-/* the one line of argument, full width under the tile so it gets a real measure */
-.agd-why{grid-area:why;margin-top:var(--s4);padding-top:var(--s3);
-  border-top:1px solid var(--hairline);
-  font-size:var(--text-sm);line-height:1.5;color:var(--general-muted-foreground)}
-.agd-why b{color:var(--general-foreground);font-weight:650}
-.agd.lead .agd-why{border-top-color:#c9dcff}
-/* the save toggle: static, not the photo card's absolute overlay */
-.agd .agr-fav{grid-area:fav;position:static;width:30px;height:30px;
+@media(max-width:1100px){.agr-det-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.agr-det-grid{grid-template-columns:1fr}}
+.agr-det{position:relative;display:flex;flex-direction:column;gap:var(--s3);
+  padding:var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:var(--shadow-xs)}
+/* the first card is the recommendation, so it is the only tinted one */
+.agr-det.lead{background:var(--brand-ice);border-color:#bdd7ff}
+.agr-det-eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-primary)}
+.agr-det-top{display:flex;align-items:center;gap:var(--s3)}
+/* the chip is absolutely placed on the photo card, so it needs resetting here */
+.agr-det .agr-chip{position:static;inset:auto;width:34px;height:34px;
+  border-radius:var(--rounded-md);box-shadow:none;border:1px solid var(--hairline)}
+.agr-det-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.agr-det-id b{font-size:var(--text-base);font-weight:700;letter-spacing:-.2px}
+.agr-det-id span{font-size:13px;color:var(--general-muted-foreground)}
+.agr-det .agr-fav{position:static;width:30px;height:30px;color:var(--general-muted-foreground)}
+.agr-det .agr-fav svg{fill:none;filter:none;width:20px;height:20px}
+.agr-det .agr-fav.on svg{fill:var(--general-destructive);stroke:var(--general-destructive)}
+/* the money, and the basis it rests on */
+.agr-det-fig{display:flex;flex-direction:column;gap:2px}
+.agr-det-fig b{font-size:var(--text-xl);font-weight:800;letter-spacing:-.4px;
+  color:var(--sentiment-positive)}
+.agr-det-fig b small{font-size:14px;font-weight:600;color:var(--general-muted-foreground)}
+.agr-det-fig>span{font-size:13px;color:var(--general-muted-foreground)}
+.agr-det-why{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.agr-det-why li{position:relative;padding-left:16px;font-size:14px;line-height:1.45}
+.agr-det-why li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;
+  border-radius:var(--rounded-full);background:var(--general-border)}
+.agr-det-note{display:flex;gap:var(--s2);font-size:13px;line-height:1.45;
   color:var(--general-muted-foreground)}
-.agd .agr-fav svg{width:20px;height:20px;fill:none;filter:none}
-.agd .agr-fav.on svg{fill:var(--general-destructive);stroke:var(--general-destructive)}
+.agr-det-note svg{flex:0 0 auto;width:15px;height:15px;margin-top:2px;color:var(--general-accent)}
+.agr-det-act{margin-top:auto;padding-top:var(--s3);border-top:1px solid var(--hairline);
+  display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
 
 /* ---------- opportunity detail (full page) ---------- */
 .opp-page{display:flex;flex-direction:column;gap:var(--s6);max-width:760px;margin:0 auto;width:100%}
@@ -1748,8 +1734,7 @@ body.in-app .flow{display:none}
 .ac{position:relative;border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
   background:var(--surface);overflow:hidden;
   transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
-.ac:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
+.ac:hover{background:#f7f8fa;border-color:var(--card-stroke-hover);box-shadow:var(--shadow-sm)}
 /* the facts band is a shade of white, so on the hover ground it would read as a
    lighter stripe than the card around it — it merges instead */
 .ac-feats{transition:background var(--t-fast)}
@@ -1908,8 +1893,7 @@ body.in-app .flow{display:none}
   border:1px solid transparent;border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f;
   transition:border-color var(--t-fast),box-shadow var(--t-fast),transform .12s ease}
-.oc-card:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  box-shadow:0 8px 22px -8px #0f0f0f2b;transform:translateY(-2px)}
+.oc-card:hover{box-shadow:0 8px 22px -8px #0f0f0f2b;transform:translateY(-2px)}
 .oc-card:active{transform:none}
 .oc-top{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s3)}
 .oc-ic{flex:0 0 auto;width:38px;height:38px;display:grid;place-items:center;
@@ -1953,16 +1937,6 @@ body.in-app .flow{display:none}
   .oc-card:hover .oc-go{transform:none}
 }
 
-/* ---------- brand-tinted hover ----------
-   Every card already carries --b: the supplier's own ink as an "r g b" triplet,
-   the same value the logo chips tint themselves with. Hover washes the card in 6%
-   of it, so pointing at Hilti gives a barely-there red and Q8 a barely-there blue.
-   Layered over --surface rather than set as a bare colour: these cards sometimes
-   sit on a grey tray, and a translucent background would pick the tray up instead
-   of white. --b falls back to brand blue for suppliers with no artwork on file. */
-.agc,.ac,.agd,.oc-card{--tint:rgb(var(--b,33 112 237)/.06);
-  --tint-edge:rgb(var(--b,33 112 237)/.2)}
-
 /* ---------- ask the assistant about THIS agreement ----------
    A quiet mark that appears on hover or keyboard focus. It carries the assistant's
    own logo rather than a generic chat bubble: the point is that the answer comes
@@ -2002,8 +1976,7 @@ body.in-app .flow{display:none}
    surface, not a rectangle with a slightly darker edge. Neutral, not brand-ice:
    the discount highlight inside is brand-ice, and tinting the card the same colour
    would erase the one thing the card is meant to lead with. */
-.agc:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
+.agc:hover{background:#f7f8fa;border-color:var(--card-stroke-hover);box-shadow:var(--shadow-sm)}
 .agc.on{border-color:#00968947}
 /* the recommended one gets a header band across the top of the card, in both
    views — it is a sentence, not a label, and it needs the full width to say it */
@@ -4529,27 +4502,34 @@ const NC_SIZE_LABEL = {small:'small (under 20 employees)', medium:'medium (20–
      · "Strong published savings potential" is marketing, not information.
      · the four-line "HOW TO GET STARTED" panel is one honest line: setup is
        needed, and we only send the request once you agree it fits. */
-/* The portal's card shape: one big brand tile, an eyebrow, the name, the money,
-   one line of why. Deliberately FLAT — every element is a direct child of the <li>,
-   placed by grid areas, so the card has no inner wrappers at all. The old version
-   nested five (.agr-det-top, -id, -fig, -why, -act) and its logo chip carried a
-   -30px top margin from the photo-card base rule, which is what dragged it up over
-   the "Worth reviewing first" label. */
 function ncAgreementCardDetail(r, a, idx, pos){
   const rate = Math.round(a.save / a.covers * 100);
   const lead = pos === 0;
   return `
-    <li class="agd${lead ? ' lead' : ''}" data-cat="${r.id}" data-idx="${idx}"
-      tabindex="0" role="button" aria-label="${a.n}, ${r.n}: ${saveFig(a.save, isEstimated(a))} kr. a year"
+    <li class="agr-det${lead ? ' lead' : ''}" data-cat="${r.id}" data-idx="${idx}"
       style="--b:${brandOf(a.n)}">
-      ${agrLogoTile(a.n)}
-      <span class="agd-eye">${lead ? 'Worth reviewing first' : r.n}</span>
-      <b class="agd-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</b>
-      <span class="agd-fig"><b>${saveFig(a.save, isEstimated(a))
-        .replace('typically ', '')} kr.</b><em>a year</em></span>
-      <p class="agd-why">${CAT_PITCH[r.id] || 'Group price on what you already buy'} —
-        <b>${rate}% under</b> the ${fmt(a.covers)} kr. you spend here today.</p>
-      ${agrFav(a.n)}
+      ${lead ? '<span class="agr-det-eyebrow">Worth reviewing first</span>' : ''}
+      <div class="agr-det-top">
+        ${agrLogoChip(a.n)}
+        <span class="agr-det-id"><b>${a.n}</b><span>${r.n}</span></span>
+        ${agrFav(a.n)}
+      </div>
+      <div class="agr-det-fig">
+        <b>typically +${fmt(a.save)} kr.<small> / year</small></b>
+        <span>−${rate}% on the ${fmt(a.covers)} kr. you already buy here</span>
+      </div>
+      <ul class="agr-det-why">
+        <li>${CAT_PITCH[r.id] || 'Group price on what you already buy'}</li>
+        <li>Same supplier, same delivery — only the invoice price changes</li>
+      </ul>
+      <p class="agr-det-note">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Needs setup before first use. We only send the request once you agree it fits.</span>
+      </p>
+      <div class="agr-det-act">
+        <button type="button" class="btn btn-primary btn-sm" data-open="${idx}">Explore this agreement</button>
+        <button type="button" class="linkbtn" data-open="${idx}">What you get</button>
+      </div>
     </li>`;
 }
 
@@ -5290,15 +5270,11 @@ function renderNewCustomerDash(){
     if(window.ResizeObserver) new ResizeObserver(syncNav).observe(aRow);
     syncNav();
   }
-  /* the card is one hit area now that it carries no buttons of its own — the only
-     nested control is the save toggle, which stops the event itself */
-  $$('#viewNewCustomer .agd').forEach(li => {
-    const go = () => window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
-    li.addEventListener('click', go);
-    li.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
-    });
-  });
+  /* the detail card is not one big hit area — only its two actions open it */
+  $$('#viewNewCustomer .agr-det [data-open]').forEach(b => b.addEventListener('click', () => {
+    const li = b.closest('.agr-det');
+    window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
+  }));
   $$('#viewNewCustomer .opp-legend-item, #viewNewCustomer .agr-card').forEach(el => {
     const go = () => window.open(catTabUrl(el.dataset.cat, el.dataset.idx ? +el.dataset.idx : undefined), '_blank');
     el.addEventListener('click', go);
@@ -6726,8 +6702,7 @@ function catOtherHTML(cur){
     <div class="oc-panel">
     <ul class="oc-grid">
       ${items.map(({r, save}) => `
-      <li><button type="button" class="oc-card" data-oc="${r.id}"
-        style="--b:${brandOf([...r.agr].sort((a, b) => b.covers - a.covers)[0].n)}">
+      <li><button type="button" class="oc-card" data-oc="${r.id}">
         <span class="oc-top">
           <span class="oc-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
           <span class="cv-brand-stack">
@@ -8738,5 +8713,111 @@ if(catViewId){
   enterApp();
 }
 </script>
+<style id="light-grey">
+/* ===================================================================
+   LIGHT — grey ground, white cards
+     L0 #F5F5F7  content ground
+     L1 #FFFFFF  chrome + cards on the canvas
+     L2 #F5F5F7  a well inside a card, or a card sitting on chrome
+     L3 #ECECEF  hover / active
+   Separation is value first, hairline second. No element shares a plane
+   with the element it sits inside.
+   =================================================================== */
+:root{
+  --e0:#F5F5F7;--e1:#FFFFFF;--e2:#F5F5F7;--e3:#ECECEF;
+  --edge:#0000000f;--edge-strong:#00000018;
+  --general-background:#F5F5F7;
+  --surface:#FFFFFF;
+  --hairline:#e6e6ea;
+  --card-stroke:#e6e6ea;--card-stroke-hover:#d2d2d9;
+  --shadow-xs:0 1px 2px #0f172a0a;
+  --shadow-sm:0 1px 2px #0f172a0f,0 1px 3px #0f172a0a;
+  --shadow-md:0 2px 4px #0f172a0d,0 6px 16px -6px #0f172a14;
+  --shadow-lg:0 8px 24px -8px #0f172a1f,0 2px 6px #0f172a0f;
+}
+html{color-scheme:light}
+
+/* --- L0: the ground --- */
+html,body,.app,.wrap{background:var(--e0)!important}
+.canvas{background:var(--e0)!important}
+.canvas::before{display:none!important}
+
+/* --- L1: chrome and cards share the raised white plane --- */
+.rail,.appbar,.topbar,.nc-activity{background:var(--e1)!important}
+.rail{border-right:1px solid var(--edge)!important}
+.nc-activity{border-left:1px solid var(--edge)!important;
+  box-shadow:-14px 0 30px -26px #0f172a29!important}
+.appbar,.topbar{border-bottom:1px solid var(--edge)!important;backdrop-filter:none!important}
+
+.hw-t,.bento-cell,.bento-hero,.card,.agr-card,.ag-row,.dc-method,
+.app-p,.wm,.npop,.upop,.bc,.hw-pop,.sitn-card,.opp-card{
+  background:var(--e1)!important;border:1px solid var(--edge)!important;
+  box-shadow:var(--shadow-md)!important}
+
+/* Page-level wrappers are containers, not cards. Painting them white made the
+   whole page one white sheet again; they belong to the ground so the cards
+   inside them can be the raised white plane. */
+.opp-bento,.cat-tab-wrap,.page-wrap{
+  background:var(--e0)!important;border:none!important;box-shadow:none!important}
+
+/* --- GROUP PANEL: a section that groups cards. It goes deeper than the ground
+   so the cards inside it read as the raised white plane. Same relationship the
+   dark theme uses, with grey standing in for the blue tint. --- */
+.nc-ov,.nc-sec,.grp,.section-panel{
+  background:#E9E9EE!important;border:1px solid #00000012!important;box-shadow:none!important}
+.nc-ov .nc-ov-grid>*,.nc-ov .card,.nc-ov .hw-t,.nc-sec .card,.nc-sec .hw-t{
+  background:var(--e1)!important;border:1px solid #00000010!important;
+  box-shadow:0 1px 2px #0f172a0d!important}
+
+/* --- L2: a well inside a card, or a card sitting on the chrome --- */
+.act-card,.ap-card,.np-prefs,.bc-steps,.bc-f,.search,.searchbox,
+.hw-trend-bar,.opp-inner,.ag-inner,.railtog,.activity-tog,.erp,.ap-subj,.iconbtn,.bx{
+  background:var(--e2)!important;border:1px solid var(--edge)!important;
+  box-shadow:none!important}
+
+/* --- L3: inside an L2, and every hover --- */
+.ap-sug,.ap-in,.ap-human,.pchip,.chip-soft,input,select,textarea{
+  background:var(--e3)!important;border:1px solid var(--edge-strong)!important}
+.ap-in textarea,.ap-in input,.search input,.searchbox input{
+  background:transparent!important;border:none!important}
+.hw-t:hover,.bento-cell:hover,.agr-card:hover,.card:hover,.ag-row:hover,.dc-method:hover{
+  border-color:var(--card-stroke-hover)!important;box-shadow:var(--shadow-lg)!important}
+.act-card:hover{background:var(--e3)!important}
+.rail .ni.on,.rail a[aria-current="page"],.ni.on{background:var(--e2)!important}
+.rail .ni:hover{background:var(--e2)!important}
+
+/* text ladder kept from the design system, nudged for the grey ground */
+:root{
+  --general-foreground:#141416;
+  --general-muted-foreground:#5f6167;
+  --sidebar-foreground:#3d3f45;
+}
+::placeholder{color:#8b8d94}
+
+/* The announcement banner carries white text but paints no background of its
+   own — it was relying on whatever sat behind .app. Once the ground went grey
+   that text vanished, so the banner gets its own dark plane back. */
+.bannerwrap,.banner{background:#0b1a45!important}
+.bannerwrap *,.banner *,.btxt,.btitle{color:#eef3ff!important}
+.bannerwrap .bx,.banner .bx{background:#ffffff1f!important;border-color:#ffffff3d!important;
+  color:#eef3ff!important}
+.bcta,.bcta span{background:#3b82f6!important;color:#06122e!important;border-color:#3b82f6!important}
+
+/* --- contrast repairs (these fail AA in the base file too, on plain white) ---
+   the design-system teal and orange sit at 3.1-3.7:1 for small text; these are
+   the darkened values that clear 4.5:1 without changing the hue. */
+:root{--sentiment-positive:#00736a;--sentiment-negative:#c23c07}
+.nv.up,.act-v.up,.pos,.dc-row-status.ok,.now,.done,.hw-trend.up{color:#00736a!important}
+.nv.dn,.act-v.dn,.neg,.hw-trend.down{color:#c23c07!important}
+.chip-good{background:#dff3f0!important;color:#00635c!important}
+.ncta,.ag-row-fig{color:#155ec9!important}
+.ap-human-live{color:#00736a!important}
+.up-f,.hw-trend{color:#5f6167!important}
+
+/* the sidebar must never share a plane with the content it sits beside */
+.nc-activity{position:fixed!important;right:0!important;width:320px;z-index:6}
+body.activity-mini .nc-activity{width:76px}
+.canvas>.page{position:relative;z-index:1}
+</style>
 </body>
 </html>

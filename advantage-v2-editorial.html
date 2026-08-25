@@ -537,24 +537,15 @@ body.in-app .flow{display:none}
   box-shadow:0 -1px 0 #ffffff1a,var(--shadow-xl)}
 
 /* --- header --- */
-/* a soft vertical wash rather than flat white: the card-tray grey held across most
-   of the bar and released into the page at the bottom edge. The first attempt ran
-   #f2f2f2 -> white across the whole 68px, which is a 5% luminance change spread
-   over the full height — measurably there, visually invisible. Holding the grey and
-   fading late is what makes it read. */
 .appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:68px;padding:0 var(--s6);
-  border-bottom:1px solid var(--hairline);
-  background:linear-gradient(180deg,var(--surface) 0%,#fbfbfc 42%,#f4f4f5 100%)}
+  border-bottom:1px solid var(--hairline)}
 .appbar .brand{display:flex;align-items:center;flex:0 0 auto}
 .appbar .brand img{height:28px;width:auto;display:block}
 .appbar .spacer{flex:1}
 .search{position:relative;display:flex;align-items:center;gap:var(--s2);min-width:0;width:min(460px,42vw);
-  height:42px;padding:0 var(--s3) 0 var(--s4);background:var(--surface);
-  border:1px solid var(--hairline);
+  height:42px;padding:0 var(--s3) 0 var(--s4);background:#f7f8fa;border:1px solid transparent;
   border-radius:var(--rounded-full);transition:var(--t-fast)}
-/* inverted now that the bar is grey: the field is the light thing on a grey ground,
-   so hover brightens the rim rather than darkening the fill */
-.search:hover{border-color:var(--general-border)}
+.search:hover{background:var(--general-muted)}
 .search:focus-within{background:var(--surface);border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
 .search svg{width:17px;height:17px;color:var(--general-muted-foreground);flex:0 0 auto}
 .search input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:var(--text-sm)}
@@ -1142,56 +1133,42 @@ body.in-app .flow{display:none}
 /* Two per row: this one argues a case, so it needs a readable measure. It is
    deliberately NOT one big click target — a card with two buttons shouldn't also
    be a button, which is the trap the reference fell into. */
-/* two up, not three: a 64px tile beside a text column needs ~460px to stop the
-   name and the figure both wrapping. Three-up gave 299px and broke each of them. */
-.agr-det-grid{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+.agr-det-grid{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);
   gap:var(--s4);margin-top:var(--s8)}
-@container page (max-width:720px){.agr-det-grid{grid-template-columns:minmax(0,1fr)}}
-/* the card IS the grid — no inner containers. The tile spans every row on the left,
-   the text stacks in the middle, the save toggle holds the top-right corner. */
-.agd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
-  grid-template-areas:
-    "tile eye  fav"
-    "tile name fav"
-    "tile fig  fig"
-    "why  why  why";
-  column-gap:var(--s4);align-items:start;
-  padding:var(--s5,20px);cursor:pointer;
-  border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
-  background:var(--surface);
-  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
-.agd:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
-.agd:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
-/* the recommendation is the only tinted card, and its eyebrow is the only blue one */
-.agd.lead{background:var(--brand-ice);border-color:#bdd7ff}
-.agd.lead:hover{background:#e4eeff}
-.agd.lead .agd-eye{color:var(--general-primary)}
-.agd .agc-logo{grid-area:tile;width:64px;height:64px}
-.agd-eye{grid-area:eye;font-size:12px;font-weight:700;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--general-muted-foreground)}
-.agd-name{grid-area:name;margin-top:2px;font-family:var(--font-sans);
-  font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.25}
-/* the range is one unit: it drops "a year" to the next line before it ever splits
-   the number across two. "typically" is dropped here — the word earns its space
-   when the figure is a page headline, not when it is one of eight cards. */
-.agd-fig{grid-area:fig;margin-top:var(--s2);display:flex;align-items:baseline;gap:6px;
-  flex-wrap:wrap;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:800;
-  letter-spacing:-.4px;color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
-.agd-fig b{font-weight:800;white-space:nowrap}
-.agd-fig em{font-style:normal;font-family:var(--font-body);font-size:12.5px;
-  font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
-/* the one line of argument, full width under the tile so it gets a real measure */
-.agd-why{grid-area:why;margin-top:var(--s4);padding-top:var(--s3);
-  border-top:1px solid var(--hairline);
-  font-size:var(--text-sm);line-height:1.5;color:var(--general-muted-foreground)}
-.agd-why b{color:var(--general-foreground);font-weight:650}
-.agd.lead .agd-why{border-top-color:#c9dcff}
-/* the save toggle: static, not the photo card's absolute overlay */
-.agd .agr-fav{grid-area:fav;position:static;width:30px;height:30px;
+@media(max-width:1100px){.agr-det-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.agr-det-grid{grid-template-columns:1fr}}
+.agr-det{position:relative;display:flex;flex-direction:column;gap:var(--s3);
+  padding:var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:var(--shadow-xs)}
+/* the first card is the recommendation, so it is the only tinted one */
+.agr-det.lead{background:var(--brand-ice);border-color:#bdd7ff}
+.agr-det-eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-primary)}
+.agr-det-top{display:flex;align-items:center;gap:var(--s3)}
+/* the chip is absolutely placed on the photo card, so it needs resetting here */
+.agr-det .agr-chip{position:static;inset:auto;width:34px;height:34px;
+  border-radius:var(--rounded-md);box-shadow:none;border:1px solid var(--hairline)}
+.agr-det-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.agr-det-id b{font-size:var(--text-base);font-weight:700;letter-spacing:-.2px}
+.agr-det-id span{font-size:13px;color:var(--general-muted-foreground)}
+.agr-det .agr-fav{position:static;width:30px;height:30px;color:var(--general-muted-foreground)}
+.agr-det .agr-fav svg{fill:none;filter:none;width:20px;height:20px}
+.agr-det .agr-fav.on svg{fill:var(--general-destructive);stroke:var(--general-destructive)}
+/* the money, and the basis it rests on */
+.agr-det-fig{display:flex;flex-direction:column;gap:2px}
+.agr-det-fig b{font-size:var(--text-xl);font-weight:800;letter-spacing:-.4px;
+  color:var(--sentiment-positive)}
+.agr-det-fig b small{font-size:14px;font-weight:600;color:var(--general-muted-foreground)}
+.agr-det-fig>span{font-size:13px;color:var(--general-muted-foreground)}
+.agr-det-why{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.agr-det-why li{position:relative;padding-left:16px;font-size:14px;line-height:1.45}
+.agr-det-why li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;
+  border-radius:var(--rounded-full);background:var(--general-border)}
+.agr-det-note{display:flex;gap:var(--s2);font-size:13px;line-height:1.45;
   color:var(--general-muted-foreground)}
-.agd .agr-fav svg{width:20px;height:20px;fill:none;filter:none}
-.agd .agr-fav.on svg{fill:var(--general-destructive);stroke:var(--general-destructive)}
+.agr-det-note svg{flex:0 0 auto;width:15px;height:15px;margin-top:2px;color:var(--general-accent)}
+.agr-det-act{margin-top:auto;padding-top:var(--s3);border-top:1px solid var(--hairline);
+  display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
 
 /* ---------- opportunity detail (full page) ---------- */
 .opp-page{display:flex;flex-direction:column;gap:var(--s6);max-width:760px;margin:0 auto;width:100%}
@@ -1747,13 +1724,8 @@ body.in-app .flow{display:none}
    top-left of the page. .agc had it, .ac did not. */
 .ac{position:relative;border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
   background:var(--surface);overflow:hidden;
-  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
-.ac:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
-/* the facts band is a shade of white, so on the hover ground it would read as a
-   lighter stripe than the card around it — it merges instead */
-.ac-feats{transition:background var(--t-fast)}
-.ac:hover .ac-feats{background:transparent}
+  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.ac:hover{border-color:var(--card-stroke-hover);box-shadow:var(--shadow-sm)}
 .ac.on{border-color:#00968947}
 /* the right padding reserves the Ask lane, the same way the card view does, so the
    discount pill and the hover mark can never overlap */
@@ -1831,26 +1803,25 @@ body.in-app .flow{display:none}
 
 /* — the same bloom, INSIDE the card — lighter, because it sits behind live text.
    Same frosted glass treatment as the under version. */
-/* straight from the Figma node (44:7): a vertical fade, not a radial bloom —
-   #fcfafb held to 41.83% and then run down to #b0d2f4 at the bottom edge. No white
-   veil over it this time: the veil is what kept washing the blue out, and the
-   reference wants the gradient at full strength. */
-/* no border at all: a 1px transparent border here drew a blue hairline round the
-   card, because background-origin defaults to the padding box while the clip is the
-   border box — so that 1px ring got the gradient's REPEAT, i.e. its last row (the
-   #b0d2f4 end colour). no-repeat kills the mechanism as well as the symptom. */
 .skin-inside .cat-mast{padding:var(--s8) var(--s6);
-  border:none;border-radius:32px;overflow:hidden;background-repeat:no-repeat;
-  /* the ellipse from the Figma node, as a layer instead of an asset: an oval of the
-     SAME off-white as the top of the gradient, soft-edged, laid OVER the blue. That
-     is what curves the white/blue boundary instead of leaving it a straight line —
-     the white bulges down through the middle and the blue stays in the corners.
-     Percentages, so it scales with the card instead of being pinned to Figma's 444px. */
+  border:1px solid #ffffffe8;border-radius:var(--rounded-2xl);overflow:hidden;
+  /* four layers, top to bottom: a diagonal specular sheen, the frosted veil, the
+     bloom, then white. The veil sitting OVER the bloom is what makes this read as
+     glass with light behind it rather than as a tinted panel — and the bloom uses
+     the same pale palette as the under version, spread wide enough (114% × 96%,
+     centred past the bottom edge) to be a bloom instead of a shadow. */
   background:
-    radial-gradient(ellipse 56% 25% at 50% 62%,
-      #fcfafb 0%,#fcfafbf7 38%,#fcfafbb8 64%,#fcfafb45 84%,#fcfafb00 100%),
-    linear-gradient(180deg,#fcfafb 41.83%,#b0d2f4 100%);
-  box-shadow:0 16px 40px rgba(0,0,0,.05)}
+    linear-gradient(145deg,#ffffffb8 0%,#ffffff33 34%,transparent 58%),
+    linear-gradient(#fdfbfc36,#fdfbfc36),
+    radial-gradient(116% 100% at 50% 112%,
+      #a1c4f5f2 0%,#b6d1f7d9 26%,#cddefaa8 50%,#e5eefd5e 76%,#fdfbfc00 100%),
+    /* the bloom resolves into a warm off-white, not pure white: the blue fading to
+       #ffffff goes slightly cold at the top of the card, and this keeps it neutral */
+    #fdfbfc;
+  -webkit-backdrop-filter:blur(20px) saturate(165%);
+  backdrop-filter:blur(20px) saturate(165%);
+  box-shadow:0 1px 2px #0b00ab0d,0 20px 48px -20px #1b64dc26,
+    inset 0 1px 0 #ffffff,inset 0 -1px 0 #ffffff8c}
 .skin-inside .cat-mast-note{border-top-color:#cbd9ee}
 /* the hero CTA stays solid blue on the glass: white-on-frost had no contrast
    against the pane it was sitting on, and the one action on this card has to be
@@ -1881,67 +1852,34 @@ body.in-app .flow{display:none}
    A quiet card: the money is the only coloured thing, the arrow is the only thing
    that moves, and the whole tile is one target. The logo stack repeats the
    overview's Brands view so the two read as the same idea seen twice. */
-/* the heading sits on the page and the grey holds only the cards — the closest grey
-   the system has is --general-muted (#f2f2f2). Two planes instead of white-on-white
-   is what lets the cards read as objects rather than as outlined regions.
-   The stroke runs all four sides, top included, so the panel is a closed shape
-   rather than a tint that happens to stop. */
-/* an 8px gutter, uniform on all four sides and between the cards — the same tray
-   geometry the overview uses. It also lands the nested-radius rule exactly: 25px
-   outer = 16px card + 8px gutter, so the corners stay concentric. */
-.oc-panel{padding:var(--s2);border:1px solid var(--card-stroke);
-  border-radius:var(--rounded-2xl);background:var(--general-muted)}
-/* 16px, matching the overview's heading-to-content step */
-.oc .cat-agrs-head{margin-bottom:var(--s4)}
-/* the section title carries the same weight as the overview's h2 */
-.oc .cat-agrs-head h3{font-size:var(--text-2xl);letter-spacing:-.6px}
 .oc-grid{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:var(--s2)}
-@container catmain (max-width:430px){.oc-grid{grid-template-columns:minmax(0,1fr)}}
-/* no rule on the card: against the grey the white edge is the boundary, and a
-   border on top of that reads as a second, competing outline. The border stays in
-   the box model as transparent so hover cannot shift the layout by a pixel. */
-/* gap:0 — the spacing is set per group instead, because one uniform gap between
-   every block is what made this read looser than the overview's rows. */
-.oc-card{display:flex;flex-direction:column;gap:0;width:100%;text-align:left;
-  padding:var(--s6);cursor:pointer;
-  border:1px solid transparent;border-radius:var(--rounded-lg);
-  background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f;
+  gap:var(--s4)}
+@container catmain (max-width:520px){.oc-grid{grid-template-columns:minmax(0,1fr)}}
+.oc-card{display:flex;flex-direction:column;gap:var(--s3);width:100%;text-align:left;
+  padding:var(--s5,20px);cursor:pointer;
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
+  background:var(--surface);
   transition:border-color var(--t-fast),box-shadow var(--t-fast),transform .12s ease}
-.oc-card:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  box-shadow:0 8px 22px -8px #0f0f0f2b;transform:translateY(-2px)}
+.oc-card:hover{border-color:var(--card-stroke-hover);box-shadow:var(--shadow-sm);
+  transform:translateY(-2px)}
 .oc-card:active{transform:none}
-.oc-top{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s3)}
-.oc-ic{flex:0 0 auto;width:38px;height:38px;display:grid;place-items:center;
+.oc-top{display:flex;align-items:center;gap:var(--s3)}
+.oc-ic{flex:0 0 auto;width:36px;height:36px;display:grid;place-items:center;
   border-radius:var(--rounded-md);background:var(--brand-ice);color:var(--general-primary)}
-.oc-ic svg{width:20px;height:20px}
-/* laid out side by side, not overlapped: at this size the fallback initials are
-   two letters wide, and an avatar-style overlap slices the second one off */
-.oc-top .cv-brand-stack{margin-left:auto;width:auto;gap:4px}
-.oc-top .cv-bchip .agr-chip{width:26px;height:26px;box-shadow:none;
-  border:1px solid var(--hairline)}
-.oc-top .cv-bchip .agr-chip img{padding:4px}
-.oc-top .cv-bchip + .cv-bchip{margin-left:0}
-/* the tight pair: 1px apart, the exact grouping the overview's rows use, so name
-   and detail read as one unit and the money reads as another */
-.oc-id{display:flex;flex-direction:column;gap:1px;min-width:0}
-.oc-n{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;
-  letter-spacing:-.3px;line-height:1.3;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* no "a year" here: the overview's rows print the bare figure too, and the unit was
-   wrapping under the number in every card at this width */
-.oc-v{flex:1 1 auto;min-width:0;font-family:var(--font-sans);line-height:1.15;
-  /* 18px, not 20: at the narrowest card (219px) the longest estimated range
-     needs 138px at 20px against 131px of room. Weight and colour carry the
-     emphasis instead of size. */
-  font-size:var(--text-lg);font-weight:800;letter-spacing:-.5px;
-  color:var(--sentiment-positive);font-variant-numeric:tabular-nums;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* one separation, not three: this used to carry a top margin AND top padding AND
-   a rule, all doing the same job */
-.oc-f{display:flex;align-items:center;gap:var(--s3);margin-top:var(--s3);
+.oc-ic svg{width:19px;height:19px}
+.oc-top .cv-brand-stack{margin-left:auto;width:auto}
+.oc-top .cv-bchip .agr-chip{width:26px;height:26px}
+.oc-top .cv-bchip + .cv-bchip{margin-left:-8px}
+.oc-n{font-family:var(--font-sans);font-size:var(--text-base);font-weight:700;
+  letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.oc-v{display:flex;align-items:baseline;gap:6px;font-family:var(--font-sans);
+  font-size:var(--text-xl);font-weight:800;letter-spacing:-.6px;
+  color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.oc-v em{font-style:normal;font-family:var(--font-body);font-size:12.5px;font-weight:500;
+  letter-spacing:0;color:var(--general-muted-foreground)}
+.oc-f{display:flex;align-items:center;gap:var(--s3);margin-top:var(--s1);
   padding-top:var(--s3);border-top:1px solid var(--hairline)}
-.oc-meta{min-width:0;font-size:13px;color:var(--general-muted-foreground);
+.oc-meta{flex:1 1 auto;min-width:0;font-size:12.5px;color:var(--general-muted-foreground);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .oc-go{flex:0 0 auto;display:grid;place-items:center;width:26px;height:26px;
   border-radius:var(--rounded-full);background:var(--general-secondary);
@@ -1952,16 +1890,6 @@ body.in-app .flow{display:none}
   .oc-card:hover{transform:none}
   .oc-card:hover .oc-go{transform:none}
 }
-
-/* ---------- brand-tinted hover ----------
-   Every card already carries --b: the supplier's own ink as an "r g b" triplet,
-   the same value the logo chips tint themselves with. Hover washes the card in 6%
-   of it, so pointing at Hilti gives a barely-there red and Q8 a barely-there blue.
-   Layered over --surface rather than set as a bare colour: these cards sometimes
-   sit on a grey tray, and a translucent background would pick the tray up instead
-   of white. --b falls back to brand blue for suppliers with no artwork on file. */
-.agc,.ac,.agd,.oc-card{--tint:rgb(var(--b,33 112 237)/.06);
-  --tint-edge:rgb(var(--b,33 112 237)/.2)}
 
 /* ---------- ask the assistant about THIS agreement ----------
    A quiet mark that appears on hover or keyboard focus. It carries the assistant's
@@ -1996,14 +1924,8 @@ body.in-app .flow{display:none}
 .agc{position:relative;display:flex;flex-direction:column;
   border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
   background:var(--surface);overflow:hidden;
-  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
-/* the whole card takes a faint ground on hover rather than only changing its
-   outline — a browsable list reads better when the row you are pointing at is a
-   surface, not a rectangle with a slightly darker edge. Neutral, not brand-ice:
-   the discount highlight inside is brand-ice, and tinting the card the same colour
-   would erase the one thing the card is meant to lead with. */
-.agc:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
+  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.agc:hover{border-color:var(--card-stroke-hover);box-shadow:var(--shadow-sm)}
 .agc.on{border-color:#00968947}
 /* the recommended one gets a header band across the top of the card, in both
    views — it is a sentence, not a label, and it needs the full width to say it */
@@ -2612,9 +2534,7 @@ body.in-app .flow{display:none}
   letter-spacing:.04em;text-transform:uppercase;color:var(--general-muted-foreground)}
 .nc-mini-colhead-go{flex:0 0 auto;width:16px}
 .nc-mini-list{margin:0 calc(var(--s3) * -1)}
-/* a range needs more room than a single figure, but not so much that the
-   category names have to truncate to pay for it */
-.nc-mini-list .opp-legend-amt{min-width:104px}
+.nc-mini-list .opp-legend-amt{min-width:76px}
 /* .opp-legend-txt/-amt come in at var(--text-sm) (14px) from the shared dashboard
    component — below this page's own 15px body-copy floor, so bump them back up */
 .nc-mini-list .opp-legend-txt{font-size:16px}
@@ -4529,27 +4449,34 @@ const NC_SIZE_LABEL = {small:'small (under 20 employees)', medium:'medium (20–
      · "Strong published savings potential" is marketing, not information.
      · the four-line "HOW TO GET STARTED" panel is one honest line: setup is
        needed, and we only send the request once you agree it fits. */
-/* The portal's card shape: one big brand tile, an eyebrow, the name, the money,
-   one line of why. Deliberately FLAT — every element is a direct child of the <li>,
-   placed by grid areas, so the card has no inner wrappers at all. The old version
-   nested five (.agr-det-top, -id, -fig, -why, -act) and its logo chip carried a
-   -30px top margin from the photo-card base rule, which is what dragged it up over
-   the "Worth reviewing first" label. */
 function ncAgreementCardDetail(r, a, idx, pos){
   const rate = Math.round(a.save / a.covers * 100);
   const lead = pos === 0;
   return `
-    <li class="agd${lead ? ' lead' : ''}" data-cat="${r.id}" data-idx="${idx}"
-      tabindex="0" role="button" aria-label="${a.n}, ${r.n}: ${saveFig(a.save, isEstimated(a))} kr. a year"
+    <li class="agr-det${lead ? ' lead' : ''}" data-cat="${r.id}" data-idx="${idx}"
       style="--b:${brandOf(a.n)}">
-      ${agrLogoTile(a.n)}
-      <span class="agd-eye">${lead ? 'Worth reviewing first' : r.n}</span>
-      <b class="agd-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</b>
-      <span class="agd-fig"><b>${saveFig(a.save, isEstimated(a))
-        .replace('typically ', '')} kr.</b><em>a year</em></span>
-      <p class="agd-why">${CAT_PITCH[r.id] || 'Group price on what you already buy'} —
-        <b>${rate}% under</b> the ${fmt(a.covers)} kr. you spend here today.</p>
-      ${agrFav(a.n)}
+      ${lead ? '<span class="agr-det-eyebrow">Worth reviewing first</span>' : ''}
+      <div class="agr-det-top">
+        ${agrLogoChip(a.n)}
+        <span class="agr-det-id"><b>${a.n}</b><span>${r.n}</span></span>
+        ${agrFav(a.n)}
+      </div>
+      <div class="agr-det-fig">
+        <b>typically +${fmt(a.save)} kr.<small> / year</small></b>
+        <span>−${rate}% on the ${fmt(a.covers)} kr. you already buy here</span>
+      </div>
+      <ul class="agr-det-why">
+        <li>${CAT_PITCH[r.id] || 'Group price on what you already buy'}</li>
+        <li>Same supplier, same delivery — only the invoice price changes</li>
+      </ul>
+      <p class="agr-det-note">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Needs setup before first use. We only send the request once you agree it fits.</span>
+      </p>
+      <div class="agr-det-act">
+        <button type="button" class="btn btn-primary btn-sm" data-open="${idx}">Explore this agreement</button>
+        <button type="button" class="linkbtn" data-open="${idx}">What you get</button>
+      </div>
     </li>`;
 }
 
@@ -4882,7 +4809,7 @@ function ncMiniCatRow(r){
     <li class="opp-legend-item" data-cat="${r.id}" tabindex="0" role="button" aria-label="${r.n}: typically ${fmt(estSave)} kr./year">
       <span class="opp-legend-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
       <span class="opp-legend-txt">${r.n}</span>
-      <b class="opp-legend-amt">${saveFig(estSave, true).replace('typically ', '')} kr.</b>
+      <b class="opp-legend-amt">${saveFig(estSave, true)} kr.</b>
       <svg class="opp-legend-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </li>`;
 }
@@ -5290,15 +5217,11 @@ function renderNewCustomerDash(){
     if(window.ResizeObserver) new ResizeObserver(syncNav).observe(aRow);
     syncNav();
   }
-  /* the card is one hit area now that it carries no buttons of its own — the only
-     nested control is the save toggle, which stops the event itself */
-  $$('#viewNewCustomer .agd').forEach(li => {
-    const go = () => window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
-    li.addEventListener('click', go);
-    li.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
-    });
-  });
+  /* the detail card is not one big hit area — only its two actions open it */
+  $$('#viewNewCustomer .agr-det [data-open]').forEach(b => b.addEventListener('click', () => {
+    const li = b.closest('.agr-det');
+    window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
+  }));
   $$('#viewNewCustomer .opp-legend-item, #viewNewCustomer .agr-card').forEach(el => {
     const go = () => window.open(catTabUrl(el.dataset.cat, el.dataset.idx ? +el.dataset.idx : undefined), '_blank');
     el.addEventListener('click', go);
@@ -6040,15 +5963,8 @@ let seenTour = false;
 /* a verified figure is a fact: "+12.400". An estimated one is a typical outcome,
    not a cap: "typically +12.400". It used to read "up to", which the team rejected
    — "up to" puts a roof on a number that can just as easily come out higher. */
-/* An estimate is a band, not a point. Printing "typically +12.400" implies a
-   precision we do not have for a company whose invoices we have not read — so an
-   estimated figure prints as a ±15% range (the same band the overview's peer cards
-   use) and in compact form, because the FORMAT should carry how much we actually
-   know. A verified figure stays exact to the krone. */
-const EST_BAND = 0.15;
-const estRange = amount => `${fmtCompact(Math.round(amount * (1 - EST_BAND)))}–${fmtCompact(Math.round(amount * (1 + EST_BAND)))}`;
 const saveFig = (amount, estimated) =>
-  estimated ? `typically +${estRange(amount)}` : `+${fmt(amount)}`;
+  estimated ? `typically +${fmt(amount)}` : `+${fmt(amount)}`;
 
 /* the dashboard's welcome line — orients the user and sums up where they stand today */
 /* the dashboard's welcome line — short, and pointed at whatever is new */
@@ -6723,11 +6639,9 @@ function catOtherHTML(cur){
         <p>Ranked by what is still on the table, biggest first.</p>
       </div>
     </div>
-    <div class="oc-panel">
     <ul class="oc-grid">
       ${items.map(({r, save}) => `
-      <li><button type="button" class="oc-card" data-oc="${r.id}"
-        style="--b:${brandOf([...r.agr].sort((a, b) => b.covers - a.covers)[0].n)}">
+      <li><button type="button" class="oc-card" data-oc="${r.id}">
         <span class="oc-top">
           <span class="oc-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
           <span class="cv-brand-stack">
@@ -6735,18 +6649,14 @@ function catOtherHTML(cur){
               `<span class="cv-bchip" style="--b:${brandOf(a.n)}">${agrLogoChip(a.n)}</span>`).join('')}
           </span>
         </span>
-        <span class="oc-id">
-          <b class="oc-n">${r.n}</b>
-          <span class="oc-meta">${r.agr.filter(a => !a.req).length} ready · −${r.rate}% vs list</span>
-        </span>
+        <span class="oc-n">${r.n}</span>
+        <span class="oc-v">+${fmt(save)} kr.<em>a year</em></span>
         <span class="oc-f">
-          <span class="oc-v"><b>${saveFig(save, r.agr.some(a => !a.req && isEstimated(a)))
-            .replace('typically ', '')} kr.</b></span>
+          <span class="oc-meta">${r.agr.filter(a => !a.req).length} ready · −${r.rate}% vs list</span>
           <span class="oc-go">${ARROW}</span>
         </span>
       </button></li>`).join('')}
     </ul>
-    </div>
   </section>`;
 }
 
@@ -8738,5 +8648,84 @@ if(catViewId){
   enterApp();
 }
 </script>
+
+<style id="direction-editorial">
+/* ===================================================================
+   VISUAL DIRECTION 3 — EDITORIAL
+   Warm paper instead of clinical white, hard-edged ink blocks, and the
+   orange promoted from a highlight to a structural colour. Energy comes
+   from contrast jumps and scale, not from gradients.
+   =================================================================== */
+:root{
+  --general-background:#efece4;
+  --general-foreground:#14120e;
+  --general-primary:#1746c9;
+  --general-secondary:#dfe6ff;
+  --general-muted:#e5e1d7;
+  --general-muted-foreground:#5f5a4e;
+  --general-accent:#f26b1d;
+  --general-accent-foreground:#fffaf5;
+  --general-border:#14120e;
+  --general-input:#fffdf8;
+  --sidebar-border:#14120e;
+  --sidebar-foreground:#14120e;
+  --sentiment-positive:#0b7a5e;
+  --surface:#fffdf8;
+  --brand-ice:#f3ede1;
+  --hairline:#d8d2c4;
+  --card-stroke:#14120e;--card-stroke-hover:#f26b1d;
+  --rounded-sm:4px;--rounded-md:6px;--rounded-lg:8px;
+  --rounded-xl:10px;--rounded-2xl:12px;--rounded-3xl:16px;
+  --shadow-xs:none;--shadow-sm:none;
+  --shadow-md:4px 4px 0 #14120e;
+  --shadow-lg:7px 7px 0 #14120e;
+  --shadow-xl:10px 10px 0 #14120e;
+}
+body{background:var(--general-background)}
+.wrap,.canvas{background:
+  linear-gradient(180deg,#f5f2ea 0%,#efece3 42%,#e9e5da 100%);
+  background-attachment:fixed}
+
+/* cards are drawn, not floated: solid rule, hard offset, no blur */
+.card,.bento-cell,.opp-bento,.agr-card,.ag-row,.nc-activity,.hw-t{
+  background:var(--surface);border:2px solid #14120e;box-shadow:4px 4px 0 #14120e}
+.card:hover,.bento-cell:hover,.agr-card:hover,.hw-t:hover{box-shadow:7px 7px 0 #f26b1d;border-color:#14120e;
+  transform:translate(-2px,-2px)}
+.card,.bento-cell,.agr-card,.hw-t{transition:transform var(--t-fast),box-shadow var(--t-fast)}
+.wm,.npop,.upop,.hw-pop,.bc,.app-p{background:#fffdf8;border:2px solid #14120e;
+  box-shadow:8px 8px 0 #14120e}
+/* the hero tile is the ink block that anchors the page */
+.bento-hero{background:#14120e;color:#fffdf8;border-color:#14120e;box-shadow:6px 6px 0 #f26b1d}
+.bento-hero *{color:inherit}
+.bento-hero .kpi-v{color:#fff}
+
+/* chrome as printed matter */
+.appbar,.topbar{background:#fffdf8;border-bottom:2px solid #14120e;backdrop-filter:none}
+.rail{background:#f4f1ea;border-right:2px solid #14120e}
+.rail .ni.on,.rail a[aria-current="page"]{background:#14120e;color:#fffdf8;border-radius:6px}
+.banner,.bannerwrap{background:#14120e;color:#fffdf8;border-bottom:2px solid #14120e}
+.bannerwrap .bx:hover{background:#f26b1d;color:#fffdf8}
+.nc-activity{border-left:2px solid #14120e;background:#f7f4ed;border-radius:0}
+.hw-trend.up{color:#0b7a5e}
+
+/* type gets louder — the display voice carries the energy */
+h1{font-size:clamp(38px,4.6vw,60px);letter-spacing:-2.4px;line-height:.98;font-weight:700}
+h2{letter-spacing:-1px;font-weight:700}
+.kpi-v,.opp-amt-big{letter-spacing:-2px;font-weight:700}
+
+/* orange as structure: section rules and the primary action */
+.sec-head,.opp-col-head{border-bottom:3px solid #f26b1d;padding-bottom:8px}
+.btn-primary{background:#14120e;color:#fffdf8;border:2px solid #14120e;box-shadow:3px 3px 0 #f26b1d}
+.btn-primary:hover:not([disabled]){background:#f26b1d;border-color:#14120e;
+  color:#fffdf8;box-shadow:3px 3px 0 #14120e}
+.btn-secondary{background:#fffdf8;border:2px solid #14120e;box-shadow:3px 3px 0 #d8d2c4}
+.chip-rec{background:#f26b1d;color:#fffdf8}
+.chip-warn{background:#ffe6d2;color:#8a3908}
+.hw-trend-bar{background:#ded8ca}
+.hw-trend-bar i{background:#14120e}
+tbody tr.needs{background:#fdeee1}
+tbody tr.needs:hover{background:#fbe2cd}
+@media(prefers-reduced-motion:reduce){.card:hover,.agr-card:hover{transform:none}}
+</style>
 </body>
 </html>
