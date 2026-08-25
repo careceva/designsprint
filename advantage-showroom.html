@@ -45,6 +45,21 @@ a{color:var(--accent);text-decoration:none}
 .meta p{font-size:14px;color:var(--soft);line-height:1.5;margin-top:4px}
 .meta .act{margin-top:auto;padding-top:12px;font-size:14px;font-weight:600;color:var(--accent)}
 
+/* visual styles */
+.styles{margin-top:52px;padding-top:34px;border-top:1px solid var(--hair)}
+.styles h2{font-size:24px}
+.styles>p{color:var(--soft);margin:6px 0 22px;max-width:62ch}
+.scard{color:var(--ink);text-decoration:none}
+.scard .meta{gap:4px}
+.swk{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+ color:var(--faint);margin-top:16px}
+.sw{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.sw i{display:inline-flex;align-items:center;gap:6px;font-style:normal;
+ font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:var(--soft);
+ background:var(--canvas);border-radius:var(--r-full);padding:4px 10px 4px 4px}
+.sw i b{width:14px;height:14px;border-radius:var(--r-full);
+ box-shadow:inset 0 0 0 1px #0000001f}
+
 /* theater */
 .theater{position:fixed;inset:0;z-index:50;background:var(--canvas);display:none;flex-direction:column}
 .theater.on{display:flex}
@@ -97,6 +112,20 @@ a{color:var(--accent);text-decoration:none}
   <div class="filters" id="filters"></div>
   <p class="hint" id="cmpHint">Pick two dashboards to compare. First pick fills the left side.</p>
   <div class="grid" id="grid"></div>
+
+  <section class="styles">
+    <h2>Visual styles</h2>
+    <p>Six theme layers over the same build. Each is a full copy of the app with a different
+    visual direction appended, so you can open any one of them and use the whole product in that style.</p>
+    <div class="grid">
+      <a class="card scard" href="advantage-v2-midnight.html" target="_blank" rel="noopener"><span class="meta"><h3>Midnight</h3><span class="fn">advantage-v2-midnight.html</span><p>Deep navy canvas with a drifting aurora. Cards lift out of it with light; the figures glow.</p><span class="swk">Canvas, card, accents</span><span class="sw"><i title="Canvas #050e2e"><b style="background:#050e2e"></b>#050e2e</i><i title="Card surface #101d45"><b style="background:#101d45"></b>#101d45</i><i title="Card edge #2a3968"><b style="background:#2a3968"></b>#2a3968</i><i title="Primary #5b95ff"><b style="background:#5b95ff"></b>#5b95ff</i><i title="Accent #ffab52"><b style="background:#ffab52"></b>#ffab52</i><i title="Positive #2fd6b6"><b style="background:#2fd6b6"></b>#2fd6b6</i></span><span class="act">Open in tab &rarr;</span></span></a>
+      <a class="card scard" href="advantage-v2-ink-ice.html" target="_blank" rel="noopener"><span class="meta"><h3>Ink &amp; Ice</h3><span class="fn">advantage-v2-ink-ice.html</span><p>Light, but no pure white anywhere: an ice-wash canvas, solid midnight chrome, near-white cards.</p><span class="swk">Canvas, card, chrome</span><span class="sw"><i title="Ice canvas #e4ecfa"><b style="background:#e4ecfa"></b>#e4ecfa</i><i title="Card panel #fbfcff"><b style="background:#fbfcff"></b>#fbfcff</i><i title="Card edge #cddcf3"><b style="background:#cddcf3"></b>#cddcf3</i><i title="Ink chrome #101f47"><b style="background:#101f47"></b>#101f47</i><i title="Primary #1b64dc"><b style="background:#1b64dc"></b>#1b64dc</i></span><span class="act">Open in tab &rarr;</span></span></a>
+      <a class="card scard" href="advantage-v2-dark-navy.html" target="_blank" rel="noopener"><span class="meta"><h3>Dark Navy</h3><span class="fn">advantage-v2-dark-navy.html</span><p>A four-step ladder on blue-black. Separation carried by value, not borders, plus one blue glow.</p><span class="swk">Elevation ladder</span><span class="sw"><i title="L0 ground #0a0e19"><b style="background:#0a0e19"></b>#0a0e19</i><i title="L1 chrome + cards #18202f"><b style="background:#18202f"></b>#18202f</i><i title="L2 nested panel #232d40"><b style="background:#232d40"></b>#232d40</i><i title="L3 hover #2d3950"><b style="background:#2d3950"></b>#2d3950</i><i title="Canvas glow #22409c"><b style="background:#22409c"></b>#22409c</i></span><span class="act">Open in tab &rarr;</span></span></a>
+      <a class="card scard" href="advantage-v2-dark-charcoal.html" target="_blank" rel="noopener"><span class="meta"><h3>Dark Charcoal</h3><span class="fn">advantage-v2-dark-charcoal.html</span><p>The same four-step ladder with the hue taken out — neutral greys, no colour cast.</p><span class="swk">Elevation ladder</span><span class="sw"><i title="L0 ground #0e0f11"><b style="background:#0e0f11"></b>#0e0f11</i><i title="L1 chrome + cards #1d1f22"><b style="background:#1d1f22"></b>#1d1f22</i><i title="L2 nested panel #282b30"><b style="background:#282b30"></b>#282b30</i><i title="L3 hover #33373d"><b style="background:#33373d"></b>#33373d</i><i title="Canvas glow #2a3550"><b style="background:#2a3550"></b>#2a3550</i></span><span class="act">Open in tab &rarr;</span></span></a>
+      <a class="card scard" href="advantage-v2-dark-carbon.html" target="_blank" rel="noopener"><span class="meta"><h3>Dark Carbon</h3><span class="fn">advantage-v2-dark-carbon.html</span><p>The deepest ground of the three, near-black, carrying the strongest blue glow.</p><span class="swk">Elevation ladder</span><span class="sw"><i title="L0 ground #070809"><b style="background:#070809"></b>#070809</i><i title="L1 chrome + cards #181a1e"><b style="background:#181a1e"></b>#181a1e</i><i title="L2 nested panel #24272c"><b style="background:#24272c"></b>#24272c</i><i title="L3 hover #30343a"><b style="background:#30343a"></b>#30343a</i><i title="Canvas glow #1d3a8f"><b style="background:#1d3a8f"></b>#1d3a8f</i></span><span class="act">Open in tab &rarr;</span></span></a>
+      <a class="card scard" href="advantage-v2-light.html" target="_blank" rel="noopener"><span class="meta"><h3>Light Grey</h3><span class="fn">advantage-v2-light.html</span><p>The dark set inverted: the ground is grey and the white cards are the raised plane.</p><span class="swk">Elevation ladder</span><span class="sw"><i title="L0 ground #F5F5F7"><b style="background:#F5F5F7"></b>#F5F5F7</i><i title="L1 chrome + cards #FFFFFF"><b style="background:#FFFFFF"></b>#FFFFFF</i><i title="L2 group panels #E9E9EE"><b style="background:#E9E9EE"></b>#E9E9EE</i><i title="L3 hover #ECECEF"><b style="background:#ECECEF"></b>#ECECEF</i></span><span class="act">Open in tab &rarr;</span></span></a>
+    </div>
+  </section>
 </div>
 
 <div class="theater" id="theater" role="dialog" aria-label="Prototype viewer">

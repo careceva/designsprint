@@ -1144,9 +1144,12 @@ body.in-app .flow{display:none}
    be a button, which is the trap the reference fell into. */
 /* two up, not three: a 64px tile beside a text column needs ~460px to stop the
    name and the figure both wrapping. Three-up gave 299px and broke each of them. */
-.agr-det-grid{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+/* three across: at 1100px that is ~350px a card, which is what the flat card was
+   designed around. Two made each card wider than its own content needed. */
+.agr-det-grid{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
   gap:var(--s4);margin-top:var(--s8)}
-@container page (max-width:720px){.agr-det-grid{grid-template-columns:minmax(0,1fr)}}
+@container page (max-width:1040px){.agr-det-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container page (max-width:660px){.agr-det-grid{grid-template-columns:minmax(0,1fr)}}
 /* the card IS the grid — no inner containers. The tile spans every row on the left,
    the text stacks in the middle, the save toggle holds the top-right corner. */
 .agd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
@@ -1275,45 +1278,212 @@ body.in-app .flow{display:none}
    112px box above #viewNewCustomer even though every child inside is hidden. */
 .page[hidden]{display:none!important}
 
-/* ---------- suppliers: page head + search & filter ----------
-   The catalogue used to start at the first shelf with no way to reach a NAMED
-   supplier except scrolling three rows. The head gives the page a name, the
-   search reaches any supplier in two keystrokes, and the chips are the same
-   pill language the rest of the app selects with. */
+/* ==========================================================================
+   SUPPLIERS — the catalogue, read against the invoices
+   Replaces the shelf/scroll-row block. Two ideas:
+     · a summary tray at the top that says what this company actually uses,
+       derived from ROWS (the invoice data) — the same .nc-ov component the
+       new-customer overview uses, not a second stat-card language;
+     · one card shape, the portal's flat .agd card, for every supplier in
+       every mode — so a search result and a curated shelf card are the same
+       object and can never drift apart.
+   ========================================================================== */
+
+/* ---------- page head ---------- */
+.sup-head{display:flex;flex-direction:column;gap:var(--s6)}
 .sup-head h1{font-size:var(--text-2xl);letter-spacing:-.8px}
 .sup-head p{margin-top:var(--s1);font-size:var(--text-sm);line-height:1.5;
+  max-width:68ch;color:var(--general-muted-foreground)}
+/* where the tray's numbers come from — sits under the tray, tight to it, because
+   it is a footnote on those figures and not a paragraph of its own */
+.sup-basis{margin-top:calc(var(--s6) * -1 + var(--s2));font-size:13px;
   color:var(--general-muted-foreground)}
-.sup-tools{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s6)}
-.sup-search{position:relative;max-width:440px}
+
+/* ---------- the summary tray ----------
+   .nc-ov / .nc-ov-card are reused as-is. Two gaps in the shared component are
+   fixed here rather than duplicated: .nc-ov-card-c was referenced by the
+   new-customer overview markup but never declared (so captions inherited 16px
+   body ink), and the grid's only breakpoint was a viewport media query, which
+   says nothing about a canvas squeezed by two open rails. */
+.nc-ov-card-c{min-height:18px;font-size:13px;line-height:1.45;
+  color:var(--general-muted-foreground)}
+/* the tray figures are big; on a narrow canvas three columns turn each one into
+   a two-line wrap before the window ever reaches its own breakpoint */
+@container page (max-width:820px){#viewSup .nc-ov-grid{grid-template-columns:repeat(2,1fr)}}
+@container page (max-width:560px){#viewSup .nc-ov-grid{grid-template-columns:1fr}}
+
+/* ---------- search, filters, sort ----------
+   The search field and every chip live in the head, OUTSIDE #supBody, so
+   re-rendering results never steals focus mid-keystroke. */
+.sup-tools{display:flex;flex-direction:column;gap:var(--s4)}
+/* tight group: the field and the sort segment are one row of controls */
+.sup-tools-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3)}
+.sup-search{position:relative;flex:1 1 300px;max-width:440px}
 .sup-search>svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);
   width:16px;height:16px;color:var(--general-muted-foreground);pointer-events:none}
 .sup-search input{width:100%;height:44px;padding:0 46px 0 42px;
   border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
   background:var(--general-input);font-size:var(--text-sm);box-shadow:var(--shadow-xs)}
 .sup-search input::placeholder{color:var(--general-muted-foreground)}
+.sup-search input:hover{border-color:var(--card-stroke-hover)}
 .sup-search input:focus-visible{outline:2px solid var(--general-primary);outline-offset:-1px}
 .sup-search-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);
   width:28px;height:28px;display:grid;place-items:center;border:none;cursor:pointer;
   border-radius:var(--rounded-full);background:var(--general-muted);
-  color:var(--general-muted-foreground);transition:color var(--t-fast)}
-.sup-search-x:hover{color:var(--general-foreground)}
+  color:var(--general-muted-foreground);transition:color var(--t-fast),background var(--t-fast)}
+.sup-search-x:hover{background:var(--general-secondary);color:var(--general-foreground)}
 .sup-search-x svg{width:11px;height:11px}
 .sup-search-x[hidden]{display:none!important}
+/* sort is a segmented control, not a select: two options, and the app already
+   speaks .pill-opt for "one of these is on" */
+.sup-sort{display:flex;align-items:center;gap:var(--s2);flex:0 0 auto}
+.sup-sort-l{font-size:13px;font-weight:600;color:var(--general-muted-foreground)}
+/* the two chip groups sit closer to each other than to the field above them:
+   they are one filter block, read top to bottom */
+.sup-chips{display:flex;flex-direction:column;gap:var(--s2)}
 .sup-cats{display:flex;flex-wrap:wrap;gap:var(--s2)}
 .sup-cats .pill-opt{height:34px;font-size:13px}
-/* the found suppliers, flat — the shelves answer "what is there?", this answers
-   "where is the one I mean?", so it drops the sideways scroll entirely */
-.sup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--s4)}
-.sup-grid .sup{width:auto}
-.sup-empty{padding:var(--s16) var(--s4);text-align:center}
+.sup-cats .pill-opt svg{width:13px;height:13px;flex:0 0 auto}
+/* the status row is the new filter dimension — "what is this supplier to us
+   already?" — and it reads as a distinct question, so it gets its own line and
+   a hairline above it rather than being mixed into the category chips */
+.sup-cats.is-status{padding-top:var(--s3);border-top:1px solid var(--hairline)}
+
+/* ---------- the live filter / result bar ----------
+   Always present, so the result count has one fixed home and the page never
+   reflows when a filter is applied. aria-live announces the new count. */
+.sup-bar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);
+  min-height:32px;font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.sup-bar b{color:var(--general-foreground);font-weight:650}
+.sup-bar-sep{flex:0 0 auto;width:1px;height:16px;background:var(--hairline)}
+/* one applied filter, removable in place */
+.sup-tokx{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 var(--s2) 0 var(--s3);
+  border:1px solid var(--general-border);border-radius:var(--rounded-full);
+  background:var(--brand-ice);color:var(--general-primary);
+  font-size:13px;font-weight:600;cursor:pointer;
+  transition:background var(--t-fast),border-color var(--t-fast)}
+.sup-tokx:hover{background:var(--general-secondary);border-color:var(--general-primary)}
+.sup-tokx svg{width:11px;height:11px;opacity:.75}
+.sup-tokx:hover svg{opacity:1}
+.sup-clear{flex:0 0 auto;border:none;background:none;cursor:pointer;padding:0 var(--s1);
+  font-size:13px;font-weight:650;color:var(--general-primary);border-radius:var(--rounded-xs)}
+.sup-clear:hover{text-decoration:underline}
+
+/* ---------- body: sections of cards ---------- */
+#supBody{display:flex;flex-direction:column;gap:var(--s12);min-width:0}
+.sup-sec{min-width:0}
+/* .sh-head / .sh-eyebrow / .sh-note are the incumbent's shelf header, reused —
+   only the prev/next nav is gone, so the head no longer needs to be a flex row
+   with a trailing control group */
+.sup-sec .sh-head{display:block;margin-bottom:var(--s4)}
+/* two up: a 64px tile beside a text column needs ~460px before the name and the
+   figure both start wrapping — the same measure the .agr-det-grid settled on */
+.supd-grid{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--s4);min-width:0}
+@container page (max-width:900px){.supd-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- the supplier card ----------
+   The .agd contract, verbatim: the card IS the grid, no inner containers, one
+   hit area, brand-tinted hover. Two extra columns carry the two badges so they
+   are direct children too — a .supd-tags wrapper would have broken the rule the
+   card exists to demonstrate. */
+.supd{display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto auto auto;
+  grid-template-areas:
+    "tile eye  tagA tagB fav"
+    "tile name name name fav"
+    "tile fig  fig  fig  fig"
+    "why  why  why  why  why";
+  column-gap:var(--s4);align-items:start;
+  padding:var(--s5,20px);cursor:pointer;
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
+  background:var(--surface);
+  --tint:rgb(var(--b,33 112 237)/.06);
+  --tint-edge:rgb(var(--b,33 112 237)/.2);
+  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
+.supd:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
+  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
+.supd:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+/* a supplier already working for us is the one state worth colouring the whole
+   card for — the same role .agd.lead plays for "review this first" */
+.supd.live{background:var(--brand-ice);border-color:var(--general-border)}
+.supd.live:hover{background:var(--general-secondary)}
+.supd.live .supd-eye{color:var(--general-primary)}
+.supd.live .supd-why{border-top-color:var(--general-border)}
+/* the brand tile — .agc-logo, sized down the way .agd sizes it */
+.supd .agc-logo{grid-area:tile;width:64px;height:64px}
+/* where there is no artwork the category glyph reads better than initials, and it
+   keeps SUP_ICON — the one genuinely good asset on the old card — in service */
+.supd .agc-logo svg{width:26px;height:26px;color:rgb(var(--b,33 112 237))}
+.supd-eye{grid-area:eye;font-size:12px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--general-muted-foreground);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.supd-name{grid-area:name;margin-top:2px;font-family:var(--font-sans);
+  font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.25}
+/* the money, or the rate where money would be a guess. One unit: the figure wraps
+   before it ever splits, and the qualifier drops to the next line. */
+.supd-fig{grid-area:fig;margin-top:var(--s2);display:flex;align-items:baseline;gap:6px;
+  flex-wrap:wrap;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:800;
+  letter-spacing:-.4px;color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.supd-fig b{font-weight:800;white-space:nowrap}
+.supd-fig em{font-style:normal;font-family:var(--font-body);font-size:12.5px;
+  font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
+/* the one line of argument, full width under the tile so it gets a real measure */
+.supd-why{grid-area:why;margin-top:var(--s4);padding-top:var(--s3);
+  border-top:1px solid var(--hairline);
+  font-size:var(--text-sm);line-height:1.5;color:var(--general-muted-foreground)}
+.supd-why b{color:var(--general-foreground);font-weight:650}
+/* on the tinted card the secondary line is tinted from the same hue, never grey */
+.supd.live .supd-why{color:color-mix(in srgb,var(--general-primary) 34%,var(--general-foreground))}
+.supd.live .supd-eye{color:var(--general-primary)}
+
+/* the two badges. tagA is the money relationship and is the only one allowed
+   colour; tagB is curation (new / most used / matched to you) and stays grey, so
+   a grid of cards doesn't read as a carnival. */
+.supd-tag{display:inline-flex;align-items:center;gap:5px;align-self:center;
+  padding:3px 9px;border-radius:var(--rounded-full);white-space:nowrap;
+  font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.supd-tag svg{width:11px;height:11px;flex:0 0 auto}
+.supd-tag.t1{grid-area:tagA}
+/* pulled back so the two badges read as one cluster, not two separate marks */
+.supd-tag.t2{grid-area:tagB;margin-left:calc(var(--s2) - var(--s4))}
+.supd-tag.on{background:color-mix(in srgb,var(--sentiment-positive) 13%,var(--surface));
+  color:var(--sentiment-positive)}
+.supd-tag.ready{background:var(--brand-ice);color:var(--general-primary)}
+.supd-tag.mute{background:var(--general-muted);color:var(--general-muted-foreground)}
+.supd.live .supd-tag.mute{background:var(--surface)}
+/* the save toggle: the only nested control, and it stops its own event */
+.supd .agr-fav{grid-area:fav;position:static;width:30px;height:30px;
+  color:var(--general-muted-foreground)}
+.supd .agr-fav svg{width:20px;height:20px;fill:none;filter:none}
+.supd .agr-fav.on svg{fill:var(--general-destructive);stroke:var(--general-destructive)}
+
+/* narrow canvas: the badges drop to their own row rather than squeezing the name
+   column to nothing. Container, not viewport — two open rails can leave this
+   canvas at ~500px while the window is 1600px. */
+@container page (max-width:600px){
+  .supd{grid-template-columns:auto minmax(0,1fr) auto;
+    grid-template-areas:
+      "tile eye  fav"
+      "tile name fav"
+      "tile fig  fig"
+      "tagA tagB tagB"
+      "why  why  why"}
+  .supd-tag{margin-top:var(--s4)}
+  .supd-tag.t2{margin-left:calc(var(--s2) - var(--s4))}
+}
+
+/* ---------- empty state ---------- */
+.sup-empty{padding:var(--s16) var(--s4);text-align:center;
+  border:1px dashed var(--card-stroke);border-radius:var(--rounded-lg)}
+.sup-empty-ic{display:inline-grid;place-items:center;width:48px;height:48px;
+  margin-bottom:var(--s4);border-radius:var(--rounded-full);
+  background:var(--general-muted);color:var(--general-muted-foreground)}
+.sup-empty-ic svg{width:22px;height:22px}
 .sup-empty h3{font-size:var(--text-lg);letter-spacing:-.3px}
-.sup-empty p{margin:var(--s2) auto 0;max-width:44ch;font-size:var(--text-sm);
+.sup-empty p{margin:var(--s2) auto 0;max-width:46ch;font-size:var(--text-sm);
   line-height:1.55;color:var(--general-muted-foreground)}
 .sup-empty .btn{margin-top:var(--s6)}
-/* the body wraps the shelves now, so it re-creates the view's own rhythm */
-#supBody{display:flex;flex-direction:column;gap:var(--s8);min-width:0}
-
-.shelf{min-width:0}
 .sh-head{display:flex;align-items:flex-end;gap:var(--s4);margin-bottom:var(--s3)}
 .sh-head>div{flex:1;min-width:0}
 .sh-eyebrow{display:flex;align-items:center;gap:6px;margin-bottom:var(--s1);
@@ -1323,57 +1493,7 @@ body.in-app .flow{display:none}
 .sh-head h2{font-size:var(--text-xl);letter-spacing:-.6px}
 .sh-note{margin-top:var(--s1);font-size:var(--text-sm);line-height:1.5;
   color:var(--general-muted-foreground)}
-/* prev / next */
-.sh-nav{flex:0 0 auto;display:flex;gap:var(--s2);padding-bottom:2px}
-.snav{width:34px;height:34px;display:grid;place-items:center;cursor:pointer;
-  background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
-  box-shadow:var(--shadow-xs);color:var(--general-foreground);transition:var(--t-fast)}
-.snav:hover:not([disabled]){background:var(--brand-ice);border-color:var(--general-border);
-  color:var(--general-primary)}
-.snav[disabled]{cursor:not-allowed;opacity:.35;box-shadow:none}
-.snav svg{width:16px;height:16px}
-/* the row: wheel, trackpad and touch all still scroll it — only the bar is hidden */
-.suprow{--supw:250px;display:flex;align-items:stretch;gap:var(--s4);
-  padding:var(--s2) 3px var(--s3);margin:0 -3px;
-  overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-left:3px;
-  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.suprow::-webkit-scrollbar{display:none}
-@container page (max-width:860px){.suprow{--supw:222px}}
-@container page (max-width:600px){.suprow{--supw:196px;gap:var(--s3)}}
-@container page (max-width:420px){.suprow{--supw:80%}}
-/* card — one focusable target, no nested controls */
-.sup{position:relative;flex:0 0 auto;width:var(--supw);scroll-snap-align:start;
-  display:flex;flex-direction:column;text-align:left;cursor:pointer;
-  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
-  box-shadow:var(--shadow-xs);
-  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
-.sup:hover{border-color:var(--general-border);box-shadow:var(--shadow-md)}
-/* image area — no photography available, so: a tinted gradient plus one big quiet
-   category watermark. Deliberately low contrast; the numbers have to win. */
-.sup-img{position:relative;flex:0 0 auto;aspect-ratio:16/10}
-.sup-ph{position:absolute;inset:0;overflow:hidden;
-  border-radius:calc(var(--rounded-lg) - 1px) calc(var(--rounded-lg) - 1px) 0 0;
-  background:linear-gradient(150deg,var(--g1),var(--g2))}
-.sup-ph svg{position:absolute;right:-7%;bottom:-16%;width:58%;height:auto;color:var(--wm)}
-.sup[data-tone="blue"]{--g1:#1b64dc24;--g2:#1b64dc08;--wm:#1b64dc47}
-.sup[data-tone="teal"]{--g1:#00968924;--g2:#00968908;--wm:#00968947}
-.sup[data-tone="amber"]{--g1:#ff9b3d30;--g2:#ff9b3d0a;--wm:#ff9b3d5c}
-.sup[data-tone="corn"]{--g1:#73abff38;--g2:#73abff0a;--wm:#73abff7a}
-.sup[data-tone="ink"]{--g1:#000a4517;--g2:#000a4505;--wm:#000a4533}
-.sup-b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;
-  padding:var(--s4)}
-.sup-cat{font-size:13px;color:var(--general-muted-foreground);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sup-n{margin-top:2px;font-family:var(--font-sans);font-size:var(--text-base);font-weight:600;
-  letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sup-save{margin-top:var(--s2);min-height:calc(1.5em * 2);font-size:var(--text-xs);line-height:1.5;
-  color:var(--general-muted-foreground);text-wrap:pretty}
-.sup-save b{color:var(--sentiment-positive);font-weight:600}
-.sup-more{display:flex;align-items:center;gap:5px;margin-top:auto;padding-top:var(--s3);
-  border-top:1px solid var(--hairline);font-size:var(--text-xs);font-weight:600;
-  color:var(--general-primary)}
-.sup-more svg{width:14px;height:14px;transition:transform var(--t-fast)}
-.sup:hover .sup-more svg{transform:translateX(3px)}
+
 
 @media(max-width:760px){
   /* the rail floats over the canvas here; JS keeps it collapsed unless the user opens it */
@@ -2984,14 +3104,358 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
    portal walk-through (T3).
    ========================================================================== */
 
-/* ---------- T6 · Agreements: status, dormant agreements, timelines ---------- */
+/* ---------- Reports ----------
+   Three readings of the same eight categories: what was saved, what was spent,
+   what is actually flowing through the agreements. One page, one toolbar, three
+   bodies — the report type is a view of the data, not a different page. */
+.rp-page{width:100%;max-width:1100px;margin:0 auto;
+  display:flex;flex-direction:column;gap:var(--s12)}
+
+/* — header + toolbar — */
+.rp-hero h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+.rp-hero p{margin-top:var(--s3);font-size:var(--text-lg);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:66ch}
+/* the toolbar is part of the header group, so 24px from the lead — not the 48px
+   that separates the report sections from each other */
+.rp-bar{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;
+  margin-top:var(--s6);padding-bottom:var(--s4);border-bottom:1px solid var(--hairline)}
+.rp-bar-sp{flex:1 1 auto}
+.rp-bar-r{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+/* period sits beside an export button, so it takes the tighter geometry the
+   category page's seg already uses when it has to share a row */
+.rp-per.seg button{padding:0 var(--s3)}
+.rp-exp{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.rp-exp svg{width:15px;height:15px}
+.rp-lbl{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+@container page (max-width:700px){
+  .rp-bar{flex-direction:column;align-items:stretch}
+  .rp-bar-r{justify-content:space-between}
+}
+
+/* — the benchmark framing line: brand-ice band, secondary text tinted from the
+     blue it sits on rather than going grey on a coloured ground — */
+.rp-note{display:flex;align-items:flex-start;gap:var(--s3);
+  padding:var(--s4) var(--s5,20px);border-radius:var(--rounded-lg);
+  background:var(--brand-ice);font-size:15px;line-height:1.55;color:#1b3a6b}
+.rp-note svg{flex:0 0 auto;width:18px;height:18px;margin-top:2px;color:var(--general-primary)}
+.rp-note b{font-weight:650;color:var(--general-foreground)}
+
+/* — headline figures: white cards on a grey tray, 8px gutter all round — */
+.rp-tray{padding:var(--s2);border:1px solid var(--card-stroke);
+  border-radius:var(--rounded-2xl);background:var(--general-muted)}
+.rp-figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s2)}
+@container page (max-width:820px){.rp-figs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container page (max-width:460px){.rp-figs{grid-template-columns:minmax(0,1fr)}}
+.rp-fig{display:flex;flex-direction:column;gap:var(--s1);
+  padding:var(--s5,20px) var(--s6);border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f}
+.rp-fig b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-.9px;line-height:1.05;font-variant-numeric:tabular-nums}
+/* an estimated range is two numbers where a verified figure is one — it needs the
+   size back to stay on one line at the narrowest card */
+.rp-fig.est b{font-size:var(--text-xl);letter-spacing:-.4px}
+.rp-fig b.pos{color:var(--sentiment-positive)}
+.rp-fig b.warn{color:var(--sentiment-negative)}
+.rp-fig b small{font-family:var(--font-body);font-size:14px;font-weight:500;
+  letter-spacing:0;color:var(--general-muted-foreground)}
+.rp-fig span{font-size:14px;line-height:1.4;color:var(--general-muted-foreground)}
+
+/* — section shell — */
+.rp-sec h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
+.rp-sec>p{margin-top:var(--s2);font-size:16px;line-height:1.5;
+  color:var(--general-muted-foreground);max-width:70ch}
+.rp-viz{margin-top:var(--s6)}
+
+/* — chart 1 · savings: realised, then what is still on the table, on one track — */
+.rp-bars{list-style:none;display:flex;flex-direction:column;gap:var(--s5,20px)}
+.rp-bar-row{display:grid;grid-template-columns:1fr auto;gap:var(--s2) var(--s4)}
+.rp-bar-n{font-size:16px;font-weight:600;letter-spacing:-.2px}
+.rp-bar-v{font-size:16px;font-weight:700;color:var(--sentiment-positive);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.rp-bar-v.zero{color:var(--general-muted-foreground);font-weight:600}
+.rp-track{grid-column:1 / -1;display:flex;gap:2px;height:6px;
+  border-radius:3px;background:var(--general-muted);overflow:hidden}
+.rp-track i{display:block;height:100%;min-width:2px;transition:width var(--t-slow)}
+/* --rp-soft is the tint the app already uses for "positive, but quiet"
+   (.chip-good, .trend-up) — the only hex here, and it is the incumbent's own */
+.rp-page{--rp-soft:#d9f2ef}
+.rp-track i.done{background:var(--sentiment-positive)}
+.rp-track i.open{background:var(--rp-soft)}
+.rp-key{display:flex;gap:var(--s6);flex-wrap:wrap;margin-top:var(--s6);
+  font-size:13px;color:var(--general-muted-foreground)}
+.rp-key span{display:inline-flex;align-items:center;gap:7px}
+.rp-key i{width:10px;height:10px;border-radius:var(--rounded-full)}
+.rp-key i.done{background:var(--sentiment-positive)}
+.rp-key i.open{background:var(--rp-soft)}
+.rp-key i.exp{background:var(--general-muted)}
+
+/* — chart 2 · spending: one strip showing the whole, then the parts — */
+.rp-split{display:flex;height:52px;gap:2px;border-radius:var(--rounded-md);
+  overflow:hidden;background:var(--surface)}
+.rp-split-seg{position:relative;min-width:3px;background:var(--general-primary);
+  transition:filter var(--t-fast)}
+.rp-split-seg:hover{filter:brightness(1.14)}
+.rp-split-seg.off{background:var(--general-secondary)}
+.rp-split-seg:first-child{border-radius:var(--rounded-md) 0 0 var(--rounded-md)}
+.rp-split-seg:last-child{border-radius:0 var(--rounded-md) var(--rounded-md) 0}
+.rp-split-legend{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);
+  gap:var(--s3) var(--s6);margin-top:var(--s6)}
+@container page (max-width:820px){.rp-split-legend{grid-template-columns:1fr}}
+.rp-split-legend li{display:flex;align-items:baseline;gap:var(--s2);
+  font-size:15px;line-height:1.4}
+.rp-dot{flex:0 0 auto;width:9px;height:9px;border-radius:var(--rounded-full);
+  background:var(--general-primary);transform:translateY(-1px)}
+.rp-dot.off{background:var(--general-secondary)}
+.rp-split-n{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rp-split-v{flex:0 0 auto;font-weight:700;font-variant-numeric:tabular-nums}
+.rp-split-pct{flex:0 0 auto;min-width:34px;text-align:right;font-size:13px;
+  color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+
+/* — chart 3 · usage: the track is the volume the agreement covers, the fill is
+     what has actually gone through it. A short fill IS the finding. — */
+.rp-use{list-style:none;display:flex;flex-direction:column;gap:var(--s5,20px)}
+.rp-use-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  gap:var(--s2) var(--s3);align-items:center}
+.rp-use-chip{grid-row:span 2}
+/* .agr-chip ships at 60px with a −30px top margin (it overlaps a photo header on
+   the cards it was built for) — both have to be undone to use it as a list mark,
+   exactly as .cv-bchip does. --b comes off the row, so the initials fallback
+   tints from the supplier's own ink instead of falling back to brand blue. */
+.rp-use-chip .agr-chip{margin:0;width:30px;height:30px;border-radius:var(--rounded-sm);
+  border:1px solid var(--hairline);box-shadow:none}
+.rp-use-chip .agr-chip img{padding:3px}
+.rp-use-chip .agr-chip-i{font-size:11px}
+.rp-use-n{min-width:0;font-size:16px;font-weight:600;letter-spacing:-.2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rp-use-n em{font-style:normal;font-weight:500;color:var(--general-muted-foreground)}
+.rp-use-v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rp-use-v.idle{color:var(--sentiment-negative)}
+.rp-use-row .rp-track{grid-column:2 / -1}
+.rp-flag{display:inline-flex;align-items:center;gap:5px;margin-left:var(--s2);
+  font-size:12.5px;font-weight:650;color:var(--sentiment-negative);white-space:nowrap}
+.rp-flag svg{width:14px;height:14px}
+
+/* — the rows table: figures that have to add up, so a table with a total row — */
+.rp-tblwrap{margin-top:var(--s8);overflow-x:auto}
+.rp-tbl{width:100%;border-collapse:collapse;font-size:15px}
+.rp-tbl caption{text-align:left;font-size:13px;font-weight:600;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--general-muted-foreground);padding-bottom:var(--s3)}
+.rp-tbl th,.rp-tbl td{padding:var(--s3);text-align:left;white-space:nowrap;
+  border-bottom:1px solid var(--hairline)}
+.rp-tbl th{font-size:13px;font-weight:600;color:var(--general-muted-foreground)}
+.rp-tbl td:not(:first-child),.rp-tbl th:not(:first-child){text-align:right;
+  font-variant-numeric:tabular-nums}
+.rp-tbl td:first-child{white-space:normal;min-width:150px}
+.rp-tbl tbody tr:hover{background:var(--general-muted)}
+.rp-tbl tr.idle td{color:var(--general-muted-foreground)}
+.rp-tbl .pos{color:var(--sentiment-positive);font-weight:600}
+.rp-tbl .neg{color:var(--sentiment-negative);font-weight:600}
+.rp-tbl .none{font-style:italic;color:var(--general-muted-foreground)}
+.rp-tbl tfoot td{border-bottom:none;border-top:2px solid var(--general-border);
+  font-weight:700;padding-top:var(--s4)}
+
+/* — empty state: a category (or the whole report) with nothing running through it.
+     Says what is missing and what it is worth, because "no data" on its own is
+     not a finding. — */
+.rp-empty{display:flex;align-items:flex-start;gap:var(--s4);
+  padding:var(--s8) var(--s6);border:1px dashed var(--card-stroke);
+  border-radius:var(--rounded-lg);background:var(--general-background)}
+.rp-empty-ic{flex:0 0 auto;width:44px;height:44px;display:grid;place-items:center;
+  border-radius:var(--rounded-md);background:var(--brand-ice);color:var(--general-primary)}
+.rp-empty-ic svg{width:22px;height:22px}
+.rp-empty-tx{min-width:0;display:flex;flex-direction:column;gap:var(--s2);
+  align-items:flex-start}
+.rp-empty-tx b{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;
+  letter-spacing:-.2px}
+.rp-empty-tx p{font-size:15px;line-height:1.55;color:var(--general-muted-foreground);
+  max-width:56ch}
+.rp-empty-tx .btn{margin-top:var(--s2)}
+
+/* — the closing reconciliation note — */
+.rp-foot{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--hairline);
+  font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
+.rp-foot b{font-weight:650;color:var(--general-foreground)}
+
+/* ==========================================================================
+   AREAS — every purchasing area, with the specialist's shortlist on top.
+   Same page furniture as the Agreements view (.ag-page/.ag-stats are reused
+   directly); the only new component is .ar-card, which is one flat grid used
+   in both sections so the shortlist and the list read as one system.
+   ========================================================================== */
+.ar-page{width:100%;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;
+  gap:var(--s12);padding:var(--s4) 0 var(--s16)}
+.ar-hero h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
+.ar-hero p{margin-top:var(--s3);font-size:var(--text-lg);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:62ch}
+
+/* section heading: title + sub tight (8px), control pinned to the far end.
+   Same geometry as .cat-agrs-head, but it has to sit on this page's own
+   heading scale (h2, not h3) so the two sections rank equally. */
+.ar-head{display:flex;align-items:flex-end;justify-content:space-between;
+  gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s6)}
+.ar-head-t{min-width:0}
+.ar-head h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
+.ar-head p{margin-top:var(--s2);font-size:var(--text-sm);line-height:1.5;
+  color:var(--general-muted-foreground);max-width:58ch}
+.ar-sort{display:flex;align-items:center;gap:var(--s2);flex:0 0 auto}
+.ar-sort-l{font-size:13px;color:var(--general-muted-foreground)}
+
+/* the shortlist tray: --general-muted holding white cards, 8px on all four
+   sides and between them — .oc-panel already is exactly this, so it is reused
+   rather than restated. auto-fit keeps 3 or 4 picks balanced without an orphan. */
+.ar-rec-grid{list-style:none;display:grid;gap:var(--s2);
+  grid-template-columns:repeat(auto-fit,minmax(238px,1fr))}
+@container page (max-width:560px){.ar-rec-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* the full list: two up while there is room for a 46ch brief beside a 38px
+   tile, one up below that */
+.ar-list{list-style:none;display:grid;gap:var(--s3);
+  grid-template-columns:repeat(2,minmax(0,1fr))}
+@container page (max-width:780px){.ar-list{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- the card ----------
+   Flat: no inner wrappers, every child placed by area. gap:0 on the rows —
+   the vertical rhythm is set per group below, which is what keeps the head
+   (icon/label/name) reading as one unit and the money as another. */
+.ar-card{position:relative;display:grid;width:100%;text-align:left;cursor:pointer;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  grid-template-areas:
+    "ic    eye   brands"
+    "ic    name  name"
+    "brief brief brief"
+    "fig   fig   fig"
+    "why   why   why"
+    "foot  foot  foot";
+  row-gap:0;column-gap:var(--s3);align-items:start;
+  padding:var(--s6);border:1px solid transparent;border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:var(--shadow-xs);
+  --tint:rgb(var(--b,33 112 237)/.06);
+  transition:border-color var(--t-fast),box-shadow var(--t-fast),
+    background var(--t-fast),transform .12s ease}
+/* on the grey tray the white edge IS the boundary; on the white page it needs a rule */
+.ar-list .ar-card{border-color:var(--card-stroke)}
+.ar-card:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
+  box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.ar-list .ar-card:hover{border-color:var(--card-stroke-hover)}
+.ar-card:active{transform:none}
+.ar-card:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+@container page (max-width:430px){
+  .ar-card{padding:var(--s4);grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:"ic eye" "ic name" "brief brief" "fig fig" "why why" "foot foot"}
+  .ar-brands{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .ar-card:hover{transform:none}
+  .ar-card:hover .ar-go{transform:none}
+}
+
+.ar-ic{grid-area:ic;width:38px;height:38px;display:grid;place-items:center;
+  border-radius:var(--rounded-md);background:var(--brand-ice);color:var(--general-primary)}
+.ar-ic svg{width:20px;height:20px}
+/* the reason label and the name are a 1px pair, the tightest group on the card */
+.ar-eye{grid-area:eye;align-self:center;font-size:12px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--general-primary)}
+.ar-flag{grid-area:eye;align-self:center;justify-self:start}
+.ar-n{grid-area:name;margin-top:1px;font-family:var(--font-sans);
+  font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.3;
+  color:var(--general-foreground)}
+/* the logo stack, laid out side by side (not overlapped): at 26px the fallback
+   initials are two letters wide and an overlap slices the second one off */
+.ar-brands{grid-area:brands;justify-self:end;display:flex;gap:4px;width:auto}
+.ar-card .cv-bchip + .cv-bchip{margin-left:0}
+.ar-card .cv-bchip .agr-chip{margin:0;width:26px;height:26px;box-shadow:none;
+  border:1px solid var(--hairline)}
+.ar-card .cv-bchip .agr-chip img{padding:4px}
+
+.ar-brief{grid-area:brief;margin-top:var(--s2);font-size:13.5px;line-height:1.5;
+  color:var(--general-muted-foreground);max-width:48ch}
+
+/* the money: its own group, 16px clear of the brief. The figure never breaks —
+   the unit is what wraps away when the card gets narrow. */
+.ar-fig{grid-area:fig;margin-top:var(--s4);display:flex;align-items:baseline;
+  flex-wrap:wrap;gap:6px}
+.ar-fig b{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:800;
+  letter-spacing:-.5px;line-height:1.15;color:var(--sentiment-positive);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.ar-fig b.held{color:var(--general-foreground)}
+.ar-fig em{font-style:normal;font-size:12.5px;line-height:1.4;
+  color:var(--general-muted-foreground)}
+.ar-fig .est-chip{align-self:center}
+
+/* the specialist's line — only on the shortlist. It carries the card's single
+   hairline, so a shortlist card and a list card each have exactly one rule. */
+.ar-why{grid-area:why;margin-top:var(--s4);padding-top:var(--s3);
+  border-top:1px solid var(--hairline);font-size:13px;line-height:1.5;
+  color:var(--general-muted-foreground)}
+.ar-why b{color:var(--general-foreground);font-weight:650}
+
+.ar-foot{grid-area:foot;margin-top:var(--s3);display:flex;align-items:center;
+  gap:var(--s3)}
+.ar-card:not(.rec) .ar-foot{margin-top:var(--s4);padding-top:var(--s3);
+  border-top:1px solid var(--hairline)}
+.ar-agr{min-width:0;display:flex;align-items:center;gap:6px;font-size:13px;
+  line-height:1.4;color:var(--general-muted-foreground)}
+.ar-agr svg{flex:0 0 auto;width:14px;height:14px;color:var(--general-muted-foreground)}
+.ar-agr b{color:var(--general-foreground);font-weight:700;
+  font-variant-numeric:tabular-nums}
+.ar-go{flex:0 0 auto;margin-left:auto;display:grid;place-items:center;
+  width:26px;height:26px;border-radius:var(--rounded-full);
+  background:var(--general-secondary);color:var(--general-primary);
+  transition:transform var(--t-fast),background var(--t-fast),color var(--t-fast)}
+.ar-go svg{width:15px;height:15px}
+.ar-card:hover .ar-go{background:var(--general-primary);
+  color:var(--general-primary-foreground);transform:translateX(3px)}
+
+/* ---------- page hero: one opening for all four pages ----------
+   These pages opened four different ways: a 24px title on Suppliers, 36px on
+   Agreements, and Reports/Areas rendered UNSTYLED because .rp-hero and .ar-hero
+   were never given rules at all. Same for their figure rows — four treatments of
+   one idea (a grey tray, white cards, a hairline strip, an inline row).
+   One component now, carrying the bloom the category page established, so a page
+   opens on light rather than on a bare heading. */
+.ph{position:relative;padding:var(--s4) 0 var(--s8)}
+.ph-eye{display:block;margin-bottom:var(--s3);font-size:12px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--general-primary)}
+.ph h1{font-family:var(--font-sans);font-size:clamp(30px,3.1vw,40px);font-weight:800;
+  letter-spacing:-1.4px;line-height:1.04;text-wrap:balance;max-width:24ch}
+.ph-lead{margin-top:var(--s4);font-size:var(--text-lg);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:54ch}
+/* the figure row — the one treatment, replacing all four */
+.ph-figs{display:flex;flex-wrap:wrap;gap:var(--s8);margin-top:var(--s8);
+  padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.ph-fig{display:flex;flex-direction:column;gap:var(--s1);min-width:0}
+.ph-fig b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ph-fig b small{font-size:var(--text-base);font-weight:600;letter-spacing:0;
+  color:var(--general-muted-foreground)}
+.ph-fig b.pos{color:var(--sentiment-positive)}
+.ph-fig b.brand{color:var(--general-primary)}
+.ph-fig b.warn{color:var(--sentiment-negative)}
+.ph-fig span{font-size:var(--text-sm);line-height:1.45;
+  color:var(--general-muted-foreground);max-width:30ch}
+/* the one thing that is wrong, as a sentence rather than a fourth figure — three
+   figures fit the row, a fourth wrapped and read as an afterthought */
+.ph-warn{display:flex;gap:7px;margin-top:var(--s4);font-size:var(--text-sm);line-height:1.5;
+  color:var(--sentiment-negative);max-width:64ch}
+.ph-warn b{font-weight:700}
+.ph-note{margin-top:var(--s4);font-size:13px;line-height:1.5;
+  color:var(--general-muted-foreground);max-width:66ch}
+.ph-act{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s6)}
+@container page (max-width:700px){
+  .ph-figs{gap:var(--s6)}
+  .ph-fig b{font-size:var(--text-2xl);letter-spacing:-.7px}
+}
+
+/* ---------- shared page furniture ----------
+   .ag-page / .ag-hero / .ag-stats started life on the Agreements view. Reports and
+   Areas now reuse them too, so they outlive that page's redesign and live here
+   rather than inside any one page's block. */
 .ag-page{width:100%;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;
   gap:var(--s12);padding:var(--s4) 0 var(--s16)}
 .ag-hero h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
 .ag-hero p{margin-top:var(--s3);font-size:var(--text-lg);line-height:1.55;
   color:var(--general-muted-foreground);max-width:62ch}
-/* the three counts that describe the portfolio, as one hairline strip rather
-   than three more cards — this page already has cards doing real work below */
 .ag-stats{display:flex;flex-wrap:wrap;gap:var(--s8);margin-top:var(--s6);
   padding-top:var(--s6);border-top:1px solid var(--hairline)}
 .ag-stat{display:flex;flex-direction:column;gap:var(--s1)}
@@ -3003,68 +3467,210 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .ag-sec h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
 .ag-sec>p{margin-top:var(--s2);font-size:16px;line-height:1.5;
   color:var(--general-muted-foreground);max-width:64ch}
-.ag-list{list-style:none;display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s6)}
-.ag-row{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s5,20px);
-  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface)}
-.ag-row.alert{border-color:#b4550a30;background:#fff4e8}
-.ag-row-h{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
-.ag-row .agr-chip{position:static;margin:0;width:40px;height:40px;box-shadow:none}
-.ag-row-id{flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:2px}
-.ag-row-id b{font-size:var(--text-base);font-weight:700;letter-spacing:-.2px}
-.ag-row-id span{font-size:13px;color:var(--general-muted-foreground)}
-.ag-row-fig{flex:0 0 auto;text-align:right;font-size:var(--text-lg);font-weight:800;
-  letter-spacing:-.4px;color:var(--sentiment-positive);white-space:nowrap}
-.ag-row-fig small{display:block;font-size:12px;font-weight:600;
-  color:var(--general-muted-foreground);letter-spacing:0}
-/* the progress bar the map asks for: four named steps, so "where is this?" is
-   answerable without opening anything. The rail is one track, not four pills,
-   because the steps are sequential — pills would imply they can be done in any
-   order. */
-.ag-prog{display:flex;flex-direction:column;gap:var(--s2)}
-.ag-prog-track{position:relative;height:4px;border-radius:2px;background:var(--general-muted)}
-.ag-prog-fill{height:100%;border-radius:2px;background:var(--sentiment-positive);
-  transition:width var(--t-slow)}
-.ag-prog-steps{display:flex;justify-content:space-between;gap:var(--s2)}
-.ag-prog-steps span{flex:1 1 0;font-size:12px;line-height:1.3;
+
+/* ==========================================================================
+   T6 · AGREEMENTS — the portfolio page
+   Three bands: where you stand (hero), the agreements you hold (tray of .agy
+   cards, each carrying the activation stepper and its dates), and the whole
+   catalogue below the fold as .agd cards.
+   ========================================================================== */
+.agp{display:flex;flex-direction:column;gap:var(--s16);padding-bottom:var(--s16)}
+
+/* ---------- hero ----------
+   .cat-mast does the voice (eyebrow, 44px title, one sentence, the money, the
+   note, the actions). Two things change on a full-width page: the prose needs a
+   measure it would otherwise lose, and the money is two or three facts side by
+   side rather than one stacked block. */
+.agp-mast{padding-top:0}
+.agp-mast h1{max-width:24ch}
+.agp-mast .cat-mast-sub{max-width:62ch;font-size:var(--text-lg)}
+.agp-mast .cat-mast-note{max-width:68ch}
+/* the figure row: generous separation between facts, tight inside each one */
+.agp-money{margin-top:var(--s12);display:flex;flex-wrap:wrap;gap:var(--s6) var(--s16);
+  padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.agp-money .cat-mast-fig{margin-top:0;min-width:0}
+.agp-money .cat-mast-fig b{font-size:var(--text-4xl);letter-spacing:-1.6px}
+.agp-money .cat-mast-fig span{max-width:26ch}
+/* money you already hold is green; money still on the table is the brand blue —
+   the same two roles the overview uses, so the pair reads without a legend */
+.agp-fig-open b{color:var(--general-primary)}
+.agp-fig-warn b{color:var(--sentiment-negative)}
+@container page (max-width:720px){
+  .agp-money{gap:var(--s6) var(--s8)}
+  .agp-money .cat-mast-fig b{font-size:var(--text-3xl);letter-spacing:-1.2px}
+}
+
+/* ---------- section furniture ---------- */
+.agp-sec{display:flex;flex-direction:column}
+.agp-sec>h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
+.agp-sec>p{margin-top:var(--s2);max-width:64ch;font-size:var(--text-base);line-height:1.55;
   color:var(--general-muted-foreground)}
-.ag-prog-steps span:not(:first-child){text-align:center}
-.ag-prog-steps span:last-child{text-align:right}
-.ag-prog-steps span.done{color:var(--sentiment-positive);font-weight:650}
-.ag-prog-steps span.now{color:var(--general-foreground);font-weight:700}
-.ag-row-f{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;
-  padding-top:var(--s3);border-top:1px solid var(--hairline)}
-.ag-row-f .spacer{flex:1 1 auto}
-.ag-note{display:flex;align-items:flex-start;gap:var(--s2);font-size:13.5px;line-height:1.5;
-  color:var(--general-muted-foreground)}
-.ag-note svg{flex:0 0 auto;width:16px;height:16px;margin-top:2px;color:var(--sentiment-negative)}
-.ag-note b{color:var(--general-foreground);font-weight:650}
-/* the twelve-month renewal track: one row per supplier, a dot where its terms
-   come up. This is the "quick overview of timelines" — a calendar, not a list,
-   because the question is "what lands close together?" */
-.ag-tl{margin-top:var(--s6);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
-  padding:var(--s5,20px);overflow-x:auto}
-.ag-tl-grid{min-width:640px}
-.ag-tl-head,.ag-tl-row{display:grid;grid-template-columns:170px 1fr;gap:var(--s4);
-  align-items:center}
-.ag-tl-row{padding:var(--s2) 0}
-.ag-tl-row+.ag-tl-row{border-top:1px solid var(--hairline)}
-.ag-tl-months{display:grid;grid-template-columns:repeat(12,1fr);font-size:11px;
-  color:var(--general-muted-foreground);text-align:center;padding-bottom:var(--s2);
-  border-bottom:1px solid var(--hairline)}
-.ag-tl-n{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ag-tl-bar{position:relative;height:26px;display:grid;grid-template-columns:repeat(12,1fr);
-  align-items:center}
-.ag-tl-bar::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;
-  background:var(--general-muted)}
-.ag-tl-dot{position:relative;grid-row:1;justify-self:center;width:11px;height:11px;
+.agp-sec>.oc-panel,.agp-sec>.agr-det-grid{margin-top:var(--s6)}
+/* the renewal line is a second thought about the same set, not part of the tray —
+   so it gets a real gap, not the heading-to-content one */
+.agp-sec>.agp-year{margin-top:var(--s12)}
+/* a hairline count line under the catalogue heading: two facts, not two chips */
+.agp-count{margin-top:var(--s3);display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);
+  font-size:13px;color:var(--general-muted-foreground)}
+.agp-count b{color:var(--general-foreground);font-weight:650}
+.agp-count i{font-style:normal;width:8px;height:8px;flex:0 0 auto;margin-right:6px;
   border-radius:var(--rounded-full);background:var(--general-primary);
-  box-shadow:0 0 0 3px var(--surface)}
-.ag-tl-dot.soon{background:var(--sentiment-negative)}
-.ag-tl-key{display:flex;gap:var(--s6);margin-top:var(--s4);padding-top:var(--s4);
+  display:inline-block;vertical-align:1px}
+.agp-count span{display:inline-flex;align-items:center}
+.agp-count .on i{background:var(--sentiment-positive)}
+
+/* ---------- .agy · one agreement you hold ----------
+   Flat, like .agd: tile, eyebrow, name, figure, stepper and date rail are all
+   direct children placed by area. It is NOT one hit area — it contains a
+   <details> and its own buttons — so the NAME is the affordance instead. */
+.agp-list{list-style:none;display:grid;gap:var(--s2)}
+.agy{--tint:rgb(var(--b,33 112 237)/.06);--tint-edge:rgb(var(--b,33 112 237)/.2);
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) minmax(216px,264px);
+  grid-template-areas:
+    "tile eye  cal"
+    "tile name cal"
+    "tile fig  cal"
+    "flag flag cal"
+    "step step cal"
+    "act  act  cal";
+  column-gap:var(--s6);align-items:start;
+  padding:var(--s6);border:1px solid transparent;border-radius:var(--rounded-lg);
+  background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f;
+  transition:box-shadow var(--t-fast),background var(--t-fast)}
+.agy:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
+  box-shadow:0 8px 22px -10px #0f0f0f26}
+.agy:focus-within{box-shadow:0 8px 22px -10px #0f0f0f26}
+.agy .agc-logo{grid-area:tile;width:64px;height:64px}
+/* the name as the navigation: a real button, so one Tab stop and one Enter */
+.agy-open{grid-area:name;justify-self:start;display:inline-flex;align-items:center;gap:var(--s2);
+  margin-top:2px;padding:0;border:0;background:none;cursor:pointer;text-align:left;
+  font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;
+  line-height:1.25;color:var(--general-foreground)}
+.agy-open svg{flex:0 0 auto;width:17px;height:17px;color:var(--general-primary);
+  transition:transform var(--t-fast)}
+.agy-open:hover{color:var(--general-primary)}
+.agy-open:hover svg{transform:translateX(3px)}
+.agy:hover .agy-open svg{transform:translateX(3px)}
+.agy-open:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px;
+  border-radius:var(--rounded-xs)}
+/* the eyebrow carries the category and, when it applies, the one word of alarm */
+.agy .agd-eye{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.agy-chip{padding:2px 8px;border-radius:var(--rounded-full);
+  font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  background:var(--general-muted);color:var(--general-muted-foreground)}
+.agy-chip.warn{background:#f54a0014;color:#a33200}
+.agy .agd-fig{margin-top:var(--s3)}
+/* the dormant note: a left rule, not a tinted panel — a box inside a card reads
+   as a second card, and this is one sentence, not an object */
+.agy-flag{grid-area:flag;margin-top:var(--s4);display:flex;gap:var(--s2);align-items:flex-start;
+  padding-left:var(--s3);border-left:2px solid var(--sentiment-negative);
+  font-size:13.5px;line-height:1.55;color:var(--general-muted-foreground)}
+.agy-flag svg{flex:0 0 auto;width:17px;height:17px;margin-top:1px;color:var(--sentiment-negative)}
+.agy-flag b{color:var(--general-foreground);font-weight:650}
+/* the stepper: the existing component, unchanged, in its own area. .opp-fold
+   already brings the hairline that separates it from the identity block, so the
+   spacing above it is halved rather than doubled. */
+.agy>.opp-fold{grid-area:step;min-width:0;margin-top:var(--s4);padding-top:var(--s4)}
+.agy>.opp-fold>summary h3{font-size:var(--text-base)}
+/* the badge earns a second state: all four done is not "step 5 of 4" */
+.act-now.done{background:#00968916;color:var(--sentiment-positive)}
+/* a step whose expected date has passed. We say we are chasing — which the
+   product does — and never that anything came back. */
+.stp.due .stp-tx em{color:var(--sentiment-negative)}
+.stepper.live .stp.now .stp-tx em{color:var(--general-primary)}
+.agy-act{grid-area:act;margin-top:var(--s5);display:flex;flex-wrap:wrap;gap:var(--s2)}
+
+/* the date rail: the calendar dimension, separated by a hairline rather than
+   boxed. Three answers — when it started, what lands next, when it comes up. */
+.agy-cal{grid-area:cal;min-width:0;display:flex;flex-direction:column;gap:var(--s5);
+  padding-left:var(--s6);border-left:1px solid var(--hairline)}
+.agy-date{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--s3)}
+/* span 3, not 1/-1: there are no explicit rows here, and 1/-1 in an implicit grid
+   collapses to a single row */
+.agy-date svg{grid-column:1;grid-row:span 3;width:18px;height:18px;margin-top:2px;
+  color:var(--general-muted-foreground)}
+.agy-date-k{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.agy-date-v{margin-top:2px;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:700;
+  letter-spacing:-.1px;color:var(--general-foreground);font-variant-numeric:tabular-nums}
+.agy-date-s{margin-top:1px;font-size:12.5px;line-height:1.45;color:var(--general-muted-foreground)}
+.agy-date.pos svg,.agy-date.pos .agy-date-v{color:var(--sentiment-positive)}
+.agy-date.due svg,.agy-date.due .agy-date-v{color:var(--sentiment-negative)}
+.agy-date.soon svg,.agy-date.soon .agy-date-v{color:var(--general-primary)}
+
+@container page (max-width:860px){
+  .agy{grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:
+      "tile eye"
+      "tile name"
+      "tile fig"
+      "flag flag"
+      "cal  cal"
+      "step step"
+      "act  act"}
+  .agy-cal{margin-top:var(--s5);padding-left:0;padding-top:var(--s5);
+    border-left:0;border-top:1px solid var(--hairline);
+    flex-direction:row;flex-wrap:wrap;gap:var(--s6)}
+  .agy-cal .agy-date{flex:1 1 200px}
+}
+@container page (max-width:480px){
+  .agy{padding:var(--s5,20px);column-gap:var(--s4)}
+  .agy .agc-logo{width:52px;height:52px}
+}
+
+/* ---------- the empty state ----------
+   No agreements yet is Fanny's likely reality, so it gets the same card, in
+   preview: the stepper's own not-yet-started mode (all four steps todo, the
+   "you can stop it at any point" note) beside the three dates we WILL keep. */
+.agy.agy-pre{grid-template-columns:minmax(0,1fr) minmax(216px,264px);
+  grid-template-areas:"eye  cal" "name cal" "step cal"}
+.agy.agy-pre:hover{background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f}
+.agy-pre .agy-pre-t{grid-area:name;margin-top:2px;font-family:var(--font-sans);
+  font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.25}
+.agy-pre .agy-date-v{color:var(--general-muted-foreground);font-weight:650}
+@container page (max-width:860px){
+  .agy.agy-pre{grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"eye" "name" "cal" "step"}
+}
+
+/* ---------- when terms come up ----------
+   One shared twelve-month line, not one row per supplier: the question is what
+   lands close together, and clustering is only visible when they share an axis. */
+.agp-year{border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  padding:var(--s5,20px);overflow-x:auto}
+.agp-year-grid{display:grid;grid-template-columns:repeat(12,minmax(48px,1fr));min-width:576px}
+.agp-year-cell{position:relative;display:flex;flex-direction:column;align-items:center;gap:var(--s3);
+  padding-top:var(--s4);min-height:74px}
+.agp-year-cell::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--general-muted)}
+.agp-year-cell:first-child::before{border-radius:1px 0 0 1px}
+.agp-year-cell:last-child::before{border-radius:0 1px 1px 0}
+.agp-year-cell.now::before{background:var(--general-primary)}
+.agp-year-cell.soon::before{background:var(--general-secondary)}
+.agp-year-m{font-size:11.5px;font-weight:600;color:var(--general-muted-foreground)}
+.agp-year-cell.now .agp-year-m{color:var(--general-primary);font-weight:700}
+.agp-year-chips{display:flex;flex-direction:column;gap:var(--s1)}
+.agp-year .agr-chip{position:static;margin:0;width:28px;height:28px;box-shadow:none;
+  border:1px solid var(--hairline)}
+.agp-year .agr-chip img{padding:4px}
+.agp-year-key{display:flex;flex-wrap:wrap;gap:var(--s6);margin-top:var(--s4);padding-top:var(--s4);
   border-top:1px solid var(--hairline);font-size:12.5px;color:var(--general-muted-foreground)}
-.ag-tl-key span{display:flex;align-items:center;gap:6px}
-.ag-tl-key i{width:9px;height:9px;border-radius:var(--rounded-full);background:var(--general-primary)}
-.ag-tl-key i.soon{background:var(--sentiment-negative)}
+.agp-year-key span{display:flex;align-items:center;gap:6px}
+.agp-year-key i{width:16px;height:3px;border-radius:2px;background:var(--general-primary)}
+.agp-year-key i.soon{background:var(--general-secondary)}
+
+/* ---------- catalogue: .agd, with the ones you hold marked ----------
+   Same card the client signed off on. In use gets the positive ground the app
+   already uses for an active agreement (.agr.on), a green eyebrow with a tick,
+   and no fav toggle — you cannot shortlist what you already have. */
+.agd.mine{background:#f4fcfb;border-color:#00968947}
+.agd.mine:hover{background:#eaf9f7;border-color:#00968973}
+.agd.mine .agd-eye{color:var(--sentiment-positive);display:flex;align-items:center;gap:5px}
+.agd.mine .agd-eye svg{flex:0 0 auto;width:13px;height:13px}
+.agd.mine .agd-why{border-top-color:#00968924}
+/* the estimated marker rides in the figure row, which is baseline-aligned */
+.agp .agd-fig .est-chip{align-self:center}
 
 /* ---------- T4 · notification preferences: channel, volume, the email ---------- */
 .np-h .npgear{display:grid;place-items:center;width:26px;height:26px;border:none;
@@ -3525,6 +4131,16 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
              through, and when every supplier's terms come up. -->
         <section id="viewAgreements" hidden></section>
 
+        <!-- REPORTS — Savings, Spending and Agreement usage over a chosen period.
+             Inside .page on purpose: it needs the `page` container so its
+             breakpoints respond to the canvas, not the window. -->
+        <section id="viewReports" hidden></section>
+
+        <!-- AREAS — the purchasing areas themselves (ROWS): the specialist's
+             shortlist on a grey tray, then all of them. Also inside .page so its
+             cards resolve @container page breakpoints. -->
+        <section id="viewAreas" hidden></section>
+
         </div>
 
         <!-- a genuinely different first view for a brand-new customer: no invoice
@@ -3748,7 +4364,7 @@ const NAV = [
    icon:'<path d="M4 10v9a1 1 0 001 1h14a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 6.5L4.6 3.6A1 1 0 015.5 3h13a1 1 0 01.9.6L21 6.5c0 1.7-1.3 3-3 3a3 3 0 01-3-3 3 3 0 01-3 3 3 3 0 01-3-3 3 3 0 01-3 3c-1.7 0-3-1.3-3-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 20v-5h4v5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
   {id:'reports', n:'Reports',
    icon:'<rect x="4" y="3" width="16" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h8M8 16h4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'},
-  {id:'categories', n:'Categories',
+  {id:'categories', n:'Areas',
    icon:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.7"/>'},
   {id:'agreements', n:'Agreements', badge:'',
    icon:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 16c1.5-2.5 2.5-2.5 3 0s1.5 1 3-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
@@ -3802,16 +4418,26 @@ function setView(){
   /* Agreements is the one page both personas share — Fanny needs it the moment
      she activates her first one, so it is not gated behind newCustomer */
   const ags = navAt === 'agreements';
-  const ncDash = newCustomer && !sup && !ags;
+  /* Reports and Areas are the same case as Agreements: both are benchmark-safe
+     (every figure runs through saveFig, so Fanny sees ranges), so neither is
+     gated behind newCustomer — otherwise her click would silently land back on
+     the new-customer dashboard instead of the page she asked for. */
+  const rep = navAt === 'reports';
+  const areas = navAt === 'categories';
+  const ncDash = newCustomer && !sup && !ags && !rep && !areas;
   $('.page').hidden = ncDash;
   const sv = $('#viewSavings'); if(sv) sv.hidden = true;
   const ag = $('#viewAgreements'); if(ag) ag.hidden = !ags;
+  const rp = $('#viewReports'); if(rp) rp.hidden = !rep;
+  const arv = $('#viewAreas'); if(arv) arv.hidden = !areas;
   $('#viewSup').hidden = !sup;
-  $('#viewDash').hidden = sup || ncDash || ags;
+  $('#viewDash').hidden = sup || ncDash || ags || rep || areas;
   const nc = $('#viewNewCustomer'); if(nc) nc.hidden = !ncDash;
   $('#canvas').scrollTop = 0;
-  if(sup) syncRows();               /* rows measure 0 while hidden */
+  if(sup) renderSup();
   if(ags) renderAgreements();
+  if(rep) renderReports();
+  if(areas) renderAreas();
   if(ncDash) renderNewCustomerDash();
   updateActivityRail();
   renderActivityRail();
@@ -5629,11 +6255,10 @@ $$('.opp-tbl-toggle').forEach(btn => {
   });
 });
 
-/* ---------------- suppliers ----------------
-   A catalogue, not a report: three shelves of cards the user can browse sideways.
-   No photography is available and the file has to stay self-contained, so each card gets
-   a tinted gradient plus one big low-opacity category watermark instead of an image, and
-   the logo tile is the supplier name set as a wordmark. */
+/* ---------- suppliers: catalogue data ----------
+   Restored intact: the redesign replaced the RENDERER, not the data. SUP_ICON and
+   SPARK are still read by the new sections, and SUPPLIERS is the catalogue every
+   card, badge and filter is derived from. */
 const SUP_ICON = {
   travel:'<path d="M10.5 13.4L3 11V8.6l7.5 1.1V5a1.5 1.5 0 013 0v4.7L21 8.6V11l-7.5 2.4v4.3l3 1.6V21L12 19.7 7.5 21v-1.7l3-1.6v-4.3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
   office:'<path d="M9 7.5v8.8a3 3 0 006 0V6.4a2.5 2.5 0 00-5 0v9.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
@@ -5651,9 +6276,9 @@ const SUP_ICON = {
   bolt:'<path d="M13.5 2.5L4.5 14.2h5.8L9 21.5l9.5-12h-6l1-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
   people:'<circle cx="9.5" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 5.4a3.2 3.2 0 010 5.8M18 20a6.5 6.5 0 00-1.7-4.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
 };
+
 const SPARK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l1.9 4.3 4.6.6-3.4 3.2.9 4.7-4-2.3-4 2.3.9-4.7L5.5 7.9l4.6-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
 
-/* pct is printed verbatim, so 7 reads as "7%" */
 const SUPPLIERS = [
   {id:'own', eye:'Made specific for your company', title:() => state.company,
    note:'Matched to the categories we found in your invoices.', cards:[
@@ -5694,32 +6319,244 @@ const SUPPLIERS = [
 ];
 
 
-const SUP_ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+/* ---------------- suppliers ----------------
+   The catalogue is not a poster wall any more: it is read against the invoices.
+   Three joins do all the work, and every figure on the page is derived from one
+   of them:
+     1. name  -> a real agreement in ROWS (7 of 18 catalogue suppliers), which
+        carries actual covers/save/req, so those cards can state money;
+     2. category -> a ROWS category (9 more), so the card can say "you already
+        buy this, here is what you spend";
+     3. neither -> a category we have never seen on an invoice, which the card
+        says out loud instead of inventing a figure for it.
+   The three curated shelves are kept as browse mode. The horizontal snap rows
+   are not: a flat card with a 64px brand tile needs ~460px of measure, and the
+   rows gave it 250px. Nothing is lost — every shelf, eyebrow, note and card is
+   still on the page, now readable two-up and searchable in the same shape. */
 
-/* one card, everywhere — the shelves and the search results must not drift apart.
-   hideCat keeps the Popular shelf's no-label look; results always name the category. */
-function supCardHTML(c, {inimg = false, hideCat = false} = {}){
-  return `
-    <button type="button" class="sup${inimg ? ' inimg' : ''}" data-tone="${c.tone}"
-      data-sup="${c.n}">
-      <span class="sup-img">
-        <span class="sup-ph" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">${SUP_ICON[c.ic]}</svg>
-        </span>
-      </span>
-      <span class="sup-b">
-        ${c.cat && !hideCat ? `<span class="sup-cat">${c.cat}</span>` : ''}
-        <span class="sup-n">${c.n}</span>
-        <span class="sup-save"><b>${c.pct}%</b> average saving ·
-          ${c.w || 'Reduced unit price and fixed price'}</span>
-        <span class="sup-more">Read more ${SUP_ARROW}</span>
-      </span>
-    </button>`;
+/* the categories the catalogue shares with the invoice data. The ones missing
+   from this map (Travel, Hotel, Coffee, Gifts, Flowers, Batteries, Staffing)
+   are missing on purpose: there is no such row in ROWS, which is exactly the
+   fact the "Not in your spend" badge reports. */
+const SUP_CAT_ROW = {
+  'Building materials':'mat', 'Office':'off', 'Tools':'tool', 'Workwear':'tool',
+  'Fuel':'fuel', 'Freight':'frg', 'Shipping':'frg', 'Waste':'site', 'IT & telecom':'tel'
+};
+
+/* Fanny has no invoices: her ROWS figures are peer benchmarks scaled by company
+   size, the same multiplier the overview and the calculator use. */
+const supMult   = () => newCustomer ? NC_SIZE_MULT[ncSize] : 1;
+const supRow    = id => ROWS.find(r => r.id === id && !r.hidden);
+/* a spend figure follows the same rule as a saving figure: exact for a customer
+   whose invoices we have read, a band for one we have not */
+const supMoney  = n => newCustomer ? `${estRange(n)} kr.` : `${fmt(n)} kr.`;
+const supPlain  = s => String(s).replace('typically ', '');
+
+/* the catalogue name against the agreement names in ROWS. "DSV" -> "DSV Road",
+   "Lyreco" -> "Lyreco Erhverv", "Stark Byggecenter" -> itself. Prefix-on-a-word-
+   boundary only, so "Make" never matches "Marius Pedersen". */
+function supAgrMatch(name){
+  const n = name.trim().toLowerCase();
+  for(const r of ROWS){
+    if(r.hidden) continue;
+    for(let i = 0; i < r.agr.length; i++){
+      const an = r.agr[i].n.toLowerCase();
+      if(an === n || an.startsWith(n + ' ') || n.startsWith(an + ' ')) return {r, a:r.agr[i], i};
+    }
+  }
+  return null;
 }
 
-/* search + category filter over the whole catalogue */
-let supQuery = '', supCat = 'all';
+/* which curated shelves a supplier appears on — Lyreco is on two, and the
+   badges should say so rather than silently keeping whichever came first */
+const SUP_SHELVES = (() => {
+  const m = new Map();
+  SUPPLIERS.forEach(sh => sh.cards.forEach(c => {
+    if(!m.has(c.n)) m.set(c.n, new Set());
+    m.get(c.n).add(sh.id);
+  }));
+  return m;
+})();
+
+/* everything the card, the badges, the filters and the sort need, resolved once.
+   Cleared in renderSup() because isEstimated()/newCustomer change with the
+   persona and every figure below depends on them. */
+const supMetaCache = new Map();
+function supMeta(c){
+  if(supMetaCache.has(c.n)) return supMetaCache.get(c.n);
+  const hit   = supAgrMatch(c.n);
+  const row   = hit ? hit.r : supRow(SUP_CAT_ROW[c.cat]);
+  const shelves = SUP_SHELVES.get(c.n) || new Set();
+  const mult  = supMult();
+  const m = {
+    c, name:c.n, cat:c.cat, pct:c.pct, row, hit, shelves,
+    onAgr:  !!(hit && hit.a.req),
+    ready:  !!(hit && !hit.a.req),
+    known:  !!row,
+    isNew:  shelves.has('new'),
+    isPop:  shelves.has('pop'),
+    isMine: shelves.has('own'),
+    est:    hit ? isEstimated(hit.a) : true,
+    save:   hit ? Math.round(hit.a.save   * mult) : 0,
+    covers: hit ? Math.round(hit.a.covers * mult) : 0,
+    spend:  row ? Math.round(row.amt     * mult) : 0
+  };
+  supMetaCache.set(c.n, m);
+  return m;
+}
+
+/* ---------- the summary tray: what this company uses today ----------
+   Not a dashboard — four honest facts and where they came from. Every one is a
+   reduction over ROWS, so it can never disagree with the dashboard. */
+function supStats(){
+  const rows = live();
+  const mult = supMult();
+  const pairs = rows.flatMap(r => r.agr.map(a => ({r, a})));
+  const on    = pairs.filter(x => x.a.req);
+  const open  = pairs.filter(x => !x.a.req);
+  return {
+    cats:    rows.length,
+    supTot:  rows.reduce((s, r) => s + r.sup, 0),
+    spend:   rows.reduce((s, r) => s + Math.round(r.amt * mult), 0),
+    onCount: on.length,
+    covered: on.reduce((s, x) => s + Math.round(x.a.covers * mult), 0),
+    open:    open.length,
+    pot:     open.reduce((s, x) => s + Math.round(x.a.save * mult), 0),
+    est:     open.some(x => isEstimated(x.a))
+  };
+}
+
+function supHeroHTML(){
+  const s = supStats();
+  const basis = newCustomer
+    ? `Modelled from electrical contractors your size — sharpen it by connecting your invoices.`
+    : `From the ${fmt(state.invoices)} invoices we have read.`;
+  return `
+    <div class="ph-figs">
+      <div class="ph-fig">
+        <b>${s.supTot}<small> suppliers</small></b>
+        <span>Across ${s.cats} purchasing categories · ${supMoney(s.spend)} a year</span>
+      </div>
+      <div class="ph-fig">
+        <b>${s.onCount}<small> of ${s.supTot}</small></b>
+        <span>On an Advantage agreement — ${supMoney(s.covered)} already on group terms</span>
+      </div>
+      <div class="ph-fig">
+        <b class="pos">${supPlain(saveFig(s.pot, s.est))}<small> kr.</small></b>
+        <span>a year still on the table, across ${s.open} agreements you have not activated</span>
+      </div>
+    </div>
+    <p class="ph-note">${basis}</p>`;
+}
+
+/* ---------- the card ----------
+   The portal's flat card: brand tile, eyebrow, name, figure, one line of why.
+   Every element a direct child of the <li>, placed by grid areas, no wrappers.
+   The whole card is the hit area; the save toggle is the only nested control and
+   it stops its own event. */
+const SUP_CHECK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const SUP_GLASS = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/><path d="M16.2 16.2L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+const SUP_X     = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+
+/* artwork where the matched agreement has any, the category glyph where it does
+   not — initials say less about a coffee supplier than a cup does */
+function supTile(m){
+  const brandName = m.hit ? m.hit.a.n : m.name;
+  if(AGR_BRAND[brandName]) return agrLogoTile(brandName);
+  return `<span class="agc-logo tint"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${
+    SUP_ICON[m.c.ic] || ''}</svg></span>`;
+}
+
+/* badge 1 — the money relationship, the only badge allowed colour */
+function supTagA(m){
+  if(m.onAgr) return `<span class="supd-tag t1 on">${SUP_CHECK}Active for you</span>`;
+  if(m.ready) return `<span class="supd-tag t1 ready">Ready to activate</span>`;
+  if(m.known) return `<span class="supd-tag t1 mute">Matches your spend</span>`;
+  return `<span class="supd-tag t1 mute">Not in your spend</span>`;
+}
+/* badge 2 — curation. Grey, always: two coloured badges on one card would rank
+   nothing at all. */
+function supTagB(m){
+  if(m.isNew)  return `<span class="supd-tag t2 mute">New this quarter</span>`;
+  if(m.isPop)  return `<span class="supd-tag t2 mute">Most used</span>`;
+  if(m.isMine) return `<span class="supd-tag t2 mute">Matched to you</span>`;
+  return '';
+}
+
+/* the figure. Money wherever a matched agreement gives us real covers/save —
+   exact for Bob, a ±15% band for Fanny, via saveFig. Where there is no matched
+   agreement there is no money to state honestly, so the card shows the rate the
+   agreement actually publishes and says so. */
+function supFigHTML(m){
+  if(m.hit) return `<span class="supd-fig"><b>${supPlain(saveFig(m.save, m.est))} kr.</b><em>a year${
+    m.est ? ', estimated' : ''}</em></span>`;
+  return `<span class="supd-fig"><b>${m.pct}%</b><em>average saving on this agreement</em></span>`;
+}
+
+/* one line, written from whichever join we actually have */
+function supWhyHTML(m){
+  const w = m.c.w || 'Reduced unit price and fixed price';
+  if(m.hit){
+    const rate = m.covers ? Math.round(m.hit.a.save / m.hit.a.covers * 100) : m.pct;
+    return m.onAgr
+      ? `<p class="supd-why">Already running — <b>${rate}% under</b> list on the ${
+          supMoney(m.covers)} of ${m.row.n.toLowerCase()} it covers.</p>`
+      : `<p class="supd-why">${CAT_PITCH[m.row.id] || w} — <b>${rate}% under</b> the ${
+          supMoney(m.covers)} you spend here today.</p>`;
+  }
+  if(m.known)
+    return `<p class="supd-why">${w} — you already buy ${m.row.n.toLowerCase()}, <b>${
+      supMoney(m.spend)}</b> a year across ${m.row.sup} suppliers.</p>`;
+  return `<p class="supd-why">${w} — we have not seen <b>${m.cat.toLowerCase()}</b>
+    on your invoices, so there is no figure of yours to compare it to yet.</p>`;
+}
+
+function supCardHTML(c){
+  const m = supMeta(c);
+  const brandName = m.hit ? m.hit.a.n : m.name;
+  /* where the card goes: the matched agreement on its category page, else the
+     category page, else the data centre — which is where a category we have no
+     invoices for gets resolved */
+  const dest = m.hit ? `data-cat="${m.row.id}" data-idx="${m.hit.i}"`
+             : m.known ? `data-cat="${m.row.id}"` : `data-dc="1"`;
+  const aria = m.hit
+    ? `${c.n}, ${m.row.n}: ${saveFig(m.save, m.est)} kroner a year`
+    : `${c.n}, ${c.cat}: ${m.pct}% average saving`;
+  return `
+    <li class="supd${m.onAgr ? ' live' : ''}" ${dest} tabindex="0" role="button"
+      aria-label="${aria}" style="--b:${brandOf(brandName)}">
+      ${supTile(m)}
+      <span class="supd-eye">${c.cat || 'Advantage agreement'}</span>
+      <b class="supd-name">${c.n}</b>
+      ${supTagA(m)}
+      ${supTagB(m)}
+      ${supFigHTML(m)}
+      ${supWhyHTML(m)}
+      ${agrFav(c.n)}
+    </li>`;
+}
+
+/* ---------- search, category, status, sort ----------
+   supQuery / supCat / supPool() / supMatches() keep their names and behaviour.
+   Two dimensions are added: status (what this supplier already is to us) and
+   sort (biggest saving / A–Z), both derived from supMeta, both clearable. */
+let supQuery = '', supCat = 'all', supStatus = 'all', supSort = 'curated';
+
 const SUP_CATS = () => [...new Set(SUPPLIERS.flatMap(sh => sh.cards.map(c => c.cat)).filter(Boolean))];
+
+const SUP_STATUS = [
+  {id:'all',   l:'All suppliers'},
+  {id:'off',   l:'Not on agreement yet'},
+  {id:'on',    l:'Active for you'},
+  {id:'known', l:'In a category you buy'},
+  {id:'new',   l:'New this quarter'},
+  {id:'pop',   l:'Most used'}
+];
+const SUP_SORTS = [
+  {id:'curated', l:'Curated'},
+  {id:'save',    l:'Biggest saving'},
+  {id:'az',      l:'A–Z'}
+];
 
 /* the flat pool behind the search: every card once — Lyreco sits on two shelves,
    and finding it twice would read as a bug */
@@ -5730,111 +6567,182 @@ function supPool(){
     seen.add(c.n); return true;
   });
 }
-function supMatches(){
-  const q = supQuery.trim().toLowerCase();
-  return supPool().filter(c =>
-    (supCat === 'all' || c.cat === supCat) &&
-    (!q || c.n.toLowerCase().includes(q) || (c.cat || '').toLowerCase().includes(q)));
+
+function supStatusOk(m){
+  switch(supStatus){
+    case 'on':    return m.onAgr;
+    case 'off':   return !m.onAgr;
+    case 'known': return m.known;
+    case 'new':   return m.isNew;
+    case 'pop':   return m.isPop;
+    default:      return true;
+  }
 }
 
-const supShelfHTML = sh => {
-  const t = sh.title();
-  return `
-    <section class="shelf" aria-labelledby="sh-${sh.id}">
-      <div class="sh-head">
-        <div>
-          <div class="sh-eyebrow">${sh.spark ? SPARK : ''}${sh.eye}</div>
-          <h2 id="sh-${sh.id}">${t}</h2>
-          ${sh.note ? `<p class="sh-note">${sh.note}</p>` : ''}
-        </div>
-        <div class="sh-nav">
-          <button class="snav" data-scroll="-1" aria-controls="row-${sh.id}"
-            aria-label="Previous suppliers in ${t}" disabled>
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button class="snav" data-scroll="1" aria-controls="row-${sh.id}"
-            aria-label="More suppliers in ${t}">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="suprow" id="row-${sh.id}">
-        ${sh.cards.map(c => supCardHTML(c, {inimg:sh.inimg, hideCat:sh.inimg})).join('')}
-      </div>
-    </section>`;
-};
+function supMatches(){
+  const q = supQuery.trim().toLowerCase();
+  const hits = supPool().filter(c => {
+    const m = supMeta(c);
+    return (supCat === 'all' || c.cat === supCat)
+      && supStatusOk(m)
+      && (!q || c.n.toLowerCase().includes(q) || (c.cat || '').toLowerCase().includes(q));
+  });
+  if(supSort === 'az')   hits.sort((a, b) => a.n.localeCompare(b.n, 'da'));
+  if(supSort === 'save') hits.sort((a, b) =>
+    (supMeta(b).save - supMeta(a).save) || (b.pct - a.pct) || a.n.localeCompare(b.n, 'da'));
+  return hits;
+}
+
+const supFiltering = () =>
+  !!supQuery.trim() || supCat !== 'all' || supStatus !== 'all' || supSort !== 'curated';
+
+function supResetAll(){
+  supQuery = ''; supCat = 'all'; supStatus = 'all'; supSort = 'curated';
+  const q = $('#supQ'); if(q) q.value = '';
+  renderSupBody();
+}
+
+/* ---------- the live filter / result bar ----------
+   Filter state has to be visible somewhere other than the chips themselves, and
+   the result count needs one fixed home. One line does both, and each applied
+   filter is removable where it is named. */
+function renderSupBar(count){
+  const bar = $('#supBar');
+  if(!supFiltering()){
+    const n = supPool().length;
+    bar.innerHTML = `<span><b>${n} suppliers</b> in the catalogue, in ${
+      SUPPLIERS.length} curated lists</span>`;
+    return;
+  }
+  const toks = [];
+  if(supQuery.trim()) toks.push({k:'q',   l:`“${supQuery.trim()}”`});
+  if(supCat !== 'all')    toks.push({k:'cat',  l:supCat});
+  if(supStatus !== 'all') toks.push({k:'st',   l:(SUP_STATUS.find(s => s.id === supStatus) || {}).l});
+  if(supSort !== 'curated') toks.push({k:'sort', l:`Sorted: ${
+    (SUP_SORTS.find(s => s.id === supSort) || {}).l}`});
+  bar.innerHTML = `
+    <span><b>${count} supplier${count === 1 ? '' : 's'}</b></span>
+    <span class="sup-bar-sep" aria-hidden="true"></span>
+    ${toks.map(t => `<button type="button" class="sup-tokx" data-suptok="${t.k}"
+        aria-label="Remove filter ${t.l}">${t.l}${SUP_X}</button>`).join('')}
+    <button type="button" class="sup-clear" id="supClearAll">Clear all</button>`;
+}
+
+/* ---------- body ---------- */
+const supSectionHTML = (eye, title, note, cards, id) => `
+  <section class="sup-sec" aria-labelledby="sh-${id}">
+    <div class="sh-head">
+      <div class="sh-eyebrow">${eye.spark ? SPARK : ''}${eye.t}</div>
+      <h2 id="sh-${id}">${title}</h2>
+      ${note ? `<p class="sh-note">${note}</p>` : ''}
+    </div>
+    <ol class="supd-grid">${cards.map(supCardHTML).join('')}</ol>
+  </section>`;
 
 function renderSupBody(){
   const body = $('#supBody');
-  const filtering = supQuery.trim() || supCat !== 'all';
+  const filtering = supFiltering();
+  let count = supPool().length;
 
   if(!filtering){
-    rowSyncs.length = 0;                    /* drop syncs for rows we just replaced */
-    body.innerHTML = SUPPLIERS.map(supShelfHTML).join('');
-    SUPPLIERS.forEach(sh => wireRow($('#row-' + sh.id)));
+    /* browse mode: the three curated shelves, intact — same eyebrow, title, note
+       and cards, stacked instead of scrolled sideways */
+    body.innerHTML = SUPPLIERS.map(sh =>
+      supSectionHTML({t:sh.eye, spark:sh.spark}, sh.title(), sh.note, sh.cards, sh.id)).join('');
   }else{
-    rowSyncs.length = 0;
     const hits = supMatches();
-    const what = supQuery.trim()
-      ? `matching “${supQuery.trim()}”${supCat !== 'all' ? ` in ${supCat.toLowerCase()}` : ''}`
-      : `in ${supCat.toLowerCase()}`;
-    body.innerHTML = hits.length ? `
-      <section class="shelf" aria-labelledby="sh-hits">
-        <div class="sh-head">
-          <div>
-            <div class="sh-eyebrow">Search results</div>
-            <h2 id="sh-hits">${hits.length} supplier${hits.length > 1 ? 's' : ''} ${what}</h2>
-          </div>
-        </div>
-        <div class="sup-grid">${hits.map(c => supCardHTML(c)).join('')}</div>
-      </section>` : `
+    count = hits.length;
+    body.innerHTML = hits.length
+      ? supSectionHTML({t:'Results'},
+          `${hits.length} supplier${hits.length === 1 ? '' : 's'}`,
+          supSort === 'save' ? 'Biggest annual saving first, on the spend we can see.'
+          : supSort === 'az' ? 'Alphabetical.' : '', hits, 'hits')
+      : `
       <div class="sup-empty">
-        <h3>No supplier ${what}</h3>
-        <p>Check the spelling, or clear the filters and browse the shelves —
-          new agreements land every quarter.</p>
+        <span class="sup-empty-ic" aria-hidden="true">${SUP_GLASS}</span>
+        <h3>No supplier matches those filters</h3>
+        <p>Nothing in the catalogue is ${supStatus !== 'all'
+            ? `“${(SUP_STATUS.find(s => s.id === supStatus) || {}).l.toLowerCase()}”`
+            : 'a match'}${supCat !== 'all' ? ` in ${supCat.toLowerCase()}` : ''}${
+            supQuery.trim() ? ` for “${supQuery.trim()}”` : ''}.
+          Try one filter at a time, or clear them and browse — the group
+          renegotiates agreements every quarter.</p>
         <button class="btn btn-secondary" id="supReset">Clear search &amp; filters</button>
       </div>`;
     const reset = $('#supReset');
-    if(reset) reset.addEventListener('click', () => {
-      supQuery = ''; supCat = 'all';
-      $('#supQ').value = '';
-      renderSupTools(); renderSupBody();
-      $('#supQ').focus();
-    });
+    if(reset) reset.addEventListener('click', () => { supResetAll(); $('#supQ').focus(); });
   }
-  /* the chips and the clear button live outside the body — just sync their state */
+
+  /* the head is never re-rendered — the search field must not lose focus — so its
+     controls are only re-synced */
   $$('#viewSup [data-supcat]').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.supcat === supCat)));
+  $$('#viewSup [data-supstatus]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.supstatus === supStatus)));
+  $$('#viewSup [data-supsort]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.supsort === supSort)));
   $('#supQX').hidden = !supQuery;
+  renderSupBar(count);
+  wireAgrFav('#supBody');
 }
 
+/* kept for the callers that only need the chips re-synced */
 function renderSupTools(){
   $$('#viewSup [data-supcat]').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.supcat === supCat)));
+  $$('#viewSup [data-supstatus]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.supstatus === supStatus)));
+  $$('#viewSup [data-supsort]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.supsort === supSort)));
 }
 
 function renderSup(){
-  supQuery = ''; supCat = 'all';
+  supQuery = ''; supCat = 'all'; supStatus = 'all'; supSort = 'curated';
+  supMetaCache.clear();          /* isEstimated / newCustomer moved with the persona */
+
   $('#viewSup').innerHTML = `
-    <header class="sup-head">
-      <h1>Suppliers</h1>
-      <p>Every supplier with an Advantage agreement. Search for one you already buy from,
-        or browse the shelves.</p>
+    <header class="ph">
+      <div>
+        <h1>Suppliers</h1>
+        <p class="ph-lead">${newCustomer
+          ? `Every supplier with an Advantage agreement, read against what companies
+             your size typically buy. Connect your invoices and these become your
+             own numbers.`
+          : `Every supplier with an Advantage agreement, read against your own
+             invoices — so each card says what it is worth to you, not in general.`}</p>
+      </div>
+      ${supHeroHTML()}
       <div class="sup-tools">
-        <div class="sup-search">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.2 16.2L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <input id="supQ" type="text" autocomplete="off" spellcheck="false"
-            placeholder="Search suppliers or categories…" aria-label="Search suppliers">
-          <button class="sup-search-x" id="supQX" aria-label="Clear search" hidden>
-            <svg viewBox="0 0 24 24" fill="none"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-          </button>
+        <div class="sup-tools-row">
+          <div class="sup-search">
+            ${SUP_GLASS}
+            <input id="supQ" type="text" autocomplete="off" spellcheck="false"
+              placeholder="Search suppliers or categories…" aria-label="Search suppliers">
+            <button class="sup-search-x" id="supQX" aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div class="sup-sort" role="group" aria-label="Sort suppliers">
+            <span class="sup-sort-l">Sort</span>
+            ${SUP_SORTS.map(s => `
+              <button type="button" class="pill-opt" data-supsort="${s.id}"
+                aria-pressed="${s.id === 'curated'}">${s.l}</button>`).join('')}
+          </div>
         </div>
-        <div class="sup-cats" role="group" aria-label="Filter by category">
-          <button type="button" class="pill-opt" data-supcat="all" aria-pressed="true">All</button>
-          ${SUP_CATS().map(c => `
-            <button type="button" class="pill-opt" data-supcat="${c}" aria-pressed="false">${c}</button>`).join('')}
+        <div class="sup-chips">
+          <div class="sup-cats" role="group" aria-label="Filter by category">
+            <button type="button" class="pill-opt" data-supcat="all" aria-pressed="true">All categories</button>
+            ${SUP_CATS().map(c => `
+              <button type="button" class="pill-opt" data-supcat="${c}" aria-pressed="false">${c}</button>`).join('')}
+          </div>
+          <div class="sup-cats is-status" role="group" aria-label="Filter by what this supplier already is to you">
+            ${SUP_STATUS.map(s => `
+              <button type="button" class="pill-opt" data-supstatus="${s.id}"
+                aria-pressed="${s.id === 'all'}">${s.id === 'on' ? SUP_CHECK : ''}${s.l}</button>`).join('')}
+          </div>
         </div>
       </div>
+      <div class="sup-bar" id="supBar" role="status" aria-live="polite"></div>
     </header>
     <div id="supBody"></div>`;
 
@@ -5849,32 +6757,49 @@ function renderSup(){
   $$('#viewSup [data-supcat]').forEach(b => b.addEventListener('click', () => {
     supCat = b.dataset.supcat; renderSupBody();
   }));
+  $$('#viewSup [data-supstatus]').forEach(b => b.addEventListener('click', () => {
+    supStatus = b.dataset.supstatus; renderSupBody();
+  }));
+  $$('#viewSup [data-supsort]').forEach(b => b.addEventListener('click', () => {
+    supSort = b.dataset.supsort; renderSupBody();
+  }));
+
+  /* the bar's contents change every render, so its handlers are delegated from
+     the element itself, which does not */
+  $('#supBar').addEventListener('click', e => {
+    if(e.target.closest('#supClearAll')){ supResetAll(); return; }
+    const tok = e.target.closest('[data-suptok]');
+    if(!tok) return;
+    const k = tok.dataset.suptok;
+    if(k === 'q'){ supQuery = ''; $('#supQ').value = ''; }
+    if(k === 'cat')  supCat = 'all';
+    if(k === 'st')   supStatus = 'all';
+    if(k === 'sort') supSort = 'curated';
+    renderSupBody();
+  });
+
+  /* the card is one hit area: it carries no buttons of its own except the save
+     toggle, which stops the event itself in wireAgrFav */
+  const supGo = li => {
+    if(li.dataset.dc === '1'){ openDataCenter(); return; }
+    window.open(catTabUrl(li.dataset.cat,
+      li.dataset.idx ? +li.dataset.idx : undefined), '_blank');
+  };
+  const bodyEl = $('#supBody');
+  bodyEl.addEventListener('click', e => {
+    if(e.target.closest('.agr-fav')) return;
+    const li = e.target.closest('.supd');
+    if(li) supGo(li);
+  });
+  bodyEl.addEventListener('keydown', e => {
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    if(e.target.closest('.agr-fav')) return;
+    const li = e.target.closest('.supd');
+    if(li){ e.preventDefault(); supGo(li); }
+  });
+
   renderSupBody();
 }
-
-/* one shelf: the arrows move roughly one visible page, and they disable at the ends */
-const rowSyncs = [];
-function wireRow(row){
-  const head = row.previousElementSibling;
-  const prev = head.querySelector('[data-scroll="-1"]');
-  const next = head.querySelector('[data-scroll="1"]');
-  const sync = () => {
-    const max = row.scrollWidth - row.clientWidth;
-    prev.disabled = row.scrollLeft <= 1;
-    next.disabled = max <= 1 || row.scrollLeft >= max - 1;
-  };
-  const step = d => row.scrollBy({
-    left:d * Math.max(160, row.clientWidth - 48),
-    behavior:RM ? 'auto' : 'smooth'
-  });
-  prev.addEventListener('click', () => step(-1));
-  next.addEventListener('click', () => step(1));
-  row.addEventListener('scroll', sync, {passive:true});
-  if(window.ResizeObserver) new ResizeObserver(sync).observe(row);
-  rowSyncs.push(sync);
-  sync();
-}
-const syncRows = () => rowSyncs.forEach(f => f());
 
 /* per-agreement colour: the unit its price is quoted in, and why it's worth doing */
 const CDET = {
@@ -8092,127 +9017,974 @@ const agRenewMonth = a => seedOf('renew:' + a.n) % 12;
 /* days since the last invoice came through a dormant agreement */
 const agQuietDays = a => 95 + (seedOf('quiet:' + a.n) % 180);
 
-const AG_WARN = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4.5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10.3 3.9L2.7 17a2 2 0 001.7 3h15.2a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+/* ============================================================================
+   T6 · AGREEMENTS — the portfolio page
+   Rebuilt around the activation stepper that already exists (ACT_STEPS +
+   .stepper), because it is the one place in the product that models the four
+   steps honestly. What this page adds is TIME: every completed step carries the
+   date it happened, the step in progress carries the date it is expected, and
+   each agreement carries when it renews — so "where is my agreement right now"
+   is answerable without opening anything.
+   agStage()/agDormant()/agQuietDays()/agRenewMonth() are kept from the previous
+   version: hand-authored stages give the demo a real spread, and anything
+   activated mid-session correctly starts at step 1 rather than teleporting.
+   ========================================================================= */
+const AG_DAY = 86400000;
+/* noon, so every derived date differs by whole days and the relative labels
+   ("in 6 days") can never be off by a daylight-saving hour */
+const agToday = () => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; };
 
-function agProgHTML(stage){
+/* How long ago the request went out, banded by how far the agreement has got:
+   a request sent yesterday cannot already be verified, and a verified one cannot
+   have been sent last week. Stable per supplier via rngOf. */
+const AG_SENT_BAND = [[0, 5], [7, 20], [24, 44], [130, 780]];
+function agSentDate(a){
+  const [lo, hi] = AG_SENT_BAND[Math.min(agStage(a), ACT_STEPS.length) - 1];
+  const back = lo + Math.floor(rngOf('sent:' + a.n)() * (hi - lo));
+  return new Date(agToday().getTime() - back * AG_DAY);
+}
+/* the four step dates. Offsets follow the timeline the product promises:
+   confirmation inside five working days, the new price about two weeks later,
+   verification on the first invoice after that. */
+function agStepDates(a){
+  const rnd = rngOf('steps:' + a.n);
+  const conf  = 3 + Math.floor(rnd() * 5);
+  const price = conf + 9 + Math.floor(rnd() * 8);
+  const check = price + 22 + Math.floor(rnd() * 16);
+  const sent = agSentDate(a);
+  return [0, conf, price, check].map(d => new Date(sent.getTime() + d * AG_DAY));
+}
+/* when the terms come up. agRenewMonth() already picks the month; this pins a day
+   and the right year, always forward of today. */
+function agRenewDate(a){
+  const m = agRenewMonth(a), day = 1 + (seedOf('renewday:' + a.n) % 27), t = agToday();
+  let d = new Date(t.getFullYear(), m, day, 12);
+  while(d <= t) d = new Date(d.getFullYear() + 1, m, day, 12);
+  return d;
+}
+const agDayDiff = d => Math.round((d - agToday()) / AG_DAY);
+const agFmtDate  = d => `${d.getDate()} ${MONTH_ABBR[d.getMonth()]} ${d.getFullYear()}`;
+const agFmtShort = d => d.getFullYear() === agToday().getFullYear()
+  ? `${d.getDate()} ${MONTH_ABBR[d.getMonth()]}` : agFmtDate(d);
+function agRel(d){
+  const n = agDayDiff(d);
+  if(n === 0) return 'today';
+  if(n === 1) return 'tomorrow';
+  if(n === -1) return 'yesterday';
+  if(n > 0) return n < 45 ? `in ${n} days` : `in ${Math.round(n / 30.4)} months`;
+  const p = -n;
+  if(p < 45) return `${p} days ago`;
+  if(p < 365) return `${Math.round(p / 30.4)} months ago`;
+  const y = Math.floor(p / 365);
+  return y === 1 ? 'over a year ago' : `${y} years ago`;
+}
+
+/* icons: authored here rather than bent out of FEAT_SVG, which is the category
+   page's four-facts set. viewBox 0 0 24 24, stroke-width 1.7, like the rest. */
+const AGP_SVG = {
+  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 9.8h17M8.5 3v3.6M15.5 3v3.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  renew:'<path d="M20 12a8 8 0 01-13.7 5.6M4 12a8 8 0 0113.7-5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M17.7 3v3.5h-3.5M6.3 21v-3.5h3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  alert:'<path d="M12 9v4.6M12 17.2h.01" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path d="M10.3 3.9L2.7 17a2 2 0 001.7 3h15.2a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  go:'<path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>'
+};
+const agIc = k => `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${AGP_SVG[k]}</svg>`;
+
+/* how many steps are behind it, and therefore which step it is sitting on */
+const agDone = a => Math.min(agStage(a), ACT_STEPS.length);
+const agComplete = a => agDone(a) >= ACT_STEPS.length;
+
+/* ---------- the stepper, with dates ----------
+   The same component and the same four steps. The only thing this adds is WHEN:
+   a date for a step that has happened, an expected date for the one in flight,
+   and the generic window for the ones after it. It never says the supplier
+   replied — only that a step is expected, and that we chase when it slips. */
+function agStepperHTML(a){
+  const at = agDone(a), done = agComplete(a), dates = agStepDates(a), t = agToday();
   return `
-    <div class="ag-prog">
-      <div class="ag-prog-track">
-        <div class="ag-prog-fill" style="width:${(stage / AG_STEPS.length * 100).toFixed(0)}%"></div>
+  <details class="opp-fold"${done ? '' : ' open'}>
+    <summary><h3>Activation timeline</h3>
+      <span class="act-now${done ? ' done' : ''}">${done
+        ? `All ${ACT_STEPS.length} steps done`
+        : `Step ${at + 1} of ${ACT_STEPS.length}`}</span></summary>
+    <ol class="stepper live">
+      ${ACT_STEPS.map((st, i) => {
+        const state = i < at ? 'done' : i === at ? 'now' : 'todo';
+        const late = state === 'now' && dates[i] <= t;
+        const when = state === 'done' ? agFmtDate(dates[i])
+          : state === 'now' ? (late
+              ? `expected ${agFmtShort(dates[i])} — we are chasing`
+              : `expected by ${agFmtShort(dates[i])}`)
+          : st.w;
+        return `
+        <li class="stp ${state}${late ? ' due' : ''}">
+          <span class="stp-mark">${state === 'done' ? TICK : i + 1}</span>
+          <span class="stp-tx">
+            <b>${st.t}</b>
+            <em>${when}</em>
+            <span>${st.s}</span>
+          </span>
+        </li>`;
+      }).join('')}
+    </ol>
+    <p class="stepper-note">${done
+      ? `The rate was checked against the invoice dated <b>${agFmtDate(dates[3])}</b>, and
+         we re-check it on every invoice after that.`
+      : `Nothing for you to do. If step ${at + 1} has not landed
+         <b>five working days</b> after the one before it, we chase the supplier —
+         and every step lands in <b>Advantage activity</b> as it happens.`}</p>
+  </details>`;
+}
+
+/* ---------- the date rail ----------
+   Three dates, in the order they get asked about: when did this start, what
+   lands next, when does it come up for renewal. */
+function agCalHTML(a){
+  const dates = agStepDates(a), at = agDone(a), done = agComplete(a);
+  const ren = agRenewDate(a), renIn = agDayDiff(ren);
+  const next = done
+    ? {cls:'pos', ic:'price', k:'Next check', v:'Every invoice',
+       s:'We read the rate on each new invoice from this supplier.'}
+    : {cls:dates[at] <= agToday() ? 'due' : 'soon', ic:'clock',
+       k:'Next step', v:agFmtShort(dates[at]),
+       s:`${ACT_STEPS[at].t} — ${agRel(dates[at])}`};
+  const row = r => `
+    <span class="agy-date${r.cls ? ' ' + r.cls : ''}">
+      ${r.ic === 'clock' || r.ic === 'price' ? featIcon(r.ic) : agIc(r.ic)}
+      <span class="agy-date-k">${r.k}</span>
+      <span class="agy-date-v">${r.v}</span>
+      <span class="agy-date-s">${r.s}</span>
+    </span>`;
+  return `
+    <div class="agy-cal">
+      ${row({ic:'cal', k:'Activated', v:agFmtShort(dates[0]), s:`Request sent ${agRel(dates[0])}`})}
+      ${row(next)}
+      ${row({ic:'renew', cls:renIn <= 92 ? 'soon' : '', k:'Terms renew', v:agFmtShort(ren),
+             s:renIn <= 92 ? `${agRel(ren)} — worth taking to them early` : agRel(ren)})}
+    </div>`;
+}
+
+/* ---------- one agreement you hold ----------
+   Flat, like .agd: no wrappers, every element placed by grid area. Unlike .agd
+   it is not one hit area — it holds a <details> and its own buttons — so the
+   NAME is the button, which is also the one thing you would click. */
+function agyCardHTML({r, a, i}){
+  const idle = agDormant(a), done = agComplete(a), est = isEstimated(a);
+  const dates = agStepDates(a);
+  return `
+  <li class="agy${idle ? ' flagged' : ''}" style="--b:${brandOf(a.n)}">
+    ${agrLogoTile(a.n)}
+    <span class="agd-eye">${r.n}${idle
+      ? '<span class="agy-chip warn">Not being used</span>'
+      : done ? '<span class="agy-chip">Verified</span>' : ''}</span>
+    <button type="button" class="agy-open" data-agopen="${r.id}:${i}">
+      ${a.n}${agIc('go')}</button>
+    <span class="agd-fig"><b>${saveFig(a.save, est).replace('typically ', '')} kr.</b><em>a
+      year${done && !idle ? ', landing now' : ''}</em>${est
+      ? `<span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}</span>
+    ${idle ? `
+    <p class="agy-flag">${agIc('alert')}<span>The rate is agreed and live, but
+      <b>no invoices have come through it in ${agQuietDays(a)} days</b> — so the saving
+      is not landing. Usually an old supplier account still set as the default.</span></p>` : ''}
+    ${agStepperHTML(a)}
+    ${agCalHTML(a)}
+    ${idle ? `
+    <div class="agy-act">
+      <button type="button" class="btn btn-primary btn-sm" data-buyer="${r.id}:${i}">Contact the buyer</button>
+      <button type="button" class="btn btn-secondary btn-sm" data-agopen="${r.id}:${i}">See the agreement</button>
+    </div>` : ''}
+  </li>`;
+}
+
+/* ---------- the twelve-month renewal line ----------
+   One axis shared by every agreement, so what lands close together is visible as
+   clustering. Twelve cells, each holding the suppliers whose terms come up then. */
+function agYearHTML(mine){
+  const t = agToday(), mNow = t.getMonth();
+  const soon = m => ((m - mNow) + 12) % 12 <= 2;
+  const byMonth = Array.from({length:12}, () => []);
+  mine.forEach(({a}) => byMonth[agRenewDate(a).getMonth()].push(a));
+  return `
+    <div class="agp-year">
+      <div class="agp-year-grid">
+        ${MONTH_ABBR.map((mn, m) => `
+          <div class="agp-year-cell${m === mNow ? ' now' : soon(m) ? ' soon' : ''}">
+            <span class="agp-year-m">${mn}</span>
+            <span class="agp-year-chips">${byMonth[m].map(a =>
+              `<span title="${a.n} — terms up ${agFmtShort(agRenewDate(a))}"
+                 style="--b:${brandOf(a.n)}">${agrLogoChip(a.n)}</span>`).join('')}</span>
+          </div>`).join('')}
       </div>
-      <div class="ag-prog-steps">
-        ${AG_STEPS.map((t, i) => `<span class="${i + 1 <= stage && stage === AG_STEPS.length ? 'done' : i + 1 < stage ? 'done' : i + 1 === stage ? 'now' : ''}">${t}</span>`).join('')}
+      <div class="agp-year-key">
+        <span><i></i>This month</span>
+        <span><i class="soon"></i>Next three months</span>
+        <span>Two renewals in the same month are one conversation, not two.</span>
       </div>
     </div>`;
 }
 
-function renderAgreements(){
-  const all = ROWS.flatMap(r => r.agr.map((a, i) => ({r, a, i})));
-  const live = all.filter(x => x.a.req);
-  const dormant = live.filter(x => agDormant(x.a));
-  const moving = live.filter(x => !agDormant(x.a));
-  const inFlight = live.filter(x => agStage(x.a) < 4).length;
-  const yearly = live.reduce((n, x) => n + x.a.save, 0);
-  const mNow = new Date().getMonth();
-  /* "soon" = the next three months, wrapped across the year boundary */
-  const soon = m => ((m - mNow) + 12) % 12 <= 2;
-
-  const row = ({r, a, i}, alert) => {
-    const stage = agStage(a);
-    return `
-    <li class="ag-row${alert ? ' alert' : ''}" style="--b:${brandOf(a.n)}">
-      <div class="ag-row-h">
-        ${agrLogoChip(a.n)}
-        <span class="ag-row-id"><b>${a.n}</b><span>${r.n}</span></span>
-        <span class="ag-row-fig">+${fmt(a.save)} kr.<small>a year</small></span>
-      </div>
-      ${alert ? `
-      <p class="ag-note">${AG_WARN}<span>Live since your request, but <b>no invoices have come
-        through it in ${agQuietDays(a)} days</b>. The rate is agreed — it just isn't being used,
-        so the saving is not landing.</span></p>` : agProgHTML(stage)}
-      <div class="ag-row-f">
-        ${alert
-          ? `<button type="button" class="btn btn-primary btn-sm" data-buyer="${r.id}:${i}">Contact the buyer</button>
-             <button type="button" class="btn btn-secondary btn-sm" data-agopen="${r.id}:${i}">See the agreement</button>`
-          : `<button type="button" class="btn btn-secondary btn-sm" data-agopen="${r.id}:${i}">See the agreement</button>`}
-        <span class="spacer"></span>
-        <span class="ac-lev">${featIcon('clock')}Terms up in <b>${MONTH_ABBR[agRenewMonth(a)]}</b></span>
-      </div>
+/* ---------- the catalogue card ----------
+   The .agd card as signed off, with one modifier. In use reads as in use: the
+   positive ground, a ticked green eyebrow, the date it started instead of a
+   pitch, and no fav toggle — you cannot shortlist what you already hold. */
+function agdCatalogueHTML({r, a, i}){
+  const est = isEstimated(a), rate = Math.round(a.save / a.covers * 100);
+  const mine = !!a.req;
+  const why = !mine
+    ? `${CAT_PITCH[r.id] || 'Group price on what you already buy'} —
+       <b>${rate}% under</b> what your ${r.n.toLowerCase()} invoices show today.`
+    : agDormant(a)
+      ? `In use since <b>${agFmtShort(agStepDates(a)[0])}</b>, but nothing has been
+         bought through it in ${agQuietDays(a)} days.`
+      : agComplete(a)
+        ? `In use since <b>${agFmtShort(agStepDates(a)[0])}</b> — the group rate is on
+           your invoices.`
+        : `Requested <b>${agFmtShort(agStepDates(a)[0])}</b>. Next step:
+           ${ACT_STEPS[agDone(a)].t.toLowerCase()}.`;
+  return `
+    <li class="agd${mine ? ' mine' : ''}" data-cat="${r.id}" data-idx="${i}"
+      tabindex="0" role="button"
+      aria-label="${mine ? 'In use — ' : ''}${a.n}, ${r.n}: ${saveFig(a.save, est)} kroner a year">
+      ${agrLogoTile(a.n)}
+      <span class="agd-eye">${mine ? TICK + 'In use' : r.n}</span>
+      <b class="agd-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</b>
+      <span class="agd-fig"><b>${saveFig(a.save, est).replace('typically ', '')} kr.</b><em>a
+        year</em>${est ? `<span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}</span>
+      <p class="agd-why">${why}</p>
+      ${mine ? '' : agrFav(a.n)}
     </li>`;
-  };
+}
+
+function renderAgreements(){
+  const all  = ROWS.filter(r => !r.hidden).flatMap(r => r.agr.map((a, i) => ({r, a, i})));
+  const mine = all.filter(x => x.a.req);
+  const open = all.filter(x => !x.a.req);
+  const earning = mine.reduce((s, x) => s + x.a.save, 0);
+  const onTable = open.reduce((s, x) => s + x.a.save, 0);
+  const estMine = mine.some(x => isEstimated(x.a));
+  const estOpen = open.some(x => isEstimated(x.a));
+  const idle    = mine.filter(x => agDormant(x.a));
+  const moving  = mine.filter(x => !agComplete(x.a) && !agDormant(x.a));
+  const idleSum = idle.reduce((s, x) => s + x.a.save, 0);
+  /* needs a look first, then still moving, then settled — and money inside each */
+  const rank = x => agDormant(x.a) ? 0 : agComplete(x.a) ? 2 : 1;
+  const held = [...mine].sort((p, q) => rank(p) - rank(q) || q.a.save - p.a.save);
+  const best = [...open].sort((p, q) => q.a.save - p.a.save)[0];
+
+  /* ---- hero ---- */
+  const heroHTML = mine.length ? `
+    <span class="ph-eye">Agreements</span>
+    <h1 id="agT" tabindex="-1">Your supplier agreements</h1>
+    <p class="ph-lead">See every supplier agreement available to ${state.company} — both the
+      ones in use and the ones not yet activated. Filter by status or search by supplier or
+      category. Use <b>Areas</b> to explore needs and opportunities.</p>
+    <div class="ph-figs">
+      <div class="ph-fig"><b>${all.length}</b><span>Supplier agreements</span></div>
+      <div class="ph-fig"><b class="pos">${mine.length}</b><span>In use, earning
+        ${saveFig(earning, estMine).replace('typically ', '')} kr. a year</span></div>
+      <div class="ph-fig"><b class="brand">${open.length}</b><span>Available, worth
+        ${saveFig(onTable, estOpen).replace('typically ', '')} kr. a year</span></div>
+    </div>
+    ${idle.length ? `
+    <p class="ph-warn">${saveFig(idleSum, estMine).replace('typically ', '').replace('+', '')} kr. a year is
+      <b>agreed but not landing</b>, in ${idle.length} agreement${idle.length === 1 ? '' : 's'}
+      nobody is buying through. ${idle.length === 1 ? 'It is' : 'They are'} first in the list below.</p>` : ''}
+    <p class="ph-note">An agreement only saves money once invoices start going through
+      it. Every step below is dated from what we have actually seen — a step is marked done
+      when it happened, not when it was due.</p>
+    <div class="cat-mast-act">
+      <button type="button" class="btn btn-primary" id="agpJump">Explore new opportunities</button>
+    </div>` : `
+    <h1 id="agT" tabindex="-1">Nothing activated yet</h1>
+    <p class="ph-lead">All ${AGR_TOTAL} Advantage agreements are open to you. Activating one
+      changes the price on your existing account — same supplier, same branch, same
+      delivery — and you can stop it any time before the supplier confirms.</p>
+    <div class="ph-figs">
+      <div class="ph-fig">
+        <b>${saveFig(onTable, estOpen)} kr.</b>
+        <span>a year across all ${open.length} of them</span>
+      </div>
+      ${best ? `
+      <div class="ph-fig">
+        <b class="pos">${saveFig(best.a.save, isEstimated(best.a)).replace('typically ', '')}<small> kr.</small></b>
+        <span>a year from the biggest single one, ${best.a.n}</span>
+      </div>` : ''}
+    </div>
+    <p class="ph-note">Once you activate one, this page is where it lives: which of the four
+      steps it is on, the date each one landed, and when the terms come up again.</p>
+    ${best ? `
+    <div class="ph-act">
+      <button type="button" class="btn btn-primary" data-agopen="${best.r.id}:${best.i}">
+        Open ${best.a.n}</button>
+      <button type="button" class="btn btn-secondary" id="agpJump">See all
+        ${AGR_TOTAL} agreements</button>
+    </div>` : ''}`;
+
+  /* ---- the section for the ones you hold, or the preview if you hold none ---- */
+  const heldHTML = mine.length ? `
+    <section class="agp-sec">
+      <h2>Where each one has got to</h2>
+      <p>Four steps from request to a verified saving, each with the date it happened.
+        We only call it verified once the new rate has appeared on an invoice we have read.</p>
+      <div class="oc-panel">
+        <ul class="agp-list">${held.map(agyCardHTML).join('')}</ul>
+      </div>
+      ${mine.length > 1 ? agYearHTML(mine) : ''}
+    </section>` : `
+    <section class="agp-sec">
+      <h2>What activating one starts</h2>
+      <p>Four steps, and we date every one of them. This is the shape of the card you
+        will see here for each agreement you hold.</p>
+      <div class="oc-panel">
+        <div class="agy agy-pre">
+          <span class="agd-eye">Preview</span>
+          <b class="agy-pre-t">Any agreement, once you activate it</b>
+          ${oppTimelineHTML()}
+          <div class="agy-cal">
+            <span class="agy-date">${agIc('cal')}
+              <span class="agy-date-k">Activated</span>
+              <span class="agy-date-v">The day you say yes</span>
+              <span class="agy-date-s">Nothing changes on your side until then.</span></span>
+            <span class="agy-date">${featIcon('clock')}
+              <span class="agy-date-k">Next step</span>
+              <span class="agy-date-v">Five working days</span>
+              <span class="agy-date-s">If the supplier has not confirmed by then,
+                we chase them.</span></span>
+            <span class="agy-date">${agIc('renew')}
+              <span class="agy-date-k">Terms renew</span>
+              <span class="agy-date-v">Twelve months on</span>
+              <span class="agy-date-s">We tell you before they come up, not after.</span></span>
+          </div>
+        </div>
+      </div>
+    </section>`;
+
+  /* biggest thing still on the table first; the ones you hold trail, in the same
+     order the section above shows them, so the two lists agree */
+  const cards = [...open].sort((p, q) => q.a.save - p.a.save).concat(held);
 
   $('#viewAgreements').innerHTML = `
-    <div class="ag-page">
-      <header class="ag-hero">
-        <h1 id="agT" tabindex="-1">Agreements</h1>
-        <p>Every agreement you have activated, where it has got to, and whether it is
-          actually earning. An agreement only saves money once invoices start going
-          through it — this page is where that gets checked.</p>
-        <div class="ag-stats">
-          <div class="ag-stat"><b>${live.length}</b><span>Activated</span></div>
-          <div class="ag-stat"><b>${inFlight}</b><span>Still being set up</span></div>
-          <div class="ag-stat"><b class="${dormant.length ? 'warn' : 'pos'}">${dormant.length}</b>
-            <span>Live but unused</span></div>
-          <div class="ag-stat"><b class="pos">+${fmt(yearly)}</b><span>kr. a year at stake</span></div>
-        </div>
-      </header>
-
-      ${dormant.length ? `
-      <section class="ag-sec">
-        <h2>Active, but nothing is going through them</h2>
-        <p>The price is agreed and waiting. Something on the buying side hasn't
-          switched over — usually an old supplier account still set as default, or a
-          site that never got told. One message to the buyer normally fixes it.</p>
-        <ul class="ag-list">${dormant.map(x => row(x, true)).join('')}</ul>
-      </section>` : ''}
-
-      <section class="ag-sec">
-        <h2>Where the rest have got to</h2>
-        <p>Four steps from request to a verified saving. We only call it verified once
-          the new price has actually appeared on an invoice we've read.</p>
-        <ul class="ag-list">${moving.map(x => row(x, false)).join('')}</ul>
-      </section>
-
-      <section class="ag-sec">
-        <h2>When terms come up</h2>
-        <p>Twelve months ahead. Renewals that land close together are worth taking to
-          the supplier as one conversation rather than three.</p>
-        <div class="ag-tl">
-          <div class="ag-tl-grid">
-            <div class="ag-tl-head">
-              <span></span>
-              <div class="ag-tl-months">${MONTH_ABBR.map((m, i) =>
-                `<span${i === mNow ? ' style="font-weight:700;color:var(--general-foreground)"' : ''}>${m}</span>`).join('')}</div>
-            </div>
-            ${live.slice(0, 10).map(({a}) => {
-              const m = agRenewMonth(a);
-              return `<div class="ag-tl-row">
-                <span class="ag-tl-n">${a.n}</span>
-                <div class="ag-tl-bar">
-                  <span class="ag-tl-dot${soon(m) ? ' soon' : ''}" style="grid-column:${m + 1}"
-                    title="${a.n} — terms up in ${MONTH_ABBR[m]}"></span>
-                </div>
-              </div>`;
-            }).join('')}
-          </div>
-          <div class="ag-tl-key">
-            <span><i class="soon"></i>Within three months</span>
-            <span><i></i>Later this year</span>
-          </div>
-        </div>
+    <div class="agp">
+      <header class="ph">${heroHTML}</header>
+      ${heldHTML}
+      <section class="agp-sec" id="agpAll">
+        <h2>Every agreement Advantage has</h2>
+        <p>All ${AGR_TOTAL} of them, across ${ROWS.filter(r => !r.hidden).length} areas, biggest
+          saving still on the table first. The ones you already hold sit at the end, marked.</p>
+        <p class="agp-count">
+          <span><i></i>${open.length} open to you${onTable
+            ? ` · worth ${saveFig(onTable, estOpen)} kr. a year` : ''}</span>
+          <span class="on"><i></i><b>${mine.length}</b>&nbsp;in use</span>
+        </p>
+        <ul class="agr-det-grid">${cards.map(agdCatalogueHTML).join('')}</ul>
       </section>
     </div>`;
 
-  const pick = v => { const [id, i] = v.split(':'); const r = ROWS.find(x => x.id === id); return {r, a:r.agr[+i], i:+i}; };
-  $$('#viewAgreements [data-agopen]').forEach(b => b.addEventListener('click', () => {
+  /* ---- wiring ---- */
+  const pick = v => { const [id, i] = v.split(':'); const r = ROWS.find(x => x.id === id);
+    return {r, a:r.agr[+i], i:+i}; };
+  $$('#viewAgreements [data-agopen]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
     const {r, i} = pick(b.dataset.agopen);
     window.open(catTabUrl(r.id, i), '_blank');
   }));
-  $$('#viewAgreements [data-buyer]').forEach(b => b.addEventListener('click', () => {
+  $$('#viewAgreements [data-buyer]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
     const {r, a} = pick(b.dataset.buyer);
     openContactBuyer(r, a);
   }));
+  /* the catalogue card is one hit area, keyboard included — same contract the
+     new-customer grid uses */
+  $$('#viewAgreements .agd').forEach(li => {
+    const go = () => window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
+    li.addEventListener('click', go);
+    li.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
+    });
+  });
+  wireAgrFav('#viewAgreements');
+  const jump = $('#agpJump');
+  if(jump) jump.addEventListener('click', () => {
+    const t = $('#agpAll');
+    if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+  });
   setTimeout(() => { const h = $('#agT'); if(h) h.focus({preventScroll:true}); }, 50);
+}
+
+/* ---------- Reports ----------
+   Savings, Spending, Agreement usage — three readings of the same eight
+   categories. All figures derive from ROWS (Bob) or peerProfile() (Fanny) via
+   rpModel(), so a report can never disagree with the dashboard it came from. */
+let rpType   = 'savings';
+let rpPeriod = '12m';
+
+/* the period scales the HISTORIC flows only. Potential is an annual rate, so it
+   stays annualised and is labelled as such rather than being quietly quartered. */
+const RP_PERIOD = {
+  '12m':{n:'Last 12 months', f:1,    of:'the last twelve months'},
+  'ytd':{n:'Year to date',   f:0.66, of:'the year so far'},
+  'q':  {n:'Last quarter',   f:0.25, of:'the last quarter'}
+};
+const RP_TYPES = [
+  {k:'savings',  n:'Savings'},
+  {k:'spending', n:'Spending'},
+  {k:'usage',    n:'Agreement usage'}
+];
+const RP_IC = {
+  info:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v5.5M12 7.8h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  dl:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v10.5M8 11l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 18.5h15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 9.5v4M12 16.6h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10.3 4.4L3.1 17a2 2 0 001.7 3h14.4a2 2 0 001.7-3L13.7 4.4a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  idle:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 10h17" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 14.5h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-dasharray="2 3"/></svg>'
+};
+
+/* a spend or a count is not a saving, so it does not get saveFig()'s "+".
+   It gets the SAME ±15% band through estRange(), which is where saveFig()
+   gets its range from — so the two can never drift apart. */
+const rpNum  = (n, est) => est ? estRange(n) : fmt(n);
+const rpSave = (n, est) => saveFig(n, est);
+const rpPct  = (v, t) => t > 0 ? Math.round(v / t * 100) : 0;
+
+function rpModel(){
+  const f = RP_PERIOD[rpPeriod].f;
+  const sc = n => Math.round(n * f);
+  let cats;
+
+  if(newCustomer){
+    /* Fanny has no invoices of her own yet: every row is the median peer in her
+       industry and size band, straight out of peerProfile() — the same source
+       the benchmark cards and the Savings drill-down read. */
+    const p = peerProfile();
+    cats = p.cats.map(c => {
+      const row = ROWS.find(r => r.id === c.id) || {sup:0, agr:[]};
+      return {
+        id:c.id, n:c.n, rate:c.rate, sup:row.sup,
+        inv:sc(c.inv), spend:sc(c.spend),
+        realised:sc(c.saved), potential:c.potential, est:true, peer:true,
+        agrs: c.inUse ? [{n:c.agr, cat:c.n, catId:c.id,
+                          covers:sc(Math.round(c.spend * 0.72)),
+                          vol:sc(Math.round(c.spend * 0.72)),
+                          save:sc(c.saved), dormant:false, est:true}] : [],
+        ready: c.inUse ? 0 : (row.agr || []).length
+      };
+    });
+  } else {
+    cats = live().map(r => {
+      const on = r.agr.filter(a => a.req);
+      return {
+        id:r.id, n:r.n, rate:r.rate, sup:r.sup,
+        inv:sc(r.inv), spend:sc(r.amt),
+        realised:sc(on.reduce((s, a) => s + a.save, 0)),
+        potential:potOf(r),
+        est:on.some(a => isEstimated(a)) || r.agr.some(a => !a.req && isEstimated(a)),
+        peer:false,
+        /* a dormant agreement is live at an agreed price with nothing going
+           through it — so its covered volume is the expectation and its actual
+           volume is zero. That gap is the whole point of the usage report. */
+        agrs: on.map(a => ({n:a.n, cat:r.n, catId:r.id, covers:sc(a.covers),
+                            vol:agDormant(a) ? 0 : sc(a.covers),
+                            save:agDormant(a) ? 0 : sc(a.save),
+                            dormant:agDormant(a), est:isEstimated(a)})),
+        ready: r.agr.filter(a => !a.req).length
+      };
+    });
+  }
+
+  const sum = k => cats.reduce((s, c) => s + c[k], 0);
+  const agrs = cats.flatMap(c => c.agrs);
+  const covered = agrs.reduce((s, a) => s + a.covers, 0);
+  const spend = sum('spend');
+  return {
+    cats, agrs, spend, covered,
+    off:Math.max(0, spend - covered),
+    volume:agrs.reduce((s, a) => s + a.vol, 0),
+    realised:sum('realised'), potential:sum('potential'),
+    invoices:sum('inv'), idle:agrs.filter(a => a.dormant),
+    empties:cats.filter(c => !c.agrs.length),
+    est:cats.some(c => c.est),
+    period:RP_PERIOD[rpPeriod]
+  };
+}
+
+/* one figure card. `est` swaps in the smaller type the two-number range needs. */
+const rpFig = (v, label, tone, est) => `
+  <div class="rp-fig${est ? ' est' : ''}">
+    <b${tone ? ` class="${tone}"` : ''}>${v}</b><span>${label}</span></div>`;
+
+/* ---- report 1 · savings ---- */
+function rpSavings(m){
+  const rows = [...m.cats].sort((a, b) => (b.realised + b.potential) - (a.realised + a.potential));
+  const max = Math.max(1, ...rows.map(c => c.realised + c.potential));
+  return `
+  ${rpFig(rpSave(m.realised, m.est) + ' <small>kr.</small>', `Realised over ${m.period.of}`, 'pos', m.est)}
+  ${rpFig(rpSave(m.potential, m.est) + ' <small>kr./year</small>', 'Still on the table', '', m.est)}
+  ${rpFig(rpPct(m.covered, m.spend) + '<small>%</small>', 'Of spend on an agreement', '')}
+  ${rpFig(rpNum(m.agrs.length, false), 'Agreements earning', '')}
+  §
+  <section class="rp-sec">
+    <h2>Where the saving came from</h2>
+    <p>Ranked by what each category is worth in total. The solid part has landed;
+      the pale part is agreed pricing you have not switched to yet.</p>
+    <div class="rp-viz">
+      <ul class="rp-bars">
+        ${rows.map(c => {
+          const tot = c.realised + c.potential;
+          return `<li class="rp-bar-row">
+            <span class="rp-bar-n">${c.n}</span>
+            <span class="rp-bar-v${c.realised ? '' : ' zero'}">${c.realised
+              ? rpSave(c.realised, c.est) + ' kr.'
+              : 'Nothing yet'}</span>
+            <span class="rp-track" role="img"
+              aria-label="${c.n}: ${c.realised ? rpSave(c.realised, c.est) + ' kroner realised' : 'nothing realised'}, ${rpSave(c.potential, c.est)} kroner still available">
+              <i class="done" style="width:${(c.realised / max * 100).toFixed(1)}%"></i>
+              <i class="open" style="width:${(c.potential / max * 100).toFixed(1)}%"></i>
+            </span>
+          </li>`;
+        }).join('')}
+      </ul>
+      <div class="rp-key">
+        <span><i class="done"></i>Realised — ${m.period.n.toLowerCase()}</span>
+        <span><i class="open"></i>Still available, per year</span>
+      </div>
+    </div>
+
+    <div class="rp-tblwrap">
+      <table class="rp-tbl">
+        <caption>Savings by category · ${m.period.n}</caption>
+        <thead><tr><th scope="col">Category</th><th scope="col">Spend, kr.</th>
+          <th scope="col">Realised, kr.</th><th scope="col">Still available, kr./year</th>
+          <th scope="col">Rate</th></tr></thead>
+        <tbody>
+          ${rows.map(c => `<tr${c.realised ? '' : ' class="idle"'}>
+            <th scope="row">${c.n}</th>
+            <td>${rpNum(c.spend, c.est)}</td>
+            <td class="${c.realised ? 'pos' : 'none'}">${c.realised
+              ? rpSave(c.realised, c.est) : 'none yet'}</td>
+            <td>${c.potential ? rpSave(c.potential, c.est) : '<span class="none">all taken</span>'}</td>
+            <td>−${c.rate}%</td></tr>`).join('')}
+        </tbody>
+        <tfoot><tr><th scope="row">Total</th>
+          <td>${rpNum(m.spend, m.est)}</td>
+          <td class="pos">${rpSave(m.realised, m.est)}</td>
+          <td>${rpSave(m.potential, m.est)}</td>
+          <td>−${Math.round(m.cats.reduce((s, c) => s + c.rate * c.spend, 0) / Math.max(1, m.spend))}%</td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <p class="rp-foot">Realised is what the agreed rate took off invoices in
+      ${m.period.of}. <b>Still available</b> is an annual figure — it does not
+      shrink when you narrow the period, because the rate is per year.</p>
+  </section>`;
+}
+
+/* ---- report 2 · spending ---- */
+function rpSpending(m){
+  const rows = [...m.cats].sort((a, b) => b.spend - a.spend);
+  return `
+  ${rpFig(rpNum(m.spend, m.est) + ' <small>kr.</small>', `Spend, ${m.period.n.toLowerCase()}`, '', m.est)}
+  ${rpFig(rpNum(m.covered, m.est) + ' <small>kr.</small>', 'Through an agreement', 'pos', m.est)}
+  ${rpFig(rpNum(m.off, m.est) + ' <small>kr.</small>', 'Still off agreement', 'warn', m.est)}
+  ${rpFig(rpNum(m.invoices, m.est), 'Invoices read', '', m.est)}
+  §
+  <section class="rp-sec">
+    <h2>What you buy, and where it goes</h2>
+    <p>The whole ${rpNum(m.spend, m.est)} kr. as one strip, then the parts.
+      ${rpPct(m.off, m.spend)}% of it still runs outside any agreement.</p>
+    <div class="rp-viz">
+      <div class="rp-split" role="img"
+        aria-label="Spend split: ${rows.map(c => `${c.n} ${rpPct(c.spend, m.spend)} percent`).join(', ')}">
+        ${rows.map(c => `<span class="rp-split-seg" style="flex:0 0 ${(c.spend / Math.max(1, m.spend) * 100).toFixed(2)}%"
+          title="${c.n} — ${rpNum(c.spend, c.est)} kr. (${rpPct(c.spend, m.spend)}%)"></span>`).join('')}
+      </div>
+      <ul class="rp-split-legend">
+        ${rows.map(c => `<li><span class="rp-dot" aria-hidden="true"></span>
+          <span class="rp-split-n">${c.n}</span>
+          <span class="rp-split-v">${rpNum(c.spend, c.est)}</span>
+          <span class="rp-split-pct">${rpPct(c.spend, m.spend)}%</span></li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="rp-tblwrap">
+      <table class="rp-tbl">
+        <caption>Spend by category · ${m.period.n}</caption>
+        <thead><tr><th scope="col">Category</th><th scope="col">Spend, kr.</th>
+          <th scope="col">Share</th><th scope="col">On agreement, kr.</th>
+          <th scope="col">Suppliers</th><th scope="col">Invoices</th></tr></thead>
+        <tbody>
+          ${rows.map(c => {
+            const on = c.agrs.reduce((s, a) => s + a.covers, 0);
+            return `<tr${on ? '' : ' class="idle"'}>
+              <th scope="row">${c.n}</th>
+              <td>${rpNum(c.spend, c.est)}</td>
+              <td>${rpPct(c.spend, m.spend)}%</td>
+              <td class="${on ? '' : 'none'}">${on ? rpNum(on, c.est) : 'none'}</td>
+              <td>${rpNum(c.sup, c.est)}</td>
+              <td>${rpNum(c.inv, c.est)}</td></tr>`;
+          }).join('')}
+        </tbody>
+        <tfoot><tr><th scope="row">Total</th>
+          <td>${rpNum(m.spend, m.est)}</td><td>100%</td>
+          <td>${rpNum(m.covered, m.est)}</td>
+          <td>${rpNum(m.cats.reduce((s, c) => s + c.sup, 0), m.est)}</td>
+          <td>${rpNum(m.invoices, m.est)}</td></tr></tfoot>
+      </table>
+    </div>
+    <p class="rp-foot">On agreement plus off agreement equals total spend:
+      <b>${rpNum(m.covered, m.est)}</b> + <b>${rpNum(m.off, m.est)}</b> kr.</p>
+  </section>`;
+}
+
+/* ---- report 3 · agreement usage ---- */
+function rpUsage(m){
+  const rows = [...m.agrs].sort((a, b) => b.covers - a.covers);
+  const max = Math.max(1, ...rows.map(a => a.covers));
+
+  const figs = `
+    ${rpFig(fmt(m.agrs.length), 'Agreements in use', '')}
+    ${rpFig(rpNum(m.volume, m.est) + ' <small>kr.</small>', `Volume through them, ${m.period.n.toLowerCase()}`, '', m.est)}
+    ${m.est
+      ? rpFig(`${m.empties.length} <small>of ${m.cats.length}</small>`, 'Categories with no agreement', m.empties.length ? 'warn' : 'pos')
+      : rpFig(fmt(m.idle.length), 'Live but unused', m.idle.length ? 'warn' : 'pos')}
+    ${rpFig(rpSave(m.realised, m.est) + ' <small>kr.</small>', 'Earned through them', 'pos', m.est)}`;
+
+  if(!rows.length) return `${figs}§
+    <section class="rp-sec">
+      <h2>Agreement usage</h2>
+      <p>Nothing to measure yet — this report fills in as soon as invoices start
+        arriving against an agreement.</p>
+      <div class="rp-viz">
+        <div class="rp-empty">
+          <span class="rp-empty-ic">${RP_IC.idle}</span>
+          <span class="rp-empty-tx">
+            <b>No agreements are running yet</b>
+            <p>${m.cats.length} categories are waiting, worth
+              ${rpSave(m.potential, m.est)} kr. a year between them. Activate one and
+              its volume, its saving and its renewal date all show up here.</p>
+            <button type="button" class="btn btn-primary btn-sm" data-rpgo="agreements">See what is ready</button>
+          </span>
+        </div>
+      </div>
+    </section>`;
+
+  return `${figs}§
+  <section class="rp-sec">
+    <h2>How much is actually going through them</h2>
+    <p>The track is the spend each agreement covers. The fill is what has really
+      been invoiced against it — a short fill means the price is agreed but nobody
+      switched over.</p>
+    <div class="rp-viz">
+      <ul class="rp-use">
+        ${rows.map(a => `<li class="rp-use-row" style="--b:${brandOf(a.n)}">
+          <span class="rp-use-chip" aria-hidden="true">${agrLogoChip(a.n)}</span>
+          <span class="rp-use-n">${a.n} <em>· ${a.cat}</em>${a.dormant
+            ? `<span class="rp-flag">${RP_IC.warn}Unused</span>` : ''}</span>
+          <span class="rp-use-v${a.dormant ? ' idle' : ''}">${a.vol
+            ? rpNum(a.vol, a.est) + ' kr.' : 'nothing'}</span>
+          <span class="rp-track" role="img"
+            aria-label="${a.n}: ${a.vol ? rpNum(a.vol, a.est) : 'no'} kroner of ${rpNum(a.covers, a.est)} covered">
+            <i class="done" style="width:${(a.vol / max * 100).toFixed(1)}%"></i>
+          </span>
+        </li>`).join('')}
+      </ul>
+      <div class="rp-key">
+        <span><i class="done"></i>Invoiced through the agreement</span>
+        <span><i class="exp"></i>Spend it covers</span>
+      </div>
+    </div>
+
+    <div class="rp-tblwrap">
+      <table class="rp-tbl">
+        <caption>Agreement usage · ${m.period.n}</caption>
+        <thead><tr><th scope="col">Agreement</th><th scope="col">Volume, kr.</th>
+          <th scope="col">Covered spend, kr.</th><th scope="col">Used</th>
+          <th scope="col">Earning, kr.</th></tr></thead>
+        <tbody>
+          ${rows.map(a => `<tr${a.dormant ? ' class="idle"' : ''}>
+            <th scope="row">${a.n}<br><span class="muted" style="font-size:13px">${a.cat}</span></th>
+            <td>${a.vol ? rpNum(a.vol, a.est) : '<span class="none">none</span>'}</td>
+            <td>${rpNum(a.covers, a.est)}</td>
+            <td class="${a.dormant ? 'neg' : 'pos'}">${a.dormant ? '0%' : rpPct(a.vol, a.covers) + '%'}</td>
+            <td class="${a.save ? 'pos' : 'none'}">${a.save ? rpSave(a.save, a.est) : 'nothing'}</td>
+          </tr>`).join('')}
+        </tbody>
+        <tfoot><tr><th scope="row">Total</th>
+          <td>${rpNum(m.volume, m.est)}</td>
+          <td>${rpNum(m.covered, m.est)}</td>
+          <td>${rpPct(m.volume, m.covered)}%</td>
+          <td class="pos">${rpSave(m.realised, m.est)}</td></tr></tfoot>
+      </table>
+    </div>
+
+    ${m.empties.length ? `
+    <div class="rp-viz">
+      <div class="rp-empty">
+        <span class="rp-empty-ic">${RP_IC.idle}</span>
+        <span class="rp-empty-tx">
+          <b>${m.empties.length} ${m.empties.length === 1 ? 'category has' : 'categories have'} no agreement in use</b>
+          <p>${m.empties.map(c => c.n).join(', ')} — ${rpNum(m.empties.reduce((s, c) => s + c.spend, 0), m.est)} kr.
+            of spend with nothing negotiated behind it, worth
+            ${rpSave(m.empties.reduce((s, c) => s + c.potential, 0), m.est)} kr. a year.</p>
+          <button type="button" class="btn btn-secondary btn-sm" data-rpgo="agreements">See what is ready</button>
+        </span>
+      </div>
+    </div>` : ''}
+    ${m.idle.length ? `<p class="rp-foot">${m.idle.map(a => a.n).join(' and ')}
+      ${m.idle.length === 1 ? 'is' : 'are'} live at the agreed price with nothing
+      invoiced against ${m.idle.length === 1 ? 'it' : 'them'}. <b>That is the fastest
+      money on this page</b> — the rate is already signed.</p>` : ''}
+  </section>`;
+}
+
+function renderReports(){
+  const m = rpModel();
+  const body = (rpType === 'spending' ? rpSpending : rpType === 'usage' ? rpUsage : rpSavings)(m);
+  /* the builders return "figures § sections" so the figures land in the tray and
+     the sections land on the page, without either one knowing about the shell */
+  const [figs, secs] = body.split('§');
+  const typeName = (RP_TYPES.find(t => t.k === rpType) || RP_TYPES[0]).n;
+
+  $('#viewReports').innerHTML = `
+    <div class="rp-page">
+      <header class="ph">
+        <h1 id="rpT" tabindex="-1">Reports</h1>
+        <p class="ph-lead">Three readings of the same purchasing: what you saved, what
+          you spent, and how much is really flowing through the agreements you hold.</p>
+        <div class="rp-bar">
+          <div class="seg" role="group" aria-label="Report">
+            ${RP_TYPES.map(t => `<button type="button" data-rptype="${t.k}"
+              aria-pressed="${rpType === t.k}">${t.n}</button>`).join('')}
+          </div>
+          <span class="rp-bar-sp"></span>
+          <div class="rp-bar-r">
+            <div class="seg rp-per" role="group" aria-label="Period">
+              ${Object.entries(RP_PERIOD).map(([k, v]) => `<button type="button" data-rpper="${k}"
+                aria-pressed="${rpPeriod === k}">${v.n}</button>`).join('')}
+            </div>
+            <button type="button" class="btn btn-secondary rp-exp" id="rpExport">
+              ${RP_IC.dl}Export CSV — not in this prototype</button>
+          </div>
+        </div>
+      </header>
+
+      ${m.est ? `
+      <p class="rp-note">${RP_IC.info}<span>Every figure on this page is a
+        <b>benchmark estimate</b>, not your own accounting: it is the median of
+        ${ncPeers} ${(state.industry || 'similar').toLowerCase()} companies in your size band,
+        shown as a range because that is how much we actually know.
+        <b>Connect your invoices and this page reports your own numbers</b>,
+        exact to the krone.</span></p>` : ''}
+
+      <div class="rp-tray">
+        <div class="rp-figs">${figs}</div>
+      </div>
+      ${secs}
+    </div>`;
+
+  /* — wiring — */
+  $$('#viewReports [data-rptype]').forEach(b => b.addEventListener('click', () => {
+    if(rpType === b.dataset.rptype) return;
+    rpType = b.dataset.rptype; renderReports();
+    const h = $('#rpT'); if(h) h.focus();
+  }));
+  $$('#viewReports [data-rpper]').forEach(b => b.addEventListener('click', () => {
+    if(rpPeriod === b.dataset.rpper) return;
+    rpPeriod = b.dataset.rpper; renderReports();
+  }));
+  $('#rpExport').addEventListener('click', () => alert(
+    `Export is not built in this prototype.\n\nThe real thing would download the ` +
+    `${typeName.toLowerCase()} report for ${RP_PERIOD[rpPeriod].n.toLowerCase()} as CSV.`));
+  $$('#viewReports [data-rpgo]').forEach(b => b.addEventListener('click', () => {
+    navAt = b.dataset.rpgo; renderNav(); setView();
+  }));
+}
+
+/* ---------------- Areas ----------------
+   Every purchasing area on one page: the specialist's shortlist on a grey tray,
+   then all of them. ROWS *are* the areas, so nothing here is a second source of
+   truth — the money is potOf(), the agreement counts are r.agr, and a card click
+   opens that area's own page in a new tab via catTabUrl(), exactly like the
+   "other recommended categories" cards do. */
+
+/* a real brief per area, not a category label: what is actually bought and what
+   changes when the agreement is on. CAT_PITCH stays the fallback. */
+const AREA_BRIEF = {
+  mat:'Timber, board, insulation and fixings from the yards you already order from. Same delivery, same account — the price on the invoice is what changes.',
+  tool:'Power tools, hand tools, workwear and repair cover priced as one framework instead of per purchase order.',
+  fuel:'Pump discount and card fees fixed for twelve months across the whole fleet, on the stations the vans already use.',
+  off:'Paper, ink, canteen and cleaning stock — small invoices, and the steepest gap between list price and group price in the account.',
+  rent:'Lifts, excavators and site machines on a group day-rate, with the same yards and the same delivery windows.',
+  frg:'Pallet and parcel freight on negotiated tariffs rather than per-shipment list rates, including fuel surcharge.',
+  tel:'Mobile lines, broadband and IT hardware consolidated onto one contract and one monthly bill.',
+  site:'Skips, waste handling and site cleaning bundled into one agreed rate per site instead of ad-hoc call-outs.'
+};
+
+/* Fanny has no invoices of her own: her figures are the peer benchmark scaled to
+   the company size she picked, the same multiplier her dashboard uses. Bob's
+   multiplier is 1, so his numbers are untouched. */
+const areaMult   = () => newCustomer ? NC_SIZE_MULT[ncSize] : 1;
+const areaPot    = r => Math.round(potOf(r) * areaMult());
+const areaHeld   = r => Math.round(r.agr.filter(a => a.req).reduce((s, a) => s + a.save, 0) * areaMult());
+const areaEst    = r => r.agr.some(a => !a.req && isEstimated(a));
+const areaByCovers = r => [...r.agr].sort((a, b) => b.covers - a.covers);
+let areaSort = 'pot';
+
+const AR_DOC = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 3H8a2 2 0 00-2 2v14a2 2 0 002 2h8a2 2 0 002-2V7l-4-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+
+/* the shortlist: three different arguments, never the same area twice, each with
+   a line that could only be said about that area. */
+function areaPicks(){
+  const pool = live().filter(r => areaPot(r) > 0);
+  const picks = [], taken = new Set();
+  const rest = () => pool.filter(r => !taken.has(r.id));
+  const best = (score) => rest().slice().sort((a, b) => score(b) - score(a))[0];
+  const take = (r, tag, why) => { if(r){ taken.add(r.id); picks.push({r, tag, why}); } };
+
+  /* 1 · the most money left on the table */
+  const a = best(areaPot);
+  if(a) take(a, 'Biggest potential',
+    `More is left unclaimed here than in any other area you buy in, across
+     <b>${a.sup} suppliers</b> and ${fmt(a.inv)} invoices a year.`);
+
+  /* 2 · the steepest discount, regardless of size: least spend to move per krone saved */
+  const b = best(r => r.rate);
+  if(b) take(b, 'Widest gap',
+    `Advantage buys this <b>${b.rate}% under list price</b>, the steepest discount in your account, across ${b.agr.filter(x => !x.req).length} agreement${b.agr.filter(x => !x.req).length === 1 ? '' : 's'} nobody has switched on yet.`);
+
+  /* 3 · fastest to switch: the remaining money sits in one agreement, not spread
+         across four, so it is one supplier conversation rather than a project */
+  const conc = r => {
+    const off = r.agr.filter(x => !x.req);
+    if(!off.length) return 0;
+    const sum = off.reduce((s, x) => s + x.save, 0);
+    return sum ? Math.max(...off.map(x => x.save)) / sum : 0;
+  };
+  const c = best(conc);
+  if(c){
+    const off = c.agr.filter(x => !x.req).sort((x, y) => y.save - x.save);
+    take(c, 'Fastest to switch',
+      `<b>${Math.round(conc(c) * 100)}%</b> of what is left here is in one agreement — ${off[0].n}. One switch does most of the work.`);
+  }
+
+  /* 4 · only when there genuinely is something new (fwd6 injects these) */
+  /* capped at 3: the tray is a 3-up grid, so a 4th pick orphans a card on its own
+     row — and a shortlist of four is not a shortlist. */
+  const nw = rest().find(r => r.agr.some(x => x.isNew && !x.req));
+  if(nw && picks.length < 3){
+    const x = nw.agr.find(y => y.isNew && !y.req);
+    take(nw, 'New since you joined',
+      `<b>${x.n}</b> has been negotiated for you and is not switched on — <b>${saveFig(Math.round(x.save * areaMult()), isEstimated(x))} kr. a year</b> on its own.`);
+  }
+  return picks;
+}
+
+/* one card, both sections. rec = the shortlist variant, which adds the
+   specialist's line and drops the footer rule (one hairline per card, never two). */
+function areaCardHTML(r, o){
+  o = o || {};
+  const pot = areaPot(r), est = areaEst(r);
+  const on  = r.agr.filter(a => a.req).length;
+  const off = r.agr.length - on;
+  /* "typically " is dropped from the headline figure — the range plus the
+     Estimated chip already say it, and the word costs 70px the narrowest card
+     does not have. The full phrasing stays in the aria-label. */
+  const figFull = pot > 0 ? `${saveFig(pot, est)} kr.` : `+${fmt(areaHeld(r))} kr.`;
+  const fig = pot > 0
+    ? `<b>${saveFig(pot, est).replace('typically ', '')} kr.</b><em>a year still available</em>
+       ${est ? `<span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}`
+    : `<b class="held">+${fmt(areaHeld(r))} kr.</b><em>a year secured — every agreement is in use</em>`;
+  return `
+  <li><button type="button" class="ar-card${o.rec ? ' rec' : ''}" data-area="${r.id}"
+    style="--b:${brandOf(areaByCovers(r)[0].n)}"
+    aria-label="${r.n}: ${r.agr.length} agreement${r.agr.length === 1 ? '' : 's'}, ${off} available, ${pot > 0 ? `${figFull} a year still available` : `${figFull} a year secured`}. Opens the ${r.n} page in a new tab.">
+    <span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[r.id] || ''}</svg></span>
+    ${o.rec
+      ? `<span class="ar-eye">${o.tag}</span>`
+      : o.flag ? `<span class="chip chip-soft ar-flag">Recommended</span>` : ''}
+    <b class="ar-n">${r.n}</b>
+    <span class="ar-brands">${areaByCovers(r).slice(0, 3).map(a =>
+      `<span class="cv-bchip" style="--b:${brandOf(a.n)}">${agrLogoChip(a.n)}</span>`).join('')}</span>
+    <span class="ar-brief">${AREA_BRIEF[r.id] || CAT_PITCH[r.id] || ''}</span>
+    <span class="ar-fig">${fig}</span>
+    ${o.rec ? `<span class="ar-why">${o.why}</span>` : ''}
+    <span class="ar-foot">
+      <span class="ar-agr">${AR_DOC}<span><b>${r.agr.length}</b> agreement${r.agr.length === 1 ? '' : 's'} · <b>${on}</b> in use · <b>${off}</b> available</span></span>
+      <span class="ar-go">${ARROW}</span>
+    </span>
+  </button></li>`;
+}
+
+function renderAreas(focusSort){
+  const rows  = live();
+  const picks = areaPicks();
+  const rec   = new Set(picks.map(p => p.r.id));
+  const list  = rows.slice().sort(areaSort === 'name'
+    ? (a, b) => a.n.localeCompare(b.n, 'da')
+    : (a, b) => areaPot(b) - areaPot(a));
+
+  const totPot = rows.reduce((s, r) => s + areaPot(r), 0);
+  const anyEst = rows.some(areaEst);
+  const agsOn  = rows.reduce((s, r) => s + r.agr.filter(a => a.req).length, 0);
+  const agsOff = rows.reduce((s, r) => s + r.agr.filter(a => !a.req).length, 0);
+
+  $('#viewAreas').innerHTML = `
+    <div class="ar-page">
+      <header class="ph">
+        <h1 id="arT" tabindex="-1">Areas</h1>
+        <p class="ph-lead">The ${rows.length} areas your company buys in, what Advantage
+          has negotiated in each one, and what is still on the table.</p>
+        <div class="ph-figs">
+          <div class="ph-fig"><b>${rows.length}</b><span>Purchasing areas</span></div>
+          <div class="ph-fig"><b>${agsOff}</b><span>Agreements available</span></div>
+          <div class="ph-fig"><b>${agsOn}</b><span>Already in use</span></div>
+          <div class="ph-fig"><b class="pos">${saveFig(totPot, anyEst).replace('typically ', '')}<small> kr.</small></b>
+            <span>a year still available${anyEst ? ', estimated' : ''}</span></div>
+        </div>
+      </header>
+
+      <section class="ar-sec" aria-labelledby="arRecH">
+        <div class="ar-head">
+          <div class="ar-head-t">
+            <h2 id="arRecH">Recommended by your Advantage specialist</h2>
+            <p>Where a specialist would start, and why — ranked from your own figures.
+              All ${rows.length} areas are listed below.</p>
+          </div>
+        </div>
+        <div class="oc-panel">
+          <ul class="ar-rec-grid">
+            ${picks.map(p => areaCardHTML(p.r, {rec:true, tag:p.tag, why:p.why})).join('')}
+          </ul>
+        </div>
+      </section>
+
+      <section class="ar-sec" aria-labelledby="arAllH">
+        <div class="ar-head">
+          <div class="ar-head-t">
+            <h2 id="arAllH">All areas</h2>
+            <p>Savings still available, what the area covers, and how many agreements
+              it holds.</p>
+          </div>
+          <div class="ar-sort">
+            <span class="ar-sort-l" id="arSortL">Sort</span>
+            <div class="seg" role="group" aria-labelledby="arSortL">
+              <button type="button" data-sort="pot" aria-pressed="${areaSort === 'pot'}">Potential</button>
+              <button type="button" data-sort="name" aria-pressed="${areaSort === 'name'}">A–Z</button>
+            </div>
+          </div>
+        </div>
+        <ul class="ar-list">
+          ${list.map(r => areaCardHTML(r, {flag:rec.has(r.id)})).join('')}
+        </ul>
+      </section>
+    </div>`;
+
+  $$('#viewAreas [data-area]').forEach(b => b.addEventListener('click',
+    () => window.open(catTabUrl(b.dataset.area), '_blank')));
+  $$('#viewAreas [data-sort]').forEach(b => b.addEventListener('click', () => {
+    if(b.dataset.sort === areaSort) return;
+    areaSort = b.dataset.sort; renderAreas(true);
+  }));
+  /* re-rendering on sort would drop focus on the floor — put it back on the
+     control that was just pressed, not on the page title */
+  if(focusSort){ const s = $(`#viewAreas [data-sort="${areaSort}"]`); if(s) s.focus(); }
+  else setTimeout(() => { const h = $('#arT'); if(h) h.focus({preventScroll:true}); }, 50);
 }
 
 /* ---------- contact the buyer about a dormant agreement ----------
