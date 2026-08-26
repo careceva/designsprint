@@ -1,0 +1,989 @@
+<title>Two Portals, One Teardown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#F7F6F3;
+  --surface:#FFFFFF;
+  --surface-2:#FBFAF8;
+  --ink:#15171B;
+  --ink-2:#3C4149;
+  --muted:#6A7078;
+  --line:#E4E2DC;
+  --line-2:#EFEDE8;
+  --a:#2A3BD4;
+  --a-ink:#1F2CA6;
+  --a-soft:#EEF0FE;
+  --b:#A85B24;
+  --b-ink:#8A4A1C;
+  --b-soft:#FAF0E7;
+  --gain:#1B6E45;
+  --gap:#9E3520;
+  --shadow:0 1px 2px rgba(20,22,26,.05), 0 8px 24px rgba(20,22,26,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#111214;
+    --surface:#181A1D;
+    --surface-2:#1E2024;
+    --ink:#F2F1EE;
+    --ink-2:#C9C7C2;
+    --muted:#8F949B;
+    --line:#2A2D32;
+    --line-2:#232629;
+    --a:#8792FF;
+    --a-ink:#A6AEFF;
+    --a-soft:#1B2040;
+    --b:#E09B62;
+    --b-ink:#EDB183;
+    --b-soft:#32241A;
+    --gain:#5FBF8B;
+    --gap:#E28E79;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#111214;
+  --surface:#181A1D;
+  --surface-2:#1E2024;
+  --ink:#F2F1EE;
+  --ink-2:#C9C7C2;
+  --muted:#8F949B;
+  --line:#2A2D32;
+  --line-2:#232629;
+  --a:#8792FF;
+  --a-ink:#A6AEFF;
+  --a-soft:#1B2040;
+  --b:#E09B62;
+  --b-ink:#EDB183;
+  --b-soft:#32241A;
+  --gain:#5FBF8B;
+  --gap:#E28E79;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+code{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.82em;
+  background:var(--surface-2);
+  border:1px solid var(--line-2);
+  border-radius:4px;
+  padding:.08em .32em;
+  color:var(--ink-2);
+}
+a{color:var(--a-ink)}
+:focus-visible{outline:2px solid var(--a);outline-offset:2px;border-radius:3px}
+
+.shell{max-width:1520px;margin:0 auto;padding:0 28px 96px}
+
+/* ---------- masthead ---------- */
+.mast{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);
+}
+.mast h1{
+  font-size:clamp(38px,5.4vw,68px);
+  font-weight:800;letter-spacing:-.03em;line-height:1.02;
+  margin:16px 0 0;max-width:20ch;
+}
+.mast .dek{
+  margin:20px 0 0;max-width:62ch;font-size:19px;color:var(--ink-2);
+}
+
+/* ---------- finding callout ---------- */
+.finding{
+  margin:36px 0 0;
+  display:grid;grid-template-columns:minmax(0,1fr);gap:0;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-left:3px solid var(--gap);
+  border-radius:3px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.finding-in{padding:24px 28px}
+.finding h2{font-size:20px;font-weight:700;letter-spacing:-.015em;margin:8px 0 10px}
+.finding p{margin:0;color:var(--ink-2);max-width:78ch}
+.finding-evidence{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;
+}
+.ev{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+  background:var(--surface-2);border:1px solid var(--line-2);
+  border-radius:3px;padding:5px 9px;color:var(--ink-2);
+}
+
+/* ---------- side identity band ---------- */
+.ids{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:40px 0 0;
+}
+.idcard{
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:22px 24px;box-shadow:var(--shadow);border-top:3px solid var(--line);
+}
+.idcard.a{border-top-color:var(--a)}
+.idcard.b{border-top-color:var(--b)}
+.idtag{
+  display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+  padding:3px 8px;border-radius:3px;margin-bottom:12px;
+}
+.a .idtag{background:var(--a-soft);color:var(--a-ink)}
+.b .idtag{background:var(--b-soft);color:var(--b-ink)}
+.idcard h3{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.idcard .file{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);
+  margin-top:6px;word-break:break-all;
+}
+.idmeta{
+  list-style:none;padding:0;margin:16px 0 0;
+  display:grid;gap:7px;font-size:14.5px;color:var(--ink-2);
+}
+.idmeta li{display:grid;grid-template-columns:96px 1fr;gap:12px}
+.idmeta b{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  padding-top:3px;
+}
+
+/* ---------- scorecard ---------- */
+.sec-head{margin:80px 0 24px}
+.sec-head h2{
+  font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.028em;
+}
+.sec-head p{margin:12px 0 0;color:var(--ink-2);max-width:70ch}
+
+.matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface);box-shadow:var(--shadow)}
+table.matrix{border-collapse:collapse;width:100%;min-width:720px;font-family:Archivo,sans-serif}
+table.matrix th,table.matrix td{
+  text-align:left;padding:13px 18px;border-bottom:1px solid var(--line-2);
+  font-size:14px;vertical-align:middle;
+}
+table.matrix thead th{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;
+  background:var(--surface-2);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:2;
+}
+table.matrix tbody tr:last-child td{border-bottom:0}
+table.matrix td.flow{font-weight:600;color:var(--ink)}
+.win{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 8px;border-radius:3px;white-space:nowrap;
+}
+.win.a{background:var(--a-soft);color:var(--a-ink)}
+.win.b{background:var(--b-soft);color:var(--b-ink)}
+.win.tie{background:var(--surface-2);color:var(--muted);border:1px solid var(--line-2)}
+.win.none{background:transparent;color:var(--gap);border:1px dashed var(--gap)}
+td.why{color:var(--ink-2);font-size:13.5px}
+
+.tally{
+  display:flex;flex-wrap:wrap;gap:14px;margin:22px 0 0;
+}
+.tallybox{
+  flex:1 1 200px;background:var(--surface);border:1px solid var(--line);
+  border-radius:3px;padding:18px 20px;box-shadow:var(--shadow);
+}
+.tallybox .n{
+  font-family:Archivo,sans-serif;font-size:40px;font-weight:800;
+  letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;
+}
+.tallybox.a .n{color:var(--a-ink)}
+.tallybox.b .n{color:var(--b-ink)}
+.tallybox .lbl{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);margin-top:9px;
+}
+
+/* ---------- the side-by-side spine ---------- */
+.spine{margin-top:80px}
+.colhead{
+  position:sticky;top:0;z-index:20;
+  background:var(--ground);
+  padding:14px 0 12px;
+  border-bottom:1px solid var(--line);
+  display:grid;
+  grid-template-columns:220px 1fr 1fr;
+  gap:20px;
+  align-items:end;
+}
+.colhead .ch{
+  font-family:Archivo,sans-serif;font-weight:700;font-size:14px;
+  letter-spacing:-.01em;display:flex;align-items:center;gap:9px;
+}
+.dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.dot.a{background:var(--a)}
+.dot.b{background:var(--b)}
+.colhead .ch span.sub{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:400;
+  color:var(--muted);letter-spacing:.06em;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:220px 1fr 1fr;
+  gap:20px;
+  padding:34px 0 30px;
+  border-bottom:1px solid var(--line);
+  align-items:start;
+}
+.rowlabel{position:sticky;top:78px}
+.rowlabel .num{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);
+  letter-spacing:.1em;
+}
+.rowlabel h3{
+  font-size:19px;font-weight:700;letter-spacing:-.02em;margin:8px 0 0;
+}
+.rowlabel .q{
+  margin:10px 0 0;font-size:14px;color:var(--muted);font-style:italic;
+}
+
+.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:20px 22px;box-shadow:var(--shadow);
+  border-top:2px solid var(--line);
+  height:100%;
+}
+.panel.a{border-top-color:var(--a)}
+.panel.b{border-top-color:var(--b)}
+
+/* flow chain */
+.chain{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:0}
+.chain li{
+  position:relative;padding:0 0 12px 22px;
+  font-family:Archivo,sans-serif;font-size:14px;line-height:1.45;
+  color:var(--ink);
+}
+.chain li:last-child{padding-bottom:0}
+.chain li::before{
+  content:"";position:absolute;left:4px;top:6px;
+  width:7px;height:7px;border-radius:50%;background:var(--line);
+  border:1.5px solid var(--surface);
+}
+.chain li::after{
+  content:"";position:absolute;left:7.2px;top:15px;bottom:-1px;width:1px;
+  background:var(--line);
+}
+.chain li:last-child::after{display:none}
+.panel.a .chain li::before{background:var(--a)}
+.panel.b .chain li::before{background:var(--b)}
+.chain li b{font-weight:600}
+.chain li em{font-style:normal;color:var(--muted);font-size:13px}
+
+.note{
+  margin:0;font-size:14.5px;color:var(--ink-2);
+  padding-top:14px;border-top:1px solid var(--line-2);
+}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.05em;
+  padding:3px 7px;border-radius:3px;background:var(--surface-2);
+  border:1px solid var(--line-2);color:var(--muted);
+}
+.tag.only{
+  background:transparent;border-style:dashed;
+}
+.panel.a .tag.only{border-color:var(--a);color:var(--a-ink)}
+.panel.b .tag.only{border-color:var(--b);color:var(--b-ink)}
+.tag.miss{border-color:var(--gap);color:var(--gap);border-style:dashed;background:transparent}
+
+.verdict{
+  grid-column:2 / -1;
+  display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;
+  margin-top:16px;padding:14px 18px;
+  background:var(--surface-2);border:1px solid var(--line-2);
+  border-radius:3px;
+}
+.verdict .vlbl{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;padding-top:2px;white-space:nowrap;
+}
+.verdict.a .vlbl{color:var(--a-ink)}
+.verdict.b .vlbl{color:var(--b-ink)}
+.verdict.tie .vlbl{color:var(--muted)}
+.verdict p{margin:0;font-size:15px;color:var(--ink-2)}
+
+/* ---------- merge recommendation ---------- */
+.merge{
+  margin-top:80px;background:var(--surface);border:1px solid var(--line);
+  border-radius:3px;box-shadow:var(--shadow);overflow:hidden;
+}
+.merge-head{padding:28px 30px 22px;border-bottom:1px solid var(--line)}
+.merge-head h2{font-size:30px;font-weight:800;letter-spacing:-.028em}
+.merge-head p{margin:12px 0 0;color:var(--ink-2);max-width:74ch}
+.halves{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.half{padding:26px 30px}
+.half + .half{border-left:1px solid var(--line)}
+.half h4{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:600;margin-bottom:14px;
+}
+.half.a h4{color:var(--a-ink)}
+.half.b h4{color:var(--b-ink)}
+.take{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.take li{
+  font-family:Archivo,sans-serif;font-size:14.5px;line-height:1.5;
+  padding-left:18px;position:relative;color:var(--ink);
+}
+.take li::before{
+  content:"→";position:absolute;left:0;top:0;
+  font-family:"IBM Plex Mono",monospace;font-size:13px;
+}
+.half.a li::before{color:var(--a)}
+.half.b li::before{color:var(--b)}
+.take li span{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+
+.openq{
+  padding:26px 30px;border-top:1px solid var(--line);background:var(--surface-2);
+}
+.openq h4{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:600;color:var(--muted);margin-bottom:14px;
+}
+.qlist{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.qlist li{
+  font-family:Archivo,sans-serif;font-size:15.5px;font-weight:600;
+  color:var(--ink);padding-left:26px;position:relative;letter-spacing:-.01em;
+}
+.qlist li::before{
+  content:"?";position:absolute;left:0;top:-1px;
+  font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--gap);
+}
+.qlist li span{
+  display:block;font-family:"Source Serif 4",serif;font-weight:400;
+  font-size:14.5px;color:var(--ink-2);margin-top:4px;
+}
+
+footer.foot{
+  margin-top:56px;padding-top:24px;border-top:1px solid var(--line);
+  font-size:13.5px;color:var(--muted);max-width:80ch;
+}
+
+@media (max-width:1080px){
+  .row,.colhead{grid-template-columns:1fr}
+  .colhead{display:none}
+  .rowlabel{position:static}
+  .verdict{grid-column:1}
+  .panel::before{
+    content:attr(data-side);
+    display:block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+    letter-spacing:.11em;text-transform:uppercase;font-weight:600;
+    margin-bottom:12px;
+  }
+  .panel.a::before{color:var(--a-ink)}
+  .panel.b::before{color:var(--b-ink)}
+  .ids,.halves{grid-template-columns:1fr}
+  .half + .half{border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-width:640px){
+  .shell{padding:0 18px 72px}
+  .mast{padding:44px 0 32px}
+  .idmeta li{grid-template-columns:1fr;gap:2px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="shell">
+
+  <header class="mast">
+    <div class="eyebrow">Flow teardown · 26 Aug 2026</div>
+    <h1>Two portals, one teardown</h1>
+    <p class="dek">You suspected the v177 prototype and <code>advantage-main.html</code> had drifted into near-duplicates. They haven't. They are two different products, built for two different markets, that disagree about where the hard part of procurement actually is.</p>
+
+    <div class="finding">
+      <div class="finding-in">
+        <div class="eyebrow">The thing to settle first</div>
+        <h2>These aren't two versions. They're two markets.</h2>
+        <p>Before comparing a single flow: the files don't share a locale, a currency format, a supplier list, or an advisor. Any "which flow is better" conversation has to decide whether one of these is being retired — or whether both ship and the flows only need to rhyme.</p>
+        <div class="finding-evidence">
+          <span class="ev">v177 · nb-NO · Vinst · Fjordkraft, Talkmore, Pakkepost · advisor "Maja"</span>
+          <span class="ev">main · da-DK · CVR · Danske Fragtmænd, Cramo Danmark, *Erhverv ×26 · advisor "Peter"</span>
+          <span class="ev">"plain Danish or English" appears in main's own tour copy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ids">
+      <div class="idcard a">
+        <div class="idtag">Side A</div>
+        <h3>Advantage portal prototype</h3>
+        <div class="file">Advantage-prototype-v177-correct-advantage-logo (1).html</div>
+        <ul class="idmeta">
+          <li><b>Market</b><span>Norway — Vinst supplier catalogue, 56 agreements</span></li>
+          <li><b>Shape</b><span>Ten destinations in four sidebar groups. Page-per-job.</span></li>
+          <li><b>Personas</b><span>Three companies picked at login, switchable in the top bar</span></li>
+          <li><b>Thesis</b><span>Breadth. Every job a member has gets its own surface.</span></li>
+          <li><b>On disk</b><span>No — pasted only. Not found in the repo.</span></li>
+        </ul>
+      </div>
+      <div class="idcard b">
+        <div class="idtag">Side B</div>
+        <h3>Advantage — Onboarding</h3>
+        <div class="file">advantage-main.html · 612 KB · 10,785 lines</div>
+        <ul class="idmeta">
+          <li><b>Market</b><span>Denmark — CVR, kr., da-DK sorting</span></li>
+          <li><b>Shape</b><span>Six nav items, two of them hero cards. Overlay-driven.</span></li>
+          <li><b>Personas</b><span>Two — <code>loginAs('bob')</code> established, <code>loginAs('fanny')</code> new</span></li>
+          <li><b>Thesis</b><span>Depth. Follow the money all the way to a verified invoice.</span></li>
+          <li><b>On disk</b><span>Yes — token-based design system, <code>persist()</code> to localStorage</span></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <h2>Where each one actually wins</h2>
+      <p>Twelve flows, scored on which prototype takes the user further before it runs out of product. "Neither" means the flow doesn't exist on either side — those are the interesting rows.</p>
+    </div>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr><th>Flow</th><th>Stronger</th><th>Because</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="flow">Entry &amp; identity</td><td><span class="win a">v177</span></td><td class="why">Three companies including a no-bonus one, so the value story gets tested where bonus doesn't exist</td></tr>
+          <tr><td class="flow">Landing screen</td><td><span class="win b">main</span></td><td class="why">Persistent activity rail with next-best-actions beats a static "what changed" feed</td></tr>
+          <tr><td class="flow">Finding an opportunity</td><td><span class="win a">v177</span></td><td class="why">Free-text needs intake — main has no "I already know what I want" door</td></tr>
+          <tr><td class="flow">Category / area page</td><td><span class="win tie">split</span></td><td class="why">v177 qualifies the need; main separates understanding the deal from doing it</td></tr>
+          <tr><td class="flow">Supplier detail</td><td><span class="win a">v177</span></td><td class="why">Prospect and active states are genuinely different pages, not one page with things greyed out</td></tr>
+          <tr><td class="flow">Activation — the commit</td><td><span class="win b">main</span></td><td class="why">Four dated steps ending in <em>Saving verified</em>; v177 ends at a toast</td></tr>
+          <tr><td class="flow">Asking for better terms</td><td><span class="win b">main</span></td><td class="why">Price challenge + custom request exist. v177's only lever is switching supplier.</td></tr>
+          <tr><td class="flow">Proving the value</td><td><span class="win tie">split</span></td><td class="why">v177 has Cashback as a first-class page; main has exact splits, sparklines and Reports</td></tr>
+          <tr><td class="flow">Renewal &amp; drift</td><td><span class="win b">main</span></td><td class="why">Renewal calendar and dormant detection vs. asking the user to type dates into a modal</td></tr>
+          <tr><td class="flow">Getting people to use it</td><td><span class="win a">v177</span></td><td class="why">Code wallet, distribution copy, travel-policy help. main goes quiet after activation.</td></tr>
+          <tr><td class="flow">AI vs. human help</td><td><span class="win b">main</span></td><td class="why">Peter has the account open, and you can reach the group's category buyer</td></tr>
+          <tr><td class="flow">Compliance &amp; admin</td><td><span class="win a">v177</span></td><td class="why">Transparency Act pack, green options, roles table. Absent from main.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tally">
+      <div class="tallybox a">
+        <div class="n">5</div>
+        <div class="lbl">Flows v177 takes further</div>
+      </div>
+      <div class="tallybox b">
+        <div class="n">5</div>
+        <div class="lbl">Flows main takes further</div>
+      </div>
+      <div class="tallybox">
+        <div class="n">2</div>
+        <div class="lbl">Genuinely split down the middle</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="spine">
+    <div class="sec-head">
+      <h2>Flow by flow, side by side</h2>
+      <p>Each row is one journey. Read across: same job, two answers. Dashed chips mark something that exists on one side only.</p>
+    </div>
+
+    <div class="colhead">
+      <div></div>
+      <div class="ch"><span class="dot a"></span>v177 — Norway <span class="sub">breadth</span></div>
+      <div class="ch"><span class="dot b"></span>advantage-main — Denmark <span class="sub">depth</span></div>
+    </div>
+
+    <!-- 1 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 01</div>
+        <h3>Entry &amp; identity</h3>
+        <p class="q">Who am I, and what state is my account in?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Login card</b> <em>demo@advantage.no, any credentials</em></li>
+          <li><b>Choose company</b> — three profiles with their test purpose spelled out</li>
+          <li>Nordic Build (8 agreements) · Fjord Labs (0, new) · Orbit Works (10, <b>no bonus</b>)</li>
+          <li><b>Portal boots</b> — help rail opens itself on desktop</li>
+          <li>Switch company any time from the top bar</li>
+        </ul>
+        <p class="note">The no-bonus profile is the sharp idea here: it forces the value story to hold up when cashback is zero, and it hides the Cashback nav item entirely rather than showing an empty page.</p>
+        <div class="tags"><span class="tag only">3 profiles</span><span class="tag only">conditional nav</span><span class="tag">top-bar switcher</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li><b>loginAs('bob' | 'fanny')</b> <em>established vs. brand new</em></li>
+          <li><b>Welcome overlay</b> — explains estimated vs. verified before you can misread a number</li>
+          <li>New customer sees <b>ranges</b>, not figures — enforced in code by <code>saveFig</code></li>
+          <li>State persists across reloads via <code>persist()</code></li>
+          <li><code>switchPersona()</code> and <code>startOver()</code> for demoing</li>
+        </ul>
+        <p class="note">Only two personas, but the trust problem is solved structurally rather than with copy: a benchmark literally cannot render as a hard number for Fanny.</p>
+        <div class="tags"><span class="tag only">welcome overlay</span><span class="tag only">benchmark ranges in code</span><span class="tag only">persisted state</span><span class="tag miss">no multi-company</span></div>
+      </div>
+      <div class="verdict a">
+        <div class="vlbl">v177 · but steal one thing</div>
+        <p>Three companies beats two personas, and the no-bonus profile is a genuinely good test case. But main's welcome overlay is the better answer to the same anxiety v177 handles with scattered "estimated / documented" labels — and main enforces it in code where v177 relies on the writer remembering.</p>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 02</div>
+        <h3>The landing screen</h3>
+        <p class="q">What do I do this morning?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Hero</b> — 210 000 kr total value, savings/bonus ring</li>
+          <li><b>Where to unlock more value</b> — three ranked cards</li>
+          <li><b>What changed</b> — activity feed, three rows, each with a result column</li>
+          <li><b>Current offers</b> → <b>Popular agreements</b> → <b>New &amp; updated</b></li>
+          <li><b>We're here when you need us</b> — Maja and Advantage AI</li>
+        </ul>
+        <p class="note">Reads top-to-bottom like a newsletter. Six sections, all of them push. Strong on social proof — "popular", "most used", "new supplier" — which main has almost none of on the surface.</p>
+        <div class="tags"><span class="tag only">social proof rail</span><span class="tag only">offers module</span><span class="tag">static feed</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li><b>Time-aware greeting</b> — good morning / afternoon / evening</li>
+          <li><b>Situation grid</b> — saved YTD, scaled by how much of the year has elapsed</li>
+          <li><b>Opportunity by agreement</b> — every un-activated one, biggest saving first</li>
+          <li><b>Activity rail</b> (right) — next best actions on top, then the log of what we did for you</li>
+          <li>Rail collapses to a mini state and remembers it</li>
+        </ul>
+        <p class="note">Reads like an operations console. The rail is the real difference: it's persistent across pages, and it separates "what you should do" from "what already happened" — v177 merges both into one feed on one page.</p>
+        <div class="tags"><span class="tag only">persistent activity rail</span><span class="tag only">YTD scaled to date</span><span class="tag only">Weekly discovery</span></div>
+      </div>
+      <div class="verdict b">
+        <div class="vlbl">main</div>
+        <p>v177's home is better <em>marketing</em>; main's is better <em>software</em>. A returning member's question is "what needs me today", and only main answers it in a place that follows you around. v177's social proof and Offers modules are worth keeping — they just belong beside a rail, not instead of one.</p>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 03</div>
+        <h3>Finding an opportunity</h3>
+        <p class="q">I need something. Where do I start?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Needs intake</b> — free textarea: "We send ~200 packages a month and want to cut shipping costs"</li>
+          <li>Example chips prefill it; <code>interpretNeed()</code> keyword-matches to an area</li>
+          <li>Result: <b>"This looks like Shipping"</b> + supplier count + two exits</li>
+          <li>No match → route the need straight to the advisor</li>
+          <li><b>— OR —</b> six personalised opportunity cards, ranked, with kr ranges</li>
+          <li><b>All areas</b> — 25-item searchable directory</li>
+        </ul>
+        <p class="note">Two doors, explicitly labelled with an OR divider: describe your need, or browse what we picked for you. Global ⌘K search is a third door from anywhere.</p>
+        <div class="tags"><span class="tag only">free-text intake</span><span class="tag only">OR divider</span><span class="tag only">⌘K global search</span><span class="tag only">25-area directory</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li><b>Weekly discovery</b> — hero nav card, "4 new findings since Monday"</li>
+          <li><b>Areas</b> — recommended picks first, then sort by potential or name</li>
+          <li><b>Opportunity by agreement</b> on the dashboard, money-ranked</li>
+          <li><b>Ask the assistant</b> — plain-language question in the advisor pane</li>
+          <li>Opening one shows <em>how the number was worked out</em> before you commit</li>
+        </ul>
+        <p class="note">Everything is push or ranked-by-money. The assistant is the only free-text door, and it's a chat panel rather than a structured intake that produces a routed result.</p>
+        <div class="tags"><span class="tag only">Weekly discovery push</span><span class="tag">assistant chat</span><span class="tag miss">no needs intake</span><span class="tag miss">no global search</span></div>
+      </div>
+      <div class="verdict a">
+        <div class="vlbl">v177, clearly</div>
+        <p>main assumes the member arrives without an agenda and waits to be told what's valuable. Half of them arrive with a job already in hand. v177's intake plus ⌘K search covers both; main covers one. This is the single biggest structural gap in main.</p>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 04</div>
+        <h3>The category page</h3>
+        <p class="q">I'm in an area. Help me narrow it down.</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li>Breadcrumb → headline framed as a <b>commercial claim</b>, not a category name</li>
+          <li>Potential saving with an <b>ⓘ why</b> popover explaining the benchmark</li>
+          <li>Three numbered benefits — why this area is worth your attention</li>
+          <li><b>Progressive needs discovery</b> — one question at a time, four total, then a summary chip row</li>
+          <li>→ <b>ranked recommendations</b> with "best match" and a reason per supplier</li>
+          <li>→ <b>Send my request</b>, or ask Maja first</li>
+          <li>Active variant: realised savings + <b>"Are you happy with Selecta?"</b> → reason chips</li>
+        </ul>
+        <p class="note">The page is a funnel: qualify, then recommend, then request. The satisfaction check on already-used agreements is a nice touch — it treats "keep what works" as a valid outcome.</p>
+        <div class="tags"><span class="tag only">4-question qualifier</span><span class="tag only">need→rec matching</span><span class="tag only">satisfaction check</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li>Opens in a <b>new browser tab</b> (<code>catTabUrl</code>) — a workspace, not a drill-down</li>
+          <li>Five tabs: <b>Deal · Activate · AI · Advisor · Human</b></li>
+          <li>Deal explains the terms; Activate is the mechanics; the last three are routes to help</li>
+          <li>Six alternative layout styles behind the scenes — bars, brands, focus, split, story, why</li>
+          <li>Contact the group's <b>category buyer</b> from inside the tab</li>
+        </ul>
+        <p class="note">Splits two things v177 merges: understanding a deal, and acting on it. Opening in a tab means you can keep a category open while working elsewhere. But nothing qualifies your need first — you get the same page whoever you are.</p>
+        <div class="tags"><span class="tag only">opens as own tab</span><span class="tag only">Deal/Activate split</span><span class="tag only">6 layout variants</span><span class="tag miss">no qualification</span></div>
+      </div>
+      <div class="verdict tie">
+        <div class="vlbl">Split — and complementary</div>
+        <p>v177 knows <em>who's asking</em>; main knows <em>what the page is for</em>. The best version is v177's four-question qualifier feeding main's Deal/Activate tab structure — qualify once, then land on a page that separates reading from doing. Neither ships that today.</p>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 05</div>
+        <h3>Supplier detail</h3>
+        <p class="q">Is this agreement right for us?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Two genuinely different pages</b> per supplier — prospect and active</li>
+          <li>Prospect (Norwegian): benefit row → why-grid → activation card → <b>"how do you book today?"</b> → tailored setup</li>
+          <li>Prospect (Lyreco): leads with <b>"Benchmark our prices first"</b> — the honest CTA</li>
+          <li>Active: <b>agreement code VISMAKONSERN</b> + copy button + how-to-use</li>
+          <li>Active: adoption cards — distribute the code, write a travel policy, brief your travel agency</li>
+          <li>Active (Lyreco): expansion categories, each with its own "benchmark this" button</li>
+        </ul>
+        <p class="note">The strongest work in either prototype. "How do you book today?" branches the rollout advice three ways. And the code lives on the page with instructions — the one thing that decides whether an agreement gets used.</p>
+        <div class="tags"><span class="tag only">prospect vs active pages</span><span class="tag only">agreement code + how-to</span><span class="tag only">adoption cards</span><span class="tag only">benchmark-first CTA</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li>Catalogue filters: <b>All · Active for you · Not on agreement yet</b></li>
+          <li>Sort: <b>Curated · Biggest saving · A–Z</b></li>
+          <li>Supplier hero, stats, tools, why, and <b>matches</b> to your other agreements</li>
+          <li><b>Member count</b> — how many members are already on this deal</li>
+          <li><code>peerProfile</code> — what companies like yours do here</li>
+        </ul>
+        <p class="note">Better at <em>comparison</em> — curated sort and peer profiles are things v177 doesn't have. Weaker at the moment after yes: no code surface, no rollout advice, no distinct active state.</p>
+        <div class="tags"><span class="tag only">member count</span><span class="tag only">peer profile</span><span class="tag only">curated sort</span><span class="tag miss">no code wallet</span></div>
+      </div>
+      <div class="verdict a">
+        <div class="vlbl">v177</div>
+        <p>main helps you choose; v177 helps you choose <em>and then actually use it</em>. Keep main's member count and peer profile — social proof from real member numbers is more persuasive than v177's "Popular" badge — but the prospect/active split and the code wallet are the reference implementation.</p>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 06</div>
+        <h3>Activation — the commit</h3>
+        <p class="q">I said yes. Now what happens?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Request agreement code</b> — one supplier at a time</li>
+          <li>State flips to <code>requested</code>; card becomes "being prepared"</li>
+          <li>Toast confirms; an Inbox thread appears</li>
+          <li>Inbox shows request sent to N suppliers with per-supplier response status</li>
+          <li>When ready: code appears in <b>Resources → Access wallet</b></li>
+        </ul>
+        <p class="note">The request is tracked and the destination is clear. What's missing is the middle: no dates, no expectations, and nothing ever tells you the saving actually landed.</p>
+        <div class="tags"><span class="tag only">per-supplier response status</span><span class="tag miss">no dates</span><span class="tag miss">no verification step</span><span class="tag miss">one at a time</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li><b>Select several</b> agreements, activate as a batch</li>
+          <li>Funnel screen: "Sending 3 requests…" with a spinner, then done</li>
+          <li>Four-step stepper, each step carrying a <b>real date</b>:</li>
+          <li><b>1 · Request sent</b> — today. "Nothing changes on your side yet."</li>
+          <li><b>2 · Supplier confirms</b> — within 5 working days</li>
+          <li><b>3 · New price is live</b> — ~2 weeks</li>
+          <li><b>4 · Saving verified</b> — "we read the next invoice and check the rate matches"</li>
+        </ul>
+        <p class="note">This is the best flow in either file. Step 4 is the whole product: it closes the loop between a promise and an invoice, and it's the only place either prototype admits that activation isn't the same as saving.</p>
+        <div class="tags"><span class="tag only">batch activation</span><span class="tag only">dated 4-step stepper</span><span class="tag only">invoice verification</span></div>
+      </div>
+      <div class="verdict b">
+        <div class="vlbl">main, decisively</div>
+        <p>v177 treats activation as a form submission. main treats it as a two-week process with a verifiable end. Everything in v177's Value page is a claim until something like step 4 exists — and v177 has no equivalent anywhere.</p>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 07</div>
+        <h3>Asking for better terms</h3>
+        <p class="q">The price still isn't right. What are my options?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li>Message the advisor with a prefilled draft</li>
+          <li>Or <b>request quotes</b> from several suppliers on the same brief</li>
+          <li>Upload an invoice so the comparison is grounded</li>
+          <li>That's the full set of levers</li>
+        </ul>
+        <p class="note">Every route is "switch, or get another quote". There is no way to push back on a supplier you already use and intend to keep.</p>
+        <div class="tags"><span class="tag only">multi-supplier quote request</span><span class="tag miss">no price challenge</span><span class="tag miss">no terms negotiation</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li><b>Price challenge</b> — <code>openPriceChallenge(r, a)</code></li>
+          <li>Pick a reason (competitor), name the rival and their price</li>
+          <li>AI assembles <b>three assertions from data you already hold</b>: annual spend, invoice count, member count, effective rate</li>
+          <li>→ drafted challenge letter → review → send</li>
+          <li><b>Custom request</b> — choose terms (delivery, payment…), pick recipients, add a note, get a draft</li>
+        </ul>
+        <p class="note">Two distinct negotiation instruments. The price challenge is notable for what it doesn't do: it invents nothing. Every claim in the draft traces to something the app can actually prove.</p>
+        <div class="tags"><span class="tag only">price challenge</span><span class="tag only">evidence from held data</span><span class="tag only">custom terms request</span></div>
+      </div>
+      <div class="verdict b">
+        <div class="vlbl">main — no contest</div>
+        <p>This is a whole product capability v177 doesn't have. A buying group's leverage is collective volume, and main is the only one that turns that volume into a sentence you can send a supplier. Port both flows.</p>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 08</div>
+        <h3>Proving the value</h3>
+        <p class="q">What has this membership actually returned?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Value</b> page — period selector: 12 months, YTD, last year, custom</li>
+          <li>Three KPIs with trend pills vs. the same period last year</li>
+          <li>Ring (savings vs. bonus) + category contribution bars</li>
+          <li>Category accordion → open one → supplier rows with savings / bonus / spend</li>
+          <li><b>Cashback</b> — its own page: total, split by year, accruing vs. in payout, per-supplier share bars</li>
+          <li>Nav item disappears entirely for the no-bonus company</li>
+        </ul>
+        <p class="note">Cashback as a first-class destination is right — members feel a payout differently from a discount. The period selector and trend pills are also better than main's equivalent.</p>
+        <div class="tags"><span class="tag only">Cashback page</span><span class="tag only">period selector</span><span class="tag only">trend vs. last year</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li><b>Situation grid</b> on the dashboard — saved YTD from invoices</li>
+          <li><b>Savings overlay</b> — <code>splitExact</code>, <code>monthlyShares</code>, sparklines</li>
+          <li><b>Reports</b> — three report types: savings · spending · usage</li>
+          <li>Figures split into a tray, sections onto the page</li>
+          <li><b>Calculator</b> for modelling a scenario before committing</li>
+        </ul>
+        <p class="note">More analytically serious — exact splits, month-by-month shares, a usage report that asks whether agreements are being used rather than just whether they exist. But bonus is folded into "value", not surfaced as its own thing.</p>
+        <div class="tags"><span class="tag only">usage report</span><span class="tag only">exact monthly splits</span><span class="tag only">scenario calculator</span><span class="tag miss">no cashback page</span></div>
+      </div>
+      <div class="verdict tie">
+        <div class="vlbl">Split</div>
+        <p>v177 wins the <em>framing</em> — cashback deserves its own page, and hiding it when it's zero is exactly right. main wins the <em>substance</em> — a usage report is the one thing that catches an agreement nobody's ordering through. Take the frame from A and the reports from B.</p>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 09</div>
+        <h3>Renewal &amp; drift</h3>
+        <p class="q">What's about to expire, and what quietly stopped working?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>"Agreements to review"</b> strip on the Agreements page</li>
+          <li>Rows show "Agreement period — <b>not registered</b>"</li>
+          <li>→ <b>Add period</b> modal: start date, end/renewal date, notice period</li>
+          <li>Then Advantage can remind you</li>
+        </ul>
+        <p class="note">Honest about the gap, but the work is the member's. Nothing detects drift on its own — an agreement that's live and unused looks identical to one that's live and working.</p>
+        <div class="tags"><span class="tag only">notice-period field</span><span class="tag miss">manual entry</span><span class="tag miss">no drift detection</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li><b>Renewal calendar</b> — month and year views, per-agreement renewal dates</li>
+          <li><b>Dormant detection</b> — Hilti Erhverv and Lyreco Erhverv flagged <b>"Live but unused"</b></li>
+          <li><code>agQuietDays</code> — days since the last invoice came through that agreement</li>
+          <li>Nav badge counts activated agreements that still need something</li>
+          <li>Three portfolio views: <b>basket · compare · impact</b></li>
+        </ul>
+        <p class="note">"Live but unused" is the sharpest diagnosis in either prototype — a signed agreement that nobody orders through is the most common and most invisible failure in a buying group, and only main names it.</p>
+        <div class="tags"><span class="tag only">renewal calendar</span><span class="tag only">"Live but unused"</span><span class="tag only">quiet-days counter</span><span class="tag only">live nav badge</span></div>
+      </div>
+      <div class="verdict b">
+        <div class="vlbl">main</div>
+        <p>v177 asks the member to do the noticing. main does the noticing and then tells them. Combine: keep v177's notice-period field (main has renewal dates but no notice window, which is the number that actually matters for switching), and adopt main's dormancy flag wholesale.</p>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 10</div>
+        <h3>Getting people to use it</h3>
+        <p class="q">The agreement is live. How does it reach 40 employees?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Access wallet</b> — the code, big, with a copy button</li>
+          <li><b>"How to use"</b> collapsible: copy the code → add to each traveller profile → book</li>
+          <li><b>Company discount page URL</b> employees can bookmark</li>
+          <li>Adoption cards: create employee instructions · draft a travel policy with AI · brief the travel agency</li>
+          <li><b>Team &amp; access</b> — roles, permissions, pending invites</li>
+        </ul>
+        <p class="note">Treats adoption as a distinct job with its own surfaces. The bookmarkable employee page is the pragmatic bit — most staff will never log into a procurement portal.</p>
+        <div class="tags"><span class="tag only">access wallet</span><span class="tag only">employee URL</span><span class="tag only">policy drafting</span><span class="tag only">roles &amp; invites</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li>Usage appears as a <b>Reports</b> type — you can see adoption is low</li>
+          <li>Dormancy flag tells you an agreement isn't being ordered through</li>
+          <li>…and then the product stops</li>
+        </ul>
+        <p class="note">main is excellent at <em>detecting</em> the adoption problem and has no tooling to <em>fix</em> it. There is no code surface, no employee-facing artifact, and no user management.</p>
+        <div class="tags"><span class="tag only">usage detection</span><span class="tag miss">no code surface</span><span class="tag miss">no employee artifact</span><span class="tag miss">no team management</span></div>
+      </div>
+      <div class="verdict a">
+        <div class="vlbl">v177</div>
+        <p>The two sides are the halves of one loop: main measures adoption, v177 drives it. Shipping either alone means you either can't see the problem or can't act on it. This pairing is the most obviously additive in the whole teardown.</p>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 11</div>
+        <h3>AI vs. human help</h3>
+        <p class="q">I'm stuck. Who helps, and how fast?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Docked help rail</b> — reserves page width on desktop rather than covering content</li>
+          <li>Two tabs: <b>AI advisor</b> (available now) and <b>Maja</b> (your advisor)</li>
+          <li>Shows the <b>page you're on</b> as context; prompts change per page</li>
+          <li><b>Services</b> page — explicit channel choice, then seven named jobs</li>
+          <li>Minimise to a floating pill</li>
+        </ul>
+        <p class="note">Better at <em>presence</em> — one rail, everywhere, context-aware, and it doesn't obscure the thing you're asking about. Weaker at specificity: Maja is a stock advisor with no visible knowledge of your account.</p>
+        <div class="tags"><span class="tag only">docked, reserves width</span><span class="tag only">per-page prompts</span><span class="tag only">7 named jobs</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li>Advisor pane with <b>AI</b> and <b>Peter</b> tabs</li>
+          <li>Tour copy: <em>"Peter has your account open and answers in the same panel"</em></li>
+          <li><b>Contact buyer</b> — reach the group's <b>category buyer</b>, not a generic advisor</li>
+          <li><b>Book an advisor meeting</b></li>
+          <li>Open requests are tracked <b>inside the pane</b></li>
+        </ul>
+        <p class="note">Better at <em>who</em>. Three distinct humans with different jobs — your advisor, the category buyer who negotiated the deal, a booked meeting — and the pane carries your live requests so the conversation has state.</p>
+        <div class="tags"><span class="tag only">category buyer route</span><span class="tag only">meeting booking</span><span class="tag only">requests in pane</span></div>
+      </div>
+      <div class="verdict b">
+        <div class="vlbl">main · with v177's chrome</div>
+        <p>"Talk to the buyer who negotiated this" is a far stronger promise than "message Maja", and requests-in-the-pane gives the conversation memory. But v177's docked rail is the better container — take main's cast of humans and put them in v177's frame.</p>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="row">
+      <div class="rowlabel">
+        <div class="num">Flow 12</div>
+        <h3>Data, compliance &amp; admin</h3>
+        <p class="q">What do you need from me, and what do you give me back?</p>
+      </div>
+      <div class="panel a" data-side="v177 — Norway">
+        <ul class="chain">
+          <li><b>Data</b> — three routes: connect ERP · upload spend report · upload invoices</li>
+          <li>Status list showing what's connected and what isn't</li>
+          <li>Explainer: without spend data vs. with it</li>
+          <li><b>Resources → Transparency Act</b> — due-diligence responses collected per supplier, searchable, downloadable</li>
+          <li><b>Resources → Green options</b> — reuse, waste, origin-guaranteed power</li>
+          <li><b>Team &amp; access</b> — three roles, table, invite flow</li>
+        </ul>
+        <p class="note">The Transparency Act pack is the standout: a legal obligation the group can discharge on the member's behalf. It's a reason to be a member that has nothing to do with price.</p>
+        <div class="tags"><span class="tag only">Transparency Act pack</span><span class="tag only">green options</span><span class="tag only">roles table</span><span class="tag only">3 data routes</span></div>
+      </div>
+      <div class="panel b" data-side="advantage-main — Denmark">
+        <ul class="chain">
+          <li><b>Data centre</b> overlay + an ERP status pill in the shell</li>
+          <li>Connecting accounting data is the hinge of the whole new-customer story</li>
+          <li>Benchmarks become real figures only after connection</li>
+          <li>Notes and notification preferences</li>
+          <li>No compliance surface. No user management.</li>
+        </ul>
+        <p class="note">Tighter and better-motivated — the ERP pill is always visible and the payoff is explicit, so connecting feels like unlocking the product rather than filing paperwork. But the surface area is much smaller.</p>
+        <div class="tags"><span class="tag only">persistent ERP pill</span><span class="tag only">unlock framing</span><span class="tag miss">no compliance</span><span class="tag miss">no sustainability</span><span class="tag miss">no roles</span></div>
+      </div>
+      <div class="verdict a">
+        <div class="vlbl">v177</div>
+        <p>main motivates the data connection better; v177 gives back far more once you've connected. Compliance and sustainability are non-price reasons to stay a member — worth keeping even if they never move a kroner of savings.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="merge">
+    <div class="merge-head">
+      <div class="eyebrow">The read</div>
+      <h2>They're not competing. They're two halves of one product.</h2>
+      <p>v177 owns the front half — discover, qualify, choose, get access, get your colleagues using it. main owns the back half — commit, negotiate, verify, renew, catch drift. Almost nothing overlaps in a way that forces a choice, which is why they felt similar: they're both good, in different places.</p>
+    </div>
+    <div class="halves">
+      <div class="half a">
+        <h4>Take from v177</h4>
+        <ul class="take">
+          <li>Free-text needs intake + ⌘K search<span>The missing "I already know what I want" door</span></li>
+          <li>Progressive qualifier on category pages<span>Four questions, one at a time, feeding real recommendations</span></li>
+          <li>Prospect vs. active supplier pages<span>Two different jobs, two different pages</span></li>
+          <li>Access wallet, employee URL, adoption cards<span>The only tooling that turns a signed deal into orders</span></li>
+          <li>Cashback as its own page, hidden when zero<span>Members feel a payout differently from a discount</span></li>
+          <li>Transparency Act pack + green options<span>Reasons to stay a member that aren't price</span></li>
+          <li>Team &amp; access, and the docked help rail<span>Table stakes, and the better container for help</span></li>
+        </ul>
+      </div>
+      <div class="half b">
+        <h4>Take from main</h4>
+        <ul class="take">
+          <li>The dated four-step activation stepper<span>Ending in "Saving verified" — read the next invoice</span></li>
+          <li>Price challenge with evidence from held data<span>Turns collective volume into a sendable sentence</span></li>
+          <li>Custom request — terms, recipients, draft<span>Push back without switching supplier</span></li>
+          <li>Renewal calendar + "Live but unused"<span>Names the most invisible failure in a buying group</span></li>
+          <li>Persistent activity rail<span>Next best actions separated from the log, on every page</span></li>
+          <li>Welcome overlay + benchmark ranges in code<span>A benchmark that structurally cannot read as a real figure</span></li>
+          <li>Category buyer route + requests in the pane<span>A specific human, and a conversation with state</span></li>
+          <li>Member count and peer profile<span>Real social proof, not a "Popular" badge</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="openq">
+      <h4>What we need to decide before merging anything</h4>
+      <ul class="qlist">
+        <li>Are both markets shipping, or is one lineage being retired?
+          <span>This is upstream of every other call. A shared codebase with locale switching is a very different build from two portals that merely share patterns — and right now they share no data model, currency format, supplier list, or advisor.</span></li>
+        <li>Is our core promise "find you a better deal" or "make sure the deal you signed is working"?
+          <span>v177 is built for the first, main for the second. The merged IA has to lead with one. My read: main's promise is the defensible one — anyone can publish a discount list, but verifying it landed is the thing a member can't do alone.</span></li>
+        <li>Ten destinations or six?
+          <span>v177's page-per-job is more discoverable but thinner per page; main's six-item rail with overlays is denser but hides a lot. Merging both feature sets into v177's IA gives ~14 destinations, which is too many.</span></li>
+        <li>Does activation stay one-at-a-time, or become a batch?
+          <span>main's batch funnel is faster, but v177's per-supplier response tracking is what a member actually watches afterwards. These need reconciling, not just picking.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p><b>Method.</b> <code>advantage-main.html</code> read directly from the repo (612 KB, 10,785 lines) — nav array, <code>setView</code>, <code>ACT_STEPS</code>, <code>agStage</code>/<code>agDormant</code>, <code>tourScript</code>, all twelve <code>open*</code> overlay flows, and the persona logic. The v177 prototype was read from the pasted document; it is <b>not present in this repo</b> under any name — no file matches on <code>v177</code>, <code>prototypeEntry</code>, <code>advantage-wordmark</code>, or the title "portal prototype". Save it into the repo and I can put both in a two-pane harness for a live click-through.</p>
+  </footer>
+
+</div>
