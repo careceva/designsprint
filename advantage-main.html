@@ -791,6 +791,10 @@ body.in-app .flow{display:none}
 .apx svg{width:16px;height:16px}
 .ap-b{flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 20px}
 /* the subject the panel was opened about */
+/* [hidden] cannot win against display:flex, so the empty subject chip painted as a
+   bare ice-blue bar whenever nothing had been asked about. Third instance of this
+   trap in the file — see .nc-activity[hidden] and .page[hidden]. */
+.ap-subj[hidden]{display:none!important}
 .ap-subj{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s4);
   padding:var(--s3) var(--s4);border-radius:var(--rounded-lg);
   background:var(--brand-ice);border:1px solid #bdd7ff}
@@ -1153,6 +1157,11 @@ body.in-app .flow{display:none}
 /* the card IS the grid — no inner containers. The tile spans every row on the left,
    the text stacks in the middle, the save toggle holds the top-right corner. */
 .agd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  grid-template-areas:
+    "tile eye  fav"
+    "tile name fav"
+    "tile fig  fig"
+    "why  why  why";
   column-gap:var(--s4);align-items:start;
   padding:var(--s5,20px);cursor:pointer;
   border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
@@ -1384,6 +1393,11 @@ body.in-app .flow{display:none}
    card exists to demonstrate. */
 .supd{display:grid;
   grid-template-columns:auto minmax(0,1fr) auto auto auto;
+  grid-template-areas:
+    "tile eye  tagA tagB fav"
+    "tile name name name fav"
+    "tile fig  fig  fig  fig"
+    "why  why  why  why  why";
   column-gap:var(--s4);align-items:start;
   padding:var(--s5,20px);cursor:pointer;
   border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
@@ -1627,6 +1641,7 @@ body.in-app .flow{display:none}
   color:var(--general-muted-foreground)}
 .bc-h h2{font-size:var(--text-2xl);letter-spacing:-.8px}
 /* stepper: progress plus random access across the eight cases */
+.bc-steps[hidden]{display:none!important}
 .bc-steps{flex:0 0 auto;display:flex;align-items:center;gap:var(--s2);
   padding:var(--s4) var(--s8);border-bottom:1px solid var(--hairline);background:#fcfcfd}
 .bc-steps .segs{flex:1;display:flex;gap:4px;min-width:0}
@@ -3316,36 +3331,25 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
    Flat: no inner wrappers, every child placed by area. gap:0 on the rows —
    the vertical rhythm is set per group below, which is what keeps the head
    (icon/label/name) reading as one unit and the money as another. */
-.ar-card{position:relative;display:grid;width:100%;text-align:left;cursor:pointer;
-  grid-template-columns:auto minmax(0,1fr) auto;
-  row-gap:0;column-gap:var(--s3);align-items:start;
-  padding:var(--s6);border:1px solid transparent;border-radius:var(--rounded-lg);
-  background:var(--surface);box-shadow:var(--shadow-xs);
-  --tint:rgb(var(--b,33 112 237)/.06);
-  transition:border-color var(--t-fast),box-shadow var(--t-fast),
-    background var(--t-fast),transform .12s ease}
 /* on the grey tray the white edge IS the boundary; on the white page it needs a rule */
-.ar-list .ar-card{border-color:var(--card-stroke)}
-.ar-card:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
+.ar-list .ar-card:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
   box-shadow:var(--shadow-lg);transform:translateY(-2px)}
 .ar-list .ar-card:hover{border-color:var(--card-stroke-hover)}
 .ar-card:active{transform:none}
 .ar-card:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
 @container page (max-width:430px){
-  .ar-card{padding:var(--s4);grid-template-columns:auto minmax(0,1fr);
-    grid-template-areas:"ic eye" "ic name" "brief brief" "fig fig" "why why" "foot foot"}
-  .ar-brands{display:none}
+    .ar-brands{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   .ar-card:hover{transform:none}
   .ar-card:hover .ar-go{transform:none}
 }
 
-.ar-ic{grid-area:ic;width:38px;height:38px;display:grid;place-items:center;
+.ar-ic{width:38px;height:38px;display:grid;place-items:center;
   border-radius:var(--rounded-md);background:var(--brand-ice);color:var(--general-primary)}
 .ar-ic svg{width:20px;height:20px}
 /* the reason label and the name are a 1px pair, the tightest group on the card */
-.ar-eye{grid-area:eye;align-self:center;font-size:12px;font-weight:700;
+.ar-eye{align-self:center;font-size:12px;font-weight:700;
   letter-spacing:.07em;text-transform:uppercase;color:var(--general-primary)}
 /* the logo stack, laid out side by side (not overlapped): at 26px the fallback
    initials are two letters wide and an overlap slices the second one off */
@@ -3469,6 +3473,27 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   letter-spacing:.09em;text-transform:uppercase;color:var(--general-primary)}
 .ar-meta{margin-top:var(--s3);font-size:var(--text-sm);color:var(--general-muted-foreground)}
 .ar-meta b{font-weight:700;color:var(--general-foreground)}
+
+/* ---------- suppliers: one rhythm ----------
+   The page had four rows of controls stacked at four different gaps, and the
+   result bar sat flush against the last of them. Two rows now, one step between
+   every block. */
+.sup-card{grid-template-columns:none}
+.sup-card .agc-logo,.sup-card .sup-tile{width:56px;height:56px}
+.sup-tools{gap:var(--s3)!important;margin-top:var(--s6);
+  padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.sup-tools-row{gap:var(--s2)}
+/* one row, scrolled — seventeen chips wrapping was two rows of chrome before any
+   content. The bar is hidden; wheel, trackpad and touch all still move it. */
+.sup-cats{display:flex;flex-direction:row!important;flex-wrap:nowrap!important;gap:6px;
+  overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
+  padding-bottom:2px;margin:0 -3px;padding-left:3px;padding-right:3px}
+.sup-cats::-webkit-scrollbar{display:none}
+.sup-cats .agc-pill{flex:0 0 auto}
+.agc-pill.sm{height:32px;padding:0 var(--s3);font-size:13px;font-weight:600}
+.sup-bar{margin-top:var(--s4)}
+.sup-sec + .sup-sec{margin-top:var(--s12)}
+.sup-sec .sh-head{margin-bottom:var(--s4)}
 
 /* ---------- the agreement catalogue: less text, findable ----------
    The old card carried a full sentence of argument per agreement. Twenty-four of
@@ -3617,6 +3642,13 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .agy{--tint:rgb(var(--b,33 112 237)/.06);--tint-edge:rgb(var(--b,33 112 237)/.2);
   display:grid;
   grid-template-columns:auto minmax(0,1fr) minmax(216px,264px);
+  grid-template-areas:
+    "tile eye  cal"
+    "tile name cal"
+    "tile fig  cal"
+    "flag flag cal"
+    "step step cal"
+    "act  act  cal";
   column-gap:var(--s6);align-items:start;
   padding:var(--s6);border:1px solid transparent;border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f;
@@ -3762,6 +3794,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .np-h .npgear:hover{background:var(--general-muted);color:var(--general-foreground)}
 .np-h .npgear svg{width:16px;height:16px}
 .np-h .npgear[aria-pressed="true"]{background:var(--general-secondary);color:var(--general-primary)}
+.np-prefs[hidden]{display:none!important}
 .np-prefs{padding:var(--s4);border-top:1px solid var(--hairline);background:#fcfcfd;
   display:flex;flex-direction:column;gap:var(--s5,20px)}
 .np-prefs h4{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
@@ -6719,25 +6752,27 @@ function supWhyHTML(m){
 function supCardHTML(c){
   const m = supMeta(c);
   const brandName = m.hit ? m.hit.a.n : m.name;
-  /* where the card goes: the matched agreement on its category page, else the
-     category page, else the data centre — which is where a category we have no
-     invoices for gets resolved */
   const dest = m.hit ? `data-cat="${m.row.id}" data-idx="${m.hit.i}"`
              : m.known ? `data-cat="${m.row.id}"` : `data-dc="1"`;
-  const aria = m.hit
-    ? `${c.n}, ${m.row.n}: ${saveFig(m.save, m.est)} kroner a year`
-    : `${c.n}, ${c.cat}: ${m.pct}% average saving`;
+  /* One status, one benefit, one way in — the same card the agreement catalogue
+     uses. The "why" sentence and the second badge are gone: eighteen of those is
+     a page you read rather than a list you scan. */
+  const benefit = m.hit
+    ? `${Math.round(m.hit.a.save / m.hit.a.covers * 100)}% average savings`
+    : `${m.pct}% average savings`;
   return `
-    <li class="supd${m.onAgr ? ' live' : ''}" ${dest} tabindex="0" role="button"
-      aria-label="${aria}" style="--b:${brandOf(brandName)}">
+    <li class="aga sup-card" ${dest} tabindex="0" role="button"
+      aria-label="${c.n}, ${c.cat || 'Advantage agreement'}: ${benefit}"
+      style="--b:${brandOf(brandName)}">
       ${supTile(m)}
-      <span class="supd-eye">${c.cat || 'Advantage agreement'}</span>
-      <b class="supd-name">${c.n}</b>
-      ${supTagA(m)}
-      ${supTagB(m)}
-      ${supFigHTML(m)}
-      ${supWhyHTML(m)}
-      ${agrFav(c.n)}
+      <span class="aga-st${m.onAgr ? ' on' : ''}">${m.onAgr ? 'Active for you' : 'Available'}</span>
+      <b class="aga-n">${c.n}</b>
+      <span class="aga-cat">${c.cat || 'Advantage agreement'}</span>
+      <span class="aga-ben">
+        <span>Advantage benefit</span>
+        <b>${benefit}</b>
+      </span>
+      <span class="aga-go">Open agreement ${ARROW}</span>
     </li>`;
 }
 
@@ -6749,13 +6784,13 @@ let supQuery = '', supCat = 'all', supStatus = 'all', supSort = 'curated';
 
 const SUP_CATS = () => [...new Set(SUPPLIERS.flatMap(sh => sh.cards.map(c => c.cat)).filter(Boolean))];
 
+/* three, not six: "New this quarter" and "Most used" are exactly what the curated
+   shelves below already are, and "In a category you buy" is what the card badge
+   says. Six pills wrapped onto a second row to offer two duplicates. */
 const SUP_STATUS = [
-  {id:'all',   l:'All suppliers'},
-  {id:'off',   l:'Not on agreement yet'},
-  {id:'on',    l:'Active for you'},
-  {id:'known', l:'In a category you buy'},
-  {id:'new',   l:'New this quarter'},
-  {id:'pop',   l:'Most used'}
+  {id:'all', l:'All suppliers'},
+  {id:'on',  l:'Active for you'},
+  {id:'off', l:'Not on agreement yet'}
 ];
 const SUP_SORTS = [
   {id:'curated', l:'Curated'},
@@ -6823,8 +6858,6 @@ function renderSupBar(count){
   if(supQuery.trim()) toks.push({k:'q',   l:`“${supQuery.trim()}”`});
   if(supCat !== 'all')    toks.push({k:'cat',  l:supCat});
   if(supStatus !== 'all') toks.push({k:'st',   l:(SUP_STATUS.find(s => s.id === supStatus) || {}).l});
-  if(supSort !== 'curated') toks.push({k:'sort', l:`Sorted: ${
-    (SUP_SORTS.find(s => s.id === supSort) || {}).l}`});
   bar.innerHTML = `
     <span><b>${count} supplier${count === 1 ? '' : 's'}</b></span>
     <span class="sup-bar-sep" aria-hidden="true"></span>
@@ -6835,12 +6868,12 @@ function renderSupBar(count){
 
 /* ---------- body ---------- */
 const supSectionHTML = (eye, title, note, cards, id) => `
-  <section class="sup-sec" aria-labelledby="sh-${id}">
-    <div class="sh-head">
+  <section class="sup-sec"${title ? ` aria-labelledby="sh-${id}"` : ' aria-label="Results"'}>
+    ${!title ? '' : `<div class="sh-head">
       <div class="sh-eyebrow">${eye.spark ? SPARK : ''}${eye.t}</div>
       <h2 id="sh-${id}">${title}</h2>
       ${note ? `<p class="sh-note">${note}</p>` : ''}
-    </div>
+    </div>`}
     <ol class="supd-grid">${cards.map(supCardHTML).join('')}</ol>
   </section>`;
 
@@ -6853,15 +6886,14 @@ function renderSupBody(){
     /* browse mode: the three curated shelves, intact — same eyebrow, title, note
        and cards, stacked instead of scrolled sideways */
     body.innerHTML = SUPPLIERS.map(sh =>
-      supSectionHTML({t:sh.eye, spark:sh.spark}, sh.title(), sh.note, sh.cards, sh.id)).join('');
+      supSectionHTML({t:sh.eye, spark:sh.spark}, sh.title(), '', sh.cards, sh.id)).join('');
   }else{
     const hits = supMatches();
     count = hits.length;
     body.innerHTML = hits.length
       ? supSectionHTML({t:'Results'},
           `${hits.length} supplier${hits.length === 1 ? '' : 's'}`,
-          supSort === 'save' ? 'Biggest annual saving first, on the spend we can see.'
-          : supSort === 'az' ? 'Alphabetical.' : '', hits, 'hits')
+          '', hits, 'hits')
       : `
       <div class="sup-empty">
         <span class="sup-empty-ic" aria-hidden="true">${SUP_GLASS}</span>
@@ -6884,8 +6916,6 @@ function renderSupBody(){
     b.setAttribute('aria-pressed', String(b.dataset.supcat === supCat)));
   $$('#viewSup [data-supstatus]').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.supstatus === supStatus)));
-  $$('#viewSup [data-supsort]').forEach(b =>
-    b.setAttribute('aria-pressed', String(b.dataset.supsort === supSort)));
   $('#supQX').hidden = !supQuery;
   renderSupBar(count);
   wireAgrFav('#supBody');
@@ -6897,8 +6927,6 @@ function renderSupTools(){
     b.setAttribute('aria-pressed', String(b.dataset.supcat === supCat)));
   $$('#viewSup [data-supstatus]').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.supstatus === supStatus)));
-  $$('#viewSup [data-supsort]').forEach(b =>
-    b.setAttribute('aria-pressed', String(b.dataset.supsort === supSort)));
 }
 
 function renderSup(){
@@ -6909,12 +6937,7 @@ function renderSup(){
     <header class="ph">
       <div>
         <h1>Suppliers</h1>
-        <p class="ph-lead">${newCustomer
-          ? `Every supplier with an Advantage agreement, read against what companies
-             your size typically buy. Connect your invoices and these become your
-             own numbers.`
-          : `Every supplier with an Advantage agreement, read against your own
-             invoices — so each card says what it is worth to you, not in general.`}</p>
+        <p class="ph-lead">${newCustomer ? `Every supplier with an Advantage agreement, priced against what companies your size buy.` : `Every supplier with an Advantage agreement, priced against your own invoices.`}</p>
       </div>
       ${supHeroHTML()}
       <div class="sup-tools">
@@ -6922,32 +6945,24 @@ function renderSup(){
           <div class="sup-search">
             ${SUP_GLASS}
             <input id="supQ" type="text" autocomplete="off" spellcheck="false"
-              placeholder="Search suppliers or categories…" aria-label="Search suppliers">
+              placeholder="Search supplier or category" aria-label="Search suppliers">
             <button class="sup-search-x" id="supQX" aria-label="Clear search" hidden>
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
             </button>
           </div>
-          <div class="sup-sort" role="group" aria-label="Sort suppliers">
-            <span class="sup-sort-l">Sort</span>
-            ${SUP_SORTS.map(s => `
-              <button type="button" class="pill-opt" data-supsort="${s.id}"
-                aria-pressed="${s.id === 'curated'}">${s.l}</button>`).join('')}
-          </div>
+          <span class="spacer"></span>
+          ${SUP_STATUS.map(st => `
+            <button type="button" class="agc-pill" data-supstatus="${st.id}"
+              aria-pressed="${supStatus === st.id}">${st.l}</button>`).join('')}
         </div>
-        <div class="sup-chips">
-          <div class="sup-cats" role="group" aria-label="Filter by category">
-            <button type="button" class="pill-opt" data-supcat="all" aria-pressed="true">All categories</button>
-            ${SUP_CATS().map(c => `
-              <button type="button" class="pill-opt" data-supcat="${c}" aria-pressed="false">${c}</button>`).join('')}
-          </div>
-          <div class="sup-cats is-status" role="group" aria-label="Filter by what this supplier already is to you">
-            ${SUP_STATUS.map(s => `
-              <button type="button" class="pill-opt" data-supstatus="${s.id}"
-                aria-pressed="${s.id === 'all'}">${s.id === 'on' ? SUP_CHECK : ''}${s.l}</button>`).join('')}
-          </div>
+        <div class="sup-cats" role="group" aria-label="Filter by category">
+          <button type="button" class="agc-pill sm" data-supcat="all"
+            aria-pressed="${supCat === 'all'}">All categories</button>
+          ${SUP_CATS().map(cat => `
+            <button type="button" class="agc-pill sm" data-supcat="${cat}"
+              aria-pressed="${supCat === cat}">${cat}</button>`).join('')}
         </div>
-      </div>
-      <div class="sup-bar" id="supBar" role="status" aria-live="polite"></div>
+        <div class="sup-bar" id="supBar" role="status" aria-live="polite"></div>
     </header>
     <div id="supBody"></div>`;
 
@@ -6964,9 +6979,6 @@ function renderSup(){
   }));
   $$('#viewSup [data-supstatus]').forEach(b => b.addEventListener('click', () => {
     supStatus = b.dataset.supstatus; renderSupBody();
-  }));
-  $$('#viewSup [data-supsort]').forEach(b => b.addEventListener('click', () => {
-    supSort = b.dataset.supsort; renderSupBody();
   }));
 
   /* the bar's contents change every render, so its handlers are delegated from
