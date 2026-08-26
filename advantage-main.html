@@ -1153,11 +1153,6 @@ body.in-app .flow{display:none}
 /* the card IS the grid — no inner containers. The tile spans every row on the left,
    the text stacks in the middle, the save toggle holds the top-right corner. */
 .agd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
-  grid-template-areas:
-    "tile eye  fav"
-    "tile name fav"
-    "tile fig  fig"
-    "why  why  why";
   column-gap:var(--s4);align-items:start;
   padding:var(--s5,20px);cursor:pointer;
   border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
@@ -1389,11 +1384,6 @@ body.in-app .flow{display:none}
    card exists to demonstrate. */
 .supd{display:grid;
   grid-template-columns:auto minmax(0,1fr) auto auto auto;
-  grid-template-areas:
-    "tile eye  tagA tagB fav"
-    "tile name name name fav"
-    "tile fig  fig  fig  fig"
-    "why  why  why  why  why";
   column-gap:var(--s4);align-items:start;
   padding:var(--s5,20px);cursor:pointer;
   border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
@@ -3328,13 +3318,6 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
    (icon/label/name) reading as one unit and the money as another. */
 .ar-card{position:relative;display:grid;width:100%;text-align:left;cursor:pointer;
   grid-template-columns:auto minmax(0,1fr) auto;
-  grid-template-areas:
-    "ic    eye   brands"
-    "ic    name  name"
-    "brief brief brief"
-    "fig   fig   fig"
-    "why   why   why"
-    "foot  foot  foot";
   row-gap:0;column-gap:var(--s3);align-items:start;
   padding:var(--s6);border:1px solid transparent;border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:var(--shadow-xs);
@@ -3364,49 +3347,22 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 /* the reason label and the name are a 1px pair, the tightest group on the card */
 .ar-eye{grid-area:eye;align-self:center;font-size:12px;font-weight:700;
   letter-spacing:.07em;text-transform:uppercase;color:var(--general-primary)}
-.ar-flag{grid-area:eye;align-self:center;justify-self:start}
-.ar-n{grid-area:name;margin-top:1px;font-family:var(--font-sans);
-  font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.3;
-  color:var(--general-foreground)}
 /* the logo stack, laid out side by side (not overlapped): at 26px the fallback
    initials are two letters wide and an overlap slices the second one off */
-.ar-brands{grid-area:brands;justify-self:end;display:flex;gap:4px;width:auto}
 .ar-card .cv-bchip + .cv-bchip{margin-left:0}
 .ar-card .cv-bchip .agr-chip{margin:0;width:26px;height:26px;box-shadow:none;
   border:1px solid var(--hairline)}
 .ar-card .cv-bchip .agr-chip img{padding:4px}
 
-.ar-brief{grid-area:brief;margin-top:var(--s2);font-size:13.5px;line-height:1.5;
-  color:var(--general-muted-foreground);max-width:48ch}
 
 /* the money: its own group, 16px clear of the brief. The figure never breaks —
    the unit is what wraps away when the card gets narrow. */
-.ar-fig{grid-area:fig;margin-top:var(--s4);display:flex;align-items:baseline;
-  flex-wrap:wrap;gap:6px}
-.ar-fig b{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:800;
-  letter-spacing:-.5px;line-height:1.15;color:var(--sentiment-positive);
-  font-variant-numeric:tabular-nums;white-space:nowrap}
-.ar-fig b.held{color:var(--general-foreground)}
-.ar-fig em{font-style:normal;font-size:12.5px;line-height:1.4;
-  color:var(--general-muted-foreground)}
-.ar-fig .est-chip{align-self:center}
 
 /* the specialist's line — only on the shortlist. It carries the card's single
    hairline, so a shortlist card and a list card each have exactly one rule. */
-.ar-why{grid-area:why;margin-top:var(--s4);padding-top:var(--s3);
-  border-top:1px solid var(--hairline);font-size:13px;line-height:1.5;
-  color:var(--general-muted-foreground)}
-.ar-why b{color:var(--general-foreground);font-weight:650}
 
-.ar-foot{grid-area:foot;margin-top:var(--s3);display:flex;align-items:center;
-  gap:var(--s3)}
 .ar-card:not(.rec) .ar-foot{margin-top:var(--s4);padding-top:var(--s3);
   border-top:1px solid var(--hairline)}
-.ar-agr{min-width:0;display:flex;align-items:center;gap:6px;font-size:13px;
-  line-height:1.4;color:var(--general-muted-foreground)}
-.ar-agr svg{flex:0 0 auto;width:14px;height:14px;color:var(--general-muted-foreground)}
-.ar-agr b{color:var(--general-foreground);font-weight:700;
-  font-variant-numeric:tabular-nums}
 .ar-go{flex:0 0 auto;margin-left:auto;display:grid;place-items:center;
   width:26px;height:26px;border-radius:var(--rounded-full);
   background:var(--general-secondary);color:var(--general-primary);
@@ -3442,11 +3398,6 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .ph-fig b.warn{color:var(--sentiment-negative)}
 .ph-fig span{font-size:var(--text-sm);line-height:1.45;
   color:var(--general-muted-foreground);max-width:30ch}
-/* the one thing that is wrong, as a sentence rather than a fourth figure — three
-   figures fit the row, a fourth wrapped and read as an afterthought */
-.ph-warn{display:flex;gap:7px;margin-top:var(--s4);font-size:var(--text-sm);line-height:1.5;
-  color:var(--sentiment-negative);max-width:64ch}
-.ph-warn b{font-weight:700}
 .ph-note{margin-top:var(--s4);font-size:13px;line-height:1.5;
   color:var(--general-muted-foreground);max-width:66ch}
 .ph-act{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s6)}
@@ -3508,6 +3459,16 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .ap-dots i:nth-child(3){animation-delay:.3s}
 @keyframes apDot{0%,60%,100%{opacity:.25}30%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.ap-dots i{animation:none;opacity:.5}}
+
+/* the area card is the catalogue card with a category tile instead of a logo */
+.ar-card .ar-ic{width:56px;height:56px;display:grid;place-items:center;
+  border-radius:var(--rounded-lg);background:var(--brand-ice);color:var(--general-primary)}
+.ar-card .ar-ic svg{width:28px;height:28px}
+.ar-card.rec{border-color:#bdd7ff}
+.ar-card .ar-eye{display:block;margin-top:var(--s2);font-size:11.5px;font-weight:700;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--general-primary)}
+.ar-meta{margin-top:var(--s3);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.ar-meta b{font-weight:700;color:var(--general-foreground)}
 
 /* ---------- the agreement catalogue: less text, findable ----------
    The old card carried a full sentence of argument per agreement. Twenty-four of
@@ -3656,13 +3617,6 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .agy{--tint:rgb(var(--b,33 112 237)/.06);--tint-edge:rgb(var(--b,33 112 237)/.2);
   display:grid;
   grid-template-columns:auto minmax(0,1fr) minmax(216px,264px);
-  grid-template-areas:
-    "tile eye  cal"
-    "tile name cal"
-    "tile fig  cal"
-    "flag flag cal"
-    "step step cal"
-    "act  act  cal";
   column-gap:var(--s6);align-items:start;
   padding:var(--s6);border:1px solid transparent;border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f;
@@ -9613,13 +9567,6 @@ function renderAgreements(){
       <div class="ph-fig"><b class="brand">${open.length}</b><span>Available, worth
         ${saveFig(onTable, estOpen).replace('typically ', '')} kr. a year</span></div>
     </div>
-    ${idle.length ? `
-    <p class="ph-warn">${saveFig(idleSum, estMine).replace('typically ', '').replace('+', '')} kr. a year is
-      <b>agreed but not landing</b>, in ${idle.length} agreement${idle.length === 1 ? '' : 's'}
-      nobody is buying through. ${idle.length === 1 ? 'It is' : 'They are'} first in the list below.</p>` : ''}
-    <p class="ph-note">An agreement only saves money once invoices start going through
-      it. Every step below is dated from what we have actually seen — a step is marked done
-      when it happened, not when it was due.</p>
     <div class="cat-mast-act">
       <button type="button" class="btn btn-primary" id="agpJump">Explore new opportunities</button>
     </div>` : `
@@ -9638,8 +9585,6 @@ function renderAgreements(){
         <span>a year from the biggest single one, ${best.a.n}</span>
       </div>` : ''}
     </div>
-    <p class="ph-note">Once you activate one, this page is where it lives: which of the four
-      steps it is on, the date each one landed, and when the terms come up again.</p>
     ${best ? `
     <div class="ph-act">
       <button type="button" class="btn btn-primary" data-agopen="${best.r.id}:${best.i}">
@@ -10204,35 +10149,25 @@ function areaPicks(){
    specialist's line and drops the footer rule (one hairline per card, never two). */
 function areaCardHTML(r, o){
   o = o || {};
-  const pot = areaPot(r), est = areaEst(r);
   const on  = r.agr.filter(a => a.req).length;
   const off = r.agr.length - on;
-  /* "typically " is dropped from the headline figure — the range plus the
-     Estimated chip already say it, and the word costs 70px the narrowest card
-     does not have. The full phrasing stays in the aria-label. */
-  const figFull = pot > 0 ? `${saveFig(pot, est)} kr.` : `+${fmt(areaHeld(r))} kr.`;
-  const fig = pot > 0
-    ? `<b>${saveFig(pot, est).replace('typically ', '')} kr.</b><em>a year still available</em>
-       ${est ? `<span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}`
-    : `<b class="held">+${fmt(areaHeld(r))} kr.</b><em>a year secured — every agreement is in use</em>`;
+  /* The brief, the money line and the specialist paragraph all went. What decides
+     an area is the discount and how many agreements are waiting behind it — so the
+     card is those two facts, the way the agreement catalogue does it. */
   return `
-  <li><button type="button" class="ar-card${o.rec ? ' rec' : ''}" data-area="${r.id}"
+  <li><button type="button" class="aga ar-card${o.rec ? ' rec' : ''}" data-area="${r.id}"
     style="--b:${brandOf(areaByCovers(r)[0].n)}"
-    aria-label="${r.n}: ${r.agr.length} agreement${r.agr.length === 1 ? '' : 's'}, ${off} available, ${pot > 0 ? `${figFull} a year still available` : `${figFull} a year secured`}. Opens the ${r.n} page in a new tab.">
+    aria-label="${r.n}: ${r.rate}% average saving, ${r.agr.length} agreement${r.agr.length === 1 ? '' : 's'}, ${off} available. Opens in a new tab.">
     <span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[r.id] || ''}</svg></span>
-    ${o.rec
-      ? `<span class="ar-eye">${o.tag}</span>`
-      : o.flag ? `<span class="chip chip-soft ar-flag">Recommended</span>` : ''}
-    <b class="ar-n">${r.n}</b>
-    <span class="ar-brands">${areaByCovers(r).slice(0, 3).map(a =>
-      `<span class="cv-bchip" style="--b:${brandOf(a.n)}">${agrLogoChip(a.n)}</span>`).join('')}</span>
-    <span class="ar-brief">${AREA_BRIEF[r.id] || CAT_PITCH[r.id] || ''}</span>
-    <span class="ar-fig">${fig}</span>
-    ${o.rec ? `<span class="ar-why">${o.why}</span>` : ''}
-    <span class="ar-foot">
-      <span class="ar-agr">${AR_DOC}<span><b>${r.agr.length}</b> agreement${r.agr.length === 1 ? '' : 's'} · <b>${on}</b> in use · <b>${off}</b> available</span></span>
-      <span class="ar-go">${ARROW}</span>
+    <span class="aga-st${off ? '' : ' on'}">${off ? `${off} available` : 'All in use'}</span>
+    <b class="aga-n">${r.n}</b>
+    ${o.rec ? `<span class="ar-eye">${o.tag}</span>` : ''}
+    <span class="aga-ben">
+      <span>Advantage benefit</span>
+      <b>${r.rate}% average savings</b>
     </span>
+    <span class="ar-meta"><b>${r.agr.length}</b> agreements · <b>${on}</b> in use</span>
+    <span class="aga-go">Open area ${ARROW}</span>
   </button></li>`;
 }
 
@@ -10253,8 +10188,7 @@ function renderAreas(focusSort){
     <div class="ar-page">
       <header class="ph">
         <h1 id="arT" tabindex="-1">Areas</h1>
-        <p class="ph-lead">The ${rows.length} areas your company buys in, what Advantage
-          has negotiated in each one, and what is still on the table.</p>
+        <p class="ph-lead">The ${rows.length} areas your company buys in.</p>
         <div class="ph-figs">
           <div class="ph-fig"><b>${rows.length}</b><span>Purchasing areas</span></div>
           <div class="ph-fig"><b>${agsOff}</b><span>Agreements available</span></div>
