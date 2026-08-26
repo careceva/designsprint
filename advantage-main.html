@@ -3509,6 +3509,73 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 @keyframes apDot{0%,60%,100%{opacity:.25}30%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.ap-dots i{animation:none;opacity:.5}}
 
+/* ---------- the agreement catalogue: less text, findable ----------
+   The old card carried a full sentence of argument per agreement. Twenty-four of
+   those is a wall to read, not a list to scan. Four facts now — who, what area,
+   what the benefit is, one way in — and the finding is done by letter, status and
+   search instead of by reading. */
+.agc-controls{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);
+  margin-top:var(--s5,20px)}
+.agc-controls .spacer{flex:1 1 auto}
+.agc-pill{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 var(--s4);
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-full);
+  background:var(--surface);cursor:pointer;font-size:var(--text-sm);font-weight:600;
+  color:var(--general-foreground);transition:var(--t-fast)}
+.agc-pill:hover{border-color:var(--card-stroke-hover)}
+.agc-pill b{font-weight:700;color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.agc-pill[aria-pressed="true"]{background:var(--brand-ice);border-color:#bdd7ff;
+  color:var(--general-primary)}
+.agc-pill[aria-pressed="true"] b{color:var(--general-primary)}
+/* the search sits at the far end of the same row, as in the reference */
+.agc-find{position:relative;flex:0 1 300px;min-width:200px}
+.agc-find>svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;color:var(--general-muted-foreground);pointer-events:none}
+.agc-find input{width:100%;height:36px;padding:0 var(--s4) 0 38px;
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-full);
+  background:var(--surface);font-size:var(--text-sm)}
+.agc-find input:focus-visible{outline:2px solid var(--general-primary);outline-offset:-1px}
+/* A–Z: only the letters that actually have an agreement behind them */
+.agc-az{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--s3)}
+.agc-az button{min-width:32px;height:32px;padding:0 8px;border:1px solid var(--card-stroke);
+  border-radius:var(--rounded-sm);background:var(--surface);cursor:pointer;
+  font-size:13px;font-weight:650;color:var(--general-muted-foreground);transition:var(--t-fast)}
+.agc-az button:hover{border-color:var(--card-stroke-hover);color:var(--general-foreground)}
+.agc-az button[aria-pressed="true"]{background:var(--brand-ice);border-color:#bdd7ff;
+  color:var(--general-primary)}
+/* the card */
+.aga-grid{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:var(--s4);margin-top:var(--s6)}
+@container page (max-width:1040px){.aga-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container page (max-width:660px){.aga-grid{grid-template-columns:minmax(0,1fr)}}
+.aga{position:relative;display:flex;flex-direction:column;width:100%;text-align:left;
+  padding:var(--s5,20px);cursor:pointer;
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
+  background:var(--surface);
+  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
+.aga:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
+  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
+.aga:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+.aga .agc-logo{width:56px;height:56px}
+.aga-st{position:absolute;top:var(--s5,20px);right:var(--s5,20px);
+  padding:4px 10px;border-radius:var(--rounded-full);
+  font-size:12px;font-weight:650;white-space:nowrap;
+  background:var(--general-muted);color:var(--general-muted-foreground)}
+.aga-st.on{background:#d9f2ef;color:var(--sentiment-positive)}
+.aga-n{margin-top:var(--s4);font-family:var(--font-sans);font-size:var(--text-lg);
+  font-weight:700;letter-spacing:-.3px;line-height:1.25}
+.aga-cat{margin-top:2px;font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.aga-ben{margin-top:var(--s4);padding-top:var(--s4);border-top:1px solid var(--hairline)}
+.aga-ben span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.aga-ben b{display:block;margin-top:var(--s1);font-family:var(--font-sans);
+  font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px}
+.aga-go{display:inline-flex;align-items:center;gap:6px;margin-top:var(--s4);
+  font-size:var(--text-sm);font-weight:650;color:var(--general-primary)}
+.aga-go svg{width:15px;height:15px;transition:transform var(--t-fast)}
+.aga:hover .aga-go svg{transform:translateX(3px)}
+.aga-empty{grid-column:1 / -1;padding:var(--s12) var(--s4);text-align:center;
+  font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
 /* ---------- shared page furniture ----------
    .ag-page / .ag-hero / .ag-stats started life on the Agreements view. Reports and
    Areas now reuse them too, so they outlive that page's redesign and live here
@@ -9427,32 +9494,93 @@ function agYearHTML(mine){
    The .agd card as signed off, with one modifier. In use reads as in use: the
    positive ground, a ticked green eyebrow, the date it started instead of a
    pitch, and no fav toggle — you cannot shortlist what you already hold. */
-function agdCatalogueHTML({r, a, i}){
-  const est = isEstimated(a), rate = Math.round(a.save / a.covers * 100);
-  const mine = !!a.req;
-  const why = !mine
-    ? `${CAT_PITCH[r.id] || 'Group price on what you already buy'} —
-       <b>${rate}% under</b> what your ${r.n.toLowerCase()} invoices show today.`
-    : agDormant(a)
-      ? `In use since <b>${agFmtShort(agStepDates(a)[0])}</b>, but nothing has been
-         bought through it in ${agQuietDays(a)} days.`
-      : agComplete(a)
-        ? `In use since <b>${agFmtShort(agStepDates(a)[0])}</b> — the group rate is on
-           your invoices.`
-        : `Requested <b>${agFmtShort(agStepDates(a)[0])}</b>. Next step:
-           ${ACT_STEPS[agDone(a)].t.toLowerCase()}.`;
+/* filter state for the catalogue */
+let agcStatus = 'all', agcQuery = '', agcLetter = 'all';
+
+/* four facts, no prose: who they are, which area, what the benefit is, one way in. */
+function agaCardHTML({r, a, i}){
+  const est = isEstimated(a);
+  const rate = Math.round(a.save / a.covers * 100);
   return `
-    <li class="agd${mine ? ' mine' : ''}" data-cat="${r.id}" data-idx="${i}"
-      tabindex="0" role="button"
-      aria-label="${mine ? 'In use — ' : ''}${a.n}, ${r.n}: ${saveFig(a.save, est)} kroner a year">
+    <li><button type="button" class="aga" data-agopen="${r.id}:${i}"
+      style="--b:${brandOf(a.n)}"
+      aria-label="${a.n}, ${r.n}, ${rate}% average saving">
       ${agrLogoTile(a.n)}
-      <span class="agd-eye">${mine ? TICK + 'In use' : r.n}</span>
-      <b class="agd-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</b>
-      <span class="agd-fig"><b>${saveFig(a.save, est).replace('typically ', '')} kr.</b><em>a
-        year</em>${est ? `<span class="est-chip">${DASH_CIRCLE} Estimated</span>` : ''}</span>
-      <p class="agd-why">${why}</p>
-      ${mine ? '' : agrFav(a.n)}
-    </li>`;
+      <span class="aga-st${a.req ? ' on' : ''}">${a.req ? 'In use' : 'Available'}</span>
+      <b class="aga-n">${a.n}</b>
+      <span class="aga-cat">${r.n}</span>
+      <span class="aga-ben">
+        <span>Advantage benefit</span>
+        <b>${rate}% average savings</b>
+      </span>
+      <span class="aga-go">Open agreement ${ARROW}</span>
+    </button></li>`;
+}
+
+/* the letters that actually have something behind them — an A–Z where half the
+   keys return nothing is a dead end dressed up as a control */
+function agaLetters(all){
+  return [...new Set(all.map(x => x.a.n.trim()[0].toUpperCase()))].sort();
+}
+function agaMatches(all){
+  const q = agcQuery.trim().toLowerCase();
+  return all.filter(({r, a}) =>
+    (agcStatus === 'all' || (agcStatus === 'use' ? a.req : !a.req)) &&
+    (agcLetter === 'all' || a.n.trim()[0].toUpperCase() === agcLetter) &&
+    (!q || a.n.toLowerCase().includes(q) || r.n.toLowerCase().includes(q)));
+}
+
+function agaControlsHTML(all){
+  const nUse = all.filter(x => x.a.req).length;
+  const opt = (id, l, n) => `<button type="button" class="agc-pill" data-agcst="${id}"
+    aria-pressed="${agcStatus === id}">${l} <b>${n}</b></button>`;
+  return `
+    <div class="agc-controls">
+      ${opt('all', 'All', all.length)}
+      ${opt('use', 'In use', nUse)}
+      ${opt('avail', 'Available', all.length - nUse)}
+      <span class="spacer"></span>
+      <div class="agc-find">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.9"/><path d="M16.3 16.3L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <input id="agcQ" type="text" autocomplete="off" spellcheck="false"
+          value="${agcQuery.replace(/"/g, '&quot;')}"
+          placeholder="Search supplier or category" aria-label="Search agreements">
+      </div>
+    </div>
+    <div class="agc-az" role="group" aria-label="Filter by first letter">
+      <button type="button" data-agcaz="all" aria-pressed="${agcLetter === 'all'}">All</button>
+      ${agaLetters(all).map(L => `<button type="button" data-agcaz="${L}"
+        aria-pressed="${agcLetter === L}">${L}</button>`).join('')}
+    </div>`;
+}
+
+function renderAgaBody(all){
+  const el = $('#agaBody');
+  if(!el) return;
+  const hits = agaMatches(all);
+  el.innerHTML = hits.length
+    ? `<ul class="aga-grid">${hits.map(agaCardHTML).join('')}</ul>`
+    : `<ul class="aga-grid"><li class="aga-empty">No agreement matches that. Clear the
+         letter or the search to see all ${all.length}.</li></ul>`;
+  $$('#agaBody [data-agopen]').forEach(b => b.addEventListener('click', () => {
+    const [id, i] = b.dataset.agopen.split(':');
+    window.open(catTabUrl(id, +i), '_blank');
+  }));
+}
+
+function wireAgaControls(all){
+  const redraw = () => {
+    $('#agaControls').innerHTML = agaControlsHTML(all);
+    wireAgaControls(all); renderAgaBody(all);
+  };
+  $$('#agaControls [data-agcst]').forEach(b => b.addEventListener('click', () => {
+    agcStatus = b.dataset.agcst; redraw();
+  }));
+  $$('#agaControls [data-agcaz]').forEach(b => b.addEventListener('click', () => {
+    agcLetter = b.dataset.agcaz; redraw();
+  }));
+  const q = $('#agcQ');
+  if(q) q.addEventListener('input', () => { agcQuery = q.value; renderAgaBody(all); });
 }
 
 function renderAgreements(){
@@ -9568,19 +9696,15 @@ function renderAgreements(){
       <header class="ph">${heroHTML}</header>
       ${heldHTML}
       <section class="agp-sec" id="agpAll">
-        <h2>Every agreement Advantage has</h2>
-        <p>All ${AGR_TOTAL} of them, across ${ROWS.filter(r => !r.hidden).length} areas, biggest
-          saving still on the table first. The ones you already hold sit at the end, marked.</p>
-        <p class="agp-count">
-          <span><i></i>${open.length} open to you${onTable
-            ? ` · worth ${saveFig(onTable, estOpen)} kr. a year` : ''}</span>
-          <span class="on"><i></i><b>${mine.length}</b>&nbsp;in use</span>
-        </p>
-        <ul class="agr-det-grid">${cards.map(agdCatalogueHTML).join('')}</ul>
+        <h2>All supplier agreements</h2>
+        <p>All ${all.length} of them, across ${ROWS.filter(r => !r.hidden).length} areas.</p>
+        <div id="agaControls">${agaControlsHTML(all)}</div>
+        <div id="agaBody"></div>
       </section>
     </div>`;
 
   /* ---- wiring ---- */
+  renderAgaBody(all); wireAgaControls(all);
   const pick = v => { const [id, i] = v.split(':'); const r = ROWS.find(x => x.id === id);
     return {r, a:r.agr[+i], i:+i}; };
   $$('#viewAgreements [data-agopen]').forEach(b => b.addEventListener('click', e => {
