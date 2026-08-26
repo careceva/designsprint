@@ -2623,10 +2623,21 @@ body.in-app .flow{display:none}
 .nc-ov-card-v.accent{color:var(--sentiment-positive)}
 /* the trend arrow: small, aligned to the cap height of the figure rather than its
    baseline, so it reads as a mark on the number and not as punctuation after it */
+/* solid disc, white glyph — the tinted version read as a faded sticker next to a
+   700-weight figure. Every colour here clears 3:1 against white, which is the bar
+   for a non-text mark. */
 .trend-up{flex:0 0 auto;align-self:center;display:inline-grid;place-items:center;
   width:22px;height:22px;margin-left:var(--s2);border-radius:var(--rounded-full);
-  background:#d9f2ef;color:var(--sentiment-positive)}
+  background:var(--sentiment-positive);color:#fff}
 .trend-up svg{width:13px;height:13px}
+/* neutral for a figure that is holding, brand blue for a count that is climbing.
+   Green stays reserved for money gained. */
+.trend-up.flat{background:var(--general-muted-foreground)}
+.trend-up.rise{background:var(--general-primary)}
+/* same disc, different reading: neutral grey for a steady figure, brand blue for a
+   count that is climbing. Green stays reserved for money gained. */
+.trend-up.flat{background:var(--general-muted);color:var(--general-muted-foreground)}
+.trend-up.rise{background:var(--general-secondary);color:var(--general-primary)}
 /* the "how we got these numbers" banner: sits inside the grey tray as its first
    row, so the 8px gutter frames it exactly like the cards below. A dark band
    carries this better than a quiet secondary button did — the question it answers
@@ -3055,6 +3066,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   padding:3px 9px;border-radius:var(--rounded-full);font-size:12px;font-weight:650;
   white-space:nowrap;background:#fff2e0;color:#a35c00}
 .req-pill.chase{background:var(--general-secondary);color:var(--general-primary)}
+.req-pill.booked{background:#d9f2ef;color:var(--sentiment-positive)}
 .req-pill::before{content:"";width:6px;height:6px;border-radius:var(--rounded-full);
   background:currentColor}
 /* collapsed rail: icons only */
@@ -3448,6 +3460,60 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   .ph-figs{gap:var(--s6)}
   .ph-fig b{font-size:var(--text-2xl);letter-spacing:-.7px}
 }
+
+/* ---------- assistant: two tabs, one composer ----------
+   The AI thread and the human advisor used to stack in the same scroll, which left
+   no answer to "who am I about to message". */
+.ap-tabs{display:flex;gap:var(--s1);padding:3px;margin-bottom:var(--s4);
+  border-radius:var(--rounded-full);background:var(--general-muted)}
+.ap-tab{flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;
+  gap:6px;height:36px;padding:0 var(--s3);border:none;cursor:pointer;
+  border-radius:var(--rounded-full);background:none;font-size:13px;font-weight:650;
+  color:var(--general-muted-foreground);white-space:nowrap;
+  transition:background var(--t-fast),color var(--t-fast)}
+.ap-tab:hover{color:var(--general-foreground)}
+.ap-tab[aria-selected="true"]{background:var(--surface);color:var(--general-foreground);
+  box-shadow:var(--shadow-xs)}
+.ap-tab .sda{width:16px;height:16px}
+.ap-tab-av{display:grid;place-items:center;width:18px;height:18px;border-radius:var(--rounded-full);
+  background:var(--brand-midnight);color:#fff;font-size:9px;font-weight:700;letter-spacing:.02em}
+.ap-tab-live{width:6px;height:6px;border-radius:var(--rounded-full);
+  background:var(--sentiment-positive)}
+/* Peter's tab opens on who he is and what he can do, then the thread */
+.ap-who{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s4);
+  padding-bottom:var(--s4);border-bottom:1px solid var(--hairline)}
+.ap-who-av{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--brand-midnight);color:#fff;
+  font-size:13px;font-weight:700}
+.ap-who-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.ap-who-id b{font-size:var(--text-sm);font-weight:650}
+.ap-who-id span{font-size:12.5px;color:var(--general-muted-foreground)}
+.ap-who .btn{flex:0 0 auto}
+
+/* ---------- assistant: the conversation ----------
+   Replaces the canned-prompt block. Two bubble shapes, one clipped corner each so
+   the tail points at its author, and a typing state so a reply that takes a beat
+   does not read as nothing happening. */
+.ap-thread{display:flex;flex-direction:column;gap:var(--s4);padding-bottom:var(--s2)}
+.ap-msg{max-width:90%;font-size:var(--text-sm);line-height:1.55}
+.ap-msg.me{align-self:flex-end;padding:var(--s3) var(--s4);
+  border-radius:var(--rounded-lg) var(--rounded-lg) var(--rounded-xs) var(--rounded-lg);
+  background:var(--general-primary);color:#fff}
+.ap-msg.ai{align-self:flex-start;display:flex;gap:var(--s3)}
+.ap-msg.ai>img{flex:0 0 auto;width:22px;height:22px;margin-top:2px}
+.ap-msg.ai>div{padding:var(--s3) var(--s4);
+  border-radius:var(--rounded-lg) var(--rounded-lg) var(--rounded-lg) var(--rounded-xs);
+  background:var(--general-muted);color:var(--general-foreground)}
+.ap-msg.ai b{font-weight:650}
+.ap-msg.ai .pos{color:var(--sentiment-positive);font-weight:700}
+/* the three dots: opacity only, so it stays cheap and respects reduced motion */
+.ap-dots{display:inline-flex;gap:4px;padding:2px 0}
+.ap-dots i{width:6px;height:6px;border-radius:var(--rounded-full);
+  background:var(--general-muted-foreground);animation:apDot 1.1s infinite ease-in-out}
+.ap-dots i:nth-child(2){animation-delay:.15s}
+.ap-dots i:nth-child(3){animation-delay:.3s}
+@keyframes apDot{0%,60%,100%{opacity:.25}30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.ap-dots i{animation:none;opacity:.5}}
 
 /* ---------- shared page furniture ----------
    .ag-page / .ag-hero / .ag-stats started life on the Agreements view. Reports and
@@ -3990,43 +4056,20 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
             <!-- requests the user has sent, in the assistant too: they were created
                  by a conversation, so this is where people look for them -->
             <div class="ap-reqs-wrap" id="apReqs" hidden></div>
-            <div class="ap-card">
-              <div class="ap-lbl">Ask</div>
-
-              <button class="ap-grp" id="apGrp" aria-expanded="true">
-                <svg class="gi" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.4" stroke="currentColor" stroke-width="1.7"/><path d="M8 12h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-                <b>Procurement Manager Prompt</b>
-                <span class="spacer"></span>
-                <svg class="ch" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-              <div class="ap-prompts" id="apPrompts">
-                <button class="pchip">Show me relevant suppliers for office supplies</button>
-                <button class="pchip">Help me compare freight deals by region</button>
-                <button class="pchip">What agreements are best for a company with 50–100 employees?</button>
-              </div>
-
-              <div class="ap-sug">
-                <p>Create a price request for a better deal on <b>car rental</b>?</p>
-                <button class="btn btn-dark btn-sm" id="apSug">Send request</button>
-              </div>
+            <!-- the conversation. Starts with one opening line from the assistant
+                 rather than a wall of canned prompts: the panel's job is to be typed
+                 into, and three example questions were furniture in front of that. -->
+            <!-- two conversations, one panel: the AI and the named advisor were both
+                 sitting in here at once, so there was no way to tell who a message
+                 was going to. The tab picks the recipient; the composer is shared. -->
+            <div class="ap-tabs" role="tablist" aria-label="Who you are talking to">
+              <button type="button" class="ap-tab" id="apTabAi" role="tab" data-aptab="ai">
+                <img class="sda" src="assets/sda-mark.svg" alt="">Assistant</button>
+              <button type="button" class="ap-tab" id="apTabPeter" role="tab" data-aptab="peter">
+                <span class="ap-tab-av" aria-hidden="true">PL</span>Peter Lund
+                <i class="ap-tab-live" aria-hidden="true"></i></button>
             </div>
-
-            <!-- the map asks for the AI and a person in the same place, not a
-                 support link buried elsewhere. The advisor is named and has a
-                 presence state, so "talk to a human" is a person, not a queue. -->
-            <div class="ap-human">
-              <div class="ap-human-h">
-                <span class="ap-human-av" aria-hidden="true">PL</span>
-                <span class="ap-human-id"><b>Peter Lund</b><span>Your procurement advisor</span></span>
-                <span class="ap-human-live"><i></i>Online</span>
-              </div>
-              <p>Rather talk it through? Peter has your account open and can answer
-                anything the assistant can't — or take a negotiation on for you.</p>
-              <div class="ap-human-act">
-                <button class="btn btn-secondary btn-sm" id="apChat">Message Peter</button>
-                <button class="btn btn-secondary btn-sm" id="apCall">Book 15 minutes</button>
-              </div>
-            </div>
+            <div class="ap-pane" id="apPane"></div>
           </div>
 
           <footer class="ap-f">
@@ -4470,7 +4513,7 @@ function toggleAgent(on){
   ap.classList.toggle('on', open);
   ap.inert = !open;
   $('#agentBtn').setAttribute('aria-expanded', String(open));
-  if(open) setTimeout(() => $('#apT').focus(), 320);
+  if(open){ renderApThread(); setTimeout(() => $('#apInput').focus(), 320); }
 }
 $('#agentBtn').addEventListener('click', () => toggleAgent());
 $('#apX').addEventListener('click', () => toggleAgent(false));
@@ -4478,11 +4521,7 @@ $('#apWide').addEventListener('click', () => {
   const wide = $('#ap').classList.toggle('wide');
   $('#apWide').setAttribute('aria-label', wide ? 'Shrink panel' : 'Expand panel');
 });
-$('#apGrp').addEventListener('click', () => {
-  const b = $('#apGrp'), open = b.getAttribute('aria-expanded') === 'true';
-  b.setAttribute('aria-expanded', String(!open));
-  $('#apPrompts').classList.toggle('shut', open);
-});
+
 /* ---------- the assistant, opened about something ----------
    Clicking "Ask" on an agreement card should not dump the user in a blank panel:
    the thing they clicked becomes the subject, named at the top, and the composer
@@ -4515,7 +4554,7 @@ function renderApReqs(){
       ${REQS.map(q => `
       <button type="button" class="act-req" data-apreq="${q.id}">
         <b>${q.agr || q.catName}</b>
-        <span class="req-pill${reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
+        <span class="req-pill${q.kind === 'meeting' ? ' booked' : reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
         <span class="act-req-s">${reqSub(q)}</span>
       </button>`).join('')}
     </div>`;
@@ -4523,6 +4562,7 @@ function renderApReqs(){
     b.addEventListener('click', () => openReqStatus(b.dataset.apreq)));
 }
 function openAssistantAbout(subject, question){
+  apTab = 'ai';
   apSubject = subject;
   renderApSubject();
   renderApReqs();
@@ -4540,8 +4580,145 @@ function wireAgrAsk(root, r){
   }));
 }
 
-/* the entry state only — a prompt or the suggestion drops the text into the composer,
-   which is where the conversation state will pick up later */
+/* ---------- the conversation ----------
+   Replies are generated from the SAME data the pages render, so nothing the
+   assistant says can contradict a figure on screen. It is still a prototype reply:
+   keyword-matched, not understood. */
+let apTab = 'ai';
+const apMsgs = {ai:[], peter:[]};
+const apEsc = t => String(t).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function apOpener(){
+  const pot = live().reduce((s, r) => s + potOf(r), 0);
+  const est = forceEstimated;
+  return `Ask me anything about your agreements, suppliers or spend. Right now I can see
+    <b>${live().length} purchasing areas</b> with <b class="pos">${saveFig(pot, est)} kr.</b>
+    a year still on the table.`;
+}
+
+/* the reply: matched on what was asked, answered from ROWS */
+function apReplyFor(q){
+  const t = q.toLowerCase();
+  const est = forceEstimated;
+  const byPot = live().slice().sort((a, b) => potOf(b) - potOf(a));
+  const named = live().find(r => t.includes(r.n.toLowerCase().split(' ')[0]));
+  const money = (n) => `<b class="pos">${saveFig(n, est)} kr.</b>`;
+
+  if(named){
+    const off = named.agr.filter(a => !a.req);
+    return `In <b>${named.n}</b> you spend ${fmt(named.amt)} kr. a year across ${named.sup}
+      suppliers. ${off.length
+        ? `${off.length} agreement${off.length === 1 ? '' : 's'} there ${off.length === 1 ? 'is' : 'are'}
+           not switched on yet — worth ${money(potOf(named))} a year, at ${named.rate}% under
+           what your invoices show. The biggest is ${off.sort((a, b) => b.save - a.save)[0].n}.`
+        : `Every agreement there is already in use — nothing left on the table.`}`;
+  }
+  if(/price|cheaper|discount|better deal|expensive/.test(t)){
+    const w = byPot.slice().sort((a, b) => b.rate - a.rate)[0];
+    return `The widest gap in your account is <b>${w.n}</b> at <b>${w.rate}% under list</b>.
+      Activating what is open there is ${money(potOf(w))} a year. If you want to push a
+      specific supplier rather than switch, Peter can take that on — he negotiates with the
+      group's volume behind you, not yours alone.`;
+  }
+  if(/supplier/.test(t)){
+    const on = live().reduce((n, r) => n + r.agr.filter(a => a.req).length, 0);
+    return `You buy from ${live().reduce((n, r) => n + r.sup, 0)} suppliers across
+      ${live().length} areas. <b>${on}</b> of your agreements are live; the rest of the
+      catalogue is on the Suppliers page, filterable by whether it matches your spend.`;
+  }
+  if(/agreement|activate|switch/.test(t)){
+    const top = byPot[0];
+    return `${AGR_TOTAL} agreements exist; the ones you hold are on the Agreements page with
+      where each sits in activation. The one I would open first is
+      <b>${top.agr.filter(a => !a.req).sort((a, b) => b.save - a.save)[0].n}</b> in
+      ${top.n.toLowerCase()} — ${money(potOf(top))} a year.`;
+  }
+  if(/save|saving|money|worth/.test(t)){
+    return `Still on the table: ${money(live().reduce((s, r) => s + potOf(r), 0))} a year.
+      It is concentrated — <b>${byPot[0].n}</b> alone is
+      ${Math.round(potOf(byPot[0]) / live().reduce((s, r) => s + potOf(r), 0) * 100)}% of it.`;
+  }
+  if(/report|export|spend/.test(t)){
+    return `Reports has three readings of this: what you saved, what you spent, and how much
+      is actually flowing through the agreements you hold — by area, over a period you pick.`;
+  }
+  return `I can answer that from your own invoices once we are talking properly. In this
+    prototype I am matching on keywords, so try me on a specific area
+    (<b>${byPot[0].n.toLowerCase()}</b>), on prices, suppliers, agreements or savings.`;
+}
+
+/* Peter answers like a person with the account open: he acknowledges, names one
+   real number, and says what he will do. He never claims a supplier has replied. */
+function apPeterReplyFor(q){
+  const t = q.toLowerCase();
+  const byPot = live().slice().sort((a, b) => potOf(b) - potOf(a));
+  const est = forceEstimated;
+  if(/meet|call|talk|time|book/.test(t))
+    return `Happy to. Use <b>Book 15 minutes</b> above and pick anything in the next few
+      days — I will come with your ${byPot[0].n.toLowerCase()} figures already open.`;
+  if(/price|negotiat|supplier|push/.test(t))
+    return `I can take that on. I negotiate with the group's volume behind you rather than
+      yours alone, which is what usually moves it. Tell me the supplier and I will come back
+      with what they have given comparable members.`;
+  return `Got it — I have your account open. The short answer: <b>${byPot[0].n}</b> is where
+    your money is, ${saveFig(potOf(byPot[0]), est)} kr. a year. I will look properly and come
+    back to you today.`;
+}
+
+function apPaneHTML(){
+  const msgs = apMsgs[apTab];
+  const opener = apTab === 'ai' ? apOpener()
+    : `Hi ${state.user.split(' ')[0]} — I have your account open. Ask me anything the
+       assistant cannot answer, or book fifteen minutes and we will go through it.`;
+  const body = (msgs.length ? msgs : [{who:'them', html:opener}]).map(m => m.who === 'me'
+    ? `<div class="ap-msg me">${apEsc(m.html)}</div>`
+    : `<div class="ap-msg ai">${apTab === 'ai'
+        ? '<img class="sda" src="assets/sda-mark.svg" alt="">'
+        : '<span class="ap-who-av" style="width:22px;height:22px;font-size:9px">PL</span>'}
+         <div>${m.typing
+           ? '<span class="ap-dots" aria-label="Typing"><i></i><i></i><i></i></span>'
+           : m.html}</div></div>`).join('');
+  const head = apTab === 'peter' ? `
+    <div class="ap-who">
+      <span class="ap-who-av" aria-hidden="true">PL</span>
+      <span class="ap-who-id"><b>${ADVISOR.n}</b><span>${ADVISOR.role} · usually replies same day</span></span>
+      <button type="button" class="btn btn-secondary btn-sm" id="apBook">Book 15 min</button>
+    </div>` : '';
+  return head + `<div class="ap-thread">${body}</div>`;
+}
+
+function renderApThread(){
+  const el = $('#apPane');
+  if(!el) return;
+  $$('#ap .ap-tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.aptab === apTab)));
+  el.innerHTML = apPaneHTML();
+  const bk = $('#apBook');
+  if(bk) bk.addEventListener('click', () => openAdvisorMeeting(live()[0]));
+  const i = $('#apInput');
+  if(i) i.placeholder = apTab === 'ai'
+    ? 'Ask the saving assistant…' : `Message ${ADVISOR.n.split(' ')[0]}…`;
+  const b = $('.ap-b'); if(b) b.scrollTop = b.scrollHeight;
+}
+
+function apSend(text){
+  const q = (text || '').trim();
+  if(!q) return;
+  const who = apTab;
+  apMsgs[who].push({who:'me', html:q});
+  apMsgs[who].push({who:'them', typing:true});
+  renderApThread();
+  const i = $('#apInput');
+  if(i){ i.value = ''; i.style.height = 'auto'; }
+  setTimeout(() => {
+    const list = apMsgs[who];
+    list[list.length - 1] = {who:'them',
+      html:who === 'ai' ? apReplyFor(q) : apPeterReplyFor(q)};
+    if(apTab === who) renderApThread();
+  }, RM ? 200 : who === 'ai' ? 700 : 1100);
+}
+
+/* the entry state only — an "Ask" mark drops the text into the composer so it can be
+   edited before it is sent, rather than firing a question the user did not write */
 function agentAsk(text){
   const i = $('#apInput');
   i.value = text;
@@ -4549,15 +4726,19 @@ function agentAsk(text){
   i.style.height = 'auto';
   i.style.height = Math.min(120, i.scrollHeight) + 'px';
 }
-$$('#apPrompts .pchip').forEach(c => c.addEventListener('click', () => agentAsk(c.textContent.trim())));
-$('#apSug').addEventListener('click', () =>
-  agentAsk('Create a price request for a better deal on car rental'));
+$$('#ap .ap-tab').forEach(b => b.addEventListener('click', () => {
+  apTab = b.dataset.aptab; renderApThread(); $('#apInput').focus();
+}));
+$('#apSend').addEventListener('click', () => apSend($('#apInput').value));
+$('#apInput').addEventListener('keydown', e => {
+  /* Enter sends, Shift+Enter makes a new line — the composer is a textarea so it can
+     hold more than one line, but the common case is one line and a send */
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); apSend(e.target.value); }
+});
 /* both drop into the same composer the AI uses — one thread, one place, which is
    the point of putting the person inside the assistant rather than beside it */
-$('#apChat').addEventListener('click', () =>
-  agentAsk('Peter — can you take a look at my account and call me back?'));
-$('#apCall').addEventListener('click', () =>
-  agentAsk('Peter — can we book 15 minutes this week to go through my agreements?'));
+
+
 $('#apInput').addEventListener('input', e => {
   e.target.style.height = 'auto';
   e.target.style.height = Math.min(120, e.target.scrollHeight) + 'px';
@@ -4580,6 +4761,9 @@ const ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="
 /* upward trend: a diagonal, not a vertical — a vertical arrow reads as "up next",
    a diagonal reads as a trend line going the right way */
 const TREND_UP = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 17L17 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M10.5 6H17v6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+/* steady, not rising: a level arrow reads as "this is holding", which is the honest
+   thing to say about a spend figure — it is neither good news nor bad. */
+const TREND_FLAT = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M13.5 7.5L18 12l-4.5 4.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function openCase(){
   bcStep = 1; $('#bcSteps').hidden = true; renderCase();
@@ -5336,12 +5520,14 @@ const reqWhen = q => { const d = reqDays(q);
   return d === 0 ? 'sent today' : d === 1 ? 'sent yesterday' : `sent ${d} days ago`; };
 /* we chase at day five — that is a real thing the product does, so it is the only
    stage change we assert. An ANSWER is the supplier's move, never inferred here. */
-const reqStage = q => reqDays(q) >= 5 ? 'Chasing' : 'Awaiting reply';
-const reqTitle = q => q.agr
-  ? `Better price · ${q.agr}`
+/* a meeting is not waiting on anybody — it is in the diary, so it never chases */
+const reqStage = q => q.kind === 'meeting' ? 'Booked'
+  : reqDays(q) >= 5 ? 'Chasing' : 'Awaiting reply';
+const reqTitle = q => q.kind === 'meeting' ? `${ADVISOR.n} · ${q.catName}`
+  : q.agr ? `Better price · ${q.agr}`
   : `Better terms · ${q.catName}`;
-const reqSub = q => q.agr
-  ? `Better price · ${reqWhen(q)}`
+const reqSub = q => q.kind === 'meeting' ? `${q.chan} · ${q.when}`
+  : q.agr ? `Better price · ${reqWhen(q)}`
   : `Better terms · ${q.count} supplier${q.count > 1 ? 's' : ''} · ${reqWhen(q)}`;
 
 /* one refresh for every surface a request shows on, so the store stays the only
@@ -5440,7 +5626,7 @@ function renderActivityRail(){
       ${REQS.map(q => `
       <button type="button" class="act-req" data-req="${q.id}">
         <b>${q.agr || q.catName}</b>
-        <span class="req-pill${reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
+        <span class="req-pill${q.kind === 'meeting' ? ' booked' : reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
         <span class="act-req-s">${reqSub(q)}</span>
       </button>`).join('')}
     </div>` : ''}
@@ -5786,10 +5972,12 @@ function renderNewCustomerDash(){
                     class="trend-up" aria-hidden="true">${TREND_UP}</span></b>
                   <span class="nc-ov-card-c">Can be more or less than this</span></div>
                 <div class="nc-ov-card"><span class="nc-ov-card-l">They buy</span>
-                  <b class="nc-ov-card-v">${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}<small> kr. / year</small></b>
+                  <b class="nc-ov-card-v">${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}<small> kr. / year</small><span
+                    class="trend-up flat" aria-hidden="true">${TREND_FLAT}</span></b>
                   <span class="nc-ov-card-c">Across ${ROWS.length} purchasing categories</span></div>
                 <div class="nc-ov-card"><span class="nc-ov-card-l">Agreements in use</span>
-                  <b class="nc-ov-card-v">${peerAgrCount}</b>
+                  <b class="nc-ov-card-v">${peerAgrCount}<span
+                    class="trend-up rise" aria-hidden="true">${TREND_UP}</span></b>
                   <span class="nc-ov-card-c">${AGR_TOTAL - peerAgrCount} more are open to you</span></div>
               </div>
             </div>
@@ -8252,13 +8440,16 @@ function reqCardsHTML(list){
     <button type="button" class="rq-card" data-reqopen="${q.id}">
       <span class="rq-ic">${RQ_ICON}</span>
       <span class="rq-tx">
-        <b>${q.agr ? `You asked ${q.agr} for a better price` : `You asked for better terms`}</b>
-        <span>${q.agr
+        <b>${q.kind === 'meeting' ? `${ADVISOR.n} is booked for ${q.catName.toLowerCase()}`
+          : q.agr ? `You asked ${q.agr} for a better price` : `You asked for better terms`}</b>
+        <span>${q.kind === 'meeting'
+          ? `${q.when} · ${q.len} min · ${q.chan} · reference ${q.ref}`
+          : q.agr
           ? `${reqWhen(q).replace('sent', 'Sent')} · reference ${q.ref}`
           : `${q.count} supplier${q.count > 1 ? 's' : ''} · ${reqWhen(q).replace('sent', 'sent')} · reference ${q.ref}`}</span>
       </span>
       <span class="rq-go">
-        <span class="req-pill${reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
+        <span class="req-pill${q.kind === 'meeting' ? ' booked' : reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </span>
     </button>`).join('')}
@@ -8475,7 +8666,18 @@ function renderMeeting(){
       const btn = $('#msBook');
       msState.note = $('#msNote').value;
       btn.disabled = true; btn.textContent = 'Booking…';
-      setTimeout(() => { msState.step = 3; renderMeeting(); body.scrollTop = 0; }, RM ? 300 : 900);
+      setTimeout(() => {
+        /* a booked meeting is a commitment the user made, so it belongs in the same
+           store the requests use — otherwise "Talk to my advisor" leaves no trace
+           anywhere once the confirmation is dismissed */
+        addReq({
+          id:'ms-' + r.id + '-' + Date.now(), kind:'meeting', catId:r.id, catName:r.n,
+          agr:null, count:1, ref:'MT-' + String(seedOf(r.n + msState.day) % 100000).padStart(5, '0'),
+          when:`${msDay().long}, ${msState.time}`, whenShort:`${msDay().label} ${msState.time}`,
+          len:msState.len, chan:msChan().t, terms:[]
+        });
+        msState.step = 3; renderMeeting(); body.scrollTop = 0;
+      }, RM ? 300 : 900);
     });
 
   } else {
@@ -8545,8 +8747,8 @@ function renderCatTab(r){
           ? `<button type="button" class="btn btn-secondary btn-sm" data-reqopen="${mine.id}">
                <span class="req-pill${reqDays(mine) >= 5 ? ' chase' : ''}">${reqStage(mine)}</span>
                Price request</button>`
-          : `<button type="button" class="btn btn-secondary btn-sm" data-challenge="${i}">
-               Ask for a better price</button>`}
+          : `<button type="button" class="btn btn-secondary btn-sm" data-advisor="${i}">
+               Talk to my advisor</button>`}
       </div>
       <div class="agc-lev">${featIcon('group')}<b>${memberCount(a.n)}</b> members use this</div>
     </li>`;
@@ -8582,8 +8784,8 @@ function renderCatTab(r){
           ? `<button type="button" class="btn btn-secondary btn-sm" data-reqopen="${reqForAgr(r.id, a.n).id}">
                <span class="req-pill${reqDays(reqForAgr(r.id, a.n)) >= 5 ? ' chase' : ''}">${reqStage(reqForAgr(r.id, a.n))}</span>
                Price request</button>`
-          : `<button type="button" class="btn btn-secondary btn-sm" data-challenge="${i}">
-               Ask for a better price</button>`}
+          : `<button type="button" class="btn btn-secondary btn-sm" data-advisor="${i}">
+               Talk to my advisor</button>`}
         <span class="spacer"></span>
         <span class="ac-lev">${featIcon('group')}<b>${memberCount(a.n)}</b> members use this</span>
       </div>
@@ -8644,8 +8846,11 @@ function renderCatTab(r){
   wireAgrAsk('#viewCatTab', r);
   $$('#viewCatTab [data-agr]').forEach(b => b.addEventListener('click',
     () => renderCatTabAgreement(r, +b.dataset.agr)));
-  $$('#viewCatTab [data-challenge]').forEach(b => b.addEventListener('click',
-    () => openPriceChallenge(r, r.agr[+b.dataset.challenge])));
+  /* the card's secondary action is the advisor now — a button labelled "talk to my
+     advisor" that opened a supplier price-challenge letter would be a lying label.
+     The price challenge is still reachable from the agreement's own page. */
+  $$('#viewCatTab [data-advisor]').forEach(b => b.addEventListener('click',
+    () => openAdvisorMeeting(r)));
 }
 
 /* ---------- the agreement page, in three views ----------
@@ -8847,7 +9052,7 @@ function renderCatTabAgreement(r, idx){
   const mine = reqForAgr(r.id, a.n);
   const challengeHTML = mine
     ? `<button class="btn btn-secondary btn-block" data-reqopen="${mine.id}">Track your price request</button>`
-    : `<button class="btn btn-secondary btn-block" id="catTabChallenge">Ask for a better price</button>`;
+    : `<button class="btn btn-secondary btn-block" id="catTabAdvisor">Talk to my advisor</button>`;
   /* in use is not a dead end: the hero keeps a way to reach a person, which is the
      thing the removed "Need more info?" section was there for */
   const activateHTML = a.req
@@ -8895,8 +9100,8 @@ function renderCatTabAgreement(r, idx){
   }));
   const upLink = $('#cmpUploadLink');
   if(upLink) upLink.addEventListener('click', e => { e.preventDefault(); openDataCenter(); });
-  const chal = $('#catTabChallenge');
-  if(chal) chal.addEventListener('click', () => openPriceChallenge(r, a));
+  const adv = $('#catTabAdvisor');
+  if(adv) adv.addEventListener('click', () => openAdvisorMeeting(r));
   const actBtn = $('#catTabActivate');
   if(actBtn) actBtn.addEventListener('click', () => {
     actBtn.disabled = true; actBtn.textContent = 'Sending…';
