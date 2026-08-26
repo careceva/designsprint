@@ -6349,7 +6349,7 @@ const oppTimelineHTML = (a) => {
   const at = a === undefined ? -1 : actStageOf(a);
   const live = at >= 0;
   return `
-  <details class="opp-fold" ${live ? 'open' : ''}>
+  <details class="opp-fold" open>
     <summary><h3>Activation timeline</h3>${live
       ? `<span class="act-now">Step ${at + 1} of ${ACT_STEPS.length}</span>` : ''}</summary>
     <ol class="stepper${live ? ' live' : ''}">
@@ -8779,10 +8779,17 @@ html,body,.app,.wrap{background:var(--e0)!important}
 .nc-sec{border-top:1px solid #0000000f!important}
 .nc-sec:first-child{border-top:none!important}
 
+/* 8px, uniform. The grey is a frame around the cards, not a container with
+   comfortable padding — so every side gets the same 8px and the value is dark
+   enough to hold that width. .nc-calc-banner is the heading block inside the
+   panel and carries its own inset, so it is pulled back to the 8px line too. */
 .nc-ov,.agr-simple-tray,.grp,.section-panel{
-  background:#E9E9EE!important;border:1px solid #00000012!important;
-  box-shadow:none!important;border-radius:20px!important;padding:16px!important}
-.nc-ov{gap:12px!important}
+  background:#E0E0E6!important;border:none!important;
+  box-shadow:none!important;border-radius:20px!important;padding:8px!important}
+.nc-ov{gap:8px!important}
+/* the heading lines up with the CARD TEXT below it, not with the card's edge —
+   8px frame + the card's own 24px inset — so the column reads as one left margin */
+.nc-ov>.nc-calc-banner{padding:16px 24px 12px!important}
 
 /* cards inside a panel are the raised white plane — same inversion as dark */
 .nc-ov .nc-ov-grid>*,.nc-ov .card,.nc-ov .hw-t,.nc-sec .card,.nc-sec .hw-t,
@@ -8796,7 +8803,7 @@ html,body,.app,.wrap{background:var(--e0)!important}
 .agr-simple-tray{position:relative!important}
 .agr-simple-tray::after{content:"";position:absolute;top:1px;right:1px;bottom:1px;
   width:64px;pointer-events:none;border-radius:0 19px 19px 0;
-  background:linear-gradient(90deg,#E9E9EE00,#E9E9EEe6 55%,#E9E9EE)}
+  background:linear-gradient(90deg,#E0E0E600,#E0E0E6e6 55%,#E0E0E6)}
 
 /* The view switcher wrapped onto a second line at narrower widths, stranding
    "Story" on a row of its own inside the pill. Seven options need 353px in a
@@ -8853,6 +8860,77 @@ html,body,.app,.wrap{background:var(--e0)!important}
 .ncta,.ag-row-fig{color:#155ec9!important}
 .ap-human-live{color:#00736a!important}
 .up-f,.hw-trend{color:#5f6167!important}
+
+/* ===================================================================
+   AGREEMENT PAGE — every section gets its own card
+
+   The page was a stack of blocks separated by hairline rules, all floating
+   directly on the grey ground: the chart, the today-vs-agreement bars, the
+   terms, the timeline and the contact block had no surface of their own.
+   Each one is now a card, using the treatment from the opportunity cards
+   (.agr-simple): no border, 20px radius, shadow-xs, and a 2px lift with
+   shadow-md on hover.
+
+   Section HEADINGS stay on the ground — same rule as the overview. A card
+   holds content; the heading that introduces it sits outside.
+   =================================================================== */
+.iv-chart,.iv-vs,.opp-terms,.opp-fold,.pp,.cmp,
+.opp-sec.opp-contact,.stepper-note{
+  background:var(--e1)!important;border:none!important;
+  border-radius:var(--rounded-lg,20px)!important;
+  box-shadow:var(--shadow-xs)!important;
+  padding:var(--s6,24px)!important;
+  transition:box-shadow var(--t-fast,.15s) ease,transform .12s ease}
+.iv-chart:hover,.iv-vs:hover,.opp-terms:hover,.opp-fold:hover,
+.pp:hover,.cmp:hover,.opp-sec.opp-contact:hover,.bk-tbl:hover{
+  box-shadow:var(--shadow-md)!important;transform:translateY(-2px)}
+
+/* The basket table needs the same card, but a <table> with border-collapse:
+   collapse IGNORES its own padding, and adding it blew the table out to 760px
+   in a 564px column — it overflowed the content area to the right. Separated
+   borders with zero spacing keeps the rules exactly as they render today and
+   lets the table hold its own padding, with border-box so 100% stays 100%. */
+.bk-tbl{background:var(--e1)!important;border:none!important;
+  border-collapse:separate!important;border-spacing:0!important;
+  box-sizing:border-box!important;width:100%!important;max-width:100%!important;
+  /* .opp-sec is a column flex container, so the table is a flex item with the
+     default min-width:auto — which is min-content, and no width/max-width can
+     shrink it past that. min-width:0 is what actually lets it fit. */
+  min-width:0!important;
+  /* Pre-existing, not caused by the card: the table's min-content width is 760px
+     in a 564px column, so at this width its last column ("You save") ran under
+     the fixed activity sidebar. Auto layout cannot shrink below min-content;
+     fixed layout can, so the columns get explicit shares and the text wraps. */
+  table-layout:fixed!important;
+  border-radius:var(--rounded-lg,20px)!important;box-shadow:var(--shadow-xs)!important;
+  padding:var(--s6,24px)!important;
+  transition:box-shadow var(--t-fast,.15s) ease,transform .12s ease}
+.bk-tbl th:first-child,.bk-tbl td:first-child{width:40%}
+.bk-tbl th:not(:first-child),.bk-tbl td:not(:first-child){width:20%}
+
+/* the KPI strip is already a card — it just needs the same shell, and the grey
+   it paints is its own cell gridline, so it must not leak past the corners */
+.iv-stats{border:none!important;border-radius:var(--rounded-lg,20px)!important;
+  box-shadow:var(--shadow-xs)!important;overflow:hidden!important;
+  transition:box-shadow var(--t-fast,.15s) ease,transform .12s ease}
+.iv-stats:hover{box-shadow:var(--shadow-md)!important;transform:translateY(-2px)}
+
+/* the hairline rules and 24px top padding were doing the separating. Cards and
+   the gap between them do it now, so the rules are noise on top of noise. */
+.opp-sec,.opp-fold{border-top:none!important}
+.opp-sec{padding-top:0!important}
+.opp-fold{margin-top:var(--s6,24px)}
+.opp-sec.opp-contact{margin-top:var(--s6,24px)}
+/* the note under the stepper is inside the timeline card, so it must not be a
+   second card nested in the first */
+.opp-fold .stepper-note{background:transparent!important;box-shadow:none!important;
+  padding:0!important;border-radius:0!important;margin-top:var(--s4,16px)}
+.opp-fold:hover .stepper-note{transform:none}
+/* summary sits flush with the card's own padding rather than adding to it */
+.opp-fold>summary{margin:0!important}
+.opp-fold[open]>summary{margin-bottom:var(--s4,16px)!important}
+/* the chart figure's caption and month axis belong inside its card */
+.iv-chart>figcaption{margin-bottom:var(--s4,16px)}
 
 /* the sidebar must never share a plane with the content it sits beside */
 .nc-activity{position:fixed!important;right:0!important;width:320px;z-index:6}

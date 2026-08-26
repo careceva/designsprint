@@ -1290,10 +1290,7 @@ body.in-app .flow{display:none}
    ========================================================================== */
 
 /* ---------- page head ---------- */
-.sup-head{display:flex;flex-direction:column;gap:var(--s6)}
-.sup-head h1{font-size:var(--text-2xl);letter-spacing:-.8px}
-.sup-head p{margin-top:var(--s1);font-size:var(--text-sm);line-height:1.5;
-  max-width:68ch;color:var(--general-muted-foreground)}
+/* .sup-head retired — the page opens with the shared .ph hero now */
 /* where the tray's numbers come from — sits under the tray, tight to it, because
    it is a footnote on those figures and not a paragraph of its own */
 .sup-basis{margin-top:calc(var(--s6) * -1 + var(--s2));font-size:13px;
@@ -1315,7 +1312,12 @@ body.in-app .flow{display:none}
 /* ---------- search, filters, sort ----------
    The search field and every chip live in the head, OUTSIDE #supBody, so
    re-rendering results never steals focus mid-keystroke. */
-.sup-tools{display:flex;flex-direction:column;gap:var(--s4)}
+/* its own block below the hero, with a rule to sit under — the controls are a
+   separate act from the page's opening statement */
+/* no top margin: .ph already pads 32px below itself, and adding another 32 here
+   opened ~88px of dead space between the hero and the controls */
+.sup-tools{display:flex;flex-direction:column;gap:var(--s4);
+  padding-top:var(--s6);border-top:1px solid var(--hairline)}
 /* tight group: the field and the sort segment are one row of controls */
 .sup-tools-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3)}
 .sup-search{position:relative;flex:1 1 300px;max-width:440px}
@@ -1340,7 +1342,7 @@ body.in-app .flow{display:none}
 .sup-sort-l{font-size:13px;font-weight:600;color:var(--general-muted-foreground)}
 /* the two chip groups sit closer to each other than to the field above them:
    they are one filter block, read top to bottom */
-.sup-chips{display:flex;flex-direction:column;gap:var(--s2)}
+.sup-chips{display:flex;flex-direction:column;gap:var(--s3)}
 .sup-cats{display:flex;flex-wrap:wrap;gap:var(--s2)}
 .sup-cats .pill-opt{height:34px;font-size:13px}
 .sup-cats .pill-opt svg{width:13px;height:13px;flex:0 0 auto}
@@ -6653,10 +6655,12 @@ function renderSupBody(){
     const hits = supMatches();
     count = hits.length;
     body.innerHTML = hits.length
-      ? supSectionHTML({t:'Results'},
-          `${hits.length} supplier${hits.length === 1 ? '' : 's'}`,
-          supSort === 'save' ? 'Biggest annual saving first, on the spend we can see.'
-          : supSort === 'az' ? 'Alphabetical.' : '', hits, 'hits')
+      ? supSectionHTML({t:'Matching your filters'},
+          supSort === 'save' ? 'Biggest annual saving first'
+          : supSort === 'az' ? 'A to Z'
+          : 'In the order Advantage recommends them',
+          supSort === 'save' ? 'On the spend we can actually see — suppliers with no invoice match sit last.' : '',
+          hits, 'hits')
       : `
       <div class="sup-empty">
         <span class="sup-empty-ic" aria-hidden="true">${SUP_GLASS}</span>
@@ -6712,7 +6716,8 @@ function renderSup(){
              invoices — so each card says what it is worth to you, not in general.`}</p>
       </div>
       ${supHeroHTML()}
-      <div class="sup-tools">
+    </header>
+    <div class="sup-tools">
         <div class="sup-tools-row">
           <div class="sup-search">
             ${SUP_GLASS}
@@ -6743,7 +6748,7 @@ function renderSup(){
         </div>
       </div>
       <div class="sup-bar" id="supBar" role="status" aria-live="polite"></div>
-    </header>
+    </div>
     <div id="supBody"></div>`;
 
   const q = $('#supQ');
