@@ -1,0 +1,2759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Advantage — merged prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<style>
+/* ============================================================================
+   ADVANTAGE — MERGED PROTOTYPE
+   Front half from the Norwegian portal (v177): needs-first discovery, the
+   progressive qualifier, prospect-vs-active supplier states, the access wallet,
+   cashback, compliance. Back half from advantage-main (DK): the dated activation
+   stepper ending in a verified saving, price challenge, custom requests, the
+   renewal calendar, dormancy detection, the activity rail, benchmark ranges.
+   Tokens inherited verbatim from advantage-main.html. Single portable file:
+   no relative paths, no remote images — inline SVG and gradients only.
+   ========================================================================= */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;
+  --general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --general-input:#ffffff;
+  --sidebar-border:#e0e0e0;
+  --sidebar-foreground:#1c1c1c;
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+
+  --font-sans:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-3xl:40px;--rounded-full:9999px;
+
+  --shadow-2xs:0 1px 0 0 #0000000d;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+
+  /* 8pt scale — s5/s7/s10 are NOT defined; use var(--s5,20px) if truly needed */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+
+  --hairline:#ececec;
+  --card-stroke:#e7e7ea;--card-stroke-hover:#d2d3d8;
+
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  --t-slow:.5s cubic-bezier(.2,.7,.3,1);
+
+  --brand-grad:linear-gradient(135deg,#2170ed,#0b00ab);
+  --pos-tint:#f4fcfb;
+  --pos-stroke:#00968930;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{
+  font-family:var(--font-body);background:var(--general-background);
+  color:var(--general-foreground);font-size:var(--text-base);line-height:1.5;
+  min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-4xl);letter-spacing:-1.1px;line-height:1.12}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+h4{font-size:var(--text-base);letter-spacing:-.2px}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+svg{flex:0 0 auto}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),opacity var(--t-fast),transform .1s ease}
+.btn:active:not([disabled]){transform:translateY(1px)}
+.btn[disabled]{cursor:not-allowed;opacity:.5}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover:not([disabled]){background:#1757c0}
+.btn-ghost{background:var(--surface);border-color:var(--card-stroke);color:var(--general-foreground)}
+.btn-ghost:hover{border-color:var(--card-stroke-hover);background:#fcfcfd}
+.btn-quiet{background:transparent;border-color:transparent;color:var(--general-primary);padding:0 var(--s3)}
+.btn-quiet:hover{background:var(--brand-ice)}
+.btn-sm{height:34px;padding:0 var(--s4);font-size:var(--text-xs)}
+.btn-xs{height:28px;padding:0 var(--s3);font-size:var(--text-xs);gap:var(--s1)}
+
+/* ---------- cards & sections ---------- */
+.card{background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-xl);box-shadow:var(--shadow-sm)}
+.card-in{border-radius:var(--rounded-lg)}   /* nested card steps radius down */
+.pad{padding:var(--s6)}
+.pad-sm{padding:var(--s4)}
+.col{display:flex;flex-direction:column}
+.row{display:flex;align-items:center}
+.g1{gap:var(--s1)}.g2{gap:var(--s2)}.g3{gap:var(--s3)}.g4{gap:var(--s4)}
+.g6{gap:var(--s6)}.g8{gap:var(--s8)}.g12{gap:var(--s12)}
+.wrap{flex-wrap:wrap}
+.spread{justify-content:space-between}
+.push{margin-left:auto}
+/* hairline section divider — preferred over boxing each section */
+.hsec{padding-top:var(--s6);border-top:1px solid var(--hairline)}
+
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.chip{display:inline-flex;align-items:center;gap:var(--s1);height:26px;padding:0 var(--s3);
+  border-radius:var(--rounded-full);background:var(--general-muted);
+  font-size:var(--text-xs);font-weight:500;white-space:nowrap}
+.chip-pos{background:var(--pos-tint);border:1px solid var(--pos-stroke);color:var(--sentiment-positive)}
+.chip-live{background:var(--general-secondary);color:#154a9e}
+.chip-warn{background:#fff5e8;border:1px solid #ff9b3d40;color:#9a5a10}
+.chip-est{background:var(--general-muted);color:var(--general-muted-foreground)}
+.figure{font-family:var(--font-sans);font-weight:600;letter-spacing:-.6px;
+  font-variant-numeric:tabular-nums}
+.f-xl{font-size:var(--text-4xl)}.f-lg{font-size:var(--text-2xl)}.f-md{font-size:var(--text-xl)}
+.pos{color:var(--sentiment-positive)}
+.tint-pos{background:var(--pos-tint);border:1px solid var(--pos-stroke);
+  border-radius:var(--rounded-lg);padding:var(--s4)}
+
+/* ---------- app shell ---------- */
+.shell{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}
+body.help-open .shell{grid-template-columns:248px minmax(0,1fr)}
+.topbar{position:sticky;top:0;z-index:60;grid-column:1/-1;height:64px;
+  display:flex;align-items:center;gap:var(--s4);padding:0 var(--s6);
+  background:var(--surface);border-bottom:1px solid var(--hairline)}
+.brand{display:flex;align-items:center;gap:var(--s2);font-family:var(--font-sans);
+  font-weight:700;font-size:var(--text-lg);letter-spacing:-.5px;width:200px;flex:0 0 auto}
+.brand-mark{width:28px;height:28px;border-radius:var(--rounded-sm);background:var(--brand-grad);
+  display:grid;place-items:center;color:#fff;font-size:14px;font-weight:700}
+.palette-btn{flex:1 1 auto;max-width:520px;height:40px;display:flex;align-items:center;
+  gap:var(--s2);padding:0 var(--s4);border:1px solid var(--card-stroke);background:#fcfcfd;
+  border-radius:var(--rounded-full);color:var(--general-muted-foreground);cursor:pointer;
+  font-size:var(--text-sm);transition:border-color var(--t-fast)}
+.palette-btn:hover{border-color:var(--card-stroke-hover);background:var(--surface)}
+.palette-btn kbd{margin-left:auto;font-family:var(--font-mono);font-size:11px;
+  background:var(--general-muted);border-radius:var(--rounded-xs);padding:2px 6px}
+.tb-actions{display:flex;align-items:center;gap:var(--s2);margin-left:auto}
+.iconbtn{width:38px;height:38px;border:0;background:transparent;border-radius:var(--rounded-md);
+  display:grid;place-items:center;cursor:pointer;color:#43576c;position:relative}
+.iconbtn:hover{background:var(--general-muted)}
+.iconbtn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.badge-dot{position:absolute;top:5px;right:5px;min-width:16px;height:16px;padding:0 4px;
+  border-radius:var(--rounded-full);background:var(--general-primary);color:#fff;
+  font-size:10px;font-weight:600;display:grid;place-items:center;border:2px solid var(--surface)}
+.switcher{display:flex;align-items:center;gap:var(--s2);height:40px;padding:0 var(--s3);
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-full);background:var(--surface);
+  cursor:pointer;font-size:var(--text-xs);text-align:left}
+.switcher:hover{border-color:var(--card-stroke-hover)}
+.sw-av{width:26px;height:26px;border-radius:var(--rounded-sm);background:var(--general-secondary);
+  color:#154a9e;display:grid;place-items:center;font-weight:700;font-size:11px}
+.sw-copy{display:flex;flex-direction:column;line-height:1.25}
+.sw-copy b{font-size:var(--text-xs);white-space:nowrap}
+.sw-copy span{font-size:10.5px;color:var(--general-muted-foreground);white-space:nowrap}
+
+/* ---------- sidebar ---------- */
+.side{border-right:1px solid var(--sidebar-border);background:var(--surface);
+  padding:var(--s6) var(--s3);display:flex;flex-direction:column;gap:var(--s6);
+  position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto}
+.navgrp{display:flex;flex-direction:column;gap:var(--s1)}
+.navlbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--general-muted-foreground);padding:0 var(--s3) var(--s1)}
+.ni{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s2) var(--s3);
+  border:0;background:transparent;border-radius:var(--rounded-md);cursor:pointer;
+  font-size:var(--text-sm);font-weight:500;color:var(--sidebar-foreground);text-align:left;
+  transition:background var(--t-fast)}
+.ni:hover{background:var(--general-muted)}
+.ni.on{background:var(--brand-ice);color:#0f4bb0;font-weight:600}
+.ni svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.ni-badge{margin-left:auto;min-width:20px;height:20px;padding:0 5px;border-radius:var(--rounded-full);
+  background:var(--general-primary);color:#fff;font-size:11px;font-weight:600;
+  display:grid;place-items:center}
+.ni-hero{background:var(--brand-ice);border:1px solid #cfe0ff;flex-direction:column;
+  align-items:flex-start;gap:var(--s1);padding:var(--s3)}
+.ni-hero:hover{background:#e4efff}
+.ni-hero .h-top{display:flex;align-items:center;gap:var(--s2);width:100%}
+.ni-hero small{font-size:11px;color:#3d6199;font-weight:400;line-height:1.35}
+
+/* ---------- canvas ---------- */
+.canvas{padding:var(--s8) var(--s8) var(--s24);min-width:0;
+  display:flex;flex-direction:column;gap:var(--s8)}
+body.help-open .canvas{padding-right:calc(var(--s8) + 400px)}
+.view{display:none;flex-direction:column;gap:var(--s8)}
+.view.on{display:flex}
+.vhead{display:flex;flex-direction:column;gap:var(--s2);max-width:76ch}
+.vhead p{color:var(--general-muted-foreground)}
+.maxw{max-width:1180px}
+
+/* ---------- grids ---------- */
+.g-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4)}
+.g-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s4)}
+.g-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s3)}
+.g-side{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:var(--s6);align-items:start}
+
+/* ---------- stat tiles ---------- */
+.stat{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  padding:var(--s4);display:flex;flex-direction:column;gap:var(--s1)}
+.stat .lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.stat .sub{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.stat.hero{background:var(--brand-ice);border-color:#cfe0ff}
+
+/* ---------- opportunity / agreement cards ---------- */
+.opp{display:flex;flex-direction:column;gap:var(--s3);padding:var(--s4);
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  cursor:pointer;transition:border-color var(--t-fast),box-shadow var(--t-fast);text-align:left}
+.opp:hover{border-color:var(--card-stroke-hover);box-shadow:var(--shadow-sm)}
+.opp-band{height:6px;border-radius:var(--rounded-full);background:var(--brand-grad);opacity:.9}
+.opp-top{display:flex;align-items:flex-start;gap:var(--s3)}
+.logo-tile{width:40px;height:40px;flex:0 0 auto;border-radius:var(--rounded-md);
+  display:grid;place-items:center;font-family:var(--font-sans);font-weight:700;font-size:13px;
+  background:var(--general-muted);color:#3a4a5c}
+.sel-box{width:20px;height:20px;flex:0 0 auto;border:1.5px solid var(--card-stroke-hover);
+  border-radius:var(--rounded-xs);display:grid;place-items:center;background:var(--surface)}
+.opp.picked{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc1f}
+.opp.picked .sel-box{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
+.sel-box svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.6;
+  stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.opp.picked .sel-box svg{opacity:1}
+
+/* ---------- the dated activation stepper (from main) ---------- */
+.stepper{display:flex;flex-direction:column;gap:0}
+.step{display:grid;grid-template-columns:28px minmax(0,1fr);gap:var(--s3);position:relative;
+  padding-bottom:var(--s4)}
+.step:last-child{padding-bottom:0}
+.step::before{content:"";position:absolute;left:13px;top:26px;bottom:0;width:2px;
+  background:var(--hairline)}
+.step:last-child::before{display:none}
+.step-dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  background:var(--surface);border:2px solid var(--hairline);color:var(--general-muted-foreground);
+  font-size:11px;font-weight:700;z-index:1}
+.step.done .step-dot{background:var(--sentiment-positive);border-color:var(--sentiment-positive);color:#fff}
+.step.done::before{background:var(--sentiment-positive)}
+.step.now .step-dot{border-color:var(--general-primary);color:var(--general-primary);
+  box-shadow:0 0 0 4px #1b64dc1a}
+.step-dot svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:3;
+  stroke-linecap:round;stroke-linejoin:round}
+.step-body{display:flex;flex-direction:column;gap:2px;padding-top:2px}
+.step-t{display:flex;align-items:baseline;gap:var(--s2);flex-wrap:wrap}
+.step-t b{font-size:var(--text-sm);font-weight:600}
+.step-when{font-size:var(--text-xs);color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums}
+.step-s{font-size:var(--text-xs);color:var(--general-muted-foreground);max-width:62ch}
+.step.pending .step-t b,.step.pending .step-s{opacity:.55}
+
+/* ---------- renewal calendar ---------- */
+.cal{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--s1)}
+.cal-m{display:flex;flex-direction:column;gap:var(--s1);padding:var(--s2) var(--s1);
+  border:1px solid var(--hairline);border-radius:var(--rounded-sm);min-height:74px;
+  background:var(--surface)}
+.cal-m b{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);text-align:center}
+.cal-pill{font-size:10px;font-weight:600;padding:2px 4px;border-radius:var(--rounded-xs);
+  background:var(--general-secondary);color:#154a9e;text-align:center;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-m.hot{border-color:#ff9b3d80;background:#fffaf3}
+.cal-m.hot .cal-pill{background:#ffe9cf;color:#8a4d09}
+
+/* ---------- progressive qualifier ---------- */
+.qz{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  overflow:hidden}
+.qz-h{display:flex;align-items:center;gap:var(--s4);padding:var(--s4)}
+.qz-h .col{gap:2px;min-width:0}
+.qz-step{margin-left:auto;flex:0 0 auto;font-size:11px;font-weight:600;padding:4px var(--s2);
+  border-radius:var(--rounded-full);background:var(--brand-ice);color:#0f4bb0;
+  font-variant-numeric:tabular-nums}
+.qz-b{padding:var(--s4);border-top:1px solid var(--hairline);background:#fcfcfd;
+  display:flex;flex-direction:column;gap:var(--s3)}
+.qz-opts{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.qz-opt{height:34px;padding:0 var(--s3);border:1px solid var(--card-stroke);background:var(--surface);
+  border-radius:var(--rounded-full);font-size:var(--text-xs);font-weight:500;cursor:pointer;
+  transition:all var(--t-fast)}
+.qz-opt:hover{border-color:var(--brand-cornflower);background:var(--brand-ice)}
+.qz-opt.on{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
+.qz-done{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);background:var(--pos-tint)}
+.qz-tick{width:30px;height:30px;border-radius:50%;background:#d8f2ef;color:var(--sentiment-positive);
+  display:grid;place-items:center;flex:0 0 auto}
+.qz-tick svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:3;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- ranked recommendation rows ---------- */
+.rec{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:var(--s3);
+  align-items:center;padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline)}
+.rec:last-child{border-bottom:0}
+.rec-rank{width:26px;height:26px;border-radius:var(--rounded-sm);background:var(--brand-ice);
+  color:#0f4bb0;display:grid;place-items:center;font-size:11px;font-weight:700}
+.rec:first-child .rec-rank{background:var(--general-primary);color:#fff}
+
+/* ---------- rails ---------- */
+.rail{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  overflow:hidden;position:sticky;top:calc(64px + var(--s8))}
+.rail-h{display:flex;align-items:center;gap:var(--s2);padding:var(--s4);
+  border-bottom:1px solid var(--hairline)}
+.rail-h h4{flex:1 1 auto}
+.rail-count{min-width:22px;height:22px;padding:0 6px;border-radius:var(--rounded-full);
+  background:var(--general-primary);color:#fff;font-size:11px;font-weight:600;
+  display:grid;place-items:center}
+.rail-b{display:flex;flex-direction:column}
+.nba{display:flex;gap:var(--s3);padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline);
+  text-align:left;background:transparent;border-left:0;border-right:0;border-top:0;cursor:pointer;
+  transition:background var(--t-fast)}
+.nba:hover{background:#fcfcfd}
+.nba-i{width:28px;height:28px;flex:0 0 auto;border-radius:var(--rounded-sm);
+  background:var(--brand-ice);color:#0f4bb0;display:grid;place-items:center}
+.nba-i svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+.nba .col{gap:2px;min-width:0}
+.nba b{font-size:var(--text-xs);font-weight:600}
+.nba span{font-size:11.5px;color:var(--general-muted-foreground);line-height:1.4}
+.logrow{display:grid;grid-template-columns:8px minmax(0,1fr);gap:var(--s3);
+  padding:var(--s2) var(--s4);font-size:11.5px;color:var(--general-muted-foreground)}
+.logdot{width:7px;height:7px;border-radius:50%;background:var(--sentiment-positive);margin-top:6px}
+.logrow b{color:var(--general-foreground);font-weight:600;font-size:var(--text-xs);display:block}
+
+/* ---------- docked help rail (v177's container, main's cast of humans) ---------- */
+.help{position:fixed;top:64px;right:0;bottom:0;width:400px;z-index:55;background:var(--surface);
+  border-left:1px solid var(--hairline);display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform var(--t);box-shadow:var(--shadow-lg)}
+body.help-open .help{transform:none}
+.help-h{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);
+  border-bottom:1px solid var(--hairline)}
+.help-tabs{display:flex;gap:var(--s1);padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--hairline);background:#fcfcfd;overflow-x:auto}
+.htab{height:32px;padding:0 var(--s3);border:1px solid var(--card-stroke);background:var(--surface);
+  border-radius:var(--rounded-full);font-size:var(--text-xs);font-weight:500;cursor:pointer;
+  white-space:nowrap}
+.htab.on{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
+.help-ctx{padding:var(--s2) var(--s4);font-size:11.5px;color:var(--general-muted-foreground);
+  background:var(--brand-ice);border-bottom:1px solid #dbe9ff}
+.help-b{flex:1 1 auto;overflow-y:auto;padding:var(--s4);display:flex;flex-direction:column;gap:var(--s3)}
+.bub{max-width:88%;padding:var(--s3);border-radius:var(--rounded-md);font-size:var(--text-xs);
+  line-height:1.5}
+.bub.them{background:var(--general-muted)}
+.bub.me{background:var(--general-secondary);color:#123c78;margin-left:auto}
+.prompts{display:flex;flex-direction:column;gap:var(--s2)}
+.prompt{text-align:left;padding:var(--s3);border:1px solid var(--card-stroke);background:var(--surface);
+  border-radius:var(--rounded-md);font-size:var(--text-xs);cursor:pointer;line-height:1.4}
+.prompt:hover{border-color:var(--brand-cornflower);background:var(--brand-ice)}
+.help-f{padding:var(--s3) var(--s4);border-top:1px solid var(--hairline);display:flex;gap:var(--s2)}
+.help-f input{flex:1 1 auto;height:38px;padding:0 var(--s3);border:1px solid var(--card-stroke);
+  border-radius:var(--rounded-full);background:var(--surface);outline:none;font-size:var(--text-xs)}
+.help-f input:focus{border-color:var(--brand-cornflower);box-shadow:0 0 0 3px #1b64dc14}
+.person{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface)}
+.portrait{width:40px;height:40px;flex:0 0 auto;border-radius:50%;background:var(--brand-grad);
+  color:#fff;display:grid;place-items:center;font-weight:700;font-size:var(--text-sm)}
+.reqrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--s2);align-items:center;
+  padding:var(--s3);border:1px solid var(--hairline);border-radius:var(--rounded-md)}
+
+/* ---------- overlays ---------- */
+.scrim{position:fixed;inset:0;background:#0b132480;backdrop-filter:blur(3px);z-index:90;
+  display:none;align-items:center;justify-content:center;padding:var(--s6)}
+.scrim.on{display:flex}
+.sheet{width:min(680px,100%);max-height:88vh;overflow-y:auto;background:var(--surface);
+  border-radius:var(--rounded-xl);box-shadow:var(--shadow-xl);padding:var(--s8);
+  display:flex;flex-direction:column;gap:var(--s6)}
+.sheet-wide{width:min(860px,100%)}
+.sheet-h{display:flex;align-items:flex-start;gap:var(--s4)}
+.sheet-h .col{gap:var(--s1);min-width:0}
+.x{width:34px;height:34px;border:0;background:var(--general-muted);border-radius:50%;cursor:pointer;
+  display:grid;place-items:center;flex:0 0 auto;margin-left:auto;font-size:18px;line-height:1;
+  color:var(--general-muted-foreground)}
+.x:hover{background:#e6e6e6}
+.field{display:flex;flex-direction:column;gap:var(--s2)}
+.field label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.field input,.field textarea,.field select{padding:var(--s3);border:1px solid var(--card-stroke);
+  border-radius:var(--rounded-md);background:var(--surface);outline:none;font-size:var(--text-sm)}
+.field textarea{min-height:110px;resize:vertical;line-height:1.55}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--brand-cornflower);
+  box-shadow:0 0 0 3px #1b64dc14}
+.evi{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--s2);
+  font-size:var(--text-xs);line-height:1.55}
+.evi-n{width:20px;height:20px;border-radius:var(--rounded-xs);background:var(--pos-tint);
+  border:1px solid var(--pos-stroke);color:var(--sentiment-positive);display:grid;place-items:center;
+  font-size:10px;font-weight:700}
+.draft{background:#fcfcfd;border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  padding:var(--s4);font-size:var(--text-xs);line-height:1.65;white-space:pre-wrap}
+.pickrow{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-md);cursor:pointer;
+  background:var(--surface);text-align:left;width:100%}
+.pickrow:hover{border-color:var(--card-stroke-hover)}
+.pickrow.on{border-color:var(--general-primary);background:var(--brand-ice)}
+.tick{width:20px;height:20px;flex:0 0 auto;border:1.5px solid var(--card-stroke-hover);
+  border-radius:var(--rounded-xs);display:grid;place-items:center;background:var(--surface)}
+.pickrow.on .tick{background:var(--general-primary);border-color:var(--general-primary);color:#fff}
+.tick svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.6;
+  stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.pickrow.on .tick svg{opacity:1}
+
+/* funnel */
+.funnel{display:flex;flex-direction:column;align-items:center;gap:var(--s4);padding:var(--s8) 0}
+.spin{width:52px;height:52px;border-radius:50%;border:3px solid var(--hairline);
+  border-top-color:var(--general-primary);animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){
+  .spin{animation-duration:2.4s}
+  *{transition-duration:.01ms!important}
+}
+
+/* command palette */
+.pal{position:fixed;inset:0;z-index:95;display:none;justify-content:center;
+  align-items:flex-start;padding:12vh var(--s6) var(--s6);background:#0b132466;backdrop-filter:blur(3px)}
+.pal.on{display:flex}
+.pal-box{width:min(620px,100%);background:var(--surface);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xl);overflow:hidden;display:flex;flex-direction:column}
+.pal-in{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);
+  border-bottom:1px solid var(--hairline)}
+.pal-in input{flex:1 1 auto;border:0;outline:none;font-size:var(--text-lg);background:transparent}
+.pal-list{max-height:52vh;overflow-y:auto;padding:var(--s2)}
+.pal-i{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3);border:0;
+  background:transparent;border-radius:var(--rounded-md);cursor:pointer;text-align:left;
+  font-size:var(--text-sm)}
+.pal-i:hover,.pal-i.cur{background:var(--brand-ice)}
+.pal-k{margin-left:auto;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.pal-empty{padding:var(--s6);text-align:center;color:var(--general-muted-foreground);
+  font-size:var(--text-sm)}
+
+/* intake */
+.intake{display:flex;flex-direction:column;gap:var(--s3);padding:var(--s6);
+  background:var(--brand-ice);border:1px solid #cfe0ff;border-radius:var(--rounded-xl)}
+.intake textarea{min-height:84px;border:1px solid #cfe0ff;background:var(--surface);
+  border-radius:var(--rounded-md);padding:var(--s3);outline:none;resize:vertical;
+  font-size:var(--text-sm);line-height:1.55}
+.intake textarea:focus{border-color:var(--brand-cornflower);box-shadow:0 0 0 3px #1b64dc14}
+.ex{display:flex;gap:var(--s2);flex-wrap:wrap}
+.ex button{height:30px;padding:0 var(--s3);border:1px solid #cfe0ff;background:var(--surface);
+  border-radius:var(--rounded-full);font-size:11.5px;cursor:pointer;color:#26507f}
+.ex button:hover{border-color:var(--brand-cornflower);background:#f4f9ff}
+.intake-res{display:none;gap:var(--s3);align-items:center;padding:var(--s4);background:var(--surface);
+  border:1px solid var(--pos-stroke);border-radius:var(--rounded-lg)}
+.intake-res.on{display:flex}
+.or{display:flex;align-items:center;gap:var(--s3);color:var(--general-muted-foreground);
+  font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.or::before,.or::after{content:"";height:1px;background:var(--hairline);flex:1 1 auto}
+
+/* directory */
+.dir{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2)}
+.dir-i{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);border:1px solid var(--hairline);
+  border-radius:var(--rounded-md);background:var(--surface);cursor:pointer;text-align:left}
+.dir-i:hover{border-color:var(--card-stroke-hover);background:#fcfcfd}
+.dir-ic{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-sm);
+  background:var(--general-muted);color:#3a4a5c;display:grid;place-items:center;
+  font-size:11px;font-weight:700}
+.dir-i b{font-size:var(--text-xs);display:block}
+.dir-i small{font-size:10.5px;color:var(--general-muted-foreground);display:block;line-height:1.3}
+
+/* wallet */
+.wal{display:flex;flex-direction:column;gap:var(--s3);padding:var(--s4);background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg)}
+.wal-code{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);
+  background:var(--brand-ice);border:1px solid #cfe0ff;border-radius:var(--rounded-md)}
+.wal-code b{font-family:var(--font-sans);font-size:var(--text-xl);letter-spacing:.5px;
+  color:#123c78;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis}
+details.how{border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+details.how summary{list-style:none;display:flex;align-items:center;justify-content:space-between;
+  padding:var(--s3) 0;cursor:pointer;font-size:var(--text-xs);font-weight:600;color:#1f4f8f}
+details.how summary::-webkit-details-marker{display:none}
+details.how p{padding-bottom:var(--s3);font-size:var(--text-xs);line-height:1.6;
+  color:var(--general-muted-foreground)}
+
+/* tabs */
+.tabs{display:flex;gap:var(--s1);border-bottom:1px solid var(--hairline)}
+.tab{height:40px;padding:0 var(--s4);border:0;background:transparent;cursor:pointer;
+  font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground);
+  border-bottom:2px solid transparent}
+.tab.on{color:var(--general-primary);border-bottom-color:var(--general-primary);font-weight:600}
+.tabpane{display:none;flex-direction:column;gap:var(--s6);padding-top:var(--s6)}
+.tabpane.on{display:flex}
+
+/* bars */
+.bar{height:10px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:var(--rounded-full);background:var(--brand-grad)}
+.barrow{display:grid;grid-template-columns:150px minmax(0,1fr) 110px;gap:var(--s3);
+  align-items:center;font-size:var(--text-xs)}
+
+table.tbl{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+table.tbl th{text-align:left;padding:var(--s2) var(--s3);font-size:11px;font-weight:600;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--general-muted-foreground);
+  border-bottom:1px solid var(--hairline)}
+table.tbl td{padding:var(--s3);border-bottom:1px solid var(--hairline)}
+table.tbl tr:last-child td{border-bottom:0}
+
+.toast{position:fixed;left:50%;bottom:var(--s6);transform:translate(-50%,14px);z-index:120;
+  background:var(--brand-midnight);color:#fff;padding:var(--s3) var(--s6);
+  border-radius:var(--rounded-full);font-size:var(--text-xs);font-weight:500;
+  box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity var(--t),transform var(--t)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1240px){
+  body.help-open .canvas{padding-right:var(--s8)}
+  .g-side{grid-template-columns:minmax(0,1fr)}
+  .rail{position:static}
+}
+@media (max-width:1080px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+  .g-3,.g-4,.dir{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cal{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .help{width:min(400px,100%)}
+}
+@media (max-width:720px){
+  .canvas{padding:var(--s6) var(--s4) var(--s24)}
+  .g-2,.g-3,.g-4,.dir{grid-template-columns:minmax(0,1fr)}
+  .palette-btn,.sw-copy{display:none}
+  .barrow{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">A</span><span>Advantage</span></div>
+
+    <button class="palette-btn" id="palBtn">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <span>Search areas, suppliers, agreements…</span><kbd>⌘K</kbd>
+    </button>
+
+    <div class="tb-actions">
+      <button class="switcher" id="locBtn" title="Switch market">
+        <span class="sw-av" id="locFlag">NO</span>
+        <span class="sw-copy"><b id="locName">Norway</b><span id="locOrg">Org.nr</span></span>
+      </button>
+      <button class="switcher" id="coBtn" title="Switch company">
+        <span class="sw-av" id="coAv">NB</span>
+        <span class="sw-copy"><b id="coName">Nordic Build</b><span id="coMeta">8 in use</span></span>
+      </button>
+      <button class="iconbtn" id="helpBtn" aria-label="Open assistant">
+        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.7 9.7 0 0 1-2.8-.4L4 21l1.4-4.2A8.3 8.3 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
+        <span class="badge-dot" id="helpBadge">2</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="side">
+    <div class="navgrp" id="navCore"></div>
+    <div class="navgrp" id="navTools"></div>
+    <div class="navgrp" id="navAdmin"></div>
+    <div class="navgrp" style="margin-top:auto">
+      <button class="ni" id="tourBtn">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8.5v.01"/></svg>
+        Show me around
+      </button>
+    </div>
+  </nav>
+
+  <main class="canvas" id="canvas">
+    <section class="view" id="v-overview"></section>
+    <section class="view" id="v-areas"></section>
+    <section class="view" id="v-category"></section>
+    <section class="view" id="v-supplier"></section>
+    <section class="view" id="v-suppliers"></section>
+    <section class="view" id="v-agreements"></section>
+    <section class="view" id="v-value"></section>
+    <section class="view" id="v-data"></section>
+    <section class="view" id="v-resources"></section>
+    <section class="view" id="v-team"></section>
+  </main>
+</div>
+
+<!-- docked help rail: v177's container, main's cast of humans -->
+<aside class="help" id="help" aria-label="Assistant">
+  <div class="help-h">
+    <span class="portrait" id="hPortrait">AI</span>
+    <div class="col" style="gap:2px;flex:1 1 auto;min-width:0">
+      <b style="font-size:var(--text-sm)" id="hWho">Advantage assistant</b>
+      <span style="font-size:11.5px" class="muted" id="hRole">Answers now · brings in a person when you ask</span>
+    </div>
+    <button class="x" id="hClose" aria-label="Close">×</button>
+  </div>
+  <div class="help-tabs" id="hTabs"></div>
+  <div class="help-ctx" id="hCtx"></div>
+  <div class="help-b" id="hBody"></div>
+  <div class="help-f">
+    <input id="hInput" placeholder="Ask about this page…">
+    <button class="btn btn-primary btn-sm" id="hSend">Send</button>
+  </div>
+</aside>
+
+<!-- command palette -->
+<div class="pal" id="pal">
+  <div class="pal-box">
+    <div class="pal-in">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#707070"
+        stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="palIn" placeholder="Search areas, suppliers, agreements, pages…" autocomplete="off">
+      <kbd style="font-family:var(--font-mono);font-size:11px;color:#707070">esc</kbd>
+    </div>
+    <div class="pal-list" id="palList"></div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const $ = (s,r=document) => r.querySelector(s);
+const $$ = (s,r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ============================================================================
+   1 · MARKET  —  the open question from the teardown, made a switch.
+   Whether both markets ship is a decision this prototype can demonstrate
+   rather than hardcode: currency, company-ID label and the named advisor
+   all follow from here.
+   ========================================================================= */
+const MARKETS = {
+  no:{ code:'NO', name:'Norway',  org:'Org.nr', cur:'kr',  adviser:'Maja Larsen',  buyer:'Ingrid Solberg',
+       group:'Vinst', loc:'nb-NO' },
+  dk:{ code:'DK', name:'Denmark', org:'CVR',    cur:'kr.', adviser:'Peter Holm',   buyer:'Mette Kruse',
+       group:'Advantage DK', loc:'da-DK' }
+};
+let MK = 'no';
+const mk = () => MARKETS[MK];
+const fmt = n => Math.round(n).toLocaleString(mk().loc).replace(/ /g,' ') + ' ' + mk().cur;
+
+/* ============================================================================
+   2 · PERSONAS + the trust rule
+   From main: a new customer never sees a hard figure. saveFig() enforces it in
+   code, so a benchmark cannot be mistaken for a verified number no matter who
+   writes the copy later.
+   ========================================================================= */
+const COMPANIES = {
+  built:{ av:'NB', name:'Nordic Build', legal:'Nordic Build AS', id:'913 402 118',
+          trade:'Construction', size:'50–99 employees', newCustomer:false },
+  fjord:{ av:'FL', name:'Fjord Labs',  legal:'Fjord Labs AS',  id:'927 118 004',
+          trade:'Technology',   size:'20–49 employees', newCustomer:true }
+};
+let CO = 'built';
+const co = () => COMPANIES[CO];
+const isNew = () => co().newCustomer;
+
+/* a verified figure prints exact; an estimate always prints as a range */
+function saveFig(n){
+  if(!isNew()) return fmt(n);
+  const lo = Math.round(n*0.72/1000)*1000, hi = Math.round(n*1.34/1000)*1000;
+  return fmt(lo).replace(' '+mk().cur,'') + '–' + fmt(hi);
+}
+const figTag = () => isNew()
+  ? '<span class="chip chip-est">estimated</span>'
+  : '<span class="chip chip-pos">verified</span>';
+
+/* ============================================================================
+   3 · DATA  —  areas, each with its agreements.
+   `req` = activated. `sent` = the day the request went out, which is what makes
+   the dated stepper possible. `dormant` = live but nothing invoiced through it.
+   ========================================================================= */
+const AREAS = [
+  { id:'ship', n:'Shipping', ic:'truck', spend:1240000, inv:412,
+    lead:'Parcels and freight — the widest gap between what you pay and what the group pays.',
+    agr:[
+      { n:'Pakkepost',    rate:0.34, covers:520000, req:false, members:1840 },
+      { n:'DHL Express',  rate:0.21, covers:310000, req:false, members:2210 },
+      { n:'Profrakt',     rate:0.26, covers:240000, req:false, members:760  },
+      { n:'Bring Express',rate:0.18, covers:170000, req:false, members:1320 }
+    ]},
+  { id:'mob', n:'Mobile', ic:'phone', spend:410000, inv:96,
+    lead:'Subscriptions drift. Nobody renegotiates a mobile contract that still works.',
+    agr:[
+      { n:'Talkmore', rate:0.31, covers:260000, req:false, members:3100 },
+      { n:'Phonero',  rate:0.24, covers:150000, req:false, members:1450 }
+    ]},
+  { id:'it', n:'IT', ic:'laptop', spend:690000, inv:151,
+    lead:'Hardware, licences and services — usually split across more suppliers than anyone intends.',
+    agr:[
+      { n:'Advania',  rate:0.22, covers:430000, req:true,  sent:-64, members:2640 },
+      { n:'Digiflow', rate:0.17, covers:260000, req:false, members:880  }
+    ]},
+  { id:'office', n:'Office & workplace', ic:'box', spend:520000, inv:288,
+    lead:'Small invoices, high volume — the steepest gap between list price and group price.',
+    agr:[
+      { n:'Lyreco',    rate:0.25, covers:340000, req:true, sent:-210, members:4100, dormant:true },
+      { n:'AllOffice', rate:0.19, covers:180000, req:false, members:1210 }
+    ]},
+  { id:'travel', n:'Travel & hotels', ic:'plane', spend:635000, inv:174,
+    lead:'You already hold three of these. The remaining value is in the parts of the trip you do not.',
+    agr:[
+      { n:'Norwegian', rate:0.20, covers:180000, req:true, sent:-320, members:5200 },
+      { n:'Scandic',   rate:0.17, covers:310000, req:true, sent:-290, members:4700 },
+      { n:'Hertz',     rate:0.25, covers:145000, req:true, sent:-150, members:2900 },
+      { n:'Strawberry',rate:0.14, covers:120000, req:false, members:2100 },
+      { n:'BCD Travel',rate:0.11, covers:95000,  req:false, members:1600 }
+    ]},
+  { id:'fuel', n:'Fuel & charging', ic:'fuel', spend:360000, inv:640,
+    lead:'A per-litre and per-kWh discount on volume you are already committed to.',
+    agr:[
+      { n:'Circle K', rate:0.09, covers:360000, req:true, sent:-410, members:3800 }
+    ]},
+  { id:'coffee', n:'Coffee & catering', ic:'cup', spend:150000, inv:64,
+    lead:'Machine setup, service and consumption matter more than the headline discount.',
+    agr:[
+      { n:'Selecta',      rate:0.30, covers:110000, req:true, sent:-500, members:1900, dormant:true },
+      { n:'Barista Bros', rate:0.36, covers:70000,  req:false, members:640 }
+    ]},
+  { id:'power', n:'Electricity', ic:'bolt', spend:280000, inv:24,
+    lead:'Prices, terms and your own consumption all move. The contract usually does not.',
+    agr:[
+      { n:'Fjordkraft', rate:0.13, covers:280000, req:false, members:2400 },
+      { n:'Fortum',     rate:0.15, covers:280000, req:false, members:2050 }
+    ]}
+];
+
+/* areas with no negotiated agreement of their own — the A–Z long tail */
+const DIRECTORY = [
+  ['Workwear','Protective equipment and clothing'],['Waste management','Handling and recycling'],
+  ['Staffing & recruitment','Temporary and permanent hiring'],['Fleet management','Company vehicles'],
+  ['Car sharing','Flexible mobility'],['Flowers','Workplace deliveries'],
+  ['Groceries','Recurring workplace purchases'],['Tyres & tyre hotel','Service and seasonal storage'],
+  ['Insurance','Business cover and advice'],['Fruit','Workplace fruit deliveries'],
+  ['Print & profile','Print and branded products'],['Office furniture','Furniture and interiors'],
+  ['Courier & express','Fast local delivery'],['Moving services','Office relocation'],
+  ['Cold drinks','Beverages for the workplace'],['Medical supplies','Consumables and equipment'],
+  ['Cleaning services','Facility and cleaning'],['Employee benefits','Discounts and perks']
+];
+
+/* keyword → area, for the free-text intake (v177's idea, kept literal) */
+const INTENT = {
+  ship:['parcel','parcels','package','packages','shipping','freight','courier','deliver','delivery','send','pallet'],
+  mob:['mobile','phone','sim','subscription','telecom','data plan','roaming'],
+  it:['it','laptop','laptops','computer','computers','software','licence','license','hardware','server'],
+  office:['office','supplies','paper','stationery','hygiene','cleaning','toner','ink'],
+  travel:['travel','flight','flights','hotel','hotels','trip','conference','car rental','accommodation'],
+  fuel:['fuel','diesel','petrol','charging','ev','electric car'],
+  coffee:['coffee','catering','canteen','machine','beans','refreshment'],
+  power:['electricity','power','energy','kwh','spot price']
+};
+
+/* ---------- derived helpers ---------- */
+const live = () => AREAS.filter(a => a.agr.length);
+const allAgr = () => AREAS.flatMap(r => r.agr.map(a => ({...a, r})));
+const saveOf = a => Math.round(a.covers * a.rate);
+const potOf  = r => r.agr.filter(a => !a.req).reduce((s,a) => s + saveOf(a), 0);
+const gotOf  = r => r.agr.filter(a => a.req).reduce((s,a) => s + saveOf(a), 0);
+const totalPot = () => AREAS.reduce((s,r) => s + potOf(r), 0);
+const totalGot = () => AREAS.reduce((s,r) => s + gotOf(r), 0);
+const bonusOf  = a => Math.round(a.covers * 0.015);
+const totalBonus = () => allAgr().filter(a => a.req).reduce((s,a) => s + bonusOf(a), 0);
+const findArea = id => AREAS.find(r => r.id === id);
+const findAgr  = n  => allAgr().find(a => a.n === n);
+const memberCount = a => a.members;
+
+/* ---------- the four dated steps (verbatim intent from main) ---------- */
+const ACT_STEPS = [
+  { k:'sent',  t:'Request sent',        w:'Today',
+    s:'We send your volumes and company number to the supplier. Nothing changes on your side yet.' },
+  { k:'conf',  t:'Supplier confirms',   w:'Within 5 working days',
+    s:'They put your account on the group’s terms and confirm it back to us.' },
+  { k:'price', t:'New price is live',   w:'~2 weeks',
+    s:'The agreed rate applies to everything you order from that point on.' },
+  { k:'check', t:'Saving verified',     w:'First invoice after',
+    s:'We read the next invoice, check the rate matches, and confirm the saving is real.' }
+];
+const DAY = 86400000;
+/* how far a request has travelled, from the day it was sent */
+function agStage(a){
+  if(!a.req) return -1;
+  const d = -(a.sent || 0);
+  if(d >= 30) return 3;
+  if(d >= 14) return 2;
+  if(d >= 5)  return 1;
+  return 0;
+}
+const agDormant = a => !!a.req && !!a.dormant;
+const quietDays = a => 95 + (a.n.length * 17) % 180;
+function stepDate(a, i){
+  const base = Date.now() + (a.sent || 0) * DAY;
+  const off = [0, 5, 14, 34][i];
+  return new Date(base + off * DAY).toLocaleDateString(mk().loc,
+    { day:'numeric', month:'short' });
+}
+/* renewal month, stable per supplier name */
+const renewMonth = a => [...a.n].reduce((s,c) => s + c.charCodeAt(0), 0) % 12;
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* ---------- state ---------- */
+let viewAt = 'overview';
+let catAt = null, supAt = null;
+let picked = new Set();          // batch activation selection
+let saved  = new Set();
+let REQS   = [];                 // per-supplier request tracking (v177) on main's batch
+const QANS = {};                 // qualifier answers, per area
+let qStep  = {};
+const LOG  = [
+  { t:'Lyreco invoice read — rate matches the group price', d:'2 days ago' },
+  { t:'Circle K saving verified for the quarter',           d:'6 days ago' },
+  { t:'Advania request confirmed by the supplier',          d:'9 days ago' }
+];
+
+/* ============================================================================
+   4 · CHROME  —  8 destinations in 3 groups.
+   The teardown's IA problem: merging both feature sets naively gives ~14.
+   Cashback and Reports become tabs inside Value; Weekly discovery is an
+   Overview module; requests live in the help rail.
+   ========================================================================= */
+const IC = {
+  home:'<path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1Z"/>',
+  grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+  store:'<path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M4 9 6 4h12l2 5"/><path d="M9 20v-6h6v6"/>',
+  doc:'<path d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v4h4M8.5 12h7M8.5 16h5"/>',
+  coin:'<circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10.5h5M9.5 13.5h5"/>',
+  plug:'<path d="M9 3v6M15 3v6M6 9h12v3a6 6 0 0 1-12 0Z"/><path d="M12 18v3"/>',
+  book:'<path d="M5 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H5Z"/><path d="M19 4h-4a3 3 0 0 0-1 .2V20a2.5 2.5 0 0 1 2.5-2.5H19Z"/>',
+  users:'<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><path d="M16 5.5a3 3 0 0 1 0 5.6M17.5 20c0-2.2-.7-3.9-1.8-5"/>',
+  spark:'<path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7Z"/><path d="M18.5 16.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7Z"/>',
+  bolt:'<path d="M13 3 5.5 13.5H11L10 21l7.5-10.5H12Z"/>',
+  chart:'<path d="M4 20V9M10 20V4M16 20v-7M22 20H2"/>'
+};
+const svg = k => `<svg viewBox="0 0 24 24">${IC[k]}</svg>`;
+
+const NAV = {
+  core:{ lbl:'', items:[
+    { id:'discover', n:'Weekly discovery', ic:'spark', hero:true },
+    { id:'overview', n:'Overview',    ic:'home'  },
+    { id:'areas',    n:'Areas',       ic:'grid'  },
+    { id:'suppliers',n:'Suppliers',   ic:'store' },
+    { id:'agreements',n:'Agreements', ic:'doc', badge:true },
+    { id:'value',    n:'Value',       ic:'coin'  }
+  ]},
+  tools:{ lbl:'Tools', items:[
+    { id:'data',     n:'Data',        ic:'plug'  },
+    { id:'resources',n:'Resources',   ic:'book'  }
+  ]},
+  admin:{ lbl:'Administration', items:[
+    { id:'team',     n:'Team & access', ic:'users' }
+  ]}
+};
+
+/* the badge counts what genuinely needs the member: requests still in flight,
+   plus any agreement that is live but unused */
+const needsMe = () => allAgr().filter(a => a.req && (agStage(a) < 3 || agDormant(a))).length;
+
+function renderNav(){
+  const grp = (g, host) => {
+    const el = $(host);
+    el.innerHTML = (g.lbl ? `<div class="navlbl">${g.lbl}</div>` : '') + g.items.map(i => {
+      if(i.hero) return `<button class="ni ni-hero" data-go="${i.id}">
+        <span class="h-top">${svg(i.ic)}<b style="font-size:var(--text-sm)">${i.n}</b></span>
+        <small>${isNew() ? 'Start with the biggest benchmark gap' : '4 new findings since Monday'}</small></button>`;
+      const b = i.badge && needsMe() ? `<span class="ni-badge">${needsMe()}</span>` : '';
+      return `<button class="ni${viewAt === i.id ? ' on' : ''}" data-go="${i.id}">
+        ${svg(i.ic)}<span>${i.n}</span>${b}</button>`;
+    }).join('');
+  };
+  grp(NAV.core,'#navCore'); grp(NAV.tools,'#navTools'); grp(NAV.admin,'#navAdmin');
+  $$('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+}
+
+const RENDER = {};
+function go(id){
+  if(id === 'discover'){ go('areas'); toast('Weekly discovery — 4 findings, biggest first'); return; }
+  viewAt = id; catAt = null; supAt = null;
+  $$('.view').forEach(v => v.classList.remove('on'));
+  const v = $('#v-' + id);
+  if(v){ v.classList.add('on'); (RENDER[id] || (()=>{}))(); }
+  renderNav(); refreshHelp();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function toast(m){
+  const t = $('#toast'); t.textContent = m; t.classList.add('on');
+  clearTimeout(t._x); t._x = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+/* ---------- overlay plumbing ---------- */
+function sheet(html, wide){
+  const s = $('#sheet');
+  s.className = 'sheet' + (wide ? ' sheet-wide' : '');
+  s.innerHTML = html;
+  $('#scrim').classList.add('on');
+  const c = s.querySelector('[data-x]'); if(c) c.onclick = closeSheet;
+}
+function closeSheet(){ $('#scrim').classList.remove('on'); }
+$('#scrim').onclick = e => { if(e.target.id === 'scrim') closeSheet(); };
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){ closeSheet(); $('#pal').classList.remove('on'); }
+  if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); openPal(); }
+});
+
+/* ---------- switches ---------- */
+function paintSwitches(){
+  const m = mk(), c = co();
+  $('#locFlag').textContent = m.code; $('#locName').textContent = m.name;
+  $('#locOrg').textContent = m.org;
+  $('#coAv').textContent = c.av; $('#coName').textContent = c.name;
+  $('#coMeta').textContent = isNew() ? 'new customer' : allAgr().filter(a=>a.req).length + ' in use';
+}
+$('#locBtn').onclick = () => {
+  MK = MK === 'no' ? 'dk' : 'no';
+  paintSwitches(); go(viewAt);
+  toast(mk().name + ' — ' + mk().org + ', ' + mk().cur + ', advisor ' + mk().adviser);
+};
+$('#coBtn').onclick = () => {
+  CO = CO === 'built' ? 'fjord' : 'built';
+  /* a new customer has nothing activated — the trust rule then makes every
+     figure on every page a range, automatically */
+  const on = CO === 'built';
+  allAgr().forEach(a => { if(a._req === undefined) a._req = a.req; a.req = on ? a._req : false; });
+  paintSwitches(); go('overview');
+  toast(co().legal + (isNew() ? ' — benchmark ranges until data is connected' : ' — verified figures'));
+};
+
+/* ============================================================================
+   5 · OVERVIEW  —  main's money-first console.
+   Situation grid, opportunity ranked by money, and the persistent activity rail
+   that separates "what needs you" from "what already happened".
+   ========================================================================= */
+RENDER.overview = () => {
+  const hour = new Date().getHours();
+  const part = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const yearFrac = Math.min(1, (Date.now() - new Date(new Date().getFullYear(),0,1)) / (365*DAY));
+  const ytd = Math.round(totalGot() * yearFrac);
+  const open = allAgr().filter(a => !a.req).sort((x,y) => saveOf(y) - saveOf(x));
+
+  $('#v-overview').innerHTML = `
+    <div class="vhead">
+      <span class="eyebrow">${co().legal} · ${mk().org} ${co().id}</span>
+      <h1>${part}</h1>
+      <p>${isNew()
+        ? `Nothing is activated yet, so every figure below is what companies in ${co().trade.toLowerCase()} at ${co().size} actually achieve. Connect your accounting data and they become yours.`
+        : `Year to date, straight from your invoices. ${needsMe()} ${needsMe()===1?'thing needs':'things need'} you.`}</p>
+    </div>
+
+    <div class="g-4">
+      <div class="stat hero">
+        <span class="lbl">${isNew() ? 'Benchmark potential' : 'Saved year to date'}</span>
+        <span class="figure f-xl">${isNew() ? saveFig(totalPot()) : fmt(ytd)}</span>
+        <span class="sub">${figTag()} ${isNew() ? 'across 8 areas' : 'from ' + allAgr().filter(a=>a.req).length + ' active agreements'}</span>
+      </div>
+      <div class="stat">
+        <span class="lbl">Still on the table</span>
+        <span class="figure f-lg">${saveFig(totalPot())}</span>
+        <span class="sub">${open.length} agreements not activated</span>
+      </div>
+      <div class="stat">
+        <span class="lbl">Customer bonus</span>
+        <span class="figure f-lg">${isNew() ? '—' : fmt(totalBonus())}</span>
+        <span class="sub">${isNew() ? 'starts once agreements are live' : '1.5% of covered spend'}</span>
+      </div>
+      <div class="stat">
+        <span class="lbl">Live but unused</span>
+        <span class="figure f-lg">${allAgr().filter(agDormant).length}</span>
+        <span class="sub">${allAgr().filter(agDormant).length ? 'signed, nothing ordered through' : 'nothing drifting'}</span>
+      </div>
+    </div>
+
+    <div class="g-side">
+      <div class="col g6" style="min-width:0">
+        <div class="col g3">
+          <div class="row spread g3 wrap">
+            <div class="col" style="gap:2px">
+              <h2>What to do next</h2>
+              <span class="muted" style="font-size:var(--text-sm)">Every agreement you have not activated, biggest saving first. Pick several — they go out as one batch.</span>
+            </div>
+            <button class="btn btn-primary btn-sm" id="actBtn" disabled>Activate selected</button>
+          </div>
+          <div class="g-3" id="oppGrid">
+            ${open.slice(0,6).map(a => `
+              <button class="opp" data-pick="${esc(a.n)}">
+                <span class="opp-band"></span>
+                <span class="opp-top">
+                  <span class="logo-tile">${initials(a.n)}</span>
+                  <span class="col" style="gap:2px;min-width:0;flex:1 1 auto">
+                    <b style="font-size:var(--text-sm)">${esc(a.n)}</b>
+                    <span class="muted" style="font-size:11.5px">${a.r.n} · −${Math.round(a.rate*100)}%</span>
+                  </span>
+                  <span class="sel-box"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+                </span>
+                <span class="row spread g2">
+                  <span class="figure f-md pos">${saveFig(saveOf(a))}</span>
+                  <span class="chip">${memberCount(a).toLocaleString(mk().loc)} members</span>
+                </span>
+              </button>`).join('')}
+          </div>
+        </div>
+
+        <div class="hsec col g3">
+          <h3>Where it sits</h3>
+          ${live().slice().sort((a,b) => potOf(b) - potOf(a)).slice(0,5).map(r => {
+            const max = Math.max(...live().map(potOf)) || 1;
+            return `<div class="barrow">
+              <span><b>${r.n}</b></span>
+              <span class="bar"><i style="width:${Math.max(6, potOf(r)/max*100)}%"></i></span>
+              <span class="num muted" style="text-align:right">${saveFig(potOf(r))}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      ${railHTML()}
+    </div>`;
+
+  wirePick();
+  wireRail();
+};
+
+function initials(n){
+  const w = n.replace(/([a-z])([A-Z])/g,'$1 $2').split(/[\s-]+/).filter(Boolean);
+  return w.length === 1 ? w[0].slice(0,2).toUpperCase() : (w[0][0] + w[1][0]).toUpperCase();
+}
+
+/* ---------- the activity rail: next best actions, then the log ---------- */
+function railHTML(){
+  const dorm = allAgr().filter(agDormant);
+  const flight = allAgr().filter(a => a.req && agStage(a) < 3);
+  const acts = [];
+  if(isNew()) acts.push({ i:'plug', t:'Connect your accounting data',
+    s:'Turns every range on these pages into your own number.', go:() => go('data') });
+  dorm.forEach(a => acts.push({ i:'bolt', t:`${a.n} is live but unused`,
+    s:`Signed, but nothing invoiced through it for ${quietDays(a)} days.`, go:() => openSupplier(a.n) }));
+  flight.forEach(a => acts.push({ i:'doc', t:`${a.n} — ${ACT_STEPS[agStage(a)+1] ? ACT_STEPS[agStage(a)+1].t.toLowerCase() : 'in progress'}`,
+    s:`Sent ${-a.sent} days ago. Expected ${stepDate(a, agStage(a)+1)}.`, go:() => go('agreements') }));
+  const top = allAgr().filter(a => !a.req).sort((x,y) => saveOf(y) - saveOf(x))[0];
+  if(top) acts.push({ i:'coin', t:`${top.n} is the biggest one open`,
+    s:`${saveFig(saveOf(top))} a year, on spend you already have.`, go:() => openSupplier(top.n) });
+
+  return `<aside class="rail" id="rail">
+    <div class="rail-h">
+      <h4>Next best actions</h4><span class="rail-count">${acts.length}</span>
+    </div>
+    <div class="rail-b">
+      ${acts.slice(0,5).map((a,i) => `
+        <button class="nba" data-act="${i}">
+          <span class="nba-i">${svg(a.i)}</span>
+          <span class="col"><b>${esc(a.t)}</b><span>${esc(a.s)}</span></span>
+        </button>`).join('')}
+      <div class="rail-h" style="border-top:1px solid var(--hairline);border-bottom:0">
+        <h4 style="font-size:var(--text-sm)">What we did for you</h4>
+      </div>
+      ${LOG.map(l => `<div class="logrow"><span class="logdot"></span>
+        <span><b>${esc(l.t)}</b>${esc(l.d)}</span></div>`).join('')}
+      <div style="padding:var(--s3) var(--s4)">
+        <button class="btn btn-quiet btn-xs" id="railAsk">Ask why any of these changed</button>
+      </div>
+    </div>
+  </aside>`;
+}
+/* the rail's markup and its click targets are built from the same inputs, so the
+   wiring recomputes them rather than reaching for a global */
+function railActs(){
+  const dorm = allAgr().filter(agDormant);
+  const flight = allAgr().filter(a => a.req && agStage(a) < 3);
+  const acts = [];
+  if(isNew()) acts.push(() => go('data'));
+  dorm.forEach(a => acts.push(() => openSupplier(a.n)));
+  flight.forEach(() => acts.push(() => go('agreements')));
+  const top = allAgr().filter(a => !a.req).sort((x,y) => saveOf(y) - saveOf(x))[0];
+  if(top) acts.push(() => openSupplier(top.n));
+  return acts;
+}
+function wireRail(){
+  const acts = railActs();
+  $$('[data-act]').forEach(b => b.onclick = () => (acts[+b.dataset.act] || (()=>{}))());
+  const ask = $('#railAsk'); if(ask) ask.onclick = () => openHelp('ai');
+}
+
+/* ---------- batch selection ---------- */
+function wirePick(){
+  $$('[data-pick]').forEach(b => b.onclick = () => {
+    const n = b.dataset.pick;
+    picked.has(n) ? picked.delete(n) : picked.add(n);
+    b.classList.toggle('picked', picked.has(n));
+    const btn = $('#actBtn');
+    if(btn){
+      btn.disabled = !picked.size;
+      btn.textContent = picked.size > 1 ? `Activate ${picked.size} agreements` : 'Activate selected';
+    }
+  });
+  const btn = $('#actBtn');
+  if(btn) btn.onclick = () => runFunnel([...picked]);
+}
+
+/* ============================================================================
+   6 · AREAS  —  v177's front door, which main never had.
+   Two labelled doors: describe the need in your own words, or browse what we
+   ranked for you. Plus the full A–Z so nothing is unreachable.
+   ========================================================================= */
+RENDER.areas = () => {
+  const ranked = live().slice().sort((a,b) => potOf(b) - potOf(a));
+  $('#v-areas').innerHTML = `
+    <div class="vhead">
+      <span class="eyebrow">Discovery</span>
+      <h1>What do you need?</h1>
+      <p>Describe it in your own words, or start from the areas we ranked for your
+         ${co().trade.toLowerCase()} profile at ${co().size}.</p>
+    </div>
+
+    <div class="intake">
+      <div class="col g2">
+        <b style="font-size:var(--text-sm)">Tell us what you are trying to buy or fix</b>
+        <span class="muted" style="font-size:var(--text-xs)">Plain language is fine — we route it to the right area and the right person.</span>
+      </div>
+      <textarea id="intakeIn" placeholder="e.g. We send about 200 parcels a month and want to cut what we pay for shipping"></textarea>
+      <div class="ex">
+        ${['We send ~200 parcels a month','Our mobile bill looks high','We need laptops for 12 new starters',
+           'Coffee machines for two floors','Review our electricity contract'].map(x =>
+          `<button data-ex="${esc(x)}">${esc(x)}</button>`).join('')}
+      </div>
+      <div class="row g3 wrap">
+        <button class="btn btn-primary btn-sm" id="intakeGo">Find the right area</button>
+        <button class="btn btn-quiet btn-sm" id="intakeAsk">Send it to ${mk().adviser} instead</button>
+      </div>
+      <div class="intake-res" id="intakeRes"></div>
+    </div>
+
+    <div class="or">or browse</div>
+
+    <div class="col g3">
+      <h2>Ranked for you</h2>
+      <div class="g-3">
+        ${ranked.map((r,i) => `
+          <button class="opp" data-area="${r.id}">
+            <span class="row g3">
+              <span class="logo-tile" style="background:var(--brand-ice);color:#0f4bb0">${i+1}</span>
+              <span class="col" style="gap:2px;min-width:0">
+                <b style="font-size:var(--text-sm)">${r.n}</b>
+                <span class="muted" style="font-size:11.5px">${r.agr.length} supplier${r.agr.length>1?'s':''} · ${r.agr.filter(a=>a.req).length} in use</span>
+              </span>
+            </span>
+            <span class="figure f-md pos">${saveFig(potOf(r))}</span>
+            <span class="muted" style="font-size:11.5px;text-align:left">${esc(r.lead)}</span>
+          </button>`).join('')}
+      </div>
+    </div>
+
+    <div class="hsec col g3">
+      <div class="row spread g3 wrap">
+        <div class="col" style="gap:2px">
+          <h2>Every area</h2>
+          <span class="muted" style="font-size:var(--text-sm)">The full offering. The ranking above is a priority, not a limit.</span>
+        </div>
+        <input id="dirFind" placeholder="Filter areas…" style="height:38px;padding:0 var(--s3);
+          border:1px solid var(--card-stroke);border-radius:var(--rounded-full);outline:none;
+          font-size:var(--text-sm);min-width:220px">
+      </div>
+      <div class="dir" id="dirGrid">
+        ${live().map(r => `<button class="dir-i" data-area="${r.id}" data-find="${esc(r.n.toLowerCase())}">
+          <span class="dir-ic">${initials(r.n)}</span>
+          <span><b>${r.n}</b><small>${r.agr.length} negotiated agreement${r.agr.length>1?'s':''}</small></span>
+        </button>`).join('')
+        + DIRECTORY.map(([n,d]) => `<button class="dir-i" data-ask="${esc(n)}" data-find="${esc(n.toLowerCase())}">
+          <span class="dir-ic">${initials(n)}</span>
+          <span><b>${esc(n)}</b><small>${esc(d)}</small></span>
+        </button>`).join('')}
+      </div>
+    </div>`;
+
+  $$('[data-ex]').forEach(b => b.onclick = () => { $('#intakeIn').value = b.dataset.ex; runIntake(); });
+  $('#intakeGo').onclick = runIntake;
+  $('#intakeAsk').onclick = () => { openHelp('adviser'); hSay($('#intakeIn').value || 'We need help choosing an area.'); };
+  $$('[data-area]').forEach(b => b.onclick = () => openCategory(b.dataset.area));
+  $$('[data-ask]').forEach(b => b.onclick = () => {
+    openHelp('adviser'); hSay(`We have a need in ${b.dataset.ask}. There is no negotiated agreement listed — can you help?`);
+  });
+  $('#dirFind').oninput = e => {
+    const q = e.target.value.toLowerCase().trim();
+    $$('#dirGrid .dir-i').forEach(x =>
+      x.style.display = !q || x.dataset.find.includes(q) ? 'flex' : 'none');
+  };
+};
+
+/* free-text → area. Deliberately simple keyword matching: the point is that a
+   typed sentence lands somewhere, not that the parser is clever. */
+function runIntake(){
+  const txt = ($('#intakeIn').value || '').toLowerCase();
+  const res = $('#intakeRes');
+  if(!txt.trim()){ res.classList.remove('on'); return; }
+  let best = null, hits = 0;
+  for(const [id, words] of Object.entries(INTENT)){
+    const n = words.filter(w => txt.includes(w)).length;
+    if(n > hits){ hits = n; best = id; }
+  }
+  if(!best){
+    res.className = 'intake-res on';
+    res.innerHTML = `<span class="logo-tile" style="background:#fff5e8;color:#9a5a10">?</span>
+      <span class="col" style="gap:2px;flex:1 1 auto"><b style="font-size:var(--text-sm)">No obvious match</b>
+      <span class="muted" style="font-size:var(--text-xs)">${mk().adviser} can route this by hand — that is what the advisor is for.</span></span>
+      <button class="btn btn-primary btn-sm" id="resAsk">Send to ${mk().adviser}</button>`;
+    $('#resAsk').onclick = () => { openHelp('adviser'); hSay($('#intakeIn').value); };
+    return;
+  }
+  const r = findArea(best);
+  res.className = 'intake-res on';
+  res.innerHTML = `<span class="logo-tile" style="background:var(--pos-tint);color:var(--sentiment-positive)">${initials(r.n)}</span>
+    <span class="col" style="gap:2px;flex:1 1 auto;min-width:0">
+      <b style="font-size:var(--text-sm)">This looks like ${r.n}</b>
+      <span class="muted" style="font-size:var(--text-xs)">${r.agr.length} negotiated agreement${r.agr.length>1?'s':''} · ${saveFig(potOf(r))} still open</span>
+    </span>
+    <button class="btn btn-primary btn-sm" id="resGo">Open ${r.n}</button>`;
+  $('#resGo').onclick = () => openCategory(r.id);
+}
+
+/* ============================================================================
+   7 · CATEGORY  —  v177's four-question qualifier feeding main's Deal/Activate
+   split. The teardown said neither prototype shipped this combination; this is it.
+   ========================================================================= */
+const QS = {
+  ship:[ ['How many shipments a month?',['Under 25','25–100','100–500','500+']],
+         ['Mainly going where?',['Domestic','Nordics','Europe','Worldwide']],
+         ['What do you send most?',['Small parcels','Mixed parcels','Pallets','Express']],
+         ['How do you buy it today?',['One carrier','Several','Ad hoc','Not sure']] ],
+  mob:[ ['How many subscriptions?',['1–10','11–25','26–75','75+']],
+        ['What describes your data use?',['Standard','Heavy','International','Mixed']],
+        ['Tied to a contract?',['No binding','Binding period','Not sure']],
+        ['What matters most?',['Lower cost','Flexibility','Coverage','International']] ],
+  it:[ ['How many users do you support?',['1–25','26–75','76–200','200+']],
+       ['What are you looking for?',['Products','Managed services','Specialists','A mix']],
+       ['How do you purchase today?',['One supplier','Several','Ad hoc','Not sure']],
+       ['What matters most?',['Price','Consolidation','Support','Security']] ],
+  office:[ ['How many locations?',['1','2–5','6+']],
+           ['Roughly how much a year?',['Under 50k','50–150k','150–500k','500k+']],
+           ['What do you buy most?',['Office supplies','Hygiene','Catering','Several']],
+           ['How is buying organised?',['One supplier','Several','Local','Not sure']] ],
+  travel:[ ['How often do people travel?',['Occasionally','Monthly','Weekly','Constantly']],
+           ['How are trips booked?',['Self-booked','One booker','Travel agency','Mixed']],
+           ['Where is most of the spend?',['Flights','Hotels','Car rental','Spread']],
+           ['What matters most?',['Lower prices','Flexibility','Less admin','Control']] ],
+  coffee:[ ['How many locations?',['1','2–5','6+']],
+           ['Roughly how many people?',['1–25','26–75','76–200','200+']],
+           ['How many machines?',['1','2–5','6+','Not sure']],
+           ['Buy or lease?',['Buy','Lease','Either','Not sure']] ],
+  power:[ ['How many metering points?',['1','2–5','6+','Not sure']],
+          ['Annual consumption?',['Under 100 MWh','100–500','500+','Not sure']],
+          ['What matters most?',['Lowest price','Predictability','Simplicity','Not sure']],
+          ['Last reviewed?',['Under a year','1–3 years','3+ years','Not sure']] ],
+  fuel:[ ['How many vehicles?',['1–5','6–20','21–50','50+']],
+         ['Petrol, diesel or electric?',['Mostly fuel','Mixed','Mostly electric','Not sure']],
+         ['Where do they refuel?',['Local','Regional','Nationwide','Cross-border']],
+         ['What matters most?',['Per-litre price','Charging access','Admin','Control']] ]
+};
+
+function openCategory(id){
+  catAt = id; viewAt = 'areas';
+  $$('.view').forEach(v => v.classList.remove('on'));
+  $('#v-category').classList.add('on');
+  renderCategory(); renderNav(); refreshHelp();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function renderCategory(){
+  const r = findArea(catAt); if(!r) return go('areas');
+  const qs = QS[r.id] || [];
+  const ans = QANS[r.id] = QANS[r.id] || {};
+  const done = Object.keys(ans).length >= qs.length && qs.length > 0;
+  const step = Math.min(qStep[r.id] || Object.keys(ans).length, Math.max(0, qs.length - 1));
+  const inUse = r.agr.filter(a => a.req);
+
+  $('#v-category').innerHTML = `
+    <div class="row g2" style="font-size:var(--text-xs)">
+      <button class="btn btn-quiet btn-xs" id="crumb">Areas</button>
+      <span class="muted">›</span><b>${r.n}</b>
+    </div>
+
+    <div class="vhead">
+      <span class="eyebrow">${r.n}</span>
+      <h1>${inUse.length
+        ? `You use ${inUse.length} of ${r.agr.length} agreements here. The rest is what is left.`
+        : `Cut what you pay for ${r.n.toLowerCase()}`}</h1>
+      <div class="row g3 wrap" style="margin-top:var(--s2)">
+        <span class="figure f-lg pos">${saveFig(potOf(r))}</span>
+        ${figTag()}
+        <span class="muted" style="font-size:var(--text-sm)">a year, still open</span>
+      </div>
+      <p>${esc(r.lead)}</p>
+    </div>
+
+    ${qs.length ? (done ? `
+      <div class="qz">
+        <div class="qz-done">
+          <span class="qz-tick"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+          <span class="col" style="gap:var(--s1);flex:1 1 auto;min-width:0">
+            <b style="font-size:var(--text-sm)">We know what you need</b>
+            <span class="row g1 wrap">${qs.map((q,i) =>
+              `<span class="chip">${esc(ans[i] || '')}</span>`).join('')}</span>
+          </span>
+          <button class="btn btn-quiet btn-xs" id="qzEdit">Edit</button>
+        </div>
+        <div class="qz-b" style="background:var(--surface)">
+          <div class="eyebrow">Ranked for what you just told us</div>
+          <div class="card card-in" style="box-shadow:none">
+            ${rankFor(r, ans).map((a,i) => `
+              <div class="rec">
+                <span class="rec-rank">${i+1}</span>
+                <span class="col" style="gap:2px;min-width:0">
+                  <b style="font-size:var(--text-sm)">${esc(a.n)}${a.req?' <span class="chip chip-pos">in use</span>':''}</b>
+                  <span class="muted" style="font-size:11.5px">${esc(a.why)}</span>
+                </span>
+                <span class="col" style="gap:2px;text-align:right">
+                  <b class="pos" style="font-size:var(--text-sm)">${saveFig(saveOf(a))}</b>
+                  <span class="muted" style="font-size:10.5px">${memberCount(a).toLocaleString(mk().loc)} members</span>
+                </span>
+              </div>`).join('')}
+          </div>
+          <div class="row g2 wrap">
+            <button class="btn btn-primary btn-sm" id="qzSend">Send my request</button>
+            <button class="btn btn-ghost btn-sm" id="qzQuote">Get comparable quotes</button>
+            <button class="btn btn-quiet btn-sm" id="qzAsk">Ask ${mk().adviser} first</button>
+          </div>
+        </div>
+      </div>` : `
+      <div class="qz">
+        <div class="qz-h">
+          <div class="col">
+            <b style="font-size:var(--text-sm)">Help us narrow it down</b>
+            <span class="muted" style="font-size:var(--text-xs)">Four questions, one at a time. About thirty seconds.</span>
+          </div>
+          <span class="qz-step">${step+1} of ${qs.length}</span>
+        </div>
+        <div class="qz-b">
+          <div class="eyebrow">Question ${step+1}</div>
+          <b style="font-size:var(--text-base)">${esc(qs[step][0])}</b>
+          <div class="qz-opts">
+            ${qs[step][1].map(o => `<button class="qz-opt${ans[step]===o?' on':''}" data-q="${step}" data-a="${esc(o)}">${esc(o)}</button>`).join('')}
+          </div>
+          <div class="row spread g2">
+            <button class="btn btn-quiet btn-xs" id="qzSkip">Skip — just show me everything</button>
+            ${step > 0 ? '<button class="btn btn-quiet btn-xs" id="qzBack">Back</button>' : ''}
+          </div>
+        </div>
+      </div>`) : ''}
+
+    <div class="hsec col g4">
+      <div class="col" style="gap:2px">
+        <h2>The agreements</h2>
+        <span class="muted" style="font-size:var(--text-sm)">Pick several to send as one batch — each one still gets tracked separately.</span>
+      </div>
+      <div class="g-2">
+        ${r.agr.map(a => `
+          <div class="card card-in pad-sm col g3">
+            <div class="row g3">
+              <span class="logo-tile">${initials(a.n)}</span>
+              <span class="col" style="gap:2px;flex:1 1 auto;min-width:0">
+                <b style="font-size:var(--text-sm)">${esc(a.n)}</b>
+                <span class="muted" style="font-size:11.5px">−${Math.round(a.rate*100)}% on ${fmt(a.covers)} of covered spend</span>
+              </span>
+              ${a.req
+                ? (agDormant(a) ? '<span class="chip chip-warn">live but unused</span>'
+                                : '<span class="chip chip-pos">in use</span>')
+                : `<span class="figure f-md pos">${saveFig(saveOf(a))}</span>`}
+            </div>
+            <div class="row g2 wrap">
+              <button class="btn btn-ghost btn-sm" data-sup="${esc(a.n)}">Read the deal</button>
+              ${a.req
+                ? `<button class="btn btn-quiet btn-sm" data-chal="${esc(a.n)}">Challenge the price</button>`
+                : `<button class="btn btn-primary btn-sm" data-one="${esc(a.n)}">Activate</button>`}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="hsec col g3">
+      <h3>Not what you needed?</h3>
+      <span class="muted" style="font-size:var(--text-sm)">Ask for terms that are not on the list, or get comparable quotes from several of these suppliers on the same brief.</span>
+      <div class="row g2 wrap">
+        <button class="btn btn-ghost btn-sm" id="catCustom">Ask for different terms</button>
+        <button class="btn btn-ghost btn-sm" id="catQuote">Request quotes</button>
+        <button class="btn btn-quiet btn-sm" id="catBuyer">Talk to the buyer who negotiated this</button>
+      </div>
+    </div>`;
+
+  $('#crumb').onclick = () => go('areas');
+  $$('[data-q]').forEach(b => b.onclick = () => {
+    ans[+b.dataset.q] = b.dataset.a;
+    qStep[r.id] = Math.min(+b.dataset.q + 1, qs.length);
+    renderCategory();
+  });
+  const bind = (sel, fn) => { const e = $(sel); if(e) e.onclick = fn; };
+  bind('#qzBack', () => { qStep[r.id] = Math.max(0, step - 1); renderCategory(); });
+  bind('#qzSkip', () => { qStep[r.id] = 0; QANS[r.id] = {}; qs.length = qs.length; renderCategory();
+                          toast('Skipped — all agreements shown below'); });
+  bind('#qzEdit', () => { QANS[r.id] = {}; qStep[r.id] = 0; renderCategory(); });
+  bind('#qzSend', () => runFunnel(rankFor(r, ans).filter(a => !a.req).slice(0,2).map(a => a.n)));
+  bind('#qzQuote', () => openQuote(r));
+  bind('#qzAsk', () => { openHelp('adviser'); hSay(`We answered the ${r.n.toLowerCase()} questions — which agreement fits us best?`); });
+  bind('#catCustom', () => openCustom(r));
+  bind('#catQuote', () => openQuote(r));
+  bind('#catBuyer', () => openHelp('buyer'));
+  $$('[data-sup]').forEach(b => b.onclick = () => openSupplier(b.dataset.sup));
+  $$('[data-one]').forEach(b => b.onclick = () => runFunnel([b.dataset.one]));
+  $$('[data-chal]').forEach(b => b.onclick = () => openChallenge(findAgr(b.dataset.chal)));
+}
+
+/* the qualifier has to actually change the order, or it is theatre */
+function rankFor(r, ans){
+  const a0 = ans[0] || '', a1 = ans[1] || '', a2 = ans[2] || '', a3 = ans[3] || '';
+  return r.agr.map(a => {
+    let score = saveOf(a), why = `Covers ${fmt(a.covers)} of your ${r.n.toLowerCase()} spend at group terms.`;
+    if(r.id === 'ship'){
+      if((a2 === 'Express' || a1 === 'Worldwide') && a.n === 'DHL Express'){
+        score *= 1.9; why = 'Best fit for express and cross-border — that is what you said you send.'; }
+      if(a0 === '500+' && a.n === 'Pakkepost'){
+        score *= 1.5; why = 'At your volume the per-parcel rate matters more than anything else.'; }
+      if(a2 === 'Pallets' && a.n === 'Profrakt'){
+        score *= 1.6; why = 'Pallet and larger-goods freight is where this one is strongest.'; }
+    }
+    if(r.id === 'power' && a2 === 'Predictability' && a.n === 'Fortum'){
+      score *= 1.7; why = 'Managed rather than pure spot — you said predictability matters most.'; }
+    if(r.id === 'travel' && a3 === 'Less admin' && a.n === 'BCD Travel'){
+      score *= 2.1; why = 'A travel agency is the only one of these that removes admin rather than adding it.'; }
+    if(r.id === 'coffee' && a3 === 'Lease' && a.n === 'Selecta'){
+      score *= 1.6; why = 'Leasing and service are handled in one agreement here.'; }
+    if(r.id === 'it' && a1 === 'Managed services' && a.n === 'Digiflow'){
+      score *= 1.8; why = 'Managed IT rather than boxes — that is what you asked for.'; }
+    if(r.id === 'mob' && a3 === 'Flexibility' && a.n === 'Talkmore'){
+      score *= 1.5; why = 'No binding period and no termination fee.'; }
+    return { ...a, score, why };
+  }).sort((x,y) => y.score - x.score);
+}
+
+/* ============================================================================
+   8 · SUPPLIER  —  v177's insight: prospect and active are two different jobs,
+   so they get two different pages. Active carries the code and the adoption
+   work; prospect carries the benchmark-first CTA.
+   ========================================================================= */
+function openSupplier(name){
+  supAt = name;
+  $$('.view').forEach(v => v.classList.remove('on'));
+  $('#v-supplier').classList.add('on');
+  renderSupplier(); refreshHelp();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function renderSupplier(){
+  const a = findAgr(supAt); if(!a) return go('suppliers');
+  const r = a.r, on = a.req, dorm = agDormant(a), st = agStage(a);
+  const code = (mk().group.toUpperCase().replace(/[^A-Z]/g,'') + 'GROUP').slice(0,12);
+
+  $('#v-supplier').innerHTML = `
+    <div class="row g2" style="font-size:var(--text-xs)">
+      <button class="btn btn-quiet btn-xs" id="sCrumb">${r.n}</button>
+      <span class="muted">›</span><b>${esc(a.n)}</b>
+    </div>
+
+    <div class="card pad col g4">
+      <div class="row g4 wrap">
+        <span class="logo-tile" style="width:64px;height:64px;font-size:20px;border-radius:var(--rounded-lg)">${initials(a.n)}</span>
+        <div class="col" style="gap:var(--s1);flex:1 1 auto;min-width:0">
+          <span class="eyebrow">${r.n}</span>
+          <div class="row g3 wrap">
+            <h1 style="font-size:var(--text-3xl)">${esc(a.n)}</h1>
+            ${on ? (dorm ? '<span class="chip chip-warn">Live but unused</span>'
+                         : '<span class="chip chip-pos">Active for you</span>')
+                 : '<span class="chip chip-live">Available through the group</span>'}
+          </div>
+          <span class="muted" style="font-size:var(--text-sm)">
+            −${Math.round(a.rate*100)}% on ${fmt(a.covers)} of covered spend ·
+            ${memberCount(a).toLocaleString(mk().loc)} members already on it</span>
+        </div>
+        <div class="col" style="gap:2px;text-align:right">
+          <span class="figure f-xl pos">${saveFig(saveOf(a))}</span>
+          <span class="muted" style="font-size:var(--text-xs)">${on ? 'a year, realised' : 'a year, if you activate'}</span>
+        </div>
+      </div>
+
+      ${on ? `
+        <div class="tint-pos col g3">
+          <div class="row spread g3 wrap">
+            <div class="col" style="gap:2px">
+              <span class="eyebrow" style="color:var(--sentiment-positive)">Your agreement code</span>
+              <span class="muted" style="font-size:var(--text-xs)">This is the thing that decides whether the deal gets used.</span>
+            </div>
+            <span class="chip chip-pos">${memberCount(a).toLocaleString(mk().loc)} members</span>
+          </div>
+          <div class="wal-code">
+            <b>${code}</b>
+            <button class="btn btn-ghost btn-sm" id="sCopy">Copy</button>
+          </div>
+          <details class="how"><summary>How to use it <span>+</span></summary>
+            <p>Copy the code → add it to each ordering or traveller profile at ${esc(a.n)} →
+               order as normal. The group price applies from that point on. You can also give it
+               to your booking agency once, centrally, so nobody has to remember it.</p></details>
+        </div>` : `
+        <div class="card card-in pad-sm row g4 wrap" style="box-shadow:none;background:#fcfcfd">
+          <div class="col" style="gap:2px;flex:1 1 auto;min-width:0">
+            <b style="font-size:var(--text-sm)">Not sure it beats what you pay now?</b>
+            <span class="muted" style="font-size:var(--text-xs)">Benchmark first. We compare your last invoice against the group price before you commit to anything.</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="sBench">Benchmark our prices</button>
+        </div>`}
+
+      <div class="row g2 wrap">
+        ${on
+          ? `<button class="btn btn-primary btn-sm" id="sChal">Challenge the price</button>
+             <button class="btn btn-ghost btn-sm" id="sCustom">Ask for different terms</button>`
+          : `<button class="btn btn-primary btn-sm" id="sAct">Activate this agreement</button>
+             <button class="btn btn-ghost btn-sm" id="sQuote">Compare with the others</button>`}
+        <button class="btn btn-quiet btn-sm" id="sBuyer">Talk to the buyer who negotiated it</button>
+      </div>
+    </div>
+
+    ${on ? `
+      <div class="hsec col g4">
+        <div class="col" style="gap:2px">
+          <h2>Where the request has got to</h2>
+          <span class="muted" style="font-size:var(--text-sm)">Sent ${-a.sent} days ago. Each step carries the date it happened, or the date we expect it.</span>
+        </div>
+        ${stepperHTML(a)}
+      </div>
+
+      <div class="hsec col g4">
+        <div class="col" style="gap:2px">
+          <h2>Getting it used</h2>
+          <span class="muted" style="font-size:var(--text-sm)">${dorm
+            ? `Nothing has been invoiced through this for ${quietDays(a)} days. A signed agreement nobody orders through saves nothing.`
+            : 'The agreement is working. These are the things that keep it working.'}</span>
+        </div>
+        <div class="g-3">
+          <div class="card card-in pad-sm col g2" style="box-shadow:none">
+            <b style="font-size:var(--text-sm)">Give people the code</b>
+            <span class="muted" style="font-size:var(--text-xs)">A short message they can paste into email, Teams or the intranet.</span>
+            <button class="btn btn-quiet btn-xs push" id="sTell" style="margin-left:0">Draft it for me →</button>
+          </div>
+          <div class="card card-in pad-sm col g2" style="box-shadow:none">
+            <b style="font-size:var(--text-sm)">Make it the default</b>
+            <span class="muted" style="font-size:var(--text-xs)">A one-paragraph policy so ${esc(a.n)} is the preferred choice when it fits.</span>
+            <button class="btn btn-quiet btn-xs" id="sPol" style="margin-left:0">Draft a policy →</button>
+          </div>
+          <div class="card card-in pad-sm col g2" style="box-shadow:none">
+            <b style="font-size:var(--text-sm)">Set it once, centrally</b>
+            <span class="muted" style="font-size:var(--text-xs)">Give the code to your agency or ordering system so nobody types it.</span>
+            <button class="btn btn-quiet btn-xs" id="sCentral" style="margin-left:0">Get help →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hsec col g3">
+        <h3>Are you happy with ${esc(a.n)}?</h3>
+        <span class="muted" style="font-size:var(--text-sm)">Keeping what works is a valid answer. We only look for alternatives if you want them.</span>
+        <div class="row g2 wrap">
+          <button class="btn btn-ghost btn-sm" id="sHappy">Yes, it works</button>
+          <button class="btn btn-ghost btn-sm" id="sReview">We want to review it</button>
+        </div>
+        <div class="row g2 wrap" id="sReasons" style="display:none">
+          ${['Price','Service','Delivery','Our needs changed','Something else'].map(x =>
+            `<button class="btn btn-quiet btn-xs" data-reason="${esc(x)}">${esc(x)}</button>`).join('')}
+        </div>
+      </div>` : `
+      <div class="hsec col g4">
+        <div class="col" style="gap:2px">
+          <h2>What happens if you say yes</h2>
+          <span class="muted" style="font-size:var(--text-sm)">Four steps with real dates, ending in a saving we have actually checked against an invoice.</span>
+        </div>
+        ${stepperHTML(a, true)}
+      </div>`}
+
+    <div class="hsec col g3">
+      <h3>Why this number</h3>
+      <div class="col g2">
+        ${evidence(r, a).map((e,i) => `<div class="evi"><span class="evi-n">${i+1}</span><span>${e}</span></div>`).join('')}
+      </div>
+      <span class="muted" style="font-size:var(--text-xs)">${isNew()
+        ? `Ranges, not figures — until your accounting data is connected these are what comparable ${co().trade.toLowerCase()} companies achieve.`
+        : 'Every figure here traces to your own invoices.'}</span>
+    </div>`;
+
+  const bind = (s,f) => { const e = $(s); if(e) e.onclick = f; };
+  bind('#sCrumb', () => openCategory(r.id));
+  bind('#sCopy', () => { copy(code); toast('Agreement code copied'); });
+  bind('#sBench', () => { openHelp('adviser'); hSay(`Can you benchmark our current ${r.n.toLowerCase()} prices against the ${a.n} agreement before we commit?`); });
+  bind('#sAct', () => runFunnel([a.n]));
+  bind('#sQuote', () => openQuote(r));
+  bind('#sChal', () => openChallenge(a));
+  bind('#sCustom', () => openCustom(r));
+  bind('#sBuyer', () => openHelp('buyer'));
+  bind('#sTell', () => draftSheet('Tell people about ' + a.n,
+    `${co().name} now has a group agreement with ${a.n}.\n\nAgreement code: ${code}\n\nAdd the code to your ${a.n} profile before you next order. The group price then applies automatically — nothing else changes about how you order.\n\nQuestions: ${mk().adviser}, your Advantage advisor.`));
+  bind('#sPol', () => draftSheet('Policy for ' + a.n,
+    `${a.n} is ${co().name}'s preferred supplier for ${r.n.toLowerCase()} where it fits the requirement.\n\nUse the group agreement code ${code} on every order. Where another supplier is materially better for a specific job, use them and tell ${mk().adviser} why — that is useful information, not a breach.\n\nReviewed annually, or whenever the agreement renews.`));
+  bind('#sCentral', () => { openHelp('adviser'); hSay(`We would like the ${a.n} agreement code set up centrally in our ordering system.`); });
+  bind('#sHappy', () => toast('Noted — we will leave this one alone'));
+  bind('#sReview', () => { $('#sReasons').style.display = 'flex'; });
+  $$('[data-reason]').forEach(b => b.onclick = () => {
+    openHelp('adviser');
+    hSay(`We use ${a.n} but want to review it. The reason is: ${b.dataset.reason.toLowerCase()}.`);
+  });
+}
+
+/* evidence assembled only from things this app actually holds */
+function evidence(r, a){
+  return [
+    `You put <b>${fmt(a.covers)}</b> a year through ${r.n.toLowerCase()} across <b>${r.inv} invoices</b> — enough volume to negotiate on.`,
+    `<b>${memberCount(a).toLocaleString(mk().loc)}</b> members of ${mk().group} are already on this agreement. The price reflects their combined volume, not yours alone.`,
+    `The group rate is <b>${Math.round(a.rate*100)}%</b> below list on the lines you actually buy, which is where the ${saveFig(saveOf(a))} comes from.`
+  ];
+}
+
+function stepperHTML(a, preview){
+  const st = preview ? -1 : agStage(a);
+  return `<div class="stepper">${ACT_STEPS.map((s,i) => {
+    const cls = preview ? 'pending' : i < st ? 'done' : i === st ? 'now' : 'pending';
+    const when = preview ? s.w : (i <= st ? stepDate(a,i) : s.w);
+    return `<div class="step ${cls}">
+      <span class="step-dot">${i < st && !preview
+        ? '<svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>' : i+1}</span>
+      <span class="step-body">
+        <span class="step-t"><b>${s.t}</b><span class="step-when">${when}</span></span>
+        <span class="step-s">${s.s}</span>
+      </span></div>`;
+  }).join('')}</div>`;
+}
+
+function copy(t){ if(navigator.clipboard) navigator.clipboard.writeText(t).catch(()=>{}); }
+function draftSheet(title, body){
+  sheet(`<div class="sheet-h"><div class="col"><span class="eyebrow">Drafted for you</span>
+    <h2>${esc(title)}</h2></div><button class="x" data-x>×</button></div>
+    <div class="draft">${esc(body)}</div>
+    <div class="row g2 wrap"><button class="btn btn-primary btn-sm" id="dCopy">Copy</button>
+    <button class="btn btn-ghost btn-sm" data-x>Close</button></div>`);
+  $('#dCopy').onclick = () => { copy(body); toast('Copied'); closeSheet(); };
+}
+
+/* ============================================================================
+   9 · ACTIVATION  —  the reconciliation the teardown asked for.
+   main's batch funnel (send several at once) plus v177's per-supplier response
+   tracking (watch each one land separately). Both, not either.
+   ========================================================================= */
+function runFunnel(names){
+  if(!names.length) return;
+  const n = names.length;
+  sheet(`<div class="funnel">
+      <span class="spin"></span>
+      <div class="col g2" style="align-items:center;text-align:center">
+        <h2>${n > 1 ? `Sending ${n} requests…` : 'Sending your request…'}</h2>
+        <span class="muted" style="font-size:var(--text-sm);max-width:44ch">
+          We are passing your volumes and ${mk().org} to ${n > 1 ? 'each supplier' : 'the supplier'}.
+          Nothing changes on your side yet.</span>
+      </div>
+    </div>`);
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(() => {
+    names.forEach(nm => {
+      const a = findAgr(nm);
+      if(a && !a.req){ a.req = true; a._req = true; a.sent = 0;
+        REQS.push({ n:nm, at:Date.now(), status:'sent' }); }
+    });
+    picked.clear();
+    LOG.unshift({ t:`${n > 1 ? n + ' requests' : names[0] + ' request'} sent to ${n > 1 ? 'suppliers' : 'the supplier'}`, d:'just now' });
+
+    sheet(`<div class="sheet-h">
+        <span class="qz-tick" style="width:40px;height:40px"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+        <div class="col"><span class="eyebrow">On its way</span>
+          <h2>${n > 1 ? `${n} requests sent` : 'Request sent'}</h2></div>
+        <button class="x" data-x>×</button></div>
+      <p class="muted" style="font-size:var(--text-sm)">Each one is tracked separately from here — you will see them move through the same four steps, and we will tell you when the saving is verified against an invoice.</p>
+      <div class="col g2">
+        ${names.map(nm => {
+          const a = findAgr(nm);
+          return `<div class="reqrow">
+            <span class="row g3">
+              <span class="logo-tile" style="width:32px;height:32px;font-size:11px">${initials(nm)}</span>
+              <span class="col" style="gap:2px;min-width:0">
+                <b style="font-size:var(--text-xs)">${esc(nm)}</b>
+                <span class="muted" style="font-size:11px">${a ? a.r.n : ''} · expect confirmation ${a ? stepDate(a,1) : 'within 5 working days'}</span>
+              </span>
+            </span>
+            <span class="chip chip-live">Sent</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="row g2 wrap">
+        <button class="btn btn-primary btn-sm" id="fSee">See them in Agreements</button>
+        <button class="btn btn-ghost btn-sm" data-x>Stay here</button>
+      </div>`);
+    $('#fSee').onclick = () => { closeSheet(); go('agreements'); };
+    renderNav();
+  }, reduced ? 400 : 1900);
+}
+
+/* ============================================================================
+   10 · PRICE CHALLENGE  —  from main. The capability v177 had no answer for:
+   pushing back on a supplier you intend to keep. Every claim in the draft
+   traces to something this app can prove.
+   ========================================================================= */
+function openChallenge(a, step, st){
+  if(!a) return;
+  st = st || { reason:'competitor', rival:'', price:'' };
+  step = step || 1;
+  const r = a.r;
+
+  if(step === 1){
+    sheet(`<div class="sheet-h"><div class="col"><span class="eyebrow">${r.n} · ${esc(a.n)}</span>
+        <h2>Challenge the price</h2>
+        <span class="muted" style="font-size:var(--text-sm)">You keep the supplier. We ask them to sharpen the rate, using volume you already have.</span></div>
+        <button class="x" data-x>×</button></div>
+      <div class="col g3">
+        <div class="eyebrow">Why are you challenging it?</div>
+        ${[['competitor','We have a cheaper quote elsewhere'],
+           ['volume','Our volume has grown since we signed'],
+           ['market','Market prices have moved'],
+           ['service','Service has not matched the price']].map(([k,l]) =>
+          `<button class="pickrow${st.reason===k?' on':''}" data-r="${k}">
+            <span class="tick"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+            <span style="font-size:var(--text-sm)">${l}</span></button>`).join('')}
+      </div>
+      <div class="row g2 wrap"><button class="btn btn-primary btn-sm" id="pcNext">Continue</button>
+        <button class="btn btn-ghost btn-sm" data-x>Cancel</button></div>`);
+    $$('[data-r]').forEach(b => b.onclick = () => { st.reason = b.dataset.r; openChallenge(a,1,st); });
+    $('#pcNext').onclick = () => openChallenge(a,2,st);
+    return;
+  }
+
+  if(step === 2){
+    sheet(`<div class="sheet-h"><div class="col"><span class="eyebrow">Step 2 of 3</span>
+        <h2>What have you been offered?</h2>
+        <span class="muted" style="font-size:var(--text-sm)">Optional. A named alternative makes the challenge concrete, but the volume argument stands on its own.</span></div>
+        <button class="x" data-x>×</button></div>
+      <div class="g-2">
+        <div class="field"><label>Competing supplier</label>
+          <input id="pcRival" value="${esc(st.rival)}" placeholder="e.g. a local carrier"></div>
+        <div class="field"><label>Their price</label>
+          <input id="pcPrice" value="${esc(st.price)}" placeholder="e.g. 12% below list"></div>
+      </div>
+      <div class="row g2 wrap"><button class="btn btn-primary btn-sm" id="pcNext2">See what we can put behind this</button>
+        <button class="btn btn-ghost btn-sm" id="pcBack">Back</button></div>`);
+    $('#pcBack').onclick = () => openChallenge(a,1,st);
+    $('#pcNext2').onclick = () => {
+      st.rival = $('#pcRival').value; st.price = $('#pcPrice').value;
+      openChallenge(a,3,st);
+    };
+    return;
+  }
+
+  const ev = evidence(r, a);
+  const draft =
+`To ${a.n}\nRe: ${r.n} pricing — ${co().legal} (${mk().org} ${co().id})\n\n`
++ `We buy ${r.n.toLowerCase()} from you under the ${mk().group} group agreement and intend to keep doing so. `
++ `We are asking you to review the rate.\n\n`
++ `· ${fmt(a.covers)} of annual spend, across ${r.inv} invoices.\n`
++ `· ${memberCount(a).toLocaleString(mk().loc)} group members are on this agreement.\n`
++ `· Current group rate is ${Math.round(a.rate*100)}% below list on our lines.\n`
++ (st.rival ? `· We have been quoted ${st.price || 'a lower rate'} by ${st.rival}.\n` : '')
++ `\nWe would rather not move. Tell us what you can do on the rate for the next period.\n\n`
++ `${mk().adviser}\non behalf of ${co().legal}`;
+
+  sheet(`<div class="sheet-h"><div class="col"><span class="eyebrow">Step 3 of 3</span>
+      <h2>What we can put behind this</h2>
+      <span class="muted" style="font-size:var(--text-sm)">Three things we can already assert on your behalf. Nothing here is invented.</span></div>
+      <button class="x" data-x>×</button></div>
+    <div class="col g3">
+      ${ev.map((e,i) => `<div class="evi"><span class="evi-n">${i+1}</span><span>${e}</span></div>`).join('')}
+    </div>
+    <div class="hsec col g3">
+      <div class="eyebrow">The letter</div>
+      <div class="draft">${esc(draft)}</div>
+    </div>
+    <div class="row g2 wrap">
+      <button class="btn btn-primary btn-sm" id="pcSend">Send it</button>
+      <button class="btn btn-ghost btn-sm" id="pcCopy">Copy the draft</button>
+      <button class="btn btn-quiet btn-sm" id="pcBack3">Back</button>
+    </div>`, true);
+  $('#pcBack3').onclick = () => openChallenge(a,2,st);
+  $('#pcCopy').onclick = () => { copy(draft); toast('Draft copied'); };
+  $('#pcSend').onclick = () => {
+    REQS.push({ n:a.n + ' — price challenge', at:Date.now(), status:'sent' });
+    LOG.unshift({ t:`Price challenge sent to ${a.n}`, d:'just now' });
+    closeSheet(); toast('Challenge sent — tracked in the assistant'); refreshHelp();
+  };
+}
+
+/* ============================================================================
+   11 · CUSTOM REQUEST  —  also from main. Ask for terms that are not on the list.
+   ========================================================================= */
+const CR_TERMS = [['delivery','Delivery windows'],['payment','Payment terms'],
+  ['volume','Volume rebate'],['sla','Service levels'],['price','Price review'],['returns','Returns']];
+
+function openCustom(r, st){
+  st = st || { terms:new Set(['delivery','payment']), to:new Set(r.agr.slice(0,2).map(a => a.n)), note:'' };
+  const chosen = CR_TERMS.filter(([k]) => st.terms.has(k)).map(([,l]) => l.toLowerCase());
+  const draft =
+`To ${[...st.to].join(', ') || 'the suppliers below'}\nRe: ${r.n} — request for revised terms\n\n`
++ `${co().legal} (${mk().org} ${co().id}) buys ${r.n.toLowerCase()} under the ${mk().group} group agreement — `
++ `${fmt(r.spend)} a year across ${r.inv} invoices.\n\n`
++ `We would like to discuss: ${chosen.join(', ') || 'our current terms'}.\n\n`
++ (st.note ? st.note + '\n\n' : '')
++ `Please come back with what is possible.\n\n${mk().adviser}`;
+
+  sheet(`<div class="sheet-h"><div class="col"><span class="eyebrow">${r.n}</span>
+      <h2>Ask for different terms</h2>
+      <span class="muted" style="font-size:var(--text-sm)">Not every negotiation is about price. Pick what actually matters and we will draft it.</span></div>
+      <button class="x" data-x>×</button></div>
+
+    <div class="col g3">
+      <div class="eyebrow">What do you want to change?</div>
+      <div class="row g2 wrap">${CR_TERMS.map(([k,l]) =>
+        `<button class="qz-opt${st.terms.has(k)?' on':''}" data-t="${k}">${l}</button>`).join('')}</div>
+    </div>
+
+    <div class="hsec col g3">
+      <div class="eyebrow">Who should see it</div>
+      <div class="col g2">${r.agr.map(a =>
+        `<button class="pickrow${st.to.has(a.n)?' on':''}" data-to="${esc(a.n)}">
+          <span class="tick"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+          <span class="row g3" style="flex:1 1 auto;min-width:0">
+            <span class="logo-tile" style="width:28px;height:28px;font-size:10px">${initials(a.n)}</span>
+            <span class="col" style="gap:1px;min-width:0"><b style="font-size:var(--text-xs)">${esc(a.n)}</b>
+            <span class="muted" style="font-size:11px">${a.req?'in use':'available'} · ${memberCount(a).toLocaleString(mk().loc)} members</span></span>
+          </span></button>`).join('')}</div>
+    </div>
+
+    <div class="field"><label>Anything else they should know</label>
+      <textarea id="crNote" placeholder="Optional context — a deadline, a volume change, a problem you have had">${esc(st.note)}</textarea></div>
+
+    <div class="hsec col g3"><div class="eyebrow">The draft</div>
+      <div class="draft">${esc(draft)}</div></div>
+
+    <div class="row g2 wrap">
+      <button class="btn btn-primary btn-sm" id="crSend">Send to ${st.to.size || 0} supplier${st.to.size===1?'':'s'}</button>
+      <button class="btn btn-ghost btn-sm" id="crRe">Redraft</button>
+      <button class="btn btn-quiet btn-sm" data-x>Cancel</button>
+    </div>`, true);
+
+  $$('[data-t]').forEach(b => b.onclick = () => {
+    const k = b.dataset.t; st.terms.has(k) ? st.terms.delete(k) : st.terms.add(k);
+    st.note = $('#crNote').value; openCustom(r, st);
+  });
+  $$('[data-to]').forEach(b => b.onclick = () => {
+    const k = b.dataset.to; st.to.has(k) ? st.to.delete(k) : st.to.add(k);
+    st.note = $('#crNote').value; openCustom(r, st);
+  });
+  $('#crRe').onclick = () => { st.note = $('#crNote').value; openCustom(r, st); };
+  $('#crSend').onclick = () => {
+    if(!st.to.size) return toast('Pick at least one supplier');
+    [...st.to].forEach(n => REQS.push({ n:n + ' — terms request', at:Date.now(), status:'sent' }));
+    LOG.unshift({ t:`Terms request sent to ${st.to.size} supplier${st.to.size===1?'':'s'} in ${r.n}`, d:'just now' });
+    closeSheet(); toast('Sent — tracked in the assistant'); refreshHelp();
+  };
+}
+
+/* ============================================================================
+   12 · QUOTE REQUEST  —  recovered from v140, which had the most structured
+   version of this and lost it in v177's consolidation.
+   ========================================================================= */
+function openQuote(r, sel){
+  sel = sel || new Set(r.agr.map(a => a.n));
+  sheet(`<div class="sheet-h"><div class="col"><span class="eyebrow">${r.n}</span>
+      <h2>Request comparable quotes</h2>
+      <span class="muted" style="font-size:var(--text-sm)">One brief, several suppliers, same basis — so what comes back is actually comparable.</span></div>
+      <button class="x" data-x>×</button></div>
+
+    <div class="col g3">
+      <div class="eyebrow">Send the same brief to</div>
+      <div class="col g2">${r.agr.map(a =>
+        `<button class="pickrow${sel.has(a.n)?' on':''}" data-q="${esc(a.n)}">
+          <span class="tick"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+          <span class="row g3" style="flex:1 1 auto;min-width:0">
+            <span class="logo-tile" style="width:28px;height:28px;font-size:10px">${initials(a.n)}</span>
+            <span class="col" style="gap:1px;min-width:0"><b style="font-size:var(--text-xs)">${esc(a.n)}</b>
+            <span class="muted" style="font-size:11px">−${Math.round(a.rate*100)}% group rate today</span></span>
+          </span></button>`).join('')}</div>
+    </div>
+
+    <div class="hsec col g3">
+      <div class="eyebrow">What they will be given</div>
+      <div class="col g2">
+        <div class="evi"><span class="evi-n">1</span><span><b>${fmt(r.spend)}</b> of annual ${r.n.toLowerCase()} spend across <b>${r.inv} invoices</b>.</span></div>
+        <div class="evi"><span class="evi-n">2</span><span>Your ${co().trade.toLowerCase()} profile at ${co().size}, and ${mk().group} membership.</span></div>
+        <div class="evi"><span class="evi-n">3</span><span>${Object.keys(QANS[r.id]||{}).length
+          ? 'The answers you gave the qualifier, so nobody quotes for the wrong thing.'
+          : 'No qualifier answers yet — quotes will be broader without them.'}</span></div>
+      </div>
+    </div>
+
+    <div class="row g2 wrap">
+      <button class="btn btn-primary btn-sm" id="qSend">Send to ${sel.size} supplier${sel.size===1?'':'s'}</button>
+      <button class="btn btn-quiet btn-sm" data-x>Cancel</button>
+    </div>`, true);
+
+  $$('[data-q]').forEach(b => b.onclick = () => {
+    const k = b.dataset.q; sel.has(k) ? sel.delete(k) : sel.add(k); openQuote(r, sel);
+  });
+  $('#qSend').onclick = () => {
+    if(!sel.size) return toast('Pick at least one supplier');
+    [...sel].forEach(n => REQS.push({ n:n + ' — quote', at:Date.now(), status:'waiting' }));
+    LOG.unshift({ t:`Quote request sent to ${sel.size} supplier${sel.size===1?'':'s'} in ${r.n}`, d:'just now' });
+    closeSheet(); toast(`Sent to ${sel.size} — responses land in the assistant`); refreshHelp();
+  };
+}
+
+/* ============================================================================
+   13 · AGREEMENTS  —  main's portfolio page: the dated stepper, the renewal
+   calendar, and dormancy named out loud.
+   ========================================================================= */
+RENDER.agreements = () => {
+  const on = allAgr().filter(a => a.req).sort((x,y) => (x.sent||0) - (y.sent||0));
+  const off = allAgr().filter(a => !a.req).sort((x,y) => saveOf(y) - saveOf(x));
+  const dorm = on.filter(agDormant);
+
+  const byMonth = MONTHS.map((m,i) => on.filter(a => renewMonth(a) === i));
+  const thisMonth = new Date().getMonth();
+
+  $('#v-agreements').innerHTML = `
+    <div class="vhead">
+      <span class="eyebrow">Portfolio</span>
+      <h1>Your agreements</h1>
+      <p>${on.length} in use, ${off.length} available. This is the page that tells you whether
+         what you signed is actually landing.</p>
+    </div>
+
+    <div class="g-4">
+      <div class="stat"><span class="lbl">In use</span><span class="figure f-lg">${on.length}</span>
+        <span class="sub">of ${allAgr().length} negotiated</span></div>
+      <div class="stat"><span class="lbl">Verified saving</span>
+        <span class="figure f-lg pos">${isNew() ? '—' : fmt(totalGot())}</span>
+        <span class="sub">${isNew() ? 'nothing active yet' : 'checked against invoices'}</span></div>
+      <div class="stat${dorm.length ? ' hero' : ''}"><span class="lbl">Live but unused</span>
+        <span class="figure f-lg">${dorm.length}</span>
+        <span class="sub">${dorm.length ? 'signed, nothing ordered through' : 'none drifting'}</span></div>
+      <div class="stat"><span class="lbl">Renewing in 90 days</span>
+        <span class="figure f-lg">${byMonth.slice(thisMonth, thisMonth+3).flat().length}</span>
+        <span class="sub">notice periods worth checking</span></div>
+    </div>
+
+    ${dorm.length ? `
+      <div class="card pad col g4" style="border-color:#ff9b3d55;background:#fffaf3">
+        <div class="row g3 wrap">
+          <span class="chip chip-warn">Needs you</span>
+          <b style="font-size:var(--text-lg)">${dorm.length} agreement${dorm.length>1?'s':''} live but unused</b>
+        </div>
+        <p class="muted" style="font-size:var(--text-sm);max-width:74ch">A signed agreement nobody
+          orders through saves nothing. This is the most common and most invisible way a group
+          agreement fails — so it gets named here rather than buried in a usage report.</p>
+        <div class="col g2">
+          ${dorm.map(a => `<div class="reqrow">
+            <span class="row g3"><span class="logo-tile" style="width:32px;height:32px;font-size:11px">${initials(a.n)}</span>
+              <span class="col" style="gap:2px;min-width:0"><b style="font-size:var(--text-xs)">${esc(a.n)}</b>
+              <span class="muted" style="font-size:11px">${a.r.n} · nothing invoiced for ${quietDays(a)} days · ${saveFig(saveOf(a))} at stake</span></span></span>
+            <button class="btn btn-ghost btn-sm" data-fix="${esc(a.n)}">Get it used</button>
+          </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+    <div class="hsec col g4">
+      <div class="col" style="gap:2px">
+        <h2>In flight and in use</h2>
+        <span class="muted" style="font-size:var(--text-sm)">Every step carries a date. The last one is the only one that matters: a saving we have checked against an invoice.</span>
+      </div>
+      ${on.length ? on.map(a => `
+        <div class="card pad col g4">
+          <div class="row g3 wrap">
+            <span class="logo-tile">${initials(a.n)}</span>
+            <div class="col" style="gap:2px;flex:1 1 auto;min-width:0">
+              <div class="row g2 wrap"><b style="font-size:var(--text-base)">${esc(a.n)}</b>
+                ${agDormant(a) ? '<span class="chip chip-warn">live but unused</span>' : ''}
+                ${agStage(a) === 3 ? '<span class="chip chip-pos">saving verified</span>'
+                                   : '<span class="chip chip-live">in progress</span>'}</div>
+              <span class="muted" style="font-size:var(--text-xs)">${a.r.n} · −${Math.round(a.rate*100)}% ·
+                renews ${MONTHS[renewMonth(a)]}</span>
+            </div>
+            <div class="col" style="gap:2px;text-align:right">
+              <span class="figure f-md pos">${saveFig(saveOf(a))}</span>
+              <span class="muted" style="font-size:11px">a year</span>
+            </div>
+          </div>
+          ${stepperHTML(a)}
+          <div class="row g2 wrap">
+            <button class="btn btn-ghost btn-sm" data-sup2="${esc(a.n)}">Open ${esc(a.n)}</button>
+            <button class="btn btn-quiet btn-sm" data-chal2="${esc(a.n)}">Challenge the price</button>
+          </div>
+        </div>`).join('') : `<p class="muted">Nothing activated yet. The opportunities are on Overview.</p>`}
+    </div>
+
+    <div class="hsec col g4">
+      <div class="col" style="gap:2px">
+        <h2>Renewal calendar</h2>
+        <span class="muted" style="font-size:var(--text-sm)">When each agreement comes up. The notice period is the number that actually constrains you — check it before the renewal, not after.</span>
+      </div>
+      <div class="cal">
+        ${MONTHS.map((m,i) => `<div class="cal-m${byMonth[i].length && i >= thisMonth && i < thisMonth+3 ? ' hot' : ''}">
+          <b>${m}</b>
+          ${byMonth[i].map(a => `<span class="cal-pill" title="${esc(a.n)}">${esc(a.n)}</span>`).join('')}
+        </div>`).join('')}
+      </div>
+    </div>
+
+    ${off.length ? `
+    <div class="hsec col g4">
+      <div class="col" style="gap:2px">
+        <h2>Available to you</h2>
+        <span class="muted" style="font-size:var(--text-sm)">Negotiated and waiting. Biggest first.</span>
+      </div>
+      <div class="g-3">
+        ${off.map(a => `<button class="opp" data-sup2="${esc(a.n)}">
+          <span class="opp-top"><span class="logo-tile">${initials(a.n)}</span>
+            <span class="col" style="gap:2px;min-width:0;flex:1 1 auto">
+              <b style="font-size:var(--text-sm)">${esc(a.n)}</b>
+              <span class="muted" style="font-size:11.5px">${a.r.n} · −${Math.round(a.rate*100)}%</span>
+            </span></span>
+          <span class="row spread g2"><span class="figure f-md pos">${saveFig(saveOf(a))}</span>
+            <span class="chip">${memberCount(a).toLocaleString(mk().loc)} members</span></span>
+        </button>`).join('')}
+      </div>
+    </div>` : ''}`;
+
+  $$('[data-sup2]').forEach(b => b.onclick = () => openSupplier(b.dataset.sup2));
+  $$('[data-chal2]').forEach(b => b.onclick = () => openChallenge(findAgr(b.dataset.chal2)));
+  $$('[data-fix]').forEach(b => b.onclick = () => openSupplier(b.dataset.fix));
+};
+
+/* ============================================================================
+   14 · SUPPLIERS  —  main's catalogue: curated sort, peer profile, member count.
+   ========================================================================= */
+let supFilter = 'all', supSort = 'save';
+RENDER.suppliers = () => {
+  let list = allAgr();
+  if(supFilter === 'on')  list = list.filter(a => a.req);
+  if(supFilter === 'off') list = list.filter(a => !a.req);
+  list = list.slice().sort(
+    supSort === 'az' ? (x,y) => x.n.localeCompare(y.n, mk().loc)
+    : supSort === 'members' ? (x,y) => y.members - x.members
+    : (x,y) => saveOf(y) - saveOf(x));
+
+  $('#v-suppliers').innerHTML = `
+    <div class="vhead"><span class="eyebrow">Catalogue</span>
+      <h1>Suppliers</h1>
+      <p>${allAgr().length} negotiated agreements. Sorted by what they are worth to you, not alphabetically.</p></div>
+
+    <div class="row g3 wrap">
+      <div class="row g1">
+        ${[['all','All'],['on','Active for you'],['off','Not on agreement yet']].map(([k,l]) =>
+          `<button class="qz-opt${supFilter===k?' on':''}" data-fl="${k}">${l}</button>`).join('')}
+      </div>
+      <div class="row g1 push">
+        ${[['save','Biggest saving'],['members','Most members'],['az','A–Z']].map(([k,l]) =>
+          `<button class="qz-opt${supSort===k?' on':''}" data-so="${k}">${l}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="g-3">
+      ${list.map(a => `
+        <button class="opp" data-sup3="${esc(a.n)}">
+          <span class="opp-band"></span>
+          <span class="opp-top">
+            <span class="logo-tile">${initials(a.n)}</span>
+            <span class="col" style="gap:2px;min-width:0;flex:1 1 auto">
+              <b style="font-size:var(--text-sm)">${esc(a.n)}</b>
+              <span class="muted" style="font-size:11.5px">${a.r.n}</span>
+            </span>
+            ${a.req ? (agDormant(a) ? '<span class="chip chip-warn">unused</span>'
+                                    : '<span class="chip chip-pos">in use</span>') : ''}
+          </span>
+          <span class="muted" style="font-size:11.5px;text-align:left">
+            ${memberCount(a).toLocaleString(mk().loc)} of your peers are on this — the price reflects
+            their combined volume.</span>
+          <span class="row spread g2">
+            <span class="figure f-md pos">${saveFig(saveOf(a))}</span>
+            <span class="chip">−${Math.round(a.rate*100)}%</span>
+          </span>
+        </button>`).join('')}
+    </div>`;
+
+  $$('[data-fl]').forEach(b => b.onclick = () => { supFilter = b.dataset.fl; RENDER.suppliers(); });
+  $$('[data-so]').forEach(b => b.onclick = () => { supSort = b.dataset.so; RENDER.suppliers(); });
+  $$('[data-sup3]').forEach(b => b.onclick = () => openSupplier(b.dataset.sup3));
+};
+
+/* ============================================================================
+   15 · VALUE  —  the IA compromise. v177 was right that cashback deserves its
+   own place; main was right that a usage report is what catches a dormant
+   agreement. Both, as tabs, so the nav stays at 8 items. Cashback still
+   disappears entirely when there is nothing to show.
+   ========================================================================= */
+let valTab = 'saved';
+RENDER.value = () => {
+  const bonus = totalBonus();
+  const showBonus = bonus > 0;                 // v177's rule, kept
+  if(!showBonus && valTab === 'bonus') valTab = 'saved';
+  const cats = live().filter(r => gotOf(r) > 0).sort((a,b) => gotOf(b) - gotOf(a));
+  const maxGot = Math.max(...cats.map(gotOf), 1);
+  const used = allAgr().filter(a => a.req);
+
+  $('#v-value').innerHTML = `
+    <div class="vhead"><span class="eyebrow">Membership value</span>
+      <h1>${isNew() ? 'What this could be worth' : 'What it has returned'}</h1>
+      <p>${isNew()
+        ? 'Nothing is active yet, so this is benchmark potential rather than realised value. Connect your data and this page becomes your own numbers.'
+        : 'Savings and bonus from the agreements you actually use, plus whether they are being used at all.'}</p></div>
+
+    <div class="tabs">
+      <button class="tab${valTab==='saved'?' on':''}" data-vt="saved">Saved</button>
+      ${showBonus ? `<button class="tab${valTab==='bonus'?' on':''}" data-vt="bonus">Cashback</button>` : ''}
+      <button class="tab${valTab==='usage'?' on':''}" data-vt="usage">Usage</button>
+    </div>
+
+    <div class="tabpane${valTab==='saved'?' on':''}">
+      <div class="g-3">
+        <div class="stat hero"><span class="lbl">${isNew()?'Potential':'Realised saving'}</span>
+          <span class="figure f-xl">${saveFig(isNew() ? totalPot() : totalGot())}</span>
+          <span class="sub">${figTag()}</span></div>
+        <div class="stat"><span class="lbl">Still open</span>
+          <span class="figure f-lg">${saveFig(totalPot())}</span>
+          <span class="sub">${allAgr().filter(a=>!a.req).length} agreements</span></div>
+        <div class="stat"><span class="lbl">Covered spend</span>
+          <span class="figure f-lg">${fmt(used.reduce((s,a)=>s+a.covers,0))}</span>
+          <span class="sub">buying at group terms</span></div>
+      </div>
+      ${cats.length ? `
+        <div class="hsec col g3"><h3>Where it comes from</h3>
+          ${cats.map(r => `<div class="barrow">
+            <span><b>${r.n}</b></span>
+            <span class="bar"><i style="width:${Math.max(6, gotOf(r)/maxGot*100)}%"></i></span>
+            <span class="num muted" style="text-align:right">${saveFig(gotOf(r))}</span>
+          </div>`).join('')}
+        </div>` : '<p class="muted">Nothing realised yet — activate an agreement and it appears here.</p>'}
+    </div>
+
+    ${showBonus ? `
+    <div class="tabpane${valTab==='bonus'?' on':''}">
+      <div class="g-3">
+        <div class="stat hero"><span class="lbl">Cashback accrued</span>
+          <span class="figure f-xl">${fmt(bonus)}</span>
+          <span class="sub">1.5% of covered spend</span></div>
+        <div class="stat"><span class="lbl">Paid out</span>
+          <span class="figure f-lg">${fmt(Math.round(bonus*0.6))}</span>
+          <span class="sub">previous period</span></div>
+        <div class="stat"><span class="lbl">Accruing now</span>
+          <span class="figure f-lg">${fmt(Math.round(bonus*0.4))}</span>
+          <span class="sub">pays out next cycle</span></div>
+      </div>
+      <div class="hsec col g3">
+        <h3>By supplier</h3>
+        <span class="muted" style="font-size:var(--text-sm)">Cashback is money that arrives, not a discount you never see — which is why it gets its own place rather than being folded into a savings total.</span>
+        <table class="tbl"><thead><tr><th>Supplier</th><th>Covered spend</th><th style="text-align:right">Cashback</th></tr></thead>
+          <tbody>${used.map(a => `<tr>
+            <td><b style="font-size:var(--text-sm)">${esc(a.n)}</b>
+              <div class="muted" style="font-size:11.5px">${a.r.n}</div></td>
+            <td class="num">${fmt(a.covers)}</td>
+            <td class="num pos" style="text-align:right"><b>${fmt(bonusOf(a))}</b></td>
+          </tr>`).join('')}</tbody></table>
+      </div>
+    </div>` : ''}
+
+    <div class="tabpane${valTab==='usage'?' on':''}">
+      <div class="col g3">
+        <h3>Is what you signed being used?</h3>
+        <span class="muted" style="font-size:var(--text-sm)">The report that catches the failure nobody notices: an agreement that is live, correctly priced, and that nobody orders through.</span>
+      </div>
+      <table class="tbl"><thead><tr><th>Agreement</th><th>Status</th><th>Last activity</th>
+        <th style="text-align:right">At stake</th></tr></thead>
+        <tbody>${used.map(a => `<tr>
+          <td><b style="font-size:var(--text-sm)">${esc(a.n)}</b>
+            <div class="muted" style="font-size:11.5px">${a.r.n}</div></td>
+          <td>${agDormant(a) ? '<span class="chip chip-warn">live but unused</span>'
+                             : '<span class="chip chip-pos">ordering through it</span>'}</td>
+          <td class="muted" style="font-size:var(--text-xs)">${agDormant(a)
+            ? quietDays(a) + ' days ago' : 'this month'}</td>
+          <td class="num" style="text-align:right"><b class="${agDormant(a)?'':'pos'}">${saveFig(saveOf(a))}</b></td>
+        </tr>`).join('') || '<tr><td colspan="4" class="muted">Nothing active yet.</td></tr>'}</tbody></table>
+    </div>`;
+
+  $$('[data-vt]').forEach(b => b.onclick = () => { valTab = b.dataset.vt; RENDER.value(); });
+};
+
+/* ============================================================================
+   16 · DATA  —  v177's three routes, with main's motivation: the ERP state is
+   the thing that turns every range on every page into a real number.
+   ========================================================================= */
+RENDER.data = () => {
+  $('#v-data').innerHTML = `
+    <div class="vhead"><span class="eyebrow">Company data</span>
+      <h1>${isNew() ? 'Turn the ranges into your numbers' : 'What we use to personalise this'}</h1>
+      <p>You do not have to connect everything. Pick the smallest thing that answers the question you actually have.</p></div>
+
+    ${isNew() ? `
+      <div class="card pad row g4 wrap" style="background:var(--brand-ice);border-color:#cfe0ff">
+        <div class="col" style="gap:var(--s1);flex:1 1 auto;min-width:0">
+          <b style="font-size:var(--text-base)">Every figure you have seen so far is a range</b>
+          <span class="muted" style="font-size:var(--text-sm)">That is deliberate. Until your accounting data is here, we will not print a number that looks like yours but is not.</span>
+        </div>
+        <span class="chip chip-est">estimated</span>
+      </div>` : ''}
+
+    <div class="g-3">
+      ${[['Connect your ERP','Best for ongoing insight',
+          'Purchasing data flows in continuously, so benchmarks and dormancy detection stay current without you doing anything.','erp',true],
+         ['Upload a spend report','Quickest start',
+          'One Excel or CSV export is enough to rank your categories by real spend instead of by industry averages.','spend',false],
+         ['Upload invoices','For one specific question',
+          'A single invoice is enough to benchmark one category — useful before a price challenge.','inv',false]
+        ].map(([t,k,d,id,feat]) => `
+        <div class="card card-in pad-sm col g3${feat?'':''}" style="${feat?'border-color:#cfe0ff;background:#fcfdff;':''}box-shadow:none">
+          <span class="chip${feat?' chip-live':''}">${k}</span>
+          <b style="font-size:var(--text-base)">${t}</b>
+          <span class="muted" style="font-size:var(--text-xs)">${d}</span>
+          <button class="btn ${feat?'btn-primary':'btn-ghost'} btn-sm" data-src="${id}" style="margin-top:auto">${t}</button>
+        </div>`).join('')}
+    </div>
+
+    <div class="hsec col g4">
+      <h2>What we hold today</h2>
+      <table class="tbl"><tbody>
+        <tr><td><b style="font-size:var(--text-sm)">Company profile</b>
+          <div class="muted" style="font-size:11.5px">${co().trade} · ${co().size} · ${mk().org} ${co().id}</div></td>
+          <td style="text-align:right"><span class="chip chip-pos">connected</span></td></tr>
+        <tr><td><b style="font-size:var(--text-sm)">ERP purchasing data</b>
+          <div class="muted" style="font-size:11.5px">${isNew() ? 'not connected — this is why figures are ranges' : 'connected, refreshed nightly'}</div></td>
+          <td style="text-align:right">${isNew() ? '<span class="chip">not connected</span>' : '<span class="chip chip-pos">connected</span>'}</td></tr>
+        <tr><td><b style="font-size:var(--text-sm)">Invoices read</b>
+          <div class="muted" style="font-size:11.5px">${isNew() ? 'none yet' : AREAS.reduce((s,r)=>s+r.inv,0) + ' invoices, used to verify savings'}</div></td>
+          <td style="text-align:right">${isNew() ? '<span class="chip">none</span>' : '<span class="chip chip-pos">' + AREAS.reduce((s,r)=>s+r.inv,0) + '</span>'}</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="hsec g-2">
+      <div class="col g2"><b style="font-size:var(--text-sm)">Without your spend data</b>
+        <span class="muted" style="font-size:var(--text-xs)">Savings are ranges from companies of your trade and size. Useful for prioritising, not for a business case.</span></div>
+      <div class="col g2"><b style="font-size:var(--text-sm)">With it</b>
+        <span class="muted" style="font-size:var(--text-xs)">We rank your categories by what you actually buy, verify each saving against an invoice, and notice when an agreement stops being used.</span></div>
+    </div>`;
+
+  $$('[data-src]').forEach(b => b.onclick = () => {
+    if(b.dataset.src === 'erp' && isNew()){
+      sheet(`<div class="sheet-h"><div class="col"><span class="eyebrow">Connect</span>
+          <h2>Connect your ERP</h2></div><button class="x" data-x>×</button></div>
+        <p class="muted" style="font-size:var(--text-sm)">In the real product this is an OAuth handshake. Here it demonstrates the consequence: connect, and every range on every page becomes a figure.</p>
+        <div class="row g2 wrap"><button class="btn btn-primary btn-sm" id="dConn">Connect and switch to verified</button>
+          <button class="btn btn-ghost btn-sm" data-x>Cancel</button></div>`);
+      $('#dConn').onclick = () => {
+        closeSheet(); CO = 'built';
+        allAgr().forEach(a => { if(a._req !== undefined) a.req = a._req; });
+        paintSwitches(); go('overview');
+        toast('Connected — figures are now verified against invoices');
+      };
+    } else toast('Upload flow — prototype');
+  });
+};
+
+/* ============================================================================
+   17 · RESOURCES  —  v177's strongest idea: the access wallet. A negotiated
+   price nobody can find the code for is worth nothing. Plus the non-price
+   reasons to be a member: compliance and sustainability.
+   ========================================================================= */
+let resTab = 'wallet';
+RENDER.resources = () => {
+  const on = allAgr().filter(a => a.req);
+  const code = n => (mk().group.toUpperCase().replace(/[^A-Z]/g,'') + 'GROUP').slice(0,12);
+  const url = `https://${MK === 'no' ? 'rabatt.vinst.no' : 'fordele.advantage.dk'}/${co().name.replace(/\s/g,'').toUpperCase()}`;
+
+  $('#v-resources').innerHTML = `
+    <div class="vhead"><span class="eyebrow">Resources</span>
+      <h1>Everything the rest of the company needs</h1>
+      <p>Most of your colleagues will never log in here. These are the things that work without them having to.</p></div>
+
+    <div class="tabs">
+      ${[['wallet','Access & codes'],['comply','Compliance'],['green','Lower impact']].map(([k,l]) =>
+        `<button class="tab${resTab===k?' on':''}" data-rt="${k}">${l}</button>`).join('')}
+    </div>
+
+    <div class="tabpane${resTab==='wallet'?' on':''}">
+      <div class="card pad col g4" style="background:var(--brand-ice);border-color:#cfe0ff">
+        <div class="col g2">
+          <span class="eyebrow">One link for everyone</span>
+          <b style="font-size:var(--text-base)">Your company discount page</b>
+          <span class="muted" style="font-size:var(--text-sm)">Bookmarkable, no login. This is how staff who will never open a procurement portal still get the group price.</span>
+        </div>
+        <div class="wal-code"><b class="mono" style="font-size:var(--text-sm)">${url}</b>
+          <button class="btn btn-ghost btn-sm" id="rCopyUrl">Copy link</button></div>
+      </div>
+
+      ${on.length ? `
+        <div class="hsec col g4">
+          <div class="col" style="gap:2px"><h2>Your codes</h2>
+            <span class="muted" style="font-size:var(--text-sm)">The single most operationally useful thing in the product, and the reason a signed agreement turns into orders.</span></div>
+          <div class="g-2">
+            ${on.map(a => `
+              <div class="wal">
+                <div class="row g3">
+                  <span class="logo-tile">${initials(a.n)}</span>
+                  <span class="col" style="gap:2px;flex:1 1 auto;min-width:0">
+                    <b style="font-size:var(--text-sm)">${esc(a.n)}</b>
+                    <span class="muted" style="font-size:11.5px">${a.r.n}</span>
+                  </span>
+                  ${agDormant(a) ? '<span class="chip chip-warn">unused</span>' : '<span class="chip chip-pos">ready</span>'}
+                </div>
+                <div class="wal-code"><b>${code(a.n)}</b>
+                  <button class="btn btn-ghost btn-sm" data-cc="${esc(code(a.n))}">Copy</button></div>
+                <details class="how"><summary>How to use it <span>+</span></summary>
+                  <p>Copy the code → add it to each ordering or traveller profile at ${esc(a.n)} →
+                     order as normal. Or give it to your booking agency once so nobody has to remember it.</p></details>
+                <div class="row g2 wrap">
+                  <button class="btn btn-quiet btn-xs" data-tell="${esc(a.n)}">Draft a message to staff</button>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>` : `
+        <div class="hsec card pad row g4 wrap">
+          <div class="col" style="gap:var(--s1);flex:1 1 auto;min-width:0">
+            <b style="font-size:var(--text-base)">No codes yet</b>
+            <span class="muted" style="font-size:var(--text-sm)">Codes appear here as soon as an agreement is active. Start with the biggest one open.</span>
+          </div>
+          <button class="btn btn-primary btn-sm" id="rGo">See what is open</button>
+        </div>`}
+    </div>
+
+    <div class="tabpane${resTab==='comply'?' on':''}">
+      <div class="card pad row g4 wrap" style="background:var(--pos-tint);border-color:var(--pos-stroke)">
+        <span class="qz-tick" style="width:40px;height:40px"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>
+        <div class="col" style="gap:var(--s1);flex:1 1 auto;min-width:0">
+          <span class="eyebrow" style="color:var(--sentiment-positive)">${MK === 'no' ? 'Åpenhetsloven' : 'Due diligence'}</span>
+          <b style="font-size:var(--text-base)">Supplier responses already collected</b>
+          <span class="muted" style="font-size:var(--text-sm)">A legal obligation the group discharges on your behalf. This is a reason to be a member that has nothing to do with price.</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="rPack">Download the pack</button>
+      </div>
+      <div class="hsec col g3">
+        <h3>By supplier</h3>
+        <table class="tbl"><tbody>
+          ${allAgr().slice(0,10).map(a => `<tr>
+            <td><b style="font-size:var(--text-sm)">${esc(a.n)}</b>
+              <div class="muted" style="font-size:11.5px">${a.r.n}</div></td>
+            <td style="text-align:right"><span class="chip chip-pos">response on file</span></td></tr>`).join('')}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="tabpane${resTab==='green'?' on':''}">
+      <div class="col g3">
+        <h3>Where a lower-impact option exists</h3>
+        <span class="muted" style="font-size:var(--text-sm)">Flagged where it is genuinely an option on a specific line — not a sustainability claim about the whole supplier.</span>
+      </div>
+      <div class="g-3">
+        ${[['Reused furniture','Extends product life and avoids new manufacture','office'],
+           ['Waste and recycling','Handling with documented recovery rates','office'],
+           ['Origin-guaranteed power','Documentation that supports climate reporting','power']
+          ].map(([t,d,aid]) => `
+          <div class="card card-in pad-sm col g2" style="box-shadow:none">
+            <span class="chip chip-pos">lower impact</span>
+            <b style="font-size:var(--text-sm)">${t}</b>
+            <span class="muted" style="font-size:var(--text-xs)">${d}</span>
+            <button class="btn btn-quiet btn-xs" data-area2="${aid}" style="margin-top:auto">Open the area →</button>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  $$('[data-rt]').forEach(b => b.onclick = () => { resTab = b.dataset.rt; RENDER.resources(); });
+  $$('[data-cc]').forEach(b => b.onclick = () => { copy(b.dataset.cc); toast('Code copied'); });
+  $$('[data-area2]').forEach(b => b.onclick = () => openCategory(b.dataset.area2));
+  $$('[data-tell]').forEach(b => b.onclick = () => { supAt = b.dataset.tell; const a = findAgr(supAt);
+    draftSheet('Tell people about ' + supAt,
+      `${co().name} now has a group agreement with ${supAt}.\n\nAgreement code: ${code(supAt)}\n\nAdd it to your ${supAt} profile before you next order. The group price then applies automatically.\n\nQuestions: ${mk().adviser}.`); });
+  const u = $('#rCopyUrl'); if(u) u.onclick = () => { copy(url); toast('Link copied'); };
+  const g = $('#rGo'); if(g) g.onclick = () => go('overview');
+  const p = $('#rPack'); if(p) p.onclick = () => toast('Documentation pack — prototype');
+};
+
+/* ============================================================================
+   18 · TEAM  —  table stakes v177 had and main did not.
+   ========================================================================= */
+RENDER.team = () => {
+  const people = [
+    ['Catalin Sandru','Admin','Full access, can activate agreements','active'],
+    ['Anna Bakke','Member','Can order and see prices','active'],
+    ['Jonas Ek','Member','Can order and see prices','active'],
+    ['Lise Haugen','View only','Can see agreements, cannot activate','active'],
+    ['nina@' + co().name.toLowerCase().replace(/\s/g,'') + '.no','Member','Invited, not yet accepted','pending']
+  ];
+  $('#v-team').innerHTML = `
+    <div class="vhead"><span class="eyebrow">Administration</span>
+      <h1>Team &amp; access</h1>
+      <p>Who can see prices, who can commit the company. Most people only need the codes in Resources.</p></div>
+
+    <div class="g-3">
+      <div class="stat"><span class="lbl">People</span><span class="figure f-lg">${people.filter(p=>p[3]==='active').length}</span><span class="sub">with access</span></div>
+      <div class="stat"><span class="lbl">Admins</span><span class="figure f-lg">${people.filter(p=>p[1]==='Admin').length}</span><span class="sub">can activate agreements</span></div>
+      <div class="stat"><span class="lbl">Pending</span><span class="figure f-lg">${people.filter(p=>p[3]==='pending').length}</span><span class="sub">invitation sent</span></div>
+    </div>
+
+    <div class="hsec col g4">
+      <div class="row spread g3 wrap">
+        <h2>Access</h2>
+        <button class="btn btn-primary btn-sm" id="tInvite">Invite someone</button>
+      </div>
+      <table class="tbl"><thead><tr><th>Person</th><th>Role</th><th>What they can do</th><th></th></tr></thead>
+        <tbody>${people.map(([n,role,can,st]) => `<tr>
+          <td><div class="row g3"><span class="logo-tile" style="width:30px;height:30px;font-size:11px">${initials(n.includes('@')?'New User':n)}</span>
+            <b style="font-size:var(--text-sm)">${esc(n)}</b></div></td>
+          <td><span class="chip${role==='Admin'?' chip-live':''}">${role}</span></td>
+          <td class="muted" style="font-size:var(--text-xs)">${can}</td>
+          <td style="text-align:right">${st==='pending'?'<span class="chip chip-warn">pending</span>':''}</td>
+        </tr>`).join('')}</tbody></table>
+    </div>
+
+    <div class="hsec g-3">
+      ${[['Admin','Can activate agreements, challenge prices and commit the company.'],
+         ['Member','Can see prices and order using the group codes.'],
+         ['View only','Can see what exists. Cannot activate or commit anything.']].map(([t,d]) =>
+        `<div class="col g2"><b style="font-size:var(--text-sm)">${t}</b>
+          <span class="muted" style="font-size:var(--text-xs)">${d}</span></div>`).join('')}
+    </div>`;
+  $('#tInvite').onclick = () => sheet(`<div class="sheet-h"><div class="col">
+      <span class="eyebrow">Access</span><h2>Invite someone</h2></div><button class="x" data-x>×</button></div>
+    <div class="field"><label>Email</label><input placeholder="name@company.com"></div>
+    <div class="field"><label>Role</label><select><option>Member</option><option>Admin</option><option>View only</option></select></div>
+    <div class="row g2 wrap"><button class="btn btn-primary btn-sm" onclick="closeSheet();toast('Invitation sent')">Send invitation</button>
+      <button class="btn btn-ghost btn-sm" data-x>Cancel</button></div>`);
+};
+
+/* ============================================================================
+   19 · HELP RAIL  —  v177's container (docked, reserves page width so it never
+   covers what you are asking about) with main's cast: a named advisor, the
+   category buyer who actually negotiated the deal, and your live requests.
+   ========================================================================= */
+let hTab = 'ai';
+const H_TABS = () => [
+  ['ai','Assistant'],
+  ['adviser', mk().adviser.split(' ')[0]],
+  ['buyer','Category buyer'],
+  ['reqs','Requests' + (REQS.length ? ' (' + REQS.length + ')' : '')]
+];
+
+function openHelp(tab){
+  hTab = tab || hTab;
+  document.body.classList.add('help-open');
+  refreshHelp();
+}
+$('#helpBtn').onclick = () => document.body.classList.contains('help-open')
+  ? document.body.classList.remove('help-open') : openHelp();
+$('#hClose').onclick = () => document.body.classList.remove('help-open');
+
+/* context line — the rail knows what you are looking at */
+function ctxLabel(){
+  if(catAt) return 'Looking at ' + findArea(catAt).n;
+  if(supAt) return 'Looking at ' + supAt;
+  const n = [...NAV.core.items, ...NAV.tools.items, ...NAV.admin.items].find(i => i.id === viewAt);
+  return 'Looking at ' + (n ? n.n : 'Overview');
+}
+
+const AI_SUGGEST = () => {
+  if(supAt){ const a = findAgr(supAt); return a && a.req
+    ? [`Is anyone actually ordering through ${supAt}?`, `What would a price challenge here be based on?`,
+       `How do I get the code to the people who need it?`]
+    : [`Would ${supAt} beat what we pay now?`, `What happens after we activate?`, `Who else is on this agreement?`]; }
+  if(catAt){ const r = findArea(catAt); return [`Which of these fits us best?`,
+    `What is the ${r.n.toLowerCase()} number based on?`, `Can we get comparable quotes?`]; }
+  if(viewAt === 'agreements') return ['Which of these still needs me?','What renews in the next quarter?',
+    'Why is one of these marked unused?'];
+  if(viewAt === 'value') return ['How is the verified saving calculated?','Where is the remaining opportunity?',
+    'What is cashback and when does it pay out?'];
+  if(viewAt === 'data') return ['What is the minimum you need from us?','What changes once we connect?'];
+  return ['What should we do first?','Where is the biggest opportunity?','What changed since last week?'];
+};
+
+function aiAnswer(q){
+  const t = (q || '').toLowerCase();
+  if(supAt){
+    const a = findAgr(supAt);
+    if(a && /order|used|using|anyone/.test(t)) return agDormant(a)
+      ? `No — and that is the problem. ${supAt} is live and correctly priced, but nothing has been invoiced through it for ${quietDays(a)} days. That is ${saveFig(saveOf(a))} a year sitting unclaimed. The fix is distribution, not renegotiation: get the code to the people who order.`
+      : `Yes. ${supAt} is being ordered through, and the last invoice we read matched the group rate.`;
+    if(a && /challenge|price|based/.test(t)) return `On three things we can already prove: ${fmt(a.covers)} of annual spend across ${a.r.inv} invoices, ${memberCount(a).toLocaleString(mk().loc)} group members on the same agreement, and a current rate of ${Math.round(a.rate*100)}% below list. Nothing invented.`;
+    if(a && /beat|cheaper|worth/.test(t)) return `On benchmark, ${saveFig(saveOf(a))} a year. But you do not have to take that on trust — send us one recent invoice and we will compare it line by line before you commit.`;
+    if(a && /after|activate|happens/.test(t)) return `Four steps: the request goes out today, the supplier confirms within about five working days, the new price goes live around two weeks in, and then we read your next invoice and confirm the saving is real. That last step is the one that matters.`;
+    if(a && /who else|members/.test(t)) return `${memberCount(a).toLocaleString(mk().loc)} members of ${mk().group} are on it. The price you would get reflects their combined volume, not yours alone — that is the whole point of buying as a group.`;
+  }
+  if(catAt){
+    const r = findArea(catAt);
+    if(/fits|best|which/.test(t)){
+      const ans = QANS[r.id] || {};
+      if(!Object.keys(ans).length) return `Answer the four questions above and I can rank them properly. Without them I am guessing from your trade and size alone.`;
+      const top = rankFor(r, ans)[0];
+      return `${top.n}, on what you told me. ${top.why} Worth ${saveFig(saveOf(top))} a year.`;
+    }
+    if(/based|calculat|number/.test(t)) return `${fmt(r.spend)} of annual ${r.n.toLowerCase()} spend across ${r.inv} invoices, times the group rate on the lines you actually buy. ${isNew() ? 'Shown as a range because your accounting data is not connected yet.' : 'Verified against your own invoices.'}`;
+    if(/quote/.test(t)) return `Yes — one brief to several of these suppliers on the same basis, so what comes back is genuinely comparable. Use "Request quotes" on this page.`;
+  }
+  if(/first|start|priorit/.test(t)){
+    const top = allAgr().filter(a => !a.req).sort((x,y) => saveOf(y) - saveOf(x))[0];
+    return top ? `${top.n} in ${top.r.n} — ${saveFig(saveOf(top))} a year on spend you already have. ${isNew() ? 'That is a benchmark range until your data is connected.' : 'Verified against your invoices.'}`
+               : `Everything is active. The next thing worth your time is checking nothing has gone dormant.`;
+  }
+  if(/dormant|unused/.test(t)){
+    const d = allAgr().filter(agDormant);
+    return d.length ? `${d.map(a => a.n).join(' and ')} — signed, correctly priced, but nothing invoiced through ${d.length>1?'them':'it'} recently. Together that is ${saveFig(d.reduce((s,a)=>s+saveOf(a),0))} a year going unclaimed.`
+                    : `Nothing is drifting right now.`;
+  }
+  if(/renew|quarter/.test(t)){
+    const m = new Date().getMonth();
+    const soon = allAgr().filter(a => a.req && renewMonth(a) >= m && renewMonth(a) < m+3);
+    return soon.length ? `${soon.map(a => a.n + ' (' + MONTHS[renewMonth(a)] + ')').join(', ')}. Check the notice period before the date, not after — that is the number that constrains you.`
+                       : `Nothing in the next three months.`;
+  }
+  if(/cashback|bonus/.test(t)) return `1.5% of the spend you put through active agreements — ${fmt(totalBonus())} accrued. It is money that arrives, not a discount you never see, which is why it has its own tab.`;
+  if(/connect|data|minimum/.test(t)) return `The smallest useful thing is one spend export. That alone lets us rank your categories by what you actually buy instead of by industry averages. An ERP connection keeps it current and lets us verify each saving against invoices as they arrive.`;
+  if(/changed|week/.test(t)) return LOG.slice(0,3).map(l => '· ' + l.t).join('\n');
+  return `I can work from what this account actually holds — ${AREAS.reduce((s,r)=>s+r.inv,0)} invoices, ${allAgr().length} negotiated agreements, and your ${co().trade.toLowerCase()} profile. Ask me about any of it, or bring in ${mk().adviser} if you would rather talk to a person.`;
+}
+
+const HCHAT = { ai:[], adviser:[], buyer:[] };
+
+function refreshHelp(){
+  $('#hTabs').innerHTML = H_TABS().map(([k,l]) =>
+    `<button class="htab${hTab===k?' on':''}" data-ht="${k}">${l}</button>`).join('');
+  $$('[data-ht]').forEach(b => b.onclick = () => { hTab = b.dataset.ht; refreshHelp(); });
+  $('#hCtx').textContent = ctxLabel();
+
+  const who = { ai:['AI','Advantage assistant','Answers now · brings in a person when you ask'],
+    adviser:[initials(mk().adviser), mk().adviser, 'Your advisor · has your account open'],
+    buyer:[initials(mk().buyer), mk().buyer, 'Category buyer · negotiated these agreements'],
+    reqs:['≡','Your requests','Everything in flight, per supplier'] }[hTab];
+  $('#hPortrait').textContent = who[0];
+  $('#hWho').textContent = who[1];
+  $('#hRole').textContent = who[2];
+
+  const b = $('#hBody');
+  if(hTab === 'reqs'){
+    b.innerHTML = REQS.length ? REQS.slice().reverse().map(r => `
+      <div class="reqrow">
+        <span class="col" style="gap:2px;min-width:0">
+          <b style="font-size:var(--text-xs)">${esc(r.n)}</b>
+          <span class="muted" style="font-size:11px">sent ${new Date(r.at).toLocaleDateString(mk().loc,{day:'numeric',month:'short'})}</span>
+        </span>
+        <span class="chip ${r.status==='waiting'?'chip-warn':'chip-live'}">${r.status}</span>
+      </div>`).join('')
+      : `<p class="muted" style="font-size:var(--text-xs)">Nothing in flight. Requests you send — activations, price challenges, quote requests — are tracked here per supplier.</p>`;
+    return;
+  }
+  if(hTab === 'buyer'){
+    b.innerHTML = `<div class="person">
+        <span class="portrait">${initials(mk().buyer)}</span>
+        <span class="col" style="gap:2px;min-width:0">
+          <b style="font-size:var(--text-sm)">${mk().buyer}</b>
+          <span class="muted" style="font-size:11.5px">Negotiated ${catAt ? findArea(catAt).n.toLowerCase() : 'these agreements'} for ${mk().group}</span>
+        </span></div>
+      <p class="muted" style="font-size:var(--text-xs)">"Talk to the buyer who negotiated this" is a stronger
+        promise than "message your advisor" — they know why the rate is what it is, and what the supplier
+        conceded to get it.</p>
+      ${HCHAT.buyer.map(m => `<div class="bub ${m.me?'me':'them'}">${esc(m.t)}</div>`).join('')}
+      <div class="prompts">
+        ${['Why is the rate what it is?','What did the supplier push back on?','Can this be improved at our volume?']
+          .map(p => `<button class="prompt" data-hp="${esc(p)}">${esc(p)}</button>`).join('')}
+      </div>`;
+    wireHelpPrompts();
+    return;
+  }
+  if(hTab === 'adviser'){
+    b.innerHTML = `<div class="person">
+        <span class="portrait">${initials(mk().adviser)}</span>
+        <span class="col" style="gap:2px;min-width:0">
+          <b style="font-size:var(--text-sm)">${mk().adviser}</b>
+          <span class="muted" style="font-size:11.5px">Has ${co().legal} open · usually replies same day</span>
+        </span></div>
+      ${HCHAT.adviser.map(m => `<div class="bub ${m.me?'me':'them'}">${esc(m.t)}</div>`).join('')}
+      ${HCHAT.adviser.length ? '' : `<div class="prompts">
+        ${['Review our purchasing and tell us where to start','Benchmark our current prices','Help us switch supplier']
+          .map(p => `<button class="prompt" data-hp="${esc(p)}">${esc(p)}</button>`).join('')}</div>`}
+      <button class="btn btn-ghost btn-sm" id="hBook">Book a call instead</button>`;
+    wireHelpPrompts();
+    const bk = $('#hBook'); if(bk) bk.onclick = () => toast('Booking flow — prototype');
+    return;
+  }
+  b.innerHTML = `
+    ${HCHAT.ai.map(m => `<div class="bub ${m.me?'me':'them'}">${esc(m.t)}</div>`).join('')}
+    <div class="prompts">
+      ${AI_SUGGEST().map(p => `<button class="prompt" data-hp="${esc(p)}">${esc(p)}</button>`).join('')}
+    </div>`;
+  wireHelpPrompts();
+}
+
+function wireHelpPrompts(){
+  $$('[data-hp]').forEach(b => b.onclick = () => hSay(b.dataset.hp));
+}
+function hSay(text){
+  if(!text || !text.trim()) return;
+  openHelp(hTab === 'reqs' ? 'ai' : hTab);
+  const bucket = HCHAT[hTab] || HCHAT.ai;
+  bucket.push({ me:true, t:text });
+  const reply = hTab === 'ai' ? aiAnswer(text)
+    : hTab === 'buyer'
+      ? `I negotiated this one. ${catAt ? 'For ' + findArea(catAt).n.toLowerCase() + ', ' : ''}the rate reflects combined member volume — tell me your own volumes and I will say honestly whether there is more room.`
+      : `Got it. I have ${co().legal} open — I will look at this and come back to you today. If you can add a recent invoice it makes the comparison much faster.`;
+  bucket.push({ me:false, t:reply });
+  refreshHelp();
+  const b = $('#hBody'); b.scrollTop = b.scrollHeight;
+}
+$('#hSend').onclick = () => { const i = $('#hInput'); hSay(i.value); i.value = ''; };
+$('#hInput').onkeydown = e => { if(e.key === 'Enter'){ hSay(e.target.value); e.target.value = ''; } };
+
+/* ============================================================================
+   20 · COMMAND PALETTE  —  v177's third door, and the one main had no
+   equivalent for: a member who already knows what they want, typing it.
+   ========================================================================= */
+function palItems(){
+  const out = [];
+  [...NAV.core.items, ...NAV.tools.items, ...NAV.admin.items].filter(i => !i.hero)
+    .forEach(i => out.push({ t:i.n, k:'Page', go:() => go(i.id) }));
+  live().forEach(r => out.push({ t:r.n, k:'Area',
+    s:`${r.agr.length} agreements · ${saveFig(potOf(r))} open`, go:() => openCategory(r.id) }));
+  allAgr().forEach(a => out.push({ t:a.n, k:a.req ? 'In use' : 'Supplier',
+    s:`${a.r.n} · ${saveFig(saveOf(a))}`, go:() => openSupplier(a.n) }));
+  DIRECTORY.forEach(([n,d]) => out.push({ t:n, k:'Area', s:d,
+    go:() => { openHelp('adviser'); hSay(`We have a need in ${n}.`); } }));
+  out.push({ t:'Challenge a price', k:'Action', go:() => {
+    const a = allAgr().find(x => x.req); a ? openChallenge(a) : toast('Nothing active to challenge yet'); } });
+  out.push({ t:'Request quotes', k:'Action', go:() => openQuote(live()[0]) });
+  out.push({ t:'Talk to ' + mk().adviser, k:'Action', go:() => openHelp('adviser') });
+  out.push({ t:'Talk to the category buyer', k:'Action', go:() => openHelp('buyer') });
+  return out;
+}
+let palCur = 0, palShown = [];
+
+function openPal(){
+  $('#pal').classList.add('on');
+  $('#palIn').value = ''; palCur = 0; paintPal('');
+  setTimeout(() => $('#palIn').focus(), 30);
+}
+function paintPal(q){
+  q = (q || '').toLowerCase().trim();
+  palShown = q ? palItems().filter(i =>
+      i.t.toLowerCase().includes(q) || (i.s || '').toLowerCase().includes(q) || i.k.toLowerCase().includes(q))
+    : palItems().slice(0, 9);
+  palShown = palShown.slice(0, 40);
+  if(palCur >= palShown.length) palCur = 0;
+  $('#palList').innerHTML = palShown.length
+    ? palShown.map((i,n) => `<button class="pal-i${n===palCur?' cur':''}" data-pi="${n}">
+        <span class="col" style="gap:1px;min-width:0;text-align:left">
+          <b style="font-size:var(--text-sm);font-weight:500">${esc(i.t)}</b>
+          ${i.s ? `<span class="muted" style="font-size:11.5px">${esc(i.s)}</span>` : ''}
+        </span><span class="pal-k">${i.k}</span></button>`).join('')
+    : `<div class="pal-empty">Nothing matches “${esc(q)}”.<br>
+        <button class="btn btn-quiet btn-sm" id="palAsk">Send it to ${mk().adviser} instead</button></div>`;
+  $$('[data-pi]').forEach(b => b.onclick = () => runPal(+b.dataset.pi));
+  const ask = $('#palAsk');
+  if(ask) ask.onclick = () => { const t = $('#palIn').value; $('#pal').classList.remove('on');
+    openHelp('adviser'); hSay(t); };
+}
+function runPal(n){
+  const i = palShown[n]; if(!i) return;
+  $('#pal').classList.remove('on');
+  i.go();
+}
+$('#palBtn').onclick = openPal;
+$('#palIn').oninput = e => { palCur = 0; paintPal(e.target.value); };
+$('#palIn').onkeydown = e => {
+  if(e.key === 'ArrowDown'){ e.preventDefault(); palCur = Math.min(palCur+1, palShown.length-1); paintPal($('#palIn').value); }
+  if(e.key === 'ArrowUp'){ e.preventDefault(); palCur = Math.max(palCur-1, 0); paintPal($('#palIn').value); }
+  if(e.key === 'Enter'){ e.preventDefault(); runPal(palCur); }
+};
+$('#pal').onclick = e => { if(e.target.id === 'pal') $('#pal').classList.remove('on'); };
+
+/* ============================================================================
+   21 · WELCOME  —  main's structural answer to the trust problem. A member
+   sees, once, why some numbers are ranges before they can misread one.
+   ========================================================================= */
+function welcome(){
+  sheet(`<div class="sheet-h">
+      <span class="logo-tile" style="width:44px;height:44px;background:var(--brand-grad);color:#fff;font-size:16px;border-radius:var(--rounded-md)">A</span>
+      <div class="col"><span class="eyebrow">Before you start</span>
+        <h2>Two kinds of number</h2></div><button class="x" data-x>×</button></div>
+
+    <p class="muted" style="font-size:var(--text-sm)">This matters more than it sounds. A benchmark
+      and a verified saving look identical on a slide, so this prototype never prints them the same way.</p>
+
+    <div class="g-2">
+      <div class="card card-in pad-sm col g2" style="box-shadow:none">
+        <span class="chip chip-est">estimated</span>
+        <b style="font-size:var(--text-sm)">A range</b>
+        <span class="muted" style="font-size:var(--text-xs)">What companies of your trade and size actually
+          achieve. Good for deciding where to look. Never printed as a single figure.</span>
+      </div>
+      <div class="card card-in pad-sm col g2" style="box-shadow:none;border-color:var(--pos-stroke);background:var(--pos-tint)">
+        <span class="chip chip-pos">verified</span>
+        <b style="font-size:var(--text-sm)">A figure</b>
+        <span class="muted" style="font-size:var(--text-xs)">Read from your own invoices, with the rate
+          checked against the agreement. This is the only kind we will put in a business case.</span>
+      </div>
+    </div>
+
+    <div class="hsec col g3">
+      <div class="eyebrow">Pick who you are</div>
+      <div class="col g2">
+        <button class="pickrow" data-who="built">
+          <span class="logo-tile" style="width:32px;height:32px;font-size:11px">NB</span>
+          <span class="col" style="gap:2px;flex:1 1 auto;min-width:0">
+            <b style="font-size:var(--text-sm)">Nordic Build — established</b>
+            <span class="muted" style="font-size:11.5px">Agreements in use, invoices read, figures verified. One agreement has gone quietly unused.</span>
+          </span></button>
+        <button class="pickrow" data-who="fjord">
+          <span class="logo-tile" style="width:32px;height:32px;font-size:11px">FL</span>
+          <span class="col" style="gap:2px;flex:1 1 auto;min-width:0">
+            <b style="font-size:var(--text-sm)">Fjord Labs — new customer</b>
+            <span class="muted" style="font-size:11.5px">Nothing activated. Every figure is a range until the accounting data is connected.</span>
+          </span></button>
+      </div>
+    </div>`);
+  $$('[data-who]').forEach(b => b.onclick = () => {
+    CO = b.dataset.who;
+    const on = CO === 'built';
+    allAgr().forEach(a => { if(a._req === undefined) a._req = a.req; a.req = on ? a._req : false; });
+    closeSheet(); paintSwitches(); go('overview');
+  });
+}
+
+/* ---------- guided tour ---------- */
+const TOUR = [
+  ['Eight places, and you will use three','Overview is where the money is. Areas is how you find more of it. Agreements is where you check it is actually landing.'],
+  ['Ask instead of hunting','⌘K searches everything. The assistant answers from what this account holds, and hands you to a person when you want one.'],
+  ['Two kinds of number','A range is a benchmark. A figure is read from your invoices. They never look the same.'],
+  ['The last step is the point','Activation is four dated steps ending in "saving verified" — we read the next invoice and check the rate matched.'],
+  ['What we noticed for you','The rail separates what needs you from what already happened. A signed agreement nobody orders through gets named, not buried.']
+];
+function tour(n){
+  n = n || 0;
+  const [t, s] = TOUR[n];
+  sheet(`<div class="sheet-h"><div class="col">
+      <span class="eyebrow">${n+1} of ${TOUR.length}</span><h2>${esc(t)}</h2></div>
+      <button class="x" data-x>×</button></div>
+    <p class="muted" style="font-size:var(--text-sm)">${esc(s)}</p>
+    <div class="row g2 wrap">
+      ${n ? '<button class="btn btn-ghost btn-sm" id="tB">Back</button>' : ''}
+      <button class="btn btn-primary btn-sm" id="tN">${n === TOUR.length-1 ? 'Start' : 'Next'}</button>
+    </div>`);
+  const b = $('#tB'); if(b) b.onclick = () => tour(n-1);
+  $('#tN').onclick = () => n === TOUR.length-1 ? closeSheet() : tour(n+1);
+}
+$('#tourBtn').onclick = () => tour(0);
+
+/* ---------- boot ---------- */
+paintSwitches();
+renderNav();
+go('overview');
+openHelp('ai');
+document.body.classList.remove('help-open');
+welcome();
+</script>
+</body>
+</html>

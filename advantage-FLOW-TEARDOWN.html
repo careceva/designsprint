@@ -352,6 +352,7 @@ td.why{color:var(--ink-2);font-size:13.5px}
 .half.a li::before{color:var(--a)}
 .half.b li::before{color:var(--b)}
 .take li span{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.take li span.recover{color:var(--b-ink);border-left:2px solid var(--b);padding-left:9px;margin-top:5px}
 
 .openq{
   padding:26px 30px;border-top:1px solid var(--line);background:var(--surface-2);
@@ -372,6 +373,55 @@ td.why{color:var(--ink-2);font-size:13.5px}
 .qlist li span{
   display:block;font-family:"Source Serif 4",serif;font-weight:400;
   font-size:14.5px;color:var(--ink-2);margin-top:4px;
+}
+
+/* ---------- build lineage ---------- */
+.lineage{
+  margin:44px 0 0;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:3px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.lineage-head{padding:24px 28px 20px;border-bottom:1px solid var(--line)}
+.lineage-head h2{font-size:22px;font-weight:700;letter-spacing:-.02em;margin:8px 0 10px;max-width:54ch}
+.lineage-head p{margin:0;color:var(--ink-2);max-width:84ch;font-size:15px}
+.lineage-cols{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.lineage-col{padding:22px 28px}
+.lineage-col + .lineage-col{border-left:1px solid var(--line)}
+.lineage-col h4{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.11em;
+  text-transform:uppercase;font-weight:600;color:var(--muted);margin-bottom:14px;
+}
+.ldelta{list-style:none;padding:0;margin:0;display:grid;gap:13px}
+.ldelta li{
+  font-family:Archivo,sans-serif;font-size:14.5px;line-height:1.45;
+  padding-left:19px;position:relative;color:var(--ink);
+}
+.ldelta li::before{
+  content:"\2212";position:absolute;left:0;top:0;
+  font-family:"IBM Plex Mono",monospace;color:var(--gap);font-size:14px;
+}
+.lineage-col.plus .ldelta li::before{content:"+";color:var(--gain)}
+.ldelta li span{
+  display:block;color:var(--muted);font-size:12.5px;margin-top:3px;
+  font-family:"Source Serif 4",Georgia,serif;
+}
+.lineage-read{
+  margin:0;padding:20px 28px;border-top:1px solid var(--line);
+  background:var(--surface-2);color:var(--ink-2);font-size:15px;
+}
+.vtag{
+  display:inline-block;
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.05em;
+  padding:2px 5px;border-radius:2px;background:var(--gap);color:var(--surface);
+  margin-left:5px;font-weight:600;white-space:nowrap;
+}
+.vtag.v140{background:var(--gain)}
+@media (max-width:1080px){
+  .lineage-cols{grid-template-columns:1fr}
+  .lineage-col + .lineage-col{border-left:0;border-top:1px solid var(--line)}
 }
 
 footer.foot{
@@ -451,6 +501,37 @@ footer.foot{
         </ul>
       </div>
     </div>
+    <section class="lineage">
+      <div class="lineage-head">
+        <div class="eyebrow">Build provenance</div>
+        <h2>Two Norwegian builds are in circulation. Everything below describes v177.</h2>
+        <p>A second file &mdash; <code>Advantage-prototype-v140-data-input-and-quote-paths</code> &mdash; is an <b>earlier</b> build, not a newer one. Its CSS override chain stops at <code>/* v140 */</code>, where v177's runs on through <code>v166</code> (which kills the messenger) and <code>v177</code>. Neither file is in the repo. If the team is working from v140, six of Side A's credits below don't exist yet.</p>
+      </div>
+      <div class="lineage-cols">
+        <div class="lineage-col">
+          <h4>In v177, absent from v140</h4>
+          <ul class="ldelta">
+            <li>A third persona &mdash; Orbit Works AS, the no-bonus company<span>Removes the entire basis for the Flow 01 verdict</span></li>
+            <li>Free-text needs intake and &#8984;K global search<span>Flips Flow 03. v140's only structured door is the per-category qualifier.</span></li>
+            <li>Cashback as its own page, hidden when zero<span>Flow 08 stops being a split and becomes main's</span></li>
+            <li>An Offers page<span>Drops a chip from Flow 02</span></li>
+            <li>Team &amp; access &mdash; three roles, user table, invite flow<span>Weakens Flows 10 and 12</span></li>
+            <li>A docked help rail that reserves page width<span>Flow 11's chrome credit disappears</span></li>
+          </ul>
+        </div>
+        <div class="lineage-col plus">
+          <h4>In v140, changed or killed by v177</h4>
+          <ul class="ldelta">
+            <li>Per-page AI panels on Overview, Agreements, Value and Data<span>v177 switches them off with <code>disableLegacyPageAi()</code></span></li>
+            <li>A sticky AI panel on every category and supplier page<span>v177 hides it: <code>.sticky-ai{display:none!important}</code></span></li>
+            <li>A messenger drawer with a floating "Ask my advisor" button<span>v177 hides it and folds everything into the docked rail</span></li>
+            <li><b>Request quotes</b> as a distinct mode, with per-category supplier checkboxes<span>Fjordkraft/Fortum &middot; Pakkepost/DHL/Profrakt/Bring &middot; Talkmore/Phonero &middot; Advania/Digiflow &middot; Barista&nbsp;Bros/Costa/Selecta</span></li>
+            <li>Seven items in a horizontal top nav, not ten in a grouped sidebar<span>Inbox is reachable only from the topbar mail icon</span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="lineage-read">The direction of travel is legible: v177 adds destinations (Cashback, Offers, Team) and a third persona, then consolidates three separate AI surfaces into one docked rail. Adding scope and then consolidating chrome is later-iteration behaviour &mdash; which is why v140 reads as the earlier build even though it arrived second.</p>
+    </section>
   </header>
 
   <section>
@@ -525,7 +606,7 @@ footer.foot{
           <li>Switch company any time from the top bar</li>
         </ul>
         <p class="note">The no-bonus profile is the sharp idea here: it forces the value story to hold up when cashback is zero, and it hides the Cashback nav item entirely rather than showing an empty page.</p>
-        <div class="tags"><span class="tag only">3 profiles</span><span class="tag only">conditional nav</span><span class="tag">top-bar switcher</span></div>
+        <div class="tags"><span class="tag only">3 profiles</span><span class="vtag">v177 only</span><span class="tag only">conditional nav</span><span class="vtag">v177 only</span><span class="tag">top-bar switcher</span></div>
       </div>
       <div class="panel b" data-side="advantage-main — Denmark">
         <ul class="chain">
@@ -540,7 +621,7 @@ footer.foot{
       </div>
       <div class="verdict a">
         <div class="vlbl">v177 · but steal one thing</div>
-        <p>Three companies beats two personas, and the no-bonus profile is a genuinely good test case. But main's welcome overlay is the better answer to the same anxiety v177 handles with scattered "estimated / documented" labels — and main enforces it in code where v177 relies on the writer remembering.</p>
+        <p>Three companies beats two personas, and the no-bonus profile is a genuinely good test case. But main's welcome overlay is the better answer to the same anxiety v177 handles with scattered "estimated / documented" labels — and main enforces it in code where v177 relies on the writer remembering. <b>Against v140 this row inverts:</b> that build has two companies, exactly like main, and no range enforcement at all.</p>
       </div>
     </div>
 
@@ -560,7 +641,7 @@ footer.foot{
           <li><b>We're here when you need us</b> — Maja and Advantage AI</li>
         </ul>
         <p class="note">Reads top-to-bottom like a newsletter. Six sections, all of them push. Strong on social proof — "popular", "most used", "new supplier" — which main has almost none of on the surface.</p>
-        <div class="tags"><span class="tag only">social proof rail</span><span class="tag only">offers module</span><span class="tag">static feed</span></div>
+        <div class="tags"><span class="tag only">social proof rail</span><span class="tag only">offers module</span><span class="vtag">v177 only</span><span class="tag">static feed</span></div>
       </div>
       <div class="panel b" data-side="advantage-main — Denmark">
         <ul class="chain">
@@ -596,7 +677,7 @@ footer.foot{
           <li><b>All areas</b> — 25-item searchable directory</li>
         </ul>
         <p class="note">Two doors, explicitly labelled with an OR divider: describe your need, or browse what we picked for you. Global ⌘K search is a third door from anywhere.</p>
-        <div class="tags"><span class="tag only">free-text intake</span><span class="tag only">OR divider</span><span class="tag only">⌘K global search</span><span class="tag only">25-area directory</span></div>
+        <div class="tags"><span class="tag only">free-text intake</span><span class="vtag">v177 only</span><span class="tag only">OR divider</span><span class="tag only">⌘K global search</span><span class="vtag">v177 only</span><span class="tag only">25-area directory</span></div>
       </div>
       <div class="panel b" data-side="advantage-main — Denmark">
         <ul class="chain">
@@ -611,7 +692,7 @@ footer.foot{
       </div>
       <div class="verdict a">
         <div class="vlbl">v177, clearly</div>
-        <p>main assumes the member arrives without an agenda and waits to be told what's valuable. Half of them arrive with a job already in hand. v177's intake plus ⌘K search covers both; main covers one. This is the single biggest structural gap in main.</p>
+        <p>main assumes the member arrives without an agenda and waits to be told what's valuable. Half of them arrive with a job already in hand. v177's intake plus ⌘K search covers both; main covers one. This is the single biggest structural gap in main. <b>v140 forfeits the advantage</b> &mdash; no intake, no global search, and the four-question qualifier on the category page is the only structured door left.</p>
       </div>
     </div>
 
@@ -740,7 +821,7 @@ footer.foot{
           <li>That's the full set of levers</li>
         </ul>
         <p class="note">Every route is "switch, or get another quote". There is no way to push back on a supplier you already use and intend to keep.</p>
-        <div class="tags"><span class="tag only">multi-supplier quote request</span><span class="tag miss">no price challenge</span><span class="tag miss">no terms negotiation</span></div>
+        <div class="tags"><span class="tag only">multi-supplier quote request</span><span class="vtag v140">structured only in v140</span><span class="tag miss">no price challenge</span><span class="tag miss">no terms negotiation</span></div>
       </div>
       <div class="panel b" data-side="advantage-main — Denmark">
         <ul class="chain">
@@ -776,7 +857,7 @@ footer.foot{
           <li>Nav item disappears entirely for the no-bonus company</li>
         </ul>
         <p class="note">Cashback as a first-class destination is right — members feel a payout differently from a discount. The period selector and trend pills are also better than main's equivalent.</p>
-        <div class="tags"><span class="tag only">Cashback page</span><span class="tag only">period selector</span><span class="tag only">trend vs. last year</span></div>
+        <div class="tags"><span class="tag only">Cashback page</span><span class="vtag">v177 only</span><span class="tag only">period selector</span><span class="tag only">trend vs. last year</span></div>
       </div>
       <div class="panel b" data-side="advantage-main — Denmark">
         <ul class="chain">
@@ -791,7 +872,7 @@ footer.foot{
       </div>
       <div class="verdict tie">
         <div class="vlbl">Split</div>
-        <p>v177 wins the <em>framing</em> — cashback deserves its own page, and hiding it when it's zero is exactly right. main wins the <em>substance</em> — a usage report is the one thing that catches an agreement nobody's ordering through. Take the frame from A and the reports from B.</p>
+        <p>v177 wins the <em>framing</em> — cashback deserves its own page, and hiding it when it's zero is exactly right. main wins the <em>substance</em> — a usage report is the one thing that catches an agreement nobody's ordering through. Take the frame from A and the reports from B. <b>v140 has no Cashback page</b>, so measured against that build the row is main's outright.</p>
       </div>
     </div>
 
@@ -845,7 +926,7 @@ footer.foot{
           <li><b>Team &amp; access</b> — roles, permissions, pending invites</li>
         </ul>
         <p class="note">Treats adoption as a distinct job with its own surfaces. The bookmarkable employee page is the pragmatic bit — most staff will never log into a procurement portal.</p>
-        <div class="tags"><span class="tag only">access wallet</span><span class="tag only">employee URL</span><span class="tag only">policy drafting</span><span class="tag only">roles &amp; invites</span></div>
+        <div class="tags"><span class="tag only">access wallet</span><span class="tag only">employee URL</span><span class="tag only">policy drafting</span><span class="tag only">roles &amp; invites</span><span class="vtag">v177 only</span></div>
       </div>
       <div class="panel b" data-side="advantage-main — Denmark">
         <ul class="chain">
@@ -878,7 +959,7 @@ footer.foot{
           <li>Minimise to a floating pill</li>
         </ul>
         <p class="note">Better at <em>presence</em> — one rail, everywhere, context-aware, and it doesn't obscure the thing you're asking about. Weaker at specificity: Maja is a stock advisor with no visible knowledge of your account.</p>
-        <div class="tags"><span class="tag only">docked, reserves width</span><span class="tag only">per-page prompts</span><span class="tag only">7 named jobs</span></div>
+        <div class="tags"><span class="tag only">docked, reserves width</span><span class="vtag">v177 only</span><span class="tag only">per-page prompts</span><span class="tag only">7 named jobs</span></div>
       </div>
       <div class="panel b" data-side="advantage-main — Denmark">
         <ul class="chain">
@@ -914,7 +995,7 @@ footer.foot{
           <li><b>Team &amp; access</b> — three roles, table, invite flow</li>
         </ul>
         <p class="note">The Transparency Act pack is the standout: a legal obligation the group can discharge on the member's behalf. It's a reason to be a member that has nothing to do with price.</p>
-        <div class="tags"><span class="tag only">Transparency Act pack</span><span class="tag only">green options</span><span class="tag only">roles table</span><span class="tag only">3 data routes</span></div>
+        <div class="tags"><span class="tag only">Transparency Act pack</span><span class="tag only">green options</span><span class="tag only">roles table</span><span class="vtag">v177 only</span><span class="tag only">3 data routes</span></div>
       </div>
       <div class="panel b" data-side="advantage-main — Denmark">
         <ul class="chain">
@@ -951,6 +1032,7 @@ footer.foot{
           <li>Cashback as its own page, hidden when zero<span>Members feel a payout differently from a discount</span></li>
           <li>Transparency Act pack + green options<span>Reasons to stay a member that aren't price</span></li>
           <li>Team &amp; access, and the docked help rail<span>Table stakes, and the better container for help</span></li>
+          <li>Structured multi-supplier quote requests<span class="recover">Not in v177 &mdash; recover it from v140, where it is a distinct messenger mode with per-category supplier checkboxes. Dropped when v177 consolidated its AI surfaces, and it looks like collateral damage rather than a decision.</span></li>
         </ul>
       </div>
       <div class="half b">
@@ -983,7 +1065,7 @@ footer.foot{
   </section>
 
   <footer class="foot">
-    <p><b>Method.</b> <code>advantage-main.html</code> read directly from the repo (612 KB, 10,785 lines) — nav array, <code>setView</code>, <code>ACT_STEPS</code>, <code>agStage</code>/<code>agDormant</code>, <code>tourScript</code>, all twelve <code>open*</code> overlay flows, and the persona logic. The v177 prototype was read from the pasted document; it is <b>not present in this repo</b> under any name — no file matches on <code>v177</code>, <code>prototypeEntry</code>, <code>advantage-wordmark</code>, or the title "portal prototype". Save it into the repo and I can put both in a two-pane harness for a live click-through.</p>
+    <p><b>Method.</b> <code>advantage-main.html</code> read directly from the repo (612&nbsp;KB, 10,785 lines) &mdash; the nav array, <code>setView</code>, <code>ACT_STEPS</code>, <code>agStage</code>/<code>agDormant</code>, <code>tourScript</code>, all twelve <code>open*</code> overlay flows, and the persona logic. Both Norwegian builds were read from pasted documents and <b>neither is in this repo</b>: no file matches on <code>v177</code>, <code>prototypeEntry</code>, <code>advantage-wordmark</code>, the title "portal prototype", <code>msgQuoteTab</code>, or <code>openUnifiedHelp</code>. Save either one into the repo and I can put it beside <code>advantage-main.html</code> in a two-pane harness for a live click-through.</p>
   </footer>
 
 </div>
