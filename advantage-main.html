@@ -3157,31 +3157,170 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 
 /* ---------- Reports ----------
    Three readings of the same eight categories: what was saved, what was spent,
-   what is actually flowing through the agreements. One page, one toolbar, three
-   bodies — the report type is a view of the data, not a different page. */
-.rp-page{width:100%;max-width:1100px;margin:0 auto;
-  display:flex;flex-direction:column;gap:var(--s12)}
+   what is actually flowing through the agreements.
 
-/* — header + toolbar — */
-.rp-hero h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
-.rp-hero p{margin-top:var(--s3);font-size:var(--text-lg);line-height:1.55;
-  color:var(--general-muted-foreground);max-width:66ch}
-/* the toolbar is part of the header group, so 24px from the lead — not the 48px
-   that separates the report sections from each other */
-.rp-bar{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;
-  margin-top:var(--s6);padding-bottom:var(--s4);border-bottom:1px solid var(--hairline)}
-.rp-bar-sp{flex:1 1 auto}
-.rp-bar-r{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+   Redesigned onto the same page frame as Suppliers and Areas: full canvas width
+   (.page already caps at 1200px — the old 1100px cap here made Reports the one
+   narrow page in the app), a frosted hero floating in a brand bloom, then
+   sections ruled apart on the canvas rather than parked on grey trays.
+
+   What makes it not those two pages: Suppliers is lit from the top-right and its
+   field is a grid of plus signs; Areas is lit from the bottom-left and its field
+   is a ruled measure. Reports is lit from the top-LEFT and its field is a plotted
+   series of dots — the only one of the three whose subject is a measurement over
+   time. And the report switch lives IN the hero, because it rewrites the headline:
+   the type is not a filter on this page, it is what the page is about. */
+.rp-page{width:100%;display:flex;flex-direction:column;
+  gap:var(--s16);padding:var(--s4) 0 var(--s16);
+  /* the tint the app already uses for "positive, but quiet" (.chip-good,
+     .trend-up) — the incumbent's own, so the charts borrow nothing new */
+  --rp-soft:#d9f2ef}
+
+/* ---------- the masthead ----------
+   Same MATERIAL as the other two heroes — translucent white over a bloom — because
+   that is this product's hero surface and a second material would fracture the
+   system. Three columns of meaning, not three columns of metrics:
+     left    the claim this report makes
+     right   the one figure that claim rests on, in prose
+     beneath the controls, on a hairline */
+.rp-mast-wrap{position:relative;isolation:isolate;margin-top:var(--s4)}
+/* the ambient glow the card floats in, plus a lobe up in the top-left — the third
+   corner, so no two heroes in the app read as the same asset. Both are oversized
+   free-floating squares reaching transparent at their own boundary, so there is no
+   hard edge anywhere. */
+.rp-mast-wrap::before{content:"";position:absolute;z-index:0;pointer-events:none;
+  left:50%;top:50%;width:1120px;height:1120px;transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,
+    #b9d3f78f 0%,#cbdefa61 30%,#dde9fc3d 56%,#eef4fe1f 78%,transparent 100%)}
+.rp-mast-wrap::after{content:"";position:absolute;z-index:0;pointer-events:none;
+  left:-200px;top:-240px;width:800px;height:800px;
+  background:radial-gradient(closest-side,
+    #c2d9fcbf 0%,#d5e6fd85 34%,#e8f1ff45 64%,#f6f9ff1a 84%,transparent 100%)}
+@container page (max-width:780px){
+  .rp-mast-wrap::before{width:820px;height:820px}
+  .rp-mast-wrap::after{width:560px;height:560px;left:-140px;top:-170px}
+}
+
+.rp-mast{position:relative;z-index:1;overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.86fr);
+  column-gap:var(--s12);row-gap:var(--s8);align-items:start;
+  padding:var(--s8);
+  border:1px solid #ffffffe8;border-radius:var(--rounded-2xl);
+  background:
+    linear-gradient(145deg,#ffffffb8 0%,#ffffff3d 34%,#ffffff1c 58%),
+    rgba(255,255,255,.42);
+  -webkit-backdrop-filter:blur(20px) saturate(165%);
+  backdrop-filter:blur(20px) saturate(165%);
+  box-shadow:0 1px 2px #0b00ab0d,0 22px 52px -30px #1b64dc38,
+    inset 0 1px 0 #ffffff,inset 0 -1px 0 #ffffff8c}
+/* the plotted field: four dots at four heights, held at nothing until the pointer
+   arrives and then revealed only inside a soft disc AROUND it. Same mechanic as
+   the other two heroes, so all three share one interaction; what differs is the
+   field it uncovers. --mx/--my are written by the pointermove handler in
+   renderReports(); the disc falls to transparent at its own edge, so the pattern
+   has no boundary — it stops existing rather than ending on a rim. */
+.rp-mast::before{content:"";position:absolute;z-index:0;inset:0;pointer-events:none;
+  --spot:210px;
+  opacity:0;transition:opacity var(--t);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='44'%3E%3Cg fill='%231b64dc'%3E%3Ccircle cx='6' cy='30' r='1.5'/%3E%3Ccircle cx='24' cy='22' r='1.5'/%3E%3Ccircle cx='42' cy='25' r='1.5'/%3E%3Ccircle cx='60' cy='13' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-image:radial-gradient(circle var(--spot) at var(--mx,50%) var(--my,50%),
+    #000 0%,#000000c4 34%,#00000059 68%,transparent 100%);
+  mask-image:radial-gradient(circle var(--spot) at var(--mx,50%) var(--my,50%),
+    #000 0%,#000000c4 34%,#00000059 68%,transparent 100%)}
+.rp-mast:hover::before{opacity:.62}
+@media (prefers-reduced-motion:reduce){.rp-mast::before{transition:none}}
+/* no pointer, no position to track — the field would park permanently in the dead
+   centre of the card, the one place it should never sit */
+@media (hover:none){.rp-mast::before{display:none}}
+.rp-mast>*{position:relative;z-index:1}
+
+/* the claim. No eyebrow: the heading carries its own weight, and the report switch
+   two rows down already says which of the three you are reading. */
+.rp-mast-txt{min-width:0}
+.rp-mast h1{font-family:var(--font-sans);font-size:clamp(32px,3.4vw,46px);font-weight:800;
+  letter-spacing:-1.6px;line-height:1.03;max-width:17ch}
+.rp-mast-lead{margin-top:var(--s4);font-size:var(--text-lg);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:46ch}
+
+/* the finding: one paragraph with its figure set at display scale on its own line.
+   Not a metric tile — no label, no border, no chip. The sentence is what makes the
+   number mean anything, so they are one block of prose. */
+.rp-find{padding-left:var(--s12);border-left:1px solid rgb(27 100 220/.13);
+  font-size:var(--text-lg);line-height:1.5;max-width:40ch;
+  color:var(--general-muted-foreground)}
+.rp-find b{display:block;margin-bottom:var(--s2);
+  font-family:var(--font-sans);font-size:clamp(36px,3.9vw,54px);font-weight:800;
+  letter-spacing:-2.2px;line-height:1;color:var(--general-foreground);
+  font-variant-numeric:tabular-nums}
+/* an estimated figure is a RANGE — two numbers and a dash where a verified figure
+   is one, so it needs the size back to survive at this width */
+.rp-find.est b{font-size:clamp(26px,2.7vw,36px);letter-spacing:-1.2px}
+.rp-find b small{font-size:var(--text-xl);font-weight:700;letter-spacing:-.5px;
+  color:var(--general-muted-foreground)}
+.rp-find b.pos{color:var(--sentiment-positive)}
+.rp-find b.warn{color:var(--sentiment-negative)}
+.rp-find em{font-style:normal;font-weight:650;color:var(--general-foreground)}
+
+/* ---------- the controls ----------
+   In the hero, on a hairline, in the slot Areas gives its spine. The report type
+   is on the left because it rewrites everything above it; period and export are a
+   pair on the right because they only re-cut what is already chosen. */
+.rp-ctl{grid-column:1/-1;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;
+  padding-top:var(--s6);border-top:1px solid rgb(27 100 220/.13)}
+.rp-ctl-sp{flex:1 1 auto}
+.rp-ctl-r{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+/* inside frosted glass the seg's grey ground reads as dirt, so the track is drawn
+   in the same white as the hero's own rules. The selected pill then has to work
+   harder than --shadow-xs to separate white-on-translucent-white: it goes fully
+   opaque and takes a real shadow, so which report you are reading is legible at a
+   glance rather than inferred. */
+.rp-ctl .seg{background:#ffffff5c;box-shadow:inset 0 0 0 1px #ffffffd1}
+.rp-ctl .seg button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 3px #0b00ab24}
 /* period sits beside an export button, so it takes the tighter geometry the
    category page's seg already uses when it has to share a row */
 .rp-per.seg button{padding:0 var(--s3)}
-.rp-exp{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+/* matches the seg's 38px outer height exactly, so the control row has one baseline.
+   Hover is left to .btn-secondary's brand-ice — a white-on-white hover would be no
+   hover at all against this card. */
+.rp-exp{height:38px;padding:0 var(--s4);font-size:var(--text-xs);
+  background:#ffffffc4;border-color:#ffffffe8}
 .rp-exp svg{width:15px;height:15px}
-.rp-lbl{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
-  color:var(--general-muted-foreground)}
+@container page (max-width:900px){
+  .rp-mast{grid-template-columns:minmax(0,1fr);padding:var(--s6)}
+  .rp-find{padding-left:0;padding-top:var(--s6);border-left:none;
+    border-top:1px solid rgb(27 100 220/.13);max-width:52ch}
+}
 @container page (max-width:700px){
-  .rp-bar{flex-direction:column;align-items:stretch}
-  .rp-bar-r{justify-content:space-between}
+  .rp-ctl{flex-direction:column;align-items:stretch}
+  .rp-ctl-r{justify-content:space-between}
+  .rp-ctl .seg{justify-content:space-between}
+}
+
+/* the caveat and the three figures are the hero still talking, so they are one
+   tighter group inside the page's 64px rhythm rather than two more sections */
+.rp-lede{display:flex;flex-direction:column;gap:var(--s8)}
+
+/* ---------- the supporting figures ----------
+   Three facts the hero's claim leans on, ruled apart on the canvas. Not four white
+   cards on a grey tray: a figure is a number and a line of prose, and putting each
+   one in its own box was three borders doing what one hairline does. */
+.rp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.rp-stat{display:flex;flex-direction:column;gap:var(--s1);padding-right:var(--s8)}
+.rp-stat+.rp-stat{padding-left:var(--s8);border-left:1px solid var(--hairline)}
+.rp-stat b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-.9px;line-height:1.05;font-variant-numeric:tabular-nums}
+.rp-stat.est b{font-size:var(--text-xl);letter-spacing:-.4px}
+.rp-stat b.pos{color:var(--sentiment-positive)}
+.rp-stat b.warn{color:var(--sentiment-negative)}
+.rp-stat b small{font-family:var(--font-body);font-size:14px;font-weight:500;
+  letter-spacing:0;color:var(--general-muted-foreground)}
+.rp-stat span{font-size:14px;line-height:1.4;color:var(--general-muted-foreground);
+  max-width:28ch}
+@container page (max-width:820px){
+  .rp-stats{grid-template-columns:minmax(0,1fr);gap:var(--s5,20px)}
+  .rp-stat,.rp-stat+.rp-stat{padding:0;border-left:none}
+  .rp-stat+.rp-stat{padding-top:var(--s5,20px);border-top:1px solid var(--hairline)}
 }
 
 /* — the benchmark framing line: brand-ice band, secondary text tinted from the
@@ -3192,31 +3331,20 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .rp-note svg{flex:0 0 auto;width:18px;height:18px;margin-top:2px;color:var(--general-primary)}
 .rp-note b{font-weight:650;color:var(--general-foreground)}
 
-/* — headline figures: white cards on a grey tray, 8px gutter all round — */
-.rp-tray{padding:var(--s2);border:1px solid var(--card-stroke);
-  border-radius:var(--rounded-2xl);background:var(--general-muted)}
-.rp-figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s2)}
-@container page (max-width:820px){.rp-figs{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@container page (max-width:460px){.rp-figs{grid-template-columns:minmax(0,1fr)}}
-.rp-fig{display:flex;flex-direction:column;gap:var(--s1);
-  padding:var(--s5,20px) var(--s6);border-radius:var(--rounded-lg);
-  background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f}
-.rp-fig b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
-  letter-spacing:-.9px;line-height:1.05;font-variant-numeric:tabular-nums}
-/* an estimated range is two numbers where a verified figure is one — it needs the
-   size back to stay on one line at the narrowest card */
-.rp-fig.est b{font-size:var(--text-xl);letter-spacing:-.4px}
-.rp-fig b.pos{color:var(--sentiment-positive)}
-.rp-fig b.warn{color:var(--sentiment-negative)}
-.rp-fig b small{font-family:var(--font-body);font-size:14px;font-weight:500;
-  letter-spacing:0;color:var(--general-muted-foreground)}
-.rp-fig span{font-size:14px;line-height:1.4;color:var(--general-muted-foreground)}
+/* ---------- section heading ----------
+   The same block Areas uses, so the two pages scroll at the same rhythm. */
+.rp-head{margin-bottom:var(--s6)}
+.rp-head h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
+.rp-head p{margin-top:var(--s2);font-size:var(--text-sm);line-height:1.5;
+  color:var(--general-muted-foreground);max-width:64ch}
+.rp-viz{margin-top:0}
+.rp-tblwrap+.rp-viz{margin-top:var(--s8)}
 
-/* — section shell — */
-.rp-sec h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
-.rp-sec>p{margin-top:var(--s2);font-size:16px;line-height:1.5;
-  color:var(--general-muted-foreground);max-width:70ch}
-.rp-viz{margin-top:var(--s6)}
+/* ---------- the authored moment ----------
+   Every track on this page draws itself in from the left, in reading order. It is
+   the one animation on the report, and it is the report's own gesture: figures
+   resolving. scaleX only, so it never touches layout. */
+@keyframes rpGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
 /* — chart 1 · savings: realised, then what is still on the table, on one track — */
 .rp-bars{list-style:none;display:flex;flex-direction:column;gap:var(--s5,20px)}
@@ -3225,14 +3353,15 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .rp-bar-v{font-size:16px;font-weight:700;color:var(--sentiment-positive);
   font-variant-numeric:tabular-nums;white-space:nowrap}
 .rp-bar-v.zero{color:var(--general-muted-foreground);font-weight:600}
-.rp-track{grid-column:1 / -1;display:flex;gap:2px;height:6px;
-  border-radius:3px;background:var(--general-muted);overflow:hidden}
-.rp-track i{display:block;height:100%;min-width:2px;transition:width var(--t-slow)}
-/* --rp-soft is the tint the app already uses for "positive, but quiet"
-   (.chip-good, .trend-up) — the only hex here, and it is the incumbent's own */
-.rp-page{--rp-soft:#d9f2ef}
+.rp-track{grid-column:1 / -1;display:flex;gap:2px;height:8px;
+  border-radius:4px;background:var(--general-muted);overflow:hidden}
+.rp-track i{display:block;height:100%;min-width:2px;transform-origin:left center;
+  animation:rpGrow .62s cubic-bezier(.22,.9,.24,1) both;
+  animation-delay:calc(var(--i,0) * 42ms)}
 .rp-track i.done{background:var(--sentiment-positive)}
-.rp-track i.open{background:var(--rp-soft)}
+.rp-track i.open{background:var(--rp-soft);
+  animation-delay:calc(var(--i,0) * 42ms + 110ms)}
+@media (prefers-reduced-motion:reduce){.rp-track i{animation:none}}
 .rp-key{display:flex;gap:var(--s6);flex-wrap:wrap;margin-top:var(--s6);
   font-size:13px;color:var(--general-muted-foreground)}
 .rp-key span{display:inline-flex;align-items:center;gap:7px}
@@ -3242,17 +3371,23 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .rp-key i.exp{background:var(--general-muted)}
 
 /* — chart 2 · spending: one strip showing the whole, then the parts — */
-.rp-split{display:flex;height:52px;gap:2px;border-radius:var(--rounded-md);
+.rp-split{display:flex;height:56px;gap:2px;border-radius:var(--rounded-md);
   overflow:hidden;background:var(--surface)}
 .rp-split-seg{position:relative;min-width:3px;background:var(--general-primary);
-  transition:filter var(--t-fast)}
+  transform-origin:left center;transition:filter var(--t-fast);
+  animation:rpGrow .62s cubic-bezier(.22,.9,.24,1) both;
+  animation-delay:calc(var(--i,0) * 42ms)}
+@media (prefers-reduced-motion:reduce){.rp-split-seg{animation:none}}
 .rp-split-seg:hover{filter:brightness(1.14)}
 .rp-split-seg.off{background:var(--general-secondary)}
 .rp-split-seg:first-child{border-radius:var(--rounded-md) 0 0 var(--rounded-md)}
 .rp-split-seg:last-child{border-radius:0 var(--rounded-md) var(--rounded-md) 0}
-.rp-split-legend{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);
-  gap:var(--s3) var(--s6);margin-top:var(--s6)}
-@container page (max-width:820px){.rp-split-legend{grid-template-columns:1fr}}
+/* the canvas is wider than it was, so the legend runs three up before it steps
+   down — two columns at 1200px left a corridor of dead space down the middle */
+.rp-split-legend{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);
+  gap:var(--s3) var(--s8);margin-top:var(--s6)}
+@container page (max-width:980px){.rp-split-legend{grid-template-columns:repeat(2,1fr)}}
+@container page (max-width:600px){.rp-split-legend{grid-template-columns:1fr}}
 .rp-split-legend li{display:flex;align-items:baseline;gap:var(--s2);
   font-size:15px;line-height:1.4}
 .rp-dot{flex:0 0 auto;width:9px;height:9px;border-radius:var(--rounded-full);
@@ -3294,17 +3429,19 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   text-transform:uppercase;color:var(--general-muted-foreground);padding-bottom:var(--s3)}
 .rp-tbl th,.rp-tbl td{padding:var(--s3);text-align:left;white-space:nowrap;
   border-bottom:1px solid var(--hairline)}
-.rp-tbl th{font-size:13px;font-weight:600;color:var(--general-muted-foreground)}
+.rp-tbl thead th{font-size:13px;font-weight:600;color:var(--general-muted-foreground)}
+.rp-tbl tbody th{font-weight:600}
 .rp-tbl td:not(:first-child),.rp-tbl th:not(:first-child){text-align:right;
   font-variant-numeric:tabular-nums}
-.rp-tbl td:first-child{white-space:normal;min-width:150px}
+.rp-tbl td:first-child,.rp-tbl th:first-child{white-space:normal;min-width:150px}
+.rp-tbl tbody tr{transition:background var(--t-fast)}
 .rp-tbl tbody tr:hover{background:var(--general-muted)}
 .rp-tbl tr.idle td{color:var(--general-muted-foreground)}
 .rp-tbl .pos{color:var(--sentiment-positive);font-weight:600}
 .rp-tbl .neg{color:var(--sentiment-negative);font-weight:600}
 .rp-tbl .none{font-style:italic;color:var(--general-muted-foreground)}
-.rp-tbl tfoot td{border-bottom:none;border-top:2px solid var(--general-border);
-  font-weight:700;padding-top:var(--s4)}
+.rp-tbl tfoot td,.rp-tbl tfoot th{border-bottom:none;
+  border-top:2px solid var(--general-border);font-weight:700;padding-top:var(--s4)}
 
 /* — empty state: a category (or the whole report) with nothing running through it.
      Says what is missing and what it is worth, because "no data" on its own is
@@ -3630,13 +3767,18 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   .ar-card:hover .ar-go,.ar-pick:hover .ar-pick-go svg{transform:none}
 }
 
-/* ---------- page hero: one opening for all four pages ----------
+/* ---------- page hero: the shared opening ----------
    These pages opened four different ways: a 24px title on Suppliers, 36px on
    Agreements, and Reports/Areas rendered UNSTYLED because .rp-hero and .ar-hero
    were never given rules at all. Same for their figure rows — four treatments of
    one idea (a grey tray, white cards, a hairline strip, an inline row).
-   One component now, carrying the bloom the category page established, so a page
-   opens on light rather than on a bare heading. */
+   One component fixed that, carrying the bloom the category page established, so
+   a page opens on light rather than on a bare heading.
+   Since then Areas (.ar-mast) and Reports (.rp-mast) have grown their own
+   masthead on the same MATERIAL — frosted glass in a brand bloom — because those
+   two pages open on an argument rather than on a title. .ph still dresses
+   Suppliers and Agreements, and .ph-fig is still the figure treatment all four
+   descend from. */
 .ph{position:relative;padding:var(--s4) 0 var(--s8)}
 .ph-eye{display:block;margin-bottom:var(--s3);font-size:12px;font-weight:700;
   letter-spacing:.14em;text-transform:uppercase;color:var(--general-primary)}
@@ -3987,61 +4129,179 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 
 /* ==========================================================================
    T6 · AGREEMENTS — the portfolio page
-   Three bands: where you stand (hero), the agreements you hold (tray of .agy
-   cards, each carrying the activation stepper and its dates), and the whole
-   catalogue below the fold as .agd cards.
+   The third member of the catalogue family, built from the same parts as the
+   other two rather than from its own vocabulary:
+     Suppliers   text left · wall of marks right · three divided figures beneath
+     Areas       headline left · the finding right · the distribution beneath
+     Agreements  headline left · the finding right · the STATE OF THE PORTFOLIO
+                 beneath — because what is unique to this page is not who is in
+                 the catalogue or where the money is, but where each agreement
+                 has got to and when the next thing lands.
+   Same canvas width (.page caps every view at 1200px), same frosted-glass hero
+   material, same section heading (.ar-head), same row species as the Areas
+   shortlist, and literally the same card as the Suppliers grid — two sibling
+   catalogues should not be two cards.
+   Four heroes now share that material, so each one is lit from its own corner and
+   uncovers its own field: Suppliers top-right / plus signs, Areas bottom-left /
+   ruled measure, Reports top-left / plotted dots, Agreements bottom-right /
+   chevrons — the fourth corner, and the only field that points forward, which is
+   what this page is about.
    ========================================================================== */
-.agp{display:flex;flex-direction:column;gap:var(--s16);padding-bottom:var(--s16)}
+.agp{width:100%;display:flex;flex-direction:column;
+  gap:var(--s16);padding:var(--s4) 0 var(--s16)}
 
-/* ---------- hero ----------
-   .cat-mast does the voice (eyebrow, 44px title, one sentence, the money, the
-   note, the actions). Two things change on a full-width page: the prose needs a
-   measure it would otherwise lose, and the money is two or three facts side by
-   side rather than one stacked block. */
-.agp-mast{padding-top:0}
-.agp-mast h1{max-width:24ch}
-.agp-mast .cat-mast-sub{max-width:62ch;font-size:var(--text-lg)}
-.agp-mast .cat-mast-note{max-width:68ch}
-/* the figure row: generous separation between facts, tight inside each one */
-.agp-money{margin-top:var(--s12);display:flex;flex-wrap:wrap;gap:var(--s6) var(--s16);
-  padding-top:var(--s6);border-top:1px solid var(--hairline)}
-.agp-money .cat-mast-fig{margin-top:0;min-width:0}
-.agp-money .cat-mast-fig b{font-size:var(--text-4xl);letter-spacing:-1.6px}
-.agp-money .cat-mast-fig span{max-width:26ch}
-/* money you already hold is green; money still on the table is the brand blue —
-   the same two roles the overview uses, so the pair reads without a legend */
-.agp-fig-open b{color:var(--general-primary)}
-.agp-fig-warn b{color:var(--sentiment-negative)}
-@container page (max-width:720px){
-  .agp-money{gap:var(--s6) var(--s8)}
-  .agp-money .cat-mast-fig b{font-size:var(--text-3xl);letter-spacing:-1.2px}
+/* ---------- the masthead ----------
+   Same MATERIAL as the other three heroes; everything else is deliberately not
+   them. Its bloom is lit from the BOTTOM-RIGHT — the last free corner — its
+   texture is a field of chevrons, the activation stepper's own direction reduced
+   to a pattern, and its authored moment is the band metering itself out left to
+   right. */
+.agp-mast-wrap{position:relative;isolation:isolate;margin-top:var(--s4)}
+.agp-mast-wrap::before{content:"";position:absolute;z-index:0;pointer-events:none;
+  left:50%;top:50%;width:1120px;height:1120px;transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,
+    #b9d3f78f 0%,#cbdefa61 30%,#dde9fc3d 56%,#eef4fe1f 78%,transparent 100%)}
+.agp-mast-wrap::after{content:"";position:absolute;z-index:0;pointer-events:none;
+  right:-180px;bottom:-250px;width:780px;height:780px;
+  background:radial-gradient(closest-side,
+    #c2d9fcbf 0%,#d5e6fd85 34%,#e8f1ff45 64%,#f6f9ff1a 84%,transparent 100%)}
+@container page (max-width:780px){
+  .agp-mast-wrap::before{width:820px;height:820px}
+  .agp-mast-wrap::after{width:540px;height:540px;right:-130px;bottom:-170px}
 }
 
-/* ---------- section furniture ---------- */
-.agp-sec{display:flex;flex-direction:column}
-.agp-sec>h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
-.agp-sec>p{margin-top:var(--s2);max-width:64ch;font-size:var(--text-base);line-height:1.55;
+.agp-mast{position:relative;z-index:1;overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  column-gap:var(--s12);row-gap:var(--s8);align-items:start;
+  padding:var(--s8);
+  border:1px solid #ffffffe8;border-radius:var(--rounded-2xl);
+  background:
+    linear-gradient(145deg,#ffffffb8 0%,#ffffff3d 34%,#ffffff1c 58%),
+    rgba(255,255,255,.42);
+  -webkit-backdrop-filter:blur(20px) saturate(165%);
+  backdrop-filter:blur(20px) saturate(165%);
+  box-shadow:0 1px 2px #0b00ab0d,0 22px 52px -30px #1b64dc38,
+    inset 0 1px 0 #ffffff,inset 0 -1px 0 #ffffff8c}
+/* the chevron field: one angle per tile, all pointing the way the stepper runs.
+   Held at nothing until the pointer arrives, then revealed only inside a soft disc
+   around it — the same mechanic all four heroes share; what differs is the field
+   it uncovers. --mx/--my are written by the pointermove handler in
+   renderAgreements(). The disc falls to transparent at its own edge, so the
+   pattern has no boundary — it stops existing rather than ending on a rim. */
+.agp-mast::before{content:"";position:absolute;z-index:0;inset:0;pointer-events:none;
+  --spot:210px;
+  opacity:0;transition:opacity var(--t);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='38'%3E%3Cpath d='M13 12.5l7 6.5-7 6.5' fill='none' stroke='%231b64dc' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  -webkit-mask-image:radial-gradient(circle var(--spot) at var(--mx,50%) var(--my,50%),
+    #000 0%,#000000c4 34%,#00000059 68%,transparent 100%);
+  mask-image:radial-gradient(circle var(--spot) at var(--mx,50%) var(--my,50%),
+    #000 0%,#000000c4 34%,#00000059 68%,transparent 100%)}
+.agp-mast:hover::before{opacity:.55}
+@media (prefers-reduced-motion:reduce){.agp-mast::before{transition:none}}
+/* no pointer, no position to track — the field would park in the dead centre of
+   the card, the one place it should never sit */
+@media (hover:none){.agp-mast::before{display:none}}
+.agp-mast>*{position:relative;z-index:1}
+
+/* headline column. No eyebrow — the heading carries its own weight, and Areas
+   already dropped its own for the same reason. */
+.agp-mast h1{font-family:var(--font-sans);font-size:clamp(32px,3.4vw,46px);font-weight:800;
+  letter-spacing:-1.6px;line-height:1.03;max-width:15ch}
+.agp-mast-lead{margin-top:var(--s4);font-size:var(--text-lg);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:38ch}
+
+/* the finding: one paragraph with its figure set at display scale on its own
+   line. Not a metric tile — the sentence is what makes the number mean
+   something, so they are the same block of prose. */
+.agp-find{padding-left:var(--s12);border-left:1px solid rgb(27 100 220/.13);
+  font-size:var(--text-lg);line-height:1.5;max-width:40ch;
   color:var(--general-muted-foreground)}
-.agp-sec>.oc-panel,.agp-sec>.agr-det-grid{margin-top:var(--s6)}
-/* the renewal line is a second thought about the same set, not part of the tray —
-   so it gets a real gap, not the heading-to-content one */
-.agp-sec>.agp-year{margin-top:var(--s12)}
-/* a hairline count line under the catalogue heading: two facts, not two chips */
-.agp-count{margin-top:var(--s3);display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);
-  font-size:13px;color:var(--general-muted-foreground)}
-.agp-count b{color:var(--general-foreground);font-weight:650}
-.agp-count i{font-style:normal;width:8px;height:8px;flex:0 0 auto;margin-right:6px;
-  border-radius:var(--rounded-full);background:var(--general-primary);
-  display:inline-block;vertical-align:1px}
-.agp-count span{display:inline-flex;align-items:center}
-.agp-count .on i{background:var(--sentiment-positive)}
+.agp-find b{display:block;margin-bottom:var(--s2);
+  font-family:var(--font-sans);font-size:clamp(38px,4.1vw,56px);font-weight:800;
+  letter-spacing:-2.2px;line-height:1;color:var(--sentiment-positive);
+  font-variant-numeric:tabular-nums}
+.agp-find b small{font-size:var(--text-xl);font-weight:700;letter-spacing:-.5px}
+.agp-find b.brand{color:var(--general-primary)}
+.agp-find em{font-style:normal;font-weight:700;color:var(--general-foreground)}
+
+/* ---------- the band: the state of the portfolio, as the hero's artwork ------
+   One bar the full width of the card, four segments, width proportional to the
+   MONEY sitting in each state — landing, in progress, agreed but not being
+   used, and still available. Not a progress bar: nothing here fills up over
+   time, it is a division of one pot, which is why it carries a key naming every
+   segment with its own figure rather than a percentage caption.
+   The in-progress segment is hatched in the same green as the landing one —
+   same money, not arrived yet — so the two read as related without a second
+   hue, and the four states stay distinguishable without relying on colour. */
+.agp-band{grid-column:1/-1;padding-top:var(--s6);border-top:1px solid rgb(27 100 220/.13)}
+.agp-band-l{display:flex;align-items:baseline;justify-content:space-between;
+  gap:var(--s6);flex-wrap:wrap;margin-bottom:var(--s3)}
+/* nothing below it to separate from */
+.agp-band:not(:has(.agp-band-bar)) .agp-band-l{margin-bottom:0}
+.agp-band-t{font-size:12px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.agp-band-f{display:flex;flex-wrap:wrap;gap:var(--s6);
+  font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.agp-band-f b{font-weight:700;color:var(--general-foreground);
+  font-variant-numeric:tabular-nums}
+
+.agp-band-bar{display:flex;gap:3px;height:16px}
+.agp-band-bar i{min-width:7px;border-radius:3px;background:var(--seg,#1b64dc);
+  transform:scaleX(0);transform-origin:left center;
+  animation:agpSeg .62s cubic-bezier(.22,.78,.24,1) both;
+  animation-delay:calc(var(--i,0)*70ms);
+  transition:opacity var(--t-fast)}
+/* the authored moment: the portfolio meters itself out, left to right, once */
+@keyframes agpSeg{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* agreed, not yet landed: the landing green, hatched */
+.agp-band-bar i.flight{background:
+  repeating-linear-gradient(115deg,#009689 0 4px,#8ad5ce 4px 8px)}
+.agp-band.lit .agp-band-bar i{opacity:.22}
+.agp-band.lit .agp-band-bar i.on{opacity:1}
+
+.agp-band-key{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--s4)}
+.agp-key{display:inline-flex;align-items:baseline;gap:8px;min-height:34px;padding:6px var(--s3);
+  border:1px solid transparent;border-radius:var(--rounded-full);
+  background:none;cursor:pointer;font-size:13px;font-weight:600;text-align:left;
+  color:var(--general-foreground);
+  transition:background var(--t-fast),border-color var(--t-fast)}
+.agp-key:hover{background:#fffffff0;border-color:rgb(27 100 220/.16)}
+.agp-key:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+.agp-key::before{content:"";align-self:center;flex:0 0 auto;width:9px;height:9px;
+  border-radius:2px;background:var(--seg,#1b64dc)}
+/* the swatch carries the segment's fill, hatch included — a key whose chip does
+   not look like the thing it names is not a key */
+.agp-key.flight::before{background:
+  repeating-linear-gradient(115deg,#009689 0 2px,#8ad5ce 2px 4px)}
+.agp-key em{font-style:normal;font-weight:700;color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums}
+
+@container page (max-width:900px){
+  .agp-mast{grid-template-columns:minmax(0,1fr);padding:var(--s6)}
+  .agp-mast h1,.agp-mast-lead,.agp-find{max-width:none}
+  .agp-find{padding-left:0;padding-top:var(--s6);
+    border-left:none;border-top:1px solid rgb(27 100 220/.13)}
+}
+@media (prefers-reduced-motion:reduce){
+  .agp-band-bar i{animation:none;transform:none}
+}
+
+/* ---------- section furniture ----------
+   .ar-head is the shared heading for these pages — title, one line, and an
+   optional control on the right — so Agreements stops being the one page with
+   a heading of its own invention. */
+.agp-sec{display:flex;flex-direction:column;min-width:0}
 
 /* ---------- .agy · one agreement you hold ----------
+   The same row species as the Areas shortlist (.ar-pick): full width, on the
+   canvas rather than inside a tray, a real card stroke, and the supplier's own
+   ink only in the tile and in the hover wash. It was nested inside an .oc-panel
+   before, which made every row a card inside a card.
    Flat, like .agd: tile, eyebrow, name, figure, stepper and date rail are all
    direct children placed by area. It is NOT one hit area — it contains a
    <details> and its own buttons — so the NAME is the affordance instead. */
-.agp-list{list-style:none;display:grid;gap:var(--s2)}
-.agy{--tint:rgb(var(--b,33 112 237)/.06);--tint-edge:rgb(var(--b,33 112 237)/.2);
+.agp-list{list-style:none;display:flex;flex-direction:column;gap:var(--s4)}
+.agy{--tint:rgb(var(--b,33 112 237)/.05);--tint-edge:rgb(var(--b,33 112 237)/.22);
   display:grid;
   grid-template-columns:auto minmax(0,1fr) minmax(216px,264px);
   grid-template-areas:
@@ -4051,14 +4311,23 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
     "flag flag cal"
     "step step cal"
     "act  act  cal";
+  /* the date rail spans every row, and when it is the taller column the browser
+     hands its slack out EQUALLY to all six — which opens a gap between the name
+     and the stepper. Sizing the first five to their content sends the slack to
+     the last row instead, where it is just empty space at the foot of the card. */
+  grid-template-rows:repeat(5,min-content) 1fr;
   column-gap:var(--s6);align-items:start;
-  padding:var(--s6);border:1px solid transparent;border-radius:var(--rounded-lg);
-  background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f;
-  transition:box-shadow var(--t-fast),background var(--t-fast)}
+  padding:var(--s6);border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
+  background:var(--surface);
+  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
 .agy:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  box-shadow:0 8px 22px -10px #0f0f0f26}
-.agy:focus-within{box-shadow:0 8px 22px -10px #0f0f0f26}
-.agy .agc-logo{grid-area:tile;width:64px;height:64px}
+  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
+.agy:focus-within{border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
+/* the one that is agreed and not being used is the only row allowed to break the
+   stroke — it is the single thing on this page that needs answering */
+.agy.flagged{border-color:#f54a0038}
+/* nested radius steps down: 16px row, 12px tile */
+.agy .agc-logo{grid-area:tile;width:64px;height:64px;border-radius:var(--rounded-md)}
 /* the name as the navigation: a real button, so one Tab stop and one Enter */
 .agy-open{grid-area:name;justify-self:start;display:inline-flex;align-items:center;gap:var(--s2);
   margin-top:2px;padding:0;border:0;background:none;cursor:pointer;text-align:left;
@@ -4071,17 +4340,21 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .agy:hover .agy-open svg{transform:translateX(3px)}
 .agy-open:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px;
   border-radius:var(--rounded-xs)}
+@media (prefers-reduced-motion:reduce){
+  .agy-open:hover svg,.agy:hover .agy-open svg{transform:none}
+}
 /* the eyebrow carries the category and, when it applies, the one word of alarm */
 .agy .agd-eye{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
 .agy-chip{padding:2px 8px;border-radius:var(--rounded-full);
   font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
   background:var(--general-muted);color:var(--general-muted-foreground)}
 .agy-chip.warn{background:#f54a0014;color:#a33200}
+.agy-chip.ok{background:#d9f2ef;color:var(--sentiment-positive)}
 .agy .agd-fig{margin-top:var(--s3)}
 /* the dormant note: a left rule, not a tinted panel — a box inside a card reads
    as a second card, and this is one sentence, not an object */
 .agy-flag{grid-area:flag;margin-top:var(--s4);display:flex;gap:var(--s2);align-items:flex-start;
-  padding-left:var(--s3);border-left:2px solid var(--sentiment-negative);
+  padding-left:var(--s3);border-left:1px solid var(--sentiment-negative);
   font-size:13.5px;line-height:1.55;color:var(--general-muted-foreground)}
 .agy-flag svg{flex:0 0 auto;width:17px;height:17px;margin-top:1px;color:var(--sentiment-negative)}
 .agy-flag b{color:var(--general-foreground);font-weight:650}
@@ -4096,11 +4369,14 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
    product does — and never that anything came back. */
 .stp.due .stp-tx em{color:var(--sentiment-negative)}
 .stepper.live .stp.now .stp-tx em{color:var(--general-primary)}
-.agy-act{grid-area:act;margin-top:var(--s5);display:flex;flex-wrap:wrap;gap:var(--s2)}
+.agy-act{grid-area:act;margin-top:var(--s5,20px);display:flex;flex-wrap:wrap;gap:var(--s2)}
 
-/* the date rail: the calendar dimension, separated by a hairline rather than
-   boxed. Three answers — when it started, what lands next, when it comes up. */
-.agy-cal{grid-area:cal;min-width:0;display:flex;flex-direction:column;gap:var(--s5);
+/* the date rail: the calendar dimension, divided by a hairline that runs the
+   WHOLE height of the row rather than stopping where its own content ends —
+   the same rail the Areas shortlist row uses. Three answers: when it started,
+   what lands next, when it comes up. */
+.agy-cal{grid-area:cal;align-self:stretch;min-width:0;
+  display:flex;flex-direction:column;gap:var(--s5,20px);
   padding-left:var(--s6);border-left:1px solid var(--hairline)}
 .agy-date{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--s3)}
 /* span 3, not 1/-1: there are no explicit rows here, and 1/-1 in an implicit grid
@@ -4117,7 +4393,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .agy-date.soon svg,.agy-date.soon .agy-date-v{color:var(--general-primary)}
 
 @container page (max-width:860px){
-  .agy{grid-template-columns:auto minmax(0,1fr);
+  .agy{grid-template-columns:auto minmax(0,1fr);grid-template-rows:none;
     grid-template-areas:
       "tile eye"
       "tile name"
@@ -4126,7 +4402,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
       "cal  cal"
       "step step"
       "act  act"}
-  .agy-cal{margin-top:var(--s5);padding-left:0;padding-top:var(--s5);
+  .agy-cal{margin-top:var(--s5,20px);padding-left:0;padding-top:var(--s5,20px);
     border-left:0;border-top:1px solid var(--hairline);
     flex-direction:row;flex-wrap:wrap;gap:var(--s6)}
   .agy-cal .agy-date{flex:1 1 200px}
@@ -4137,25 +4413,28 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 }
 
 /* ---------- the empty state ----------
-   No agreements yet is Fanny's likely reality, so it gets the same card, in
-   preview: the stepper's own not-yet-started mode (all four steps todo, the
-   "you can stop it at any point" note) beside the three dates we WILL keep. */
+   No agreements yet is Fanny's likely reality, so it gets the same row, in
+   preview: the stepper's own not-yet-started mode beside the three dates we
+   WILL keep. */
 .agy.agy-pre{grid-template-columns:minmax(0,1fr) minmax(216px,264px);
-  grid-template-areas:"eye  cal" "name cal" "step cal"}
-.agy.agy-pre:hover{background:var(--surface);box-shadow:0 1px 2px #0f0f0f0f}
+  grid-template-areas:"eye  cal" "name cal" "step cal";
+  grid-template-rows:min-content min-content 1fr}
+.agy.agy-pre:hover{background:var(--surface);border-color:var(--card-stroke);box-shadow:none}
 .agy-pre .agy-pre-t{grid-area:name;margin-top:2px;font-family:var(--font-sans);
   font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.25}
 .agy-pre .agy-date-v{color:var(--general-muted-foreground);font-weight:650}
 @container page (max-width:860px){
-  .agy.agy-pre{grid-template-columns:minmax(0,1fr);
+  .agy.agy-pre{grid-template-columns:minmax(0,1fr);grid-template-rows:none;
     grid-template-areas:"eye" "name" "cal" "step"}
 }
 
 /* ---------- when terms come up ----------
    One shared twelve-month line, not one row per supplier: the question is what
-   lands close together, and clustering is only visible when they share an axis. */
-.agp-year{border:1px solid var(--hairline);border-radius:var(--rounded-lg);
-  padding:var(--s5,20px);overflow-x:auto}
+   lands close together, and clustering is only visible when they share an axis.
+   It is its own section now, with its own heading — trailing the tray above it
+   left a chart nobody had introduced. */
+.agp-year{border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
+  padding:var(--s6);overflow-x:auto}
 .agp-year-grid{display:grid;grid-template-columns:repeat(12,minmax(48px,1fr));min-width:576px}
 .agp-year-cell{position:relative;display:flex;flex-direction:column;align-items:center;gap:var(--s3);
   padding-top:var(--s4);min-height:74px}
@@ -4176,6 +4455,43 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .agp-year-key span{display:flex;align-items:center;gap:6px}
 .agp-year-key i{width:16px;height:3px;border-radius:2px;background:var(--general-primary)}
 .agp-year-key i.soon{background:var(--general-secondary)}
+
+/* ---------- the catalogue ----------
+   The controls carry the Suppliers rhythm exactly — a 44px search and 44px
+   status pills on one row, the letters scrolled on a single row rather than
+   wrapped into a second block of chrome, and one live result line underneath
+   that both counts the hits and lets each applied filter be removed where it is
+   named. Same component, same heights, same order.
+   The card is the Suppliers card: .aga.sup-card, unchanged. */
+/* no margin-top: .ar-head above already carries the heading-to-content step, and
+   a margin here would stack on top of it */
+.agp-tools{display:flex;flex-direction:column;gap:var(--s3)}
+/* the pills sit at the far end of the search row */
+.agp-tools .spacer{flex:1 1 auto}
+.agp-tools .agc-pill{height:44px;padding:0 var(--s5,20px)}
+/* one row, scrolled: an A–Z that wraps is two rows of chrome before any content.
+   The bar is hidden; wheel, trackpad and touch all still move it. */
+.agp-az{display:flex;flex-direction:row;flex-wrap:nowrap;gap:6px;
+  overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
+  padding:0 3px 2px;margin:0 -3px}
+.agp-az::-webkit-scrollbar{display:none}
+.agp-az button{flex:0 0 auto;min-width:36px;height:36px;padding:0 10px;
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-sm);
+  background:var(--surface);cursor:pointer;
+  font-size:13px;font-weight:650;color:var(--general-muted-foreground);
+  transition:var(--t-fast)}
+.agp-az button:hover{border-color:var(--card-stroke-hover);color:var(--general-foreground)}
+.agp-az button[aria-pressed="true"]{background:var(--brand-ice);border-color:#bdd7ff;
+  color:var(--general-primary)}
+.agp-bar{margin-top:var(--s1)}
+#agaBody{margin-top:var(--s6)}
+/* agreement names run longer than supplier names ("Bygma Framework Agreement"),
+   and the name IS the identity of the card — so here it wraps to two lines
+   instead of taking the supplier grid's single-line ellipsis. The grid stretches
+   its row to the tallest card, so nothing below it moves. */
+#agaBody .sup-card .aga-n{white-space:normal;overflow:visible;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden;line-height:1.2}
 
 /* ---------- catalogue: .agd, with the ones you hold marked ----------
    Same card the client signed off on. In use gets the positive ground the app
@@ -9910,7 +10226,7 @@ function agyCardHTML({r, a, i}){
     ${agrLogoTile(a.n)}
     <span class="agd-eye">${r.n}${idle
       ? '<span class="agy-chip warn">Not being used</span>'
-      : done ? '<span class="agy-chip">Verified</span>' : ''}</span>
+      : done ? '<span class="agy-chip ok">Verified</span>' : ''}</span>
     <button type="button" class="agy-open" data-agopen="${r.id}:${i}">
       ${a.n}${agIc('go')}</button>
     <span class="agd-fig"><b>${saveFig(a.save, est).replace('typically ', '')} kr.</b><em>a
@@ -9957,31 +10273,88 @@ function agYearHTML(mine){
     </div>`;
 }
 
+/* ---------- the band: the state of the portfolio, as the hero's artwork -------
+   Suppliers opens on who is in the catalogue, Areas on where the money is. The
+   fact only this page holds is what STATE each agreement is in, so that is the
+   artwork: one bar, four segments, each proportional to the money sitting in
+   that state, and a key that names every segment with its own figure. Hovering
+   or focusing a key chip dims the rest — a legend nobody can map onto its chart
+   is decoration. */
+function agpBandParts(mine, open){
+  const sum = xs => xs.reduce((s, x) => s + x.a.save, 0);
+  const idle    = mine.filter(x => agDormant(x.a));
+  const landing = mine.filter(x => !agDormant(x.a) && agComplete(x.a));
+  const flight  = mine.filter(x => !agDormant(x.a) && !agComplete(x.a));
+  return [
+    {k:'landing', l:'Landing',      seg:'var(--sentiment-positive)', xs:landing,
+     s:'verified on an invoice we have read'},
+    {k:'flight',  l:'In progress',  seg:'var(--sentiment-positive)', xs:flight, hatch:true,
+     s:'agreed, not yet seen on an invoice'},
+    {k:'idle',    l:'Not being used',seg:'var(--sentiment-negative)', xs:idle,
+     s:'live at the agreed rate, nothing going through it'},
+    {k:'open',    l:'Still available',seg:'var(--general-primary)',  xs:open,
+     s:'negotiated for you, never switched on'}
+  ].filter(p => p.xs.length).map(p => ({...p, v:sum(p.xs), n:p.xs.length,
+      est:p.xs.some(x => isEstimated(x.a))}));
+}
+
+/* a figure in the band is written the way every other figure in this file is:
+   exact to the krone where we have read the invoice, a +-15% band where the row
+   is a peer estimate. Printing an exact number here next to a range in the
+   finding two lines above would claim a precision we do not have. */
+const agpFig = p => saveFig(p.v, p.est).replace('typically +', '').replace('+', '');
+
+function agpBandHTML(parts, facts){
+  /* one state is not a division, so the bar and its key are dropped — but the
+     counts are still the answer to "what have I got", so the strip stays */
+  const split = parts.length > 1;
+  return `
+    <div class="agp-band" id="agpBand">
+      <div class="agp-band-l">
+        <span class="agp-band-t">${split ? 'Where the money sits' : 'The catalogue'}</span>
+        <span class="agp-band-f">${facts}</span>
+      </div>
+      ${!split ? '' : `
+      <div class="agp-band-bar" aria-hidden="true">
+        ${parts.map((p, i) => `<i data-seg="${p.k}"${p.hatch ? ' class="flight"' : ''}
+          style="flex:${p.v} 0 0;--i:${i};--seg:${p.seg}"></i>`).join('')}
+      </div>
+      <ul class="agp-band-key">
+        ${parts.map(p => `<li><button type="button" class="agp-key${p.hatch ? ' flight' : ''}" data-key="${p.k}"
+          style="--seg:${p.seg}"
+          aria-label="${p.l}: ${p.n} agreement${p.n === 1 ? '' : 's'}, ${agpFig(p)} kroner a year — ${p.s}">
+          ${p.l} <em>${agpFig(p)} kr.</em></button></li>`).join('')}
+      </ul>`}
+    </div>`;
+}
+
 /* ---------- the catalogue card ----------
-   The .agd card as signed off, with one modifier. In use reads as in use: the
-   positive ground, a ticked green eyebrow, the date it started instead of a
-   pitch, and no fav toggle — you cannot shortlist what you already hold. */
+   The Suppliers card, not a second one: same identity row, same breathing, same
+   hairline foot with the figure and the round way in. Two catalogues of the same
+   objects should not be two cards. */
 /* filter state for the catalogue */
 let agcStatus = 'all', agcQuery = '', agcLetter = 'all';
 
-/* four facts, no prose: who they are, which area, what the benefit is, one way in. */
 function agaCardHTML({r, a, i}){
-  const est = isEstimated(a);
   const rate = Math.round(a.save / a.covers * 100);
   return `
-    <li><button type="button" class="aga" data-agopen="${r.id}:${i}"
+    <li class="aga sup-card" data-agopen="${r.id}:${i}" tabindex="0" role="button"
       style="--b:${brandOf(a.n)}"
-      aria-label="${a.n}, ${r.n}, ${rate}% average saving">
-      ${agrLogoTile(a.n)}
-      <span class="aga-st${a.req ? ' on' : ''}">${a.req ? 'In use' : 'Available'}</span>
-      <b class="aga-n">${a.n}</b>
-      <span class="aga-cat">${r.n}</span>
-      <span class="aga-ben">
-        <span>Advantage benefit</span>
-        <b>${rate}% average savings</b>
+      aria-label="Open the ${a.n} agreement — ${r.n}, ${rate}% average saving${
+        a.req ? ', in use' : ''}">
+      <span class="sup-id">
+        ${agrLogoTile(a.n)}
+        <span class="sup-title">
+          <b class="aga-n">${a.n}</b>
+          <span class="aga-cat">${r.n}</span>
+        </span>
+        <span class="aga-st${a.req ? ' on' : ''}">${a.req ? 'In use' : 'Available'}</span>
       </span>
-      <span class="aga-go">Open agreement ${ARROW}</span>
-    </button></li>`;
+      <span class="sup-foot">
+        <span class="sup-rate"><b>${rate}%</b><em>average saving</em></span>
+        <span class="sup-go" aria-hidden="true">${ARROW}</span>
+      </span>
+    </li>`;
 }
 
 /* the letters that actually have something behind them — an A–Z where half the
@@ -9996,29 +10369,86 @@ function agaMatches(all){
     (agcLetter === 'all' || a.n.trim()[0].toUpperCase() === agcLetter) &&
     (!q || a.n.toLowerCase().includes(q) || r.n.toLowerCase().includes(q)));
 }
+const agcFiltering = () =>
+  !!agcQuery.trim() || agcStatus !== 'all' || agcLetter !== 'all';
+/* the filters currently on, phrased so they read inside a sentence AND match the
+   removable tokens in the bar word for word — two vocabularies for one filter is
+   how an empty state stops being actionable */
+function agcOn(){
+  const on = [];
+  if(agcStatus !== 'all')
+    on.push((AGC_STATUS.find(s => s.id === agcStatus) || {}).l.toLowerCase());
+  if(agcLetter !== 'all') on.push(`starting with ${agcLetter}`);
+  if(agcQuery.trim())     on.push(`a match for \u201c${agcQuery.trim()}\u201d`);
+  return on;
+}
 
+const AGC_STATUS = [
+  {id:'all',   l:'All agreements'},
+  {id:'use',   l:'In use'},
+  {id:'avail', l:'Available'}
+];
+
+/* ---------- the controls ----------
+   The Suppliers rhythm exactly: search and status on one row at one height, the
+   letters scrolled on a single row below it, and one live result line that both
+   counts the hits and lets every applied filter be removed where it is named.
+   The head is never re-rendered — the search field must not lose focus — so the
+   pills are re-synced rather than rebuilt. */
 function agaControlsHTML(all){
-  const nUse = all.filter(x => x.a.req).length;
-  const opt = (id, l, n) => `<button type="button" class="agc-pill" data-agcst="${id}"
-    aria-pressed="${agcStatus === id}">${l} <b>${n}</b></button>`;
   return `
-    <div class="agc-controls">
-      ${opt('all', 'All', all.length)}
-      ${opt('use', 'In use', nUse)}
-      ${opt('avail', 'Available', all.length - nUse)}
-      <span class="spacer"></span>
-      <div class="agc-find">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.9"/><path d="M16.3 16.3L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+    <div class="sup-tools-row">
+      <div class="sup-search">
+        ${SUP_GLASS}
         <input id="agcQ" type="text" autocomplete="off" spellcheck="false"
-          value="${agcQuery.replace(/"/g, '&quot;')}"
-          placeholder="Search supplier or category" aria-label="Search agreements">
+          placeholder="Search supplier or area" aria-label="Search agreements">
+        <button class="sup-search-x" id="agcQX" aria-label="Clear search" hidden>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </button>
       </div>
+      <span class="spacer"></span>
+      ${AGC_STATUS.map(st => `
+        <button type="button" class="agc-pill" data-agcst="${st.id}"
+          aria-pressed="${agcStatus === st.id}">${st.l}</button>`).join('')}
     </div>
-    <div class="agc-az" role="group" aria-label="Filter by first letter">
+    <div class="agp-az" role="group" aria-label="Filter by first letter">
       <button type="button" data-agcaz="all" aria-pressed="${agcLetter === 'all'}">All</button>
       ${agaLetters(all).map(L => `<button type="button" data-agcaz="${L}"
         aria-pressed="${agcLetter === L}">${L}</button>`).join('')}
-    </div>`;
+    </div>
+    <div class="sup-bar agp-bar" id="agcBar" role="status" aria-live="polite"></div>`;
+}
+
+function renderAgcBar(all, count){
+  const bar = $('#agcBar');
+  if(!bar) return;
+  if(!agcFiltering()){
+    bar.innerHTML = `<span><b>${all.length} agreements</b>, across ${
+      new Set(all.map(x => x.r.id)).size} areas</span>`;
+    return;
+  }
+  const toks = [];
+  if(agcQuery.trim())    toks.push({k:'q',  l:`“${agcQuery.trim()}”`});
+  if(agcStatus !== 'all')toks.push({k:'st', l:(AGC_STATUS.find(s => s.id === agcStatus) || {}).l});
+  if(agcLetter !== 'all')toks.push({k:'az', l:`Starts with ${agcLetter}`});
+  bar.innerHTML = `
+    <span><b>${count} agreement${count === 1 ? '' : 's'}</b></span>
+    <span class="sup-bar-sep" aria-hidden="true"></span>
+    ${toks.map(t => `<button type="button" class="sup-tokx" data-agctok="${t.k}"
+        aria-label="Remove filter ${t.l}">${t.l}${SUP_X}</button>`).join('')}
+    <button type="button" class="sup-clear" id="agcClearAll">Clear all</button>`;
+}
+
+function agcResetAll(all){
+  agcQuery = ''; agcStatus = 'all'; agcLetter = 'all';
+  const q = $('#agcQ'); if(q) q.value = '';
+  agcSyncPills(); renderAgaBody(all);
+}
+function agcSyncPills(){
+  $$('#agaControls [data-agcst]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.agcst === agcStatus)));
+  $$('#agaControls [data-agcaz]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.agcaz === agcLetter)));
 }
 
 function renderAgaBody(all){
@@ -10026,103 +10456,165 @@ function renderAgaBody(all){
   if(!el) return;
   const hits = agaMatches(all);
   el.innerHTML = hits.length
-    ? `<ul class="aga-grid">${hits.map(agaCardHTML).join('')}</ul>`
-    : `<ul class="aga-grid"><li class="aga-empty">No agreement matches that. Clear the
-         letter or the search to see all ${all.length}.</li></ul>`;
-  $$('#agaBody [data-agopen]').forEach(b => b.addEventListener('click', () => {
-    const [id, i] = b.dataset.agopen.split(':');
-    window.open(catTabUrl(id, +i), '_blank');
-  }));
+    ? `<ul class="supd-grid">${hits.map(agaCardHTML).join('')}</ul>`
+    : `
+      <div class="sup-empty">
+        <span class="sup-empty-ic" aria-hidden="true">${SUP_GLASS}</span>
+        <h3>No agreement matches those filters</h3>
+        <p>${agcOn().length === 1
+            ? `Nothing in the catalogue is <b>${agcOn()[0]}</b>.`
+            : `Nothing in the catalogue is all of <b>${agcOn().join('</b>, <b>')}</b> at once.`}
+          Take one filter off, or clear them and browse all ${all.length}.</p>
+        <button class="btn btn-secondary" id="agcReset">Clear search &amp; filters</button>
+      </div>`;
+  const reset = $('#agcReset');
+  if(reset) reset.addEventListener('click', () => { agcResetAll(all); $('#agcQ').focus(); });
+  /* the card is one hit area, keyboard included — the same contract the supplier
+     grid uses, since it is the same card */
+  $$('#agaBody [data-agopen]').forEach(li => {
+    const go = () => {
+      const [id, i] = li.dataset.agopen.split(':');
+      window.open(catTabUrl(id, +i), '_blank');
+    };
+    li.addEventListener('click', go);
+    li.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
+    });
+  });
+  const x = $('#agcQX'); if(x) x.hidden = !agcQuery;
+  agcSyncPills();
+  renderAgcBar(all, hits.length);
 }
 
 function wireAgaControls(all){
-  const redraw = () => {
-    $('#agaControls').innerHTML = agaControlsHTML(all);
-    wireAgaControls(all); renderAgaBody(all);
-  };
   $$('#agaControls [data-agcst]').forEach(b => b.addEventListener('click', () => {
-    agcStatus = b.dataset.agcst; redraw();
+    agcStatus = b.dataset.agcst; renderAgaBody(all);
   }));
   $$('#agaControls [data-agcaz]').forEach(b => b.addEventListener('click', () => {
-    agcLetter = b.dataset.agcaz; redraw();
+    agcLetter = b.dataset.agcaz; renderAgaBody(all);
   }));
   const q = $('#agcQ');
-  if(q) q.addEventListener('input', () => { agcQuery = q.value; renderAgaBody(all); });
+  if(q){
+    q.addEventListener('input', () => { agcQuery = q.value; renderAgaBody(all); });
+    q.addEventListener('keydown', e => {
+      if(e.key === 'Escape' && q.value){
+        e.stopPropagation(); q.value = ''; agcQuery = ''; renderAgaBody(all);
+      }
+    });
+  }
+  const x = $('#agcQX');
+  if(x) x.addEventListener('click', () => {
+    const f = $('#agcQ'); f.value = ''; agcQuery = ''; renderAgaBody(all); f.focus();
+  });
+  /* the bar's contents change on every render, so its handlers are delegated from
+     the element itself, which does not */
+  const bar = $('#agcBar');
+  if(bar) bar.addEventListener('click', e => {
+    if(e.target.closest('#agcClearAll')){ agcResetAll(all); return; }
+    const tok = e.target.closest('[data-agctok]');
+    if(!tok) return;
+    const k = tok.dataset.agctok;
+    if(k === 'q'){ agcQuery = ''; $('#agcQ').value = ''; }
+    if(k === 'st') agcStatus = 'all';
+    if(k === 'az') agcLetter = 'all';
+    renderAgaBody(all);
+  });
 }
 
 function renderAgreements(){
+  agcStatus = 'all'; agcQuery = ''; agcLetter = 'all';
   const all  = ROWS.filter(r => !r.hidden).flatMap(r => r.agr.map((a, i) => ({r, a, i})));
   const mine = all.filter(x => x.a.req);
   const open = all.filter(x => !x.a.req);
-  const earning = mine.reduce((s, x) => s + x.a.save, 0);
   const onTable = open.reduce((s, x) => s + x.a.save, 0);
-  const estMine = mine.some(x => isEstimated(x.a));
   const estOpen = open.some(x => isEstimated(x.a));
   const idle    = mine.filter(x => agDormant(x.a));
-  const moving  = mine.filter(x => !agComplete(x.a) && !agDormant(x.a));
   const idleSum = idle.reduce((s, x) => s + x.a.save, 0);
+  const estIdle = idle.some(x => isEstimated(x.a));
   /* needs a look first, then still moving, then settled — and money inside each */
   const rank = x => agDormant(x.a) ? 0 : agComplete(x.a) ? 2 : 1;
   const held = [...mine].sort((p, q) => rank(p) - rank(q) || q.a.save - p.a.save);
   const best = [...open].sort((p, q) => q.a.save - p.a.save)[0];
+  const landing = mine.filter(x => !agDormant(x.a) && agComplete(x.a));
+  const landSum = landing.reduce((s, x) => s + x.a.save, 0);
+  /* each figure is banded from the rows it is actually made of — "any of mine is
+     estimated" would put a range on a number we read off a real invoice */
+  const estLand = landing.some(x => isEstimated(x.a));
+  const plain = s => String(s).replace('typically +', '').replace('+', '');
 
-  /* ---- hero ---- */
-  const heroHTML = mine.length ? `
-    <span class="ph-eye">Agreements</span>
-    <h1 id="agT" tabindex="-1">Your supplier agreements</h1>
-    <p class="ph-lead">See every supplier agreement available to ${state.company} — both the
-      ones in use and the ones not yet activated. Filter by status or search by supplier or
-      category. Use <b>Areas</b> to explore needs and opportunities.</p>
-    <div class="ph-figs">
-      <div class="ph-fig"><b>${all.length}</b><span>Supplier agreements</span></div>
-      <div class="ph-fig"><b class="pos">${mine.length}</b><span>In use, earning
-        ${saveFig(earning, estMine).replace('typically ', '')} kr. a year</span></div>
-      <div class="ph-fig"><b class="brand">${open.length}</b><span>Available, worth
-        ${saveFig(onTable, estOpen).replace('typically ', '')} kr. a year</span></div>
-    </div>
-    <div class="cat-mast-act">
-      <button type="button" class="btn btn-primary" id="agpJump">Explore new opportunities</button>
-    </div>` : `
-    <h1 id="agT" tabindex="-1">Nothing activated yet</h1>
-    <p class="ph-lead">All ${AGR_TOTAL} Advantage agreements are open to you. Activating one
-      changes the price on your existing account — same supplier, same branch, same
-      delivery — and you can stop it any time before the supplier confirms.</p>
-    <div class="ph-figs">
-      <div class="ph-fig">
-        <b>${saveFig(onTable, estOpen)} kr.</b>
-        <span>a year across all ${open.length} of them</span>
+  /* ---- the hero ----
+     Headline left, the finding right, the band beneath. The finding is one
+     sentence with its figure at display scale, not a metric tile: what makes
+     "N kr." mean anything is the clause after it. */
+  const findHTML = mine.length ? `
+    <p class="agp-find">
+      <b>${plain(saveFig(landSum, estLand))}<small> kr.</small></b>
+      a year is verified and landing from <em>${landing.length} of your ${mine.length}
+      agreements</em>${idle.length ? `, and <em>${idle.length}</em> more ${
+        idle.length === 1 ? 'is' : 'are'} agreed but not being bought through — ${
+        plain(saveFig(idleSum, estIdle))} kr. a year sitting still` : ''}.
+    </p>` : `
+    <p class="agp-find">
+      <b class="brand">${plain(saveFig(onTable, estOpen))}<small> kr.</small></b>
+      a year is negotiated and waiting across <em>all ${open.length} agreements</em>.
+      Activating one changes the price on your existing account — same supplier,
+      same branch, same delivery.
+    </p>`;
+
+  const bandParts = agpBandParts(mine, open);
+  const facts = mine.length
+    ? `<span><b>${mine.length}</b> in use</span>
+       <span><b>${open.length}</b> available</span>
+       <span><b>${all.length}</b> agreements in total</span>`
+    : `<span><b>${all.length}</b> agreements</span>
+       <span><b>${ROWS.filter(r => !r.hidden).length}</b> areas</span>
+       <span>None activated yet</span>`;
+
+  const heroHTML = `
+    <div class="agp-mast-wrap">
+    <header class="agp-mast">
+      <div class="agp-mast-txt">
+        <h1 id="agT" tabindex="-1">${mine.length
+          ? 'Where each agreement has got to'
+          : 'Nothing activated yet'}</h1>
+        <p class="agp-mast-lead">${mine.length
+          ? `Every agreement ${state.company} holds or could hold — what stage it is at,
+             what lands next, and when its terms come up.`
+          : `All ${all.length} Advantage agreements are open to you, and you can stop
+             any of them before the supplier confirms.`}</p>
       </div>
-      ${best ? `
-      <div class="ph-fig">
-        <b class="pos">${saveFig(best.a.save, isEstimated(best.a)).replace('typically ', '')}<small> kr.</small></b>
-        <span>a year from the biggest single one, ${best.a.n}</span>
-      </div>` : ''}
-    </div>
-    ${best ? `
-    <div class="ph-act">
-      <button type="button" class="btn btn-primary" data-agopen="${best.r.id}:${best.i}">
-        Open ${best.a.n}</button>
-      <button type="button" class="btn btn-secondary" id="agpJump">See all
-        ${AGR_TOTAL} agreements</button>
-    </div>` : ''}`;
+      ${findHTML}
+      ${agpBandHTML(bandParts, facts)}
+    </header>
+    </div>`;
 
-  /* ---- the section for the ones you hold, or the preview if you hold none ---- */
+  /* ---- the ones you hold, or the preview if you hold none ---- */
   const heldHTML = mine.length ? `
-    <section class="agp-sec">
-      <h2>Where each one has got to</h2>
-      <p>Four steps from request to a verified saving, each with the date it happened.
-        We only call it verified once the new rate has appeared on an invoice we have read.</p>
-      <div class="oc-panel">
-        <ul class="agp-list">${held.map(agyCardHTML).join('')}</ul>
+    <section class="agp-sec" aria-labelledby="agpHeldH">
+      <div class="ar-head">
+        <div class="ar-head-t">
+          <h2 id="agpHeldH">The ${mine.length} you hold</h2>
+          <p>Four steps from request to a verified saving, each with the date it
+            happened. We only call it verified once the new rate has appeared on an
+            invoice we have read.</p>
+        </div>
       </div>
-      ${mine.length > 1 ? agYearHTML(mine) : ''}
+      <ul class="agp-list">${held.map(agyCardHTML).join('')}</ul>
     </section>` : `
-    <section class="agp-sec">
-      <h2>What activating one starts</h2>
-      <p>Four steps, and we date every one of them. This is the shape of the card you
-        will see here for each agreement you hold.</p>
-      <div class="oc-panel">
-        <div class="agy agy-pre">
+    <section class="agp-sec" aria-labelledby="agpHeldH">
+      <div class="ar-head">
+        <div class="ar-head-t">
+          <h2 id="agpHeldH">What activating one starts</h2>
+          <p>Four steps, and we date every one of them. This is the row you will see
+            here for each agreement you hold.</p>
+        </div>
+        ${best ? `<div class="ar-sort">
+          <button type="button" class="btn btn-primary btn-sm"
+            data-agopen="${best.r.id}:${best.i}">Open ${best.a.n}</button>
+        </div>` : ''}
+      </div>
+      <ul class="agp-list">
+        <li class="agy agy-pre">
           <span class="agd-eye">Preview</span>
           <b class="agy-pre-t">Any agreement, once you activate it</b>
           ${oppTimelineHTML()}
@@ -10141,22 +10633,38 @@ function renderAgreements(){
               <span class="agy-date-v">Twelve months on</span>
               <span class="agy-date-s">We tell you before they come up, not after.</span></span>
           </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </section>`;
 
-  /* biggest thing still on the table first; the ones you hold trail, in the same
-     order the section above shows them, so the two lists agree */
-  const cards = [...open].sort((p, q) => q.a.save - p.a.save).concat(held);
+  /* the renewal line is a second question about the same set — when do these come
+     up — so it gets its own heading rather than trailing the tray unannounced */
+  const yearHTML = mine.length > 1 ? `
+    <section class="agp-sec" aria-labelledby="agpYearH">
+      <div class="ar-head">
+        <div class="ar-head-t">
+          <h2 id="agpYearH">When terms come up</h2>
+          <p>One twelve-month axis for all ${mine.length}, so what lands close together
+            is visible as clustering rather than as ${mine.length} separate dates.</p>
+        </div>
+      </div>
+      ${agYearHTML(mine)}
+    </section>` : '';
 
   $('#viewAgreements').innerHTML = `
     <div class="agp">
-      <header class="ph">${heroHTML}</header>
+      ${heroHTML}
       ${heldHTML}
-      <section class="agp-sec" id="agpAll">
-        <h2>All supplier agreements</h2>
-        <p>All ${all.length} of them, across ${ROWS.filter(r => !r.hidden).length} areas.</p>
-        <div id="agaControls">${agaControlsHTML(all)}</div>
+      ${yearHTML}
+      <section class="agp-sec" id="agpAll" aria-labelledby="agpAllH">
+        <div class="ar-head">
+          <div class="ar-head-t">
+            <h2 id="agpAllH">All ${all.length} agreements</h2>
+            <p>Every supplier agreement open to ${state.company}, in use or not.
+              Filter by status or first letter, or search by supplier or area.</p>
+          </div>
+        </div>
+        <div class="agp-tools" id="agaControls">${agaControlsHTML(all)}</div>
         <div id="agaBody"></div>
       </section>
     </div>`;
@@ -10175,21 +10683,48 @@ function renderAgreements(){
     const {r, a} = pick(b.dataset.buyer);
     openContactBuyer(r, a);
   }));
-  /* the catalogue card is one hit area, keyboard included — same contract the
-     new-customer grid uses */
-  $$('#viewAgreements .agd').forEach(li => {
-    const go = () => window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
-    li.addEventListener('click', go);
-    li.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
-    });
-  });
   wireAgrFav('#viewAgreements');
-  const jump = $('#agpJump');
-  if(jump) jump.addEventListener('click', () => {
-    const t = $('#agpAll');
-    if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
-  });
+
+  /* the chevron field follows the pointer: two custom properties on the hero move
+     the centre of the mask disc in ::before. Coalesced into one rAF so a fast
+     sweep writes the pair once per frame rather than once per event. Re-bound on
+     every render, since renderAgreements() rebuilds the hero node. */
+  const mast = $('#viewAgreements .agp-mast');
+  if(mast){
+    let raf = 0, hx = 0, hy = 0;
+    mast.addEventListener('pointermove', e => {
+      const b = mast.getBoundingClientRect();
+      hx = e.clientX - b.left; hy = e.clientY - b.top;
+      if(raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        mast.style.setProperty('--mx', `${hx}px`);
+        mast.style.setProperty('--my', `${hy}px`);
+      });
+    });
+  }
+
+  /* the key pairs itself with the bar: hovering or focusing a chip dims every
+     segment but its own. The dim state is driven from the CONTAINER, not from
+     each chip — per-chip enter/leave pairs strand it on whenever the pointer
+     leaves without crossing a chip's own boundary (a click that moves focus, a
+     scroll, a reflow), which leaves the chart reading as broken. */
+  const band = $('#agpBand');
+  if(band){
+    const lite = id => {
+      band.classList.toggle('lit', !!id);
+      $$('#agpBand [data-seg]').forEach(s => s.classList.toggle('on', s.dataset.seg === id));
+    };
+    $$('#agpBand [data-key]').forEach(k => {
+      k.addEventListener('pointerenter', () => lite(k.dataset.key));
+      k.addEventListener('focus', () => lite(k.dataset.key));
+    });
+    band.addEventListener('pointerleave', () => lite(null));
+    band.addEventListener('focusout', e => {
+      if(!band.contains(e.relatedTarget)) lite(null);
+    });
+  }
+
   setTimeout(() => { const h = $('#agT'); if(h) h.focus({preventScroll:true}); }, 50);
 }
 
@@ -10287,35 +10822,58 @@ function rpModel(){
   };
 }
 
-/* one figure card. `est` swaps in the smaller type the two-number range needs. */
-const rpFig = (v, label, tone, est) => `
-  <div class="rp-fig${est ? ' est' : ''}">
+/* one supporting figure: a number and a line of prose, ruled apart from its
+   neighbours rather than boxed. `est` swaps in the smaller type the two-number
+   range needs. */
+const rpStat = (v, label, tone, est) => `
+  <div class="rp-stat${est ? ' est' : ''}">
     <b${tone ? ` class="${tone}"` : ''}>${v}</b><span>${label}</span></div>`;
+
+/* Every report returns the same five things and none of them know where they go:
+   the claim the report makes (h1), what that claim is reading (lead), the one
+   figure it rests on written as prose (find), three supporting figures (stats),
+   and the body (secs). renderReports() is the only thing that knows the shell. */
 
 /* ---- report 1 · savings ---- */
 function rpSavings(m){
   const rows = [...m.cats].sort((a, b) => (b.realised + b.potential) - (a.realised + a.potential));
   const max = Math.max(1, ...rows.map(c => c.realised + c.potential));
-  return `
-  ${rpFig(rpSave(m.realised, m.est) + ' <small>kr.</small>', `Realised over ${m.period.of}`, 'pos', m.est)}
-  ${rpFig(rpSave(m.potential, m.est) + ' <small>kr./year</small>', 'Still on the table', '', m.est)}
-  ${rpFig(rpPct(m.covered, m.spend) + '<small>%</small>', 'Of spend on an agreement', '')}
-  ${rpFig(rpNum(m.agrs.length, false), 'Agreements earning', '')}
-  §
+  const best = rows.find(c => c.realised) || rows[0];
+  return {
+  h1:'What the agreements gave back',
+  lead:`The agreed rate, read off ${m.est ? `companies your size` : `your own invoices`} —
+    what it has already taken off, and what is still sitting in rates you hold but
+    have never switched to.`,
+  est:m.est,
+  find:`<b class="pos">${rpNum(m.realised, m.est)}<small> kr.</small></b>
+    came off your invoices in ${m.period.of}, through
+    <em>${m.agrs.length} ${m.agrs.length === 1 ? 'agreement' : 'agreements'}</em>${
+    best && best.realised ? ` — most of it in <em>${best.n.toLowerCase()}</em>` : ''}.`,
+  stats:`
+    ${rpStat(rpNum(m.potential, m.est) + ' <small>kr./year</small>', 'Still priced and waiting, if you switch the rest on', '', m.est)}
+    ${rpStat(rpPct(m.covered, m.spend) + '<small>%</small>', 'Of everything you buy sits on an agreement', '')}
+    ${(() => {
+      const earning = m.cats.filter(c => c.realised).length;
+      return rpStat(`${fmt(earning)} <small>of ${m.cats.length}</small>`,
+        'Categories earning something today',
+        earning === m.cats.length ? 'pos' : earning ? '' : 'warn');
+    })()}`,
+  secs:`
   <section class="rp-sec">
-    <h2>Where the saving came from</h2>
-    <p>Ranked by what each category is worth in total. The solid part has landed;
-      the pale part is agreed pricing you have not switched to yet.</p>
+    <div class="rp-head">
+      <h2>Where the saving came from</h2>
+      <p>Ranked by what each category is worth in total. The solid part has landed;
+        the pale part is agreed pricing you have not switched to yet.</p>
+    </div>
     <div class="rp-viz">
       <ul class="rp-bars">
-        ${rows.map(c => {
-          const tot = c.realised + c.potential;
+        ${rows.map((c, i) => {
           return `<li class="rp-bar-row">
             <span class="rp-bar-n">${c.n}</span>
             <span class="rp-bar-v${c.realised ? '' : ' zero'}">${c.realised
               ? rpSave(c.realised, c.est) + ' kr.'
               : 'Nothing yet'}</span>
-            <span class="rp-track" role="img"
+            <span class="rp-track" style="--i:${i}" role="img"
               aria-label="${c.n}: ${c.realised ? rpSave(c.realised, c.est) + ' kroner realised' : 'nothing realised'}, ${rpSave(c.potential, c.est)} kroner still available">
               <i class="done" style="width:${(c.realised / max * 100).toFixed(1)}%"></i>
               <i class="open" style="width:${(c.potential / max * 100).toFixed(1)}%"></i>
@@ -10355,26 +10913,36 @@ function rpSavings(m){
     <p class="rp-foot">Realised is what the agreed rate took off invoices in
       ${m.period.of}. <b>Still available</b> is an annual figure — it does not
       shrink when you narrow the period, because the rate is per year.</p>
-  </section>`;
+  </section>`};
 }
 
 /* ---- report 2 · spending ---- */
 function rpSpending(m){
   const rows = [...m.cats].sort((a, b) => b.spend - a.spend);
-  return `
-  ${rpFig(rpNum(m.spend, m.est) + ' <small>kr.</small>', `Spend, ${m.period.n.toLowerCase()}`, '', m.est)}
-  ${rpFig(rpNum(m.covered, m.est) + ' <small>kr.</small>', 'Through an agreement', 'pos', m.est)}
-  ${rpFig(rpNum(m.off, m.est) + ' <small>kr.</small>', 'Still off agreement', 'warn', m.est)}
-  ${rpFig(rpNum(m.invoices, m.est), 'Invoices read', '', m.est)}
-  §
+  const top  = rows[0];
+  return {
+  h1:'Where the money actually goes',
+  lead:`Everything the company bought in ${m.period.of}, split by category — and
+    how much of it still runs outside every agreement you could be using.`,
+  est:m.est,
+  find:`<b>${rpNum(m.spend, m.est)}<small> kr.</small></b>
+    went out in ${m.period.of} across <em>${rpNum(m.invoices, m.est)} invoices</em>${
+    top ? `, ${rpPct(top.spend, m.spend)}% of it on <em>${top.n.toLowerCase()}</em>` : ''}.`,
+  stats:`
+    ${rpStat(rpNum(m.covered, m.est) + ' <small>kr.</small>', 'Bought through an agreement you hold', 'pos', m.est)}
+    ${rpStat(rpNum(m.off, m.est) + ' <small>kr.</small>', `Still off agreement — ${rpPct(m.off, m.spend)}% of the total`, 'warn', m.est)}
+    ${rpStat(rpNum(m.cats.reduce((s, c) => s + c.sup, 0), m.est), 'Suppliers behind it, across all categories', '', m.est)}`,
+  secs:`
   <section class="rp-sec">
-    <h2>What you buy, and where it goes</h2>
-    <p>The whole ${rpNum(m.spend, m.est)} kr. as one strip, then the parts.
-      ${rpPct(m.off, m.spend)}% of it still runs outside any agreement.</p>
+    <div class="rp-head">
+      <h2>What you buy, and where it goes</h2>
+      <p>The whole ${rpNum(m.spend, m.est)} kr. as one strip, then the parts.
+        ${rpPct(m.off, m.spend)}% of it still runs outside any agreement.</p>
+    </div>
     <div class="rp-viz">
       <div class="rp-split" role="img"
         aria-label="Spend split: ${rows.map(c => `${c.n} ${rpPct(c.spend, m.spend)} percent`).join(', ')}">
-        ${rows.map(c => `<span class="rp-split-seg" style="flex:0 0 ${(c.spend / Math.max(1, m.spend) * 100).toFixed(2)}%"
+        ${rows.map((c, i) => `<span class="rp-split-seg" style="--i:${i};flex:0 0 ${(c.spend / Math.max(1, m.spend) * 100).toFixed(2)}%"
           title="${c.n} — ${rpNum(c.spend, c.est)} kr. (${rpPct(c.spend, m.spend)}%)"></span>`).join('')}
       </div>
       <ul class="rp-split-legend">
@@ -10412,27 +10980,37 @@ function rpSpending(m){
     </div>
     <p class="rp-foot">On agreement plus off agreement equals total spend:
       <b>${rpNum(m.covered, m.est)}</b> + <b>${rpNum(m.off, m.est)}</b> kr.</p>
-  </section>`;
+  </section>`};
 }
 
 /* ---- report 3 · agreement usage ---- */
 function rpUsage(m){
   const rows = [...m.agrs].sort((a, b) => b.covers - a.covers);
-  const max = Math.max(1, ...rows.map(a => a.covers));
+  const max  = Math.max(1, ...rows.map(a => a.covers));
 
-  const figs = `
-    ${rpFig(fmt(m.agrs.length), 'Agreements in use', '')}
-    ${rpFig(rpNum(m.volume, m.est) + ' <small>kr.</small>', `Volume through them, ${m.period.n.toLowerCase()}`, '', m.est)}
+  const stats = `
+    ${rpStat(fmt(m.agrs.length), 'Agreements live on your account', '')}
     ${m.est
-      ? rpFig(`${m.empties.length} <small>of ${m.cats.length}</small>`, 'Categories with no agreement', m.empties.length ? 'warn' : 'pos')
-      : rpFig(fmt(m.idle.length), 'Live but unused', m.idle.length ? 'warn' : 'pos')}
-    ${rpFig(rpSave(m.realised, m.est) + ' <small>kr.</small>', 'Earned through them', 'pos', m.est)}`;
+      ? rpStat(`${m.empties.length} <small>of ${m.cats.length}</small>`, 'Categories with no agreement behind them', m.empties.length ? 'warn' : 'pos')
+      : rpStat(fmt(m.idle.length), 'Signed at the agreed price, but never bought through', m.idle.length ? 'warn' : 'pos')}
+    ${rpStat(rpNum(m.realised, m.est) + ' <small>kr.</small>', `What that volume earned in ${m.period.of}`, 'pos', m.est)}`;
 
-  if(!rows.length) return `${figs}§
+  const h1   = 'How much is really flowing through';
+  const lead = `An agreement only pays when invoices run through it. This is how much
+    of your buying actually does — and what is signed but standing still.`;
+
+  if(!rows.length) return {
+    h1, lead, est:m.est, stats,
+    find:`<b class="warn">Nothing<small> yet</small></b>
+      is running through an agreement. ${m.cats.length} categories are waiting, worth
+      <em>${rpNum(m.potential, m.est)} kr. a year</em> between them.`,
+    secs:`
     <section class="rp-sec">
-      <h2>Agreement usage</h2>
-      <p>Nothing to measure yet — this report fills in as soon as invoices start
-        arriving against an agreement.</p>
+      <div class="rp-head">
+        <h2>Agreement usage</h2>
+        <p>Nothing to measure yet — this report fills in as soon as invoices start
+          arriving against an agreement.</p>
+      </div>
       <div class="rp-viz">
         <div class="rp-empty">
           <span class="rp-empty-ic">${RP_IC.idle}</span>
@@ -10445,23 +11023,31 @@ function rpUsage(m){
           </span>
         </div>
       </div>
-    </section>`;
+    </section>`};
 
-  return `${figs}§
+  return {
+  h1, lead, est:m.est, stats,
+  find:`<b>${rpNum(m.volume, m.est)}<small> kr.</small></b>
+    was invoiced through your agreements in ${m.period.of} —
+    <em>${rpPct(m.volume, m.covered)}%</em> of the ${rpNum(m.covered, m.est)} kr.
+    of spend they already cover.`,
+  secs:`
   <section class="rp-sec">
-    <h2>How much is actually going through them</h2>
-    <p>The track is the spend each agreement covers. The fill is what has really
-      been invoiced against it — a short fill means the price is agreed but nobody
-      switched over.</p>
+    <div class="rp-head">
+      <h2>How much is actually going through them</h2>
+      <p>The track is the spend each agreement covers. The fill is what has really
+        been invoiced against it — a short fill means the price is agreed but
+        nobody switched over.</p>
+    </div>
     <div class="rp-viz">
       <ul class="rp-use">
-        ${rows.map(a => `<li class="rp-use-row" style="--b:${brandOf(a.n)}">
+        ${rows.map((a, i) => `<li class="rp-use-row" style="--b:${brandOf(a.n)}">
           <span class="rp-use-chip" aria-hidden="true">${agrLogoChip(a.n)}</span>
           <span class="rp-use-n">${a.n} <em>· ${a.cat}</em>${a.dormant
             ? `<span class="rp-flag">${RP_IC.warn}Unused</span>` : ''}</span>
           <span class="rp-use-v${a.dormant ? ' idle' : ''}">${a.vol
             ? rpNum(a.vol, a.est) + ' kr.' : 'nothing'}</span>
-          <span class="rp-track" role="img"
+          <span class="rp-track" style="--i:${i}" role="img"
             aria-label="${a.n}: ${a.vol ? rpNum(a.vol, a.est) : 'no'} kroner of ${rpNum(a.covers, a.est)} covered">
             <i class="done" style="width:${(a.vol / max * 100).toFixed(1)}%"></i>
           </span>
@@ -10513,40 +11099,48 @@ function rpUsage(m){
       ${m.idle.length === 1 ? 'is' : 'are'} live at the agreed price with nothing
       invoiced against ${m.idle.length === 1 ? 'it' : 'them'}. <b>That is the fastest
       money on this page</b> — the rate is already signed.</p>` : ''}
-  </section>`;
+  </section>`};
 }
 
+/* The shell. It owns the frame — hero, controls, the ruled figure band, the
+   benchmark caveat — and nothing else on the page knows about it. Switching the
+   report rewrites the headline, so the switch lives in the hero rather than on a
+   toolbar underneath it: on this page the type is the subject, not a filter. */
 function renderReports(){
   const m = rpModel();
-  const body = (rpType === 'spending' ? rpSpending : rpType === 'usage' ? rpUsage : rpSavings)(m);
-  /* the builders return "figures § sections" so the figures land in the tray and
-     the sections land on the page, without either one knowing about the shell */
-  const [figs, secs] = body.split('§');
+  const r = (rpType === 'spending' ? rpSpending : rpType === 'usage' ? rpUsage : rpSavings)(m);
   const typeName = (RP_TYPES.find(t => t.k === rpType) || RP_TYPES[0]).n;
 
   $('#viewReports').innerHTML = `
     <div class="rp-page">
-      <header class="ph">
-        <h1 id="rpT" tabindex="-1">Reports</h1>
-        <p class="ph-lead">Three readings of the same purchasing: what you saved, what
-          you spent, and how much is really flowing through the agreements you hold.</p>
-        <div class="rp-bar">
+      <div class="rp-mast-wrap">
+      <header class="rp-mast">
+        <div class="rp-mast-txt">
+          <h1 id="rpT" tabindex="-1">${r.h1}</h1>
+          <p class="rp-mast-lead">${r.lead}</p>
+        </div>
+
+        <p class="rp-find${r.est ? ' est' : ''}">${r.find}</p>
+
+        <div class="rp-ctl">
           <div class="seg" role="group" aria-label="Report">
             ${RP_TYPES.map(t => `<button type="button" data-rptype="${t.k}"
               aria-pressed="${rpType === t.k}">${t.n}</button>`).join('')}
           </div>
-          <span class="rp-bar-sp"></span>
-          <div class="rp-bar-r">
+          <span class="rp-ctl-sp"></span>
+          <div class="rp-ctl-r">
             <div class="seg rp-per" role="group" aria-label="Period">
               ${Object.entries(RP_PERIOD).map(([k, v]) => `<button type="button" data-rpper="${k}"
                 aria-pressed="${rpPeriod === k}">${v.n}</button>`).join('')}
             </div>
-            <button type="button" class="btn btn-secondary rp-exp" id="rpExport">
-              ${RP_IC.dl}Export CSV — not in this prototype</button>
+            <button type="button" class="btn btn-secondary rp-exp" id="rpExport"
+              title="Export is not built in this prototype">${RP_IC.dl}Export CSV</button>
           </div>
         </div>
       </header>
+      </div>
 
+      <div class="rp-lede">
       ${m.est ? `
       <p class="rp-note">${RP_IC.info}<span>Every figure on this page is a
         <b>benchmark estimate</b>, not your own accounting: it is the median of
@@ -10555,21 +11149,45 @@ function renderReports(){
         <b>Connect your invoices and this page reports your own numbers</b>,
         exact to the krone.</span></p>` : ''}
 
-      <div class="rp-tray">
-        <div class="rp-figs">${figs}</div>
+      <div class="rp-stats">${r.stats}</div>
       </div>
-      ${secs}
+
+      ${r.secs}
     </div>`;
+
+  /* — the plotted field follows the pointer: two custom properties on the hero move
+     the centre of the mask disc in ::before. Coalesced into one rAF so a fast sweep
+     writes the pair once per frame rather than once per event. Re-bound on every
+     render, since renderReports() rebuilds the hero node. — */
+  const mast = $('#viewReports .rp-mast');
+  if(mast){
+    let raf = 0, hx = 0, hy = 0;
+    mast.addEventListener('pointermove', e => {
+      const b = mast.getBoundingClientRect();
+      hx = e.clientX - b.left; hy = e.clientY - b.top;
+      if(raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        mast.style.setProperty('--mx', `${hx}px`);
+        mast.style.setProperty('--my', `${hy}px`);
+      });
+    });
+  }
 
   /* — wiring — */
   $$('#viewReports [data-rptype]').forEach(b => b.addEventListener('click', () => {
     if(rpType === b.dataset.rptype) return;
     rpType = b.dataset.rptype; renderReports();
+    /* the headline is what changed, so that is where focus goes — and the button
+       that was pressed no longer exists after the re-render */
     const h = $('#rpT'); if(h) h.focus();
   }));
   $$('#viewReports [data-rpper]').forEach(b => b.addEventListener('click', () => {
     if(rpPeriod === b.dataset.rpper) return;
     rpPeriod = b.dataset.rpper; renderReports();
+    /* the period only re-cuts what is already on screen, so focus stays on the
+       control the user is still working with rather than jumping to the title */
+    const p = $(`#viewReports [data-rpper="${rpPeriod}"]`); if(p) p.focus();
   }));
   $('#rpExport').addEventListener('click', () => alert(
     `Export is not built in this prototype.\n\nThe real thing would download the ` +
