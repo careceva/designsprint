@@ -222,7 +222,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
     #000 0%,#000000c4 34%,#00000059 68%,transparent 100%);
   mask-image:radial-gradient(circle var(--spot) at var(--mx,50%) var(--my,50%),
     #000 0%,#000000c4 34%,#00000059 68%,transparent 100%)}
-.lg:hover .lg-field{opacity:.72}
+.lg:hover .lg-field{opacity:.65}
 /* no pointer, no spotlight — on touch the field would sit permanently in the
    middle of the page, which is the one place it should never be */
 @media (hover:none){.lg-field{display:none}}
@@ -1343,11 +1343,25 @@ body.in-app .flow{display:none}
    body ink), and the grid's only breakpoint was a viewport media query, which
    says nothing about a canvas squeezed by two open rails. */
 .nc-ov-card-c{min-height:18px;font-size:13px;line-height:1.45;
-  color:var(--general-muted-foreground)}
+  color:var(--general-muted-foreground);
+  /* the sparkline is pinned bottom-right at 34% of the card and the caption is the
+     last thing in the column, so without a stop the two share the same band and the
+     chart runs straight through the words. 62% leaves the chart its column and a
+     gutter; the caption takes a second line instead of being drawn over. */
+  max-width:62%}
 /* the tray figures are big; on a narrow canvas three columns turn each one into
-   a two-line wrap before the window ever reaches its own breakpoint */
-@container page (max-width:820px){#viewSup .nc-ov-grid{grid-template-columns:repeat(2,1fr)}}
-@container page (max-width:560px){#viewSup .nc-ov-grid{grid-template-columns:1fr}}
+   a two-line wrap before the window ever reaches its own breakpoint. Not scoped to
+   #viewSup: the dashboard runs the same tray, and with both rails open its canvas is
+   the narrowest one in the app — which is exactly where "4.820.000" broke onto two
+   lines and pushed its own caption under the sparkline. */
+/* auto-fit, not a breakpoint. The tray is rendered in three different places, and
+   only some of them are inside the `page` container — so the @container rule that
+   was here never fired on the dashboard, which is the one canvas narrow enough to
+   need it. minmax states the real constraint instead of guessing at a width: the
+   figure row is 54px (one line) at a 325px card and 78px (wrapped) at 265px, so 300
+   is the floor below which "4.820.000 kr. / year" breaks in two. The grid drops to
+   two columns and then one on its own, in every context, with no breakpoint to keep
+   in sync. */
 
 /* ---------- search, filters, sort ----------
    The search field and every chip live in the head, OUTSIDE #supBody, so
@@ -2646,7 +2660,8 @@ body.in-app .flow{display:none}
    radius rule. */
 .nc-ov{display:flex;flex-direction:column;gap:var(--s2);
   padding:var(--s2);border-radius:var(--rounded-2xl);background:var(--brand-ice)}
-.nc-ov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2)}
+.nc-ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:var(--s2)}
 .nc-ov-card{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s6);
   border:1px solid var(--hairline);border-radius:var(--rounded-lg);
   background:var(--surface);box-shadow:var(--shadow-xs)}
@@ -2659,7 +2674,13 @@ body.in-app .flow{display:none}
    stretched (preserveAspectRatio:none) because only the shape matters, not the
    proportions, and non-scaling-stroke keeps the line an even 2px through that. */
 .nc-spark{position:absolute;right:0;bottom:0;width:34%;height:40%;
-  pointer-events:none;opacity:.75;color:var(--general-primary)}
+  pointer-events:none;opacity:.75;color:var(--general-primary);
+  /* the area fill has a hard left edge at the svg's own boundary, which reads as a
+     grey rectangle pasted into the corner rather than as part of the card. Fading the
+     whole chart in from the left dissolves that edge and stops the line beginning in
+     mid-air — the same trick the heroes' bloom uses, in one dimension. */
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 34%);
+  mask-image:linear-gradient(to right,transparent 0,#000 34%)}
 /* the card's own text sits above the fade */
 .nc-ov-card>*:not(.nc-spark){position:relative;z-index:1}
 /* one tone per card, matching the trend disc beside the figure: green for money
@@ -4726,27 +4747,93 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .tour-dots i{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--general-border)}
 .tour-dots i.on{background:var(--general-primary);width:16px;border-radius:3px}
 
-/* ---------- welcome: a one-time modal explaining estimated vs verified data ---------- */
-.wms{position:fixed;inset:0;z-index:50;background:#000a4552;opacity:0;pointer-events:none;
+/* ---------- welcome: a one-time modal explaining estimated vs verified data ----------
+   The dialog's whole job is to hand over one mental model — a figure on this
+   dashboard is either read from the customer's own invoices or estimated from
+   their peers — so it teaches with the app's REAL artifacts rather than with two
+   abstract swatches: the actual range format, the actual .est-chip, the actual
+   teal tick, all rendered from one amount so the pair reads as the same number
+   known two different ways. */
+.wms{position:fixed;inset:0;z-index:50;background:#000a4547;opacity:0;pointer-events:none;
+  -webkit-backdrop-filter:blur(2px) saturate(115%);backdrop-filter:blur(2px) saturate(115%);
   transition:opacity var(--t)}
 .wms.on{opacity:1;pointer-events:auto}
-.wm{position:fixed;z-index:51;left:50%;top:50%;width:min(520px,calc(100vw - 32px));
-  background:var(--surface);border-radius:var(--rounded-2xl);box-shadow:var(--shadow-xl);
+.wm{position:fixed;z-index:51;left:50%;top:50%;width:min(560px,calc(100vw - 32px));
+  overflow:hidden;
+  background:var(--surface);border:1px solid var(--card-stroke);border-radius:var(--rounded-2xl);
+  box-shadow:0 40px 80px -34px #000a4573,var(--shadow-xl);
   opacity:0;pointer-events:none;transform:translate(-50%,-46%) scale(.98);
   transition:opacity var(--t),transform var(--t)}
 .wm.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+
+/* the bloom lives on the wrapper, never on the band — a backdrop-filter samples
+   what is painted behind its OWN element, so a pane over the dialog's white would
+   frost nothing at all. Light from the top-right, landing on the verified side. */
+.wm-herowrap{position:relative;isolation:isolate}
+.wm-herowrap::before{content:"";position:absolute;z-index:0;pointer-events:none;
+  left:50%;top:50%;width:720px;height:720px;transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,
+    #b9d3f78a 0%,#cbdefa5c 30%,#dde9fc38 56%,#eef4fe1c 78%,transparent 100%)}
+.wm-herowrap::after{content:"";position:absolute;z-index:0;pointer-events:none;
+  right:-150px;top:-200px;width:560px;height:560px;
+  background:radial-gradient(closest-side,
+    #c2d9fcbf 0%,#d5e6fd85 34%,#e8f1ff45 64%,#f6f9ff1a 84%,transparent 100%)}
+
+/* the band is the frosted pane itself, full-bleed to the dialog's top edge rather
+   than a card floating inside one — a card within a card is one nesting level too
+   many, and the dialog's own corners already do the rounding */
+.wm-hero{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;
+  padding:var(--s6);border-bottom:1px solid var(--hairline);
+  background:
+    linear-gradient(145deg,#ffffffbf 0%,#ffffff45 34%,#ffffff1c 58%),
+    rgba(255,255,255,.46);
+  -webkit-backdrop-filter:blur(20px) saturate(165%);
+  backdrop-filter:blur(20px) saturate(165%);
+  box-shadow:inset 0 1px 0 #ffffff}
+/* a white rule, not a grey one: inside a blue-tinted pane a neutral hairline reads
+   as dirt. Same construction as the in-app heroes' .ph-figs. */
+.wm-col{padding-right:var(--s6);min-width:0}
+.wm-col+.wm-col{padding-left:var(--s6);border-left:1px solid #ffffffd9}
+/* the figure leads, because the format IS the lesson: a band means we inferred it,
+   an exact krone means we read it */
+/* two lines reserved: the estimated band wraps and the exact figure does not, and
+   without the reservation the two markers below them would sit at different
+   heights — which is exactly the comparison this band exists to make */
+.wm-fig{font-family:var(--font-sans);font-size:var(--text-xl);font-weight:700;
+  letter-spacing:-.5px;line-height:1.25;min-height:2.5em;color:var(--sentiment-positive);
+  font-variant-numeric:tabular-nums;text-wrap:balance}
+.wm-fig small{font-size:.72em;font-weight:600}
+.wm-mark{margin-top:var(--s3);display:flex;align-items:center}
+.wm-note{margin-top:var(--s2);font-size:12px;line-height:1.45;
+  color:var(--general-muted-foreground)}
+
 .wm-body{padding:var(--s8)}
-.wm-ring{width:52px;height:52px;border-radius:var(--rounded-full);display:grid;place-items:center;
-  background:var(--brand-ice);color:var(--general-primary);margin-bottom:var(--s6)}
-.wm-ring svg{width:24px;height:24px}
 .wm-body h2{font-size:var(--text-2xl);letter-spacing:-.6px}
-.wm-body p{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground)}
-.wm-legend{margin-top:var(--s6);display:flex;flex-direction:column;gap:var(--s3)}
-.wm-legend-row{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-sm)}
-.wm-swatch{flex:0 0 auto;width:14px;height:14px;border-radius:4px}
-.wm-swatch.verified{background:var(--sentiment-positive)}
-.wm-swatch.estimated{background:var(--surface);border:1.5px dashed var(--general-muted-foreground)}
+.wm-body p{margin-top:var(--s3);max-width:52ch;
+  font-size:var(--text-sm);line-height:1.6;color:var(--general-muted-foreground)}
 .wm-actions{margin-top:var(--s8);display:flex;justify-content:flex-end;gap:var(--s3)}
+
+/* one authored moment, and it belongs to the opening: the dialog rises, then the
+   two specimens settle into it. Keyed off .on so it replays every time the dialog
+   is opened rather than firing once at page load. */
+@keyframes wmIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.wm.on .wm-col{animation:wmIn .5s var(--t-slow) both;animation-delay:.08s}
+.wm.on .wm-col+.wm-col{animation-delay:.17s}
+
+@media(max-width:520px){
+  .wm-hero{grid-template-columns:minmax(0,1fr);padding:var(--s4)}
+  /* stacked, there is nothing to align across — the reservation would just be a hole */
+  .wm-fig{min-height:0}
+  .wm-col{padding-right:0}
+  .wm-col+.wm-col{padding-left:0;padding-top:var(--s4);
+    border-left:none;border-top:1px solid #ffffffd9}
+  .wm-body{padding:var(--s6)}
+  .wm-actions{flex-direction:column-reverse}
+  .wm-actions .btn{width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  .wm.on .wm-col{animation:none}
+}
 </style>
 </head>
 <body>
@@ -5063,21 +5150,13 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
        dashboard could otherwise be mistaken for the customer's real, exact figure -->
   <div class="wms" id="wms"></div>
   <div class="wm" id="wm" role="dialog" aria-modal="true" aria-labelledby="wmT" aria-hidden="true">
+    <!-- the two specimens, rendered from live data in renderWelcome() -->
+    <div class="wm-herowrap">
+      <div class="wm-hero" id="wmSpec"></div>
+    </div>
     <div class="wm-body">
-      <div class="wm-ring">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg>
-      </div>
-      <h2 id="wmT" tabindex="-1">Your dashboard is live from day one</h2>
-      <p>We've filled in today's numbers using industry benchmarks and our AI's read of
-        similar companies, so you have something useful before uploading anything.
-        Upload your real agreements and spend reports any time to swap estimates for
-        your exact numbers.</p>
-      <div class="wm-legend">
-        <div class="wm-legend-row"><span class="wm-swatch verified" aria-hidden="true"></span>
-          <span><b>Verified</b> — from your own invoices or agreement</span></div>
-        <div class="wm-legend-row"><span class="wm-swatch estimated" aria-hidden="true"></span>
-          <span><b>Estimated</b> — benchmark data, shown as a range until you upload</span></div>
-      </div>
+      <h2 id="wmT" tabindex="-1">Every number here is one of two kinds</h2>
+      <p id="wmLead"></p>
       <div class="wm-actions">
         <button class="btn btn-secondary" id="wmLater">Show me around</button>
         <button class="btn btn-primary" id="wmUpload">Upload agreements</button>
@@ -5983,7 +6062,46 @@ function enterApp(){
   setView();
 }
 
+/* Both halves are rendered from ONE amount — the largest saving on the board — so
+   the pair reads as the same number known two different ways rather than as two
+   unrelated examples. The formats and the markers are the app's own: saveFig()
+   prints the very band the cards print, and .est-chip / the teal tick are lifted
+   from the cards and the data centre. A legend that invents its own swatches
+   teaches a pattern the product never shows. */
+function renderWelcome(){
+  const amount = Math.max(...live().flatMap(r => r.agr.map(a => a.save)));
+  const spec = $('#wmSpec');
+  if(spec) spec.innerHTML = `
+    <div class="wm-col">
+      <div class="wm-fig">${saveFig(amount, true)}<small> kr.</small></div>
+      <div class="wm-mark"><span class="est-chip">${DASH_CIRCLE} Estimated</span></div>
+      <p class="wm-note">Inferred from your industry, your size and your region.
+        A band, because a band is honestly all we know yet.</p>
+    </div>
+    <div class="wm-col">
+      <div class="wm-fig">${saveFig(amount, false)}<small> kr.</small></div>
+      <div class="wm-mark"><span class="dc-row-status ok">${TICK} Verified</span></div>
+      <p class="wm-note">Read straight off your own invoices and agreements.
+        Exact to the krone, and no chip needed.</p>
+    </div>`;
+
+  /* the old copy told an existing customer with every source connected that they
+     had not uploaded anything yet */
+  const lead = $('#wmLead');
+  if(lead) lead.textContent = newCustomer
+    ? 'Nothing of yours has reached us yet, so today’s figures are estimated — '
+      + 'useful enough to act on now, and replaced the moment a real agreement or '
+      + 'spend report arrives.'
+    : 'Most of yours are read straight from your invoices. Where we are still '
+      + 'missing the paperwork you will see an estimate instead — the same number, '
+      + 'held less tightly.';
+
+  const up = $('#wmUpload');
+  if(up) up.textContent = newCustomer ? 'Upload agreements' : 'See what’s estimated';
+}
+
 function openWelcome(){
+  renderWelcome();
   $('#wms').classList.add('on');
   $('#wm').classList.add('on');
   $('#wm').setAttribute('aria-hidden', 'false');
@@ -6849,16 +6967,16 @@ function dashModelOwn(){
     ovAria: 'Your year so far',
     ovTitle: 'Savings confirmed on your own invoices',
     ovSub: `${state.company} · ${fmt(invoices)} invoices from ${suppliers} suppliers, matched line by
-      line — every figure on this page is exact to the krone, none of it estimated. A volume bonus of
+      line — so every figure on this page is exact to the krone, not a benchmark. A volume bonus of
       ${fmt(bonusRun)} kr. a year sits on top of the savings below.`,
     methodLabel: 'Where these come from',
     method: openDataCenter,
     cards: [
-      {l:'You save', v:`+${fmt(saveRun)}`, u:'kr. / year', accent:true, trend:'',
+      {l:'Savings YTD', v:`+${fmt(saveRun)}`, u:'kr. / year', accent:true, trend:'',
        cap:`${fmt(Math.round(saveRun * yearFrac))} kr. of it realised so far this year`,
        spark:DASH_SPARK_SAVE, tone:'good'},
-      {l:'You buy', v:fmt(spend), u:'kr. / year', trend:'flat',
-       cap:`Across ${rows.length} purchasing categories, from ${fmt(invoices)} invoices`,
+      {l:'Spend YTD', v:fmt(spend), u:'kr. / year', trend:'flat',
+       cap:`Across ${rows.length} purchasing categories`,
        spark:DASH_SPARK_SPEND, tone:'flat', amp:.45},
       {l:'Agreements in use', v:`${reqAgs.length}`, trend:'rise',
        cap:`${agrTotal - reqAgs.length} more are open to you`,
@@ -8160,10 +8278,11 @@ let activityMini = false;
 /* saved agreements. Anette asked for a way to "select one or more that you want
    to check into or read more about" — this is that, as the card's fav toggle. */
 let savedAgr = new Set();
-/* three ways to show an agreement: 'simple' is the one-sentence scrolling card
-   (the default), 'photo' is the marketplace card, 'detail' argues the case.
-   Toggled per user, remembered. */
-let agrCardStyle = 'simple';
+/* three ways to show an agreement: 'simple' is the one-sentence scrolling card,
+   'photo' is the marketplace card, 'detail' argues the case — and 'detail' is the
+   default, because the first question on the overview is "why this one", which is
+   the only one of the three that answers it. Toggled per user, remembered. */
+let agrCardStyle = 'detail';
 /* which of the three agreement-page bodies is showing */
 let agrViewStyle = 'impact';
 /* four readings of the category figures: a menu, a ranking, a whole, a first move */
