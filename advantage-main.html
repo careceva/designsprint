@@ -1809,9 +1809,9 @@ body.in-app .flow{display:none}
   .loader .fill{clip-path:inset(0 0 0 0)}
 }
 
-/* ---------- category page (opens in a new tab) ----------
-   Reached from an Opportunities category click. Keeps the real app chrome (top bar +
-   left nav) so it never feels orphaned, then two stark-white columns: a sticky
+/* ---------- category page ----------
+   Reached from anywhere an agreement or a category is clicked, in place. Keeps the
+   real app chrome (top bar + left nav) so it never feels orphaned, then two stark-white columns: a sticky
    typographic panel on the left — eyebrow, large title, one sentence, the money,
    the actions — and the agreements plus the supporting reading on the right, each
    separated by a quiet hairline rather than a box of its own. No photography: the
@@ -1975,8 +1975,13 @@ body.in-app .flow{display:none}
    the one column that had none — the title column. A soft diagonal gradient plus
    the logo's own checkmark, tiled and faded out, so the texture is the brand's
    rather than a generic dot grid. */
-.cat-skin{display:flex;align-items:center;gap:var(--s3);justify-content:flex-end;
-  margin-bottom:var(--s6)}
+.cat-skin{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);
+  justify-content:flex-end;margin-bottom:var(--s6)}
+/* the way out of the page, sharing the row the skin toggle already occupies rather
+   than claiming one of its own: margin-right:auto splits the row, back at the left
+   edge of the text column, the toggle still at the right */
+.cat-exit{margin-right:auto}
+.cat-exit svg{width:16px;height:16px}
 .cat-skin-l{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 /* — the bloom, always UNDER the card —
@@ -5064,8 +5069,9 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
              agreement carries enough weight (terms, timeline) to earn its own page. -->
         <section id="viewOpp" hidden></section>
 
-        <!-- a category's own page: reached from an Opportunities category click, opened
-             in a new tab so the dashboard stays put in the original one -->
+        <!-- a category's own page, and the page for a single agreement. Every
+             agreement and category in the app opens here, in place (openCatTab),
+             and the page carries a back button to wherever it was opened from. -->
         <section id="viewCatTab" hidden></section>
 
         <!-- data confidence center: where every "estimated" number points to, one
@@ -5409,22 +5415,27 @@ function renderNav(){
 function goNav(id){
   navAt = id; persist(); renderNav();
   oppAt = null; $('#viewOpp').hidden = true;
-  const ct = $('#viewCatTab'); if(ct) ct.hidden = true;
   const dc = $('#viewDataCenter'); if(dc) dc.hidden = true;
+  /* the category page stands itself down from inside setView() */
   /* the category tab boots via enterAppShell(), which skips the Dashboard and
      Suppliers views entirely — render them now, the first time nav actually
      needs one of them */
   if(shellOnly){ renderDash(); renderSup(); shellOnly = false; }
   setView();
 }
-/* the mark goes home. On the category tab — which opens in its own tab on top of a
-   bare shell — "home" means booting the Overview it never rendered, which goNav()
-   handles through its shellOnly branch. */
+/* the mark goes home. On a page booted straight from a ?catView= URL — a bare
+   shell with no Overview behind it — "home" means rendering the Overview it never
+   had, which goNav() handles through its shellOnly branch. */
 $('#brandHome').addEventListener('click', () => goNav('dashboard'));
 
 /* Only two views exist so far: the suppliers catalogue and the dashboard. Reports,
    Categories and Agreements keep showing the dashboard, as they did before. */
 function setView(){
+  /* every caller of setView is going to a top-level page, so the category page
+     (and the origin it was remembering) is done — one place to say so, rather
+     than a `hidden = true` in each of them, one of which would eventually be
+     forgotten and leave a stale back button pointing at a page nobody left */
+  catTabStandDown();
   const sup = navAt === 'suppliers';
   /* Agreements is the one page both personas share — Fanny needs it the moment
      she activates her first one, so it is not gated behind newCustomer */
@@ -6547,7 +6558,7 @@ function railData(){
        s:'Replace estimates with your own figures', go:openDataCenter},
       {lbl:'Easy first win', t:'Explore office supply terms',
        s:'19% — the widest rate gap in your trade',
-       go:() => window.open(catTabUrl('off'), '_blank')},
+       go:() => openCatTab('off')},
       {lbl:'Guided setup', t:'Plan your first 30 days',
        s:'Ask the saving assistant', go:() => askAssistant(
          `What should ${state.company} do in its first 30 days?`)}
@@ -6563,13 +6574,13 @@ function railData(){
     actions:[
       {lbl:'Needs attention', lead:true, t:'Stark Byggecenter raised prices 4%',
        s:'Costing you 18.400 kr. a year',
-       go:() => window.open(catTabUrl('mat'), '_blank')},
+       go:() => openCatTab('mat')},
       {lbl:'Ready to use', t:'Telecom & IT is still off-agreement',
        s:'Typically +14.520 kr. a year',
-       go:() => window.open(catTabUrl('tel'), '_blank')},
+       go:() => openCatTab('tel')},
       {lbl:'Business case ready', t:'Circle K fuel agreement',
        s:'42.800 litres a year · +42.500 kr.',
-       go:() => window.open(catTabUrl('fuel'), '_blank')}
+       go:() => openCatTab('fuel')}
     ],
     log:[
       {k:'ok',   t:'Q8 rate confirmed on your invoice', s:'Yesterday',  v:'+33.900', up:true},
@@ -6639,14 +6650,14 @@ function renderActivityRail(){
   $$('#activityBody .act-card').forEach(b =>
     b.addEventListener('click', () => d.actions[+b.dataset.act].go()));
   $('#actAll').addEventListener('click', () => $('#bellBtn').click());
-  /* a request opens its status. Already on that category's page? Open the sheet
-     in place — sending the user to a second tab of the page they're reading is
-     the kind of thing that makes a prototype feel broken. */
+  /* a request opens its status, on its own category's page: the sheet is where the
+     answer is, the page behind it is the context for it. Already there? Just the
+     sheet — re-rendering the page the user is reading would throw away their scroll. */
   $$('#activityBody .act-req').forEach(b => b.addEventListener('click', () => {
     const q = REQS.find(x => x.id === b.dataset.req);
     if(!q) return;
-    if(catTabAt && catTabAt.r.id === q.catId) openReqStatus(q.id);
-    else window.open(catTabUrl(q.catId), '_blank');
+    if(!(catTabAt && catTabAt.r.id === q.catId)) openCatTab(q.catId);
+    openReqStatus(q.id);
   }));
 
   if(mini) mini.innerHTML = `
@@ -7257,9 +7268,9 @@ function wireDash(root, m){
   /* the non-list category views use real <button>s, so they wire straight rather
      than going through the .opp-legend-item keyboard handling below */
   q('.cv-bar-row, .cv-split-seg, .cv-focus-lead, .cv-rest-row, .cv-brand-row, .cv-why-row, .cv-story-link')
-    .forEach(b => b.addEventListener('click', () => window.open(catTabUrl(b.dataset.cat), '_blank')));
+    .forEach(b => b.addEventListener('click', () => openCatTab(b.dataset.cat)));
   q('.agr-simple').forEach(b => b.addEventListener('click', () =>
-    window.open(catTabUrl(b.dataset.cat, +b.dataset.idx), '_blank')));
+    openCatTab(b.dataset.cat, +b.dataset.idx)));
   /* the row's scrollbar is hidden, so the arrows are the only mouse path along
      it — one visible page per press, disabled at each end */
   const aRow = $(`${root} .agr-simple-row`);
@@ -7282,14 +7293,14 @@ function wireDash(root, m){
   /* the detail card is one hit area — the only nested control is the save
      toggle, which stops the event itself */
   q('.agd').forEach(li => {
-    const go = () => window.open(catTabUrl(li.dataset.cat, +li.dataset.idx), '_blank');
+    const go = () => openCatTab(li.dataset.cat, +li.dataset.idx);
     li.addEventListener('click', go);
     li.addEventListener('keydown', e => {
       if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
     });
   });
   q('.opp-legend-item, .agr-card').forEach(el => {
-    const go = () => window.open(catTabUrl(el.dataset.cat, el.dataset.idx ? +el.dataset.idx : undefined), '_blank');
+    const go = () => openCatTab(el.dataset.cat, el.dataset.idx ? +el.dataset.idx : undefined);
     el.addEventListener('click', go);
     el.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
   });
@@ -7329,6 +7340,7 @@ const renderHome = () => newCustomer ? renderNewCustomerDash() : renderDash();
    which agreements did it, and how did the bonus arise. Every figure comes from
    peerProfile() so this page and the dashboard cards always reconcile. */
 function openSavings(){
+  catTabStandDown();
   $('.page').hidden = true;
   const ag = $('#viewAgreements'); if(ag) ag.hidden = true;
   const nc = $('#viewNewCustomer'); if(nc) nc.hidden = true;
@@ -8116,19 +8128,21 @@ function renderSup(){
      toggle, which stops the event itself in wireAgrFav */
   const supGo = li => {
     if(li.dataset.dc === '1'){ openDataCenter(); return; }
-    window.open(catTabUrl(li.dataset.cat,
-      li.dataset.idx ? +li.dataset.idx : undefined), '_blank');
+    openCatTab(li.dataset.cat, li.dataset.idx ? +li.dataset.idx : undefined);
   };
+  /* .aga, not .supd: the card became the shared .aga.sup-card when the catalogue
+     and the supplier grid were unified (see supCardHTML), and this delegated
+     selector was left behind — which silently made every supplier card inert */
   const bodyEl = $('#supBody');
   bodyEl.addEventListener('click', e => {
     if(e.target.closest('.agr-fav')) return;
-    const li = e.target.closest('.supd');
+    const li = e.target.closest('.aga');
     if(li) supGo(li);
   });
   bodyEl.addEventListener('keydown', e => {
     if(e.key !== 'Enter' && e.key !== ' ') return;
     if(e.target.closest('.agr-fav')) return;
-    const li = e.target.closest('.supd');
+    const li = e.target.closest('.aga');
     if(li){ e.preventDefault(); supGo(li); }
   });
 
@@ -8344,6 +8358,7 @@ function closeOpportunity(){
 const DASH_CIRCLE = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3"/></svg>';
 
 function openDataCenter(){
+  catTabStandDown();
   const ag = $('#viewAgreements'); if(ag) ag.hidden = true;
   /* the data centre lives inside .page, which setView() hides outright on the
      new-customer dashboard — so un-hide it (and stand the new-customer view
@@ -8695,17 +8710,100 @@ function renderOppCategory(r){
   });
 }
 
-/* ---------- category page (opens in a new tab) ----------
-   A category opportunity opens in its own browser tab (window.open, same-origin, so
-   sessionStorage — and with it every activated agreement — carries over). It keeps the
-   real app shell (top bar + left nav) and renders into its own section of the canvas,
-   the same way the dashboard and suppliers views do. */
-const catTabUrl = (id, agrIdx) => `${location.pathname}?catView=${encodeURIComponent(id)}`
-  + (agrIdx === undefined ? '' : `&agr=${agrIdx}`);
+/* ---------- the category / agreement page ----------
+   Every agreement and every category in the app opens HERE, in place: this page is
+   a view of the canvas like Suppliers or Reports, not a second browser tab. It used
+   to open with window.open() — which meant the user lost their place, collected
+   tabs, and had no way back except the browser's own chrome. Now openCatTab() swaps
+   the view and the page carries a back button that returns to exactly where they
+   came from, scroll position included.
+   The ?catView=<id>[&agr=<i>] URL still boots straight into this page (bootCatTab),
+   so a link someone saved or was sent keeps working — but nothing inside the app
+   produces one any more. */
 
-/* what the category tab is currently showing, so a request sent (or withdrawn in
-   another tab) can re-render exactly this view rather than guessing */
+/* what this page is currently showing, so a request sent (or withdrawn in another
+   tab) can re-render exactly this view rather than guessing */
 let catTabAt = null;
+/* where it was opened from, so "back" is the page the user actually left — null
+   when the page was booted from a URL, which is also why it then shows no back
+   button: there is nothing behind it to go back to */
+let catTabFrom = null;
+const APP_TITLE = document.title;
+
+/* the four nav destinations that can be returned to by name. Anything else — the
+   dashboard, or a rail click from an overlay — reads "Overview", which is where
+   setView() actually lands. */
+const CAT_BACK_LABEL = {suppliers:'Suppliers', reports:'Reports',
+  categories:'Areas', agreements:'Agreements'};
+const catBackLabel = () => !catTabFrom ? ''
+  : catTabFrom.kind === 'dc' ? 'the data centre'
+  : catTabFrom.kind === 'sv' ? 'savings'
+  : CAT_BACK_LABEL[catTabFrom.navAt] || 'Overview';
+
+/* the two overlay pages are not nav destinations, so they have to be recorded
+   explicitly or the way back would silently become "Overview" */
+function catTabOrigin(){
+  const dc = $('#viewDataCenter'), sv = $('#viewSavings');
+  const kind = dc && !dc.hidden ? 'dc' : sv && !sv.hidden ? 'sv' : 'nav';
+  return {kind, navAt, scroll:$('#canvas').scrollTop};
+}
+
+function openCatTab(catId, agrIdx){
+  const r = ROWS.find(x => x.id === catId);
+  if(!r) return;
+  /* the FIRST open wins: following an agreement from inside a category page must
+     not overwrite the origin with the category page itself */
+  if(!catTabFrom) catTabFrom = catTabOrigin();
+  /* .page is hidden outright on the new-customer dashboard, and this view lives
+     inside it (it needs the `page` container query) */
+  $('.page').hidden = false;
+  oppAt = null;
+  ['#viewDash', '#viewSup', '#viewOpp', '#viewDataCenter', '#viewAgreements',
+   '#viewReports', '#viewAreas', '#viewNewCustomer', '#viewSavings'].forEach(sel => {
+    const el = $(sel); if(el) el.hidden = true;
+  });
+  $('#viewCatTab').hidden = false;
+  document.body.classList.add('cat-tab-mode');
+  document.title = `${r.n} · Advantage`;
+  const i = agrIdx === undefined || agrIdx === null ? NaN : +agrIdx;
+  if(!Number.isNaN(i) && r.agr[i]) renderCatTabAgreement(r, i);
+  else renderCatTab(r);
+  updateActivityRail();
+  $('#canvas').scrollTop = 0;
+}
+
+/* leave the page without deciding where to go — for callers that are about to set
+   the view themselves (setView, the two overlays) */
+function catTabStandDown(){
+  catTabAt = null; catTabFrom = null;
+  document.body.classList.remove('cat-tab-mode');
+  document.title = APP_TITLE;
+  const ct = $('#viewCatTab');
+  /* emptied, not just hidden: a hidden view that still holds a rendered page is
+     how a stale compositor layer ends up bleeding through another one (the same
+     trap enterAppShell() documents), and refreshRequestViews would otherwise
+     have a page to find */
+  if(ct && ct.innerHTML){ ct.hidden = true; ct.innerHTML = ''; }
+}
+
+/* the back button: return to the page this one was opened from, at the scroll
+   position it was left at */
+function closeCatTab(){
+  const from = catTabFrom;
+  catTabStandDown();
+  if(from && from.kind !== 'nav'){
+    navAt = from.navAt; renderNav();
+    from.kind === 'dc' ? openDataCenter() : openSavings();
+  }else{
+    if(from){ navAt = from.navAt; renderNav(); }
+    /* booted straight onto this page: the Dashboard and Suppliers views have
+       never been rendered (see enterAppShell) */
+    if(shellOnly){ renderDash(); renderSup(); shellOnly = false; }
+    setView();
+  }
+  /* after the target view has rendered — setView() and the overlays both zero it */
+  if(from) requestAnimationFrame(() => { $('#canvas').scrollTop = from.scroll; });
+}
 
 function catTabShell(heroHTML, mainHTML){
   $('#viewCatTab').classList.toggle('skin-under', catTabSkin === 'under');
@@ -8713,6 +8811,10 @@ function catTabShell(heroHTML, mainHTML){
   $('#viewCatTab').innerHTML = `
     <div class="cat-tab-wrap">
       <div class="cat-skin">
+        ${catTabFrom ? `
+        <button type="button" class="btn btn-ghost btn-sm cat-exit" id="catTabExit">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H6M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Back to ${catBackLabel()}</button>` : ''}
         <span class="cat-skin-l">Page look</span>
         <div class="seg" role="group" aria-label="Page look">
           <button type="button" data-skin="white" aria-pressed="${catTabSkin === 'white'}">Plain</button>
@@ -8727,7 +8829,9 @@ function catTabShell(heroHTML, mainHTML){
         <div class="cat-tab-main">${mainHTML}</div>
       </div>
     </div>`;
-  /* the toggle is shell-level, so it survives whichever body is rendered */
+  /* both shell-level controls, so they survive whichever body is rendered */
+  const exit = $('#catTabExit');
+  if(exit) exit.addEventListener('click', closeCatTab);
   $$('#viewCatTab [data-skin]').forEach(b => b.addEventListener('click', () => {
     catTabSkin = b.dataset.skin; persist();
     if(catTabAt) catTabAt.agrIdx === null
@@ -8736,7 +8840,13 @@ function catTabShell(heroHTML, mainHTML){
   /* not while a dialog is open: sending a request re-renders this page behind the
      sheet, and moving focus to the page title would pull the user out of it */
   const h1 = $('.cat-tab-title');
-  if(h1 && !$('.bc.on')){ h1.tabIndex = -1; setTimeout(() => h1.focus({preventScroll:true}), 50); }
+  if(h1){
+    h1.tabIndex = -1;
+    /* the guard belongs INSIDE the timeout: opening this page and a sheet in the
+       same gesture (a request in the activity rail does exactly that) opens the
+       sheet after the shell has already scheduled the focus */
+    setTimeout(() => { if(!$('.bc.on')) h1.focus({preventScroll:true}); }, 50);
+  }
 }
 
 /* its own contact markup — not oppContactHTML — so #oppHuman/#oppAI in the (possibly
@@ -9876,8 +9986,9 @@ function renderCatTab(r){
   );
   const deal = $('#catTabDeal');
   if(deal) deal.addEventListener('click', () => openCustomRequest(r));
-  /* a sibling category swaps this page rather than opening a third tab — the user
-     is already in the category tab, so it behaves like navigation, not a jump */
+  /* a sibling category swaps this page's body rather than stacking another page on
+     top: the user is already here, so it behaves like navigation, not a jump. The
+     back button keeps pointing at wherever they entered from. */
   $$('#viewCatTab [data-oc]').forEach(b => b.addEventListener('click', () => {
     const next = ROWS.find(x => x.id === b.dataset.oc);
     if(next){ renderCatTab(next); $('#canvas').scrollTop = 0;
@@ -10678,7 +10789,7 @@ function renderAgaBody(all){
   $$('#agaBody [data-agopen]').forEach(li => {
     const go = () => {
       const [id, i] = li.dataset.agopen.split(':');
-      window.open(catTabUrl(id, +i), '_blank');
+      openCatTab(id, +i);
     };
     li.addEventListener('click', go);
     li.addEventListener('keydown', e => {
@@ -10880,7 +10991,7 @@ function renderAgreements(){
   $$('#viewAgreements [data-agopen]').forEach(b => b.addEventListener('click', e => {
     e.stopPropagation();
     const {r, i} = pick(b.dataset.agopen);
-    window.open(catTabUrl(r.id, i), '_blank');
+    openCatTab(r.id, i);
   }));
   $$('#viewAgreements [data-buyer]').forEach(b => b.addEventListener('click', e => {
     e.stopPropagation();
@@ -11579,7 +11690,7 @@ function renderReports(){
    Every purchasing area on one page: the specialist's shortlist on a grey tray,
    then all of them. ROWS *are* the areas, so nothing here is a second source of
    truth — the money is potOf(), the agreement counts are r.agr, and a card click
-   opens that area's own page in a new tab via catTabUrl(), exactly like the
+   opens that area's own page in place via openCatTab(), exactly like the
    "other recommended categories" cards do. */
 
 /* a real brief per area, not a category label: what is actually bought and what
@@ -11685,7 +11796,7 @@ function areaPickHTML(p){
   return `
   <li><button type="button" class="ar-pick" data-area="${r.id}"
     style="--b:${areaInk(r)}"
-    aria-label="${p.tag}: ${r.n}. Opens the area in a new tab.">
+    aria-label="${p.tag}: ${r.n}. Opens the area.">
     <span class="ar-pick-ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[r.id] || ''}</svg></span>
     <span class="ar-pick-tag">${p.tag}</span>
     <b class="ar-pick-n">${r.n}</b>
@@ -11710,7 +11821,7 @@ function areaCardHTML(r, o){
   return `
   <li><button type="button" class="ar-card" data-area="${r.id}" id="arc-${r.id}"
     style="--b:${areaInk(r)}"
-    aria-label="${r.n}: ${off ? `${off} agreement${off === 1 ? '' : 's'} available` : 'all agreements in use'}, ${r.rate}% average saving. Opens in a new tab.">
+    aria-label="${r.n}: ${off ? `${off} agreement${off === 1 ? '' : 's'} available` : 'all agreements in use'}, ${r.rate}% average saving.">
     <span class="aga-st${off ? '' : ' on'}">${off ? `${off} available` : 'All in use'}</span>
     <span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[r.id] || ''}</svg></span>
     <b class="aga-n">${r.n}</b>
@@ -11833,7 +11944,7 @@ function renderAreas(focusSort){
     </div>`;
 
   $$('#viewAreas [data-area]').forEach(b => b.addEventListener('click',
-    () => window.open(catTabUrl(b.dataset.area), '_blank')));
+    () => openCatTab(b.dataset.area)));
   $$('#viewAreas [data-sort]').forEach(b => b.addEventListener('click', () => {
     if(b.dataset.sort === areaSort) return;
     areaSort = b.dataset.sort; renderAreas(true);
@@ -12246,7 +12357,7 @@ function tourScript(){
          b:'Your savings, your spend, your agreements — read off your invoices and exact to the krone. Nothing on this page is a benchmark.'},
     newCustomer
       ? {sel:dashRoot() + ' .nc-bento-row', t:'Where the opportunity sits',
-         b:'Categories on the left, the assistant’s three recommended moves on the right. Both open the detail in a new tab.'}
+         b:'Categories on the left, the assistant’s three recommended moves on the right. Both open the detail in place, with a way back.'}
       : {sel:dashRoot() + ' .nc-bento-row', t:'What to do next',
          b:'What is still open, by category, and the assistant’s three biggest moves beside it. Opening one shows how we worked the number out before you commit to anything.'},
     {sel:'#activityRail', t:'What just happened',
