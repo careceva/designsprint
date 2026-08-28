@@ -3030,10 +3030,12 @@ body.in-app .flow{display:none}
    is inset by half the knob so the fill's end and the knob's centre are the same
    point at both extremes. */
 .tune-rail{grid-area:rail;position:relative;height:46px;--knob:20px;--hit:40px}
-/* --w is the row's share of the money; the track is that wide, and the knob inset
-   comes off it so the fill's end and the knob's centre still coincide */
+/* --s is the row's share of the money, a plain number. The knob's width is taken
+   off the row FIRST and the remainder scaled, so two tracks stand in exactly the
+   ratio their two savings do — subtracting a fixed 20px after scaling would cost
+   a short rail proportionally far more than a long one. */
 .tune-rail-in{position:absolute;left:calc(var(--knob) / 2);
-  width:calc(var(--w,100%) - var(--knob));
+  width:calc((100% - var(--knob)) * var(--s,1));
   top:calc(var(--hit) / 2 - 1px);height:2px;border-radius:1px;background:var(--general-muted)}
 .tune-fill{position:absolute;left:0;top:0;bottom:0;width:var(--p,0%);
   border-radius:1px;background:var(--general-foreground)}
@@ -3065,7 +3067,8 @@ body.in-app .flow{display:none}
   .tune-val{transition:opacity var(--t-fast),transform var(--t-fast),left var(--t-fast) linear}
 }
 
-.tune-range{position:absolute;left:0;top:0;height:var(--hit);width:var(--w,100%);
+.tune-range{position:absolute;left:0;top:0;height:var(--hit);
+  width:calc((100% - var(--knob)) * var(--s,1) + var(--knob));
   margin:0;padding:0;-webkit-appearance:none;appearance:none;background:none;cursor:grab}
 .tune-range:active{cursor:grabbing}
 /* an explicit height, not 100%: a percentage on the runnable track resolves to
@@ -7816,8 +7819,8 @@ function tuneRowHTML(r){
     <li class="tune-row" data-tune="${r.id}">
       <span class="tune-n">${r.n}<span class="tune-flag" tabindex="0" role="note"
         data-tip="${f.tip}" aria-label="${f.tip}"${f.on ? '' : ' hidden'}></span></span>
-      <span class="tune-rail" style="--p:${tunePos(stops, idx)};--b:${tunePos(stops, bIdx)};--w:${
-        (tuneShare(r) * 100).toFixed(2)}%">
+      <span class="tune-rail" style="--p:${tunePos(stops, idx)};--b:${tunePos(stops, bIdx)};--s:${
+        tuneShare(r).toFixed(4)}">
         <span class="tune-rail-in">
           <i class="tune-fill"></i>
           <i class="tune-tick"></i>
