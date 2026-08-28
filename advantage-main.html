@@ -24,7 +24,9 @@
   --general-secondary:#dbe9ff;
   --general-secondary-foreground:#1c1c1c;
   --general-muted:#f2f2f2;
-  --general-muted-foreground:#707070;
+  /* #707070 lands at 4.42 on --general-muted, two hundredths under the floor.
+     #6e6e6e is visually the same grey and clears it on every surface here. */
+  --general-muted-foreground:#6e6e6e;
   --general-accent:#ff9b3d;
   --general-accent-foreground:#1c1c1c;
   --general-destructive:#dc2626;
@@ -38,6 +40,13 @@
 
   --sentiment-positive:#009689;
   --sentiment-negative:#f54a00;
+  /* text-only steps. #009689 and #f54a00 are fill colours: they clear the 3:1
+     bar for a bar or a disc, but as small text they sit at 3.1–3.7, under the
+     4.5 floor. These are the same hues taken down until they pass, used for
+     type only so no chart or badge fill changes colour. */
+  --sentiment-positive-ink:#007c71;
+  --sentiment-positive-ink-on-tint:#00796e;
+  --sentiment-negative-ink-on-tint:#c43b00;
 
   --surface:#ffffff;
   --brand-midnight:#000a45;
@@ -1039,7 +1048,7 @@ body.in-app .flow{display:none}
 .opp-meta{font-size:13px;font-weight:500;color:var(--general-muted-foreground)}
 /* marks a category/agreement that gained a new agreement after fast-forwarding 6 months */
 .cnew{display:inline-block;margin-left:var(--s2);padding:1px 7px;border-radius:var(--rounded-full);
-  background:var(--sentiment-positive);color:#fff;font-size:13px;font-weight:700;
+  background:var(--sentiment-positive-ink-on-tint);color:#fff;font-size:13px;font-weight:700;
   letter-spacing:.02em;vertical-align:1px}
 .qtag{display:inline-block;margin-left:var(--s2);padding:1px 7px;border-radius:var(--rounded-full);
   background:#00968921;color:var(--sentiment-positive);font-size:13px;font-weight:700;
@@ -1069,7 +1078,7 @@ body.in-app .flow{display:none}
 .opp-legend-txt.multi{white-space:normal;overflow:visible;display:flex;flex-direction:column;gap:1px}
 .opp-legend-txt.multi b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .opp-legend-amt{flex:0 0 auto;min-width:88px;text-align:right;font-size:var(--text-sm);font-weight:600;
-  color:var(--sentiment-positive);font-variant-numeric:tabular-nums;white-space:nowrap}
+  color:var(--sentiment-positive-ink);font-variant-numeric:tabular-nums;white-space:nowrap}
 /* a trailing chevron — the same visual cue as the agreement rows, so the legend also
    reads as clickable rather than a static key */
 .opp-legend-go{flex:0 0 auto;width:16px;height:16px;color:#a3a3a3;transition:color var(--t-fast)}
@@ -1217,7 +1226,7 @@ body.in-app .flow{display:none}
    when the figure is a page headline, not when it is one of eight cards. */
 .agd-fig{grid-area:fig;margin-top:var(--s2);display:flex;align-items:baseline;gap:6px;
   flex-wrap:wrap;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:800;
-  letter-spacing:-.4px;color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+  letter-spacing:-.4px;color:var(--sentiment-positive-ink);font-variant-numeric:tabular-nums}
 .agd-fig b{font-weight:800;white-space:nowrap}
 .agd-fig em{font-style:normal;font-family:var(--font-body);font-size:12.5px;
   font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
@@ -2687,7 +2696,10 @@ body.in-app .flow{display:none}
   -webkit-mask-image:linear-gradient(to right,transparent 0,#000 34%);
   mask-image:linear-gradient(to right,transparent 0,#000 34%)}
 /* the card's own text sits above the fade */
-.nc-ov-card>*:not(.nc-spark){position:relative;z-index:1}
+/* the chevron is excluded as well as the chart: this selector is (0,2,0) and
+   .nc-ov-card-go is (0,1,0), so without the second :not() it silently won and
+   forced the absolutely-positioned chevron back into normal flow. */
+.nc-ov-card>*:not(.nc-spark):not(.nc-ov-card-go){position:relative;z-index:1}
 /* one tone per card, matching the trend disc beside the figure: green for money
    gained, neutral for a figure that is holding, brand blue for a rising count */
 .nc-spark-good{color:var(--sentiment-positive)}
@@ -2712,19 +2724,9 @@ body.in-app .flow{display:none}
    remove the emphasis rather than create it. Green, not blue: this is money gained,
    and green is what that means everywhere else in the app. */
 .nc-ov-card-v.accent{color:var(--sentiment-positive)}
-/* the trend arrow: small, aligned to the cap height of the figure rather than its
-   baseline, so it reads as a mark on the number and not as punctuation after it */
-/* solid disc, white glyph — the tinted version read as a faded sticker next to a
-   700-weight figure. Every colour here clears 3:1 against white, which is the bar
-   for a non-text mark. */
-.trend-up{flex:0 0 auto;align-self:center;display:inline-grid;place-items:center;
-  width:22px;height:22px;margin-left:var(--s2);border-radius:var(--rounded-full);
-  background:var(--sentiment-positive);color:#fff}
-.trend-up svg{width:13px;height:13px}
-/* neutral for a figure that is holding, brand blue for a count that is climbing.
-   Green stays reserved for money gained. */
-.trend-up.flat{background:var(--general-muted-foreground)}
-.trend-up.rise{background:var(--general-primary)}
+/* the trend disc that used to sit beside the figure is gone: the sparkline in
+   the corner already says which way the number is going, and two trend marks on
+   one card is one more trend than the card has. */
 /* the "how we got these numbers" banner: sits inside the grey tray as its first
    row, so the 8px gutter frames it exactly like the cards below. A dark band
    carries this better than a quiet secondary button did — the question it answers
@@ -2846,8 +2848,20 @@ body.in-app .flow{display:none}
    where is the money concentrated (Bars), what shape is the whole (Split), and
    what do I do first (Focus). One green, stepped by rank, carries all three. */
 .cv-head{display:flex;justify-content:flex-end;margin:var(--s4) 0 var(--s6)}
-.cv-note{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--hairline);
-  font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
+/* the explanation is worth having and worth not reading twice: it lives behind
+   the info mark, and what stays on the page is the one control that acts. No box,
+   no rule — a sentence in the flow of the card. */
+.cv-foot{display:flex;align-items:center;gap:var(--s3);margin-top:var(--s4)}
+.cv-note{margin-top:var(--s3);font-size:13px;line-height:1.5;
+  color:var(--general-muted-foreground);max-width:62ch}
+.info-dot{flex:0 0 auto;display:grid;place-items:center;width:26px;height:26px;
+  border:none;border-radius:var(--rounded-full);background:none;cursor:pointer;
+  color:var(--general-muted-foreground);
+  transition:background var(--t-fast),color var(--t-fast)}
+.info-dot svg{width:17px;height:17px}
+.info-dot:hover{background:var(--general-muted);color:var(--general-foreground)}
+.info-dot:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+.info-dot[aria-expanded="true"]{background:var(--brand-ice);color:var(--general-primary)}
 
 /* — bars: ranked by money, the bar IS the comparison so the icons come off — */
 .cv-bars{list-style:none;display:flex;flex-direction:column;gap:var(--s5,20px)}
@@ -2906,9 +2920,11 @@ body.in-app .flow{display:none}
   font-variant-numeric:tabular-nums}
 .cv-rest-go{flex:0 0 auto;width:15px;height:15px;color:var(--general-muted-foreground)}
 
-/* seven views share one segmented control now — tighter buttons so it stays a
-   single row inside the half-width cell, wrapping as the safety net */
-.cv-head .seg{flex-wrap:wrap;justify-content:flex-end}
+/* eight views share one segmented control — tighter buttons so it stays a single
+   row inside the half-width cell, wrapping as the safety net. It does wrap from
+   1440px up, where the activity rail leaves the cell ~306px: two tight rows beat
+   both a scrolled row (which hides readings) and a truncated one. */
+.cv-head .seg{flex-wrap:wrap;justify-content:flex-end;row-gap:3px}
 .cv-head .seg button{padding:0 var(--s2)}
 
 /* — view 5: brands — same ranking, told through who you'd actually buy from.
@@ -2972,6 +2988,159 @@ body.in-app .flow{display:none}
   font-weight:650;color:var(--general-foreground);text-decoration:underline;
   text-underline-offset:3px;text-decoration-color:var(--general-border)}
 .cv-story-link:hover{color:var(--general-primary);text-decoration-color:currentColor}
+
+/* — view 8: tune — the only one of the eight that is a CONTROL rather than a
+   reading. Deliberately monochrome: the line, the knob and the spend figure are
+   all ink, so the single green figure per row (the money it earns) is the only
+   colour on the surface, and brand blue is kept for the one thing it means here
+   — a number the user has set themselves. */
+/* three bars in the knob: the one detail that says "this is a thing you hold".
+   A pseudo-element cannot be put inside a range thumb, so it is a background. */
+:root{--knob-grip:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cg fill='%23fff'%3E%3Crect x='.6' y='2' width='1' height='4' rx='.5'/%3E%3Crect x='3.5' y='2' width='1' height='4' rx='.5'/%3E%3Crect x='6.4' y='2' width='1' height='4' rx='.5'/%3E%3C/g%3E%3C/svg%3E")}
+.tune-list{list-style:none;margin-top:var(--s4)}
+.tune-row{display:grid;grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:"name save" "rail rail";
+  align-items:center;column-gap:var(--s4);row-gap:var(--s1);
+  padding:var(--s3) 0 var(--s1);border-bottom:1px solid var(--hairline)}
+.tune-list>li:last-child{border-bottom:none}
+.tune-n{grid-area:name;display:flex;align-items:center;gap:var(--s2);
+  font-size:16px;font-weight:600;letter-spacing:-.2px;min-width:0}
+
+/* the one mark that says a figure is the user's own doing, and the only place the
+   original is still quoted. A dot rather than a sentence: four rows of "+2,2M kr.
+   (102%) vs your invoices" was a paragraph competing with the money. */
+.tune-flag{position:relative;flex:0 0 auto;width:8px;height:8px;
+  border-radius:var(--rounded-full);background:var(--general-primary);cursor:help}
+/* same tooltip recipe as the collapsed nav rail, allowed to wrap because this one
+   is a sentence rather than a label */
+.tune-flag::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);
+  transform:translateX(-50%) translateY(4px);width:216px;padding:var(--s2) var(--s3);
+  border-radius:var(--rounded-sm);background:var(--brand-midnight);color:var(--surface);
+  font-size:var(--text-xs);font-weight:500;line-height:1.45;text-align:left;
+  pointer-events:none;opacity:0;z-index:6;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.tune-flag:hover::after,.tune-flag:focus-visible::after{opacity:1;
+  transform:translateX(-50%) translateY(0)}
+.tune-flag:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px}
+
+/* The rail: a plain volume slider. 44px of transparent input for the touch
+   target, a 2px line through its middle, and the readout sitting in the lower
+   half of that same box — the input is transparent and the readout ignores the
+   pointer, so the two can share the space instead of costing a row each. The line
+   is inset by half the knob so the fill's end and the knob's centre are the same
+   point at both extremes. */
+.tune-rail{grid-area:rail;position:relative;height:46px;--knob:20px;--hit:40px}
+/* --w is the row's share of the money; the track is that wide, and the knob inset
+   comes off it so the fill's end and the knob's centre still coincide */
+.tune-rail-in{position:absolute;left:calc(var(--knob) / 2);
+  width:calc(var(--w,100%) - var(--knob));
+  top:calc(var(--hit) / 2 - 1px);height:2px;border-radius:1px;background:var(--general-muted)}
+.tune-fill{position:absolute;left:0;top:0;bottom:0;width:var(--p,0%);
+  border-radius:1px;background:var(--general-foreground)}
+/* where their own figure sits, so the way back is visible once they have left it.
+   Above the line, never under the fill, or it would vanish exactly when needed. */
+.tune-tick{position:absolute;left:var(--b,0%);bottom:calc(100% + 3px);width:1px;height:6px;
+  margin-left:-.5px;background:rgb(10 42 92/.28)}
+/* the readout travels with the knob — the value and the thing setting it are the
+   same object, so they should not be at opposite ends of the row */
+/* Hidden until the control is touched. The figure belongs to the knob, not to
+   the row: at rest the row says what the area earns, and the level that produces
+   it is one hover away. Its space is reserved either way — revealing a value must
+   not move the line the pointer is aiming at. */
+.tune-val{position:absolute;top:calc(var(--knob) / 2 + 2px);left:0;
+  display:flex;align-items:baseline;gap:5px;
+  font-size:15px;font-weight:600;letter-spacing:-.2px;font-variant-numeric:tabular-nums;
+  color:var(--general-foreground);white-space:nowrap;
+  opacity:0;pointer-events:none;transform:translateY(-3px);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.tune-rail:hover .tune-val,.tune-rail:focus-within .tune-val,
+.tune-rail.live .tune-val{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  .tune-val{transform:none;transition:opacity var(--t-fast)}
+}
+.tune-val em{font-style:normal;font-size:13px;font-weight:500;
+  color:var(--general-muted-foreground)}
+@media(prefers-reduced-motion:no-preference){
+  .tune-fill{transition:width var(--t-fast) linear}
+  .tune-val{transition:opacity var(--t-fast),transform var(--t-fast),left var(--t-fast) linear}
+}
+
+.tune-range{position:absolute;left:0;top:0;height:var(--hit);width:var(--w,100%);
+  margin:0;padding:0;-webkit-appearance:none;appearance:none;background:none;cursor:grab}
+.tune-range:active{cursor:grabbing}
+/* an explicit height, not 100%: a percentage on the runnable track resolves to
+   nothing, the track collapses to the top of the input, and the thumb ends up
+   riding a full radius above the line it is supposed to be sitting on */
+.tune-range::-webkit-slider-runnable-track{height:var(--hit);background:none;border:none}
+/* WebKit aligns the thumb to the TOP of the runnable track rather than centring
+   it, so the offset that puts it on the line has to be spelled out. Firefox does
+   centre it, which is why the -moz- thumb below carries no margin. */
+.tune-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  margin-top:calc((var(--hit) - var(--knob)) / 2);
+  width:var(--knob);height:var(--knob);border-radius:var(--rounded-full);
+  background:var(--general-foreground) var(--knob-grip) center / 8px 8px no-repeat;
+  border:2px solid var(--surface);box-shadow:0 1px 4px rgb(10 42 92/.32)}
+.tune-range::-moz-range-track{height:var(--hit);background:none;border:none}
+.tune-range::-moz-range-thumb{width:var(--knob);height:var(--knob);
+  border-radius:var(--rounded-full);
+  background:var(--general-foreground) var(--knob-grip) center / 8px 8px no-repeat;
+  border:2px solid var(--surface);box-shadow:0 1px 4px rgb(10 42 92/.32)}
+.tune-range:focus{outline:none}
+.tune-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--surface),
+  0 0 0 5px var(--general-primary)}
+.tune-range:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px var(--surface),
+  0 0 0 5px var(--general-primary)}
+@media(prefers-reduced-motion:no-preference){
+  .tune-range::-webkit-slider-thumb{transition:transform var(--t-fast),box-shadow var(--t-fast)}
+  .tune-range::-moz-range-thumb{transition:transform var(--t-fast)}
+  .tune-range:hover::-webkit-slider-thumb{transform:scale(1.1)}
+  .tune-range:active::-webkit-slider-thumb{transform:scale(1.18)}
+  .tune-range:hover::-moz-range-thumb{transform:scale(1.1)}
+  .tune-range:active::-moz-range-thumb{transform:scale(1.18)}
+}
+
+/* the money, in the house's savings tint — the one coloured thing on the row, so
+   it is what the eye lands on after the knob moves */
+.tune-save{grid-area:save;display:flex;align-items:baseline;gap:5px;padding:4px var(--s3);
+  border:1px solid #00968930;border-radius:var(--rounded-md);background:#f4fcfb;
+  font-size:16px;font-weight:700;color:var(--sentiment-positive-ink);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+/* 13px, the app's smallest label size — 12px undercut every other unit in the
+   file for no reason but width */
+.tune-save em{font-style:normal;font-size:13px;font-weight:500;
+  color:var(--general-muted-foreground)}
+/* the areas without a slider: present, so the totals still reconcile, and
+   plainly not part of the control */
+.tune-rest{grid-template-areas:"name save" "sub save";align-items:center}
+.tune-rest .tune-n{font-weight:500;color:var(--general-muted-foreground)}
+.tune-rest-sub{grid-area:sub;font-size:13px;color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums}
+.tune-rest .tune-save{border-color:var(--hairline);
+  background:var(--general-muted);color:var(--general-muted-foreground);font-weight:600}
+.tune-head-reset{font-size:13px}
+@container page (max-width:520px){
+  .tune-row{grid-template-columns:minmax(0,1fr);grid-template-areas:"name" "save" "rail"}
+  .tune-rest{grid-template-areas:"name" "sub" "save"}
+  .tune-save{justify-self:start}
+}
+
+/* the app bar's own admission. Sits left of the data-source pill and says the
+   same thing on every page in the app: these figures are the user's, not their
+   accounting system's — with the way back attached, like a filter token. */
+.tune-pill{gap:0;padding:0 0 0 var(--s3);cursor:default;
+  border-color:rgb(33 112 237/.34);background:var(--brand-ice)}
+.tune-pill-go{display:flex;align-items:center;gap:var(--s2);height:36px;
+  padding:0 var(--s2) 0 0;background:none;border:none;font:inherit;cursor:pointer;
+  text-align:left;color:inherit}
+.tune-pill-dot{flex:0 0 auto;width:8px;height:8px;border-radius:var(--rounded-full);
+  background:var(--general-primary)}
+.tune-pill .et b{color:var(--general-primary)}
+.tune-pill-x{flex:0 0 auto;display:grid;place-items:center;width:34px;height:36px;
+  background:none;border:none;border-left:1px solid rgb(33 112 237/.24);
+  color:var(--general-primary);cursor:pointer;border-radius:0 var(--rounded-md) var(--rounded-md) 0}
+.tune-pill-x svg{width:14px;height:14px}
+.tune-pill-x:hover{background:rgb(33 112 237/.1)}
+.tune-pill-go:hover .et b{text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- agreement card, "simple" variant ----------
    One sentence per card: the supplier's mark, the money, and a single round
@@ -3047,7 +3216,7 @@ body.in-app .flow{display:none}
    actions list (icon + text + value), and a full-bleed primary button pinned
    to the bottom of the card */
 .nc-advisory{display:flex;flex-direction:column;padding-bottom:0;overflow:hidden}
-.nc-gauge-wrap{position:relative;margin:0 auto var(--s2);width:180px}
+.nc-gauge-wrap{position:relative;margin:0 auto var(--s2);width:148px}
 .nc-gauge{display:block;width:100%;height:auto}
 .nc-gauge-label{position:absolute;left:0;right:0;bottom:2px;display:flex;flex-direction:column;
   align-items:center;text-align:center}
@@ -3058,18 +3227,32 @@ body.in-app .flow{display:none}
 /* alignment only — the type comes from the shared .nc-bento-cell h2 rule so both
    cards' titles stay identical */
 .nc-advisory-title{margin-top:var(--s1);text-align:center}
-.nc-rec-list{margin-top:var(--s5,20px);list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
-.nc-rec-row{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);
-  border-radius:var(--rounded-md);background:var(--brand-ice)}
-.nc-rec-ic{flex:0 0 auto;width:34px;height:34px;border-radius:var(--rounded-md);
-  display:grid;place-items:center;background:var(--surface);color:var(--general-primary)}
-.nc-rec-ic svg{width:17px;height:17px}
+/* the recommendations and the tuner sit side by side in the bento row, so they
+   have to be one component seen twice, not two. The tuner is hairline-separated
+   rows on white with the money in a tinted pill; these were tinted blocks with a
+   bare green number. The tinted container is gone and the pill is shared, so the
+   two halves now read at the same weight. */
+.nc-rec-list{margin-top:var(--s4);list-style:none}
+.nc-rec-row{display:flex;align-items:center;gap:var(--s3);
+  padding:var(--s3) 0;border-bottom:1px solid var(--hairline)}
+.nc-rec-list>li:last-child{border-bottom:none}
+.nc-rec-ic{flex:0 0 auto;width:30px;height:30px;border-radius:var(--rounded-sm);
+  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary)}
+.nc-rec-ic svg{width:16px;height:16px}
 .nc-rec-txt{flex:1 1 auto;min-width:0;font-size:15px;line-height:1.4;color:var(--general-foreground)}
 .nc-rec-txt b{font-weight:600}
-.nc-rec-val{flex:0 0 auto;font-size:15px;font-weight:700;color:var(--sentiment-positive)}
+/* the same pill .tune-save wears, so the money reads identically on both sides */
+.nc-rec-val{flex:0 0 auto;padding:4px var(--s3);
+  border:1px solid #00968930;border-radius:var(--rounded-md);background:#f4fcfb;
+  font-size:15px;font-weight:700;color:var(--sentiment-positive-ink);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+/* a non-money value ("Idle", "Live", "Auto") is a state, not a saving — it must
+   not wear the money pill or it reads as an amount */
+.nc-rec-val.state{border-color:var(--hairline);background:var(--general-muted);
+  color:var(--general-muted-foreground);font-weight:600}
 /* a self-contained pill, centred — not a full-bleed bar welded to the card edge */
-.nc-advisory-cta{align-self:center;margin:var(--s8) 0;padding:0 var(--s6);
-  border-radius:var(--rounded-full);height:44px;font-size:16px}
+.nc-advisory-cta{align-self:center;margin:var(--s5,20px) 0 var(--s4);padding:0 var(--s5,20px);
+  border-radius:var(--rounded-full);height:40px;font-size:15px}
 /* full-bleed footer: the negative margin has to match .nc-bento-cell's padding
    (--s8 each side, so --s16 of extra width) or it won't reach the card edges */
 .nc-advisory-foot{display:flex;align-items:center;justify-content:center;gap:var(--s2);
@@ -3579,6 +3762,304 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .rp-foot{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--hairline);
   font-size:13px;line-height:1.5;color:var(--general-muted-foreground)}
 .rp-foot b{font-weight:650;color:var(--general-foreground)}
+
+/* ---------- Overview summary cards, as a way in ----------
+   The three figures at the top of the Overview each assert something the page
+   never backs up. Making the card a button is the whole fix: the claim and the
+   evidence for it stop being two separate discoveries. Only the Overview's cards
+   get this — .nc-ov-card is reused on the supplier and peer pages, where there
+   is nothing to drill into. */
+.nc-ov-card.is-link{cursor:pointer;text-align:left;font:inherit;color:inherit;
+  transition:box-shadow var(--t-fast),border-color var(--t-fast)}
+.nc-ov-card.is-link:hover{border-color:var(--card-stroke);box-shadow:var(--shadow-md)}
+.nc-ov-card.is-link:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+/* the chevron sits opposite the label, on the card's own top line, so the eye
+   meets it while reading the label rather than after finishing the card. Muted
+   at rest — this is an affordance, not an action to take right now. */
+.nc-ov-card-go{position:absolute;bottom:var(--s6);right:var(--s6);z-index:1;
+  display:grid;place-items:center;width:28px;height:28px;
+  border-radius:var(--rounded-full);background:var(--general-secondary);
+  color:var(--general-primary);
+  transition:background var(--t-fast),color var(--t-fast),transform var(--t-fast)}
+.nc-ov-card-go svg{width:15px;height:15px}
+.nc-ov-card.is-link:hover .nc-ov-card-go{background:var(--general-primary);
+  color:var(--general-primary-foreground);transform:translateX(2px)}
+@media (prefers-reduced-motion:reduce){
+  .nc-ov-card.is-link:hover .nc-ov-card-go{transform:none}
+}
+
+/* ---------- Drill-down pages (Savings / Spending / Agreement usage) ----------
+   Reached by clicking a summary card. Each answers the one question its card can
+   only assert: where did this number come from?
+
+   The vocabulary is the Reports page's, borrowed rather than cloned — .rp-bars,
+   .rp-track, .rp-key, .rp-tbl, .rp-stat, .rp-note and .rp-split are all reused
+   as-is, so anyone who knows Reports already knows this page, and there is one
+   set of bars in the file rather than two that drift. What is new is only what
+   Reports has no equivalent for: the return path, the ledger that shows the
+   arithmetic behind the headline, and the line-level drill under each category.
+
+   This lives inside .page, like Reports, so every `@container page` breakpoint
+   the borrowed classes carry still resolves. */
+.dr-page{width:100%;display:flex;flex-direction:column;
+  gap:var(--s16);padding:var(--s4) 0 var(--s16);
+  --rp-soft:#d9f2ef}
+
+/* the way back. You arrived from a card, so browser-back is not the contract —
+   the page owes a visible return to the thing you clicked. */
+/* the back button and the hero are one block — the page's 64px rhythm belongs
+   between sections, not between a control and the thing it returns from */
+.dr-top{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4)}
+.dr-top .dr-mast-wrap{align-self:stretch}
+.dr-back{display:inline-flex;align-items:center;gap:var(--s2);align-self:flex-start;
+  min-height:36px;padding:0 var(--s3) 0 var(--s2);
+  margin-left:calc(var(--s2) * -1);
+  border:1px solid transparent;border-radius:var(--rounded-full);
+  background:none;cursor:pointer;
+  font-size:var(--text-sm);font-weight:600;color:var(--general-muted-foreground);
+  transition:background var(--t-fast),color var(--t-fast)}
+.dr-back:hover{background:var(--general-muted);color:var(--general-foreground)}
+.dr-back:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+.dr-back svg{width:16px;height:16px}
+
+/* ---- the hero ----
+   Same glass-over-bloom construction as the Reports masthead, so the two pages
+   read as one family. What replaces Reports' illustration is the thing this page
+   exists for: the arithmetic. */
+.dr-mast-wrap{position:relative;isolation:isolate}
+.dr-mast-wrap::before{content:"";position:absolute;z-index:0;pointer-events:none;
+  left:50%;top:50%;width:1120px;height:1120px;transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,
+    #b9d3f78f 0%,#cbdefa61 30%,#dde9fc3d 56%,#eef4fe1f 78%,transparent 100%)}
+.dr-mast-wrap::after{content:"";position:absolute;z-index:0;pointer-events:none;
+  left:-200px;top:-240px;width:800px;height:800px;
+  background:radial-gradient(closest-side,
+    #c2d9fcbf 0%,#d5e6fd85 34%,#e8f1ff45 64%,#f6f9ff1a 84%,transparent 100%)}
+@container page (max-width:780px){
+  .dr-mast-wrap::before{width:820px;height:820px}
+  .dr-mast-wrap::after{width:560px;height:560px;left:-140px;top:-170px}
+}
+.dr-mast{position:relative;z-index:1;overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.78fr);
+  grid-template-areas:"txt led" "find led" "ctl ctl";
+  grid-template-rows:auto 1fr auto;
+  column-gap:var(--s12);row-gap:var(--s8);align-items:start;
+  padding:var(--s8);
+  border:1px solid #ffffff;border-radius:var(--rounded-2xl);
+  /* Reports can afford .42 white because a solid illustration fills half of its
+     hero and gives the type something to sit against. This hero carries a ledger
+     of 15px figures instead, and at .42 they sat on the bloom rather than on a
+     surface. .82 still reads as glass and clears 4.5:1 for every figure on it. */
+  background:
+    linear-gradient(145deg,#fffffff2 0%,#ffffffc9 38%,#ffffffad 62%),
+    rgba(255,255,255,.82);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  backdrop-filter:blur(22px) saturate(150%);
+  box-shadow:0 1px 2px #0b00ab0f,0 22px 52px -30px #1b64dc45,
+    inset 0 1px 0 #ffffff,inset 0 -1px 0 #ffffffa8}
+/* the pointer-tracked field, same mechanic as .rp-mast: a tile revealed only
+   inside a soft disc that follows the cursor, so the surface has texture without
+   a pattern that ends on a rim. --mx/--my are written in px by wireDrill(). */
+.dr-mast::before{content:"";position:absolute;z-index:0;inset:0;pointer-events:none;
+  --spot:210px;
+  opacity:0;transition:opacity var(--t);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='44'%3E%3Cg fill='%231b64dc'%3E%3Ccircle cx='6' cy='30' r='1.5'/%3E%3Ccircle cx='24' cy='22' r='1.5'/%3E%3Ccircle cx='42' cy='25' r='1.5'/%3E%3Ccircle cx='60' cy='13' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-image:radial-gradient(circle var(--spot) at var(--mx,50%) var(--my,50%),
+    #000 0%,#000000c4 34%,#00000059 68%,transparent 100%);
+  mask-image:radial-gradient(circle var(--spot) at var(--mx,50%) var(--my,50%),
+    #000 0%,#000000c4 34%,#00000059 68%,transparent 100%)}
+.dr-mast:hover::before{opacity:.62}
+@media (prefers-reduced-motion:reduce){.dr-mast::before{transition:none}}
+@media (hover:none){.dr-mast::before{display:none}}
+.dr-mast>*{position:relative;z-index:1}
+
+.dr-mast-txt{grid-area:txt;min-width:0}
+.dr-mast h1{font-family:var(--font-sans);font-size:clamp(30px,3.1vw,42px);font-weight:800;
+  letter-spacing:-1.5px;line-height:1.04;max-width:19ch}
+.dr-find{grid-area:find;align-self:start;
+  font-size:var(--text-lg);line-height:1.5;max-width:46ch;
+  color:var(--general-muted-foreground)}
+.dr-find b{display:block;margin-bottom:var(--s2);
+  font-family:var(--font-sans);font-size:clamp(36px,3.9vw,54px);font-weight:800;
+  letter-spacing:-2.2px;line-height:1;color:var(--general-foreground);
+  font-variant-numeric:tabular-nums}
+/* a range is two numbers and a dash where an exact figure is one number: at the
+   headline size it would wrap. One step down, and the sentence still leads. */
+.dr-find.est b{font-size:clamp(25px,2.6vw,34px);letter-spacing:-1.1px}
+.dr-find b small{font-size:var(--text-xl);font-weight:700;letter-spacing:-.5px;
+  color:var(--general-muted-foreground)}
+.dr-find b.pos{color:var(--sentiment-positive)}
+.dr-find em{font-style:normal;font-weight:650;color:var(--general-foreground)}
+
+/* ---- the ledger: the arithmetic, stated ----
+   Reports draws a picture here. This page owes a derivation instead — the same
+   chain a bookkeeper would write out, ending on the figure in the headline, so
+   the number can be checked rather than believed. */
+.dr-led{grid-area:led;align-self:stretch;min-width:0;
+  display:flex;flex-direction:column;gap:var(--s1);
+  padding:var(--s6);border-radius:var(--rounded-lg);
+  background:#fffffff2;box-shadow:inset 0 0 0 1px #ffffff,0 1px 2px #0b00ab0a}
+.dr-led-h{margin-bottom:var(--s2);font-size:12.5px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:#4a6da3}
+.dr-led-row{display:grid;grid-template-columns:14px minmax(0,1fr) auto;
+  align-items:baseline;gap:var(--s3);
+  padding:5px 0;font-size:15px;line-height:1.35}
+/* the operator column: an arithmetic page should look like arithmetic */
+.dr-led-op{font-family:var(--font-sans);font-weight:700;font-size:14px;
+  text-align:center;color:#4a6da3}
+.dr-led-l{min-width:0;color:#1b3a6b}
+.dr-led-l em{font-style:normal;display:block;margin-top:1px;
+  font-size:12.5px;line-height:1.35;color:#456698}
+.dr-led-v{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;
+  color:var(--general-foreground)}
+.dr-led-row.sum{margin-top:var(--s2);padding-top:var(--s3);
+  border-top:2px solid #b9cdea}
+.dr-led-row.sum .dr-led-l{font-weight:650;color:var(--general-foreground)}
+.dr-led-row.sum .dr-led-v{font-size:var(--text-xl);letter-spacing:-.4px}
+.dr-led-v.pos{color:var(--sentiment-positive-ink)}
+.dr-led-v.warn{color:#c43b00}
+/* the cohort footnote under Fanny's ledger — the sample the median came from */
+.dr-led-note{margin-top:var(--s3);padding-top:var(--s3);
+  border-top:1px solid #cfdff3;
+  font-size:12.5px;line-height:1.45;color:#4a6da3}
+
+.dr-ctl{grid-area:ctl;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;
+  padding-top:var(--s6);border-top:1px solid rgb(27 100 220/.13)}
+.dr-ctl-sp{flex:1 1 auto}
+.dr-ctl .seg{background:#ffffff5c;box-shadow:inset 0 0 0 1px #ffffffd1}
+.dr-ctl .seg button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 3px #0b00ab24}
+.dr-ctl .seg button{padding:0 var(--s3)}
+
+@container page (max-width:900px){
+  .dr-mast{grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"txt" "find" "led" "ctl";grid-template-rows:auto;
+    padding:var(--s6)}
+  .dr-find{max-width:56ch}
+}
+@container page (max-width:700px){
+  .dr-ctl{flex-direction:column;align-items:stretch}
+  .dr-ctl .seg{justify-content:space-between}
+}
+
+.dr-lede{display:flex;flex-direction:column;gap:var(--s8)}
+
+/* ---- the drill: category -> agreement -> the lines underneath ----
+   This is the part Reports has no equivalent for. Each category opens to the
+   agreements inside it, and each agreement to the lines it actually prices. */
+.dr-drill{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.dr-grp{border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  background:var(--surface);overflow:hidden}
+.dr-grp.open{border-color:var(--card-stroke);box-shadow:var(--shadow-xs)}
+/* the whole head is the control — a row with a small target inside it is a row
+   that gets clicked and does nothing */
+.dr-grp-h{width:100%;display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto auto;
+  align-items:center;gap:var(--s2) var(--s4);
+  padding:var(--s4) var(--s5,20px);
+  border:none;background:none;cursor:pointer;text-align:left;font:inherit;
+  transition:background var(--t-fast)}
+.dr-grp-h:hover{background:var(--general-muted)}
+.dr-grp-h:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
+.dr-grp-ic{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;
+  border-radius:var(--rounded-sm);
+  background:rgb(var(--b,27 100 220)/.10);color:rgb(var(--b,27 100 220))}
+.dr-grp-ic svg{width:18px;height:18px}
+.dr-grp-n{min-width:0;font-size:16px;font-weight:650;letter-spacing:-.2px}
+.dr-grp-n em{font-style:normal;display:block;margin-top:1px;
+  font-size:13px;font-weight:500;color:var(--general-muted-foreground)}
+.dr-grp-v{font-size:16px;font-weight:700;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.dr-grp-v.pos{color:var(--sentiment-positive-ink)}
+.dr-grp-v.zero{color:var(--general-muted-foreground);font-weight:600}
+.dr-grp-x{flex:0 0 auto;display:grid;place-items:center;width:26px;height:26px;
+  border-radius:var(--rounded-full);color:var(--general-muted-foreground);
+  transition:transform var(--t-fast),background var(--t-fast)}
+.dr-grp-x svg{width:16px;height:16px}
+.dr-grp.open .dr-grp-x{transform:rotate(180deg);background:var(--general-muted)}
+@media (prefers-reduced-motion:reduce){.dr-grp-x{transition:none}}
+/* the bar spans the full head width under the label, the same 8px track the
+   Reports bars use, so a category's share is legible before it is opened */
+.dr-grp-h .rp-track{grid-column:1 / -1}
+/* two extra fills on the borrowed track, scoped so the Reports page keeps its
+   own two-colour meaning. Green there means "money taken"; on the spending and
+   usage pages the split is "on agreement / not", which is not a good-vs-bad
+   axis and must not be coloured like one. */
+.dr-page .rp-track i.cov{background:rgb(var(--b,27 100 220))}
+.dr-page .rp-track i.rest{background:var(--general-muted-foreground);opacity:.26}
+.dr-page .rp-key i.cov{background:var(--general-primary)}
+/* the borrowed .rp-tbl / .rp-stat green is a fill colour used as type here; on
+   these pages it takes the text step. Scoped to .dr-page so Reports is untouched. */
+.dr-page .rp-tbl .pos{color:var(--sentiment-positive-ink)}
+.dr-page .rp-tbl .neg{color:#c43b00}
+.dr-page .rp-stat b.pos{color:var(--sentiment-positive-ink)}
+.dr-page .rp-stat b.warn{color:#c43b00}
+.dr-page .rp-bar-v{color:var(--sentiment-positive-ink)}
+.dr-page .rp-key i.rest{background:var(--general-muted-foreground);opacity:.32}
+
+.dr-grp-b{padding:0 var(--s5,20px) var(--s5,20px);
+  border-top:1px solid var(--hairline)}
+.dr-grp-b>*+*{margin-top:var(--s6)}
+.dr-sub{margin-top:var(--s5,20px);font-size:13px;font-weight:600;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--general-muted-foreground)}
+
+/* the agreement strip inside an opened category */
+.dr-ags{list-style:none;display:flex;flex-direction:column;gap:var(--s3);
+  margin-top:var(--s3)}
+.dr-ag{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;gap:var(--s3);
+  padding:var(--s3) var(--s4);border-radius:var(--rounded-md);
+  background:var(--general-background)}
+.dr-ag-n{min-width:0;font-size:15px;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dr-ag-n em{font-style:normal;font-weight:500;color:var(--general-muted-foreground)}
+.dr-ag-v{font-size:15px;font-weight:700;white-space:nowrap;
+  font-variant-numeric:tabular-nums;color:var(--sentiment-positive-ink)}
+.dr-ag-v.idle{color:var(--general-muted-foreground)}
+/* status pill: live / agreed but idle / not switched on. Never colour alone —
+   each carries its own word. */
+.dr-tag{flex:0 0 auto;padding:3px 9px;border-radius:var(--rounded-full);
+  font-size:12px;font-weight:650;white-space:nowrap;
+  background:var(--general-muted);color:var(--general-muted-foreground)}
+.dr-tag.on{background:#d9f2ef;color:var(--sentiment-positive-ink-on-tint)}
+.dr-tag.idle{background:#ffe9dd;color:var(--sentiment-negative-ink-on-tint)}
+
+/* the month strip: a real read of one agreement's year, from the same seeded
+   series the agreement page uses, so the two never disagree */
+.dr-mon{display:flex;align-items:flex-end;gap:3px;height:64px;margin-top:var(--s3)}
+.dr-mon-c{flex:1 1 0;min-width:0;display:flex;flex-direction:column;
+  align-items:center;gap:5px}
+.dr-mon-b{width:100%;border-radius:3px 3px 0 0;background:rgb(var(--b,27 100 220)/.28);
+  transform-origin:bottom center;
+  animation:drGrowY .5s cubic-bezier(.22,.9,.24,1) both;
+  animation-delay:calc(var(--i,0) * 26ms)}
+.dr-mon-c.peak .dr-mon-b{background:rgb(var(--b,27 100 220))}
+.dr-mon-l{font-size:10.5px;color:var(--general-muted-foreground)}
+@keyframes drGrowY{from{transform:scaleY(.04)}to{transform:scaleY(1)}}
+@media (prefers-reduced-motion:reduce){.dr-mon-b{animation:none}}
+
+/* ---- the illustrative-sample band ----
+   Fanny has uploaded nothing, so any line-level table on her pages is a peer
+   example, not her ledger. It says so in words, sits on the estimate tint rather
+   than the verified one, and never carries her company name. */
+.dr-samp{display:flex;align-items:flex-start;gap:var(--s3);
+  padding:var(--s3) var(--s4);border-radius:var(--rounded-md);
+  border:1px dashed #b9cdea;background:var(--brand-ice);
+  font-size:13px;line-height:1.5;color:#1b3a6b}
+.dr-samp svg{flex:0 0 auto;width:16px;height:16px;margin-top:2px;
+  color:var(--general-primary)}
+.dr-samp b{font-weight:650}
+
+/* ---- what to do about it ----
+   Every one of these pages ends on the move it implies. A drill-down that stops
+   at the number leaves the reader with a fact and no handle. */
+.dr-next{display:flex;align-items:center;gap:var(--s5,20px);flex-wrap:wrap;
+  padding:var(--s6);border-radius:var(--rounded-lg);
+  background:var(--brand-ice)}
+.dr-next-tx{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:var(--s1)}
+.dr-next-tx b{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;
+  letter-spacing:-.2px}
+.dr-next-tx span{font-size:15px;line-height:1.5;color:#40608f}
+.dr-next .btn{flex:0 0 auto}
 
 /* ==========================================================================
    AREAS — every purchasing area, with the specialist's shortlist on top.
@@ -4930,6 +5411,10 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
       <!-- data-source status: a live pill for a customer whose ERP is connected, and a
            red-dot call to action for one who hasn't connected anything yet. Either way
            it points at the same place — the data centre and its three input methods. -->
+      <!-- said once, in the shell: the figures on whatever page you are looking at
+           follow numbers the user set rather than their own accounting data. Empty
+           and hidden until that is true. -->
+      <div class="erp tune-pill" id="tunePill" hidden></div>
       <button class="erp" id="erpPill"></button>
       <div class="notif">
         <button class="bell" id="bellBtn" aria-label="Notifications" aria-expanded="false">
@@ -5090,6 +5575,9 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
              breakpoints respond to the canvas, not the window. -->
         <section id="viewReports" hidden></section>
 
+        <!-- the three drill-downs behind the Overview summary cards -->
+        <section id="viewDrill" hidden></section>
+
         <!-- AREAS — the purchasing areas themselves (ROWS): the specialist's
              shortlist on a grey tray, then all of them. Also inside .page so its
              cards resolve @container page breakpoints. -->
@@ -5182,7 +5670,9 @@ const fmt = n => nf.format(Math.round(n));
    "3.497.000", the way a Stripe-style overview keeps big figures scannable */
 const fmtCompact = n => {
   const abs = Math.abs(n);
-  if(abs >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  /* comma, not point: every other figure in the app is formatted da-DK, where a
+     point is the THOUSANDS separator — "2.1M" reads as twenty-one million */
+  if(abs >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '').replace('.', ',') + 'M';
   if(abs >= 1e3) return Math.round(n / 1e3) + 'K';
   return fmt(n);
 };
@@ -5451,6 +5941,9 @@ function setView(){
   const sv = $('#viewSavings'); if(sv) sv.hidden = true;
   const ag = $('#viewAgreements'); if(ag) ag.hidden = !ags;
   const rp = $('#viewReports'); if(rp) rp.hidden = !rep;
+  /* a drill-down is an overlay on whatever you were looking at, so any
+     navigation closes it rather than leaving it stranded behind a nav change */
+  const dv = $('#viewDrill'); if(dv) dv.hidden = true;
   const arv = $('#viewAreas'); if(arv) arv.hidden = !areas;
   $('#viewSup').hidden = !sup;
   $('#viewDash').hidden = sup || ncDash || ags || rep || areas;
@@ -5605,7 +6098,7 @@ function apReplyFor(q){
   }
   if(/agreement|activate|switch/.test(t)){
     const top = byPot[0];
-    return `${AGR_TOTAL} agreements exist; the ones you hold are on the Agreements page with
+    return `${agrTotalNow()} agreements exist; the ones you hold are on the Agreements page with
       where each sits in activation. The one I would open first is
       <b>${top.agr.filter(a => !a.req).sort((a, b) => b.save - a.save)[0].n}</b> in
       ${top.n.toLowerCase()} — ${money(potOf(top))} a year.`;
@@ -5737,6 +6230,10 @@ const TICK = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stro
 const ARROW = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 /* upward trend: a diagonal, not a vertical — a vertical arrow reads as "up next",
    a diagonal reads as a trend line going the right way */
+/* the info mark: a real button, not a hover tooltip, because what it hides is a
+   sentence someone may want to keep on screen while they drag a slider — and a
+   tooltip that vanishes on mouse-out cannot be read and acted on at once. */
+const INFO_I = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
 const TREND_UP = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 17L17 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M10.5 6H17v6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 /* steady, not rising: a level arrow reads as "this is holding", which is the honest
    thing to say about a spend figure — neither good news nor bad. */
@@ -6050,6 +6547,7 @@ function enterAppShell(){
      — that way the category tab (which boots straight through enterAppShell and
      never calls setView) gets the same rail as every other page */
   renderActivityRail();
+  renderTunePill();
   document.body.classList.add('in-app');
   $('#app').classList.add('on');
   /* after .on — the appbar has no measurable height while #app is display:none */
@@ -6476,6 +6974,37 @@ function renderErpPill(){
        <span class="et"><b>Connect your data</b></span>`;
 }
 
+/* the shell's admission that the numbers are the user's own doing. Rebuilt only
+   when the count changes — a drag calls this on every frame. */
+function renderTunePill(){
+  const pill = $('#tunePill');
+  if(!pill) return;
+  const n = tuneCount();
+  pill.hidden = !n;
+  if(pill.dataset.n === String(n)) return;
+  pill.dataset.n = String(n);
+  if(!n){ pill.innerHTML = ''; return; }
+  pill.innerHTML = `
+    <button type="button" class="tune-pill-go">
+      <span class="tune-pill-dot" aria-hidden="true"></span>
+      <span class="et"><b>Adjusted numbers</b><span>${n} area${n === 1 ? '' : 's'}</span></span>
+    </button>
+    <button type="button" class="tune-pill-x" aria-label="Reset every figure to ${
+      newCustomer ? 'the benchmark' : 'your invoices'}">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>`;
+  /* the label goes to the control that caused it, which is the only honest
+     destination: you cannot judge an adjusted figure without seeing the dial */
+  pill.querySelector('.tune-pill-go').addEventListener('click', () => {
+    catViewStyle = 'tune'; persist();
+    goNav('dashboard');
+    renderHome();
+    const el = $(`${dashRoot()} .tune-range`);
+    if(el) el.scrollIntoView({block:'center', behavior:RM ? 'auto' : 'smooth'});
+  });
+  pill.querySelector('.tune-pill-x').addEventListener('click', tuneReset);
+}
+
 /* What the rail says depends on the account. Fanny's is a setup queue — she has
    no history, so inventing events would be a lie; her log is the three things
    that have genuinely happened (account made, peer group matched, data still
@@ -6714,7 +7243,9 @@ const CAT_VIEWS = [
   {k:'focus',  n:'Focus'},
   {k:'brands', n:'Brands'},
   {k:'why',    n:'Why'},
-  {k:'story',  n:'Story'}
+  {k:'story',  n:'Story'},
+  /* the only one that writes: see the TUNE block */
+  {k:'tune',   n:'Tune'}
 ];
 
 /* the money on a category row. Bob has invoices, so his figure is what is still
@@ -6879,14 +7410,22 @@ function catViewStory(rows){
     </div>`;
 }
 
+/* The eight readings were a sprint device — one figure, eight ways to argue it —
+   and Tune is the one that won: it is the only one the user can act on. The other
+   seven are PARKED, not deleted: flip this to true and the segmented control comes
+   back with all of them, exactly as it was. */
+const SHOW_CAT_VIEWS = false;
+const catView = () => SHOW_CAT_VIEWS ? catViewStyle : 'tune';
+
 /* the list keeps its own column header; the others don't need one */
 function catViewBody(rows){
-  if(catViewStyle === 'bars')   return catViewBars(rows);
-  if(catViewStyle === 'split')  return catViewSplit(rows);
-  if(catViewStyle === 'focus')  return catViewFocus(rows);
-  if(catViewStyle === 'brands') return catViewBrands(rows);
-  if(catViewStyle === 'why')    return catViewWhy(rows);
-  if(catViewStyle === 'story')  return catViewStory(rows);
+  if(catView() === 'bars')   return catViewBars(rows);
+  if(catView() === 'split')  return catViewSplit(rows);
+  if(catView() === 'focus')  return catViewFocus(rows);
+  if(catView() === 'brands') return catViewBrands(rows);
+  if(catView() === 'why')    return catViewWhy(rows);
+  if(catView() === 'story')  return catViewStory(rows);
+  if(catView() === 'tune')   return catViewTune();
   return `
     <div class="nc-mini-colhead">
       <span class="nc-mini-colhead-sp"></span>
@@ -6964,6 +7503,9 @@ function dashModelOwn(){
   const openIn    = r => r.agr.filter(a => !a.req).length;
   const rec = (ic, txt, val) => ({ic, txt, val});
   const first = openCats[0], second = openCats[1];
+  /* the moment any spend is his rather than his invoices', the page has to stop
+     saying "exact to the krone" — that claim is the most valuable thing on it */
+  const tuned = tuneActive(), tn = tuneCount();
 
   return {
     hello: `${greetPart()}, ${state.user.split(' ')[0]}`,
@@ -6976,22 +7518,31 @@ function dashModelOwn(){
     asstSub: 'Ask me anything about your agreements',
     asstAsk: `Which of my agreements is worth the most right now?`,
     ovAria: 'Your year so far',
-    ovTitle: 'Savings confirmed on your own invoices',
-    ovSub: `${state.company} · ${fmt(invoices)} invoices from ${suppliers} suppliers, matched line by
+    ovTitle: tuned ? 'Savings on the spend you have set' : 'Savings confirmed on your own invoices',
+    ovSub: tuned
+      ? `You have set what ${state.company} buys in ${tn} area${tn === 1 ? '' : 's'} — every figure
+         here follows your numbers, not the ${fmt(invoices)} invoices we read. The discount rates
+         are untouched, so the volume bonus comes out at ${fmt(bonusRun)} kr. a year.`
+      : `${state.company} · ${fmt(invoices)} invoices from ${suppliers} suppliers, matched line by
       line — so every figure on this page is exact to the krone, not a benchmark. A volume bonus of
       ${fmt(bonusRun)} kr. a year sits on top of the savings below.`,
     methodLabel: 'Where these come from',
     method: openDataCenter,
     cards: [
-      {l:'Savings YTD', v:`+${fmt(saveRun)}`, u:'kr. / year', accent:true, trend:'',
-       cap:`${fmt(Math.round(saveRun * yearFrac))} kr. of it realised so far this year`,
-       spark:DASH_SPARK_SAVE, tone:'good'},
-      {l:'Spend YTD', v:fmt(spend), u:'kr. / year', trend:'flat',
-       cap:`Across ${rows.length} purchasing categories`,
-       spark:DASH_SPARK_SPEND, tone:'flat', amp:.45},
+      /* an adjusted figure is a run-rate, not a fact about the year so far, so
+         the label has to stop saying YTD the moment it is one */
+      {l: tuned ? 'Savings a year' : 'Savings YTD', v:`+${fmt(saveRun)}`, u:'kr. / year',
+       accent:true, trend:'',
+       cap: tuned ? `On the spend you have set, not on your invoices`
+                  : `${fmt(Math.round(saveRun * yearFrac))} kr. of it realised so far this year`,
+       spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
+      {l: tuned ? 'Spend a year' : 'Spend YTD', v:fmt(spend), u:'kr. / year', trend:'flat',
+       cap: tuned ? `Across ${rows.length} areas · ${tn} set by you`
+                  : `Across ${rows.length} purchasing categories`,
+       spark:DASH_SPARK_SPEND, tone:'flat', amp:.45, go:'spend'},
       {l:'Agreements in use', v:`${reqAgs.length}`, trend:'rise',
        cap:`${agrTotal - reqAgs.length} more are open to you`,
-       spark:DASH_SPARK_COUNT, tone:'rise'}
+       spark:DASH_SPARK_COUNT, tone:'rise', go:'usage'}
     ],
     catTitle: 'Savings still open, by category',
     catSub: `${fmt(remaining)} kr. a year, from the agreements you have not activated yet`,
@@ -7000,7 +7551,7 @@ function dashModelOwn(){
     advTitle: moves.length
       ? `${MOVE_N[moves.length]} move${moves.length === 1 ? '' : 's'} worth ${fmt(movesWorth)} kr. a year`
       : 'Every agreement is already active',
-    gaugePct: Math.round(covered / spend * 100),
+    gaugePct: spend ? Math.round(covered / spend * 100) : 0,
     gaugeLabel: 'Spend covered',
     recs: [
       first && rec(CAT_ICON[first.id] || '',
@@ -7013,7 +7564,14 @@ function dashModelOwn(){
       dormant.length
         ? rec(DASH_CLOCK_IC, `<b>${dormant[0].n}</b> is active, but nothing has been bought
             through it in ${agQuietDays(dormant[0])} days.`, 'Idle')
-        : rec(DASH_ERP_IC, `Your accounting data syncs on its own — every figure here moves with it.`, 'Live')
+        : rec(DASH_ERP_IC, `Your accounting data syncs on its own — every figure here moves with it.`, 'Live'),
+      /* the fourth: the bonus is the one piece of money on this page that is not a
+         discount, and nothing else on the Overview says it exists */
+      bonusRun
+        ? rec(DASH_LEDGER_IC, `Everything you buy on an agreement earns a volume bonus on top
+            of the discount — yours is running at ${fmt(bonusRun)} kr. a year.`, `+${fmt(bonusRun)}`)
+        : rec(DASH_ERP_IC, `Move more spend onto an agreement and a volume bonus starts on top
+            of the discount.`, 'Bonus')
     ].filter(Boolean),
     ask: `Where should ${state.company} go next?`,
     agrTitle: 'Opportunities by agreement',
@@ -7037,6 +7595,9 @@ function dashModelPeer(){
   const [spendLow, spendHigh] = band(p.spend);
   const byRate = [...ROWS].sort((a, b) => b.rate - a.rate);
   const topCat = byRate[0], secondCat = byRate[1];
+  /* when she sets her own spend the cards stop being somebody else's: the rates
+     are still the peer group's, which is why the figures stay a band */
+  const tuned = tuneActive(), tn = tuneCount();
   return {
     hello: `Hello, ${state.user.split(' ')[0]}`,
     helloSub: `Your account is live. Every figure below is what ${state.industry.toLowerCase()}
@@ -7046,24 +7607,35 @@ function dashModelPeer(){
     asstAsk: `I'm new here — how do I get started with Advantage?`,
     gettingStarted: NC_SHOW_GETTING_STARTED && !ncGettingStartedHidden ? ncGettingStartedHTML() : '',
     ovAria: 'Your benchmark',
-    ovTitle: 'Savings made by other companies in your industry',
-    ovSub: `Electrical contracting, 10–49 employees, your region. Figures come from
+    ovTitle: tuned ? 'Savings on the spend you have set'
+                   : 'Savings made by other companies in your industry',
+    ovSub: tuned
+      ? `You have set what your company buys in ${tn} area${tn === 1 ? '' : 's'}. The discount rates
+         are still what electrical contractors your size achieve, so the saving stays a range —
+         connect your accounting data to make it exact.`
+      : `Electrical contracting, 10–49 employees, your region. Figures come from
       real invoices — see the method and the agreements behind them.`,
     methodLabel: 'Show me the method',
     method: openSavings,
     cards: [
-      {l:'They save', v:`+${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}`, u:'kr. / year',
+      /* setting her own spend turns the peer benchmark into her own forecast —
+         which is exactly what the labels then say */
+      {l: tuned ? 'You could save' : 'They save',
+       v:`+${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}`, u:'kr. / year',
        accent:true, trend:'', cap:'Can be more or less than this',
-       spark:DASH_SPARK_SAVE, tone:'good'},
-      {l:'They buy', v:`${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}`, u:'kr. / year',
-       trend:'flat', cap:`Across ${ROWS.length} purchasing categories`,
-       spark:DASH_SPARK_SPEND, tone:'flat', amp:.45},
+       spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
+      {l: tuned ? 'You buy' : 'They buy',
+       v:`${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}`, u:'kr. / year',
+       trend:'flat', cap: tuned ? `Across ${ROWS.length} areas · ${tn} set by you`
+                                : `Across ${ROWS.length} purchasing categories`,
+       spark:DASH_SPARK_SPEND, tone:'flat', amp:.45, go:'spend'},
       {l:'Agreements in use', v:`${p.agrInUse}`, trend:'rise',
-       cap:`${AGR_TOTAL - p.agrInUse} more are open to you`,
-       spark:DASH_SPARK_COUNT, tone:'rise'}
+       cap:`${agrTotalNow() - p.agrInUse} more are open to you`,
+       spark:DASH_SPARK_COUNT, tone:'rise', go:'usage'}
     ],
     catTitle: 'Savings opportunity within categories',
-    catSub: 'What peers like you save per year, in each category',
+    catSub: tuned ? 'What you would save per year on the spend you have set'
+                  : 'What peers like you save per year, in each category',
     catEmpty: 'Nothing to show yet.',
     cats: byRate.slice(0, 6),
     advTitle: `Three moves worth ${fmtCompact(p.saved)} kr. a year`,
@@ -7075,7 +7647,12 @@ function dashModelPeer(){
       {ic:CAT_ICON[secondCat.id] || '', val:`${secondCat.rate}%`,
        txt:`<b>${secondCat.n}</b> is the next best entry point for companies your size.`},
       {ic:DASH_ERP_IC, val:'Auto',
-       txt:`Connect your ERP to keep every number accurate, automatically.`}
+       txt:`Connect your ERP to keep every number accurate, automatically.`},
+      /* the fourth: the bonus, which peers earn on top of the discount and which
+         nothing else on Fanny's Overview mentions */
+      {ic:DASH_LEDGER_IC, val:`+${fmtCompact(p.bonus.total)}`,
+       txt:`Companies your size earn a volume bonus on top of the discount — about
+         <b>${fmtCompact(p.bonus.total)} kr. a year</b> at this level of spend.`}
     ],
     ask: `What should ${state.company} do first to start saving?`,
     agrTitle: 'Opportunities by agreement',
@@ -7084,6 +7661,275 @@ function dashModelPeer(){
     agrs: ROWS.flatMap(r => r.agr.map((a, i) => ({r, a, i})))
       .sort((x, y) => y.a.save - x.a.save).slice(0, 8)
   };
+}
+
+/* ============================================================================
+   TUNE — the spend calculator
+   ============================================================================
+   The seventh reading of the category figures is read-only; this one is a
+   control. A discount is a percentage of what you buy, so ONE factor per area
+   scales that area's spend and every agreement's covers/save underneath it —
+   the rate never moves. That is why tuning one slider is correct everywhere at
+   once: Areas, Reports, Agreements, Suppliers and each category page all derive
+   their money from those same three numbers.
+
+   The factors are the state; the actuals are remembered on the row itself the
+   first time it is touched, so Reset always restores the invoices (or the peer
+   benchmark) rather than a previously tuned number. */
+const TUNE_N = 4;                       /* how many areas get a slider */
+let spendTune = {};                     /* {areaId: factor}; absent = actual */
+
+const tuneFactor  = id => spendTune[id] || 1;
+const tuneCount   = () => Object.keys(spendTune).length;
+const tuneActive  = () => tuneCount() > 0;
+
+function tuneRemember(r){
+  if(r.amtActual === undefined) r.amtActual = r.amt;
+  r.agr.forEach(a => {
+    if(a.coversActual === undefined){ a.coversActual = a.covers; a.saveActual = a.save; }
+  });
+}
+/* writes the factor into the data model. Rounding is applied per figure rather
+   than to a running total: these are independent quantities the rest of the app
+   reads on its own, not slices of one sum that has to re-add exactly. */
+function tuneWrite(r){
+  tuneRemember(r);
+  const f = tuneFactor(r.id);
+  r.amt = Math.round(r.amtActual * f);
+  r.agr.forEach(a => {
+    a.covers = Math.round(a.coversActual * f);
+    a.save   = Math.round(a.saveActual * f);
+  });
+}
+const tuneApplyAll = () => ROWS.forEach(tuneWrite);
+
+function tuneReset(){
+  spendTune = {};
+  tuneApplyAll();
+  persist();
+  renderTunePill();
+  renderHome();
+}
+
+/* the two figures a row is read against, in the units the user sees — Fanny's
+   are her peer group scaled to the company size she picked */
+const areaSpend  = r => Math.round(r.amt * areaMult());
+const areaBase   = r => Math.round((r.amtActual === undefined ? r.amt : r.amtActual) * areaMult());
+/* what an area still has open, at ITS ACTUAL spend — the ranking has to be
+   stable while the sliders move, or rows would reorder under the pointer */
+const areaBaseMoney = r => newCustomer
+  ? Math.round(areaBase(r) * r.rate / 100)
+  : r.agr.reduce((s, a) => s + (a.req ? 0 : (a.saveActual === undefined ? a.save : a.saveActual)), 0);
+
+/* Every rail used to be the same length, because its fill drew the STOP INDEX and
+   the untouched figure is the middle stop on every row — so four areas earning
+   126.900, 50.500, 26.300 and 14.800 kr. all showed an identical half-full bar.
+   The bar has to be the money.
+
+   The row's TRACK is what carries the proportion, not the fill inside it: scaling
+   the track keeps every slider linear in its own stops, so arrow keys, Home/End
+   and the drag all still land exactly where they did. What changes is how far the
+   rail reaches — the area earning eight times as much gets a rail eight times as
+   long, and the fill inside it grows and shrinks with the saving as you drag.
+
+   areaBaseMoney is the untouched saving, so a row's share is fixed while the
+   pointer is down: rails do not resize under the finger that is dragging one. */
+function tuneShare(r){
+  const {top} = tuneRows();
+  const max = Math.max(1, ...top.map(areaBaseMoney));
+  return Math.max(0.001, areaBaseMoney(r) / max);
+}
+
+/* round to two significant figures — enough to keep every stop a number someone
+   would say out loud, fine enough that seven of them never collide */
+const roundSig = (n, sig) => {
+  if(n <= 0) return 0;
+  const p = Math.pow(10, Math.floor(Math.log10(n)) - (sig - 1));
+  return Math.round(n / p) * p;
+};
+/* Pre-defined stops rather than a continuous range. A purchasing figure is a
+   decision — "about half of what we buy now", "double it" — not 4.032.300 kr.,
+   and a fixed set of stops means the scale can be SHOWN: seven labelled values
+   from a quarter of today up to three times it, with today itself always exactly
+   on the scale, so the way back is a stop like any other. Nothing is ever zero:
+   an area with no spend would make every per-agreement percentage in the app
+   divide by zero. */
+const TUNE_MULT = [.25, .5, .75, 1, 1.5, 2, 3];
+function tuneStops(r){
+  const base = areaBase(r);
+  return [...new Set(TUNE_MULT.map(m => m === 1 ? base : roundSig(base * m, 2)))]
+    .filter(v => v > 0).sort((a, b) => a - b);
+}
+const tuneIdx = (stops, v) => stops.reduce((best, x, i) =>
+  Math.abs(x - v) < Math.abs(stops[best] - v) ? i : best, 0);
+/* which areas get a slider, ranked once by actual money and never re-ranked */
+function tuneRows(){
+  const rows = live().slice().sort((a, b) => areaBaseMoney(b) - areaBaseMoney(a));
+  return {top: rows.slice(0, TUNE_N), rest: rows.slice(TUNE_N)};
+}
+const tuneSaving = r => newCustomer ? Math.round(areaSpend(r) * r.rate / 100) : potOf(r);
+
+/* Every figure in this app prints at the precision it actually has: exact off an
+   invoice, a ±15% band off a benchmark. A slider position is neither — it is a
+   projection of next year's buying — so it prints as a band too, ±7% for "about
+   that much", and the saving band is that times the rate. For a benchmark
+   customer the rate is itself uncertain, so the two bands compound and her figure
+   comes out wider than his. At rest nothing is projected, so each row falls back
+   to whatever the rest of the app already says about that number. */
+const TUNE_BAND = .07;
+const bandRange = (lo, hi) => `${fmtCompact(Math.round(lo))}–${fmtCompact(Math.round(hi))}`;
+
+function tuneFigs(r){
+  const now = areaSpend(r), base = areaBase(r), save = tuneSaving(r);
+  const on = Math.abs(now - base) >= 1;          /* moved off their own figure */
+  const e = newCustomer ? EST_BAND : 0;
+  /* the spend: exact only when it is an invoice total nobody has touched. A
+     benchmark carries the same ±15% it carries everywhere else in the app; a
+     level the user has dialled in carries ±7%, because they set roughly that
+     much rather than exactly that. */
+  const sb = on ? TUNE_BAND : e;
+  /* the money: the projection band times the rate band. Bob's rate is a fact, so
+     an untouched row of his is the only figure on this page that prints exact. */
+  const mb = on ? TUNE_BAND : 0;
+  return {on, now, base, save,
+    spend: sb ? bandRange(now * (1 - sb), now * (1 + sb)) : fmtCompact(now),
+    money: mb || e ? `+${bandRange(save * (1 - mb) * (1 - e), save * (1 + mb) * (1 + e))}`
+                   : `+${fmt(save)}`,
+    /* the readout under the knob is hidden at rest, so the dot has to carry BOTH
+       figures: what they set, and what it was before they set it */
+    tip: on
+      ? `You set ${bandRange(now * (1 - TUNE_BAND), now * (1 + TUNE_BAND))} kr. a year here. ${
+          newCustomer ? `Companies your size buy about ${fmtCompact(base)} kr.`
+                      : `Your invoices say ${fmt(base)} kr.`}`
+      : ''};
+}
+
+/* the stops are evenly spaced along the line whatever their values — the scale is
+   a set of choices, not a number line, and even spacing is what makes the seven
+   labels readable in 280px */
+const tunePos = (stops, i) => `${(i / Math.max(1, stops.length - 1) * 100).toFixed(3)}%`;
+
+function tuneRowHTML(r){
+  const stops = tuneStops(r), f = tuneFigs(r);
+  const idx = tuneIdx(stops, f.now), bIdx = tuneIdx(stops, f.base);
+  return `
+    <li class="tune-row" data-tune="${r.id}">
+      <span class="tune-n">${r.n}<span class="tune-flag" tabindex="0" role="note"
+        data-tip="${f.tip}" aria-label="${f.tip}"${f.on ? '' : ' hidden'}></span></span>
+      <span class="tune-rail" style="--p:${tunePos(stops, idx)};--b:${tunePos(stops, bIdx)};--w:${
+        (tuneShare(r) * 100).toFixed(2)}%">
+        <span class="tune-rail-in">
+          <i class="tune-fill"></i>
+          <i class="tune-tick"></i>
+          <span class="tune-val">${f.spend}<em>kr. a year</em></span>
+        </span>
+        <input type="range" class="tune-range" min="0" max="${stops.length - 1}" step="1"
+          value="${idx}" aria-label="${r.n} — what ${
+            newCustomer ? 'companies your size buy' : 'you buy'} a year"
+          aria-valuetext="${f.spend} kroner a year, saving ${f.money} kroner">
+      </span>
+      <b class="tune-save">${f.money}<em>kr. a year</em></b>
+    </li>`;
+}
+
+function catViewTune(){
+  const {top, rest} = tuneRows();
+  const restSpend = rest.reduce((s, r) => s + areaSpend(r), 0);
+  const restSave  = rest.reduce((s, r) => s + tuneSaving(r), 0);
+  return `
+    <ul class="tune-list">
+      ${top.map(tuneRowHTML).join('')}
+      ${rest.length ? `
+      <li class="tune-row tune-rest">
+        <span class="tune-n">${rest.length} other area${rest.length === 1 ? '' : 's'}</span>
+        <span class="tune-rest-sub">${fmtCompact(restSpend)} kr. a year · not tuned here</span>
+        <b class="tune-save">${newCustomer ? `+${estRange(restSave)}` : `+${fmt(restSave)}`}<em>kr. a year</em></b>
+      </li>` : ''}
+    </ul>
+    <div class="cv-foot">
+      <button type="button" class="info-dot" id="tuneInfo" aria-expanded="false"
+        aria-controls="tuneNote" aria-label="How the sliders work">${INFO_I}</button>
+      <button type="button" class="linkbtn tune-head-reset"${tuneActive() ? '' : ' hidden'}>Reset to ${
+        newCustomer ? 'the benchmark' : 'my invoices'}</button>
+    </div>
+    <p class="cv-note" id="tuneNote" hidden>The mark on each line is what ${newCustomer
+      ? 'companies your size buy there'
+      : 'your invoices say you buy there'} today, and every line runs from a fraction of
+      that up to about three times it. Everything follows what you set — the figures above,
+      Areas, Reports and every agreement.</p>`;
+}
+
+/* Paint, don't re-render: a full render would replace the range input the pointer
+   is holding, and the drag would die on the first frame. So a drag repaints text
+   nodes and two custom properties; only the assistant's card — a different cell,
+   nothing to lose focus in — is rebuilt, and only once the pointer is released. */
+function tunePaintRow(li){
+  const r = ROWS.find(x => x.id === li.dataset.tune);
+  if(!r) return;
+  const stops = tuneStops(r), f = tuneFigs(r);
+  const idx = tuneIdx(stops, f.now);
+  const rail = li.querySelector('.tune-rail');
+  if(rail) rail.style.setProperty('--p', tunePos(stops, idx));
+  const val = li.querySelector('.tune-val'), inn = li.querySelector('.tune-rail-in');
+  if(val && inn){
+    val.innerHTML = `${f.spend}<em>kr. a year</em>`;
+    /* centred under the knob, but kept inside the track: at 258px a centred
+       label on the second stop would hang out past the text column */
+    const track = inn.clientWidth, w = val.offsetWidth;
+    const x = idx / Math.max(1, stops.length - 1) * track - w / 2;
+    val.style.left = `${Math.max(0, Math.min(track - w, x)).toFixed(1)}px`;
+  }
+  const flag = li.querySelector('.tune-flag');
+  if(flag){ flag.hidden = !f.on; flag.dataset.tip = f.tip; flag.setAttribute('aria-label', f.tip); }
+  const rng = li.querySelector('.tune-range');
+  if(rng){
+    rng.value = idx;
+    rng.setAttribute('aria-valuetext', `${f.spend} kroner a year, saving ${f.money} kroner`);
+  }
+  const sv = li.querySelector('.tune-save');
+  if(sv) sv.innerHTML = `${f.money}<em>kr. a year</em>`;
+}
+
+/* every derived figure on the dashboard that a tune can move, updated in place */
+function dashPaint(root){
+  const m = dashModel();
+  /* keyed off the card's drill-down id — it is already a stable per-card name,
+     so the paint needs no second identifier for the same thing */
+  m.cards.forEach(c => {
+    const card = c.go && $(`${root} [data-card="${c.go}"]`);
+    if(!card) return;
+    const l = card.querySelector('.nc-ov-card-l');
+    if(l) l.textContent = c.l;
+    const v = card.querySelector('.ov-num'), cap = card.querySelector('.nc-ov-card-c');
+    if(v) v.textContent = c.v;
+    if(cap) cap.textContent = c.cap;
+  });
+  const bT = $(`${root} .nc-calc-txt b`), bS = $(`${root} .nc-calc-txt > span`);
+  if(bT) bT.textContent = m.ovTitle;
+  if(bS) bS.textContent = m.ovSub;
+  const advT = $(`${root} .nc-advisory-title`);
+  if(advT) advT.textContent = m.advTitle;
+  const gL = $(`${root} .nc-gauge-label b`);
+  if(gL) gL.textContent = `${m.gaugePct}%`;
+  const arc = $(`${root} .nc-gauge path:last-of-type`);
+  if(arc) arc.setAttribute('stroke-dashoffset', (Math.PI * 50 * (1 - m.gaugePct / 100)).toFixed(1));
+  const sub = $(`${root} .nc-mini-sub`);
+  if(sub) sub.textContent = m.catSub;
+  $$(`${root} .tune-row[data-tune]`).forEach(tunePaintRow);
+  const reset = $(`${root} .tune-head-reset`);
+  if(reset) reset.hidden = !tuneActive();
+  renderTunePill();
+  return m;
+}
+
+/* the assistant's three moves re-rank when the money changes, so that cell is
+   rebuilt on release rather than mid-drag — a list reordering under a moving
+   pointer is the one kind of feedback that reads as a bug */
+function tuneSettle(root){
+  const m = dashModel();
+  const adv = $(`${root} .nc-advisory`);
+  if(adv){ adv.innerHTML = dashAdvisoryHTML(m); wireDashAsk(root, m); }
+  persist();
 }
 
 /* the getting-started checklist is parked, not deleted (NC_SHOW_GETTING_STARTED)
@@ -7126,15 +7972,22 @@ function ncGettingStartedHTML(){
 }
 
 /* one summary card: label, figure, the basis under it, and the wash behind */
+/* One renderer, both personas. A card with a `go` becomes a real <button> rather
+   than a div with a click handler: it is then keyboard-reachable, announced as a
+   button, and gets focus styling for free. The chevron is the visible half of
+   that promise — a card that does something has to look like it does. */
 function dashCardHTML(c){
+  const t = c.go ? 'button' : 'div';
   return `
-    <div class="nc-ov-card">
+    <${t}${c.go ? ` type="button" data-drill="${c.go}" data-card="${c.go}"` : ''}
+      class="nc-ov-card${c.go ? ' is-link' : ''}"${c.go ? ` aria-label="${c.l}: ${
+        String(c.v).replace(/<[^>]*>/g, '')} — see where this comes from"` : ''}>
+      ${c.go ? `<span class="nc-ov-card-go" aria-hidden="true">${DR_IC.go}</span>` : ''}
       <span class="nc-ov-card-l">${c.l}</span>
-      <b class="nc-ov-card-v${c.accent ? ' accent' : ''}">${c.v}${c.u ? `<small> ${c.u}</small>` : ''}<span
-        class="trend-up${c.trend ? ' ' + c.trend : ''}" aria-hidden="true">${c.trend === 'flat' ? TREND_FLAT : TREND_UP}</span></b>
+      <b class="nc-ov-card-v${c.accent ? ' accent' : ''}"><span class="ov-num">${c.v}</span>${c.u ? `<small> ${c.u}</small>` : ''}</b>
       <span class="nc-ov-card-c">${c.cap}</span>
       ${cardSpark(c.spark, c.tone, c.amp)}
-    </div>`;
+    </${t}>`;
 }
 
 function dashRecHTML(rec){
@@ -7142,8 +7995,32 @@ function dashRecHTML(rec){
     <li class="nc-rec-row">
       <span class="nc-rec-ic"><svg viewBox="0 0 24 24" fill="none">${rec.ic}</svg></span>
       <span class="nc-rec-txt">${rec.txt}</span>
-      <span class="nc-rec-val">${rec.val}</span>
+      <span class="nc-rec-val${rec.val.startsWith('+') ? '' : ' state'}">${rec.val}</span>
     </li>`;
+}
+
+/* its own function because a tune rebuilds this cell alone: the three moves
+   re-rank when the money changes, and this is the one cell with no control in it
+   to lose focus from */
+function dashAdvisoryHTML(m){
+  return `
+    <span class="nc-advisory-eyebrow">Saving assistant</span>
+    <h2 class="nc-advisory-title">${m.advTitle}</h2>
+    <div class="nc-gauge-wrap">
+      <svg class="nc-gauge" viewBox="0 0 120 66">
+        <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--general-muted)" stroke-width="10" stroke-linecap="round"/>
+        <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--general-primary)" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="${(Math.PI*50).toFixed(1)}"
+          stroke-dashoffset="${(Math.PI*50*(1-m.gaugePct/100)).toFixed(1)}"/>
+      </svg>
+      <div class="nc-gauge-label"><b>${m.gaugePct}%</b><span>${m.gaugeLabel}</span></div>
+    </div>
+    <ul class="nc-rec-list">${m.recs.map(dashRecHTML).join('')}</ul>
+    <button type="button" class="btn btn-primary nc-advisory-cta dash-ask">Ask the saving assistant</button>
+    <footer class="nc-advisory-foot">
+      <img class="sda" src="${SDA_MARK}" alt="">
+      <span>Powered by the Advantage saving assistant</span>
+    </footer>`;
 }
 
 /* rowId, not a fixed id: both personas' copies of this page can be in the DOM at
@@ -7191,33 +8068,16 @@ function dashHTML(m, rowId){
           <h2>${m.catTitle}</h2>
           <p class="nc-sub nc-mini-sub">${m.catSub}</p>
           ${m.cats.length ? `
+          ${SHOW_CAT_VIEWS ? `
           <div class="cv-head">
             <div class="seg" role="group" aria-label="How to show the categories">
               ${CAT_VIEWS.map(v => `<button type="button" data-cv="${v.k}"
                 aria-pressed="${catViewStyle === v.k}">${v.n}</button>`).join('')}
             </div>
-          </div>
+          </div>` : ''}
           ${catViewBody(m.cats)}` : `<p class="opp-empty">${m.catEmpty}</p>`}
         </div>
-        <div class="nc-bento-cell nc-advisory">
-          <span class="nc-advisory-eyebrow">Saving assistant</span>
-          <h2 class="nc-advisory-title">${m.advTitle}</h2>
-          <div class="nc-gauge-wrap">
-            <svg class="nc-gauge" viewBox="0 0 120 66">
-              <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--general-muted)" stroke-width="10" stroke-linecap="round"/>
-              <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--general-primary)" stroke-width="10"
-                stroke-linecap="round" stroke-dasharray="${(Math.PI*50).toFixed(1)}"
-                stroke-dashoffset="${(Math.PI*50*(1-m.gaugePct/100)).toFixed(1)}"/>
-            </svg>
-            <div class="nc-gauge-label"><b>${m.gaugePct}%</b><span>${m.gaugeLabel}</span></div>
-          </div>
-          <ul class="nc-rec-list">${m.recs.map(dashRecHTML).join('')}</ul>
-          <button type="button" class="btn btn-primary nc-advisory-cta dash-ask">Ask the saving assistant</button>
-          <footer class="nc-advisory-foot">
-            <img class="sda" src="${SDA_MARK}" alt="">
-            <span>Powered by the Advantage saving assistant</span>
-          </footer>
-        </div>
+        <div class="nc-bento-cell nc-advisory">${dashAdvisoryHTML(m)}</div>
       </div>
     </section>
 
@@ -7259,6 +8119,8 @@ function dashHTML(m, rowId){
 function wireDash(root, m){
   const q = sel => $$(sel.split(',').map(s => `${root} ${s.trim()}`).join(','));
   wireAgrFav(root);
+  /* the three summary figures open the page that backs them up */
+  q('[data-drill]').forEach(b => b.addEventListener('click', () => openDrill(b.dataset.drill)));
   q('.seg [data-style]').forEach(b => b.addEventListener('click', () => {
     agrCardStyle = b.dataset.style; persist(); renderHome();
   }));
@@ -7309,11 +8171,77 @@ function wireDash(root, m){
   if(hideGS) hideGS.addEventListener('click', () => {
     ncGettingStartedHidden = true; persist(); renderHome();
   });
+  wireDashTune(root);
   const askAbout = text => { toggleAgent(true); agentAsk(text); };
   $(`${root} .dash-asst`).addEventListener('click', () => askAbout(m.asstAsk));
-  $(`${root} .dash-ask`).addEventListener('click', () => askAbout(m.ask));
+  wireDashAsk(root, m);
   $(`${root} .dash-method`).addEventListener('click', m.method);
   setTimeout(() => { const h = $(`${root} .dash-h1`); if(h) h.focus({preventScroll:true}); }, 50);
+}
+
+function wireDashAsk(root, m){
+  const ask = $(`${root} .dash-ask`);
+  if(ask) ask.addEventListener('click', () => { toggleAgent(true); agentAsk(m.ask); });
+}
+
+/* Every handler here writes ONE number — the factor for one area — and then asks
+   the page to repaint. Nothing re-renders while a pointer or a caret is inside
+   the control. */
+function wireDashTune(root){
+  const settle = () => tuneSettle(root);
+  $$(`${root} .tune-row[data-tune]`).forEach(li => {
+    const id  = li.dataset.tune;
+    const rng = li.querySelector('.tune-range');
+    if(!rng) return;
+    const r = ROWS.find(x => x.id === id);
+    const stops = tuneStops(r);
+    const base = areaBase(r);
+    const min = stops[0], max = stops[stops.length - 1];
+    const set = value => {
+      const v = Math.min(max, Math.max(min, value));
+      const f = v / (base || 1);
+      /* exactly on the invoices is not a tune — the app-bar token and every
+         "adjusted" line key off the absence of a factor, not off a factor of 1 */
+      if(Math.abs(v - base) < 1) delete spendTune[id]; else spendTune[id] = f;
+      tuneWrite(r);
+      dashPaint(root);
+    };
+    /* the input's value IS the stop index, so arrow keys, Home/End and the drag
+       all land on a defined figure without a line of snapping code */
+    rng.addEventListener('input', () => set(stops[+rng.value]));
+    rng.addEventListener('change', settle);
+    /* The readout is drawn only while the control is in use. Hover and focus do it
+       in CSS; a finger has neither, so a pointer down says so explicitly — and
+       holds it for a beat after the finger lifts, because on touch that beat is
+       the only chance to read the figure you just set. */
+    const rail = li.querySelector('.tune-rail');
+    let hold = 0;
+    const live = on => {
+      clearTimeout(hold);
+      if(rail) rail.classList.toggle('live', on);
+    };
+    rng.addEventListener('pointerdown', () => live(true));
+    rng.addEventListener('pointercancel', () => live(false));
+    rng.addEventListener('blur', () => live(false));
+    rng.addEventListener('pointerup', () => {
+      clearTimeout(hold);
+      hold = setTimeout(() => rail && rail.classList.remove('live'), 1400);
+    });
+  });
+  const reset = $(`${root} .tune-head-reset`);
+  if(reset) reset.addEventListener('click', tuneReset);
+  /* the info mark toggles the sentence it hides, in place. aria-expanded carries
+     the state for a screen reader; the [aria-expanded] rule carries it visually,
+     so the two can never disagree. */
+  const info = $(`${root} .info-dot`), note = $(`${root} .cv-note`);
+  if(info && note) info.addEventListener('click', () => {
+    const open = note.hidden;
+    note.hidden = !open;
+    info.setAttribute('aria-expanded', String(open));
+  });
+  /* the readout is positioned from its own measured width, which does not exist
+     until the row is in the document */
+  $$(`${root} .tune-row[data-tune]`).forEach(tunePaintRow);
 }
 
 function renderDash(){
@@ -7482,7 +8410,7 @@ function renderSavings(){
               <tfoot><tr>
                 <td>Total</td>
                 <td>${fmt(p.spend)} kr.</td>
-                <td>${p.agrInUse} of ${AGR_TOTAL} agreements</td>
+                <td>${p.agrInUse} of ${agrTotalNow()} agreements</td>
                 <td>${rate}%</td>
                 <td class="pos">+${fmt(p.saved)} kr.</td>
               </tr></tfoot>
@@ -7500,7 +8428,7 @@ function renderSavings(){
           <!-- 2 · the agreements -->
           <section class="nc-sec">
             <h2>Where they have agreements</h2>
-            <p class="nc-sub">${p.agrInUse} of the ${AGR_TOTAL} Advantage agreements, across
+            <p class="nc-sub">${p.agrInUse} of the ${agrTotalNow()} Advantage agreements, across
               ${p.inUse.length} categories, covering ${fmt(p.covered)} kr. of spend. The lead
               supplier in each category is shown below.</p>
 
@@ -8225,7 +9153,12 @@ const PEER_IN_USE = ['mat', 'tool', 'fuel', 'off', 'rent', 'frg'];
 /* The UI used to print "of 24" in three places while ROWS actually holds 21
    agreements. Derive it, so a page about verifiable numbers can't contradict
    its own catalogue — and so adding an agreement never needs a copy change. */
+/* AGR_TOTAL is evaluated at parse time, which is BEFORE injectNew6() pushes the
+   three newly-negotiated agreements onto ROWS at boot — so it freezes at 21 while
+   the live catalogue is 24, and every "N more are open to you" derived from it
+   was three short. Anything counting the catalogue has to count it when asked. */
 const AGR_TOTAL = ROWS.reduce((n, r) => n + r.agr.length, 0);
+const agrTotalNow = () => ROWS.reduce((n, r) => n + r.agr.length, 0);
 /* the one agreement peers actually hold in each of those categories */
 const PEER_AGREEMENT = {
   mat:'Stark Byggecenter', tool:'Hilti Erhverv', fuel:'Q8 Fuel Card',
@@ -11686,6 +12619,618 @@ function renderReports(){
   }));
 }
 
+/* ==========================================================================
+   DRILL-DOWNS — the three Overview summary cards, opened up.
+
+   Each summary card asserts one figure. These are the pages that back it up:
+   click "Savings YTD" and you land on where the saving came from, click
+   "Spend YTD" and you land on where the money goes, click "Agreements in use"
+   and you land on what is actually flowing through them.
+
+   Three rules hold the whole thing together:
+
+   1. No second source of truth. Every figure comes from rpModel(), the same
+      model the Reports page reads, so a number here can never disagree with the
+      same number there. What these pages add is not more arithmetic, it is one
+      level deeper: category -> agreement -> the lines underneath.
+
+   2. The proof matches the persona. Bob's figures are matched against his own
+      invoices, so his pages show the ledger and the lines. Fanny has uploaded
+      nothing, so hers show the cohort, the method and the band — and any line
+      table on her page is labelled as a peer example, because it is one.
+
+   3. Every page ends on the move it implies. A drill-down that stops at the
+      number leaves the reader with a fact and no handle.
+   ========================================================================== */
+
+let drillType = 'savings';
+
+const DRILL = {
+  savings: {k:'savings',  n:'Savings'},
+  spend:   {k:'spend',    n:'Spending'},
+  usage:   {k:'usage',    n:'Agreement usage'}
+};
+
+const DR_IC = {
+  back:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  go:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  peer:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.2 19.5a5.8 5.8 0 0111.6 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 5.2a3.2 3.2 0 010 5.6M18.6 19.5a6.2 6.2 0 00-1.5-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'
+};
+
+/* the ledger: one row of the derivation. `op` is the arithmetic sign that leads
+   the row, blank for the opening line. `sub` is the row's own footnote — where
+   the figure on that line came from, which is the whole point of the page. */
+const drRow = (op, label, sub, val, tone, sum) => `
+  <div class="dr-led-row${sum ? ' sum' : ''}">
+    <span class="dr-led-op" aria-hidden="true">${op || ''}</span>
+    <span class="dr-led-l">${label}${sub ? `<em>${sub}</em>` : ''}</span>
+    <span class="dr-led-v${tone ? ' ' + tone : ''}">${val}</span>
+  </div>`;
+
+/* Fanny's pages carry a line-level table too, and it has to be impossible to
+   read it as her own ledger. One band, in the estimate tint, saying so. */
+const drSample = txt => `
+  <p class="dr-samp">${DR_IC.peer}<span>${txt}</span></p>`;
+
+/* the seeded twelve-month curve the agreement page already draws, reused so the
+   two never tell different stories about the same agreement */
+function drMonths(a, total){
+  const sh = monthlyShares('impact:' + a.n);
+  const vals = splitExact(total, sh);
+  const peak = vals.indexOf(Math.max(...vals));
+  const max = Math.max(1, ...vals);
+  return `<div class="dr-mon" role="img"
+    aria-label="Month by month through ${a.n}: highest in ${MONTH_ABBR[peak]}">
+    ${vals.map((v, i) => `<span class="dr-mon-c${i === peak ? ' peak' : ''}" style="--i:${i}"
+      title="${MONTH_ABBR[i]} — ${fmt(v)} kr.">
+      <span class="dr-mon-b" style="height:${Math.max(3, v / max * 46).toFixed(1)}px"></span>
+      <span class="dr-mon-l">${MONTH_ABBR[i].charAt(0)}</span>
+    </span>`).join('')}
+  </div>`;
+}
+
+/* the line table under an agreement. basketRows() rescales every line so they
+   add back to the agreement's own covers and save — the table totals, so it has
+   to reconcile exactly rather than approximately. */
+function drSpendLines(r, c, est){
+  const lines = basketRows(r, {n:'spend:' + c.id, covers:c.spend, save:Math.round(c.spend * 0.1)});
+  return `
+    <div class="rp-tblwrap">
+      <table class="rp-tbl">
+        <caption>${est ? 'Illustrative lines' : 'What was bought'} · ${c.n}</caption>
+        <thead><tr><th scope="col">What is bought</th>
+          <th scope="col">Spend, kr.</th><th scope="col">Share of ${c.n.toLowerCase()}</th></tr></thead>
+        <tbody>
+          ${lines.map(l => `<tr>
+            <th scope="row">${l.n}</th>
+            <td>${fmt(l.spend)}</td>
+            <td>${(l.spend / c.spend * 100).toFixed(1)}%</td>
+          </tr>`).join('')}
+        </tbody>
+        <tfoot><tr><th scope="row">Total</th>
+          <td>${fmt(c.spend)}</td><td>100%</td></tr></tfoot>
+      </table>
+    </div>`;
+}
+
+function drLines(r, a, est){
+  const lines = basketRows(r, a);
+  return `
+    <div class="rp-tblwrap">
+      <table class="rp-tbl">
+        <caption>${est ? 'Illustrative lines' : 'Invoice lines'} · ${a.n}</caption>
+        <thead><tr><th scope="col">What is bought</th>
+          <th scope="col">Spend, kr.</th><th scope="col">Saving, kr.</th>
+          <th scope="col">Rate</th></tr></thead>
+        <tbody>
+          ${lines.map(l => `<tr>
+            <th scope="row">${l.n}</th>
+            <td>${fmt(l.spend)}</td>
+            <td class="${l.save ? 'pos' : 'none'}">${l.save ? '+' + fmt(l.save) : 'none'}</td>
+            <td>−${(l.save / l.spend * 100).toFixed(1)}%</td>
+          </tr>`).join('')}
+        </tbody>
+        <tfoot><tr><th scope="row">Total</th>
+          <td>${fmt(a.covers)}</td><td class="pos">+${fmt(a.save)}</td>
+          <td>−${(a.save / a.covers * 100).toFixed(1)}%</td></tr></tfoot>
+      </table>
+    </div>`;
+}
+
+/* rpModel() knows what is in force; ROWS knows what is merely available. The
+   drill needs both — "you have not switched this on" is half the story of a
+   category — so each model row is paired back to the ROWS row behind it. */
+function drCats(m){
+  const rows = live();
+  return m.cats.map(c => {
+    const row = rows.find(r => r.id === c.id) || {id:c.id, agr:[]};
+    return Object.assign({}, c, {
+      row,
+      open: c.peer ? (c.ready ? row.agr : []) : row.agr.filter(a => !a.req)
+    });
+  });
+}
+
+/* one collapsible category. The head carries the whole story at a glance — name,
+   figure, and the track — so the list is readable without opening anything; the
+   body is the evidence for people who need it. */
+function drGroup(id, ink, icon, name, sub, val, tone, track, body, i){
+  return `
+    <li class="dr-grp" style="--b:${ink}">
+      <button type="button" class="dr-grp-h" data-drg="${id}" aria-expanded="false"
+        aria-controls="drb-${id}">
+        <span class="dr-grp-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none">${icon}</svg></span>
+        <span class="dr-grp-n">${name}${sub ? `<em>${sub}</em>` : ''}</span>
+        <span class="dr-grp-v${tone ? ' ' + tone : ''}">${val}</span>
+        <span class="dr-grp-x" aria-hidden="true">${DR_IC.chev}</span>
+        ${track}
+      </button>
+      <div class="dr-grp-b" id="drb-${id}" hidden>${body}</div>
+    </li>`;
+}
+
+const drTrack = (i, parts, label) => `
+  <span class="rp-track" style="--i:${i}" role="img" aria-label="${label}">
+    ${parts.map(p => `<i class="${p.c}" style="width:${p.w.toFixed(1)}%"></i>`).join('')}
+  </span>`;
+
+/* ---------- 1 · Savings ---------- */
+function drSavings(m){
+  const cats = drCats(m).sort((a, b) => (b.realised + b.potential) - (a.realised + a.potential));
+  const max = Math.max(1, ...cats.map(c => c.realised + c.potential));
+  const rate = m.covered ? (m.realised / m.covered * 100) : 0;
+  const bonus = bonusOn(m.covered);
+  const best = [...cats].sort((a, b) => b.potential - a.potential)[0];
+
+  const led = m.est ? `
+    <div class="dr-led">
+      <span class="dr-led-h">How the estimate is built</span>
+      ${drRow('', 'Median peer spend', `${ncPeers} companies like yours`, rpNum(m.spend, true))}
+      ${drRow('×', 'Agreed rate where they buy on agreement',
+        `weighted across ${m.agrs.length} categories they cover`, `−${rate.toFixed(1)}%`)}
+      ${drRow('=', 'Saving a company like yours takes', '', rpNum(m.realised, true), 'pos', true)}
+      <p class="dr-led-note">${drCohort()} The band is ±15% — half of them land inside
+        it. Connect your invoices and this becomes one exact figure.</p>
+    </div>` : `
+    <div class="dr-led">
+      <span class="dr-led-h">How the figure is built</span>
+      ${drRow('', 'Spend sitting on an agreement',
+        `${fmt(m.covered)} of ${fmt(m.spend)} kr., ${rpPct(m.covered, m.spend)}% of everything you buy`,
+        fmt(m.covered))}
+      ${drRow('×', 'Average agreed rate',
+        `weighted across ${m.agrs.length} live agreement${m.agrs.length === 1 ? '' : 's'}`,
+        `−${rate.toFixed(1)}%`)}
+      ${drRow('=', 'Saving taken off the invoices', '', `+${fmt(m.realised)}`, 'pos', true)}
+      <p class="dr-led-note">A volume bonus of ${fmt(bonus.total)} kr. a year sits on top,
+        tiered on covered spend. Matched line by line against ${fmt(m.invoices)} invoices.</p>
+    </div>`;
+
+  return {
+    h1: m.est ? 'Where a saving like yours comes from' : 'Where your saving came from',
+    est: m.est,
+    find: `<b class="pos">${rpSave(m.realised, m.est)}<small> kr.</small></b>
+      came off ${m.est ? 'the invoices of companies your size' : 'your invoices'} in
+      ${m.period.of}. Another <em>${rpSave(m.potential, m.est)} kr. a year</em> is
+      priced and waiting in agreements nobody has switched on.`,
+    led,
+    stats: `
+      ${rpStat(rpNum(m.potential, m.est) + ' <small>kr./year</small>',
+        'Still priced and waiting, if you switch the rest on', '', m.est)}
+      ${rpStat(rpPct(m.covered, m.spend) + '<small>%</small>',
+        'Of everything you buy sits on an agreement', '')}
+      ${rpStat(`${fmt(cats.filter(c => c.realised).length)} <small>of ${cats.length}</small>`,
+        'Categories earning something today',
+        cats.every(c => c.realised) ? 'pos' : '')}`,
+    secs: `
+      <section class="rp-sec">
+        <div class="rp-head">
+          <h2>Every category, opened up</h2>
+          <p>Ranked by what each is worth in total. The solid part has landed; the pale
+            part is agreed pricing nobody has switched to yet. Open one to see the
+            agreements behind it and the lines they price.</p>
+        </div>
+        <ul class="dr-drill">
+          ${cats.map((c, i) => {
+            const body = `
+              ${c.agrs.length ? `
+                <p class="dr-sub">Earning today</p>
+                <ul class="dr-ags">
+                  ${c.agrs.map(a => `<li class="dr-ag">
+                    <span class="dr-tag on">Live</span>
+                    <span class="dr-ag-n">${a.n}</span>
+                    <span class="dr-ag-v">${rpSave(a.save, m.est)} kr.</span>
+                  </li>`).join('')}
+                </ul>
+                ${m.est ? drSample(`These lines are what the median company in your trade
+                  buys through this agreement — <b>not your invoices</b>. Yours will differ;
+                  upload them and this table becomes your own.`) : ''}
+                ${c.agrs.map(a => drLines(c.row, a, m.est)).join('')}` : `
+                <p class="dr-sub">Nothing earning here yet</p>`}
+              ${c.open.length ? `
+                <p class="dr-sub">Priced, not switched on</p>
+                <ul class="dr-ags">
+                  ${c.open.map(a => `<li class="dr-ag">
+                    <span class="dr-tag">Ready</span>
+                    <span class="dr-ag-n">${a.n}${a.isNew ? ' <em>· new</em>' : ''}</span>
+                    <span class="dr-ag-v">${rpSave(a.save, m.est)} kr./year</span>
+                  </li>`).join('')}
+                </ul>` : ''}`;
+            return drGroup(c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
+              c.n, `${c.sup} suppliers · ${fmt(c.inv)} invoices`,
+              c.realised ? rpSave(c.realised, m.est) + ' kr.' : 'Nothing yet',
+              c.realised ? 'pos' : 'zero',
+              drTrack(i, [
+                {c:'done', w:c.realised / max * 100},
+                {c:'open', w:c.potential / max * 100}
+              ], `${c.n}: ${fmt(c.realised)} kroner realised, ${fmt(c.potential)} still available`),
+              body, i);
+          }).join('')}
+        </ul>
+        <div class="rp-key">
+          <span><i class="done"></i>Realised — ${m.period.n.toLowerCase()}</span>
+          <span><i class="open"></i>Still available, per year</span>
+        </div>
+      </section>
+
+      ${best && best.potential ? `
+      <div class="dr-next">
+        <span class="dr-next-tx">
+          <b>${best.n} is the biggest one left</b>
+          <span>${rpSave(best.potential, m.est)} kr. a year is already priced there across
+            ${best.open.length} agreement${best.open.length === 1 ? '' : 's'} nobody has
+            switched on.</span>
+        </span>
+        <button type="button" class="btn btn-primary" data-drcat="${best.id}">Open ${best.n}${DR_IC.go}</button>
+      </div>` : ''}`
+  };
+}
+
+/* the cohort sentence, written once — it is the entire warrant for every
+   estimated figure on these pages, and it must read identically wherever it
+   appears or the reader starts wondering which one is true */
+const drCohort = () => `Median of ${ncPeers} ${(state.industry || 'similar').toLowerCase()}
+  companies, 10–49 employees, in your region.`;
+
+/* ---------- 2 · Spending ---------- */
+function drSpending(m){
+  const cats = drCats(m).sort((a, b) => b.spend - a.spend);
+  const max = Math.max(1, ...cats.map(c => c.spend));
+  const worst = [...cats].sort((a, b) =>
+    (b.spend - b.agrs.reduce((s, x) => s + x.covers, 0)) -
+    (a.spend - a.agrs.reduce((s, x) => s + x.covers, 0)))[0];
+  const worstOff = worst ? worst.spend - worst.agrs.reduce((s, x) => s + x.covers, 0) : 0;
+
+  const led = `
+    <div class="dr-led">
+      <span class="dr-led-h">Where the money splits</span>
+      ${drRow('', m.est ? 'Median peer spend' : 'Everything you bought',
+        `${cats.length} purchasing categories · ${fmt(m.invoices)} invoices`,
+        rpNum(m.spend, m.est))}
+      ${drRow('−', 'Bought on an agreement',
+        `${rpPct(m.covered, m.spend)}% of it, across ${m.agrs.length} agreement${m.agrs.length === 1 ? '' : 's'}`,
+        rpNum(m.covered, m.est))}
+      ${drRow('=', 'Bought at whatever the price was', '', rpNum(m.off, m.est), 'warn', true)}
+      <p class="dr-led-note">${m.est
+        ? drCohort() + ' Every figure on this page is that median, banded ±15%.'
+        : `Read off ${fmt(m.invoices)} invoices from ${fmt(tot('sup'))} suppliers, matched line by line.`}</p>
+    </div>`;
+
+  return {
+    h1: m.est ? 'Where a company like yours spends' : 'Where your money goes',
+    est: m.est,
+    find: `<b>${rpNum(m.spend, m.est)}<small> kr.</small></b> went out in ${m.period.of},
+      across ${cats.length} purchasing categories. <em>${rpNum(m.off, m.est)} kr.</em> of it
+      was bought at list price, with no agreement behind it.`,
+    led,
+    stats: `
+      ${rpStat(rpNum(m.covered, m.est) + ' <small>kr.</small>',
+        'Covered by an agreement you already have', '', m.est)}
+      ${rpStat(rpPct(m.off, m.spend) + '<small>%</small>',
+        'Of spend still bought at whatever the price was', m.off ? 'warn' : 'pos')}
+      ${rpStat(`${fmt(cats.length)} <small>areas</small>`,
+        `${cats.filter(c => !c.agrs.length).length} of them with no agreement at all`, '')}`,
+    secs: `
+      <section class="rp-sec">
+        <div class="rp-head">
+          <h2>Every category, opened up</h2>
+          <p>Ranked by spend. The solid part is bought on an agreement; the rest is not.
+            Open one to see who you buy from there and what the money actually goes on.</p>
+        </div>
+        <ul class="dr-drill">
+          ${cats.map((c, i) => {
+            const cov = c.agrs.reduce((s, a) => s + a.covers, 0);
+            const off = Math.max(0, c.spend - cov);
+            const sups = (c.row.top || '').split('·').map(x => x.trim()).filter(Boolean);
+            const body = `
+              ${sups.length ? `
+                <p class="dr-sub">Who you buy from here</p>
+                <ul class="dr-ags">
+                  ${sups.map(n => `<li class="dr-ag">
+                    <span class="dr-tag${c.agrs.some(a => a.n.startsWith(n.split(' ')[0])) ? ' on' : ''}">${
+                      c.agrs.some(a => a.n.startsWith(n.split(' ')[0])) ? 'On agreement' : 'No agreement'}</span>
+                    <span class="dr-ag-n">${n}</span>
+                    <span class="dr-ag-v idle">—</span>
+                  </li>`).join('')}
+                </ul>` : ''}
+              <p class="dr-sub">What the money goes on</p>
+              ${m.est ? drSample(`This is what the median company in your trade buys in
+                ${c.n.toLowerCase()} — <b>not your invoices</b>. Upload yours and this
+                table becomes your own.`) : ''}
+              ${drSpendLines(c.row, c, m.est)}
+              ${off ? `
+                <p class="dr-sub">Off agreement here</p>
+                <ul class="dr-ags">
+                  <li class="dr-ag">
+                    <span class="dr-tag idle">Unpriced</span>
+                    <span class="dr-ag-n">${rpNum(off, m.est)} kr. bought at list price</span>
+                    <span class="dr-ag-v">−${c.rate}% available</span>
+                  </li>
+                </ul>` : ''}`;
+            return drGroup(c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
+              c.n, `${c.sup} suppliers · ${rpPct(c.spend, m.spend)}% of all spend`,
+              rpNum(c.spend, m.est) + ' kr.', '',
+              drTrack(i, [
+                {c:'cov',  w:cov / max * 100},
+                {c:'rest', w:off / max * 100}
+              ], `${c.n}: ${fmt(cov)} kroner on agreement, ${fmt(off)} not`),
+              body, i);
+          }).join('')}
+        </ul>
+        <div class="rp-key">
+          <span><i class="cov"></i>Bought on an agreement</span>
+          <span><i class="rest"></i>Bought at list price</span>
+        </div>
+      </section>
+
+      ${worst && worstOff ? `
+      <div class="dr-next">
+        <span class="dr-next-tx">
+          <b>${worst.n} is the biggest gap</b>
+          <span>${rpNum(worstOff, m.est)} kr. of it goes out with no agreement behind it,
+            in a category where ${worst.rate}% is already negotiated.</span>
+        </span>
+        <button type="button" class="btn btn-primary" data-drcat="${worst.id}">Open ${worst.n}${DR_IC.go}</button>
+      </div>` : ''}`
+  };
+}
+
+/* ---------- 3 · Agreement usage ---------- */
+function drUsage(m){
+  const cats = drCats(m);
+  const rowOf = id => cats.find(c => c.id === id) || {row:{id}, rate:0};
+  const ags = [...m.agrs].sort((a, b) => b.covers - a.covers);
+  const max = Math.max(1, ...ags.map(a => a.covers));
+  const idle = m.idle;
+  const gap = m.covered - m.volume;
+  const readyN = cats.reduce((n, c) => n + c.open.length, 0);
+
+  if(!ags.length) return {
+    h1:'Nothing is running through an agreement yet',
+    est:m.est, led:'',
+    find:`You have <b>0</b> agreements in force, so there is nothing to report on here yet.
+      <em>${readyN} ${readyN === 1 ? 'is' : 'are'}</em> priced and ready to switch on.`,
+    stats:'',
+    secs:`<section class="rp-sec"><div class="rp-viz"><div class="rp-empty">
+      <span class="rp-empty-ic">${RP_IC.idle}</span>
+      <span class="rp-empty-tx"><b>Activate one and this page fills up</b>
+      <p>Each agreement you switch on starts reporting what actually flows through it,
+        month by month, against the spend it was priced for.</p>
+      <button type="button" class="btn btn-primary btn-sm" data-drgo="agreements">See what is ready</button>
+      </span></div></div></section>`
+  };
+
+  const led = `
+    <div class="dr-led">
+      <span class="dr-led-h">What is actually flowing</span>
+      ${drRow('', `${ags.length} agreement${ags.length === 1 ? '' : 's'} in force`,
+        `out of ${ags.length + readyN} open to you`, `${ags.length}`)}
+      ${drRow('', 'Spend they were priced to cover', '', rpNum(m.covered, m.est))}
+      ${drRow('−', 'Spend that actually went through them',
+        `${rpPct(m.volume, m.covered)}% of what they cover`, rpNum(m.volume, m.est))}
+      ${drRow('=', 'Agreed, but nothing running through it', '',
+        rpNum(gap, m.est), gap ? 'warn' : 'pos', true)}
+      <p class="dr-led-note">${m.est
+        ? drCohort() + ' Usage is the median pattern, not a promise about your own buying.'
+        : `An agreement can be live and still earn nothing — the price is agreed, but the
+           orders keep going somewhere else. That gap is what this page is for.`}</p>
+    </div>`;
+
+  return {
+    h1: m.est ? 'What companies like yours actually use' : 'What is actually going through them',
+    est: m.est,
+    find: `<b>${ags.length}</b> agreement${ags.length === 1 ? ' is' : 's are'} in force, carrying
+      <em>${rpNum(m.volume, m.est)} kr.</em> of ${m.period.of}'s buying.
+      ${idle.length
+        ? `<em>${idle.length}</em> of them ${idle.length === 1 ? 'is' : 'are'} live at an agreed
+           price with nothing running through ${idle.length === 1 ? 'it' : 'them'}.`
+        : `Every one of them is carrying volume.`}`,
+    led,
+    stats: `
+      ${rpStat(rpPct(m.volume, m.covered) + '<small>%</small>',
+        'Of the spend they cover is actually going through them',
+        rpPct(m.volume, m.covered) > 80 ? 'pos' : 'warn')}
+      ${rpStat(rpNum(gap, m.est) + ' <small>kr.</small>',
+        'Agreed pricing nothing is being bought against', gap ? 'warn' : '', m.est)}
+      ${rpStat(`${readyN}`, 'More agreements priced and waiting to be switched on', '')}`,
+    secs: `
+      <section class="rp-sec">
+        <div class="rp-head">
+          <h2>Every agreement, opened up</h2>
+          <p>Ranked by the spend each was priced to cover. The filled part is what actually
+            went through it. Open one to see its year month by month and the lines it prices.</p>
+        </div>
+        <ul class="dr-drill">
+          ${ags.map((a, i) => {
+            const c = rowOf(a.catId);
+            const body = `
+              <p class="dr-sub">Month by month</p>
+              ${a.vol ? drMonths(a, a.vol) : `
+                <p class="dr-samp">${DR_IC.peer}<span>Nothing has gone through this agreement,
+                  so there is no year to draw. The price below is agreed and waiting.</span></p>`}
+              <p class="dr-sub">What it prices</p>
+              ${m.est ? drSample(`These lines are the median pattern for this agreement in your
+                trade — <b>not your invoices</b>.`) : ''}
+              ${drLines(c.row, a.save ? a : {n:a.n, covers:a.covers,
+                save:Math.round(a.covers * (c.rate || 8) / 100)}, m.est)}`;
+            return drGroup('ag' + i, brandOf(a.n), CAT_ICON[a.catId] || '',
+              a.n, `${a.cat}${a.dormant ? ' · agreed, not used' : ''}`,
+              a.vol ? rpNum(a.vol, m.est) + ' kr.' : 'Nothing yet',
+              a.vol ? '' : 'zero',
+              drTrack(i, [{c:'cov', w:a.vol / max * 100},
+                          {c:'rest', w:Math.max(0, a.covers - a.vol) / max * 100}],
+                `${a.n}: ${fmt(a.vol)} of ${fmt(a.covers)} kroner covered`),
+              body, i);
+          }).join('')}
+        </ul>
+        <div class="rp-key">
+          <span><i class="cov"></i>Invoiced through the agreement</span>
+          <span><i class="rest"></i>Spend it covers, unused</span>
+        </div>
+      </section>
+
+      ${idle.length ? `
+      <div class="dr-next">
+        <span class="dr-next-tx">
+          <b>${idle.length} agreement${idle.length === 1 ? ' is' : 's are'} agreed but idle</b>
+          <span>${idle.map(a => a.n).join(' and ')} ${idle.length === 1 ? 'is' : 'are'} live at a
+            negotiated price with nothing being bought against ${idle.length === 1 ? 'it' : 'them'}.
+            Pointing the next order there is the whole fix.</span>
+        </span>
+        <button type="button" class="btn btn-primary" data-drgo="agreements">Open agreements${DR_IC.go}</button>
+      </div>` : ''}`
+  };
+}
+
+/* ---------- the shell ----------
+   Period is deliberately the SAME `rpPeriod` the Reports page reads. Two period
+   states would mean the Overview card, this page and Reports could each be
+   showing a different twelve months, which is exactly the kind of quiet
+   disagreement that makes a figure untrustworthy. */
+function renderDrill(){
+  const m = rpModel();
+  const r = (drillType === 'spend' ? drSpending : drillType === 'usage' ? drUsage : drSavings)(m);
+  const rpk = drillType === 'spend' ? 'spending' : drillType === 'usage' ? 'usage' : 'savings';
+
+  $('#viewDrill').innerHTML = `
+    <div class="dr-page">
+      <div class="dr-top">
+      <button type="button" class="dr-back" id="drBack">${DR_IC.back}Back to overview</button>
+
+      <div class="dr-mast-wrap">
+        <header class="dr-mast">
+          <div class="dr-mast-txt"><h1 id="drT" tabindex="-1">${r.h1}</h1></div>
+          <p class="dr-find${r.est ? ' est' : ''}">${r.find}</p>
+          ${r.led}
+          <div class="dr-ctl">
+            <div class="seg" role="group" aria-label="Period">
+              ${Object.entries(RP_PERIOD).map(([k, v]) => `<button type="button" data-drper="${k}"
+                aria-pressed="${rpPeriod === k}">${v.n}</button>`).join('')}
+            </div>
+            <span class="dr-ctl-sp"></span>
+            <button type="button" class="btn btn-secondary btn-sm"
+              data-drgo="reports" data-drrp="${rpk}">See the full report${DR_IC.go}</button>
+          </div>
+        </header>
+      </div>
+      </div>
+
+      <div class="dr-lede">
+        ${m.est ? `
+        <p class="rp-note">${RP_IC.info}<span>Nothing here is your own accounting yet.
+          ${drCohort()} Figures are shown as a band because that is honestly how much we
+          know before you connect anything. <b>Upload your invoices and every number on
+          this page becomes yours, exact to the krone.</b></span></p>` : ''}
+        ${r.stats ? `<div class="rp-stats">${r.stats}</div>` : ''}
+      </div>
+
+      ${r.secs}
+    </div>`;
+
+  wireDrill();
+}
+
+function wireDrill(){
+  /* the hero's pointer-tracked field, same coalesced-rAF mechanic the Reports
+     masthead uses. Re-bound every render because the node is new each time. */
+  const mast = $('#viewDrill .dr-mast');
+  if(mast){
+    let raf = 0, hx = 0, hy = 0;
+    mast.addEventListener('pointermove', e => {
+      const b = mast.getBoundingClientRect();
+      hx = e.clientX - b.left; hy = e.clientY - b.top;
+      if(raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        mast.style.setProperty('--mx', `${hx}px`);
+        mast.style.setProperty('--my', `${hy}px`);
+      });
+    });
+  }
+
+  const back = $('#drBack');
+  if(back) back.addEventListener('click', closeDrill);
+
+  $$('#viewDrill [data-drper]').forEach(b => b.addEventListener('click', () => {
+    if(rpPeriod === b.dataset.drper) return;
+    rpPeriod = b.dataset.drper; persist(); renderDrill();
+    /* period only re-cuts what is already on screen, so keep the reader where
+       they were and put focus back on the equivalent button in the new DOM */
+    const p = $(`#viewDrill [data-drper="${rpPeriod}"]`); if(p) p.focus();
+  }));
+
+  /* open one category / agreement. Toggling `hidden` rather than re-rendering
+     keeps every other open group open, which is what a reader comparing two
+     categories actually wants. */
+  $$('#viewDrill [data-drg]').forEach(b => b.addEventListener('click', () => {
+    const grp = b.closest('.dr-grp');
+    const body = $(`#drb-${b.dataset.drg}`);
+    if(!grp || !body) return;
+    const open = body.hidden;
+    body.hidden = !open;
+    grp.classList.toggle('open', open);
+    b.setAttribute('aria-expanded', String(open));
+  }));
+
+  $$('#viewDrill [data-drcat]').forEach(b => b.addEventListener('click', () => {
+    $('#viewDrill').hidden = true;
+    openCatTab(b.dataset.drcat);
+  }));
+
+  $$('#viewDrill [data-drgo]').forEach(b => b.addEventListener('click', () => {
+    if(b.dataset.drrp) rpType = b.dataset.drrp;
+    $('#viewDrill').hidden = true;
+    navAt = b.dataset.drgo; persist(); renderNav(); setView();
+  }));
+}
+
+/* ---------- routing ----------
+   A drill-down is not a nav destination — you get here from a figure, and you go
+   back to that figure. So it follows the same overlay pattern as the Savings
+   deep-dive: hide everything, show this, and leave navAt untouched so closing
+   lands you exactly where you came from. It lives INSIDE .page so the container
+   queries on the borrowed .rp-* classes still resolve. */
+const DRILL_VIEWS = ['#viewDash', '#viewSup', '#viewOpp', '#viewCatTab', '#viewDataCenter',
+  '#viewAgreements', '#viewReports', '#viewAreas', '#viewNewCustomer', '#viewSavings'];
+
+function openDrill(type){
+  drillType = DRILL[type] ? type : 'savings';
+  catTabStandDown();
+  $('.page').hidden = false;
+  DRILL_VIEWS.forEach(sel => { const el = $(sel); if(el) el.hidden = true; });
+  $('#viewDrill').hidden = false;
+  renderDrill();
+  updateActivityRail();
+  renderActivityRail();
+  $('#canvas').scrollTop = 0;
+  const h = $('#drT'); if(h) h.focus();
+}
+
+function closeDrill(){
+  $('#viewDrill').hidden = true;
+  setView();
+}
+
 /* ---------------- Areas ----------------
    Every purchasing area on one page: the specialist's shortlist on a grey tray,
    then all of them. ROWS *are* the areas, so nothing here is a second source of
@@ -12459,6 +14004,7 @@ function persist(){
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
       newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityMini,
       savedAgr: [...savedAgr], agrCardStyle, agrViewStyle, catViewStyle, catAgrView, catTabSkin,
+      spendTune,
       notifPrefs, seenTour
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
@@ -12496,7 +14042,15 @@ function applySaved(d){
   if(Array.isArray(d.savedAgr)) savedAgr = new Set(d.savedAgr);
   if(['photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
   if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
-  if(['list','bars','split','focus','brands','why','story'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
+  if(['list','bars','split','focus','brands','why','story','tune'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
+  /* factors, never the scaled figures: the actuals in ROWS stay the baseline, so
+     a reload re-derives from invoices rather than from an already-tuned number */
+  if(d.spendTune && typeof d.spendTune === 'object'){
+    spendTune = {};
+    Object.entries(d.spendTune).forEach(([k, v]) => {
+      if(ROWS.some(r => r.id === k) && typeof v === 'number' && isFinite(v) && v > 0) spendTune[k] = v;
+    });
+  }
   if(['cards','list'].includes(d.catAgrView)) catAgrView = d.catAgrView;
   if(['white','inside','under'].includes(d.catTabSkin)) catTabSkin = d.catTabSkin;
   if(d.notifPrefs && Array.isArray(d.notifPrefs.channels)) notifPrefs = d.notifPrefs;
@@ -12533,6 +14087,9 @@ const saved = jumpRaw ? null : readSaved();     /* an explicit ?step= always win
    so their activation (a.req, keyed by index) restores onto the right entries on reload */
 injectNew6();
 if(saved) applySaved(saved);
+/* after both: the actuals are remembered per row here, so anything injected
+   above is part of the baseline and a restored factor lands on it */
+tuneApplyAll();
 
 const catViewId = new URLSearchParams(location.search).get('catView');
 if(catViewId){
