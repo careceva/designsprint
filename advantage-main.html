@@ -937,6 +937,93 @@ body.in-app .flow{display:none}
 .rail.mini .agent-btn:hover::after{opacity:1;transform:translateY(-50%)}
 
 /* --- AI agent panel (left of the canvas) --- */
+/* --- Quick ask: the assistant's shortcut, bottom-right ---
+   The rail entry stays the front door. This is the doorbell — reachable from
+   wherever the cursor already is, on every page, without crossing the screen.
+   It does not host a second conversation: whatever is typed here is sent into
+   the same panel and the panel opens on the answer. */
+.qa{position:fixed;right:var(--qa-right,var(--s6));bottom:var(--s6);z-index:40;
+  display:flex;flex-direction:column;align-items:flex-end;gap:var(--s3);
+  transition:opacity var(--t),transform var(--t),right var(--t)}
+/* the activity rail owns the right edge and has its own collapse control at the
+   foot — the shortcut stands beside it rather than on top of it, and follows it
+   in and out as it collapses or the page drops it entirely */
+body:has(#activityRail:not([hidden])){--qa-right:calc(320px + var(--s6))}
+body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
+/* the shortcut has no job while the panel it opens is already open */
+.qa.hid{opacity:0;transform:translateY(10px) scale(.96);pointer-events:none}
+
+.qa-fab{display:flex;align-items:center;gap:var(--s2);height:52px;padding:5px 20px 5px 5px;
+  cursor:pointer;border:1px solid #ffffff2e;border-radius:var(--rounded-full);
+  background:linear-gradient(140deg,#1b64dc,#0b3fa0 60%,#0b00ab);color:#fff;
+  font-family:var(--font-body);font-size:var(--text-sm);font-weight:650;
+  box-shadow:0 12px 26px -10px #0b00ab8c,0 2px 6px #0b00ab29,inset 0 1px 0 #ffffff26;
+  transition:box-shadow var(--t-fast),filter var(--t-fast),transform .1s ease}
+.qa-fab:hover{filter:brightness(1.08);box-shadow:0 16px 32px -10px #0b00ab99}
+.qa-fab:active{transform:translateY(1px)}
+/* the mark sits on its own blue disc. The disc is the wrapper and the artwork is
+   the <img> inside it, kept apart on purpose: the white outline is four chained
+   drop-shadows, which trace whatever silhouette the filtered box has — on the
+   img alone that is the star, on the disc it would just be a ring. */
+.qa-mark{display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;
+  border-radius:var(--rounded-full);background:var(--general-primary)}
+.qa-fab .sda{width:22px;height:22px;
+  filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+         drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)}
+.qa-fab kbd{margin-left:var(--s1);padding:2px 6px;border-radius:var(--rounded-xs);
+  background:#ffffff26;font-family:var(--font-mono);font-size:11px;font-weight:600;
+  color:#dbe9ff;line-height:1.5}
+.qa[data-state="open"] .qa-fab{box-shadow:0 0 0 3px #1b64dc33}
+
+.qa-pop{width:min(360px,calc(100vw - var(--s8)));order:-1;
+  background:var(--surface);border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
+  box-shadow:var(--shadow-xl);overflow:hidden;transform-origin:100% 100%;
+  opacity:0;transform:translateY(10px) scale(.97);pointer-events:none;
+  transition:opacity var(--t-fast),transform var(--t)}
+.qa[data-state="open"] .qa-pop{opacity:1;transform:none;pointer-events:auto}
+.qa-pop-h{display:flex;align-items:center;gap:var(--s2);padding:var(--s4) var(--s4) var(--s3)}
+.qa-pop-h .sda{width:26px;height:26px;padding:4px;border-radius:var(--rounded-sm);
+  background:var(--brand-ice);box-sizing:border-box}
+.qa-pop-h b{font-size:var(--text-sm);font-weight:650}
+.qa-pop-h b::after{content:"";display:inline-block;width:6px;height:6px;margin-left:7px;
+  vertical-align:middle;border-radius:var(--rounded-full);background:#00b39a;
+  box-shadow:0 0 0 3px #00b39a29}
+.qa-pop-h span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.qa-pop-h .spacer{flex:1}
+.qa-x{display:grid;place-items:center;width:28px;height:28px;cursor:pointer;
+  border:0;border-radius:var(--rounded-sm);background:transparent;color:var(--general-muted-foreground)}
+.qa-x:hover{background:var(--general-muted);color:var(--general-foreground)}
+.qa-x svg{width:16px;height:16px}
+.qa-chips{display:flex;flex-wrap:wrap;gap:var(--s2);padding:0 var(--s4) var(--s3)}
+.qa-chip{padding:6px var(--s3);cursor:pointer;font-family:var(--font-body);
+  font-size:var(--text-xs);font-weight:550;color:var(--general-primary);
+  border:1px solid var(--general-border);border-radius:var(--rounded-full);
+  background:var(--brand-ice);text-align:left;
+  transition:background var(--t-fast),border-color var(--t-fast)}
+.qa-chip:hover{background:#dbe9ff;border-color:var(--general-primary)}
+.qa-in{display:flex;align-items:flex-end;gap:var(--s2);padding:var(--s3) var(--s4);
+  border-top:1px solid var(--hairline);background:var(--general-muted)}
+.qa-in textarea{flex:1;min-width:0;height:24px;max-height:96px;resize:none;overflow:auto;
+  border:0;background:transparent;outline:0;padding:0;
+  font-family:var(--font-body);font-size:var(--text-sm);line-height:1.5;color:var(--general-foreground)}
+.qa-in textarea::placeholder{color:var(--general-muted-foreground)}
+.qa-send{display:grid;place-items:center;width:32px;height:32px;flex:0 0 auto;cursor:pointer;
+  border:0;border-radius:var(--rounded-full);background:var(--general-primary);color:#fff;
+  transition:filter var(--t-fast),opacity var(--t-fast)}
+.qa-send:hover{filter:brightness(1.08)}
+.qa-send svg{width:15px;height:15px}
+.qa-f{padding:0 var(--s4) var(--s3);font-size:11px;color:var(--general-muted-foreground);
+  background:var(--general-muted)}
+
+/* on a phone the label is the first thing to go: the mark alone is the shortcut */
+@media (max-width:760px){
+  .qa{right:var(--s4);bottom:var(--s4)}
+  .qa-fab{padding:5px;gap:0}
+  .qa-fab .qa-fab-t,.qa-fab kbd{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .qa,.qa-pop{transition:none}
+}
 .ap{flex:0 0 auto;width:0;overflow:hidden;transition:width var(--t)}
 .ap.on{width:var(--apw)}
 .ap.wide.on{width:var(--apw-wide)}
@@ -1246,9 +1333,6 @@ body.in-app .flow{display:none}
 .opp-page{display:flex;flex-direction:column;gap:var(--s6);max-width:760px;margin:0 auto;width:100%}
 .opp-back{margin-bottom:var(--s2)}
 .opp-back svg{width:16px;height:16px}
-/* breadcrumb above the agreement hero: nudged left so the label's text edge — not
-   the ghost button's padding box — aligns with the title under it */
-.cat-tab-back{margin:0 0 var(--s4) calc(var(--s3) * -1)}
 .opp-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s6);
   flex-wrap:wrap;padding-bottom:var(--s6);border-bottom:1px solid var(--hairline)}
 .opp-hero h1{margin-top:var(--s2);font-size:var(--text-3xl);letter-spacing:-.8px}
@@ -1833,7 +1917,12 @@ body.in-app .flow{display:none}
    reserved for money and nothing else. */
 .cat-tab-wrap{--general-primary:#0071e3;--brand-ice:#f0f7ff;--general-secondary:#e8f2ff;
   max-width:1180px;margin:0 auto;background:var(--surface);
-  border:none;border-radius:0;box-shadow:none;padding:var(--s16) var(--s4) var(--s16)}
+  border:none;border-radius:0;
+  /* 64px of top padding was set when this page opened straight onto its title.
+     It now opens onto a breadcrumb, so that 64px sat above a 13px line and read as
+     the page having fallen down the screen. The bottom keeps its full 64px — that
+     one is the end of the document, not a gap. */
+  box-shadow:none;padding:var(--s6) var(--s4) var(--s16)}
 /* no align-items:start — the hero column needs to STRETCH to the full height of the
    (much taller) right column, so its sticky child has room to stay pinned for the
    whole scroll instead of releasing almost immediately. This is what actually makes
@@ -1984,13 +2073,31 @@ body.in-app .flow{display:none}
    the one column that had none — the title column. A soft diagonal gradient plus
    the logo's own checkmark, tiled and faded out, so the texture is the brand's
    rather than a generic dot grid. */
-.cat-skin{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);
-  justify-content:flex-end;margin-bottom:var(--s6)}
-/* the way out of the page, sharing the row the skin toggle already occupies rather
-   than claiming one of its own: margin-right:auto splits the row, back at the left
-   edge of the text column, the toggle still at the right */
-.cat-exit{margin-right:auto}
-.cat-exit svg{width:16px;height:16px}
+/* one row, not two. The trail and the look-toggle together were wrapping onto a
+   second line and costing 71px of empty bar above the page — nowrap keeps them on
+   one line and the trail ellipsizes instead of pushing the toggle down. */
+.cat-skin{display:flex;flex-wrap:nowrap;align-items:center;gap:var(--s3);
+  justify-content:flex-end;margin-bottom:var(--s5,20px)}
+@container page (max-width:640px){.cat-skin{flex-wrap:wrap}}
+/* the trail sits at the left of the row the skin toggle already occupies, so it
+   costs no row of its own — margin-right:auto splits the two apart */
+.cat-crumbs{margin-right:auto;display:flex;align-items:center;flex-wrap:nowrap;
+  gap:var(--s2);min-width:0;font-size:var(--text-sm)}
+.cat-crumb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  border:none;background:none;padding:0;font:inherit;
+  color:var(--general-muted-foreground);cursor:pointer;
+  transition:color var(--t-fast)}
+.cat-crumb:hover{color:var(--general-foreground);text-decoration:underline;
+  text-underline-offset:3px}
+.cat-crumb:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px;
+  border-radius:3px}
+/* where you are is not a link and must not look like one */
+.cat-crumb.is-here{color:var(--general-foreground);font-weight:600;cursor:default}
+.cat-crumb-s{flex:0 0 auto;color:var(--general-muted-foreground);opacity:.55;user-select:none}
+/* the page you are on keeps its full name; the steps above it give way first */
+.cat-crumb.is-here{flex:0 1 auto}
+.cat-skin-l{flex:0 0 auto}
+.cat-skin .seg{flex:0 0 auto}
 .cat-skin-l{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
 /* — the bloom, always UNDER the card —
@@ -3005,6 +3112,23 @@ body.in-app .flow{display:none}
 .tune-list>li:last-child{border-bottom:none}
 .tune-n{grid-area:name;display:flex;align-items:center;gap:var(--s2);
   font-size:16px;font-weight:600;letter-spacing:-.2px;min-width:0}
+/* the name is still the way into the category — the same affordance the other
+   category views give it, kept when this view became a control */
+.tune-go{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  border:none;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;
+  text-align:left}
+/* the whole row is the target — the name is only where the underline shows.
+   The rail is carved back out of it below: a slider you have to hold cannot
+   also be a link you click. */
+.tune-row[data-tune]{cursor:pointer}
+.tune-row[data-tune] .tune-rail,
+.tune-row[data-tune] .tune-flag{cursor:auto}
+.tune-row[data-tune] .tune-range{cursor:grab}
+.tune-row[data-tune] .tune-range:active{cursor:grabbing}
+.tune-row[data-tune]:hover .tune-go,
+.tune-go:hover{text-decoration:underline;text-underline-offset:3px}
+.tune-go:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px;
+  border-radius:3px}
 
 /* the one mark that says a figure is the user's own doing, and the only place the
    original is still quoted. A dot rather than a sentence: four rows of "+2,2M kr.
@@ -3029,16 +3153,59 @@ body.in-app .flow{display:none}
    pointer, so the two can share the space instead of costing a row each. The line
    is inset by half the knob so the fill's end and the knob's centre are the same
    point at both extremes. */
-.tune-rail{grid-area:rail;position:relative;height:46px;--knob:20px;--hit:40px}
+/* pulled out by half a knob on each side, so the TRACK's left edge — which is
+   inset by that same half knob — lands exactly on the row's left edge, under the
+   first letter of the label. Without this the line started 10px right of its own
+   name and every row read as slightly out of true. */
+.tune-rail{grid-area:rail;position:relative;height:46px;--knob:20px;--hit:40px;
+  margin-left:calc(var(--knob) / -2);margin-right:calc(var(--knob) / -2)}
 /* --s is the row's share of the money, a plain number. The knob's width is taken
    off the row FIRST and the remainder scaled, so two tracks stand in exactly the
    ratio their two savings do — subtracting a fixed 20px after scaling would cost
    a short rail proportionally far more than a long one. */
+/* The box is pure geometry — where the track starts, how long it is, where its
+   centre line falls. The visible line is its ::before, so the line can thicken
+   under the pointer without the knob, the tick and the readout riding along. */
 .tune-rail-in{position:absolute;left:calc(var(--knob) / 2);
   width:calc((100% - var(--knob)) * var(--s,1));
-  top:calc(var(--hit) / 2 - 1px);height:2px;border-radius:1px;background:var(--general-muted)}
+  top:calc(var(--hit) / 2 - 2px);height:4px}
+.tune-rail-in::before{content:"";position:absolute;inset:0;
+  border-radius:2px;background:var(--general-muted);
+  /* 4px tall, held at half height at rest and let out to full under the pointer.
+     Scaling rather than animating height keeps the line's centre pinned to the
+     same pixel, so the knob never appears to drift off it. */
+  transform:scaleY(.5)}
+.tune-rail:hover .tune-rail-in::before,.tune-rail:hover .tune-fill{transform:scaleY(.75)}
+/* keyboard focus, not any focus: the input takes focus on mouse-down too, and a
+   track left thick after the pointer has gone reads as a row still being held */
+.tune-rail.live .tune-rail-in::before,.tune-rail.live .tune-fill,
+.tune-rail:has(.tune-range:focus-visible) .tune-rail-in::before,
+.tune-rail:has(.tune-range:focus-visible) .tune-fill{transform:scaleY(1)}
 .tune-fill{position:absolute;left:0;top:0;bottom:0;width:var(--p,0%);
-  border-radius:1px;background:var(--general-foreground)}
+  border-radius:2px;background:var(--general-foreground);transform:scaleY(.5)}
+/* ---- the knob ----
+   Ours, not the browser's. The native thumb jumps to the next stop in one frame
+   while the fill behind it eases across, and that half-beat of disagreement is
+   what made the control feel broken. So the real thumb is kept (it is the touch
+   target, the focus ring's owner and the keyboard's control) and made invisible,
+   and everything the eye follows — fill, knob, readout — is painted off the same
+   --p on the same curve, arriving together. */
+.tune-knob{position:absolute;left:var(--p,0%);top:50%;
+  width:var(--knob);height:var(--knob);margin:0;border-radius:var(--rounded-full);
+  transform:translate(-50%,-50%);transform-origin:50% 50%;
+  background:var(--general-foreground) var(--knob-grip) center / 8px 8px no-repeat;
+  border:2px solid var(--surface);box-sizing:border-box;
+  box-shadow:0 1px 4px rgb(10 42 92/.32);pointer-events:none;z-index:2}
+/* the grab: the knob swells and lifts, the line it rides thickens under it.
+   Both come back on release. Nothing moves position, so the finger never has to
+   chase the thing it is already holding. */
+.tune-rail:hover .tune-knob{transform:translate(-50%,-50%) scale(1.08)}
+.tune-rail.live .tune-knob,.tune-rail:has(.tune-range:focus-visible) .tune-knob{
+  transform:translate(-50%,-50%) scale(1.16);
+  box-shadow:0 3px 10px rgb(10 42 92/.28),0 1px 3px rgb(10 42 92/.2)}
+.tune-rail:has(.tune-range:focus-visible) .tune-knob{
+  box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--general-primary),
+  0 3px 10px rgb(10 42 92/.24)}
 /* where their own figure sits, so the way back is visible once they have left it.
    Above the line, never under the fill, or it would vanish exactly when needed. */
 .tune-tick{position:absolute;left:var(--b,0%);bottom:calc(100% + 3px);width:1px;height:6px;
@@ -3062,9 +3229,34 @@ body.in-app .flow{display:none}
 }
 .tune-val em{font-style:normal;font-size:13px;font-weight:500;
   color:var(--general-muted-foreground)}
+/* One curve for the whole control. --tune-ease is the shape of a thing settling
+   into a detent: fast off the mark, decelerating hard, no overshoot — so a step
+   between two stops reads as a snap rather than as a slide, and the fill, the
+   knob and the readout are still one object because they are all on it. */
 @media(prefers-reduced-motion:no-preference){
-  .tune-fill{transition:width var(--t-fast) linear}
-  .tune-val{transition:opacity var(--t-fast),transform var(--t-fast),left var(--t-fast) linear}
+  :root{--tune-ease:cubic-bezier(.22,.9,.24,1);--tune-t:.26s}
+  .tune-fill{transition:width var(--tune-t) var(--tune-ease),
+    transform var(--t-fast) var(--tune-ease)}
+  .tune-knob{transition:left var(--tune-t) var(--tune-ease),
+    transform var(--t-fast) var(--tune-ease),box-shadow var(--t-fast)}
+  .tune-rail-in::before{transition:transform var(--t-fast) var(--tune-ease)}
+  .tune-val{transition:opacity var(--t-fast),transform var(--t-fast),
+    left var(--tune-t) var(--tune-ease)}
+  /* the press itself: the knob dips a hair the instant the pointer goes down,
+     before the drag begins. It is the only part of this that is faster than the
+     eye tracks — which is exactly why the control feels answered rather than
+     watched. */
+  /* under the finger the snap tightens to 130ms: long enough to be a movement
+     rather than a jump, short enough that the knob is never behind the hand */
+  .tune-rail.live .tune-knob{transition:left .13s var(--tune-ease),
+    transform .09s var(--tune-ease),box-shadow .09s ease}
+  .tune-rail.live .tune-fill{transition:width .13s var(--tune-ease),
+    transform .09s var(--tune-ease)}
+  .tune-rail.live .tune-val{transition:opacity var(--t-fast),transform var(--t-fast),
+    left .13s var(--tune-ease)}
+}
+@media(prefers-reduced-motion:reduce){
+  .tune-fill,.tune-knob,.tune-rail-in::before{transition:none}
 }
 
 .tune-range{position:absolute;left:0;top:0;height:var(--hit);
@@ -3073,53 +3265,44 @@ body.in-app .flow{display:none}
 .tune-range:active{cursor:grabbing}
 /* an explicit height, not 100%: a percentage on the runnable track resolves to
    nothing, the track collapses to the top of the input, and the thumb ends up
-   riding a full radius above the line it is supposed to be sitting on */
+   riding above the line it is supposed to be sitting on */
 .tune-range::-webkit-slider-runnable-track{height:var(--hit);background:none;border:none}
-/* WebKit aligns the thumb to the TOP of the runnable track rather than centring
-   it, so the offset that puts it on the line has to be spelled out. Firefox does
-   centre it, which is why the -moz- thumb below carries no margin. */
+/* The thumb keeps its full size — it is what the finger has to hit — and paints
+   nothing: .tune-knob is drawn in its place, on the same curve as the fill. */
 .tune-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
   margin-top:calc((var(--hit) - var(--knob)) / 2);
   width:var(--knob);height:var(--knob);border-radius:var(--rounded-full);
-  background:var(--general-foreground) var(--knob-grip) center / 8px 8px no-repeat;
-  border:2px solid var(--surface);box-shadow:0 1px 4px rgb(10 42 92/.32)}
+  background:none;border:none;box-shadow:none;opacity:0}
 .tune-range::-moz-range-track{height:var(--hit);background:none;border:none}
 .tune-range::-moz-range-thumb{width:var(--knob);height:var(--knob);
-  border-radius:var(--rounded-full);
-  background:var(--general-foreground) var(--knob-grip) center / 8px 8px no-repeat;
-  border:2px solid var(--surface);box-shadow:0 1px 4px rgb(10 42 92/.32)}
+  border-radius:var(--rounded-full);background:none;border:none;box-shadow:none;opacity:0}
 .tune-range:focus{outline:none}
-.tune-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--surface),
-  0 0 0 5px var(--general-primary)}
-.tune-range:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px var(--surface),
-  0 0 0 5px var(--general-primary)}
-@media(prefers-reduced-motion:no-preference){
-  .tune-range::-webkit-slider-thumb{transition:transform var(--t-fast),box-shadow var(--t-fast)}
-  .tune-range::-moz-range-thumb{transition:transform var(--t-fast)}
-  .tune-range:hover::-webkit-slider-thumb{transform:scale(1.1)}
-  .tune-range:active::-webkit-slider-thumb{transform:scale(1.18)}
-  .tune-range:hover::-moz-range-thumb{transform:scale(1.1)}
-  .tune-range:active::-moz-range-thumb{transform:scale(1.18)}
-}
 
 /* the money, in the house's savings tint — the one coloured thing on the row, so
    it is what the eye lands on after the knob moves */
-.tune-save{grid-area:save;display:flex;align-items:baseline;gap:5px;padding:4px var(--s3);
-  border:1px solid #00968930;border-radius:var(--rounded-md);background:#f4fcfb;
+.tune-save{grid-area:save;display:flex;align-items:baseline;gap:5px;
   font-size:16px;font-weight:700;color:var(--sentiment-positive-ink);
   font-variant-numeric:tabular-nums;white-space:nowrap}
 /* 13px, the app's smallest label size — 12px undercut every other unit in the
    file for no reason but width */
 .tune-save em{font-style:normal;font-size:13px;font-weight:500;
   color:var(--general-muted-foreground)}
+/* --ch is the longest figure this row can ever show, measured across its own
+   stops at render. Reserving it means the pill never resizes while the pointer is
+   down — and since the pill is the row's `auto` grid column, a pill that resizes
+   moves the label and the rail with it. That was the jumping. */
+.tune-money{display:inline-block;min-width:var(--ch,0);text-align:right;
+  font-variant-numeric:tabular-nums}
+/* same reservation on the three summary figures: tabular digits alone stop the
+   width wandering as the digits change */
+.ov-num{font-variant-numeric:tabular-nums}
 /* the areas without a slider: present, so the totals still reconcile, and
    plainly not part of the control */
 .tune-rest{grid-template-areas:"name save" "sub save";align-items:center}
 .tune-rest .tune-n{font-weight:500;color:var(--general-muted-foreground)}
 .tune-rest-sub{grid-area:sub;font-size:13px;color:var(--general-muted-foreground);
   font-variant-numeric:tabular-nums}
-.tune-rest .tune-save{border-color:var(--hairline);
-  background:var(--general-muted);color:var(--general-muted-foreground);font-weight:600}
+.tune-rest .tune-save{color:var(--general-muted-foreground);font-weight:600}
 .tune-head-reset{font-size:13px}
 @container page (max-width:520px){
   .tune-row{grid-template-columns:minmax(0,1fr);grid-template-areas:"name" "save" "rail"}
@@ -3130,6 +3313,18 @@ body.in-app .flow{display:none}
 /* the app bar's own admission. Sits left of the data-source pill and says the
    same thing on every page in the app: these figures are the user's, not their
    accounting system's — with the way back attached, like a filter token. */
+/* The search sits between two flex:1 spacers, so it is centred against whatever
+   is to its right. When this pill appeared the right-hand group got wider, the
+   spacers rebalanced, and the search slid left mid-interaction — the field moved
+   because something unrelated to it showed up. The box is therefore kept in the
+   layout whether or not it has anything in it, at a width that fits its widest
+   state, so appearing costs no reflow. Below 1100px the reservation is dropped:
+   there the bar has no room to give away, and a shifted search beats a squeezed
+   one. */
+@media (min-width:1100px){
+  .tune-pill{min-width:196px}
+  .tune-pill[hidden]{display:flex;visibility:hidden}
+}
 .tune-pill{gap:0;padding:0 0 0 var(--s3);cursor:default;
   border-color:rgb(33 112 237/.34);background:var(--brand-ice)}
 .tune-pill-go{display:flex;align-items:center;gap:var(--s2);height:36px;
@@ -3215,36 +3410,87 @@ body.in-app .flow{display:none}
 .agr-simple-go svg{width:17px;height:17px}
 .agr-simple:hover .agr-simple-go{background:var(--general-primary);transform:translateX(3px)}
 
-/* the saving-assistant advisory card: a semicircle gauge, a short recommended-
-   actions list (icon + text + value), and a full-bleed primary button pinned
-   to the bottom of the card */
+/* the saving-assistant advisory card: a title, the moves as a ranked list
+   (icon + text + rate bar + value), and a button above a full-bleed footer.
+   There was a semicircle gauge here reading BEST_CAT_DISCOUNT as "savings
+   potential". It went, for two reasons. It was a best case dressed as a
+   forecast — the same "roof" the team pushed back on, which is why that figure
+   is already barred from being a headline anywhere else — and a 0–100 dial
+   implied the other 65% was something you had failed to collect. The number it
+   held is now the scale the rate bars are measured against, where it is a
+   ceiling rather than a score, and the rows carry the comparison instead. */
 .nc-advisory{display:flex;flex-direction:column;padding-bottom:0;overflow:hidden}
-.nc-gauge-wrap{position:relative;margin:0 auto var(--s2);width:148px}
-.nc-gauge{display:block;width:100%;height:auto}
-.nc-gauge-label{position:absolute;left:0;right:0;bottom:2px;display:flex;flex-direction:column;
-  align-items:center;text-align:center}
-.nc-gauge-label b{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.4px}
-.nc-gauge-label span{font-size:15px;color:var(--general-muted-foreground)}
-.nc-advisory-eyebrow{display:block;text-align:center;font-size:13px;font-weight:600;
-  letter-spacing:.04em;text-transform:uppercase;color:var(--general-muted-foreground)}
-/* alignment only — the type comes from the shared .nc-bento-cell h2 rule so both
-   cards' titles stay identical */
-.nc-advisory-title{margin-top:var(--s1);text-align:center}
+/* left, not centred: this card sits beside the categories card in the bento and
+   the two titles have to start on the same line, or the row reads as two
+   unrelated widgets */
+
+/* ---- the dial ---------------------------------------------------------
+   The header block above the list is centred, the way it was: title, dial,
+   caption on one axis, with the rows reading left underneath. */
+.nc-advisory-title{text-align:center}
+.nc-gauge-wrap{margin:var(--s6) auto 0;max-width:212px;text-align:center}
+.nc-gauge{display:block;width:100%;height:auto;overflow:visible}
+.nc-gauge-track{fill:none;stroke:var(--general-muted);stroke-width:14;stroke-linecap:round}
+/* the fill sits on the track with the same cap, so at low percentages the two
+   round ends nest instead of the fill's cap hanging off the end of the arc */
+.nc-gauge-fill{fill:none;stroke-width:14;stroke-linecap:round;
+  filter:drop-shadow(0 2px 3px #1b64dc2e)}
+/* SVG text, at a coordinate inside the arc's well — this is the pair that used
+   to be an absolutely-positioned HTML block climbing through the stroke */
+.nc-gauge-n{fill:var(--general-foreground);font-family:var(--font-sans);
+  font-size:44px;font-weight:700;letter-spacing:-1.8px;text-anchor:middle;
+  font-variant-numeric:tabular-nums}
+.nc-gauge-u{font-size:.5em;font-weight:600;letter-spacing:-.4px}
+.nc-gauge-l{fill:var(--general-muted-foreground);font-family:var(--font-body);
+  font-size:15px;font-weight:500;text-anchor:middle}
+.nc-gauge-note{margin-top:var(--s3);font-size:14px;line-height:1.4;
+  color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+
+/* the card's one authored moment: the arc sweeps to its value. Only a `from`
+   keyframe, so the `to` is whatever stroke-dashoffset the markup set — the
+   animation never needs to know the percentage. */
+@media (prefers-reduced-motion:no-preference){
+  .nc-gauge-fill{animation:nc-gauge-sweep .82s cubic-bezier(.22,.9,.24,1) both}
+}
+@keyframes nc-gauge-sweep{from{stroke-dashoffset:100}}
+
+/* the list under the graph is a second group, so it gets a header the way a
+   grouped iOS list does — the note is the scale its rules are drawn against */
+.nc-rec-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  flex-wrap:wrap;margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid var(--hairline);
+  font-size:15px;font-weight:600;color:var(--general-foreground)}
+.nc-rec-head span{font-size:13px;font-weight:400;color:var(--general-muted-foreground)}
 /* the recommendations and the tuner sit side by side in the bento row, so they
    have to be one component seen twice, not two. The tuner is hairline-separated
    rows on white with the money in a tinted pill; these were tinted blocks with a
    bare green number. The tinted container is gone and the pill is shared, so the
    two halves now read at the same weight. */
 .nc-rec-list{margin-top:var(--s4);list-style:none}
-.nc-rec-row{display:flex;align-items:center;gap:var(--s3);
-  padding:var(--s3) 0;border-bottom:1px solid var(--hairline)}
+.nc-rec-row{display:flex;align-items:center;gap:var(--s4);
+  padding:var(--s4) 0;border-bottom:1px solid var(--hairline)}
 .nc-rec-list>li:last-child{border-bottom:none}
 .nc-rec-ic{flex:0 0 auto;width:30px;height:30px;border-radius:var(--rounded-sm);
   display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary)}
 .nc-rec-ic svg{width:16px;height:16px}
-.nc-rec-txt{flex:1 1 auto;min-width:0;font-size:15px;line-height:1.4;color:var(--general-foreground)}
+.nc-rec-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+.nc-rec-txt{font-size:15px;line-height:1.4;color:var(--general-foreground)}
 .nc-rec-txt b{font-weight:600}
-/* the same pill .tune-save wears, so the money reads identically on both sides */
+/* the rate, drawn: two rows at 19% and 11% were two identical grey pills, which
+   is the one thing a reader of this card actually needs to be able to compare.
+   The track is the full text column, so the bars share one baseline and one
+   ceiling and the gap between them is legible at a glance. */
+/* thinner and a tint rather than the full accent: the capsule above is the
+   card's graph and these are a row-level aside. Two things at full strength on
+   one card would be two graphs arguing. */
+.nc-rec-bar{height:4px;border-radius:var(--rounded-full);background:var(--general-muted);
+  overflow:hidden}
+.nc-rec-bar i{display:block;height:100%;border-radius:inherit;
+  background:var(--brand-cornflower);transform-origin:left center}
+@media (prefers-reduced-motion:no-preference){
+  .nc-rec-bar i{animation:nc-rec-grow .55s cubic-bezier(.22,.9,.24,1) var(--d,0s) both}
+}
+@keyframes nc-rec-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* the assistant card's money pill */
 .nc-rec-val{flex:0 0 auto;padding:4px var(--s3);
   border:1px solid #00968930;border-radius:var(--rounded-md);background:#f4fcfb;
   font-size:15px;font-weight:700;color:var(--sentiment-positive-ink);
@@ -3253,7 +3499,12 @@ body.in-app .flow{display:none}
    not wear the money pill or it reads as an amount */
 .nc-rec-val.state{border-color:var(--hairline);background:var(--general-muted);
   color:var(--general-muted-foreground);font-weight:600}
-/* a self-contained pill, centred — not a full-bleed bar welded to the card edge */
+/* a rate wears no pill at all: its bar already carries the emphasis, and a third
+   pill on the same list would flatten the money and the state back into it */
+.nc-rec-val.rate{padding:4px 0 4px var(--s3);border-color:transparent;background:none;
+  font-size:var(--text-lg);color:var(--general-foreground);letter-spacing:-.3px}
+/* centred with the title and the dial above it — a self-contained pill, not a
+   full-bleed bar welded to the card edge */
 .nc-advisory-cta{align-self:center;margin:var(--s5,20px) 0 var(--s4);padding:0 var(--s5,20px);
   border-radius:var(--rounded-full);height:40px;font-size:15px}
 /* full-bleed footer: the negative margin has to match .nc-bento-cell's padding
@@ -3430,13 +3681,11 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
    Same MATERIAL as the other two heroes — translucent white over a bloom — because
    that is this product's hero surface and a second material would fracture the
    system. What it does with that material is its own:
-     left    the claim, then the one figure it rests on, written as prose
-     right   an illustration, bled into the card's own top-right corner
-     beneath the controls, on a hairline the artwork lands on
-   Suppliers puts a wall of supplier marks in that right-hand slot and Areas puts a
-   distribution spine under the text. This page puts a drawing there, because a
-   report is the one page in the app that opens on a season's worth of buying rather
-   than on a list of things you can click. */
+     the claim, then the one figure it rests on, written as prose
+     beneath, the controls on a hairline
+   Suppliers fills the right-hand slot with supplier marks and Areas puts a
+   distribution spine under the text. This page keeps that column empty: a report
+   opens on a season's worth of buying, and the sentence is the whole subject. */
 .rp-mast-wrap{position:relative;isolation:isolate;margin-top:var(--s4)}
 /* the ambient glow the card floats in, plus a lobe up in the top-left — the third
    corner, so no two heroes in the app read as the same asset. Both are oversized
@@ -3456,10 +3705,9 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 }
 
 .rp-mast{position:relative;z-index:1;overflow:hidden;
-  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.66fr);
-  grid-template-areas:"txt art" "find art" "ctl ctl";
-  grid-template-rows:auto 1fr auto;
-  column-gap:var(--s12);row-gap:var(--s8);align-items:start;
+  display:grid;grid-template-columns:minmax(0,1fr);
+  grid-template-areas:"txt" "find" "ctl";
+  row-gap:var(--s8);align-items:start;
   padding:var(--s8);
   border:1px solid #ffffffe8;border-radius:var(--rounded-2xl);
   background:
@@ -3516,36 +3764,6 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .rp-find b.warn{color:var(--sentiment-negative)}
 .rp-find em{font-style:normal;font-weight:650;color:var(--general-foreground)}
 
-/* ---------- the artwork ----------
-   Bled into the card: negative margins cancel the hero's own 32px padding on the
-   top and right, so the drawing runs to the card's rounded corner (which clips it,
-   because .rp-mast is overflow:hidden) rather than floating in a box inside a box.
-   Its bottom lands exactly on the control row's hairline — the negative bottom
-   margin eats the 32px row gap — so the rule reads as the drawing's own ground line
-   rather than as a separator that happens to be nearby. */
-.rp-art{grid-area:art;align-self:stretch;position:relative;min-height:300px;
-  margin:calc(var(--s8) * -1) calc(var(--s8) * -1) calc(var(--s8) * -1) 0;
-  overflow:hidden;background:#1b4fc4}
-.rp-art-svg{display:block;width:100%;height:100%;position:absolute;inset:0}
-/* the columns rise on arrival, on the same curve as the tracks further down the page
-   — one gesture, used twice, rather than a hero animation and a chart animation that
-   have never met. The beat is 18ms rather than the chart's 42ms because --i here is
-   the tower's position in the frame, not its index: forty-odd towers at 42ms would
-   still be arriving two seconds in. Origin is the baseline, so they grow out of the
-   ground instead of unfolding from the middle. */
-.rp-art-bar{transform-box:fill-box;transform-origin:bottom center;
-  animation:rpRise .78s cubic-bezier(.22,.9,.24,1) both;
-  animation-delay:calc(var(--i,0) * 18ms + 90ms)}
-@keyframes rpRise{from{transform:scaleY(.03)}to{transform:scaleY(1)}}
-/* the plotted series arrives after the skyline it is plotted over */
-.rp-art-dot{transform-box:fill-box;transform-origin:center;
-  animation:rpPop .5s cubic-bezier(.22,1.2,.36,1) both;
-  animation-delay:calc(var(--i,0) * 90ms + 620ms)}
-@keyframes rpPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-@media (prefers-reduced-motion:reduce){
-  .rp-art-bar,.rp-art-dot{animation:none}
-}
-
 /* ---------- the controls ----------
    In the hero, on a hairline, in the slot Areas gives its spine. The report type
    is on the left because it rewrites everything above it; period and export are a
@@ -3571,16 +3789,8 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   background:#ffffffc4;border-color:#ffffffe8}
 .rp-exp svg{width:15px;height:15px}
 @container page (max-width:900px){
-  .rp-mast{grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"art" "txt" "find" "ctl";grid-template-rows:auto;
-    padding:var(--s6)}
+  .rp-mast{padding:var(--s6)}
   .rp-find{max-width:56ch}
-  /* the drawing keeps bleeding, it just bleeds sideways instead: full width, out to
-     both edges and the top. 260px, not 180 — the SVG slices from the top to hold its
-     ground, so a shallower band crops away every roofline and leaves an abstract
-     stripe where a skyline was. 260 is the height at which the tops come back. */
-  .rp-art{min-height:260px;
-    margin:calc(var(--s6) * -1) calc(var(--s6) * -1) 0 calc(var(--s6) * -1)}
 }
 @container page (max-width:700px){
   .rp-ctl{flex-direction:column;align-items:stretch}
@@ -5661,6 +5871,38 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
     </div>
   </div>
 
+  <!-- Quick ask — a shortcut to the same assistant, always within reach.
+       Not a second assistant: what is typed here is sent into the rail panel,
+       which opens on the answer, so there is only ever one thread. -->
+  <div class="qa" id="qa" data-state="idle">
+    <div class="qa-pop" id="qaPop" role="dialog" aria-labelledby="qaT" inert>
+      <div class="qa-pop-h">
+        <img class="sda" id="qaMarkS" alt="">
+        <div>
+          <b id="qaT">Saving assistant</b>
+          <div><span>Answers now · Peter is one tab away</span></div>
+        </div>
+        <span class="spacer"></span>
+        <button class="qa-x" id="qaX" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="qa-chips" id="qaChips"></div>
+      <div class="qa-in">
+        <textarea id="qaInput" rows="1" placeholder="Ask anything about your spend…"></textarea>
+        <button class="qa-send" id="qaSend" aria-label="Send">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 20.5L21 12 3 3.5l3.4 8.5L3 20.5z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <p class="qa-f">Enter sends · answers open in the assistant panel</p>
+    </div>
+    <button class="qa-fab" id="qaFab" aria-expanded="false" aria-controls="qaPop">
+      <span class="qa-mark"><img class="sda" id="qaMark" alt=""></span>
+      <span class="qa-fab-t">Ask the assistant</span>
+      <kbd id="qaKbd">⌘K</kbd>
+    </button>
+  </div>
+
 </div>
 
 <script>
@@ -5986,6 +6228,9 @@ function toggleAgent(on){
   ap.classList.toggle('on', open);
   ap.inert = !open;
   $('#agentBtn').setAttribute('aria-expanded', String(open));
+  /* the bottom-right shortcut is a way *into* this panel — while the panel is
+     open it is only clutter, so it steps aside */
+  qaShow(!open);
   if(open){ renderApThread(); setTimeout(() => $('#apInput').focus(), 320); }
 }
 $('#agentBtn').addEventListener('click', () => toggleAgent());
@@ -5994,6 +6239,85 @@ $('#apWide').addEventListener('click', () => {
   const wide = $('#ap').classList.toggle('wide');
   $('#apWide').setAttribute('aria-label', wide ? 'Shrink panel' : 'Expand panel');
 });
+
+/* ---------- quick ask ----------
+   The rail entry is the front door and stays where it is; this is the doorbell.
+   It is a shortcut, not a second assistant: a question typed here is handed to
+   apSend() and the rail panel opens on the answer, so there is one thread and
+   one history no matter which control was used to start talking. */
+const QA_CHIPS = [
+  {t:'What can I still save?',        q:'What can I still save this year?'},
+  {t:'What should I switch on first?',q:'Which agreement should I activate first?'},
+  {t:'Talk to Peter',                 who:'peter'}
+];
+function qaShow(on){ $('#qa').classList.toggle('hid', !on); }
+function qaOpen(on){
+  const qa = $('#qa');
+  const open = on === undefined ? qa.dataset.state !== 'open' : on;
+  qa.dataset.state = open ? 'open' : 'idle';
+  $('#qaFab').setAttribute('aria-expanded', String(open));
+  $('#qaPop').inert = !open;
+  if(open) setTimeout(() => $('#qaInput').focus(), 60);
+}
+/* one artwork, loaded once in the rail — the shortcut borrows the same file
+   rather than shipping a second copy of it */
+function qaInit(){
+  const src = $('#agentBtn .sda').src;
+  $('#qaMark').src = src;
+  $('#qaMarkS').src = src;
+  /* not ⌘K — the header search already wears that badge */
+  const mac = /Mac|iP(hone|ad)/.test(navigator.platform || navigator.userAgent);
+  $('#qaKbd').textContent = mac ? '\u2318J' : 'Ctrl J';
+  $('#qaChips').innerHTML = QA_CHIPS
+    .map((c, i) => `<button type="button" class="qa-chip" data-qac="${i}">${c.t}</button>`).join('');
+  $$('#qaChips [data-qac]').forEach(b => b.addEventListener('click', () => {
+    const c = QA_CHIPS[+b.dataset.qac];
+    c.who === 'peter' ? qaHandOver('peter') : qaSubmit(c.q);
+  }));
+}
+/* hand the conversation to the panel: pick the recipient, open, then send —
+   in that order, so the message lands in the thread the panel is showing */
+function qaHandOver(who, text){
+  apTab = who;
+  qaOpen(false);
+  toggleAgent(true);
+  if(text) apSend(text);
+}
+function qaSubmit(text){
+  const q = (text || '').trim();
+  const i = $('#qaInput');
+  if(i){ i.value = ''; i.style.height = 'auto'; }
+  qaHandOver('ai', q);
+}
+$('#qaFab').addEventListener('click', () => qaOpen());
+$('#qaX').addEventListener('click', () => { qaOpen(false); $('#qaFab').focus(); });
+$('#qaSend').addEventListener('click', () => qaSubmit($('#qaInput').value));
+$('#qaInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); qaSubmit(e.target.value); }
+});
+$('#qaInput').addEventListener('input', e => {
+  e.target.style.height = 'auto';
+  e.target.style.height = Math.min(96, e.target.scrollHeight) + 'px';
+});
+addEventListener('keydown', e => {
+  /* ⌘J / Ctrl+J reaches the assistant from anywhere. With the panel already open
+     it puts the caret in that composer instead of opening a second box. */
+  if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'j'){
+    e.preventDefault();
+    if($('#ap').classList.contains('on')) $('#apInput').focus();
+    else qaOpen();
+    return;
+  }
+  if(e.key === 'Escape' && $('#qa').dataset.state === 'open'){
+    qaOpen(false); $('#qaFab').focus();
+  }
+});
+/* clicking away closes it — it is a shortcut, not a window to manage */
+addEventListener('pointerdown', e => {
+  if($('#qa').dataset.state === 'open' && !(e.target instanceof Element && e.target.closest('#qa')))
+    qaOpen(false);
+});
+qaInit();
 
 /* ---------- the assistant, opened about something ----------
    Clicking "Ask" on an agreement card should not dump the user in a blank panel:
@@ -7504,7 +7828,9 @@ function dashModelOwn(){
   const dormant   = reqAgs.filter(agDormant);
   const newCount  = openAgrs.filter(x => x.a.isNew).length;
   const openIn    = r => r.agr.filter(a => !a.req).length;
-  const rec = (ic, txt, val) => ({ic, txt, val});
+  /* bar is the raw magnitude the row's rule is drawn from — optional, because a
+     state row ("Idle", "Live") has no magnitude to draw */
+  const rec = (ic, txt, val, bar) => ({ic, txt, val, bar});
   const first = openCats[0], second = openCats[1];
   /* the moment any spend is his rather than his invoices', the page has to stop
      saying "exact to the krone" — that claim is the most valuable thing on it */
@@ -7534,16 +7860,21 @@ function dashModelOwn(){
     cards: [
       /* an adjusted figure is a run-rate, not a fact about the year so far, so
          the label has to stop saying YTD the moment it is one */
-      {l: tuned ? 'Savings a year' : 'Savings YTD', v:`+${fmt(saveRun)}`, u:'kr. / year',
+      /* n + nf are the animator's handles: the number the figure really is, and
+         how to print any value between here and its next one */
+      {l: tuned ? 'Savings a year' : 'Savings YTD', v:`+${fmt(saveRun)}`,
+       n:saveRun, nf:v => `+${fmt(v)}`, u:'kr. / year',
        accent:true, trend:'',
        cap: tuned ? `On the spend you have set, not on your invoices`
                   : `${fmt(Math.round(saveRun * yearFrac))} kr. of it realised so far this year`,
        spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
-      {l: tuned ? 'Spend a year' : 'Spend YTD', v:fmt(spend), u:'kr. / year', trend:'flat',
+      {l: tuned ? 'Spend a year' : 'Spend YTD', v:fmt(spend),
+       n:spend, nf:v => fmt(v), u:'kr. / year', trend:'flat',
        cap: tuned ? `Across ${rows.length} areas · ${tn} set by you`
                   : `Across ${rows.length} purchasing categories`,
        spark:DASH_SPARK_SPEND, tone:'flat', amp:.45, go:'spend'},
-      {l:'Agreements in use', v:`${reqAgs.length}`, trend:'rise',
+      {l:'Agreements in use', v:`${reqAgs.length}`,
+       n:reqAgs.length, nf:v => `${Math.round(v)}`, trend:'rise',
        cap:`${agrTotal - reqAgs.length} more are open to you`,
        spark:DASH_SPARK_COUNT, tone:'rise', go:'usage'}
     ],
@@ -7554,27 +7885,35 @@ function dashModelOwn(){
     advTitle: moves.length
       ? `${MOVE_N[moves.length]} move${moves.length === 1 ? '' : 's'} worth ${fmt(movesWorth)} kr. a year`
       : 'Every agreement is already active',
-    gaugePct: spend ? Math.round(covered / spend * 100) : 0,
-    gaugeLabel: 'Spend covered',
+    /* the dial reads spend covered — a true part of a real whole, unlike the
+       best-available rate it used to hold. The arc it has NOT filled is the
+       point of the card: that is the buying still off agreement, and the note
+       underneath prices it. */
+    gauge:{
+      pct: spend ? Math.round(covered / spend * 100) : 0,
+      label:'on agreement',
+      note: remaining
+        ? `+${fmt(remaining)} kr. a year still open in ${openCats.length}
+           categor${openCats.length === 1 ? 'y' : 'ies'}`
+        : 'Every category you buy in is on an agreement.'
+    },
+    recHead:'What to do next',
+    recNote: second ? 'each move against the biggest one open' : '',
+    /* zero unless there are two magnitudes to compare: one move drawn at full
+       width is a rule that looks like a measurement and isn't one */
+    barMax: second ? Math.max(potOf(first), potOf(second)) : 0,
     recs: [
       first && rec(CAT_ICON[first.id] || '',
         `Start with <b>${first.n}</b> — ${openIn(first)} agreement${openIn(first) === 1 ? '' : 's'}
           you have not activated, at ${first.rate}% under what you pay there today.`,
-        `+${fmt(potOf(first))}`),
+        `+${fmt(potOf(first))}`, potOf(first)),
       second && rec(CAT_ICON[second.id] || '',
         `<b>${second.n}</b> is the next biggest, at ${second.rate}% under today's prices.`,
-        `+${fmt(potOf(second))}`),
+        `+${fmt(potOf(second))}`, potOf(second)),
       dormant.length
         ? rec(DASH_CLOCK_IC, `<b>${dormant[0].n}</b> is active, but nothing has been bought
             through it in ${agQuietDays(dormant[0])} days.`, 'Idle')
         : rec(DASH_ERP_IC, `Your accounting data syncs on its own — every figure here moves with it.`, 'Live'),
-      /* the fourth: the bonus is the one piece of money on this page that is not a
-         discount, and nothing else on the Overview says it exists */
-      bonusRun
-        ? rec(DASH_LEDGER_IC, `Everything you buy on an agreement earns a volume bonus on top
-            of the discount — yours is running at ${fmt(bonusRun)} kr. a year.`, `+${fmt(bonusRun)}`)
-        : rec(DASH_ERP_IC, `Move more spend onto an agreement and a volume bonus starts on top
-            of the discount.`, 'Bonus')
     ].filter(Boolean),
     ask: `Where should ${state.company} go next?`,
     agrTitle: 'Opportunities by agreement',
@@ -7623,16 +7962,23 @@ function dashModelPeer(){
     cards: [
       /* setting her own spend turns the peer benchmark into her own forecast —
          which is exactly what the labels then say */
+      /* the same ±15% band(), rebuilt per frame so a travelling range stays a
+         range instead of snapping from one pair of numbers to another */
       {l: tuned ? 'You could save' : 'They save',
-       v:`+${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}`, u:'kr. / year',
+       v:`+${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}`,
+       n:p.saved, nf:v => `+${fmtCompact(Math.round(v * .85))}–${fmtCompact(Math.round(v * 1.15))}`,
+       u:'kr. / year',
        accent:true, trend:'', cap:'Can be more or less than this',
        spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
       {l: tuned ? 'You buy' : 'They buy',
-       v:`${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}`, u:'kr. / year',
+       v:`${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}`,
+       n:p.spend, nf:v => `${fmtCompact(Math.round(v * .85))}–${fmtCompact(Math.round(v * 1.15))}`,
+       u:'kr. / year',
        trend:'flat', cap: tuned ? `Across ${ROWS.length} areas · ${tn} set by you`
                                 : `Across ${ROWS.length} purchasing categories`,
        spark:DASH_SPARK_SPEND, tone:'flat', amp:.45, go:'spend'},
-      {l:'Agreements in use', v:`${p.agrInUse}`, trend:'rise',
+      {l:'Agreements in use', v:`${p.agrInUse}`,
+       n:p.agrInUse, nf:v => `${Math.round(v)}`, trend:'rise',
        cap:`${agrTotalNow() - p.agrInUse} more are open to you`,
        spark:DASH_SPARK_COUNT, tone:'rise', go:'usage'}
     ],
@@ -7642,20 +7988,26 @@ function dashModelPeer(){
     catEmpty: 'Nothing to show yet.',
     cats: byRate.slice(0, 6),
     advTitle: `Three moves worth ${fmtCompact(p.saved)} kr. a year`,
-    gaugePct: BEST_CAT_DISCOUNT,
-    gaugeLabel: 'Savings potential',
+    gauge:{
+      pct: p.spend ? Math.round(p.covered / p.spend * 100) : 0,
+      label:'on agreement',
+      note: p.potential
+        ? `+${fmtCompact(p.potential)} kr. a year still open in ${p.idle.length}
+           categor${p.idle.length === 1 ? 'y' : 'ies'}`
+        : 'Peers your size are on an agreement everywhere.'
+    },
+    recHead:'What to do next',
+    recNote: `rates against ${BEST_CAT_DISCOUNT}%, the best rate open to you`,
+    barMax: BEST_CAT_DISCOUNT,
     recs: [
-      {ic:CAT_ICON[topCat.id] || '', val:`${topCat.rate}%`,
+      /* bar, not just the printed value: it is the magnitude the row is drawn
+         from, and the only figure on this card comparable row to row */
+      {ic:CAT_ICON[topCat.id] || '', val:`${topCat.rate}%`, bar:topCat.rate, rate:true,
        txt:`Start with <b>${topCat.n}</b> — the widest discount gap in your peer group.`},
-      {ic:CAT_ICON[secondCat.id] || '', val:`${secondCat.rate}%`,
+      {ic:CAT_ICON[secondCat.id] || '', val:`${secondCat.rate}%`, bar:secondCat.rate, rate:true,
        txt:`<b>${secondCat.n}</b> is the next best entry point for companies your size.`},
       {ic:DASH_ERP_IC, val:'Auto',
        txt:`Connect your ERP to keep every number accurate, automatically.`},
-      /* the fourth: the bonus, which peers earn on top of the discount and which
-         nothing else on Fanny's Overview mentions */
-      {ic:DASH_LEDGER_IC, val:`+${fmtCompact(p.bonus.total)}`,
-       txt:`Companies your size earn a volume bonus on top of the discount — about
-         <b>${fmtCompact(p.bonus.total)} kr. a year</b> at this level of spend.`}
     ],
     ask: `What should ${state.company} do first to start saving?`,
     agrTitle: 'Opportunities by agreement',
@@ -7782,6 +8134,80 @@ const tuneSaving = r => newCustomer ? Math.round(areaSpend(r) * r.rate / 100) : 
 const TUNE_BAND = .07;
 const bandRange = (lo, hi) => `${fmtCompact(Math.round(lo))}–${fmtCompact(Math.round(hi))}`;
 
+/* the money string for any saving, not just the current one — the width
+   reservation needs it for every stop, and the animator needs it for every frame
+   of the travel between two stops */
+/* ---------- figures that travel ----------
+   A number that changes should move to its new value, not teleport to it. Each
+   animated figure keeps a displayed value that CHASES its target: every frame it
+   closes a fixed fraction of the remaining distance, so it decelerates into place
+   on its own.
+
+   Chasing rather than tweening is the point. A fixed-duration tween has to be
+   restarted every time the target moves, and the target moves on every `input`
+   event while a slider is under the pointer — the restarts read as a stutter. A
+   chase just re-aims: it follows a moving figure smoothly and settles the moment
+   the figure stops moving, which is what makes a live control feel attached to
+   the number it is driving.
+
+   Digits are tabular everywhere this is used, so nothing reflows as it counts. */
+const numTravel = new WeakMap();
+function animNum(el, target, fmt){
+  if(!el) return;
+  const done = () => { el.textContent = fmt(target); numTravel.delete(el); };
+  /* no travel when the user has asked for none, and none on first paint — there
+     is no previous value to come from, so it would animate up from nowhere */
+  if(RM || !numTravel.has(el) && el.dataset.n === undefined){
+    el.dataset.n = target;
+    el.textContent = fmt(target);
+    return;
+  }
+  let st = numTravel.get(el);
+  if(!st){ st = {cur:Number(el.dataset.n) || 0, raf:0}; numTravel.set(el, st); }
+  st.target = target; st.fmt = fmt;
+  el.dataset.n = target;
+  if(st.raf) return;
+  const step = () => {
+    st.raf = 0;
+    const d = st.target - st.cur;
+    /* within half a krone of home is home — chasing an asymptote forever would
+       keep a rAF alive on a page nobody is touching */
+    if(Math.abs(d) <= Math.max(0.5, Math.abs(st.target) * 0.0004)){
+      st.cur = st.target;
+      el.textContent = st.fmt(st.cur);
+      numTravel.delete(el);
+      return;
+    }
+    st.cur += d * 0.24;
+    el.textContent = st.fmt(st.cur);
+    st.raf = requestAnimationFrame(step);
+  };
+  st.raf = requestAnimationFrame(step);
+  void done;
+}
+
+function tuneMoneyStr(save, on){
+  const e = newCustomer ? EST_BAND : 0;
+  const mb = on ? TUNE_BAND : 0;
+  return (mb || e)
+    ? `+${bandRange(save * (1 - mb) * (1 - e), save * (1 + mb) * (1 + e))}`
+    : `+${fmt(save)}`;
+}
+
+/* the widest figure this row can ever print, in ch. Every stop is tried, at rest
+   and tuned, because the longest string is not always at the largest stop — a
+   band ("+41K–48K") can be wider than a bigger exact number. */
+function tuneMoneyCh(r){
+  const stops = tuneStops(r), base = areaBase(r) || 1;
+  const per = tuneSaving(r) / (tuneFactor(r.id) || 1) / base;   /* saving per krone */
+  let max = 0;
+  stops.forEach(v => {
+    const on = Math.abs(v - base) >= 1;
+    max = Math.max(max, tuneMoneyStr(v * per, on).length);
+  });
+  return max;
+}
+
 function tuneFigs(r){
   const now = areaSpend(r), base = areaBase(r), save = tuneSaving(r);
   const on = Math.abs(now - base) >= 1;          /* moved off their own figure */
@@ -7796,8 +8222,7 @@ function tuneFigs(r){
   const mb = on ? TUNE_BAND : 0;
   return {on, now, base, save,
     spend: sb ? bandRange(now * (1 - sb), now * (1 + sb)) : fmtCompact(now),
-    money: mb || e ? `+${bandRange(save * (1 - mb) * (1 - e), save * (1 + mb) * (1 + e))}`
-                   : `+${fmt(save)}`,
+    money: tuneMoneyStr(save, on),
     /* the readout under the knob is hidden at rest, so the dot has to carry BOTH
        figures: what they set, and what it was before they set it */
     tip: on
@@ -7817,13 +8242,15 @@ function tuneRowHTML(r){
   const idx = tuneIdx(stops, f.now), bIdx = tuneIdx(stops, f.base);
   return `
     <li class="tune-row" data-tune="${r.id}">
-      <span class="tune-n">${r.n}<span class="tune-flag" tabindex="0" role="note"
+      <span class="tune-n"><button type="button" class="tune-go" data-cat="${r.id}"
+        >${r.n}</button><span class="tune-flag" tabindex="0" role="note"
         data-tip="${f.tip}" aria-label="${f.tip}"${f.on ? '' : ' hidden'}></span></span>
       <span class="tune-rail" style="--p:${tunePos(stops, idx)};--b:${tunePos(stops, bIdx)};--s:${
         tuneShare(r).toFixed(4)}">
         <span class="tune-rail-in">
           <i class="tune-fill"></i>
           <i class="tune-tick"></i>
+          <i class="tune-knob"></i>
           <span class="tune-val">${f.spend}<em>kr. a year</em></span>
         </span>
         <input type="range" class="tune-range" min="0" max="${stops.length - 1}" step="1"
@@ -7831,7 +8258,8 @@ function tuneRowHTML(r){
             newCustomer ? 'companies your size buy' : 'you buy'} a year"
           aria-valuetext="${f.spend} kroner a year, saving ${f.money} kroner">
       </span>
-      <b class="tune-save">${f.money}<em>kr. a year</em></b>
+      <b class="tune-save" style="--ch:${tuneMoneyCh(r)}ch"><span
+        class="tune-money">${f.money}</span><em>kr. a year</em></b>
     </li>`;
 }
 
@@ -7890,7 +8318,11 @@ function tunePaintRow(li){
     rng.setAttribute('aria-valuetext', `${f.spend} kroner a year, saving ${f.money} kroner`);
   }
   const sv = li.querySelector('.tune-save');
-  if(sv) sv.innerHTML = `${f.money}<em>kr. a year</em>`;
+  if(sv){
+    /* the reserved width is recomputed too: the stops move with the base */
+    sv.style.setProperty('--ch', tuneMoneyCh(r) + 'ch');
+    animNum(sv.querySelector('.tune-money'), f.save, v => tuneMoneyStr(v, f.on));
+  }
 }
 
 /* every derived figure on the dashboard that a tune can move, updated in place */
@@ -7904,7 +8336,7 @@ function dashPaint(root){
     const l = card.querySelector('.nc-ov-card-l');
     if(l) l.textContent = c.l;
     const v = card.querySelector('.ov-num'), cap = card.querySelector('.nc-ov-card-c');
-    if(v) v.textContent = c.v;
+    if(v){ if(c.nf) animNum(v, c.n, c.nf); else v.textContent = c.v; }
     if(cap) cap.textContent = c.cap;
   });
   const bT = $(`${root} .nc-calc-txt b`), bS = $(`${root} .nc-calc-txt > span`);
@@ -7912,18 +8344,82 @@ function dashPaint(root){
   if(bS) bS.textContent = m.ovSub;
   const advT = $(`${root} .nc-advisory-title`);
   if(advT) advT.textContent = m.advTitle;
-  const gL = $(`${root} .nc-gauge-label b`);
-  if(gL) gL.textContent = `${m.gaugePct}%`;
-  const arc = $(`${root} .nc-gauge path:last-of-type`);
-  if(arc) arc.setAttribute('stroke-dashoffset', (Math.PI * 50 * (1 - m.gaugePct / 100)).toFixed(1));
   const sub = $(`${root} .nc-mini-sub`);
   if(sub) sub.textContent = m.catSub;
+  /* the reservation covers the two states; a number inside a sentence can still
+     grow a digit and push it over, so a block is never allowed to shrink below
+     the tallest it has been on this page */
+  $$(`${root} .nc-calc-txt > span, ${root} .nc-mini-sub, ${root} .nc-ov-card-c`)
+    .forEach(el => {
+      const h = el.getBoundingClientRect().height;
+      if(h > (parseFloat(el.style.minHeight) || 0)) el.style.minHeight = h.toFixed(1) + 'px';
+    });
   $$(`${root} .tune-row[data-tune]`).forEach(tunePaintRow);
   const reset = $(`${root} .tune-head-reset`);
   if(reset) reset.hidden = !tuneActive();
   renderTunePill();
   return m;
 }
+
+/* ---------- reserving the height of text that swaps ----------
+   Several blocks on this page say one thing at rest and another once a slider has
+   been moved — the banner's sub-line, the category sub-head, each card's caption.
+   The two sentences are different lengths, so on some widths one wraps to three
+   lines where the other took two, and the whole page below jumps as the pointer
+   moves. That is the jump.
+
+   It cannot be fixed by guessing a min-height: whether a given sentence wraps
+   depends entirely on the width it is given, and the same line is two rows on a
+   laptop and one on a 5K. So both states are measured, at the width they actually
+   have, and the taller is reserved.
+
+   The other state is obtained by flipping `spendTune` — `tuned` is derived from
+   it — and rebuilding the model. The figures in that probe model are not
+   meaningful (ROWS already carry the current tune) but the STRINGS are the right
+   length, which is all a reservation needs. */
+function dashReserve(root){
+  const real = spendTune;
+  /* the opposite state, with as many areas tuned as the page can show, so the
+     longest "N areas set by you" is the one measured */
+  spendTune = Object.keys(real).length
+    ? {}
+    : Object.fromEntries(tuneRows().top.map(r => [r.id, 1.5]));
+  let alt;
+  try { alt = dashModel(); } finally { spendTune = real; }
+
+  const pairs = [
+    [$(`${root} .nc-calc-txt > span`), alt.ovSub],
+    [$(`${root} .nc-calc-txt b`),      alt.ovTitle],
+    [$(`${root} .nc-mini-sub`),        alt.catSub],
+    [$(`${root} .nc-advisory-title`),  alt.advTitle]
+  ];
+  alt.cards.forEach(c => {
+    const card = c.go && $(`${root} [data-card="${c.go}"]`);
+    if(card) pairs.push([card.querySelector('.nc-ov-card-c'), c.cap]);
+  });
+
+  pairs.forEach(([el, other]) => {
+    if(!el || other == null) return;
+    const keep = el.textContent;
+    el.style.minHeight = '';
+    const a = el.getBoundingClientRect().height;
+    el.textContent = other;
+    const b = el.getBoundingClientRect().height;
+    el.textContent = keep;
+    el.style.minHeight = Math.max(a, b).toFixed(1) + 'px';
+  });
+}
+
+/* a reservation is only right for the width it was measured at */
+let dashReserveRaf = 0;
+addEventListener('resize', () => {
+  if(dashReserveRaf) return;
+  dashReserveRaf = requestAnimationFrame(() => {
+    dashReserveRaf = 0;
+    const root = dashRoot();
+    if($(`${root} .nc-ov-grid`)) dashReserve(root);
+  });
+});
 
 /* the assistant's three moves re-rank when the money changes, so that cell is
    rebuilt on release rather than mid-drag — a list reordering under a moving
@@ -7993,12 +8489,60 @@ function dashCardHTML(c){
     </${t}>`;
 }
 
-function dashRecHTML(rec){
+/* three kinds of trailing value, and they must not look alike: a rate is a
+   measured quantity and gets the bar plus bare tabular type, money keeps the
+   green pill, and a state ("Auto") keeps the grey one so it can't be read as an
+   amount */
+/* the dial. Geometry first, because the old one's two defects were both
+   geometric: its label was an absolutely-positioned HTML block anchored to the
+   bottom of the wrapper, so the type climbed straight through the stroke, and
+   its dash lengths were computed from a bare radius while both paths carried
+   round caps, which add half a stroke past each end. Here the label is SVG text
+   at a fixed coordinate inside the arc's own well, and pathLength normalises the
+   arc to 100 units so the fill is the percentage, with no arithmetic to drift.
+
+   Arc: centre (100,104), r 80, stroke 14 — so the caps reach x 13..187 and
+   y 17..111, all of it inside a 200x126 box with room to spare. */
+let ncGaugeUid = 0;
+
+function dashGaugeHTML(g){
+  if(!g) return '';
+  const gid = `ncGaugeG${++ncGaugeUid}`;   /* both personas' cards can be in the DOM at once */
+  const d = 'M20 104 A80 80 0 0 1 180 104';
+  return `
+    <figure class="nc-gauge-wrap">
+      <svg class="nc-gauge" viewBox="0 0 200 126" role="img"
+        aria-label="${g.pct}% of what you buy is on an agreement.">
+        <defs>
+          <linearGradient id="${gid}" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="var(--brand-cornflower)"/>
+            <stop offset="1" stop-color="var(--general-primary)"/>
+          </linearGradient>
+        </defs>
+        <path class="nc-gauge-track" d="${d}" pathLength="100"/>
+        <path class="nc-gauge-fill" d="${d}" pathLength="100" stroke="url(#${gid})"
+          stroke-dasharray="100" stroke-dashoffset="${100 - g.pct}"/>
+        <text class="nc-gauge-n" x="100" y="84">${g.pct}<tspan class="nc-gauge-u">%</tspan></text>
+        <text class="nc-gauge-l" x="100" y="104">${g.label}</text>
+      </svg>
+      <figcaption class="nc-gauge-note">${g.note}</figcaption>
+    </figure>`;
+}
+
+function dashRecHTML(rec, i, barMax){
+  const kind = rec.rate ? ' rate' : rec.val.startsWith('+') ? '' : ' state';
+  /* a bar only when there is a ceiling to draw it against: with one move open,
+     barMax equals the only magnitude and a lone full-width rule says nothing */
+  const w = rec.bar && barMax ? Math.min(100, Math.round(rec.bar / barMax * 100)) : 0;
   return `
     <li class="nc-rec-row">
       <span class="nc-rec-ic"><svg viewBox="0 0 24 24" fill="none">${rec.ic}</svg></span>
-      <span class="nc-rec-txt">${rec.txt}</span>
-      <span class="nc-rec-val${rec.val.startsWith('+') ? '' : ' state'}">${rec.val}</span>
+      <span class="nc-rec-body">
+        <span class="nc-rec-txt">${rec.txt}</span>
+        ${w ? `<span class="nc-rec-bar" style="--d:${(i * .07).toFixed(2)}s"
+          ><i style="width:${w}%"></i></span>` : ''}
+      </span>
+      <span class="nc-rec-val${kind}">${rec.val}</span>
     </li>`;
 }
 
@@ -8007,18 +8551,10 @@ function dashRecHTML(rec){
    to lose focus from */
 function dashAdvisoryHTML(m){
   return `
-    <span class="nc-advisory-eyebrow">Saving assistant</span>
     <h2 class="nc-advisory-title">${m.advTitle}</h2>
-    <div class="nc-gauge-wrap">
-      <svg class="nc-gauge" viewBox="0 0 120 66">
-        <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--general-muted)" stroke-width="10" stroke-linecap="round"/>
-        <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="var(--general-primary)" stroke-width="10"
-          stroke-linecap="round" stroke-dasharray="${(Math.PI*50).toFixed(1)}"
-          stroke-dashoffset="${(Math.PI*50*(1-m.gaugePct/100)).toFixed(1)}"/>
-      </svg>
-      <div class="nc-gauge-label"><b>${m.gaugePct}%</b><span>${m.gaugeLabel}</span></div>
-    </div>
-    <ul class="nc-rec-list">${m.recs.map(dashRecHTML).join('')}</ul>
+    ${dashGaugeHTML(m.gauge)}
+    <h3 class="nc-rec-head">${m.recHead}${m.recNote ? `<span>${m.recNote}</span>` : ''}</h3>
+    <ul class="nc-rec-list">${m.recs.map((r, i) => dashRecHTML(r, i, m.barMax)).join('')}</ul>
     <button type="button" class="btn btn-primary nc-advisory-cta dash-ask">Ask the saving assistant</button>
     <footer class="nc-advisory-foot">
       <img class="sda" src="${SDA_MARK}" alt="">
@@ -8134,6 +8670,14 @@ function wireDash(root, m){
      than going through the .opp-legend-item keyboard handling below */
   q('.cv-bar-row, .cv-split-seg, .cv-focus-lead, .cv-rest-row, .cv-brand-row, .cv-why-row, .cv-story-link')
     .forEach(b => b.addEventListener('click', () => openCatTab(b.dataset.cat)));
+  /* a tune row is a control AND a way in, so the whole row opens the category —
+     except the two things on it that already answer to a pointer: the rail the
+     knob is dragged along, and the dot whose tooltip is the point of hovering it.
+     The name stays a real button so the row is still reachable by keyboard. */
+  q('.tune-row[data-tune]').forEach(li => li.addEventListener('click', e => {
+    if(e.target.closest('.tune-rail, .tune-flag')) return;
+    openCatTab(li.dataset.tune);
+  }));
   q('.agr-simple').forEach(b => b.addEventListener('click', () =>
     openCatTab(b.dataset.cat, +b.dataset.idx)));
   /* the row's scrollbar is hidden, so the arrows are the only mouse path along
@@ -8185,6 +8729,9 @@ function wireDash(root, m){
 function wireDashAsk(root, m){
   const ask = $(`${root} .dash-ask`);
   if(ask) ask.addEventListener('click', () => { toggleAgent(true); agentAsk(m.ask); });
+  /* last, and only once the markup is in the document — the measurement needs a
+     real width to wrap against */
+  dashReserve(root);
 }
 
 /* Every handler here writes ONE number — the factor for one area — and then asks
@@ -9741,16 +10288,32 @@ function closeCatTab(){
   if(from) requestAnimationFrame(() => { $('#canvas').scrollTop = from.scroll; });
 }
 
+/* One trail, not two back buttons. Arriving at an agreement from the Overview
+   used to stack "Back to Overview" (the shell's exit) on top of "Back to Building
+   materials" (the agreement body's own step-up) — two controls, one above the
+   other, both pointing left. They are different destinations, so neither could
+   just be deleted; a breadcrumb says both in one line and says which is which.
+   Built in the shell because catTabAt is set before either renderer calls it. */
+function catCrumbsHTML(){
+  if(!catTabAt) return '';
+  const {r, agrIdx} = catTabAt;
+  const here = agrIdx === null ? r.n : (r.agr[agrIdx] || {}).n || r.n;
+  const sep = '<span class="cat-crumb-s" aria-hidden="true">/</span>';
+  const trail = [];
+  if(catTabFrom) trail.push(`<button type="button" class="cat-crumb" id="catTabExit">${catBackLabel()}</button>`);
+  /* the category step only exists when there is one above us to go to */
+  if(agrIdx !== null) trail.push(`<button type="button" class="cat-crumb" id="catTabUp">${r.n}</button>`);
+  trail.push(`<span class="cat-crumb is-here" aria-current="page">${here}</span>`);
+  return `<nav class="cat-crumbs" aria-label="Breadcrumb">${trail.join(sep)}</nav>`;
+}
+
 function catTabShell(heroHTML, mainHTML){
   $('#viewCatTab').classList.toggle('skin-under', catTabSkin === 'under');
   $('#viewCatTab').classList.toggle('skin-inside', catTabSkin === 'inside');
   $('#viewCatTab').innerHTML = `
     <div class="cat-tab-wrap">
       <div class="cat-skin">
-        ${catTabFrom ? `
-        <button type="button" class="btn btn-ghost btn-sm cat-exit" id="catTabExit">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H6M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Back to ${catBackLabel()}</button>` : ''}
+        ${catCrumbsHTML()}
         <span class="cat-skin-l">Page look</span>
         <div class="seg" role="group" aria-label="Page look">
           <button type="button" data-skin="white" aria-pressed="${catTabSkin === 'white'}">Plain</button>
@@ -9768,6 +10331,8 @@ function catTabShell(heroHTML, mainHTML){
   /* both shell-level controls, so they survive whichever body is rendered */
   const exit = $('#catTabExit');
   if(exit) exit.addEventListener('click', closeCatTab);
+  const up = $('#catTabUp');
+  if(up && catTabAt) up.addEventListener('click', () => renderCatTab(catTabAt.r));
   $$('#viewCatTab [data-skin]').forEach(b => b.addEventListener('click', () => {
     catTabSkin = b.dataset.skin; persist();
     if(catTabAt) catTabAt.agrIdx === null
@@ -11154,12 +11719,8 @@ function renderCatTabAgreement(r, idx){
        ${challengeHTML}`;
 
   catTabShell(
-    /* the way back sits ABOVE the title, breadcrumb-style — it used to open the
-       main column, which in the single-column layout put it mid-page, after the
-       hero's own call to action */
-    `<p class="opp-back cat-tab-back"><button class="btn btn-ghost btn-sm" id="catTabBack">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H6M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Back to ${r.n}</button></p>` +
+    /* no back button of its own any more: the shell's breadcrumb already carries
+       the step up to ${r.n}, and two of them stacked was the bug */
     catTabHeroHTML(r.id, r.n, a.n, a.save,
       `${rate}% below what you pay today, on the ${fmt(a.covers)} kr. you already spend with them.`,
       agrWhy(r, a)[0], activateHTML, est),
@@ -11186,7 +11747,6 @@ function renderCatTabAgreement(r, idx){
   wireReqCards('#viewCatTab');
   const heroDeal = $('#catTabDeal');
   if(heroDeal) heroDeal.addEventListener('click', () => openAdvisorMeeting(r));
-  $('#catTabBack').addEventListener('click', () => renderCatTab(r));
   $$('#viewCatTab .seg [data-view]').forEach(b => b.addEventListener('click', () => {
     agrViewStyle = b.dataset.view; persist(); renderCatTabAgreement(r, idx);
   }));
@@ -12073,179 +12633,6 @@ function rpModel(){
   };
 }
 
-/* ---------- the hero illustration ----------
-   Flat vector, no outlines, one low sun on the LEFT — the same side the hero's own
-   bloom is lit from, so the card and the drawing agree about where the light is. The
-   signature of this style is not the shapes, it is that every form is split into a
-   lit face and a shadow face, always with the shadow on the same side. Nothing is
-   shaded; the light is a hard edge.
-
-   The subject is the report: a company's buying drawn as a skyline, standing in the
-   green this file spends on money everywhere else.
-
-   WHY THE FRAME IS 1440 WIDE FOR A ~480px PANEL. The same drawing has to survive two
-   very different crops — a near-square panel beside the text on a wide canvas, and a
-   shallow full-width band when the canvas narrows and the hero stacks. `slice` always
-   crops the axis it has too much of, so a 1.5:1 drawing loses its whole roofline in a
-   4:1 band. Drawn at 3:1 with the tall core in the middle and lower wings running out
-   to both edges, the panel crops the wings away and keeps the core, and the band keeps
-   the full width and crops only sky. One drawing, two compositions, no second asset.
-
-   Depth is four planes — ridge, water, city, foliage — and the city is two of them, a
-   hazed row behind and a crisp row in front. One row of evenly spaced towers is a
-   picket fence, not a place.
-
-   Grain is an feTurbulence overlay: no asset, no request, and it resolves with the
-   panel instead of blurring at 2x. */
-
-/* [x, width, top]. Tops do not climb monotonically — a chart would, a city does not,
-   and this is a city. The tall ones sit between x≈440 and x≈1060, which is the window
-   the square panel crop keeps. */
-const RP_CITY_BACK = [
-  [140,26,314],[228,30,300],[318,26,306],[398,28,296],
-  [466,28,290],[608,40,248],[660,30,276],[856,28,286],[948,34,272],[1000,30,282],
-  [1090,28,300],[1176,30,290],[1268,26,302],[1356,28,298]
-];
-const RP_CITY_FRONT = [
-  [120,40,296],[166,30,312],[204,46,268],[256,34,302],[296,38,286],[340,28,308],[374,44,278],
-  [444,58,224],[508,34,288],[548,66,178],[620,40,260],[666,50,206],
-  [760,60,158],[826,42,240],[874,36,284],[916,52,208],[974,34,268],[1014,44,236],
-  [1066,40,272],[1112,32,300],[1150,48,258],[1204,34,290],[1244,42,276],[1292,30,304],[1328,46,266],[1380,32,294]
-];
-
-/* the four dots of the hero's hover tile, at the heights they sit at in it, so the
-   texture and the artwork are one drawing seen twice. Kept inside the panel crop's
-   window and clear of the roofline — a series that collides with the buildings reads
-   as a tooltip rather than as weather. */
-const RP_DOTS = [[792,96],[858,72],[924,80],[990,48]];
-
-/* the foliage: scalloped arcs of varying radius, not circles on a line. The pattern
-   repeats until it has covered the frame, so the two layers never line up. */
-const rpLeafRun = pat => {
-  const out = []; let w = 0;
-  while(w < 1500){ const r = pat[out.length % pat.length]; out.push(r); w += r * 2; }
-  return out;
-};
-const RP_LEAF_BACK  = rpLeafRun([18,26,14,30,20,24,16,28,22,18,26,16,24,22,17,19]);
-const RP_LEAF_FRONT = rpLeafRun([24,16,28,20,15,26,22,25,18,23,17,29,20,15,21,26]);
-
-/* `a r r 0 0 1 2r 0` is one bump */
-const rpLeafPath = (radii, y) =>
-  `M-8 470V${y}` + radii.map(r => `a${r} ${r} 0 0 1 ${r * 2} 0`).join('') + 'V470z';
-
-/* the rise is staggered by POSITION, not by array index: forty-odd towers at the
-   chart's 42ms beat would take two seconds to finish. Forty pixels of frame per step
-   keeps the whole skyline inside ~650ms and still reads as left-to-right. */
-const rpStep = x => Math.round(x / 40);
-
-const rpTower = (x, w, top, base, far) => {
-  const sh = Math.max(far ? 8 : 9, Math.round(w * (far ? 0.3 : 0.31)));
-  const lit = w - sh, h = base - top, rows = [];
-  for(let y = top + (far ? 15 : 16); y < base - 10; y += 15) rows.push(y);
-  const cw = Math.round(w * 0.46), cx = x + Math.round((w - cw) / 2);
-  const csh = Math.max(6, Math.round(cw * 0.3));
-  return `<g class="rp-art-bar" style="--i:${rpStep(x)}">
-    ${!far && w >= 50 ? `<rect x="${cx}" y="${top - 22}" width="${cw - csh}" height="24" fill="url(#rpaLit)"/>
-      <rect x="${cx + cw - csh}" y="${top - 22}" width="${csh}" height="24" fill="url(#rpaShade)"/>
-      <rect x="${cx}" y="${top - 22}" width="${cw}" height="3" fill="#fffdf7"/>` : ''}
-    <rect x="${x}" y="${top}" width="${lit}" height="${h}" fill="url(#rpa${far ? 'LitFar' : 'Lit'})"/>
-    <rect x="${x + lit}" y="${top}" width="${sh}" height="${h}" fill="url(#rpa${far ? 'ShadeFar' : 'Shade'})"/>
-    <rect x="${x}" y="${top}" width="${w}" height="${far ? 3 : 4}" fill="${far ? '#eef4fd' : '#fffdf7'}"/>
-    ${rows.map(y => far
-      ? `<rect x="${x}" y="${y}" width="${lit}" height="2.5" fill="#7fa0d0" opacity=".35"/>`
-      : `<rect x="${x}" y="${y}" width="${lit}" height="3" fill="#8fb6ec" opacity=".48"/>
-         <rect x="${x + lit}" y="${y}" width="${sh}" height="3" fill="#5f8cd6" opacity=".4"/>`).join('')}
-  </g>`;
-};
-
-const rpArtHTML = () => `
-<svg class="rp-art-svg" viewBox="0 0 1440 470" preserveAspectRatio="xMidYMax slice"
-  role="presentation" aria-hidden="true" focusable="false">
-  <defs>
-    <linearGradient id="rpaSky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#05165f"/>
-      <stop offset=".28" stop-color="#12409f"/>
-      <stop offset=".54" stop-color="#4d87e0"/>
-      <stop offset=".76" stop-color="#a9caf1"/>
-      <stop offset=".9" stop-color="#ffdda8"/>
-      <stop offset="1" stop-color="#fbc463"/>
-    </linearGradient>
-    <linearGradient id="rpaWater" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fad07c"/><stop offset="1" stop-color="#e5951f"/>
-    </linearGradient>
-    <linearGradient id="rpaLit" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fffbf2"/><stop offset="1" stop-color="#f4e4c9"/>
-    </linearGradient>
-    <linearGradient id="rpaShade" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#c8dbf7"/><stop offset="1" stop-color="#96b5e8"/>
-    </linearGradient>
-    <linearGradient id="rpaLitFar" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#dfe9fa"/><stop offset="1" stop-color="#c2d3ef"/>
-    </linearGradient>
-    <linearGradient id="rpaShadeFar" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#a8c0e8"/><stop offset="1" stop-color="#8aa6d8"/>
-    </linearGradient>
-    <radialGradient id="rpaSun" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#fff6dc" stop-opacity=".95"/>
-      <stop offset=".34" stop-color="#ffeec2" stop-opacity=".62"/>
-      <stop offset=".62" stop-color="#ffe3a4" stop-opacity=".3"/>
-      <stop offset=".84" stop-color="#ffdd97" stop-opacity=".1"/>
-      <stop offset="1" stop-color="#ffd98f" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="rpaGrain" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="4" stitchTiles="stitch"/>
-      <feColorMatrix type="saturate" values="0"/>
-      <feComponentTransfer><feFuncA type="linear" slope="1.4" intercept="-.32"/></feComponentTransfer>
-    </filter>
-  </defs>
-
-  <!-- 1 · sky, and the sun behind the city as a glow rather than a disc. A disc has
-          to be placed in a gap between two towers, and there is no gap that survives
-          both crops — it collided with a crown in one and fell off the frame in the
-          other. A glow degrades at every crop, and it is what actually lights the
-          frame: the warm horizon, the cream faces, the amber on the water. -->
-  <rect width="1440" height="300" fill="url(#rpaSky)"/>
-  <circle cx="560" cy="214" r="238" fill="url(#rpaSun)"/>
-
-  <!-- 2 · the plotted series, in the corner the tall core leaves empty -->
-  <path d="M${RP_DOTS.map(d => d.join(' ')).join(' L')}" fill="none" stroke="#ffeec4"
-    stroke-opacity=".38" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-  ${RP_DOTS.map(([x, y], i) => `<circle class="rp-art-dot" style="--i:${i}"
-    cx="${x}" cy="${y}" r="3.5" fill="#ffeec4" opacity=".9"/>`).join('')}
-
-  <!-- 3 · one ridge, low and wide. Two would be two subjects. -->
-  <path d="M0 300v-24l64-26 52 22 74-32 58 26 78-14 66 26 62-22 70 28 64-16 80 22 52-12
-           58 24 66-26 74 30 62-18 78 26 66-22 70 24 64-14 82 20v10z" fill="#071a53"/>
-
-  <!-- 4 · water, the sun's own column down it, and the shore lights along the far bank -->
-  <rect y="300" width="1440" height="66" fill="url(#rpaWater)"/>
-  <path d="M546 300h28l14 66h-56z" fill="#fff2ce" opacity=".45"/>
-  ${[38,72,196,228,262,392,424,456,590,624,658,712,748,880,914,1042,1078,1112,1246,1280,1314,1388]
-    .map((x, i) => `<rect x="${x}" y="302" width="2.5" height="${7 + (i % 4) * 5}"
-      fill="${i % 4 === 0 ? '#f54a00' : '#fff6e2'}" opacity="${i % 4 === 0 ? '.68' : '.5'}"/>`).join('')}
-
-  <!-- 5 · the land, in shadow, so the foliage in front of it has something to be
-          lighter than -->
-  <rect y="366" width="1440" height="104" fill="#05635a"/>
-
-  <!-- 6 · the far row, hazed toward the sky it stands in — the whole of aerial
-          perspective, for the price of two gradients -->
-  ${RP_CITY_BACK.map(([x, w, top]) => rpTower(x, w, top, 398, true)).join('')}
-
-  <!-- 7 · the front row: cream in the light, cornflower in the shadow, shadow on the
-          right on every single one. Anything over 50 wide takes a stepped crown, so
-          the roofline is a skyline and not a bar chart. -->
-  ${RP_CITY_FRONT.map(([x, w, top]) => rpTower(x, w, top, 410, false)).join('')}
-
-  <!-- 8 · foliage, two scalloped depths, in the green this file spends on money -->
-  <path d="${rpLeafPath(RP_LEAF_BACK, 434)}" fill="#04796e"/>
-  <path d="${rpLeafPath(RP_LEAF_FRONT, 452)}" fill="#009689"/>
-
-  <!-- 9 · grain, over everything -->
-  <rect width="1440" height="470" filter="url(#rpaGrain)" opacity=".45"
-    style="mix-blend-mode:soft-light"/>
-</svg>`;
-
 /* one supporting figure: a number and a line of prose, ruled apart from its
    neighbours rather than boxed. `est` swaps in the smaller type the two-number
    range needs. */
@@ -12544,8 +12931,6 @@ function renderReports(){
         </div>
 
         <p class="rp-find${r.est ? ' est' : ''}">${r.find}</p>
-
-        <div class="rp-art">${rpArtHTML()}</div>
 
         <div class="rp-ctl">
           <div class="seg" role="group" aria-label="Report">
