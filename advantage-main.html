@@ -2803,10 +2803,9 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   -webkit-mask-image:linear-gradient(to right,transparent 0,#000 34%);
   mask-image:linear-gradient(to right,transparent 0,#000 34%)}
 /* the card's own text sits above the fade */
-/* the chevron is excluded as well as the chart: this selector is (0,2,0) and
-   .nc-ov-card-go is (0,1,0), so without the second :not() it silently won and
-   forced the absolutely-positioned chevron back into normal flow. */
-.nc-ov-card>*:not(.nc-spark):not(.nc-ov-card-go){position:relative;z-index:1}
+/* everything but the chart sits above it. The chevron now rides inside
+   .nc-ov-card-foot rather than being a direct child, so it comes along with it. */
+.nc-ov-card>*:not(.nc-spark){position:relative;z-index:1}
 /* one tone per card, matching the trend disc beside the figure: green for money
    gained, neutral for a figure that is holding, brand blue for a rising count */
 .nc-spark-good{color:var(--sentiment-positive)}
@@ -3989,12 +3988,17 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 /* the chevron sits opposite the label, on the card's own top line, so the eye
    meets it while reading the label rather than after finishing the card. Muted
    at rest — this is an affordance, not an action to take right now. */
-.nc-ov-card-go{position:absolute;bottom:var(--s6);right:var(--s6);z-index:1;
-  display:grid;place-items:center;width:28px;height:28px;
+/* the caption and the way in share one line. In the corner the chevron sat on top
+   of the sparkline — a solid disc punched through the chart it was covering. Beside
+   the caption it reads as the end of the sentence, and the chart keeps its corner. */
+.nc-ov-card-foot{display:flex;align-items:center;gap:var(--s2);min-width:0}
+.nc-ov-card-foot .nc-ov-card-c{min-width:0}
+.nc-ov-card-go{flex:0 0 auto;
+  display:grid;place-items:center;width:24px;height:24px;
   border-radius:var(--rounded-full);background:var(--general-secondary);
   color:var(--general-primary);
   transition:background var(--t-fast),color var(--t-fast),transform var(--t-fast)}
-.nc-ov-card-go svg{width:15px;height:15px}
+.nc-ov-card-go svg{width:14px;height:14px}
 .nc-ov-card.is-link:hover .nc-ov-card-go{background:var(--general-primary);
   color:var(--general-primary-foreground);transform:translateX(2px)}
 @media (prefers-reduced-motion:reduce){
@@ -8481,10 +8485,12 @@ function dashCardHTML(c){
     <${t}${c.go ? ` type="button" data-drill="${c.go}" data-card="${c.go}"` : ''}
       class="nc-ov-card${c.go ? ' is-link' : ''}"${c.go ? ` aria-label="${c.l}: ${
         String(c.v).replace(/<[^>]*>/g, '')} — see where this comes from"` : ''}>
-      ${c.go ? `<span class="nc-ov-card-go" aria-hidden="true">${DR_IC.go}</span>` : ''}
       <span class="nc-ov-card-l">${c.l}</span>
       <b class="nc-ov-card-v${c.accent ? ' accent' : ''}"><span class="ov-num">${c.v}</span>${c.u ? `<small> ${c.u}</small>` : ''}</b>
-      <span class="nc-ov-card-c">${c.cap}</span>
+      <span class="nc-ov-card-foot">
+        <span class="nc-ov-card-c">${c.cap}</span>
+        ${c.go ? `<span class="nc-ov-card-go" aria-hidden="true">${DR_IC.go}</span>` : ''}
+      </span>
       ${cardSpark(c.spark, c.tone, c.amp)}
     </${t}>`;
 }
