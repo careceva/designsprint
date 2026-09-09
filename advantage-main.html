@@ -5862,20 +5862,33 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .pkd-save{grid-area:save;display:flex;align-items:baseline;gap:5px;font-weight:700;
   color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
 .pkd-save em,.pkd-val em{font-style:normal;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
-.pkd-rail{grid-area:rail;position:relative;height:48px;margin-top:var(--s2);--knob:20px}
-.pkd-rail::before{content:"";position:absolute;left:0;right:0;top:calc(var(--knob) / 2 - 3px);height:6px;
-  border-radius:3px;background:var(--general-muted)}
-.pkd-fill{position:absolute;left:0;top:calc(var(--knob) / 2 - 3px);height:6px;width:var(--p,0%);
-  border-radius:3px;background:var(--general-primary);transition:width var(--pk-t) var(--pk-ease)}
-.pkd-tick{position:absolute;left:var(--b,50%);top:calc(var(--knob) / 2 - 11px);width:1px;height:6px;
-  background:var(--general-muted-foreground);transform:translateX(-50%)}
-.pkd-knob{position:absolute;left:var(--p,0%);top:calc(var(--knob) / 2);width:var(--knob);height:var(--knob);
-  border-radius:var(--rounded-full);background:var(--surface);border:2px solid var(--general-primary);
-  box-shadow:var(--shadow-sm);transform:translate(-50%,-50%);transition:left var(--pk-t) var(--pk-ease)}
-.pkd-val{position:absolute;left:clamp(44px,var(--p,0%),calc(100% - 44px));top:calc(var(--knob) + 6px);
-  transform:translateX(-50%);white-space:nowrap;display:flex;gap:4px;align-items:baseline;
-  font-size:var(--text-xs);font-weight:600;font-variant-numeric:tabular-nums;
+/* the demo rail is the page's rail, drawn again: a 2px grey line, the actual in
+   ink, the added spend in blue, the black knob with its grip, and the readout under
+   the knob — grey at rest, blue once moved. Only the timing is the demo's own. */
+.pkd-rail{grid-area:rail;position:relative;height:46px;margin-top:var(--s2);--knob:20px}
+.pkd-rail::before{content:"";position:absolute;left:calc(var(--knob) / 2);right:calc(var(--knob) / 2);
+  top:calc(var(--knob) / 2 - 1px);height:2px;border-radius:1px;background:var(--general-muted)}
+.pkd-fill,.pkd-add{position:absolute;top:calc(var(--knob) / 2 - 1px);height:2px;border-radius:1px;
+  transition:width var(--pk-t) var(--pk-ease),left var(--pk-t) var(--pk-ease)}
+.pkd-fill{left:calc(var(--knob) / 2);width:calc((100% - var(--knob)) * var(--p0,0));
+  background:var(--general-foreground)}
+.pkd-add{left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p0,0));
+  width:calc((100% - var(--knob)) * (var(--p,0) - var(--p0,0)));border-radius:0 1px 1px 0;
+  background:var(--general-primary)}
+.pkd-knob{position:absolute;left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p,0));
+  top:calc(var(--knob) / 2);width:var(--knob);height:var(--knob);box-sizing:border-box;
+  border-radius:var(--rounded-full);border:2px solid var(--surface);
+  background:var(--general-foreground) var(--knob-grip) center / 8px 8px no-repeat;
+  box-shadow:0 1px 4px rgb(10 42 92/.32);transform:translate(-50%,-50%);
   transition:left var(--pk-t) var(--pk-ease)}
+.pkd-val{position:absolute;left:clamp(44px,calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p,0)),calc(100% - 44px));
+  top:calc(var(--knob) / 2 + 2px);
+  transform:translateX(-50%);white-space:nowrap;display:flex;gap:4px;align-items:baseline;
+  font-size:var(--text-xs);font-weight:500;font-variant-numeric:tabular-nums;
+  color:var(--general-muted-foreground);
+  transition:left var(--pk-t) var(--pk-ease),color var(--t-fast)}
+.pkd-rail.set .pkd-val{color:var(--general-primary);font-weight:600}
+.pkd-rail.set .pkd-val em{color:inherit;opacity:.72}
 .pkd-cap{position:absolute;left:var(--s8);bottom:var(--s4);font-size:var(--text-xs);color:var(--general-muted-foreground)}
 /* the agreements demo: the same tile, and a short list with a switch per agreement.
    One by one the open ones switch on and the two figures in the tile move. */
@@ -5899,7 +5912,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .pkd-ag.on .pkd-sw{background:var(--sentiment-positive)}
 .pkd-ag.on .pkd-sw i{transform:translateX(14px)}
 @media(prefers-reduced-motion:reduce){
-  .pks,.pk,.pkd-fill,.pkd-knob,.pkd-val,.pkd-pill,.pkd-sw,.pkd-sw i,.pkd-ag-s{transition:none}
+  .pks,.pk,.pkd-fill,.pkd-add,.pkd-knob,.pkd-val,.pkd-pill,.pkd-sw,.pkd-sw i,.pkd-ag-s{transition:none}
 }
 @media(max-width:600px){
   .pkd-row,.pkd-list{left:var(--s4);right:var(--s4)}
@@ -14857,7 +14870,7 @@ function pkDemoTune(type, m){
   const base = areaBase(r) || 1, g = tuneFactor(r.id);
   const stops = [base, base + tuneDelta(40), base + tuneDelta(55)];
   const bIdx = 0, last = stops.length - 1;
-  const pos = i => tunePos(r, stops[i] - base);
+  const pos = i => tuneAt(r, stops[i] - base).toFixed(4);
   const path = [bIdx, Math.min(bIdx + 1, last), Math.min(bIdx + 2, last), Math.min(bIdx + 1, last), bIdx];
   const card = m.cards.find(c => c.go === type) || {n:0};
   const head0 = card.n || 0;
@@ -14885,9 +14898,9 @@ function pkDemoTune(type, m){
         <span class="pkd-row-h">Savings still open, by category</span>
         <div class="pkd-tr">
           <span class="pkd-n">${r.n}</span>
-          <span class="pkd-rail" data-pk-rail style="--p:${pos(startIdx)};--b:${pos(bIdx)}">
-            <i class="pkd-fill"></i><i class="pkd-tick"></i><i class="pkd-knob"></i>
-            <span class="pkd-val"><span data-pk-spend>${fmtCompact(stops[startIdx])}</span><em>kr. a year</em></span>
+          <span class="pkd-rail${startIdx === bIdx ? '' : ' set'}" data-pk-rail style="--p:${pos(startIdx)};--p0:${pos(bIdx)}">
+            <i class="pkd-fill"></i><i class="pkd-add"></i><i class="pkd-knob"></i>
+            <span class="pkd-val"><span data-pk-spend>${fmtCompact(stops[startIdx])}</span><em>kr.</em></span>
           </span>
           <b class="pkd-save"><span data-pk-save>${fmtPlus(rowSaveAt(f0))}</span><em>kr. a year</em></b>
         </div>
@@ -14904,6 +14917,7 @@ function pkDemoTune(type, m){
     const go = i => {
       const fFrom = stops[cur] / base, fTo = stops[i] / base;
       rail.style.setProperty('--p', pos(i));
+      rail.classList.toggle('set', i !== bIdx);
       pill.classList.toggle('is-on', i !== bIdx);
       lab.textContent = labelAt(i);
       pkTween(head, headAt(fFrom), headAt(fTo), fmtHead, 700);
