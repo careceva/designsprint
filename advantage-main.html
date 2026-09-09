@@ -1121,6 +1121,29 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   display:flex;flex-direction:column;gap:var(--s8)}
 @media(max-width:760px){.page{padding:var(--s8) var(--s4) var(--s12)}}
 
+/* --- site footer --- one per canvas, last child, so it follows whatever view is
+   showing (inside or outside .page). Same column as .page; a hairline above,
+   small muted text, and two rows on narrow canvases. */
+.sitefoot{width:100%;max-width:1200px;margin:0 auto;padding:0 var(--s8) var(--s12)}
+.sitefoot-in{display:flex;align-items:center;justify-content:space-between;gap:var(--s6);
+  flex-wrap:wrap;padding-top:var(--s6);border-top:1px solid var(--hairline);
+  font-size:var(--text-xs);line-height:1.4;color:var(--general-foreground)}
+.sitefoot-l,.sitefoot-r{display:flex;align-items:center;gap:var(--s3);min-width:0}
+.sitefoot-l{flex-wrap:wrap;row-gap:var(--s1)}
+.sitefoot-sep{color:var(--general-muted-foreground);user-select:none}
+.sitefoot a,.sitefoot button{color:inherit;text-decoration:none;background:none;border:0;
+  font-size:inherit;line-height:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--s2)}
+.sitefoot a:hover,.sitefoot button:hover{text-decoration:underline}
+.sitefoot a:focus-visible,.sitefoot button:focus-visible{outline:2px solid var(--general-primary);
+  outline-offset:2px;border-radius:var(--rounded-xs)}
+.sitefoot svg{width:16px;height:16px;flex:none}
+.sitefoot-soc{display:inline-flex;align-items:center;gap:var(--s2)}
+.sitefoot-soc a{padding:var(--s1)}
+.sitefoot-soc a:hover{text-decoration:none;color:var(--general-muted-foreground)}
+@media(min-width:1800px){body.cat-tab-mode .sitefoot{max-width:1480px}}
+@media(max-width:760px){.sitefoot{padding:0 var(--s4) var(--s8)}
+  .sitefoot-in{flex-direction:column;align-items:flex-start;gap:var(--s4)}}
+
 /* 1 · greeting */
 /* the shared opportunity row components: the dashboard's category rows, the
    agreement cards and the category tab all build out of these */
@@ -1328,6 +1351,61 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   color:var(--general-muted-foreground)}
 .agd .agr-fav svg{width:20px;height:20px;fill:none;filter:none}
 .agd .agr-fav.on svg{fill:var(--general-destructive);stroke:var(--general-destructive)}
+
+/* ---------- agreement card, "brand" variant ---------- */
+/* Airbnb's listing card, with the photograph replaced by the brand: a square
+   tile in the supplier's own colour at 10%, the wordmark sitting on it, the
+   status label top-left and the save toggle top-right exactly where Airbnb puts
+   "Guest favourite" and the heart. Under it, Airbnb's three tight lines — the
+   name, one grey line of context, the price in bold — and nothing else: no
+   border, no fill, no shadow, no button. The tile is the card's only edge. */
+/* one row, however many agreements: the tray scrolls sideways behind hidden
+   scrollbars and the header's prev/next arrows page it, the same mechanics as
+   the simple row. Cards hold their width so the row overflows instead of
+   compressing; a 24px gap gives each one air. */
+.agr-brand-row{--aw:236px;list-style:none;display:flex;gap:var(--s6);margin-top:var(--s8);
+  padding:var(--s1) 0 var(--s2);overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.agr-brand-row::-webkit-scrollbar{display:none}
+.agr-brand-row>li{flex:0 0 auto;width:var(--aw);scroll-snap-align:start}
+@container page (max-width:700px){.agr-brand-row{--aw:62%}}
+.agb{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  text-align:left;cursor:pointer;padding:0;border:none;background:none}
+.agb>*{max-width:100%}
+.agb:focus-visible{outline:2px solid var(--general-primary);outline-offset:4px;
+  border-radius:var(--rounded-md)}
+/* the tile: Airbnb's photo slot, a touch shorter than square because a wordmark
+   has no sky to fill. The wash deepens a step on hover the way their photo brightens */
+.agb-band{position:relative;width:100%;aspect-ratio:5/4;flex:0 0 auto;margin-bottom:var(--s3);
+  display:grid;place-items:center;overflow:hidden;border-radius:var(--rounded-lg);
+  background:rgb(var(--b)/.10);transition:background var(--t-fast)}
+.agb:hover .agb-band{background:rgb(var(--b)/.15)}
+/* the wordmark is the subject of the picture, so it gets the space a subject
+   gets: a white plate two-thirds the tile's width, the mark filling most of it.
+   The @64px assets carry a white ground, so white is the seamless surface. */
+.agb-logo{width:64%;aspect-ratio:2/1;padding:var(--s3);display:grid;place-items:center;
+  border-radius:var(--rounded-md);background:var(--surface)}
+.agb-logo img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+/* a square mark on its own colour (Hilti's red, Stark's amber) is a badge, not a
+   wordmark: a smaller square plate in the brand's own ground, the mark filling it */
+.agb-logo.mark{width:40%;aspect-ratio:1/1;padding:0;overflow:hidden}
+.agb-logo.mark img{width:100%;height:100%;object-fit:cover}
+.agb-logo i{font-style:normal;font-weight:700;font-size:var(--text-xl);letter-spacing:.02em;
+  color:rgb(var(--b))}
+/* the save toggle sits on a light wash here, not a photo: ink instead of white */
+.agb .agr-fav{color:var(--general-foreground)}
+.agb .agr-fav svg{fill:#ffffff99;filter:none}
+.agb .agr-fav.on svg{fill:var(--general-destructive);stroke:var(--general-destructive)}
+/* Airbnb's three lines, left-aligned and 2px apart: 15/600 name, grey context,
+   the figure in ink with the rate after a middot where their star rating sits */
+.agb-name{font-size:15px;font-weight:600;line-height:1.35;letter-spacing:-.1px;
+  color:var(--general-foreground);text-wrap:pretty;
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.agb-meta{font-size:var(--text-sm);line-height:1.35;color:var(--general-muted-foreground);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.agb-price{margin-top:2px;font-size:var(--text-sm);line-height:1.35;
+  color:var(--general-muted-foreground);font-variant-numeric:tabular-nums;white-space:nowrap}
+.agb-price b{font-weight:600;color:var(--general-foreground)}
 
 /* ---------- opportunity detail (full page) ---------- */
 .opp-page{display:flex;flex-direction:column;gap:var(--s6);max-width:760px;margin:0 auto;width:100%}
@@ -2765,7 +2843,12 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
 .nc-asst-txt b{font-size:var(--text-lg);font-weight:600;color:var(--general-foreground)}
 .nc-asst-txt>span{font-size:16px;color:var(--general-muted-foreground)}
 .nc-asst-mark{flex:0 0 auto;width:20px;height:20px;opacity:.9}
-.nc-sec{padding-top:var(--s8);border-top:1px solid var(--hairline)}
+/* no hairline between sections: the distance does the separating. 64px, two
+   steps up from the 32px the rule used to lean on — except the category
+   breakdown, which continues the invoice-savings figure above it and sits
+   close, at 32px, so the two read as one story. */
+.nc-sec{padding-top:var(--s16)}
+.nc-sec.nc-sec-follow{padding-top:var(--s8)}
 /* section titles carry the weight of the reference's "Your overview" heading —
    clearly the top of their section, one step under the page greeting (text-4xl)
    and well clear of the card titles (text-lg) below them */
@@ -4059,6 +4142,30 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .nc-ov-card-x svg{width:16px;height:16px}
 .nc-ov-card.is-link:hover .nc-ov-card-x,.nc-ov-card.is-link:focus-visible .nc-ov-card-x{
   background:var(--general-secondary);color:var(--general-primary)}
+/* ---------- the adjusted card ----------
+   Once a slider has moved, the figure is the user's, and the card has to say so
+   without a word: the number takes the slider's blue (green stays reserved for
+   money confirmed on an invoice), the hairline follows, and the invoice figure
+   stays in view beneath the caption — labelled, plain, not struck out. The row
+   is laid out at rest too, invisible, so the grid does not grow under the pointer. */
+.nc-ov-card.is-link.is-tuned,
+.nc-ov-card.is-link.is-tuned:hover{border-color:rgb(27 100 220 / .35)}
+.nc-ov-card-v{transition:color var(--t)}
+.nc-ov-card.is-tuned .nc-ov-card-v,
+.nc-ov-card.is-tuned .nc-ov-card-v.accent{color:var(--general-primary)}
+.ov-was{display:flex;gap:var(--s2);align-items:baseline;min-width:0;
+  font-size:var(--text-sm);line-height:1.45;font-variant-numeric:tabular-nums;
+  visibility:hidden;opacity:0;transform:translateY(-3px)}
+.ov-was em{font-style:normal;font-weight:400;color:var(--general-muted-foreground);white-space:nowrap}
+.ov-was b{font-weight:600;color:var(--general-foreground)}
+.nc-ov-card.is-tuned .ov-was{visibility:visible;opacity:1;transform:none}
+/* the corner mark is the way back while the figure is adjusted */
+.nc-ov-card.is-tuned>.nc-ov-card-x{color:var(--general-primary)}
+@media(prefers-reduced-motion:no-preference){
+  .ov-was{transition:opacity var(--t),transform var(--t),visibility 0s linear var(--t)}
+  .nc-ov-card.is-tuned .ov-was{transition:opacity var(--t),transform var(--t)}
+}
+@media(prefers-reduced-motion:reduce){.ov-was,.nc-ov-card-v{transition:none}}
 
 /* ---------- Drill-down pages (Savings / Spending / Agreement usage) ----------
    Reached by clicking a summary card. Each answers the one question its card can
@@ -5678,7 +5785,6 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   font-size:var(--text-lg);letter-spacing:-.4px;color:var(--sentiment-negative-ink-on-tint)}
 .cat-rise h3 svg{width:20px;height:20px;flex:0 0 auto}
 .cat-rise p{margin:var(--s3) 0 var(--s4);max-width:64ch;font-size:var(--text-base);line-height:1.55}
-.dash-more-row{margin:var(--s4) 0 0;display:flex;justify-content:center}
 /* the way onward from an assistant reply: a small secondary pill, .btn-sm sized */
 .ap-go{display:inline-flex;align-items:center;gap:6px;margin-top:var(--s2);height:32px;
   padding:0 var(--s3);border:1px solid var(--hairline);border-radius:var(--rounded-full);
@@ -6216,6 +6322,34 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
              like the new-customer dashboard so it shares the same content column
              and grid rather than being squeezed into .page's 1200px-with-padding. -->
         <section id="viewSavings" hidden></section>
+
+        <!-- site footer: the last child of the canvas, so it sits under whichever
+             view is showing. Legal links left, locale and social right. -->
+        <footer class="sitefoot" id="sitefoot" aria-label="Site footer">
+          <div class="sitefoot-in">
+            <div class="sitefoot-l">
+              <span>© 2026 Visma Advantage</span>
+              <span class="sitefoot-sep" aria-hidden="true">·</span>
+              <a href="#" onclick="return false">Privacy</a>
+              <span class="sitefoot-sep" aria-hidden="true">·</span>
+              <a href="#" onclick="return false">Terms</a>
+              <span class="sitefoot-sep" aria-hidden="true">·</span>
+              <a href="#" onclick="return false">Cookie settings</a>
+            </div>
+            <div class="sitefoot-r">
+              <button type="button" aria-label="Language: English (UK)">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.8 3 4 6 4 9s-1.2 6-4 9c-2.8-3-4-6-4-9s1.2-6 4-9z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <span>English (UK)</span>
+              </button>
+              <button type="button" aria-label="Currency: Swedish krona">SEK</button>
+              <span class="sitefoot-soc">
+                <a href="#" onclick="return false" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 110 5 2.5 2.5 0 010-5zM3 9h4v12H3zM9.5 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.5c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V21h-4z"/></svg></a>
+                <a href="#" onclick="return false" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.1l-6.8 7.8L21.8 21h-6.3l-4.9-6.4L5 21H1.9l7.3-8.3L1.5 3H8l4.4 5.9L17.5 3zm-1.1 16.2h1.7L7 4.7H5.1l11.3 14.5z"/></svg></a>
+                <a href="#" onclick="return false" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor"/></svg></a>
+              </span>
+            </div>
+          </div>
+        </footer>
 
         <!-- Advantage activity: a persistent rail available on every page and every
              persona, not just the new-customer dashboard — position:fixed so it holds
@@ -8018,6 +8152,43 @@ const agrLine = a =>
   (AGR_PITCH[a.n] || AGR_PITCH_FALLBACK[seedOf(a.n) % AGR_PITCH_FALLBACK.length])
     .replace('{m}', `<b>+${fmt(a.save)} kr.</b>`);
 
+/* the Figma card: brand wash, wordmark tile, name, rate, one line of what
+   changes, Read more. The wordmarks come from assets/company-logos, keyed by
+   agreement name — only real brand matches; everyone else gets initials, since
+   putting another company's mark on an agreement would be a lie. */
+const AGB_LOGO = {
+  'Lyreco Erhverv':    {f:'Lyreco@64px.png'},
+  'DSV Road':          {f:'DSV@64px.png'},
+  'Q8 Fuel Card':      {f:'q8@64px.png'},
+  'Shell Fleet Nordic':{f:'Shell@64px.png'},
+  'Ahlsell Nordic':    {f:'Ahlsell@64px.png'},
+  'Bygma Framework':   {f:'Bygma@64px.png'},
+  /* square marks on their own ground — shown as a badge, not a wordmark */
+  'Hilti Erhverv':     {f:'hilti.png',  mark:true, bg:'#d2091e'},
+  'Stark Byggecenter': {f:'stark.jpeg', mark:true, bg:'#f48222'}
+};
+const agbLogo = name => {
+  const l = AGB_LOGO[name];
+  if(!l) return `<span class="agb-logo"><i>${initialsOf(name)}</i></span>`;
+  return `<span class="agb-logo${l.mark ? ' mark' : ''}"${l.bg ? ` style="background:${l.bg}"` : ''}>
+    <img src="assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
+};
+function ncAgreementCardBrand(r, a, idx){
+  const rate = Math.round(a.save / a.covers * 100);
+  return `
+    <li class="agb" data-cat="${r.id}" data-idx="${idx}" tabindex="0" role="button"
+      style="--b:${brandOf(a.n)}" aria-label="${a.n}, ${r.n}: ${saveFig(a.save, isEstimated(a))} kr. a year, ${rate}% under today">
+      <div class="agb-band">
+        ${agbLogo(a.n)}
+        ${agrLabel(false)}
+        ${agrFav(a.n)}
+      </div>
+      <span class="agb-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</span>
+      <span class="agb-meta">${r.n}</span>
+      <span class="agb-price"><b>${figHTML(a.save, isEstimated(a))} kr.</b> a year · −${rate}%</span>
+    </li>`;
+}
+
 /* the simplified card: one sentence, one affordance. Deliberately says less
    than either of the other two — no photo, no status label, no fav toggle, no
    second action — so a row of eight stays scannable in a single sweep. */
@@ -8742,16 +8913,21 @@ function dashModelOwn(){
       /* the figure is a twelve-month run-rate, so the label says so — "YTD" on a
          per-year number was two different periods on one tile */
       /* landed money carries no sign — a plus is for what could still come */
+      /* `was` is the figure the invoices actually say — the same sum, read off the
+         remembered actuals rather than the tuned copies — so the card can keep it
+         in view under the number the user has set */
       {l: tuned ? 'Savings a year' : 'Saved, last 12 months', v: tuned ? `+${fmt(saveRun)}` : fmt(saveRun),
        n:saveRun, nf:v => tuned ? `+${fmt(v)}` : fmt(v), u:'kr. / year',
        accent:true, trend:'',
        cap: tuned ? `On the spend you have set, not on your invoices`
                   : `${fmt(Math.round(saveRun * yearFrac))} kr. landed so far this year`,
+       was:{l:'Your actual savings', n:landing.reduce((s, a) => s + (a.saveActual === undefined ? a.save : a.saveActual), 0)},
        spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
       {l: tuned ? 'Spend a year' : 'Spend, last 12 months', v:fmt(spend),
        n:spend, nf:v => fmt(v), u:'kr. / year', trend:'flat',
        cap: tuned ? `Across ${rows.length} areas · ${tn} set by you`
                   : `Across ${rows.length} purchasing categories`,
+       was:{l:'Your actual spend', n:rows.reduce((s, r) => s + (r.amtActual === undefined ? r.amt : r.amtActual), 0)},
        spark:DASH_SPARK_SPEND, tone:'flat', amp:.45, go:'spend'},
       {l:'Agreements in use', v:`${reqAgs.length}`,
        n:reqAgs.length, nf:v => `${Math.round(v)}`, trend:'rise',
@@ -8791,14 +8967,11 @@ function dashModelOwn(){
          ${openAgrs.length} agreements you have not activated. Biggest first.`
       : 'Nothing open right now.',
     agrEmpty: 'Every agreement is already active — nothing open right now.',
-    /* eight by default, all of them on request — a list that says "19 open" and
-       shows eight with no way to the other eleven is a promise the page breaks */
-    agrs: dashShowAllAgrs ? openAgrs : openAgrs.slice(0, 8),
-    agrMore: dashShowAllAgrs ? 0 : Math.max(0, openAgrs.length - 8),
-    agrShowAll: dashShowAllAgrs && openAgrs.length > 8
+    /* every open agreement, no "show all" step — the row scrolls, so a list
+       that says "19 open" can show all nineteen without pushing the page down */
+    agrs: openAgrs
   };
 }
-let dashShowAllAgrs = false;
 
 /* ---- Fanny: no invoices of her own, so the cards are ±15% bands around the
    median peer and every sentence says so. peerProfile() is the same source the
@@ -9240,6 +9413,16 @@ function dashPaint(root){
     const v = card.querySelector('.ov-num'), cap = card.querySelector('.nc-ov-card-c');
     if(v){ if(c.nf) animNum(v, c.n, c.nf); else v.textContent = c.v; }
     if(cap) cap.textContent = c.cap;
+    const on = cardTuned(c);
+    card.classList.toggle('is-tuned', on);
+    const was = card.querySelector('.ov-was b');
+    if(was && c.was) was.textContent = fmt(c.was.n);
+    const x = card.querySelector('.nc-ov-card-x');
+    if(x && x.dataset.mode !== (on ? 'reset' : 'expand')){
+      x.dataset.mode = on ? 'reset' : 'expand';
+      x.innerHTML = on ? PK_IC.reset : PK_IC.expand;
+      if(on) x.title = 'Back to your invoices'; else x.removeAttribute('title');
+    }
   });
   const bT = $(`${root} .nc-calc-txt b`), bI = $(`${root} .nc-calc-txt .info-tip`);
   if(bT && bI){ bT.firstChild.textContent = m.ovTitle; bI.dataset.tip = m.ovTip; bI.setAttribute('aria-label', m.ovTip); }
@@ -9379,18 +9562,26 @@ function ncGettingStartedHTML(){
    than a div with a click handler: it is then keyboard-reachable, announced as a
    button, and gets focus styling for free. The chevron is the visible half of
    that promise — a card that does something has to look like it does. */
+/* a card whose figure has left the invoices: the number is drawn in the slider's
+   blue, the caption says whose number it is, and the invoice figure stays in view
+   beneath — plain, labelled, never struck out. The row is reserved at rest so the
+   page does not jump the moment a slider moves. */
+const cardTuned = c => !!c.was && tuneActive() && Math.abs(c.n - c.was.n) >= 1;
 function dashCardHTML(c){
   const t = c.go ? 'button' : 'div';
+  const on = cardTuned(c);
   return `
     <${t}${c.go ? ` type="button" data-drill="${c.go}" data-card="${c.go}"` : ''}
-      class="nc-ov-card${c.go ? ' is-link' : ''}"${c.go ? ` aria-label="${c.l}: ${
+      class="nc-ov-card${c.go ? ' is-link' : ''}${on ? ' is-tuned' : ''}"${c.go ? ` aria-label="${c.l}: ${
         String(c.v).replace(/<[^>]*>/g, '')} — open summary"` : ''}>
-      ${c.go ? `<span class="nc-ov-card-x" aria-hidden="true">${PK_IC.expand}</span>` : ''}
+      ${c.go ? `<span class="nc-ov-card-x" aria-hidden="true" data-mode="${on ? 'reset' : 'expand'}"${
+        on ? ' title="Back to your invoices"' : ''}>${on ? PK_IC.reset : PK_IC.expand}</span>` : ''}
       <span class="nc-ov-card-l">${c.l}</span>
       <b class="nc-ov-card-v${c.accent ? ' accent' : ''}"><span class="ov-num">${c.v}</span>${c.u ? `<small> ${c.u}</small>` : ''}</b>
       <span class="nc-ov-card-foot">
         <span class="nc-ov-card-c">${c.cap}</span>
       </span>
+      ${c.was ? `<span class="ov-was"><em>${c.was.l}</em><b>${fmt(c.was.n)}</b></span>` : ''}
       ${cardSpark(c.spark, c.tone, c.amp)}
     </${t}>`;
 }
@@ -9510,7 +9701,7 @@ function dashHTML(m, rowId){
       </div>
     </section>
 
-    <section class="nc-sec">
+    <section class="nc-sec nc-sec-follow">
       <div class="nc-bento-row">
         <div class="nc-bento-cell">
           <h2>${m.catTitle}</h2>
@@ -9536,7 +9727,7 @@ function dashHTML(m, rowId){
           <p class="nc-sub">${m.agrSub}</p>
         </div>
         <div class="agr-simple-nav">
-          ${m.agrs.length && agrCardStyle === 'simple' ? `
+          ${m.agrs.length && (agrCardStyle === 'simple' || agrCardStyle === 'brand') ? `
             <button type="button" class="snav" data-ascroll="-1"
               aria-controls="${rowId}" aria-label="Previous agreements" disabled>
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -9546,6 +9737,7 @@ function dashHTML(m, rowId){
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>` : ''}
           <div class="seg" role="group" aria-label="Card style">
+            <button type="button" data-style="brand" aria-pressed="${agrCardStyle === 'brand'}">Brand</button>
             <button type="button" data-style="simple" aria-pressed="${agrCardStyle === 'simple'}">Simple</button>
             <button type="button" data-style="photo" aria-pressed="${agrCardStyle === 'photo'}">Photo</button>
             <button type="button" data-style="detail" aria-pressed="${agrCardStyle === 'detail'}">Detail</button>
@@ -9554,15 +9746,13 @@ function dashHTML(m, rowId){
       </div>
       ${!m.agrs.length
         ? `<p class="opp-empty">${m.agrEmpty}</p>`
+        : agrCardStyle === 'brand'
+        ? `<ol class="agr-brand-row" id="${rowId}">${m.agrs.map(({r,a,i}) => ncAgreementCardBrand(r, a, i)).join('')}</ol>`
         : agrCardStyle === 'detail'
         ? `<ol class="agr-det-grid">${m.agrs.map(({r,a,i}, pos) => ncAgreementCardDetail(r, a, i, pos)).join('')}</ol>`
         : agrCardStyle === 'simple'
         ? `<div class="agr-simple-tray"><ol class="agr-simple-row" id="${rowId}">${m.agrs.map(({r,a,i}) => ncAgreementCardSimple(r, a, i)).join('')}</ol></div>`
         : `<ol class="opp-list opp-list-bars nc-agr-grid">${m.agrs.map(({r,a,i}) => ncAgreementCard(r, a, i)).join('')}</ol>`}
-      ${m.agrMore ? `<p class="dash-more-row"><button type="button" class="btn btn-secondary dash-more" data-more="1">
-          Show all ${m.agrs.length + m.agrMore} agreements</button></p>`
-        : m.agrShowAll ? `<p class="dash-more-row"><button type="button" class="btn btn-secondary dash-more" data-more="0">
-          Show the biggest 8 only</button></p>` : ''}
     </section>`;
 }
 
@@ -9573,15 +9763,12 @@ function wireDash(root, m){
   wireAgrFav(root);
   /* the three summary figures open their summary, with the page that backs them
      up one click further */
-  q('[data-drill]').forEach(b => b.addEventListener('click', () => openPeek(b.dataset.drill)));
+  q('[data-drill]').forEach(b => b.addEventListener('click', e => {
+    if(b.classList.contains('is-tuned') && e.target.closest('.nc-ov-card-x')){ tuneReset(); return; }
+    openPeek(b.dataset.drill);
+  }));
   q('.seg [data-style]').forEach(b => b.addEventListener('click', () => {
     agrCardStyle = b.dataset.style; persist(); renderHome();
-  }));
-  /* the rest of the list, and the way back to the short one */
-  q('.dash-more').forEach(b => b.addEventListener('click', () => {
-    dashShowAllAgrs = b.dataset.more === '1';
-    renderHome();
-    const h = $(`${root} .nc-agr-head, ${root} .opp-h`); if(h) h.scrollIntoView({block:'start'});
   }));
   q('.seg [data-cv]').forEach(b => b.addEventListener('click', () => {
     catViewStyle = b.dataset.cv; persist(); renderHome();
@@ -9602,7 +9789,7 @@ function wireDash(root, m){
     openCatTab(b.dataset.cat, +b.dataset.idx)));
   /* the row's scrollbar is hidden, so the arrows are the only mouse path along
      it — one visible page per press, disabled at each end */
-  const aRow = $(`${root} .agr-simple-row`);
+  const aRow = $(`${root} .agr-simple-row, ${root} .agr-brand-row`);
   if(aRow){
     const navs = q('[data-ascroll]');
     const syncNav = () => {
@@ -9628,7 +9815,7 @@ function wireDash(root, m){
       if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
     });
   });
-  q('.opp-legend-item, .agr-card').forEach(el => {
+  q('.opp-legend-item, .agr-card, .agb').forEach(el => {
     const go = () => openCatTab(el.dataset.cat, el.dataset.idx ? +el.dataset.idx : undefined);
     el.addEventListener('click', go);
     el.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
@@ -10713,11 +10900,11 @@ let activityMini = false;
 /* saved agreements. Anette asked for a way to "select one or more that you want
    to check into or read more about" — this is that, as the card's fav toggle. */
 let savedAgr = new Set();
-/* three ways to show an agreement: 'simple' is the one-sentence scrolling card,
-   'photo' is the marketplace card, 'detail' argues the case — and 'detail' is the
-   default, because the first question on the overview is "why this one", which is
-   the only one of the three that answers it. Toggled per user, remembered. */
-let agrCardStyle = 'detail';
+/* four ways to show an agreement: 'brand' is the Figma card (band, tile, rate,
+   Read more), 'simple' is the one-sentence scrolling card, 'photo' is the
+   marketplace card, 'detail' argues the case. 'brand' is the default — it is
+   the shape the design file settled on. Toggled per user, remembered. */
+let agrCardStyle = 'brand';
 /* which of the three agreement-page bodies is showing */
 let agrViewStyle = 'impact';
 /* four readings of the category figures: a menu, a ranking, a whole, a first move */
@@ -14834,7 +15021,8 @@ const PK_IC = {
   list:'<path d="M9 7h11M9 12h11M9 17h11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="4.8" cy="7" r="1.1" fill="currentColor"/><circle cx="4.8" cy="12" r="1.1" fill="currentColor"/><circle cx="4.8" cy="17" r="1.1" fill="currentColor"/>',
   doc:'<path d="M7 3h7l4 4v14H7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.5 14l2 2 3.5-3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
   plus:'<rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M12 8.5v7M8.5 12h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
-  expand:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M10 19H5v-5M19 5l-6 6M5 19l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  expand:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M10 19H5v-5M19 5l-6 6M5 19l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  reset:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 10a8 8 0 0113.9-3.2M19.5 14a8 8 0 01-13.9 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18.6 3.2v3.6H15M5.4 20.8v-3.6H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 };
 const pkKr = n => `<b>${fmt(n)} kr.</b>`;
 
@@ -15990,7 +16178,7 @@ function applySaved(d){
   if(typeof d.ncGettingStartedHidden === 'boolean') ncGettingStartedHidden = d.ncGettingStartedHidden;
   if(typeof d.activityMini === 'boolean') activityMini = d.activityMini;
   if(Array.isArray(d.savedAgr)) savedAgr = new Set(d.savedAgr);
-  if(['photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
+  if(['brand','photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
   if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
   if(['list','bars','split','focus','brands','why','story','tune'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
   /* factors, never the scaled figures: the actuals in ROWS stay the baseline, so
