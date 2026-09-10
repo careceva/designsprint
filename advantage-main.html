@@ -1382,16 +1382,16 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   display:grid;place-items:center;overflow:hidden;border-radius:var(--rounded-lg);
   background:#f5f6f7;transition:background var(--t-fast)}
 .agb:hover .agb-band{background:#eceef0}
-/* the wordmark is the subject of the picture, so it gets the space a subject
-   gets: a white plate two-thirds the tile's width, the mark filling most of it.
-   The @64px assets carry a white ground, so white is the seamless surface. */
-.agb-logo{width:64%;aspect-ratio:2/1;padding:var(--s3);display:grid;place-items:center;
-  border-radius:var(--rounded-md);background:var(--surface)}
-.agb-logo img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
-/* a square mark on its own colour (Hilti's red, Stark's amber) is a badge, not a
-   wordmark: a smaller square plate in the brand's own ground, the mark filling it */
-.agb-logo.mark{width:40%;aspect-ratio:1/1;padding:0;overflow:hidden}
-.agb-logo.mark img{width:100%;height:100%;object-fit:cover}
+/* the wordmark sits straight on the grey, no plate. The @64px files are opaque
+   white, so the image is multiplied onto the tile: white becomes the tile, the
+   ink stays the ink (a 4% darkening on #f5f6f7 that nobody can see). */
+.agb-logo{width:68%;display:grid;place-items:center}
+.agb-logo img{display:block;max-width:100%;max-height:48px;width:auto;height:auto;
+  object-fit:contain;mix-blend-mode:multiply}
+/* a square mark on its own colour (Hilti's red, Stark's amber) keeps its ground:
+   a rounded badge, no blending */
+.agb-logo.mark{width:36%;aspect-ratio:1/1;overflow:hidden;border-radius:var(--rounded-md)}
+.agb-logo.mark img{max-height:none;width:100%;height:100%;object-fit:cover;mix-blend-mode:normal}
 .agb-logo i{font-style:normal;font-weight:700;font-size:var(--text-xl);letter-spacing:.02em;
   color:rgb(var(--b))}
 /* the save toggle sits on a light wash here, not a photo: ink instead of white */
@@ -3236,17 +3236,24 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
    all ink, so the single green figure per row (the money it earns) is the only
    colour on the surface, and brand blue is kept for the one thing it means here
    — a number the user has set themselves. */
-/* three bars in the knob: the one detail that says "this is a thing you hold".
-   A pseudo-element cannot be put inside a range thumb, so it is a background. */
-:root{--knob-grip:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cg fill='%23fff'%3E%3Crect x='.6' y='2' width='1' height='4' rx='.5'/%3E%3Crect x='3.5' y='2' width='1' height='4' rx='.5'/%3E%3Crect x='6.4' y='2' width='1' height='4' rx='.5'/%3E%3C/g%3E%3C/svg%3E")}
-.tune-list{list-style:none;margin-top:var(--s4)}
+.tune-list{list-style:none}
+/* the title row: the info mark sits beside the heading, as the design has it,
+   rather than in a footer under the rows */
+.tune-h1{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
+.tune-h1 .info-dot{margin-top:2px}
+.info-dot.tint{background:var(--brand-ice);color:var(--general-primary)}
+/* the column header — 48px under the subtitle (its own 16px margin plus this) */
+.tune-th{display:flex;align-items:center;justify-content:space-between;
+  margin-top:var(--s12);padding-bottom:var(--s1);border-bottom:1px solid var(--hairline);
+  font-size:var(--text-xs);font-weight:500;letter-spacing:-.1px;line-height:1.3;
+  color:var(--general-foreground);opacity:.4}
+/* (the subtitle's own 16px margin collapses into this one, so 48px is 48px) */
+/* rows: 12px on top, 4px between the name line and the rail, no rule between them */
 .tune-row{display:grid;grid-template-columns:minmax(0,1fr) auto;
   grid-template-areas:"name save" "rail rail";
-  align-items:center;column-gap:var(--s4);row-gap:var(--s1);
-  padding:var(--s3) 0 var(--s1);border-bottom:1px solid var(--hairline)}
-.tune-list>li:last-child{border-bottom:none}
+  align-items:center;column-gap:var(--s4);row-gap:var(--s1);padding-top:var(--s3)}
 .tune-n{grid-area:name;display:flex;align-items:center;gap:var(--s2);
-  font-size:16px;font-weight:600;letter-spacing:-.2px;min-width:0}
+  font-size:var(--text-base);font-weight:600;letter-spacing:-.2px;line-height:1.5;min-width:0}
 /* the name is still the way into the category — the same affordance the other
    category views give it, kept when this view became a control */
 .tune-go{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
@@ -3282,144 +3289,83 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   transform:translateX(-50%) translateY(0)}
 .tune-flag:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px}
 
-/* The rail: a plain volume slider. 44px of transparent input for the touch
-   target, a 2px line through its middle, and the readout sitting in the lower
-   half of that same box — the input is transparent and the readout ignores the
-   pointer, so the two can share the space instead of costing a row each. The line
-   is inset by half the knob so the fill's end and the knob's centre are the same
-   point at both extremes. */
-/* pulled out by half a knob on each side, so the TRACK's left edge — which is
-   inset by that same half knob — lands exactly on the row's left edge, under the
-   first letter of the label. Without this the line started 10px right of its own
-   name and every row read as slightly out of true. */
-.tune-rail{grid-area:rail;position:relative;height:46px;--knob:20px;--hit:40px;
-  margin-left:calc(var(--knob) / -2);margin-right:calc(var(--knob) / -2)}
-/* Every rail is the full row, and every rail is a bar graph first: the ink fill at
-   rest is the area's actual money, in proportion to the other three rows, with the
-   knob standing at its end. What lies to the right of the knob is headroom — up to
-   +5M kr. a year at the card's edge on every row — and dragging into it extends the
-   bar in blue, the file's colour for a figure the user set. Nothing to the left of
-   the ink is on the scale: that money is spent and its saving earned.
-   The box is pure geometry — where the track starts, how long it is, where its
-   centre line falls. The visible line is its ::before, so the line can thicken
-   under the pointer without the knob and the readout riding along. */
-.tune-rail-in{position:absolute;left:calc(var(--knob) / 2);
-  width:calc(100% - var(--knob));
-  top:calc(var(--hit) / 2 - 2px);height:4px}
-.tune-rail-in::before{content:"";position:absolute;inset:0;
-  border-radius:2px;background:var(--general-muted);
-  /* 4px tall, held at half height at rest and let out to full under the pointer.
-     Scaling rather than animating height keeps the line's centre pinned to the
-     same pixel, so the knob never appears to drift off it. */
-  transform:scaleY(.5)}
-.tune-rail:hover .tune-rail-in::before,.tune-rail:hover .tune-fill,
-.tune-rail:hover .tune-add{transform:scaleY(.75)}
-/* keyboard focus, not any focus: the input takes focus on mouse-down too, and a
-   track left thick after the pointer has gone reads as a row still being held */
-.tune-rail.live .tune-rail-in::before,.tune-rail.live .tune-fill,.tune-rail.live .tune-add,
-.tune-rail:has(.tune-range:focus-visible) .tune-rail-in::before,
-.tune-rail:has(.tune-range:focus-visible) .tune-fill,
-.tune-rail:has(.tune-range:focus-visible) .tune-add{transform:scaleY(1)}
-.tune-fill{position:absolute;left:0;top:0;bottom:0;width:var(--p0,0%);
-  border-radius:2px;background:var(--general-foreground);transform:scaleY(.5)}
-/* the added spend, from the end of the actual to the knob */
-.tune-add{position:absolute;left:var(--p0,0%);top:0;bottom:0;
-  width:calc(var(--p,0%) - var(--p0,0%));
-  border-radius:0 2px 2px 0;background:var(--general-primary);transform:scaleY(.5)}
-/* ---- the knob ----
-   Ours, not the browser's. The native thumb jumps to the next stop in one frame
-   while the fill behind it eases across, and that half-beat of disagreement is
-   what made the control feel broken. So the real thumb is kept (it is the touch
-   target, the focus ring's owner and the keyboard's control) and made invisible,
-   and everything the eye follows — fill, knob, readout — is painted off the same
-   --p on the same curve, arriving together. */
-.tune-knob{position:absolute;left:var(--p,0%);top:50%;
-  width:var(--knob);height:var(--knob);margin:0;border-radius:var(--rounded-full);
-  transform:translate(-50%,-50%);transform-origin:50% 50%;
-  background:var(--general-foreground) var(--knob-grip) center / 8px 8px no-repeat;
-  border:2px solid var(--surface);box-sizing:border-box;
-  box-shadow:0 1px 4px rgb(10 42 92/.32);pointer-events:none;z-index:2}
-/* the grab: the knob swells and lifts, the line it rides thickens under it.
-   Both come back on release. Nothing moves position, so the finger never has to
-   chase the thing it is already holding. */
-.tune-rail:hover .tune-knob{transform:translate(-50%,-50%) scale(1.08)}
-.tune-rail.live .tune-knob,.tune-rail:has(.tune-range:focus-visible) .tune-knob{
-  transform:translate(-50%,-50%) scale(1.16);
-  box-shadow:0 3px 10px rgb(10 42 92/.28),0 1px 3px rgb(10 42 92/.2)}
-.tune-rail:has(.tune-range:focus-visible) .tune-knob{
-  box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--general-primary),
-  0 3px 10px rgb(10 42 92/.24)}
-/* the readout travels with the knob — the value and the thing setting it are the
-   same object, so they should not be at opposite ends of the row. Always on, in
-   the lower half of the rail's own box so it costs no row of its own: at rest it
-   is the area's actual spend in the quiet grey of a caption, and the moment the
-   knob leaves that figure it turns brand blue — the file's one meaning for blue,
-   a number the user set themselves. No unit words beyond "kr.": the money column
-   already says "a year" for the row. */
-.tune-val{position:absolute;top:calc(var(--knob) / 2 + 2px);left:0;
-  display:flex;align-items:baseline;gap:4px;
+
+/* ---- the rail ----
+   46px tall, the 2px track through its middle from edge to edge. The actual is a
+   2px ink line from the left edge; the added spend continues it in blue. The knob
+   is a white pill carrying the figure — it stands where the ink ends, its left
+   edge half a knob before that point, and grows a pair of drag arrows under the
+   pointer. --f0 is where the actual ends and --f where the knob is, both as plain
+   fractions of the knob's travel (the rail less one knob width). */
+:root{--knob-arrows:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4.53812 5.19125C4.50023 5.0999 4.49027 4.99936 4.50952 4.90235C4.52876 4.80534 4.57635 4.71621 4.64625 4.64625L7.64625 1.64625C7.69269 1.59976 7.74783 1.56288 7.80853 1.53772C7.86923 1.51256 7.93429 1.49961 8 1.49961C8.06571 1.49961 8.13077 1.51256 8.19147 1.53772C8.25217 1.56288 8.30731 1.59976 8.35375 1.64625L11.3538 4.64625C11.4238 4.71618 11.4714 4.8053 11.4908 4.90235C11.5101 4.99939 11.5002 5.09998 11.4623 5.1914C11.4244 5.28281 11.3603 5.36092 11.278 5.41586C11.1957 5.4708 11.0989 5.50008 11 5.5H5C4.90111 5.49998 4.80445 5.47064 4.72223 5.41568C4.64002 5.36072 4.57595 5.28262 4.53812 5.19125ZM11 10.5H5C4.90105 10.4999 4.80431 10.5292 4.72201 10.5841C4.63971 10.6391 4.57556 10.7172 4.53769 10.8086C4.49981 10.9 4.48991 11.0006 4.50924 11.0977C4.52856 11.1947 4.57624 11.2838 4.64625 11.3537L7.64625 14.3537C7.69269 14.4002 7.74783 14.4371 7.80853 14.4623C7.86923 14.4874 7.93429 14.5004 8 14.5004C8.06571 14.5004 8.13077 14.4874 8.19147 14.4623C8.25217 14.4371 8.30731 14.4002 8.35375 14.3537L11.3538 11.3537C11.4238 11.2838 11.4714 11.1947 11.4908 11.0977C11.5101 11.0006 11.5002 10.9 11.4623 10.8086C11.4244 10.7172 11.3603 10.6391 11.278 10.5841C11.1957 10.5292 11.0989 10.4999 11 10.5Z' fill='black'/%3E%3C/svg%3E")}
+.tune-rail{grid-area:rail;position:relative;height:46px;--knob:20px;--hit:40px;--pill:22px;--pw:120px}
+.tune-rail-in{position:absolute;left:0;right:0;top:calc(var(--hit) / 2 - 1px);height:2px}
+.tune-rail-in::before{content:"";position:absolute;inset:0;border-radius:1px;background:#e3e3e3}
+.tune-fill{position:absolute;left:0;top:0;bottom:0;border-radius:1px;background:var(--general-foreground);
+  width:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--f0,0))}
+.tune-add{position:absolute;top:0;bottom:0;border-radius:0 1px 1px 0;background:var(--general-primary);
+  left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--f0,0));
+  width:calc((100% - var(--knob)) * (var(--f,0) - var(--f0,0)))}
+/* the pill. Positioned in px from JS (its own width has to be known to keep it
+   inside the rail at the far end); it ignores the pointer so the input under it
+   takes the drag, except for the one link it can carry. */
+.tune-val{position:absolute;top:calc(var(--hit) / 2 - var(--pill) / 2);left:var(--x,0px);height:var(--pill);
+  display:flex;align-items:center;padding:0 var(--s2);box-sizing:border-box;
+  border-radius:var(--rounded-full);border:1px solid transparent;background:var(--surface);
+  box-shadow:0 1px 2px rgb(10 42 92/.32);
   font-size:var(--text-xs);font-weight:500;letter-spacing:-.1px;font-variant-numeric:tabular-nums;
-  color:var(--general-muted-foreground);white-space:nowrap;pointer-events:none;
-  transition:color var(--t-fast)}
-.tune-rail.set .tune-val{color:var(--general-primary);font-weight:600}
-.tune-val em{font-style:normal;font-weight:500;color:var(--general-muted-foreground)}
-.tune-rail.set .tune-val em{color:inherit;opacity:.72}
-/* the top of the scale is not a figure but a threshold: at the last step the
-   readout says "+5M kr." and offers the sales person in the same breath. The
-   readout ignores the pointer so the knob can be grabbed through it — the link is
-   the one part of it that takes a click, lifted above the invisible input. */
-.tune-val{z-index:3}
-.tune-val-go{pointer-events:auto;background:none;border:none;padding:0;margin-left:2px;
+  color:var(--general-foreground);white-space:nowrap;pointer-events:none;z-index:3}
+.tune-val em{font-style:normal;margin-left:.25em}
+.tune-val-ic{display:none;flex:0 0 auto;width:16px;height:16px;margin-left:var(--s2);
+  background:var(--knob-arrows) center / 16px 16px no-repeat;transform:rotate(90deg)}
+/* under the pointer, or held, or focused from the keyboard: the pill lifts and
+   shows the arrows. The hover is the whole rail, not the pill — that is where the
+   input is. */
+.tune-rail:hover .tune-val,.tune-rail.live .tune-val,
+.tune-rail:has(.tune-range:focus-visible) .tune-val{
+  background:linear-gradient(180deg,#fff,rgb(245 245 246/.97));border-color:#f5f5f6;
+  box-shadow:0 1px 1.5px rgb(0 0 0/.1),0 5px 2.5px rgb(0 0 0/.09),0 11px 3px rgb(0 0 0/.05),
+    0 19px 3.5px rgb(0 0 0/.01)}
+.tune-rail:hover .tune-val-ic,.tune-rail.live .tune-val-ic,
+.tune-rail:has(.tune-range:focus-visible) .tune-val-ic{display:block}
+.tune-rail:has(.tune-range:focus-visible) .tune-val{outline:2px solid var(--general-primary);outline-offset:2px}
+/* the top of the scale is not a figure but a threshold: at the last step the pill
+   says "+5M kr." and offers the sales person in the same breath */
+.tune-val-go{pointer-events:auto;background:none;border:none;padding:0;
   font:inherit;font-weight:600;color:var(--general-primary);cursor:pointer;
   border-radius:var(--rounded-xs)}
-.tune-val-go::before{content:"·";margin-right:6px;font-weight:500;opacity:.6}
+.tune-val-go::before{content:"·";margin-right:6px;font-weight:500;color:var(--general-foreground);opacity:.6}
 .tune-val-go:hover{text-decoration:underline;text-underline-offset:3px}
 .tune-val-go:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px}
-/* One curve for the whole control. --tune-ease is the shape of a thing settling
-   into a detent: fast off the mark, decelerating hard, no overshoot — so a step
-   between two stops reads as a snap rather than as a slide, and the fill, the
-   knob and the readout are still one object because they are all on it. */
+/* One curve for the whole control: fast off the mark, decelerating hard, no
+   overshoot, so a step reads as a snap. Fill, blue line and pill are all on it. */
 @media(prefers-reduced-motion:no-preference){
   :root{--tune-ease:cubic-bezier(.22,.9,.24,1);--tune-t:.26s}
-  .tune-fill,.tune-add{transition:width var(--tune-t) var(--tune-ease),
-    transform var(--t-fast) var(--tune-ease)}
-  .tune-knob{transition:left var(--tune-t) var(--tune-ease),
-    transform var(--t-fast) var(--tune-ease),box-shadow var(--t-fast)}
-  .tune-rail-in::before{transition:transform var(--t-fast) var(--tune-ease)}
-  .tune-val{transition:color var(--t-fast),left var(--tune-t) var(--tune-ease)}
-  /* the press itself: the knob dips a hair the instant the pointer goes down,
-     before the drag begins. It is the only part of this that is faster than the
-     eye tracks — which is exactly why the control feels answered rather than
-     watched. */
-  /* under the finger the snap tightens to 130ms: long enough to be a movement
-     rather than a jump, short enough that the knob is never behind the hand */
-  .tune-rail.live .tune-knob{transition:left .13s var(--tune-ease),
-    transform .09s var(--tune-ease),box-shadow .09s ease}
-  .tune-rail.live .tune-fill,.tune-rail.live .tune-add{transition:width .13s var(--tune-ease),
-    transform .09s var(--tune-ease)}
-  .tune-rail.live .tune-val{transition:color var(--t-fast),left .13s var(--tune-ease)}
+  .tune-fill,.tune-add{transition:width var(--tune-t) var(--tune-ease),left var(--tune-t) var(--tune-ease)}
+  .tune-val{transition:left var(--tune-t) var(--tune-ease),box-shadow var(--t-fast),background var(--t-fast)}
+  .tune-rail.live .tune-fill,.tune-rail.live .tune-add{transition:width .13s var(--tune-ease),left .13s var(--tune-ease)}
+  .tune-rail.live .tune-val{transition:left .13s var(--tune-ease),box-shadow var(--t-fast),background var(--t-fast)}
 }
 @media(prefers-reduced-motion:reduce){
-  .tune-fill,.tune-add,.tune-knob,.tune-rail-in::before{transition:none}
+  .tune-fill,.tune-add,.tune-val{transition:none}
 }
-
+/* the input covers the headroom only — from the end of the ink to the right edge —
+   so its step 0 is exactly where the pill stands at rest. Its thumb is 120px wide
+   and centred on the knob's point, so a press anywhere on the pill (or just beside
+   it) is a press on the thumb and never a jump, while the far end of the rail is
+   still the far end of the drag. The thumb paints nothing. */
 .tune-range{position:absolute;top:0;height:var(--hit);
-  left:calc((100% - var(--knob)) * var(--f0,0));
-  width:calc((100% - var(--knob)) * (1 - var(--f0,0)) + var(--knob));
+  left:calc((100% - var(--knob)) * var(--f0,0) + var(--knob) / 2 - var(--pw) / 2);
+  width:calc((100% - var(--knob)) * (1 - var(--f0,0)) + var(--pw));
   margin:0;padding:0;-webkit-appearance:none;appearance:none;background:none;cursor:grab}
 .tune-range:active{cursor:grabbing}
-/* an explicit height, not 100%: a percentage on the runnable track resolves to
-   nothing, the track collapses to the top of the input, and the thumb ends up
-   riding above the line it is supposed to be sitting on */
 .tune-range::-webkit-slider-runnable-track{height:var(--hit);background:none;border:none}
-/* The thumb keeps its full size — it is what the finger has to hit — and paints
-   nothing: .tune-knob is drawn in its place, on the same curve as the fill. */
 .tune-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
-  margin-top:calc((var(--hit) - var(--knob)) / 2);
-  width:var(--knob);height:var(--knob);border-radius:var(--rounded-full);
+  margin-top:calc((var(--hit) - var(--pill)) / 2);
+  width:var(--pw);height:var(--pill);border-radius:var(--rounded-full);
   background:none;border:none;box-shadow:none;opacity:0}
 .tune-range::-moz-range-track{height:var(--hit);background:none;border:none}
-.tune-range::-moz-range-thumb{width:var(--knob);height:var(--knob);
+.tune-range::-moz-range-thumb{width:var(--pw);height:var(--pill);
   border-radius:var(--rounded-full);background:none;border:none;box-shadow:none;opacity:0}
 .tune-range:focus{outline:none}
 
@@ -3443,7 +3389,7 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
 .ov-num{font-variant-numeric:tabular-nums}
 /* the areas without a slider: present, so the totals still reconcile, and
    plainly not part of the control */
-.tune-rest{grid-template-areas:"name save" "sub save";align-items:center}
+.tune-rest{grid-template-areas:"name save" "sub save";align-items:center;padding:var(--s3) 0}
 .tune-rest .tune-n{font-weight:500;color:var(--general-muted-foreground)}
 .tune-rest-sub{grid-area:sub;font-size:13px;color:var(--general-muted-foreground);
   font-variant-numeric:tabular-nums}
@@ -5759,9 +5705,6 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 /* the chip is the mark alone */
 .est-chip{padding:0;width:18px;height:18px;justify-content:center;gap:0}
 .est-chip svg{width:12px;height:12px}
-/* an estimated area's slider fill is hatched — the fill is a claim about spend,
-   and this one is not read off a document */
-.tune-row.est .tune-fill{background-image:repeating-linear-gradient(135deg,transparent 0 3px,rgb(255 255 255/.5) 3px 5px)}
 /* the documents we hold, on the data page */
 .dc-docs{padding:var(--s6) 0 0}
 .dc-doc-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--s3)}
@@ -5982,34 +5925,29 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .pkd-n{grid-area:name;font-weight:600}
 .pkd-save{grid-area:save;display:flex;align-items:baseline;gap:5px;font-weight:700;
   color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
-.pkd-save em,.pkd-val em{font-style:normal;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
+.pkd-save em{font-style:normal;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
 /* the demo rail is the page's rail, drawn again: a 2px grey line, the actual in
-   ink, the added spend in blue, the black knob with its grip, and the readout under
-   the knob — grey at rest, blue once moved. Only the timing is the demo's own. */
+   ink, the added spend in blue, and the white pill carrying the figure at the end
+   of the line. Only the timing is the demo's own. */
 .pkd-rail{grid-area:rail;position:relative;height:46px;margin-top:var(--s2);--knob:20px}
-.pkd-rail::before{content:"";position:absolute;left:calc(var(--knob) / 2);right:calc(var(--knob) / 2);
-  top:calc(var(--knob) / 2 - 1px);height:2px;border-radius:1px;background:var(--general-muted)}
+.pkd-rail::before{content:"";position:absolute;left:0;right:0;top:calc(var(--knob) / 2 - 1px);height:2px;
+  border-radius:1px;background:#e3e3e3}
 .pkd-fill,.pkd-add{position:absolute;top:calc(var(--knob) / 2 - 1px);height:2px;border-radius:1px;
   transition:width var(--pk-t) var(--pk-ease),left var(--pk-t) var(--pk-ease)}
-.pkd-fill{left:calc(var(--knob) / 2);width:calc((100% - var(--knob)) * var(--p0,0));
+.pkd-fill{left:0;width:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p0,0));
   background:var(--general-foreground)}
 .pkd-add{left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p0,0));
   width:calc((100% - var(--knob)) * (var(--p,0) - var(--p0,0)));border-radius:0 1px 1px 0;
   background:var(--general-primary)}
-.pkd-knob{position:absolute;left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p,0));
-  top:calc(var(--knob) / 2);width:var(--knob);height:var(--knob);box-sizing:border-box;
-  border-radius:var(--rounded-full);border:2px solid var(--surface);
-  background:var(--general-foreground) var(--knob-grip) center / 8px 8px no-repeat;
-  box-shadow:0 1px 4px rgb(10 42 92/.32);transform:translate(-50%,-50%);
+.pkd-knob{display:none}
+.pkd-val{position:absolute;left:min(calc((100% - var(--knob)) * var(--p,0)),calc(100% - 96px));
+  top:calc(var(--knob) / 2 - 11px);height:22px;box-sizing:border-box;
+  display:flex;align-items:center;padding:0 var(--s2);white-space:nowrap;
+  border-radius:var(--rounded-full);background:var(--surface);box-shadow:0 1px 2px rgb(10 42 92/.32);
+  font-size:var(--text-xs);font-weight:500;letter-spacing:-.1px;font-variant-numeric:tabular-nums;
+  color:var(--general-foreground);
   transition:left var(--pk-t) var(--pk-ease)}
-.pkd-val{position:absolute;left:clamp(44px,calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p,0)),calc(100% - 44px));
-  top:calc(var(--knob) / 2 + 2px);
-  transform:translateX(-50%);white-space:nowrap;display:flex;gap:4px;align-items:baseline;
-  font-size:var(--text-xs);font-weight:500;font-variant-numeric:tabular-nums;
-  color:var(--general-muted-foreground);
-  transition:left var(--pk-t) var(--pk-ease),color var(--t-fast)}
-.pkd-rail.set .pkd-val{color:var(--general-primary);font-weight:600}
-.pkd-rail.set .pkd-val em{color:inherit;opacity:.72}
+.pkd-val em{font-style:normal;margin-left:.25em}
 .pkd-cap{position:absolute;left:var(--s8);bottom:var(--s4);font-size:var(--text-xs);color:var(--general-muted-foreground)}
 /* the agreements demo: the same tile, and a short list with a switch per agreement.
    One by one the open ones switch on and the two figures in the tile move. */
@@ -8005,26 +7943,7 @@ const AGR_BRAND = {
   'Ahlsell Nordic':    {f:'ahlsell.png',                        b:'0 115 182',  bg:'#ffffff'},
   'Q8 Fuel Card':      {f:'q8.png',                             b:'29 64 155',  bg:'#ffffff'},
   'Hilti Erhverv':     {f:'hilti.png',                          b:'210 9 30',   bg:'#d2091e'},
-  'Lyreco Erhverv':    {f:'lyreco.png',                         b:'46 46 136',  bg:'#2e2e88'},
-  /* the rest of the catalogue, from assets/company-logos (not inlined) */
-  'Buildor Erhverv':     {f:'Buildor@64px.png',  b:'96 96 96',   bg:'#ffffff'},
-  'Granngården Frame':   {f:'GRann@64px.png',    b:'112 0 0',    bg:'#ffffff'},
-  'Gerdmans Nordic':     {f:'Ger@64px.png',      b:'144 32 64',  bg:'#ffffff'},
-  'Procurator Workwear': {f:'Pro@64px.png',      b:'32 32 32',   bg:'#ffffff'},
-  'Mediq Erhverv':       {f:'Mediq@64px.png',    b:'0 121 122',  bg:'#ffffff'},
-  'Preem Business':      {f:'Preem@64px.png',    b:'240 160 48', bg:'#ffffff'},
-  'Shell Fleet Nordic':  {f:'Shell@64px.png',    b:'221 29 33',  bg:'#ffffff'},
-  'Office Depot':        {f:'Office@64px.png',   b:'224 16 48',  bg:'#ffffff'},
-  'Avis Erhverv':        {f:'Avis@64px.png',     b:'192 32 48',  bg:'#ffffff'},
-  'Leasify Udlejning':   {f:'Lea@64px.png',      b:'240 176 80', bg:'#ffffff'},
-  'Peugeot Professional':{f:'Peugeot@64px.png',  b:'60 60 60',   bg:'#ffffff'},
-  'DSV Road':            {f:'DSV@64px.png',      b:'0 58 112',   bg:'#ffffff'},
-  'PostNord Erhverv':    {f:'Postnord@64px.png', b:'0 144 208',  bg:'#ffffff'},
-  'Bring Fragt':         {f:'Bring@64px.png',    b:'128 176 64', bg:'#ffffff'},
-  'Hallon Erhverv':      {f:'hallon@64px.png',   b:'112 0 48',   bg:'#ffffff'},
-  'NetOnNet IT':         {f:'Netonnet@64px.png', b:'0 144 208',  bg:'#ffffff'},
-  'Rentokil Erhverv':    {f:'Rento@64px.png',    b:'208 32 32',  bg:'#ffffff'},
-  'Fortum Recycling':    {f:'Fortum@64px.png',   b:'80 192 112', bg:'#ffffff'}
+  'Lyreco Erhverv':    {f:'lyreco.png',                         b:'46 46 136',  bg:'#2e2e88'}
 };
 /* one short reason per category — the card carries a single selling point now,
    not a bullet list */
@@ -8067,7 +7986,7 @@ function agrLogoChip(name){
   return `<span class="agr-chip"${brand
     ? ` style="background:${brand.bg}"`
     : ' data-initials="1"'}>${brand
-    ? `<img src="${LOGO_SRC[brand.f] || 'assets/company-logos/' + brand.f}" alt="">`
+    ? `<img src="${LOGO_SRC[brand.f]||''}" alt="">`
     : `<span class="agr-chip-i">${initialsOf(name)}</span>`}</span>`;
 }
 /* two curated reasons where we have them (CDET); a still-true, still-specific fallback
@@ -9330,10 +9249,8 @@ function tuneFigs(r){
       : ''};
 }
 
-const tunePos = (r, delta) => `${(tuneAt(r, delta) * 100).toFixed(3)}%`;
-const tuneRailVars = (r, delta) => `--p:${tunePos(r, delta)};--p0:${tunePos(r, 0)};--f0:${tuneShare(r).toFixed(4)}`;
-
-/* the figure under the knob — or, at the top of the scale, the way past it */
+const tuneRailVars = (r, delta) => `--f:${tuneAt(r, delta).toFixed(4)};--f0:${tuneShare(r).toFixed(4)}`;
+/* the figure in the pill — or, at the top of the scale, the way past it */
 const tuneValHTML = (f, delta) => delta >= TUNE_MAX_ADD
   ? `+${fmtCompact(TUNE_MAX_ADD)}<em>kr.</em><button type="button" class="tune-val-go">Contact sales</button>`
   : `${f.spend}<em>kr.</em>`;
@@ -9355,9 +9272,8 @@ function tuneRowHTML(r){
         <span class="tune-rail-in">
           <i class="tune-fill"></i>
           <i class="tune-add"></i>
-          <i class="tune-knob"></i>
-          <span class="tune-val">${tuneValHTML(f, delta)}</span>
         </span>
+        <span class="tune-val">${tuneValHTML(f, delta)}<i class="tune-val-ic" aria-hidden="true"></i></span>
         <input type="range" class="tune-range" min="0" max="${TUNE_STEPS}" step="1"
           value="${tuneStep(delta)}" aria-label="${r.n} — what ${
             newCustomer ? 'companies your size buy' : 'you buy'} a year"
@@ -9373,6 +9289,7 @@ function catViewTune(){
   const restSpend = rest.reduce((s, r) => s + areaSpend(r), 0);
   const restSave  = rest.reduce((s, r) => s + tuneSaving(r), 0);
   return `
+    <div class="tune-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div>
     <ul class="tune-list">
       ${top.map(tuneRowHTML).join('')}
       ${rest.length ? `
@@ -9383,8 +9300,6 @@ function catViewTune(){
       </li>` : ''}
     </ul>
     <div class="cv-foot">
-      <button type="button" class="info-dot" id="tuneInfo" aria-expanded="false"
-        aria-controls="tuneNote" aria-label="How the sliders work">${INFO_I}</button>
       <button type="button" class="linkbtn tune-head-reset"${tuneActive() ? '' : ' hidden'}>Reset to ${
         newCustomer ? 'the benchmark' : 'my invoices'}</button>
     </div>
@@ -9406,19 +9321,18 @@ function tunePaintRow(li){
   const delta = f.now - f.base;
   const rail = li.querySelector('.tune-rail');
   if(rail){
-    rail.style.setProperty('--p', tunePos(r, delta));
-    rail.style.setProperty('--p0', tunePos(r, 0));
+    rail.style.setProperty('--f', tuneAt(r, delta).toFixed(4));
     rail.style.setProperty('--f0', tuneShare(r).toFixed(4));
     rail.classList.toggle('set', f.on);
   }
-  const val = li.querySelector('.tune-val'), inn = li.querySelector('.tune-rail-in');
-  if(val && inn){
-    val.innerHTML = tuneValHTML(f, delta);
-    /* centred under the knob, but kept inside the track: a centred label near
-       either end would hang out past the text column */
-    const track = inn.clientWidth, w = val.offsetWidth;
-    const x = tuneAt(r, delta) * track - w / 2;
-    val.style.left = `${Math.max(0, Math.min(track - w, x)).toFixed(1)}px`;
+  const val = li.querySelector('.tune-val');
+  if(val && rail){
+    val.innerHTML = `${tuneValHTML(f, delta)}<i class="tune-val-ic" aria-hidden="true"></i>`;
+    /* the pill's left edge is half a knob before the point the ink (or the blue)
+       ends, and it is kept inside the rail at the far end */
+    const T = rail.clientWidth, w = val.offsetWidth;
+    const x = tuneAt(r, delta) * (T - 20);
+    val.style.setProperty('--x', `${Math.max(0, Math.min(T - w, x)).toFixed(1)}px`);
   }
   const flag = li.querySelector('.tune-flag');
   if(flag){ flag.hidden = !f.on; flag.dataset.tip = f.tip; flag.setAttribute('aria-label', f.tip); }
@@ -9753,7 +9667,9 @@ function dashHTML(m, rowId){
     <section class="nc-sec nc-sec-follow">
       <div class="nc-bento-row">
         <div class="nc-bento-cell">
-          <h2>${m.catTitle}</h2>
+          <div class="tune-h1"><h2>${m.catTitle}</h2>${m.cats.length && catView() === 'tune' ? `
+            <button type="button" class="info-dot tint" id="tuneInfo" aria-expanded="false"
+              aria-controls="tuneNote" aria-label="How the sliders work">${INFO_I}</button>` : ''}</div>
           <p class="nc-sub nc-mini-sub">${m.catSub}</p>
           ${m.cats.length ? `
           ${SHOW_CAT_VIEWS ? `
@@ -9945,7 +9861,7 @@ function wireDashTune(root){
   /* the info mark toggles the sentence it hides, in place. aria-expanded carries
      the state for a screen reader; the [aria-expanded] rule carries it visually,
      so the two can never disagree. */
-  const info = $(`${root} .info-dot`), note = $(`${root} .cv-note`);
+  const info = $(`${root} #tuneInfo`), note = $(`${root} .cv-note`);
   if(info && note) info.addEventListener('click', () => {
     const open = note.hidden;
     note.hidden = !open;
