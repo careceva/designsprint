@@ -1382,16 +1382,16 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   display:grid;place-items:center;overflow:hidden;border-radius:var(--rounded-lg);
   background:#f5f6f7;transition:background var(--t-fast)}
 .agb:hover .agb-band{background:#eceef0}
-/* the wordmark sits straight on the grey, no plate. The @64px files are opaque
-   white, so the image is multiplied onto the tile: white becomes the tile, the
-   ink stays the ink (a 4% darkening on #f5f6f7 that nobody can see). */
-.agb-logo{width:68%;display:grid;place-items:center}
-.agb-logo img{display:block;max-width:100%;max-height:48px;width:auto;height:auto;
-  object-fit:contain;mix-blend-mode:multiply}
-/* a square mark on its own colour (Hilti's red, Stark's amber) keeps its ground:
-   a rounded badge, no blending */
-.agb-logo.mark{width:36%;aspect-ratio:1/1;overflow:hidden;border-radius:var(--rounded-md)}
-.agb-logo.mark img{max-height:none;width:100%;height:100%;object-fit:cover;mix-blend-mode:normal}
+/* the wordmark is the subject of the picture, so it gets the space a subject
+   gets: a white plate two-thirds the tile's width, the mark filling most of it.
+   The @64px assets carry a white ground, so white is the seamless surface. */
+.agb-logo{width:64%;aspect-ratio:2/1;padding:var(--s3);display:grid;place-items:center;
+  border-radius:var(--rounded-md);background:var(--surface)}
+.agb-logo img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+/* a square mark on its own colour (Hilti's red, Stark's amber) is a badge, not a
+   wordmark: a smaller square plate in the brand's own ground, the mark filling it */
+.agb-logo.mark{width:40%;aspect-ratio:1/1;padding:0;overflow:hidden}
+.agb-logo.mark img{width:100%;height:100%;object-fit:cover}
 .agb-logo i{font-style:normal;font-weight:700;font-size:var(--text-xl);letter-spacing:.02em;
   color:rgb(var(--b))}
 /* the save toggle sits on a light wash here, not a photo: ink instead of white */
@@ -2848,7 +2848,7 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
 /* no hairline between sections: the distance does the separating. 64px, two
    steps up from the 32px the rule used to lean on — except the category
    breakdown, which continues the invoice-savings figure above it and sits
-   close, at 32px, so the two read as one story. */
+   close, at 32px, so the two read as one story. */you 
 .nc-sec.nc-sec-follow{padding-top:var(--s8)}
 /* section titles carry the weight of the reference's "Your overview" heading —
    clearly the top of their section, one step under the page greeting (text-4xl)
@@ -8005,7 +8005,26 @@ const AGR_BRAND = {
   'Ahlsell Nordic':    {f:'ahlsell.png',                        b:'0 115 182',  bg:'#ffffff'},
   'Q8 Fuel Card':      {f:'q8.png',                             b:'29 64 155',  bg:'#ffffff'},
   'Hilti Erhverv':     {f:'hilti.png',                          b:'210 9 30',   bg:'#d2091e'},
-  'Lyreco Erhverv':    {f:'lyreco.png',                         b:'46 46 136',  bg:'#2e2e88'}
+  'Lyreco Erhverv':    {f:'lyreco.png',                         b:'46 46 136',  bg:'#2e2e88'},
+  /* the rest of the catalogue, from assets/company-logos (not inlined) */
+  'Buildor Erhverv':     {f:'Buildor@64px.png',  b:'96 96 96',   bg:'#ffffff'},
+  'Granngården Frame':   {f:'GRann@64px.png',    b:'112 0 0',    bg:'#ffffff'},
+  'Gerdmans Nordic':     {f:'Ger@64px.png',      b:'144 32 64',  bg:'#ffffff'},
+  'Procurator Workwear': {f:'Pro@64px.png',      b:'32 32 32',   bg:'#ffffff'},
+  'Mediq Erhverv':       {f:'Mediq@64px.png',    b:'0 121 122',  bg:'#ffffff'},
+  'Preem Business':      {f:'Preem@64px.png',    b:'240 160 48', bg:'#ffffff'},
+  'Shell Fleet Nordic':  {f:'Shell@64px.png',    b:'221 29 33',  bg:'#ffffff'},
+  'Office Depot':        {f:'Office@64px.png',   b:'224 16 48',  bg:'#ffffff'},
+  'Avis Erhverv':        {f:'Avis@64px.png',     b:'192 32 48',  bg:'#ffffff'},
+  'Leasify Udlejning':   {f:'Lea@64px.png',      b:'240 176 80', bg:'#ffffff'},
+  'Peugeot Professional':{f:'Peugeot@64px.png',  b:'60 60 60',   bg:'#ffffff'},
+  'DSV Road':            {f:'DSV@64px.png',      b:'0 58 112',   bg:'#ffffff'},
+  'PostNord Erhverv':    {f:'Postnord@64px.png', b:'0 144 208',  bg:'#ffffff'},
+  'Bring Fragt':         {f:'Bring@64px.png',    b:'128 176 64', bg:'#ffffff'},
+  'Hallon Erhverv':      {f:'hallon@64px.png',   b:'112 0 48',   bg:'#ffffff'},
+  'NetOnNet IT':         {f:'Netonnet@64px.png', b:'0 144 208',  bg:'#ffffff'},
+  'Rentokil Erhverv':    {f:'Rento@64px.png',    b:'208 32 32',  bg:'#ffffff'},
+  'Fortum Recycling':    {f:'Fortum@64px.png',   b:'80 192 112', bg:'#ffffff'}
 };
 /* one short reason per category — the card carries a single selling point now,
    not a bullet list */
@@ -8048,7 +8067,7 @@ function agrLogoChip(name){
   return `<span class="agr-chip"${brand
     ? ` style="background:${brand.bg}"`
     : ' data-initials="1"'}>${brand
-    ? `<img src="${LOGO_SRC[brand.f]||''}" alt="">`
+    ? `<img src="${LOGO_SRC[brand.f] || 'assets/company-logos/' + brand.f}" alt="">`
     : `<span class="agr-chip-i">${initialsOf(name)}</span>`}</span>`;
 }
 /* two curated reasons where we have them (CDET); a still-true, still-specific fallback
