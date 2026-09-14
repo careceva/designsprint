@@ -697,9 +697,15 @@ body.in-app .flow{display:none}
    #f2f2f2 -> white across the whole 68px, which is a 5% luminance change spread
    over the full height — measurably there, visually invisible. Holding the grey and
    fading late is what makes it read. */
-.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:68px;padding:0 var(--s6);
+/* the bar's height is a token on <body>, not a number on the bar: the fixed
+   activity rail on the right starts where the bar ends, and must follow it */
+body{--appbar-h:68px}
+/* the two stat tiles are taller than a search field, so the bar grows to hold them */
+body.ledger-on{--appbar-h:80px}
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);height:var(--appbar-h);padding:0 var(--s6);
   border-bottom:1px solid var(--hairline);
-  background:linear-gradient(180deg,var(--surface) 0%,#fbfbfc 42%,#f4f4f5 100%)}
+  background:linear-gradient(180deg,var(--surface) 0%,#fbfbfc 42%,#f4f4f5 100%);
+  transition:height var(--t)}
 /* the mark is the way home — a button, not an image, so it is tabbable and
    announces where it goes. The hit area is padded out beyond the 28px artwork so
    it clears the 44px touch floor without the logo moving. */
@@ -711,6 +717,47 @@ body.in-app .flow{display:none}
 .appbar .brand:active{opacity:.7}
 .appbar .brand img{height:28px;width:auto;display:block}
 .appbar .spacer{flex:1}
+/* ---- the scrolled bar ----
+   Two bars in one element. At rest: brand, search, status. Scrolled past the
+   Overview's figures: the page's sections and its two live figures. The rest state
+   steps out without ceremony (display) and the scrolled state arrives with one
+   short rise, so the change reads as the bar turning, not as things vanishing. */
+.appbar .mid{display:flex;align-items:center;justify-content:center;min-width:0}
+.bar-scrolled{display:none;flex:1 1 auto;min-width:0;align-self:stretch;align-items:center;gap:var(--s6);
+  /* the tiles start on the page's content edge, measured by ledgerAlign() */
+  padding-left:max(0px,var(--bs-left,0px))}
+/* the first tile's text, not its hover pad, sits on the edge */
+.bs-kpis{margin-left:calc(var(--s3) * -1)}
+/* the token ends on the page's content edge: whatever lies to its right (bell,
+   account) is pushed out by the measured remainder */
+.appbar.ledger-on .tune-pill{margin-right:max(0px,var(--bs-right,0px))}
+.appbar.ledger-on .mid,.appbar.ledger-on>.spacer,.appbar.ledger-on #erpPill{display:none}
+.appbar.ledger-on .bar-scrolled{display:flex}
+@media(prefers-reduced-motion:no-preference){
+  .appbar.ledger-on .bar-scrolled{animation:bs-in var(--t) both}
+  @keyframes bs-in{from{opacity:0;transform:translateY(6px)}}
+}
+/* the two figures as stat tiles: eyebrow over number, a hairline between, the
+   savings in the house's savings ink. Pressing one goes back to the cards. */
+.bs-kpis{display:flex;align-items:center;gap:var(--s2)}
+.bs-kpi{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;
+  padding:var(--s1) var(--s3);border:none;background:none;border-radius:var(--rounded-md);cursor:pointer;
+  color:var(--general-foreground);text-align:left;transition:background var(--t-fast)}
+.bs-kpi:hover{background:#0000000a}
+.bs-kpi:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+.bs-l{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--general-muted-foreground);
+  white-space:nowrap;line-height:1.2}
+.bs-v{display:flex;align-items:baseline;gap:4px;font-size:var(--text-2xl);font-weight:700;letter-spacing:-.4px;
+  line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bs-v.good{color:var(--sentiment-positive-ink)}
+.bs-v em{font-style:normal;font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.bs-sep{width:1px;height:32px;background:var(--hairline)}
+/* the token that resets the figures stands right of the tiles in this state, so
+   it reads as part of the same group — and when there is nothing to reset it is
+   gone, not reserved: there is no centred search here to hold still */
+.appbar.ledger-on .tune-pill{margin-left:var(--s2)}
+.appbar.ledger-on .tune-pill[hidden]{display:none}
+@media(max-width:700px){ .bs-l{display:none} .bs-v{font-size:var(--text-lg)} }
 .search{position:relative;display:flex;align-items:center;gap:var(--s2);min-width:0;width:min(460px,42vw);
   height:42px;padding:0 var(--s3) 0 var(--s4);background:var(--surface);
   border:1px solid var(--hairline);
@@ -1728,6 +1775,7 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   .appbar{padding:0 var(--s4);gap:var(--s3)}
   .appbar .brand img{height:24px}
   .search{width:auto;flex:1}
+  .appbar .mid{flex:1}
   .search kbd{display:none}
   .erp .et{display:none}
   .banner{flex-wrap:wrap;justify-content:center;padding:var(--s2) 44px;text-align:center}
@@ -3239,8 +3287,17 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
 .tune-list{list-style:none}
 /* the title row: the info mark sits beside the heading, as the design has it,
    rather than in a footer under the rows */
-.tune-h1{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
+.tune-h1{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
 .tune-h1 .info-dot{margin-top:2px}
+/* the explanation opens under the mark that asked for it — a small card hung
+   from the title row's right edge, not a paragraph appearing at the foot of the
+   card where nobody is looking */
+.tune-pop{position:absolute;right:0;top:calc(100% + var(--s2));z-index:7;margin:0;
+  width:min(320px,100%);padding:var(--s3) var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  background:var(--surface);box-shadow:var(--shadow-lg);
+  font-size:var(--text-xs);line-height:1.5;color:var(--general-muted-foreground)}
+.tune-pop[hidden]{display:none}
 .info-dot.tint{background:var(--brand-ice);color:var(--general-primary)}
 /* the column header — 48px under the subtitle (its own 16px margin plus this) */
 .tune-th{display:flex;align-items:center;justify-content:space-between;
@@ -3369,6 +3426,71 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   border-radius:var(--rounded-full);background:none;border:none;box-shadow:none;opacity:0}
 .tune-range:focus{outline:none}
 
+/* ---- skin "bar": the Figma rail 15624:3033 ----
+   The same control drawn as a thick bar: a 12px rounded grey track, the actual
+   as an ink bar from the left edge, the added spend continuing it in blue, an
+   11px knob with a white grip standing where the bar ends, and the figure printed
+   in white INSIDE the bar just before the knob (or, when the bar is too short to
+   hold it, in ink just after the knob). The pill skin above is kept whole and
+   reachable from the footer link; this skin only overrides what differs. */
+.tune-wrap{container-type:inline-size;container-name:tune}
+.tune-knob{display:none}
+/* 16px, not the drawing's 12: the figure lives inside the bar, and 11px type
+   needs the room to be read */
+.tune-list.bar .tune-rail{--knob:16px;--bar:16px}
+.tune-list.bar .tune-rail-in{top:calc(var(--hit) / 2 - var(--bar) / 2);height:var(--bar)}
+.tune-list.bar .tune-rail-in::before{border-radius:var(--rounded-full)}
+.tune-list.bar .tune-fill{border-radius:calc(var(--bar) / 2) 3px 3px calc(var(--bar) / 2)}
+.tune-list.bar .tune-add{border-radius:0 3px 3px 0}
+.tune-list.bar .tune-knob{display:block;position:absolute;top:50%;
+  left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--f,0));
+  width:var(--knob);height:var(--knob);box-sizing:border-box;border-radius:var(--rounded-full);
+  background:var(--general-foreground);border:1px solid #e3e3e3;
+  transform:translate(-50%,-50%);z-index:2;pointer-events:none}
+/* the grip: one white bar, as drawn */
+.tune-list.bar .tune-knob::after{content:"";position:absolute;left:50%;top:50%;width:1.5px;height:5px;
+  border-radius:1px;background:var(--surface);transform:translate(-50%,-50%)}
+.tune-list.bar .tune-val{top:calc(var(--hit) / 2);transform:translateY(-50%);height:auto;padding:0;
+  border:none;background:none;box-shadow:none;
+  font-size:11px;font-weight:500;letter-spacing:-.08px;line-height:1.3;color:var(--surface)}
+.tune-list.bar .tune-val.out{color:var(--general-foreground)}
+.tune-list.bar .tune-val-ic{display:none}
+.tune-list.bar .tune-val-go{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.tune-list.bar .tune-val-go::before{color:inherit}
+/* the pill skin's lift does not apply here: the feedback is the knob's */
+.tune-list.bar .tune-rail:hover .tune-val,.tune-list.bar .tune-rail.live .tune-val,
+.tune-list.bar .tune-rail:has(.tune-range:focus-visible) .tune-val{
+  background:none;border-color:transparent;box-shadow:none;outline:none}
+.tune-list.bar .tune-rail:hover .tune-val-ic,.tune-list.bar .tune-rail.live .tune-val-ic,
+.tune-list.bar .tune-rail:has(.tune-range:focus-visible) .tune-val-ic{display:none}
+.tune-list.bar .tune-rail:hover .tune-knob,.tune-list.bar .tune-rail.live .tune-knob{
+  transform:translate(-50%,-50%) scale(1.3);box-shadow:0 0 0 4px rgb(10 42 92/.12)}
+.tune-list.bar .tune-rail:has(.tune-range:focus-visible) .tune-knob{
+  box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--general-primary)}
+@media(prefers-reduced-motion:no-preference){
+  .tune-list.bar .tune-knob{transition:left var(--tune-t) var(--tune-ease),transform var(--t-fast),box-shadow var(--t-fast)}
+  .tune-list.bar .tune-rail.live .tune-knob{transition:left .13s var(--tune-ease),transform var(--t-fast),box-shadow var(--t-fast)}
+  .tune-list.bar .tune-val{transition:left var(--tune-t) var(--tune-ease),color var(--t-fast)}
+  .tune-list.bar .tune-rail.live .tune-val{transition:left .13s var(--tune-ease),color var(--t-fast)}
+}
+/* One line per area, as designed, once the cell has the room (1280, 1680 and
+   1920 do; a 1440 screen with the nav open does not, and keeps the stacked
+   rows). The list itself is the grid, so every rail starts and ends on the same
+   two lines whatever the row's name or money measures. */
+@container tune (min-width:400px){
+  .tune-list.bar{display:grid;grid-template-columns:120px minmax(0,1fr) auto;
+    column-gap:var(--s4);row-gap:var(--s6);align-items:center;margin-top:var(--s6)}
+  .tune-list.bar .tune-row[data-tune]{display:contents}
+  .tune-list.bar .tune-row[data-tune] .tune-n{grid-area:auto;grid-column:1;justify-content:flex-end;text-align:right}
+  .tune-list.bar .tune-row[data-tune] .tune-go{white-space:normal;overflow:visible;text-overflow:clip;text-align:right}
+  .tune-list.bar .tune-row[data-tune] .tune-rail{grid-area:auto;grid-column:2}
+  .tune-list.bar .tune-row[data-tune] .tune-save{grid-area:auto;grid-column:3;
+    flex-direction:column;align-items:flex-start;gap:5px;line-height:1}
+  .tune-list.bar .tune-row[data-tune] .tune-money{text-align:left}
+  .tune-list.bar .tune-rest{grid-column:1 / -1;padding:0}
+  .tune-wrap.bar .tune-th{padding-left:calc(120px + var(--s4))}
+}
+
 /* the money, in the house's savings tint — the one coloured thing on the row, so
    it is what the eye lands on after the knob moves */
 .tune-save{grid-area:save;display:flex;align-items:baseline;gap:5px;
@@ -3395,6 +3517,9 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
   font-variant-numeric:tabular-nums}
 .tune-rest .tune-save{color:var(--general-muted-foreground);font-weight:600}
 .tune-head-reset{font-size:13px}
+/* the other drawing of the same control, one quiet link away */
+.tune-skin-go{margin-left:auto;font-size:13px;color:var(--general-muted-foreground)}
+.tune-skin-go:hover{color:var(--general-primary)}
 @container page (max-width:520px){
   .tune-row{grid-template-columns:minmax(0,1fr);grid-template-areas:"name" "save" "rail"}
   .tune-rest{grid-template-areas:"name" "sub" "save"}
@@ -3614,10 +3739,10 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
    and .canvas's reserved padding are both driven by updateActivityRail() in JS
    rather than a plain media query, since "hidden" is now also a user choice, not
    just a viewport constraint. */
-.nc-activity{position:fixed;top:68px;right:0;bottom:0;width:320px;
+.nc-activity{position:fixed;top:var(--appbar-h);right:0;bottom:0;width:320px;
   border-left:1px solid var(--hairline);background:var(--surface);
   padding:var(--s8) var(--s6) 0;overflow-y:auto;z-index:5;
-  display:flex;flex-direction:column;transition:width var(--t)}
+  display:flex;flex-direction:column;transition:width var(--t),top var(--t)}
 /* same trap as .page[hidden] below: this display:flex overrides the [hidden] UA
    rule, so updateActivityRail's rail.hidden did nothing and the fixed rail sat
    on top of the content on every window under 1440px */
@@ -4961,6 +5086,24 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .sup-sec + .sup-sec{margin-top:var(--s12)}
 .sup-sec .sh-head{margin-bottom:var(--s4)}
 
+/* ---------- "In use for your company": the tray ----------
+   The same geometry as the overview's "other recommended categories" panel: an
+   8px gutter on all four sides and between the cards, a 1px stroke, and the
+   closest grey the system has (--general-muted) so the white cards read as
+   objects against it. Nested radius lands exactly: 25px outer = 16px card + 8px
+   gutter. Only the shelf the customer is already on gets the tray — it is the
+   one that is theirs, and the two open shelves stay on the page plane. */
+.sup-sec.is-own .sup-tray{padding:var(--s2);border:1px solid var(--card-stroke);
+  border-radius:var(--rounded-2xl);background:var(--general-muted)}
+.sup-sec.is-own .supd-grid{gap:var(--s2)}
+/* no rule on the card inside the tray: against the grey the white edge is the
+   boundary. The border stays in the box model as transparent so hover cannot
+   shift the layout by a pixel; the tint edge on hover is dropped for the same
+   reason the .oc-card drops it, and a soft lift takes its place. */
+.sup-sec.is-own .aga.sup-card{border-color:transparent;box-shadow:0 1px 2px #0f0f0f0f}
+.sup-sec.is-own .aga.sup-card:hover{border-color:transparent;
+  box-shadow:0 8px 22px -8px #0f0f0f2b}
+
 /* ---------- the agreement catalogue: less text, findable ----------
    The old card carried a full sentence of argument per agreement. Twenty-four of
    those is a wall to read, not a list to scan. Four facts now — who, what area,
@@ -5948,6 +6091,22 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   color:var(--general-foreground);
   transition:left var(--pk-t) var(--pk-ease)}
 .pkd-val em{font-style:normal;margin-left:.25em}
+/* the bar skin, for the demo: same track, knob and in-bar figure as the page */
+.pkd-rail.pkd-bar{--knob:16px}
+.pkd-rail.pkd-bar::before{top:15px;height:16px;border-radius:var(--rounded-full)}
+.pkd-rail.pkd-bar .pkd-fill,.pkd-rail.pkd-bar .pkd-add{top:15px;height:16px}
+.pkd-rail.pkd-bar .pkd-fill{border-radius:8px 3px 3px 8px}
+.pkd-rail.pkd-bar .pkd-add{border-radius:0 3px 3px 0}
+.pkd-rail.pkd-bar .pkd-knob{display:block;position:absolute;top:23px;
+  left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p,0));
+  width:16px;height:16px;box-sizing:border-box;border-radius:var(--rounded-full);
+  background:var(--general-foreground);border:1px solid #e3e3e3;transform:translate(-50%,-50%);
+  transition:left var(--pk-t) var(--pk-ease)}
+.pkd-rail.pkd-bar .pkd-knob::after{content:"";position:absolute;left:50%;top:50%;width:1.5px;height:5px;
+  border-radius:1px;background:var(--surface);transform:translate(-50%,-50%)}
+.pkd-rail.pkd-bar .pkd-val{left:calc((100% - var(--knob)) * var(--p,0) - 6px);
+  top:23px;height:auto;padding:0;border:none;background:none;box-shadow:none;
+  transform:translate(-100%,-50%);font-size:11px;letter-spacing:-.08px;color:var(--surface)}
 .pkd-cap{position:absolute;left:var(--s8);bottom:var(--s4);font-size:var(--text-xs);color:var(--general-muted-foreground)}
 /* the agreements demo: the same tile, and a short list with a switch per agreement.
    One by one the open ones switch on and the two figures in the tile move. */
@@ -6068,12 +6227,14 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
     <header class="appbar">
       <button class="brand" id="brandHome" type="button" aria-label="Advantage — go to Overview"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTcyNyIgaGVpZ2h0PSIzOTYiIHZpZXdCb3g9IjAgMCAxNzI3IDM5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxMjhfNjgpIj4KPHBhdGggZD0iTTU4LjYzMDcgMjIyLjYxN0M1Mi41ODcgMjIxLjAxIDQ3LjQ2MjkgMjE3LjgyOCA0Mi45OTU4IDIxMy4zNjdMNi42MzQ3OSAxNzcuMDU3Qy0wLjA2NTg4NDYgMTcwLjM2NiAtMS45NzA5OCAxNTkuODY5IDIuMjAwNTIgMTUwLjYyTDQxLjQxOTIgNTMuMTM2N0M0OC40NDgzIDM3LjIyODUgNjguODQ1OSAzMi43MzQ4IDgwLjY3MDcgNDQuNTQzTDE5MS4wMzUgMTUwLjk0OEwxNDcuMDIgMTk2LjUwOEMxMTAuMzMxIDIzMC41ODcgNzUuNTc5NSAyMjcuNDA2IDU4Ljk1OTIgMjIyLjYxN0g1OC42MzA3WiIgZmlsbD0idXJsKCNwYWludDBfbGluZWFyXzMxMjhfNjgpIi8+CjxwYXRoIGQ9Ik00ODEuOTU2IDg0LjAzNDhMMjUxLjYzNiAzMTguMTY0QzIyMi42IDM0Ny4xNiAxNzUuNCAzNDcuMTYgMTQ2LjY5MiAzMTcuODM2TDE0MC4zMiAzMTEuMTQ1TDEwMy42MyAyNzQuMTc5TDk2LjMwNTYgMjY2Ljg2NUw2Ni42NDUzIDIzNy4yNDZMNjYuMDIxMiAyMzYuNjIzQzcwLjgxNjggMjM4Ljg1MyAxMDkuNzA3IDI1My41MTUgMTU4LjIyMSAyMDguMjgzTDIwMi4yMzUgMTYyLjcyM0wzNDkuMjU2IDYuNjU4NDlDMzU1Ljk1NyAtMC4wMzI4MDU3IDM2Ni40NjggLTEuOTM1MjMgMzc1LjQwMiAyLjE5NzYzTDQ3My4wMjEgNDUuNTI3QzQ3NC4zMDIgNDYuMTUwMiA0NzUuNTgzIDQ2LjgwNjMgNDc2Ljg2NCA0Ny43NTc1QzQ4OS42NDIgNTYuMDIzMiA0OTIuMTcxIDc0LjE5NDYgNDgxLjY2IDg1LjAxODhMNDgxLjk4OCA4NC4wNjc2TDQ4MS45NTYgODQuMDM0OFoiIGZpbGw9InVybCgjcGFpbnQxX2xpbmVhcl8zMTI4XzY4KSIvPgo8cGF0aCBkPSJNNDU5LjYyIDMzNC43MjlMNTEwLjk1OSAxODMuMDkyQzUxMS4yODggMTgxLjgxMyA1MTIuNTY5IDE4MC44NjIgNTE0LjE0NSAxODAuODYySDU2Ny40MjJDNTY4LjcwMyAxODAuODYyIDU2OS45ODQgMTgxLjgxMyA1NzAuNjA4IDE4My4wOTJMNjIyLjI3NiAzMzQuNzI5QzYyMi45IDMzNi45NTkgNjIxLjMyMyAzMzkuMTkgNjE5LjA5IDMzOS4xOUg1ODUuNTg2QzU4NC4zMDUgMzM5LjE5IDU4My4wMjQgMzM4LjIzOCA1ODIuNCAzMzYuOTU5TDU3MS41NjEgMzA0LjQ4N0g1MTAuNjMxTDQ5OS40NjMgMzM2Ljk1OUM0OTkuMTM0IDMzOC4yMzggNDk3Ljg1MyAzMzkuMTkgNDk2LjI3NyAzMzkuMTlINDYyLjc3M0M0NjAuNTQgMzM5LjE5IDQ1OC45MyAzMzYuOTU5IDQ1OS41ODcgMzM0LjcyOUg0NTkuNjJaTTU2MC43MjIgMjcxLjM1OEw1NDAuNjE5IDIxMS43OTNMNTIwLjUxNyAyNzEuMzU4SDU2MC43MjJaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNNzI0LjM5NSAzMjIuMzNDNzIwLjI1NyAzMjguMzY1IDcxNC44MzcgMzMzLjE1NCA3MDguNDY1IDMzNi4zMzZDNzAxLjc2NCAzMzkuNTE4IDY5My43ODIgMzQxLjQ1MyA2ODQuMjI0IDM0MS40NTNDNjc0LjY2NiAzNDEuNDUzIDY2Ni4zNTYgMzM5Ljg0NiA2NTkuMDMxIDMzNi45OTJDNjUxLjcwNiAzMzQuMTM4IDY0NS4zMzQgMzI5Ljk3MyA2MzkuODgxIDMyNC41NkM2MzQuNzU3IDMxOS4xNDggNjMwLjYxOSAzMTIuNDU3IDYyNy43NjEgMzA0LjgxNUM2MjQuOTAzIDI5Ny4xNzIgNjIzLjYyMiAyODguMjUgNjIzLjYyMiAyNzguNzA1QzYyMy42MjIgMjY5LjE2MSA2MjQuOTAzIDI2MC41MzQgNjI3Ljc2MSAyNTIuODkxQzYzMC42MTkgMjQ1LjI0OSA2MzQuNDYyIDIzOC4yMyA2MzkuODgxIDIzMi40OUM2NDUuMDA1IDIyNi43NSA2NTEuMzc4IDIyMi4yODkgNjU5LjAzMSAyMTkuMTA3QzY2Ni42ODQgMjE1LjkyNSA2NzQuOTYxIDIxNC4zMTggNjg0LjIyNCAyMTQuMzE4QzY5My40ODcgMjE0LjMxOCA3MDEuMTQgMjE2LjIyMSA3MDguMTY5IDIxOS43M0M3MTQuODcgMjIzLjI0IDcyMC42MTggMjI4LjY1MiA3MjQuNzU2IDIzNS45NjZWMTY2LjUyOEM3MjQuNzU2IDE2NC42MjUgNzI2LjM2NiAxNjMuMzQ2IDcyNy45NDMgMTYzLjM0Nkg3NTYuMzIyQzc1OC4yMjcgMTYzLjM0NiA3NTkuNTA4IDE2NC45NTMgNzU5LjUwOCAxNjYuNTI4VjMzNS42OEM3NTkuNTA4IDMzNy41ODIgNzU3Ljg5OSAzMzguODYxIDc1Ni4zMjIgMzM4Ljg2MUg3MjcuOTQzQzcyNi4wMzcgMzM4Ljg2MSA3MjQuNzU2IDMzNy4yNTQgNzI0Ljc1NiAzMzUuNjhWMzIyLjI5N0g3MjQuNDI4TDcyNC4zOTUgMzIyLjMzWk03MjQuMzk1IDI3MC43MDJDNzIyLjc4NiAyNjMuMzg4IDcxOS4yNzEgMjU3LjMyIDcxMy44NTEgMjUzLjE4N0M3MDguMTAzIDI0OC43MjYgNzAxLjQwMyAyNDYuNDk1IDY5My4xMjUgMjQ2LjQ5NUM2ODQuODQ4IDI0Ni40OTUgNjg0LjE5MSAyNDcuMTE5IDY4MC4wNTIgMjQ4LjM5OEM2NzUuOTE0IDI0OS42NzcgNjcyLjM5OSAyNTEuNTc5IDY2OS41MDkgMjU0LjEzOEM2NjYuNjE4IDI1Ni42OTYgNjY0LjM4NSAyNjAuMTczIDY2Mi44MDggMjY0LjAxMUM2NjEuMjMxIDI2Ny44NDggNjYwLjU3NSAyNzIuNjA1IDY2MC41NzUgMjc4LjM0NUM2NjAuNTc1IDI4NC4wODUgNjYxLjE5OSAyODguNTQ2IDY2Mi44MDggMjkyLjM1QzY2NC40MTggMjk2LjE1NSA2NjYuNjUxIDI5OS4zNyA2NjkuNTA5IDMwMS44OTVDNjcyLjM2NiAzMDQuNDIxIDY3NS44ODEgMzA2LjM1NiA2ODAuMDUyIDMwNy4zMDdDNjg0LjE5MSAzMDguNTg3IDY4OC4zMyAzMDguOTE1IDY5My4xMjUgMzA4LjkxNUM2OTcuOTIxIDMwOC45MTUgNzAwLjE1NCAzMDguMjkxIDcwMy42NjkgMzA3LjMwN0M3MDcuMTg0IDMwNi4zMjMgNzEwLjA0MSAzMDQuNzQ5IDcxMi45MzIgMzAyLjg0N0M3MTUuODIyIDMwMC45NDQgNzE4LjA1NiAyOTguMzg2IDcxOS45NjEgMjk1LjgyN0M3MjEuODY2IDI5My4yNjkgNzIzLjQ3NSAyOTAuMDg3IDcyNC40MjggMjg2LjU3OFYyNzAuNjY5TDcyNC4zOTUgMjcwLjcwMloiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0xMDAwLjMxIDMyMi4zM0M5OTYuMTY3IDMyOC4zNjUgOTkwLjc0NyAzMzMuMTU0IDk4NC4zNzUgMzM2LjMzNkM5NzguMDAzIDMzOS41MTggOTY5LjY5MiAzNDEuNDUzIDk2MC4xMzQgMzQxLjQ1M0M5NTAuNTc2IDM0MS40NTMgOTQyLjI2NiAzMzkuODQ2IDkzNC45NDEgMzM2Ljk5MkM5MjcuNjE2IDMzNC4xMzggOTIxLjI0NCAzMjkuOTczIDkxNS43OTEgMzI0LjU2QzkxMC42NjcgMzE5LjE0OCA5MDYuNTI5IDMxMi40NTcgOTAzLjY3MSAzMDQuODE1QzkwMC44MTQgMjk3LjE3MiA4OTkuNTMyIDI4OC4yNSA4OTkuNTMyIDI3OC43MDVDODk5LjUzMiAyNjkuMTYxIDkwMC44MTQgMjYwLjUzNCA5MDMuNjcxIDI1Mi44OTFDOTA2LjUyOSAyNDUuMjQ5IDkxMC4zNzIgMjM4LjIzIDkxNS43OTEgMjMyLjQ5QzkyMS4yMTEgMjI2Ljc1IDkyNy4yODggMjIyLjI4OSA5MzQuOTQxIDIxOS4xMDdDOTQyLjU5NCAyMTUuOTI1IDk1MC44NzEgMjE0LjMxOCA5NjAuMTM0IDIxNC4zMThDOTY5LjM5NyAyMTQuMzE4IDk3Ny4wNSAyMTYuMjIxIDk4NC4wNzkgMjE5LjczQzk5MC43OCAyMjMuMjQgOTk2LjUyOCAyMjguNjUyIDEwMDAuNjcgMjM1Ljk2NlYyMTcuMTcyQzEwMDAuNjcgMjE1LjI2OSAxMDAyLjI4IDIxMy45OSAxMDAzLjg1IDIxMy45OUgxMDMyLjU2QzEwMzQuNDcgMjEzLjk5IDEwMzUuNzUgMjE1LjU5NyAxMDM1Ljc1IDIxNy4xNzJWMzM1Ljk3NUMxMDM1Ljc1IDMzNy44NzcgMTAzNC4xNCAzMzkuMTU3IDEwMzIuNTYgMzM5LjE1N0gxMDAzLjg1QzEwMDEuOTUgMzM5LjE1NyAxMDAwLjY3IDMzNy41NDkgMTAwMC42NyAzMzUuOTc1VjMyMi41OTJMMTAwMC4zNCAzMjIuMjY0TDEwMDAuMzEgMzIyLjMzWk0xMDAwLjMxIDI3MC43MDJDOTk4LjY5NiAyNjMuMzg4IDk5NS4xODEgMjU3LjMyIDk4OS43NjIgMjUzLjE4N0M5ODQuMDE0IDI0OC43MjYgOTc3LjMxMyAyNDYuNDk1IDk2OS4wMzYgMjQ2LjQ5NUM5NjAuNzU4IDI0Ni40OTUgOTYwLjEwMSAyNDcuMTE5IDk1NS45NjMgMjQ4LjM5OEM5NTEuODI0IDI0OS42NzcgOTQ4LjMwOSAyNTEuNTc5IDk0NS40MTkgMjU0LjEzOEM5NDIuNTI4IDI1Ni42OTYgOTQwLjI5NSAyNjAuMTczIDkzOC43MTggMjY0LjAxMUM5MzcuMTQyIDI2Ny44NDkgOTM2LjQ4NSAyNzIuNjA1IDkzNi40ODUgMjc4LjM0NUM5MzYuNDg1IDI4NC4wODUgOTM3LjEwOSAyODguNTQ2IDkzOC43MTggMjkyLjM1Qzk0MC4zMjggMjk2LjE1NSA5NDIuNTYxIDI5OS4zNyA5NDUuNDE5IDMwMS44OTVDOTQ4LjI3NyAzMDQuNDIxIDk1MS43OTEgMzA2LjM1NiA5NTUuOTYzIDMwNy4zMDdDOTYwLjEwMSAzMDguNTg3IDk2NC4yNCAzMDguOTE1IDk2OS4wMzYgMzA4LjkxNUM5NzMuODMxIDMwOC45MTUgOTc2LjA2NSAzMDguMjkxIDk3OS41NzkgMzA3LjMwN0M5ODMuMDk0IDMwNi4zMjMgOTg1Ljk1MSAzMDQuNzQ5IDk4OC44NDIgMzAyLjg0N0M5OTEuNzMyIDMwMC45NDQgOTkzLjk2NiAyOTguMzg2IDk5NS44NzEgMjk1LjgyN0M5OTcuNzc2IDI5My4yNjkgOTk5LjM4NiAyOTAuMDg3IDEwMDAuMzQgMjg2LjU3OFYyNzAuNjY5TDEwMDAuMzEgMjcwLjcwMloiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0xNDA0LjQ4IDMyMi4zM0MxNDAwLjM0IDMyOC4zNjUgMTM5NC45MiAzMzMuMTU0IDEzODguNTUgMzM2LjMzNkMxMzgyLjE4IDMzOS41MTggMTM3My44NyAzNDEuNDUzIDEzNjQuMzEgMzQxLjQ1M0MxMzU0Ljc1IDM0MS40NTMgMTM0Ni40NCAzMzkuODQ2IDEzMzkuMTIgMzM2Ljk5MkMxMzMxLjc5IDMzNC4xMzggMTMyNS40MiAzMjkuOTczIDEzMTkuOTcgMzI0LjU2QzEzMTQuODQgMzE5LjE0OCAxMzEwLjcgMzEyLjQ1NyAxMzA3Ljg1IDMwNC44MTVDMTMwNC45OSAyOTcuMTcyIDEzMDMuNzEgMjg4LjI1IDEzMDMuNzEgMjc4LjcwNUMxMzAzLjcxIDI2OS4xNjEgMTMwNC45OSAyNjAuNTM0IDEzMDcuODUgMjUyLjg5MUMxMzEwLjcgMjQ1LjI0OSAxMzE0LjU1IDIzOC4yMyAxMzE5Ljk3IDIzMi40OUMxMzI1LjA5IDIyNi43NSAxMzMxLjQ2IDIyMi4yODkgMTMzOS4xMiAyMTkuMTA3QzEzNDYuNzcgMjE1LjkyNSAxMzU1LjA1IDIxNC4zMTggMTM2NC4zMSAyMTQuMzE4QzEzNzMuNTcgMjE0LjMxOCAxMzgxLjIzIDIxNi4yMjEgMTM4OC4yNSAyMTkuNzNDMTM5NC45NiAyMjMuMjQgMTQwMC43IDIyOC42NTIgMTQwNC44NCAyMzUuOTY2VjIxNy4xNzJDMTQwNC44NCAyMTUuMjY5IDE0MDYuNDUgMjEzLjk5IDE0MDguMDMgMjEzLjk5SDE0MzYuNzRDMTQzOC42NCAyMTMuOTkgMTQzOS45MiAyMTUuNTk3IDE0MzkuOTIgMjE3LjE3MlYzMzUuOTc1QzE0MzkuOTIgMzM3Ljg3NyAxNDM4LjMxIDMzOS4xNTcgMTQzNi43NCAzMzkuMTU3SDE0MDguMDNDMTQwNi4xMiAzMzkuMTU3IDE0MDQuODQgMzM3LjU0OSAxNDA0Ljg0IDMzNS45NzVWMzIyLjU5MkwxNDA0LjUxIDMyMi4yNjRMMTQwNC40OCAzMjIuMzNaTTE0MDQuNDggMjcwLjcwMkMxNDAyLjg3IDI2My4zODggMTM5OS4zNiAyNTcuMzIgMTM5My45NCAyNTMuMTg3QzEzODguMTkgMjQ4LjcyNiAxMzgxLjQ5IDI0Ni40OTUgMTM3My4yMSAyNDYuNDk1QzEzNjQuOTMgMjQ2LjQ5NSAxMzY0LjI4IDI0Ny4xMTkgMTM2MC4xNCAyNDguMzk4QzEzNTYgMjQ5LjY3NyAxMzUyLjQ4IDI1MS41NzkgMTM0OS41OSAyNTQuMTM4QzEzNDYuNyAyNTYuNjk2IDEzNDQuNDcgMjYwLjE3MyAxMzQyLjg5IDI2NC4wMTFDMTM0MS4zMiAyNjcuODQ5IDEzNDAuNjYgMjcyLjYwNSAxMzQwLjY2IDI3OC4zNDVDMTM0MC42NiAyODQuMDg1IDEzNDEuMjggMjg4LjU0NiAxMzQyLjg5IDI5Mi4zNUMxMzQ0LjUgMjk2LjE1NSAxMzQ2Ljc0IDI5OS4zNyAxMzQ5LjU5IDMwMS44OTVDMTM1Mi40NSAzMDQuNDIxIDEzNTUuOTcgMzA2LjM1NiAxMzYwLjE0IDMwNy4zMDdDMTM2NC4yOCAzMDguNTg3IDEzNjguNDIgMzA4LjkxNSAxMzczLjIxIDMwOC45MTVDMTM3OC4wMSAzMDguOTE1IDEzODAuMjQgMzA4LjI5MSAxMzgzLjc1IDMwNy4zMDdDMTM4Ny4yNyAzMDYuMzIzIDEzOTAuMTMgMzA0Ljc0OSAxMzkzLjAyIDMwMi44NDdDMTM5NS45MSAzMDAuOTQ0IDEzOTguMTQgMjk4LjM4NiAxNDAwLjA1IDI5NS44MjdDMTQwMS45NSAyOTMuMjY5IDE0MDMuNTYgMjkwLjA4NyAxNDA0LjUxIDI4Ni41NzhWMjcwLjY2OUwxNDA0LjQ4IDI3MC43MDJaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNNzcxLjI2NyAyMTYuODc3SDgwMC45MjdDODAyLjUzNyAyMTYuODc3IDgwMy44MTggMjE3LjgyOCA4MDQuMTEzIDIxOS4xMDdMODMzLjQ3OCAzMTMuNzA0TDg2My40NjcgMjE4Ljc3OUM4NjMuNzk1IDIxNy41IDg2NS4wNzcgMjE2LjU0OSA4NjYuNjUzIDIxNi41NDlIODk1LjY4OUM4OTcuOTIzIDIxNi41NDkgODk5LjUzMiAyMTguNzc5IDg5OC44NzUgMjIwLjY4MUw4NjIuNTE0IDMzNi4zMzZDODYyLjE4NiAzMzcuNjE1IDg2MC45MDUgMzM4LjU2NiA4NTkuMzI4IDMzOC41NjZIODA4LjYxM0M4MDcuMDA0IDMzOC41NjYgODA2LjA1MSAzMzcuNjE1IDgwNS40MjcgMzM2LjMzNkw3NjguMTE0IDIyMC42ODFDNzY3LjQ5IDIxOC40NTEgNzY5LjA2NiAyMTYuNTQ5IDc3MS4zIDIxNi41NDlWMjE2Ljg3N0g3NzEuMjY3WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTEwNTIuMzMgMzM1LjcxM1YyMjAuMDU4QzEwNTIuMzMgMjE4LjE1NiAxMDUzLjk0IDIxNi44NzcgMTA1NS41MiAyMTYuODc3SDEwODQuMjNDMTA4Ni4xMyAyMTYuODc3IDEwODcuNDEgMjE4LjQ4NCAxMDg3LjQxIDIyMC4wNThWMjM2LjYyMkMxMDg5Ljk4IDIzMy4xMTMgMTA5Mi44MyAyMjkuOTMxIDEwOTYuMzUgMjI3LjA3OEMxMDk5Ljg2IDIyNC4yMjQgMTEwMy4zOCAyMjEuOTYxIDExMDcuMTkgMjIwLjA1OEMxMTExIDIxOC4xNTYgMTExNC44NCAyMTYuODc3IDExMTkuMzEgMjE1LjU5N0MxMTIzLjc4IDIxNC4zMTggMTEyNy41OSAyMTMuOTkgMTEzMS43NiAyMTMuOTlDMTE0MS45NyAyMTMuOTkgMTE1MC4yNSAyMTUuODkzIDExNTYuNjIgMjIwLjAyNUMxMTYyLjk5IDIyNC4xNTggMTE2OC4xMiAyMjkuMjc1IDExNzEuNiAyMzUuMzFDMTE3NS4wOCAyNDEuMzQ2IDExNzcuNjQgMjQ4LjM2NSAxMTc4LjYzIDI1NS43MTJDMTE3OS45MSAyNjMuMzU1IDExODAuNTMgMjcwLjY2OSAxMTgwLjUzIDI3Ny4zOTNWMzM1LjM4NUMxMTgwLjUzIDMzNy4yODcgMTE3OC45MiAzMzguNTY2IDExNzcuMzUgMzM4LjU2NkgxMTQ4LjY0QzExNDYuNzMgMzM4LjU2NiAxMTQ1LjQ1IDMzNi45NTkgMTE0NS40NSAzMzUuMzg1VjI3Ny4zOTNDMTE0NS40NSAyNzMuMjYxIDExNDUuMTMgMjY5LjQyMyAxMTQ0LjE3IDI2NS42MThDMTE0My4yMiAyNjEuODEzIDExNDEuOTQgMjU4LjU5OSAxMTM5LjcxIDI1NS43NDVDMTEzNy40NyAyNTIuODkyIDExMzQuOTEgMjUwLjYyOCAxMTMxLjcyIDI0OS4wNTRDMTEyOC41NCAyNDcuNDc5IDExMjQuNCAyNDYuNDk1IDExMTkuMjggMjQ2LjQ5NUMxMTE0LjE1IDI0Ni40OTUgMTEwOS43MiAyNDcuMTE5IDExMDUuODcgMjQ4LjcyNkMxMTAyLjAzIDI1MC4zMzMgMTA5OC41NSAyNTIuNTY0IDEwOTUuNjYgMjU1LjQxN0MxMDkyLjc3IDI1OC4zMDQgMTA5MC44NiAyNjEuNDUyIDEwODkuMjkgMjY1LjI5QzEwODguMDEgMjY5LjEyOCAxMDg3LjA1IDI3My4yNjEgMTA4Ny4wNSAyNzcuMzkzVjMzNS4zODVDMTA4Ny4wNSAzMzcuMjg3IDEwODUuNDQgMzM4LjU2NiAxMDgzLjg3IDMzOC41NjZIMTA1NS4xNkMxMDUzLjI1IDMzOC41NjYgMTA1MS45NyAzMzYuOTU5IDEwNTEuOTcgMzM1LjM4NUwxMDUyLjMgMzM1LjcxM0gxMDUyLjMzWiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTEyMzMuODEgMzM3LjI4N0MxMjI5LjAyIDMzNS42OCAxMjI0Ljg4IDMzMy4xNTQgMTIyMS4zNiAzMjkuNjQ1QzEyMTcuODUgMzI2LjEzNSAxMjE1LjMyIDMyMS42NzQgMTIxMy4zOCAzMTYuMjYyQzEyMTEuNDQgMzEwLjg1IDEyMTAuNDkgMzA0LjQ4NyAxMjEwLjQ5IDI5Ny4xMzlWMjQ3LjExOUgxMTkwLjA2QzExODguMTUgMjQ3LjExOSAxMTg2Ljg3IDI0NS41MTEgMTE4Ni44NyAyNDMuOTM3VjIxOS43M0MxMTg2Ljg3IDIxNy44MjggMTE4OC40OCAyMTYuNTQ5IDExOTAuMDYgMjE2LjU0OUgxMjEwLjQ5VjE4Mi4xNDFDMTIxMC40OSAxODAuMjM4IDEyMTIuMSAxNzguOTU5IDEyMTMuNjggMTc4Ljk1OUgxMjQyLjM4QzEyNDQuMjkgMTc4Ljk1OSAxMjQ1LjU3IDE4MC41NjcgMTI0NS41NyAxODIuMTQxVjIxNi41NDlIMTI5NC4zOEMxMjk1Ljk5IDIxNi41NDkgMTI5Ny41NyAyMTguMTU2IDEyOTcuNTcgMjE5LjczVjI0My45MzdDMTI5Ny41NyAyNDUuODM5IDEyOTUuOTYgMjQ3LjExOSAxMjk0LjM4IDI0Ny4xMTlIMTI0NS41N1YyOTYuMTg4QzEyNDUuNTcgMjk4Ljc0NyAxMjQ1LjkgMzAwLjk3NyAxMjQ2Ljg1IDMwMi4yMjNDMTI0Ny44IDMwMy44MzEgMTI0OS4wOCAzMDQuNzgyIDEyNTAuNjkgMzA1LjczM0MxMjUyLjMgMzA2LjY4NCAxMjUzLjg4IDMwNy4zNCAxMjU2LjExIDMwNy4zNEMxMjU4LjAyIDMwNy4zNCAxMjU5Ljk2IDMwNy42NjggMTI2MS44NiAzMDcuNjY4SDEyODkuOTVDMTI5MS44NSAzMDcuNjY4IDEyOTMuMTMgMzA5LjI3NiAxMjkzLjEzIDMxMC44NVYzMzUuNjhDMTI5My4xMyAzMzcuNTgyIDEyOTEuNTIgMzM4Ljg2MiAxMjg5Ljk1IDMzOC44NjJIMTI1MC4wN0MxMjQ0LjMyIDMzOC44NjIgMTIzOC45IDMzOC4yMzggMTIzNC4xNCAzMzYuNjMxTDEyMzMuODEgMzM3LjI1NFYzMzcuMjg3WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTE1MTEuOTkgMzkzLjM3NkwxNTAyLjQzIDM2OS43OTJDMTUwMS44IDM2Ny41NjIgMTUwMy4wNSAzNjUuMzMyIDE1MDUuNjEgMzY1LjMzMkgxNTE3Ljc0QzE1MjEuNTggMzY1LjMzMiAxNTI1LjM5IDM2NS4zMzIgMTUyOS41MyAzNjQuNzA4QzE1MzMuNjcgMzY0LjA4NSAxNTM3LjUxIDM2My4xMDEgMTU0MS4wMiAzNjEuMTk5QzE1NDQuNTQgMzU5LjI5NiAxNTQ3LjQgMzU2LjQxIDE1NDkuOTYgMzUyLjkzM0MxNTUyLjUyIDM0OS4wOTUgMTU1My40NyAzNDQuMDExIDE1NTMuNDcgMzM3LjY0OFYzMjMuMzE0QzE1NDkuMzMgMzI5LjM0OSAxNTQzLjkxIDMzMy44NDMgMTUzNy41NCAzMzYuOTkyQzE1MzEuMTcgMzQwLjE0MSAxNTIyLjg2IDM0Mi4xMDkgMTUxMy4zIDM0Mi4xMDlDMTUwMy43NCAzNDIuMTA5IDE0OTUuNDMgMzQwLjUwMiAxNDg4LjExIDMzNy42NDhDMTQ4MC43OCAzMzQuNzk0IDE0NzQuNDEgMzMwLjYyOSAxNDY4Ljk2IDMyNS4yMTdDMTQ2My44MyAzMTkuODA0IDE0NTkuNyAzMTMuMTEzIDE0NTYuODQgMzA1LjQ3MUMxNDUzLjk4IDI5Ny44MjggMTQ1Mi43IDI4OC45MDYgMTQ1Mi43IDI3OS4wMzRDMTQ1Mi43IDI2OS4xNjEgMTQ1My45OCAyNjEuMTkgMTQ1Ni44NCAyNTMuMjJDMTQ1OS43IDI0NS4yNDkgMTQ2My41NCAyMzguNTU4IDE0NjguOTYgMjMyLjgxOEMxNDc0LjA4IDIyNy4wNzggMTQ4MC40NSAyMjIuNjE3IDE0ODguMTEgMjE5LjQzNUMxNDk1LjQzIDIxNi4yNTMgMTUwMy43NCAyMTQuNjQ2IDE1MTIuOTcgMjE0LjY0NkMxNTIyLjIgMjE0LjY0NiAxNTMwLjE4IDIxNi41NDkgMTUzNi45MiAyMjAuMDU4QzE1NDMuNjUgMjIzLjU2OCAxNTQ5LjM3IDIyOC45OCAxNTUzLjUgMjM2LjYyM1YyMjAuNzE0QzE1NTMuNSAyMTguODEyIDE1NTUuMTEgMjE3LjUzMyAxNTU2LjY5IDIxNy41MzNIMTU4NS40QzE1ODcuMyAyMTcuNTMzIDE1ODguNTkgMjE5LjE0IDE1ODguNTkgMjIwLjcxNFYzMzcuNjE1QzE1ODguNTkgMzQ4Ljc2NyAxNTg2LjY4IDM1OC4wMTcgMTU4My4xNyAzNjUuNjZDMTU3OS42NSAzNzMuMzAyIDE1NzQuNTYgMzc5LjMzNyAxNTY3Ljg2IDM4NC4xMjZDMTU2MS40OSAzODguOTE1IDE1NTMuODMgMzkyLjA5NyAxNTQ1LjE5IDM5NC4zMjdDMTUzNi41OSAzOTYuNTU4IDE1MjcuMzMgMzk1LjkzNCAxNTE3LjQ0IDM5NS45MzRIMTUxNS41M0MxNTE0LjI1IDM5NS45MzQgMTUxMi45NyAzOTQuOTgzIDE1MTIuMzUgMzkzLjcwNEwxNTEyLjAyIDM5My4zNzZIMTUxMS45OVpNMTU1My4xNCAyNzAuNDA3QzE1NTIuNTIgMjY2Ljg5NyAxNTUxLjI0IDI2My4zODggMTU0OS4zIDI2MC41MzRDMTU0Ny4zNiAyNTcuNjggMTU0NS4xNiAyNTUuMTIyIDE1NDIuMjcgMjUyLjg5MkMxNTM5LjM4IDI1MC42NjEgMTUzNi41MiAyNDkuMDU0IDE1MzMuMDEgMjQ4LjEwM0MxNTI5LjQ5IDI0Ny4xNTEgMTUyNS45OCAyNDYuNDk1IDE1MjEuODQgMjQ2LjQ5NUMxNTE3LjcgMjQ2LjQ5NSAxNTEyLjU4IDI0Ny4xMTkgMTUwOC43NyAyNDguMzk4QzE1MDQuOTYgMjQ5LjY3NyAxNTAxLjExIDI1MS41OCAxNDk4LjIyIDI1NC4xMzhDMTQ5NS4zMyAyNTYuNjk2IDE0OTMuMSAyNjAuMTczIDE0OTEuNTIgMjY0LjAxMUMxNDg5Ljk1IDI2Ny44NDkgMTQ4OS4yOSAyNzIuOTMzIDE0ODkuMjkgMjc4LjY3M0MxNDg5LjI5IDI4NC40MTMgMTQ4OS45MSAyODguNTQ2IDE0OTEuNTIgMjkyLjM1QzE0OTMuMTMgMjk2LjE1NSAxNDk1LjM3IDI5OS4zNyAxNDk4LjIyIDMwMS44OTVDMTUwMS4wOCAzMDQuNDIxIDE1MDQuNiAzMDYuMzU2IDE1MDguNzcgMzA3LjMwOEMxNTEyLjkxIDMwOC41ODcgMTUxNy4wNSAzMDguOTE1IDE1MjEuODQgMzA4LjkxNUMxNTI4Ljg3IDMwOC45MTUgMTUzNS4yNCAzMDcuMDEyIDE1NDEuMjkgMzAyLjg3OUMxNTQ3LjAzIDI5OC43NDcgMTU1MS4xNyAyOTMuMzM1IDE1NTMuMDggMjg2LjMxNVYyNzAuMDc5VjI3MC40MDdIMTU1My4xNFoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0xNjM2LjQxIDMzNy42MTVDMTYyNy44IDMzNC43MjkgMTYyMC43NyAzMzAuNTk2IDE2MTUuMDYgMzI1LjE4NEMxNjA5LjM0IDMxOS43NzIgMTYwNC44NCAzMTMuMDggMTYwMS42NiAzMDUuMTFDMTU5OC40NyAyOTcuMTM5IDE1OTYuODYgMjg3LjkyMiAxNTk2Ljg2IDI3Ny43MjFDMTU5Ni44NiAyNjcuNTIxIDE1OTguNDcgMjU5LjU1IDE2MDEuMzMgMjUxLjYxMkMxNjA0LjIyIDI0My45NyAxNjA4LjY1IDIzNi45NSAxNjE0LjExIDIzMS41MzhDMTYxOS41NiAyMjYuMTI2IDE2MjYuNTYgMjIxLjY2NSAxNjM0LjgzIDIxOC43NzlDMTY0My4xMSAyMTUuODkzIDE2NTIuMzcgMjE0LjMxOCAxNjYzLjIxIDIxNC4zMThDMTY3NC4wNSAyMTQuMzE4IDE2ODEuNDEgMjE1LjU5NyAxNjg5LjA2IDIxOC40NTFDMTY5Ny4wNCAyMjEuMzM3IDE3MDMuNzQgMjI1LjQ3IDE3MDkuMTYgMjMwLjU1NEMxNzE0LjkxIDIzNS45NjYgMTcxOS4wNSAyNDIuMzMgMTcyMi4yNCAyNDkuOTcyQzE3MjUuNDIgMjU3LjYxNSAxNzI3LjAzIDI2Ni4yMDkgMTcyNy4wMyAyNzUuNzg2VjI4My40MjlDMTcyNy4wMyAyODQuMzggMTcyNi40MSAyODUuMDM2IDE3MjUuNDIgMjg1LjAzNkgxNjMzLjIyQzE2MzMuODUgMjg5LjE2OSAxNjM0LjgzIDI5My4zMDIgMTYzNi40MSAyOTYuNTE2QzE2MzguMDIgMzAwLjAyNiAxNjQwLjI1IDMwMi44NzkgMTY0Mi40NSAzMDUuMTFDMTY0NC42NSAzMDcuMzQgMTY0Ny44NyAzMDkuMjQzIDE2NTEuNzIgMzEwLjUyMkMxNjU1LjU2IDMxMS44MDEgMTY1OS4zNyAzMTIuNDI0IDE2NjQuMTYgMzEyLjQyNEMxNjcyLjE1IDMxMi40MjQgMTY3Ny44NiAzMTEuMTQ1IDE2ODIuMDMgMzA4LjU4N0MxNjg1Ljg4IDMwNi4zNTYgMTY4OC40MSAzMDMuMTc1IDE2OTAuMDEgMjk5LjMzN0MxNjkwLjAxIDI5OC43MTQgMTY5MC45NyAyOTguMzg2IDE2OTEuNjIgMjk4LjM4NkgxNzI0LjQ3QzE3MjUuNDIgMjk4LjM4NiAxNzI2LjM4IDI5OS4zMzcgMTcyNi4wOCAzMDAuMjg4QzE3MjUuNDYgMzA1LjcgMTcyMy41MiAzMTAuODE3IDE3MjAuOTYgMzE1LjU3M0MxNzE3Ljc3IDMyMC45ODUgMTcxMy42MyAzMjUuNDQ2IDE3MDguNTEgMzI5LjI1MUMxNzAzLjA5IDMzMy4wODkgMTY5Ny4wMSAzMzYuMjcgMTY4OS42OSAzMzguNTAxQzE2ODIuMzYgMzQwLjczMSAxNjc0LjM4IDM0Mi4wMSAxNjY1LjQ1IDM0Mi4wMUMxNjU2LjUxIDM0Mi4wMSAxNjQ0LjcyIDM0MC43MzEgMTYzNi40MSAzMzcuODc4VjMzNy41NVYzMzcuNjE1Wk0xNjg5Ljk4IDI2Mi40MzZDMTY4OS4wMyAyNTkuMjU1IDE2ODguMDggMjU2LjQwMSAxNjg2LjggMjU0LjE3MUMxNjg1LjUxIDI1MS45NCAxNjgzLjYxIDI0OS43MSAxNjgxLjM4IDI0Ny44MDdDMTY3OS4xNCAyNDUuOTA1IDE2NzYuNTggMjQ0LjYyNiAxNjczLjcyIDI0My42NzVDMTY3MC44NyAyNDIuNzIzIDE2NjcuMzUgMjQyLjA2NyAxNjYzLjE4IDI0Mi4wNjdDMTY1OS4wMSAyNDIuMDY3IDE2NTUuMiAyNDIuNjkxIDE2NTIuMDEgMjQzLjY3NUMxNjQ4LjgzIDI0NC42NTkgMTY0Ni4yNiAyNDYuMjMzIDE2NDQuMDMgMjQ3LjgwN0MxNjQxLjggMjQ5LjcxIDE2MzkuODkgMjUxLjY0NSAxNjM4LjYxIDI1NC4xNzFDMTYzNyAyNTYuNzI5IDE2MzYuMDUgMjU5LjU4MyAxNjM1LjEgMjYyLjQzNkgxNjg5Ljk4WiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyXzMxMjhfNjgiIHgxPSItNTUuODcyIiB5MT0iOS41MTIxMyIgeDI9IjE0MS4yOTEiIHkyPSIyMDYuOTUyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiM5MkJFRkYiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjE3MEVEIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQxX2xpbmVhcl8zMTI4XzY4IiB4MT0iNjUuOTU1NSIgeTE9IjE2OS45MzkiIHgyPSI0ODguNjIzIiB5Mj0iMTY5LjkzOSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMEIwMEFCIi8+CjxzdG9wIG9mZnNldD0iMC41MyIgc3RvcC1jb2xvcj0iIzA1MUJENSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDM3RkYiLz4KPC9saW5lYXJHcmFkaWVudD4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTI4XzY4Ij4KPHJlY3Qgd2lkdGg9IjE3MjciIGhlaWdodD0iMzk2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt="Advantage"></button>
       <span class="spacer"></span>
+      <div class="mid">
       <div class="search">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
         <input id="appSearch" type="search" placeholder="Search suppliers, agreements, areas…" aria-label="Search"
           autocomplete="off" role="combobox" aria-expanded="false" aria-controls="searchPop" aria-autocomplete="list">
         <kbd>⌘</kbd><kbd>K</kbd>
         <div class="search-pop" id="searchPop" role="listbox" aria-label="Search results" hidden></div>
+      </div>
       </div>
       <span class="spacer"></span>
       <!-- data-source status: a live pill for a customer whose ERP is connected, and a
@@ -6082,6 +6243,20 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
       <!-- said once, in the shell: the figures on whatever page you are looking at
            follow numbers the user set rather than their own accounting data. Empty
            and hidden until that is true. -->
+      <!-- the bar, once the Overview's figures have scrolled out above. Airbnb's move:
+           the bar stops being the app's and becomes the page's. Brand, search and
+           status pills step out; the two figures the calculator moves stand on the
+           page's left content edge as stat tiles, and the adjusted-numbers token that
+           resets them on its right. The brand, bell and account stay: the constants.
+           Hidden until the moment; wired by ledgerWatch(). -->
+      <div class="bar-scrolled" id="barScrolled" aria-hidden="true">
+        <div class="bs-kpis" role="group" aria-label="Your figures, live">
+          <button type="button" class="bs-kpi" data-go=".nc-ov"><span class="bs-l" data-ld="savL"></span><b class="bs-v good"><span data-ld="sav"></span><em>kr.</em></b></button>
+          <i class="bs-sep" aria-hidden="true"></i>
+          <button type="button" class="bs-kpi" data-go=".nc-ov"><span class="bs-l" data-ld="spL"></span><b class="bs-v"><span data-ld="sp"></span><em>kr.</em></b></button>
+        </div>
+        <span class="spacer"></span>
+      </div>
       <div class="erp tune-pill" id="tunePill" hidden></div>
       <button class="erp" id="erpPill"></button>
       <div class="notif">
@@ -6846,6 +7021,9 @@ $('#brandHome').addEventListener('click', () => goNav('dashboard'));
 /* Only two views exist so far: the suppliers catalogue and the dashboard. Reports,
    Categories and Agreements keep showing the dashboard, as they did before. */
 function setView(){
+  /* leaving or re-entering the Overview: the ledger is only ever true there, and
+     the observer re-arms when the dashboard is wired again */
+  ledgerSet(false);
   /* every caller of setView is going to a top-level page, so the category page
      (and the origin it was remembering) is done — one place to say so, rather
      than a `hidden = true` in each of them, one of which would eventually be
@@ -8241,6 +8419,7 @@ function renderTunePill(){
   const n = tuneCount();
   pill.hidden = !n;
   if(pill.dataset.n === String(n)) return;
+  requestAnimationFrame(() => { if(typeof ledgerAlign === 'function') ledgerAlign(); });
   pill.dataset.n = String(n);
   if(!n){ pill.innerHTML = ''; return; }
   pill.innerHTML = `
@@ -8503,9 +8682,12 @@ function updateActivityRail(){
   t.setAttribute('aria-label', activityMini ? 'Expand Advantage activity' : 'Collapse Advantage activity');
   if(show){
     const bar = $('.appbar');
-    const bottom = bar ? Math.round(bar.getBoundingClientRect().bottom) : 0;
-    if(bottom > 0){
-      rail.style.top = bottom + 'px';
+    /* only what lies above the bar (the banner) is measured; the bar's own height
+       comes from the --appbar-h token, so when the bar grows for the scrolled
+       figures the rail moves with it instead of sitting under a stale number */
+    const top = bar ? Math.round(bar.getBoundingClientRect().top) : 0;
+    if(bar && bar.getBoundingClientRect().height > 0){
+      rail.style.top = `calc(${top}px + var(--appbar-h))`;
     }else{
       /* the app is still hidden, so there is nothing to measure yet — leave the
          CSS default in place and try again once it has been laid out */
@@ -8786,6 +8968,14 @@ function dashModelOwn(){
   const pending   = reqAgs.filter(agPending);
   const dormant   = reqAgs.filter(agDormant);
   const saveRun   = landing.reduce((s, a) => s + a.save, 0);
+  /* the two bands the tuned rows put on the totals, as ratios so the travelling
+     figure can carry them on every frame */
+  const sT = tunedSum(landing);
+  const saveBand = v => sT.moved ? `+${fmtCompact(Math.round(v * sT.lo / sT.sum))}–${fmtCompact(Math.round(v * sT.hi / sT.sum))}` : `+${fmt(v)}`;
+  const spLo = rows.reduce((s, r) => s + r.amt * (spendTune[r.id] ? 1 - TUNE_BAND : 1), 0);
+  const spHi = rows.reduce((s, r) => s + r.amt * (spendTune[r.id] ? 1 + TUNE_BAND : 1), 0);
+  const spSum = rows.reduce((s, r) => s + r.amt, 0);
+  const spendBand = v => spHi > spLo ? `${fmtCompact(Math.round(v * spLo / spSum))}–${fmtCompact(Math.round(v * spHi / spSum))}` : fmt(v);
   const pendSum   = pending.reduce((s, a) => s + a.save, 0);
   const idleSum   = dormant.reduce((s, a) => s + a.save, 0);
   const covered   = landing.reduce((s, a) => s + a.covers, 0);
@@ -8884,15 +9074,17 @@ function dashModelOwn(){
       /* `was` is the figure the invoices actually say — the same sum, read off the
          remembered actuals rather than the tuned copies — so the card can keep it
          in view under the number the user has set */
-      {l: tuned ? 'Savings a year' : 'Saved, last 12 months', v: tuned ? `+${fmt(saveRun)}` : fmt(saveRun),
-       n:saveRun, nf:v => tuned ? `+${fmt(v)}` : fmt(v), u:'kr. / year',
+      /* a sum with a set spend in it is a projection and prints as its band; a
+         tuned area whose live agreement is not landing leaves the sum exact */
+      {l: tuned ? 'Savings a year' : 'Saved, last 12 months', v: tuned ? saveBand(saveRun) : fmt(saveRun),
+       n:saveRun, nf:v => tuned ? saveBand(v) : fmt(v), u:'kr. / year',
        accent:true, trend:'',
        cap: tuned ? `On the spend you have set, not on your invoices`
                   : `${fmt(Math.round(saveRun * yearFrac))} kr. landed so far this year`,
        was:{l:'Your actual savings', n:landing.reduce((s, a) => s + (a.saveActual === undefined ? a.save : a.saveActual), 0)},
        spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
-      {l: tuned ? 'Spend a year' : 'Spend, last 12 months', v:fmt(spend),
-       n:spend, nf:v => fmt(v), u:'kr. / year', trend:'flat',
+      {l: tuned ? 'Spend a year' : 'Spend, last 12 months', v: tuned ? spendBand(spend) : fmt(spend),
+       n:spend, nf:v => tuned ? spendBand(v) : fmt(v), u:'kr. / year', trend:'flat',
        cap: tuned ? `Across ${rows.length} areas · ${tn} set by you`
                   : `Across ${rows.length} purchasing categories`,
        was:{l:'Your actual spend', n:rows.reduce((s, r) => s + (r.amtActual === undefined ? r.amt : r.amtActual), 0)},
@@ -9051,6 +9243,10 @@ function dashModelPeer(){
    benchmark) rather than a previously tuned number. */
 const TUNE_N = 4;                       /* how many areas get a slider */
 let spendTune = {};                     /* {areaId: factor}; absent = actual */
+/* how the control is drawn: 'bar' (the thick rail, Figma 15624:3033) or 'line'
+   (the 2px line with the pill). Same control either way — the skin only says
+   what the eye sees. */
+let tuneSkin = 'bar';
 
 const tuneFactor  = id => spendTune[id] || 1;
 const tuneCount   = () => Object.keys(spendTune).length;
@@ -9205,8 +9401,12 @@ function animNum(el, target, fmt){
   void done;
 }
 
-function tuneMoneyStr(save, on){
-  const e = newCustomer ? EST_BAND : 0;
+/* whether a row's SPEND is itself an estimate: always for a new customer, and
+   for a documents-only account whenever no document she gave covers the area —
+   a rate we only estimate cannot sit under a spend we print as a fact */
+const tuneRowEst = r => newCustomer || (partialData() && !docOf(r, null));
+function tuneMoneyStr(save, on, est = newCustomer){
+  const e = est ? EST_BAND : 0;
   const mb = on ? TUNE_BAND : 0;
   return (mb || e)
     ? `+${bandRange(save * (1 - mb) * (1 - e), save * (1 + mb) * (1 + e))}`
@@ -9219,16 +9419,17 @@ function tuneMoneyStr(save, on){
 function tuneMoneyCh(r){
   const base = areaBase(r) || 1;
   const per = tuneSaving(r) / (tuneFactor(r.id) || 1) / base;   /* saving per krone */
-  let max = tuneMoneyStr(base * per, false).length;
+  const est = tuneRowEst(r);
+  let max = tuneMoneyStr(base * per, false, est).length;
   for(let i = 10; i <= TUNE_STEPS; i += 10)
-    max = Math.max(max, tuneMoneyStr((base + tuneDelta(i)) * per, true).length);
+    max = Math.max(max, tuneMoneyStr((base + tuneDelta(i)) * per, true, est).length);
   return max;
 }
 
 function tuneFigs(r){
   const now = areaSpend(r), base = areaBase(r), save = tuneSaving(r);
   const on = Math.abs(now - base) >= 1;          /* moved off their own figure */
-  const e = newCustomer ? EST_BAND : 0;
+  const est = tuneRowEst(r), e = est ? EST_BAND : 0;
   /* the spend: exact only when it is an invoice total nobody has touched. A
      benchmark carries the same ±15% it carries everywhere else in the app; a
      level the user has dialled in carries ±7%, because they set roughly that
@@ -9239,12 +9440,12 @@ function tuneFigs(r){
   const mb = on ? TUNE_BAND : 0;
   return {on, now, base, save,
     spend: sb ? bandRange(now * (1 - sb), now * (1 + sb)) : fmtCompact(now),
-    money: tuneMoneyStr(save, on),
-    /* the readout under the knob is hidden at rest, so the dot has to carry BOTH
-       figures: what they set, and what it was before they set it */
+    money: tuneMoneyStr(save, on, est),
+    /* the dot carries BOTH figures: what they set, and what it was before */
     tip: on
       ? `You set ${bandRange(now * (1 - TUNE_BAND), now * (1 + TUNE_BAND))} kr. a year here. ${
           newCustomer ? `Companies your size buy about ${fmtCompact(base)} kr.`
+          : est       ? `We estimate about ${bandRange(base * (1 - EST_BAND), base * (1 + EST_BAND))} kr. — no document of yours covers this area yet.`
                       : `Your invoices say ${fmt(base)} kr.`}`
       : ''};
 }
@@ -9272,6 +9473,7 @@ function tuneRowHTML(r){
         <span class="tune-rail-in">
           <i class="tune-fill"></i>
           <i class="tune-add"></i>
+          <i class="tune-knob"></i>
         </span>
         <span class="tune-val">${tuneValHTML(f, delta)}<i class="tune-val-ic" aria-hidden="true"></i></span>
         <input type="range" class="tune-range" min="0" max="${TUNE_STEPS}" step="1"
@@ -9289,8 +9491,9 @@ function catViewTune(){
   const restSpend = rest.reduce((s, r) => s + areaSpend(r), 0);
   const restSave  = rest.reduce((s, r) => s + tuneSaving(r), 0);
   return `
+    <div class="tune-wrap ${tuneSkin}">
     <div class="tune-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div>
-    <ul class="tune-list">
+    <ul class="tune-list ${tuneSkin}">
       ${top.map(tuneRowHTML).join('')}
       ${rest.length ? `
       <li class="tune-row tune-rest">
@@ -9302,11 +9505,17 @@ function catViewTune(){
     <div class="cv-foot">
       <button type="button" class="linkbtn tune-head-reset"${tuneActive() ? '' : ' hidden'}>Reset to ${
         newCustomer ? 'the benchmark' : 'my invoices'}</button>
+      <button type="button" class="linkbtn tune-skin-go">${tuneSkin === 'bar' ? 'Show as lines' : 'Show as bars'}</button>
     </div>
-    <p class="cv-note" id="tuneNote" hidden>Each bar is what ${newCustomer
+    </div>`;
+}
+/* the explanation behind the info mark — rendered in the title row, so it opens
+   under the mark itself */
+function tuneNoteHTML(){
+  return `<p class="cv-note tune-pop" id="tuneNote" hidden>Each bar is what ${newCustomer
       ? 'companies your size buy there'
       : 'your invoices say you buy there'} today, in proportion to the others, and the
-      line past it runs to ${fmtCompact(TUNE_MAX_ADD)} kr. more. Everything follows what you set — the figures above, Areas, Reports and every
+      track past it runs to ${fmtCompact(TUNE_MAX_ADD)} kr. more. Everything follows what you set — the figures above, Areas, Reports and every
       agreement. Planning more than that? ${ADVISOR.n.split(' ')[0]} will price it with you.</p>`;
 }
 
@@ -9328,11 +9537,22 @@ function tunePaintRow(li){
   const val = li.querySelector('.tune-val');
   if(val && rail){
     val.innerHTML = `${tuneValHTML(f, delta)}<i class="tune-val-ic" aria-hidden="true"></i>`;
-    /* the pill's left edge is half a knob before the point the ink (or the blue)
-       ends, and it is kept inside the rail at the far end */
     const T = rail.clientWidth, w = val.offsetWidth;
-    const x = tuneAt(r, delta) * (T - 20);
-    val.style.setProperty('--x', `${Math.max(0, Math.min(T - w, x)).toFixed(1)}px`);
+    if(tuneSkin === 'bar'){
+      /* inside the bar, its right edge 8px before the knob's centre; when the bar
+         is too short to hold it, in ink 10px after the knob instead */
+      const kw = parseFloat(getComputedStyle(rail).getPropertyValue('--knob')) || 16;
+      const knob = kw / 2 + tuneAt(r, delta) * (T - kw);
+      const inside = knob - kw / 2 - 6 - w >= 8;
+      val.classList.toggle('out', !inside);
+      const x = inside ? knob - kw / 2 - 6 - w : Math.min(T - w, knob + kw / 2 + 6);
+      val.style.setProperty('--x', `${Math.max(0, x).toFixed(1)}px`);
+    }else{
+      /* the pill's left edge is half a knob before the point the ink (or the blue)
+         ends, and it is kept inside the rail at the far end */
+      const x = tuneAt(r, delta) * (T - 20);
+      val.style.setProperty('--x', `${Math.max(0, Math.min(T - w, x)).toFixed(1)}px`);
+    }
   }
   const flag = li.querySelector('.tune-flag');
   if(flag){ flag.hidden = !f.on; flag.dataset.tip = f.tip; flag.setAttribute('aria-label', f.tip); }
@@ -9355,7 +9575,7 @@ function tunePaintRow(li){
       sv.style.setProperty('--ch', Math.max(tuneMoneyCh(r), html.replace(/<[^>]*>/g, '').length) + 'ch');
       m.innerHTML = html;
     }else{
-      const str = v => tuneMoneyStr(v, f.on);
+      const str = v => tuneMoneyStr(v, f.on, tuneRowEst(r));
       /* the reserved width is recomputed too: the stops move with the base */
       sv.style.setProperty('--ch', Math.max(tuneMoneyCh(r), str(f.save).length) + 'ch');
       animNum(m, f.save, str);
@@ -9364,8 +9584,86 @@ function tunePaintRow(li){
 }
 
 /* every derived figure on the dashboard that a tune can move, updated in place */
+/* ---------- the ledger in the app bar ----------
+   The calculator sits at the foot of the Overview and the figures it moves sit at
+   the head, and on a small screen the two are never in view together. So once
+   the summary cards have scrolled out above, their two figures take the search's
+   place in the bar — the same numbers, the same motion — and a press on them goes
+   back up. An IntersectionObserver on the cards, rooted in the canvas that
+   scrolls, decides; setView switches it off when the Overview is left. */
+let ledgerObs = null;
+function ledgerSet(on){
+  const bar = $('.appbar'), ld = $('#barScrolled');
+  if(!bar || !ld) return;
+  if(bar.classList.contains('ledger-on') === on) return;
+  bar.classList.toggle('ledger-on', on);
+  document.body.classList.toggle('ledger-on', on);
+  ld.setAttribute('aria-hidden', String(!on));
+  if(on) ledgerAlign();
+}
+/* the scrolled bar lines up with the page beneath it: tiles on the content's left
+   edge, token on its right. The content's edges are read off the cards section
+   itself, so a collapsed sidebar or a narrower window keeps them true. */
+function ledgerAlign(){
+  const bar = $('.appbar'), ld = $('#barScrolled'), cards = $(`${dashRoot()} .nc-ov`);
+  if(!bar || !ld || !cards || !bar.classList.contains('ledger-on')) return;
+  const b = bar.getBoundingClientRect(), c = cards.getBoundingClientRect(), l = ld.getBoundingClientRect();
+  ld.style.setProperty('--bs-left', `${Math.round(c.left - l.left)}px`);
+
+  /* the token's right edge today is the left edge of what follows it, less the gap */
+  const pill = $('#tunePill');
+  let next = pill && pill.nextElementSibling;
+  while(next && getComputedStyle(next).display === 'none') next = next.nextElementSibling;
+  if(pill && next){
+    pill.style.removeProperty('--bs-right');
+    const gap = parseFloat(getComputedStyle(bar).columnGap) || 16;
+    const right = next.getBoundingClientRect().left - gap;
+    pill.style.setProperty('--bs-right', `${Math.round(right - c.right)}px`);
+  }
+}
+addEventListener('resize', () => ledgerAlign());
+function ledgerPaint(m){
+  const ld = $('#barScrolled'); if(!ld) return;
+  const sav = m.cards.find(c => c.go === 'savings'), sp = m.cards.find(c => c.go === 'spend');
+  if(!sav || !sp) return;
+  const q = k => ld.querySelector(`[data-ld="${k}"]`);
+  q('savL').textContent = sav.l;
+  if(sav.nf) animNum(q('sav'), sav.n, sav.nf); else q('sav').textContent = sav.v;
+  q('spL').textContent = sp.l;
+  if(sp.nf) animNum(q('sp'), sp.n, sp.nf); else q('sp').textContent = sp.v;
+}
+function ledgerWatch(root){
+  if(ledgerObs){ ledgerObs.disconnect(); ledgerObs = null; }
+  const cards = $(`${root} .nc-ov`), canvas = $('#canvas');
+  /* the trigger is the big figure itself: the bar turns the moment the first
+     card's number has passed under it, not when the whole section has gone */
+  const mark = cards && (cards.querySelector('.ov-num') || cards);
+  if(!cards || !canvas || !('IntersectionObserver' in window)){ ledgerSet(false); return; }
+  ledgerObs = new IntersectionObserver(([e]) => {
+    if(!e) return;
+    /* out above, not merely out below: the ledger is for what you have scrolled past */
+    const above = !e.isIntersecting && e.boundingClientRect.bottom <= (e.rootBounds ? e.rootBounds.top : 0) + 8;
+    /* and only while the Overview is the page on screen: a hidden view reports an
+       empty rect at 0,0, which would otherwise pass as "scrolled past" and turn
+       the figures on over Reports, Areas or a drill-down */
+    const shown = e.boundingClientRect.height > 0 && cards.isConnected;
+    ledgerSet(above && shown);
+  }, {root:canvas, threshold:0});
+  ledgerObs.observe(mark);
+  const ld = $('#barScrolled');
+  if(ld && !ld.dataset.wired){
+    ld.dataset.wired = '1';
+    /* a tile goes back to the figures it stands for */
+    ld.addEventListener('click', e => {
+      if(!e.target.closest('[data-go]')) return;
+      canvas.scrollTo({top:0, behavior:RM ? 'auto' : 'smooth'});
+    });
+  }
+}
+
 function dashPaint(root){
   const m = dashModel();
+  ledgerPaint(m);
   /* keyed off the card's drill-down id — it is already a stable per-card name,
      so the paint needs no second identifier for the same thing */
   m.cards.forEach(c => {
@@ -9669,7 +9967,7 @@ function dashHTML(m, rowId){
         <div class="nc-bento-cell">
           <div class="tune-h1"><h2>${m.catTitle}</h2>${m.cats.length && catView() === 'tune' ? `
             <button type="button" class="info-dot tint" id="tuneInfo" aria-expanded="false"
-              aria-controls="tuneNote" aria-label="How the sliders work">${INFO_I}</button>` : ''}</div>
+              aria-controls="tuneNote" aria-label="How the sliders work">${INFO_I}</button>${tuneNoteHTML()}` : ''}</div>
           <p class="nc-sub nc-mini-sub">${m.catSub}</p>
           ${m.cats.length ? `
           ${SHOW_CAT_VIEWS ? `
@@ -9861,15 +10159,35 @@ function wireDashTune(root){
   /* the info mark toggles the sentence it hides, in place. aria-expanded carries
      the state for a screen reader; the [aria-expanded] rule carries it visually,
      so the two can never disagree. */
-  const info = $(`${root} #tuneInfo`), note = $(`${root} .cv-note`);
+  const info = $(`${root} #tuneInfo`), note = $(`${root} #tuneNote`);
   if(info && note) info.addEventListener('click', () => {
     const open = note.hidden;
     note.hidden = !open;
     info.setAttribute('aria-expanded', String(open));
   });
+  /* the popover closes on a press anywhere else on the page, or on Escape —
+     wired once, on the document, since the dashboard is re-rendered often */
+  if(!document.body.dataset.tunePop){
+    document.body.dataset.tunePop = '1';
+    const close = () => $$('#tuneNote').forEach(n => {
+      if(n.hidden) return;
+      n.hidden = true;
+      const i = n.parentElement && n.parentElement.querySelector('#tuneInfo');
+      if(i) i.setAttribute('aria-expanded', 'false');
+    });
+    document.addEventListener('pointerdown', e => { if(!e.target.closest('.tune-h1')) close(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+  }
+  /* the other skin, one link away; remembered like every other view choice */
+  const skin = $(`${root} .tune-skin-go`);
+  if(skin) skin.addEventListener('click', () => {
+    tuneSkin = tuneSkin === 'bar' ? 'line' : 'bar'; persist(); renderHome();
+  });
   /* the readout is positioned from its own measured width, which does not exist
      until the row is in the document */
   $$(`${root} .tune-row[data-tune]`).forEach(tunePaintRow);
+  ledgerPaint(dashModel());
+  ledgerWatch(root);
 }
 
 function renderDash(){
@@ -10534,14 +10852,16 @@ function renderSupBar(count){
 }
 
 /* ---------- body ---------- */
+/* the "own" shelf wraps its grid in a grey tray (.sup-tray); the other shelves
+   and the search results sit on the page plane as before */
 const supSectionHTML = (eye, title, note, cards, id) => `
-  <section class="sup-sec"${title ? ` aria-labelledby="sh-${id}"` : ' aria-label="Results"'}>
+  <section class="sup-sec${id === 'own' ? ' is-own' : ''}"${title ? ` aria-labelledby="sh-${id}"` : ' aria-label="Results"'}>
     ${!title ? '' : `<div class="sh-head">
       <div class="sh-eyebrow">${eye.spark ? SPARK : ''}${eye.t}</div>
       <h2 id="sh-${id}">${title}</h2>
       ${note ? `<p class="sh-note">${note}</p>` : ''}
     </div>`}
-    <ol class="supd-grid">${cards.map(supCardHTML).join('')}</ol>
+    ${id === 'own' ? '<div class="sup-tray">' : ''}<ol class="supd-grid">${cards.map(supCardHTML).join('')}</ol>${id === 'own' ? '</div>' : ''}
   </section>`;
 
 function renderSupBody(){
@@ -10916,12 +11236,27 @@ function potSplit(agrs){
   const open = agrs.filter(a => !a.req);
   return {exact:sumSave(open.filter(a => !isEstimated(a))), est:sumSave(open.filter(isEstimated)), open};
 }
+/* an agreement under a spend the user has set: its saving is a projection, so
+   any sum it goes into is one too. The tuned copy differs from the remembered
+   actual exactly when the row is off its invoices. */
+const tunedAgr = a => a.saveActual !== undefined && a.save !== a.saveActual;
+/* a sum with a projection in it prints as the band the projection carries —
+   ±7% (TUNE_BAND) on the tuned part only, the rest of the sum stays exact */
+function tunedSum(xs){
+  const fixed = sumSave(xs.filter(a => !tunedAgr(a))), moved = sumSave(xs.filter(tunedAgr));
+  return {sum:fixed + moved, lo:fixed + moved * (1 - TUNE_BAND), hi:fixed + moved * (1 + TUNE_BAND), moved:moved > 0};
+}
+const bandHTML = (lo, hi, plus = true, cls = 'fig-doc') =>
+  `<span class="${cls}">${plus ? '+' : ''}${fmtCompact(Math.round(lo))}–${fmtCompact(Math.round(hi))}</span>`;
 function potHTML(agrs, plus = true){
   const p = potSplit(agrs);
   if(newCustomer) return figHTML(p.exact + p.est, true, plus);
   const parts = [];
-  if(p.exact) parts.push(figHTML(p.exact, false, plus));
-  if(p.est)   parts.push(figHTML(p.est, true, plus));
+  const ex = tunedSum(p.open.filter(a => !isEstimated(a)));
+  const es = tunedSum(p.open.filter(isEstimated));
+  if(ex.sum) parts.push(ex.moved ? bandHTML(ex.lo, ex.hi, plus) : figHTML(ex.sum, false, plus));
+  /* an estimate under a set spend compounds the two bands */
+  if(es.sum) parts.push(es.moved ? bandHTML(es.lo * (1 - EST_BAND), es.hi * (1 + EST_BAND), plus, 'fig-est') : figHTML(es.sum, true, plus));
   return parts.join('<span class="fig-sep" aria-hidden="true"> · </span>') || figHTML(0, false, plus);
 }
 /* the key, shown once per page: the kinds actually present, a glyph and a word each */
@@ -13911,11 +14246,17 @@ const rpNum  = (n, est) => est ? estRange(n) : fmt(n);
 const rpSave = (n, est) => saveFig(n, est);
 /* the open potential, printed in its two kinds — documented and estimated — or as
    the single benchmark range a customer with no data has */
-const rpPot  = m => potHTML(live().flatMap(r => r.agr));
+const rpPot  = m => m.real ? `+${fmt(m.potential)}` : potHTML(live().flatMap(r => r.agr));
 const rpPct  = (v, t) => t > 0 ? Math.round(v / t * 100) : 0;
 
-function rpModel(){
+/* `real` is the Reports page's reading: Bob's ERP and Kari's documents are their
+   own accounting, so every figure prints exact to the krone there — no ±15% band,
+   no "estimated" setting. Only Fanny, who has no data of her own, keeps the
+   benchmark ranges. The Overview drill-downs call without it and keep the
+   per-agreement confidence they have always shown. */
+function rpModel({real = false} = {}){
   const f = RP_PERIOD[rpPeriod].f;
+  const exact = real && !newCustomer;
   const sc = n => Math.round(n * f);
   let cats;
 
@@ -13949,7 +14290,7 @@ function rpModel(){
            Agreements page apply */
         realised:sc(on.filter(agLanding).reduce((s, a) => s + a.save, 0)),
         potential:potOf(r),
-        est:on.some(a => isEstimated(a)) || r.agr.some(a => !a.req && isEstimated(a)),
+        est:!exact && (on.some(a => isEstimated(a)) || r.agr.some(a => !a.req && isEstimated(a))),
         peer:false,
         /* a dormant agreement is live at an agreed price with nothing going
            through it — so its covered volume is the expectation and its actual
@@ -13960,7 +14301,7 @@ function rpModel(){
                             vol:agLanding(a) ? sc(a.covers) : 0,
                             save:agLanding(a) ? sc(a.save) : 0,
                             dormant:agDormant(a), pending:agPending(a), landing:agLanding(a),
-                            est:isEstimated(a)})),
+                            est:!exact && isEstimated(a)})),
         ready: r.agr.filter(a => !a.req).length
       };
     });
@@ -13990,8 +14331,8 @@ function rpModel(){
        estimated opportunity, not one blurred figure. */
     est:cats.some(c => c.est),
     estR:agrs.some(a => a.est && a.landing !== false && !a.dormant && !a.pending) || (newCustomer && agrs.length > 0),
-    estP:live().some(r => r.agr.some(a => !a.req && isEstimated(a))),
-    peer:newCustomer,
+    estP:!exact && live().some(r => r.agr.some(a => !a.req && isEstimated(a))),
+    peer:newCustomer, real:exact,
     period:RP_PERIOD[rpPeriod]
   };
 }
@@ -14282,7 +14623,7 @@ function rpUsage(m){
    report rewrites the headline, so the switch lives in the hero rather than on a
    toolbar underneath it: on this page the type is the subject, not a filter. */
 function renderReports(){
-  const m = rpModel();
+  const m = rpModel({real:true});
   const r = (rpType === 'spending' ? rpSpending : rpType === 'usage' ? rpUsage : rpSavings)(m);
   const typeName = (RP_TYPES.find(t => t.k === rpType) || RP_TYPES[0]).n;
 
@@ -15051,7 +15392,7 @@ function pkDemoTune(type, m){
         <span class="pkd-row-h">Savings still open, by category</span>
         <div class="pkd-tr">
           <span class="pkd-n">${r.n}</span>
-          <span class="pkd-rail${startIdx === bIdx ? '' : ' set'}" data-pk-rail style="--p:${pos(startIdx)};--p0:${pos(bIdx)}">
+          <span class="pkd-rail pkd-${tuneSkin}${startIdx === bIdx ? '' : ' set'}" data-pk-rail style="--p:${pos(startIdx)};--p0:${pos(bIdx)}">
             <i class="pkd-fill"></i><i class="pkd-add"></i><i class="pkd-knob"></i>
             <span class="pkd-val"><span data-pk-spend>${fmtCompact(stops[startIdx])}</span><em>kr.</em></span>
           </span>
@@ -15321,6 +15662,8 @@ addEventListener('keydown', e => {
 
 function openDrill(type){
   drillType = DRILL[type] ? type : 'savings';
+  /* an overlay on the Overview, so the Overview's figures leave the bar with it */
+  ledgerSet(false);
   catTabStandDown();
   $('.page').hidden = false;
   DRILL_VIEWS.forEach(sel => { const el = $(sel); if(el) el.hidden = true; });
@@ -16115,7 +16458,7 @@ function persist(){
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
       newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityMini,
       savedAgr: [...savedAgr], agrCardStyle, agrViewStyle, catViewStyle, catAgrView, catTabSkin,
-      spendTune,
+      spendTune, tuneSkin,
       notifPrefs, seenTour
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
@@ -16154,6 +16497,7 @@ function applySaved(d){
   if(['brand','photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
   if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
   if(['list','bars','split','focus','brands','why','story','tune'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
+  if(['bar','line'].includes(d.tuneSkin)) tuneSkin = d.tuneSkin;
   /* factors, never the scaled figures: the actuals in ROWS stay the baseline, so
      a reload re-derives from invoices rather than from an already-tuned number */
   if(d.spendTune && typeof d.spendTune === 'object'){

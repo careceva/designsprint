@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage — the calculator as a chart, five approaches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap">
+<style>
+
+/* ==========================================================================
+   Advantage Design System — tokens, copied from advantage-main.html
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;
+  --general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;
+  --general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;
+  --general-muted-foreground:#6e6e6e;
+  --general-accent:#ff9b3d;
+  --general-destructive:#dc2626;
+  --general-border:#bdd7ff;
+  --sentiment-positive:#009689;
+  --sentiment-negative:#f54a00;
+  --sentiment-positive-ink:#007c71;
+  --surface:#ffffff;
+  --brand-midnight:#000a45;
+  --brand-ice:#edf5ff;
+  --brand-cornflower:#73abff;
+  --font-sans:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+  --hairline:#ececec;
+  --track:#e3e3e3;
+  --t-fast:.15s ease;
+  --t:.28s cubic-bezier(.2,.7,.3,1);
+  /* the calculator's one curve: fast off the mark, decelerating hard, no overshoot */
+  --tune-ease:cubic-bezier(.22,.9,.24,1);--tune-t:.26s;
+  /* the drag arrows, the exported Figma glyph (16×16, drawn vertical, rotated 90° in use) */
+  --knob-arrows:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4.53812 5.19125C4.50023 5.0999 4.49027 4.99936 4.50952 4.90235C4.52876 4.80534 4.57635 4.71621 4.64625 4.64625L7.64625 1.64625C7.69269 1.59976 7.74783 1.56288 7.80853 1.53772C7.86923 1.51256 7.93429 1.49961 8 1.49961C8.06571 1.49961 8.13077 1.51256 8.19147 1.53772C8.25217 1.56288 8.30731 1.59976 8.35375 1.64625L11.3538 4.64625C11.4238 4.71618 11.4714 4.8053 11.4908 4.90235C11.5101 4.99939 11.5002 5.09998 11.4623 5.1914C11.4244 5.28281 11.3603 5.36092 11.278 5.41586C11.1957 5.4708 11.0989 5.50008 11 5.5H5C4.90111 5.49998 4.80445 5.47064 4.72223 5.41568C4.64002 5.36072 4.57595 5.28262 4.53812 5.19125ZM11 10.5H5C4.90105 10.4999 4.80431 10.5292 4.72201 10.5841C4.63971 10.6391 4.57556 10.7172 4.53769 10.8086C4.49981 10.9 4.48991 11.0006 4.50924 11.0977C4.52856 11.1947 4.57624 11.2838 4.64625 11.3537L7.64625 14.3537C7.69269 14.4002 7.74783 14.4371 7.80853 14.4623C7.86923 14.4874 7.93429 14.5004 8 14.5004C8.06571 14.5004 8.13077 14.4874 8.19147 14.4623C8.25217 14.4371 8.30731 14.4002 8.35375 14.3537L11.3538 11.3537C11.4238 11.2838 11.4714 11.1947 11.4908 11.0977C11.5101 11.0006 11.5002 10.9 11.4623 10.8086C11.4244 10.7172 11.3603 10.6391 11.278 10.5841C11.1957 10.5292 11.0989 10.4999 11 10.5Z' fill='black'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+body{font-family:var(--font-sans);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+button,input{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs)}
+.linkbtn:hover{text-decoration:underline;text-underline-offset:3px}
+.linkbtn:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px}
+
+/* ---------- the gallery page ---------- */
+.gal{max-width:1120px;margin:0 auto;padding:var(--s16) var(--s8) var(--s24)}
+.gal-head{max-width:640px;margin-bottom:var(--s16)}
+.gal-head h1{font-size:var(--text-4xl);letter-spacing:-.9px;line-height:1.1;font-weight:700}
+.gal-head p{margin-top:var(--s4);color:var(--general-muted-foreground);font-size:var(--text-lg)}
+.gal-nav{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s6)}
+.gal-nav a{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-full);background:var(--surface);
+  color:var(--general-foreground);text-decoration:none;font-size:var(--text-sm);font-weight:500}
+.gal-nav a b{color:var(--general-muted-foreground);font-weight:600}
+.gal-nav a:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.gal-list{display:flex;flex-direction:column;gap:var(--s24)}
+.cc-wrap{display:grid;grid-template-columns:minmax(0,1fr) 568px;gap:var(--s12);align-items:start;scroll-margin-top:var(--s8)}
+.cc-label{position:sticky;top:var(--s8);padding-top:var(--s2)}
+.cc-eyebrow{display:block;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.cc-vname{font-size:var(--text-3xl);letter-spacing:-.6px;line-height:1.15;font-weight:700;margin-top:var(--s2)}
+.cc-blurb{margin-top:var(--s3);color:var(--general-muted-foreground);max-width:38ch}
+.cc-kind{display:inline-flex;margin-top:var(--s4);padding:3px 10px;border-radius:var(--rounded-full);
+  background:var(--brand-ice);color:var(--general-primary);font-size:var(--text-xs);font-weight:600}
+@media(max-width:1000px){
+  .cc-wrap{grid-template-columns:minmax(0,1fr)}
+  .cc-label{position:static}
+}
+
+/* ---------- the card: the Figma frame 15612:2870 ---------- */
+.cc-card{width:100%;max-width:568px;padding:var(--s8);background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-xl);box-shadow:var(--shadow-sm)}
+.cc-h1{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3)}
+.cc-h1 h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.4px;line-height:1.25}
+.info-dot{flex:0 0 auto;display:grid;place-items:center;width:26px;height:26px;margin-top:2px;
+  border:none;border-radius:var(--rounded-full);background:var(--brand-ice);cursor:pointer;
+  color:var(--general-primary);transition:background var(--t-fast),color var(--t-fast)}
+.info-dot svg{width:17px;height:17px}
+.info-dot:hover{background:var(--general-secondary)}
+.info-dot:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+.cc-sub{margin-top:var(--s2);color:var(--general-muted-foreground);line-height:1.5}
+.cc-sub .cc-total{font-weight:400;color:var(--general-primary);font-variant-numeric:tabular-nums}
+.cc-sub .cc-total.band{font-weight:500;color:var(--general-foreground)}
+/* the body starts 48px under the subtitle, as the design has it. A variant that
+   draws its own header inside the body keeps this gap. */
+.cc-body{margin-top:var(--s12)}
+.cc-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);margin-top:var(--s4);min-height:24px}
+.cc-foot[hidden]{display:none}
+.cc-reset{font-size:var(--text-xs)}
+.cc-adj{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);font-weight:600;color:var(--general-primary)}
+.cc-adj::before{content:"";width:8px;height:8px;border-radius:var(--rounded-full);background:var(--general-primary)}
+.cc-adj[hidden],.cc-reset[hidden]{display:none}
+.cc-note{margin-top:var(--s3);font-size:var(--text-xs);line-height:1.5;color:var(--general-muted-foreground);max-width:62ch}
+
+/* ---------- shared pieces every variant may reuse ---------- */
+/* the category name: 16/600, the row's way into the category (a button in the app) */
+.cc-n{display:flex;align-items:center;gap:var(--s2);font-size:var(--text-base);font-weight:600;
+  letter-spacing:-.2px;line-height:1.5;min-width:0}
+.cc-n>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* the one mark that says a figure is the user's own doing, with the original quoted */
+.cc-flag{position:relative;flex:0 0 auto;width:8px;height:8px;border-radius:var(--rounded-full);
+  background:var(--general-primary);cursor:help}
+.cc-flag[hidden]{display:none}
+.cc-flag::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);
+  transform:translateX(-50%) translateY(4px);width:216px;padding:var(--s2) var(--s3);
+  border-radius:var(--rounded-sm);background:var(--brand-midnight);color:var(--surface);
+  font-size:var(--text-xs);font-weight:500;line-height:1.45;text-align:left;
+  pointer-events:none;opacity:0;z-index:6;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.cc-flag:hover::after,.cc-flag:focus-visible::after{opacity:1;transform:translateX(-50%) translateY(0)}
+.cc-flag:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px}
+/* the money: 16/700 in the savings ink, the unit 13/500 muted; width reserved so
+   the column never resizes under a drag */
+.cc-save{display:flex;align-items:baseline;gap:5px;font-size:var(--text-base);font-weight:700;
+  color:var(--sentiment-positive-ink);font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1}
+.cc-save em{font-style:normal;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
+.cc-money{display:inline-block;min-width:var(--ch,0);text-align:right;font-variant-numeric:tabular-nums}
+/* the white pill that carries the figure (Figma "knob"): 22px tall, 13/500, the
+   arrows appear under the pointer / while held / on keyboard focus */
+.cc-pill{position:absolute;height:22px;display:flex;align-items:center;padding:0 var(--s2);
+  box-sizing:border-box;border-radius:var(--rounded-full);border:1px solid transparent;
+  background:var(--surface);box-shadow:0 1px 2px rgb(10 42 92/.32);
+  font-size:var(--text-xs);font-weight:500;letter-spacing:-.1px;font-variant-numeric:tabular-nums;
+  color:var(--general-foreground);white-space:nowrap;pointer-events:none;z-index:3}
+.cc-pill em{font-style:normal;margin-left:.25em}
+.cc-pill-ic{display:none;flex:0 0 auto;width:16px;height:16px;margin-left:var(--s2);
+  background:var(--knob-arrows) center / 16px 16px no-repeat;transform:rotate(90deg)}
+.live .cc-pill,.hot .cc-pill,:is(.cc-rowhit:hover) .cc-pill,
+:has(.cc-range:focus-visible) .cc-pill{
+  background:linear-gradient(180deg,#fff,rgb(245 245 246/.97));border-color:#f5f5f6;
+  box-shadow:0 1px 1.5px rgb(0 0 0/.1),0 5px 2.5px rgb(0 0 0/.09),0 11px 3px rgb(0 0 0/.05),0 19px 3.5px rgb(0 0 0/.01)}
+.live .cc-pill-ic,.hot .cc-pill-ic,:is(.cc-rowhit:hover) .cc-pill-ic,
+:has(.cc-range:focus-visible) .cc-pill-ic{display:block}
+:has(.cc-range:focus-visible) .cc-pill{outline:2px solid var(--general-primary);outline-offset:2px}
+/* the top of the scale is a threshold, not a figure: "+5M kr. · Contact sales" */
+.cc-go{pointer-events:auto;background:none;border:none;padding:0;font:inherit;font-weight:600;
+  color:var(--general-primary);cursor:pointer;border-radius:var(--rounded-xs)}
+.cc-go::before{content:"·";margin:0 6px;font-weight:500;color:var(--general-foreground);opacity:.6}
+.cc-go:hover{text-decoration:underline;text-underline-offset:3px}
+.cc-go:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px}
+/* the native range, painted by nothing: the variant positions and sizes it (and its
+   thumb, via --thumb-w/--thumb-h) so that it lies exactly over what the eye takes
+   for the handle. It stays a real input so arrows, Home and End work. */
+.cc-range{position:absolute;margin:0;padding:0;-webkit-appearance:none;appearance:none;
+  background:none;cursor:grab;--thumb-w:20px;--thumb-h:22px}
+.cc-range:active{cursor:grabbing}
+.cc-range:focus{outline:none}
+.cc-range::-webkit-slider-runnable-track{height:100%;background:none;border:none}
+.cc-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  width:var(--thumb-w);height:var(--thumb-h);border-radius:var(--rounded-full);
+  background:none;border:none;box-shadow:none;opacity:0}
+.cc-range::-moz-range-track{height:100%;background:none;border:none}
+.cc-range::-moz-range-thumb{width:var(--thumb-w);height:var(--thumb-h);border-radius:var(--rounded-full);
+  background:none;border:none;box-shadow:none;opacity:0}
+/* the areas without a slider: present so the total reconciles, plainly not a control */
+.cc-rest{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name save" "sub save";
+  align-items:center;column-gap:var(--s4);row-gap:var(--s1);padding:var(--s3) 0}
+.cc-rest .cc-n{grid-area:name;font-weight:500;color:var(--general-muted-foreground)}
+.cc-rest-sub{grid-area:sub;font-size:var(--text-xs);color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.cc-rest .cc-save{grid-area:save;color:var(--general-primary);font-weight:600}
+/* column header, as in the design: 13/500 at 40% ink over a hairline */
+.cc-th{display:flex;align-items:center;justify-content:space-between;padding-bottom:var(--s1);
+  border-bottom:1px solid var(--hairline);font-size:var(--text-xs);font-weight:500;letter-spacing:-.1px;
+  line-height:1.3;color:var(--general-foreground);opacity:.4}
+@media(prefers-reduced-motion:reduce){
+  .cc-pill,.cc-range{transition:none}
+}
+/* ---------- toast (stands in for the app's "Book time with Peter" flow) ---------- */
+.toast{position:fixed;left:50%;bottom:var(--s8);transform:translateX(-50%) translateY(8px);
+  padding:var(--s3) var(--s4);border-radius:var(--rounded-md);background:var(--brand-midnight);color:var(--surface);
+  font-size:var(--text-sm);font-weight:500;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;
+  transition:opacity var(--t),transform var(--t);z-index:20}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+/* @@VARIANT_CSS@@ */
+
+
+/* the plot holds rows, gridlines and axis together, so a gridline can run from the
+   first bar to the axis without a break; isolated so z-index:-1 stays inside it */
+.v-bars .b-plot{position:relative;isolation:isolate}
+.v-bars .b-grid{position:absolute;z-index:-1;width:1px;background:var(--track);
+  top:calc(var(--s3) + var(--s6) + var(--s1) + 2px);   /* the first bar's top: row padding + name line + gap + the bar's inset in its rail */
+  bottom:var(--s6);                                     /* the axis line */
+  left:calc(100% * var(--f))}
+/* a row: name and saving on one line, the bar's rail under it — the design's rhythm,
+   72px a row */
+.v-bars .b-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name save" "rail rail";
+  align-items:center;column-gap:var(--s4);row-gap:var(--s1);padding-top:var(--s3)}
+/* the label line knocks the gridlines out as one band — the same on every row and
+   for both lines — so the break reads as designed and no line runs through a word */
+.v-bars .b-row::before{content:"";grid-area:1/1/2/3;align-self:stretch;background:var(--surface)}
+.v-bars .b-row .cc-n{grid-area:name}
+.v-bars .b-row .cc-save{grid-area:save}
+/* the rail: 32px of band, a 28px bar in it. Clipped sideways only, so the input's
+   thumb overhang past the column never widens the card; the pill's lift is not cut,
+   and the clip stands 4px off so a focus ring on a pill at the far end is not either */
+.v-bars .b-rail{grid-area:rail;position:relative;height:var(--s8);overflow-x:clip;overflow-y:visible;overflow-clip-margin:var(--s1)}
+/* the bar stands 3px proud of the 22px pill above and below, so the pill rides on the
+   bar rather than sitting in it, and the bar's true end stays in view where the pill
+   has to cover it */
+.v-bars .b-fill,.v-bars .b-add{position:absolute;top:2px;height:calc(var(--s6) + var(--s1));   /* (32 − 28) / 2 */
+  border-radius:0 var(--rounded-xs) var(--rounded-xs) 0}       /* square at the baseline, rounded at the data end */
+.v-bars .b-fill{left:0;width:calc(100% * var(--a0));background:var(--general-foreground)}
+.v-bars .set .b-fill{border-radius:0}                          /* once blue continues the bar, ink is no longer the end */
+.v-bars .b-add{left:calc(100% * var(--a0));width:calc(100% * (var(--a) - var(--a0)));background:var(--general-primary)}
+/* the pill: centred on the bar, its left edge half a knob before the bar's end. On
+   blue its shadow all but vanishes, so a hairline in the shadow's own colour keeps
+   the capsule's edge */
+.v-bars .cc-pill{top:5px;left:var(--x,0px)}
+.v-bars .set .cc-pill{border-color:rgb(10 42 92/.14)}
+/* the input covers this row's headroom only, its thumb centred on the bar end and as
+   tall as the rail. The thumb is 120px at least; paint() widens it until it covers
+   the whole pill, so no part of the readout ever sits over the track */
+.v-bars .cc-range{top:0;height:100%;--thumb-w:120px;--thumb-h:var(--s8);
+  left:calc(100% * var(--a0) - var(--thumb-w) / 2);
+  width:calc(100% * (var(--amax) - var(--a0)) + var(--thumb-w))}
+/* one axis for all four bars: a rule in the gridlines' grey, so line and rule meet as
+   one grid (the header's hairline is another thing, a rule between text), and the
+   ticks under it in 13/500 at 40% ink */
+.v-bars .b-axis{position:relative;height:var(--s6);margin-top:var(--s2);border-top:1px solid var(--track)}
+.v-bars .b-tick{position:absolute;top:var(--s1);left:calc(100% * var(--f));transform:translateX(-50%);
+  font-size:var(--text-xs);font-weight:500;line-height:var(--s4);letter-spacing:-.1px;
+  color:var(--general-foreground);opacity:.4;font-variant-numeric:tabular-nums;white-space:nowrap}
+.v-bars .b-tick.lo{left:0;transform:none}                     /* the ends sit inside the column */
+.v-bars .b-tick.hi{left:auto;right:0;transform:none}
+@media(prefers-reduced-motion:no-preference){
+  .v-bars .b-add{transition:width var(--tune-t) var(--tune-ease)}
+  .v-bars .cc-pill{transition:left var(--tune-t) var(--tune-ease),box-shadow var(--t-fast),background var(--t-fast)}
+  .v-bars .live .b-add{transition:width .13s var(--tune-ease)}
+  .v-bars .live .cc-pill{transition:left .13s var(--tune-ease)}
+}
+
+.v-bullet .b-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name save" "rail rail";
+  align-items:center;column-gap:var(--s4);row-gap:var(--s1);padding-top:var(--s3)}
+.v-bullet .b-row .cc-n{grid-area:name}
+.v-bullet .b-row .cc-save{grid-area:save}
+/* the rail: 40px so the 22px pill has air; band (16), bar (8), tick (20) and pill
+   all share its centre line at 20px */
+.v-bullet .b-rail{grid-area:rail;position:relative;height:40px}
+/* the scale: three equal bands, darkest at the origin, a shade lighter each step
+   right — the bands' edges are the axis, so nothing else needs drawing. The ramp
+   starts one step under the track grey: on the white card the muted grey is all
+   but invisible, and the last band is what says how much of the range is left */
+.v-bullet .b-scale{position:absolute;left:0;right:0;top:12px;height:16px;display:flex;
+  border-radius:var(--rounded-sm);overflow:hidden}
+.v-bullet .b-scale i{flex:1 1 0;background:var(--hairline)}
+.v-bullet .b-scale i:first-child{background:color-mix(in srgb,var(--general-foreground) 16%,var(--surface))}
+.v-bullet .b-scale i:nth-child(2){background:var(--track)}
+/* the measure: today in ink, the added spend continuing it in blue; the inner
+   radius is the strip's (8) less the inset (4), so the two caps nest */
+.v-bullet .b-bar,.v-bullet .b-add{position:absolute;top:16px;height:8px}
+.v-bullet .b-bar{left:0;width:calc(100% * var(--a0));background:var(--general-foreground);
+  border-radius:var(--rounded-xs) 0 0 var(--rounded-xs)}
+.v-bullet .b-add{left:calc(100% * var(--a0));width:calc(100% * (var(--a) - var(--a0)));
+  background:var(--general-primary);border-radius:0 var(--rounded-xs) var(--rounded-xs) 0}
+/* the target tick: 2px of ink at today's figure. Under the pill at rest; standing
+   on the ink/blue joint once the bar has moved on, so the origin stays readable */
+.v-bullet .b-tick{position:absolute;top:10px;height:20px;width:2px;left:calc(100% * var(--a0) - 1px);
+  background:var(--general-foreground)}
+/* the drawing never takes the pointer: the tick stands exactly where the handle is pressed at rest */
+.v-bullet .b-scale,.v-bullet .b-bar,.v-bullet .b-add,.v-bullet .b-tick{pointer-events:none}
+/* the pill's left cap is centred on the bar's end; paint() sets --x */
+.v-bullet .cc-pill{top:9px;left:var(--x,0px)}
+/* the input covers this row's headroom only, its thumb centred on the bar's end.
+   The thumb is 120px at least and grows until the whole pill is thumb (paint()
+   sets --thumb-w), so a press anywhere on the readout is a press on the handle,
+   never on the track. The wrapper clips sideways alone: the invisible thumb past
+   the row's ends would otherwise widen the card, while the pill — outside the
+   wrapper — keeps its hover arrows at the far right */
+.v-bullet .b-hit{position:absolute;inset:0;overflow-x:clip;overflow-y:visible}
+.v-bullet .cc-range{top:0;height:40px;--thumb-w:120px;--thumb-h:22px;touch-action:none;
+  left:calc(100% * var(--a0) - var(--thumb-w) / 2);width:calc(100% * (var(--amax) - var(--a0)) + var(--thumb-w))}
+.v-bullet .cc-range::-webkit-slider-thumb{margin-top:9px}
+/* the bands' boundaries, labelled once under the last row: 13/500 at 40% ink,
+   the first flush left, the last flush right, the rest centred on their edge */
+.v-bullet .b-axis{position:relative;height:var(--s4);font-size:var(--text-xs);font-weight:500;
+  line-height:var(--s4);letter-spacing:-.1px;color:var(--general-foreground);opacity:.4;font-variant-numeric:tabular-nums}
+.v-bullet .b-axis span{position:absolute;top:0;left:calc(100% * var(--t));transform:translateX(-50%);white-space:nowrap}
+.v-bullet .b-axis span:first-child{transform:none}
+.v-bullet .b-axis span:last-child{transform:translateX(-100%)}
+/* the areas without a control sit under a hairline, so the axis reads as the chart's, not theirs */
+.v-bullet .cc-rest{margin-top:var(--s2);border-top:1px solid var(--hairline)}
+@media(prefers-reduced-motion:no-preference){
+  .v-bullet .b-add{transition:width var(--tune-t) var(--tune-ease)}
+  .v-bullet .cc-pill{transition:left var(--tune-t) var(--tune-ease),box-shadow var(--t-fast),background var(--t-fast)}
+  .v-bullet .live .b-add{transition:width .13s var(--tune-ease)}
+  .v-bullet .live .cc-pill{transition:left .13s var(--tune-ease)}
+}
+
+/* geometry: 504 wide. A 48px gutter for the axis labels, then four 114px cells
+   with an 80px column centred in each. The plot is 240px tall for 7,5M — 32px a
+   million — so every gridline lands on the 8pt grid. */
+.v-columns{--gut:48px;--ph:240px;--col:80px;--pill:22px}
+.v-columns .c-chart{position:relative;padding-top:var(--s2)}
+/* the axis: hairlines across the plot, the figure at the left; the "0" line is
+   the baseline and a touch firmer than the rest */
+.v-columns .c-axis{position:absolute;left:var(--gut);right:0;top:var(--s2);height:var(--ph);pointer-events:none}
+.v-columns .c-tick{position:absolute;left:0;right:0;top:calc(var(--ph) * (1 - var(--f)));height:1px;background:var(--hairline)}
+.v-columns .c-tick.is-base{background:var(--track)}
+.v-columns .c-tick span{position:absolute;right:calc(100% + var(--s2));top:50%;transform:translateY(-50%);width:40px;
+  text-align:right;font-size:var(--text-xs);font-weight:500;font-style:normal;line-height:16px;letter-spacing:-.1px;
+  color:var(--general-foreground);opacity:.4;font-variant-numeric:tabular-nums}
+/* the columns' box is also the hit region: the inputs reach up past the plot so a
+   120px thumb can be centred on the top pill, and the clip keeps that overhang
+   from being hoverable in the gap under the subtitle. 8px of air at the top for
+   the focus ring; wide at the sides so no tooltip or pill is cut. */
+.v-columns .c-cols{position:relative;margin-left:var(--gut);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  clip-path:inset(calc(-1 * var(--s2)) calc(-1 * var(--s24)) 0)}
+.v-columns .c-col{position:relative;min-width:0}
+.v-columns .c-stack{position:relative;height:var(--ph)}
+/* the column: today's figure in ink from the baseline, the added spend on top in blue */
+.v-columns .c-base,.v-columns .c-add{position:absolute;left:calc(50% - var(--col) / 2);width:var(--col)}
+.v-columns .c-base{bottom:0;height:calc(var(--ph) * var(--b));background:var(--general-foreground)}
+.v-columns .c-add{bottom:calc(var(--ph) * var(--b));height:calc(var(--ph) * (var(--a) - var(--b)));background:var(--general-primary)}
+/* the pill rests 4px above the column's top edge, so the ink and the blue stay in
+   view — a small area is a small column, not a pill with ears. It is centred on
+   the column by CSS, so the arrows growing in on hover widen it evenly and no
+   measured width is involved; --dx nudges it only when it would leave the plot.
+   Held between the top gridline and the baseline. */
+.v-columns .cc-pill{left:calc(50% + var(--dx,0px));translate:-50%;
+  top:clamp(0px, calc(var(--ph) * (1 - var(--a)) - var(--pill) - var(--s1)), calc(var(--ph) - var(--pill)))}
+/* at the top of the scale the pill is a link surface and wider than its cell: it
+   takes the press itself, so a click on "Contact sales" cannot fall through to the
+   neighbour's input. The blue column stays the way back down. */
+.v-columns .cc-pill:has(.cc-go){pointer-events:auto}
+/* the handle moves up and down, so the arrows do too (the glyph is drawn vertical) */
+.v-columns .cc-pill-ic{transform:none}
+/* at the top of the scale the pill is wide and neighbours' can meet: the one under
+   the pointer, held or focused comes to the front */
+.v-columns .c-col:hover .cc-pill,.v-columns .c-col.live .cc-pill,.v-columns .c-col:has(.cc-range:focus-visible) .cc-pill{z-index:4}
+/* the input runs up the column's headroom — step 0 at today's top, step 100 at
+   today + 5M — with a 120px thumb centred on the pill (which sits half its height
+   plus 4px above the column top), so a press on the pill never jumps. It is a
+   little wider than the column to cover the pill's ends. */
+.v-columns .cc-range{left:calc(50% - 48px);width:96px;--thumb-w:96px;--thumb-h:120px;
+  bottom:calc(var(--ph) * var(--b) + var(--pill) / 2 + var(--s1) - 60px);height:calc(var(--ph) * (var(--m) - var(--b)) + 120px);
+  writing-mode:vertical-lr;direction:rtl;z-index:1}
+.v-columns .cc-range::-webkit-slider-runnable-track{width:100%}
+.v-columns .cc-range::-moz-range-track{width:100%}
+/* the name and the saving under the column, centred; the block sits above the
+   input's lower reach so the flag can be hovered and a click here moves nothing */
+.v-columns .c-lab{position:relative;z-index:2;margin-top:var(--s3);display:flex;flex-direction:column;align-items:center;gap:var(--s1)}
+.v-columns .c-lab .cc-n{display:block;min-height:48px;padding:0 var(--s1);text-align:center}
+.v-columns .c-lab .cc-n>span:first-child{display:inline;white-space:normal;overflow:visible;text-overflow:clip}
+.v-columns .c-lab .cc-n>.cc-flag{display:inline-block;vertical-align:middle;margin-left:var(--s2)}
+.v-columns .c-lab .cc-n>.cc-flag[hidden]{display:none}
+/* the last column's tip would leave the card if centred on its dot */
+.v-columns .c-col:last-child .cc-flag::after{left:auto;right:-12px;transform:translateY(4px)}
+.v-columns .c-col:last-child .cc-flag:hover::after,.v-columns .c-col:last-child .cc-flag:focus-visible::after{transform:translateY(0)}
+/* the saving stacks its unit underneath — a column is too narrow for one line */
+.v-columns .c-lab .cc-save{flex-direction:column;align-items:center;gap:var(--s1)}
+.v-columns .c-lab .cc-money{text-align:center}
+.v-columns .c-lab .cc-save em{line-height:16px}
+/* the areas without a column, under a rule */
+.v-columns .cc-rest{margin-top:var(--s4);border-top:1px solid var(--hairline)}
+@media(prefers-reduced-motion:no-preference){
+  .v-columns .c-add{transition:height var(--tune-t) var(--tune-ease)}
+  .v-columns .cc-pill{transition:top var(--tune-t) var(--tune-ease),left var(--tune-t) var(--tune-ease),box-shadow var(--t-fast),background var(--t-fast)}
+  .v-columns .live .c-add{transition:height .13s var(--tune-ease)}
+  .v-columns .live .cc-pill{transition:top .13s var(--tune-ease),left .13s var(--tune-ease)}
+}
+
+.v-composition{--knob:20px}
+/* one hue, four steps, darkest first — the order the slices are drawn in. The
+   ring is what marks a set slice: white where it shows, blue on the pale one. */
+.v-composition [data-seg="mat"],.v-composition [data-row="mat"]{--seg:var(--brand-midnight);--ring:var(--surface)}
+.v-composition [data-seg="tool"],.v-composition [data-row="tool"]{--seg:var(--general-primary);--ring:var(--surface)}
+.v-composition [data-seg="frg"],.v-composition [data-row="frg"]{--seg:var(--brand-cornflower);--ring:var(--surface)}
+.v-composition [data-seg="fuel"],.v-composition [data-row="fuel"]{--seg:var(--general-secondary);--ring:var(--general-primary)}
+.v-composition [data-seg="rest"],.v-composition .cc-rest{--seg:var(--track)}
+/* the total: label left, figure right, on one 24px line; the bar 8px under it */
+.v-composition .c-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);height:24px}
+.v-composition .c-head-l{font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
+.v-composition .c-total{display:flex;align-items:baseline;gap:5px;font-size:var(--text-base);font-weight:700;
+  font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1;color:var(--general-foreground)}
+.v-composition .c-total em{font-style:normal;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
+/* the bar: five slices with 2px of white between them, the ends rounded to 4px.
+   Widths are shares of the total, so they always sum to the bar. */
+.v-composition .c-bar{display:flex;gap:2px;height:28px;margin-top:var(--s2);border-radius:var(--rounded-xs)}
+.v-composition .c-seg{position:relative;flex:0 0 auto;height:100%;width:calc((100% - 8px) * var(--w));background:var(--seg);border-radius:2px}
+.v-composition .c-seg:first-child{border-radius:var(--rounded-xs) 2px 2px var(--rounded-xs)}
+.v-composition .c-seg:last-child{border-radius:2px var(--rounded-xs) var(--rounded-xs) 2px}
+/* a set slice carries a 2px keyline 2px in from its edge — drawn as its own box,
+   not an inset shadow, so the slice's edge stays crisp and the line never
+   merges with the white gap beside it */
+.v-composition .c-seg.set::after{content:"";position:absolute;inset:2px;border:2px solid var(--ring);border-radius:2px;pointer-events:none}
+/* under 16px the ring would be all there is of the slice — its colour gone, a
+   white sliver in an outline — so it steps aside; the flag and the blue on the
+   rail still say "set" for that row */
+.v-composition .c-seg.thin.set::after{display:none}
+/* pointing at a row lifts its slice 2px top and bottom, so the eye finds the
+   link before dragging — a different mark from "set", on purpose */
+.v-composition:has([data-row="mat"]:is(:hover,.live)) [data-seg="mat"],
+.v-composition:has([data-row="tool"]:is(:hover,.live)) [data-seg="tool"],
+.v-composition:has([data-row="frg"]:is(:hover,.live)) [data-seg="frg"],
+.v-composition:has([data-row="fuel"]:is(:hover,.live)) [data-seg="fuel"]{transform:scaleY(1.143)}
+/* the legend is the controls: 24px under the bar, the column header, then a row per area */
+.v-composition .cc-th{margin-top:var(--s6)}
+.v-composition .c-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name save" "rail rail";
+  align-items:center;column-gap:var(--s4);row-gap:var(--s1);padding-top:var(--s3)}
+.v-composition .c-name{grid-area:name;display:flex;align-items:center;gap:var(--s2);min-width:0}
+/* the chip is a hard square and the flag is round, so the legend swatch and the
+   "you set this" mark never read as the same thing — even when both are the
+   primary blue. The rest row gets the same chip, in the track grey, so the
+   legend has one entry per slice and one left edge. */
+.v-composition .c-chip,.v-composition .cc-rest .cc-n::before{content:"";flex:0 0 auto;width:10px;height:10px;
+  border-radius:1px;background:var(--seg);
+  box-shadow:inset 0 0 0 1px rgb(0 0 0/.06)}   /* keeps the palest swatch from vanishing on white */
+.v-composition .cc-rest-sub{padding-left:calc(10px + var(--s2))}   /* chip + gap: the sub line follows its name */
+.v-composition .c-share{flex:0 0 auto;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.v-composition .c-row .cc-save{grid-area:save}
+/* the rail: 32px, the 2px track through its middle, the pill centred on it */
+.v-composition .c-rail{grid-area:rail;position:relative;height:32px}
+.v-composition .c-track{position:absolute;left:0;right:0;top:15px;height:2px;border-radius:1px;background:var(--track)}
+.v-composition .c-fill,.v-composition .c-add{position:absolute;top:15px;height:2px;border-radius:1px}
+.v-composition .c-fill{left:0;background:var(--general-foreground);width:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--a0))}
+.v-composition .c-add{left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--a0));background:var(--general-primary);
+  width:calc((100% - var(--knob)) * (var(--a) - var(--a0)))}
+.v-composition .cc-pill{top:5px;left:var(--x,0px)}
+/* the input covers this row's headroom only, its 120px thumb centred on the pill's point */
+.v-composition .cc-range{top:0;height:32px;--thumb-w:120px;
+  left:calc((100% - var(--knob)) * var(--a0) + var(--knob) / 2 - 60px);
+  width:calc((100% - var(--knob)) * (var(--amax) - var(--a0)) + 120px)}
+.v-composition .cc-range::-webkit-slider-thumb{margin-top:5px}
+@media(prefers-reduced-motion:no-preference){
+  .v-composition .c-seg{transition:width var(--tune-t) var(--tune-ease),transform var(--t-fast)}
+  .v-composition .c-fill,.v-composition .c-add{transition:width var(--tune-t) var(--tune-ease),left var(--tune-t) var(--tune-ease)}
+  .v-composition .cc-pill{transition:left var(--tune-t) var(--tune-ease),box-shadow var(--t-fast),background var(--t-fast)}
+  .v-composition:has(.live) .c-seg{transition-duration:.13s}
+  .v-composition .live .c-add{transition:width .13s var(--tune-ease)}
+  .v-composition .live .cc-pill{transition:left .13s var(--tune-ease)}
+}
+
+/* the plot clips sideways only: the range's thumb is as wide as the pill and centred
+   on the dot, so at the far end it hangs past the rail. Nothing visible lives out
+   there, and the clip keeps it out of the card's overflow; the 8px margin is so the
+   pill's shadow and focus ring are not cut when it sits at an end. */
+.v-dumbbell .d-plot{overflow-x:clip;overflow-y:visible;overflow-clip-margin:var(--s2)}
+.v-dumbbell .d-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name save" "rail rail";
+  align-items:center;column-gap:var(--s4);row-gap:var(--s1);padding-top:var(--s3)}
+.v-dumbbell .d-row .cc-n{grid-area:name}
+.v-dumbbell .d-row .cc-save{grid-area:save}
+/* the rail keeps the design's 46px: pill 8..30, 4px, dots centred on y=40 and flush
+   with the bottom — the next row's 12px is the air under them */
+.v-dumbbell .d-rail{grid-area:rail;display:block;position:relative;height:46px;isolation:isolate}
+/* gridlines per rail, behind the marks only: each starts 4px under its row's name
+   line and stops 4px above the next, and the last ones land on the axis line. No
+   line ever runs beside a figure. */
+.v-dumbbell .d-grid{position:absolute;top:0;bottom:calc(-1 * var(--s2));left:calc(var(--t) * 100%);width:1px;
+  background:var(--track);z-index:-1;pointer-events:none}
+.v-dumbbell .d-track,.v-dumbbell .d-add{position:absolute;top:39px;height:2px;border-radius:1px}
+.v-dumbbell .d-track{left:0;right:0;background:var(--track)}
+/* centre to centre; the ring's white fill hides the blue inside it */
+.v-dumbbell .d-add{left:calc(var(--a0) * 100%);width:calc((var(--a) - var(--a0)) * 100%);background:var(--general-primary)}
+.v-dumbbell .d-base,.v-dumbbell .d-now{position:absolute;top:34px;width:12px;height:12px;border-radius:var(--rounded-full)}
+.v-dumbbell .d-base{left:calc(var(--a0) * 100% - 6px);border:2px solid var(--general-foreground);background:var(--surface)}
+/* until the two dots clear each other the ring would peek out as a crescent behind
+   the solid dot — neither one dot nor two — so it stays hidden till then */
+.v-dumbbell .tight .d-base{opacity:0}
+.v-dumbbell .d-now{left:calc(var(--a) * 100% - 6px);background:var(--general-foreground)}
+/* --x is the pill's centre, so when the arrows appear it grows both ways and stays over the dot */
+.v-dumbbell .cc-pill{top:var(--s2);left:var(--x,0px);transform:translateX(-50%)}
+/* the input covers this row's headroom, its thumb centred on the moving dot and as
+   wide as the pill (--tw, set in place(); wider still when the pill is pulled in at
+   an end, so its far edge is covered too). left and width move by the same
+   half-thumb, so the value↔x mapping is unchanged when the pill changes width mid-drag. */
+.v-dumbbell .cc-range{top:0;height:46px;--thumb-w:var(--tw,96px);--thumb-h:46px;
+  left:calc(var(--a0) * 100% - var(--tw,96px) / 2);width:calc((var(--amax) - var(--a0)) * 100% + var(--tw,96px))}
+/* the axis: one line 8px under the last rail, a 4px tick per label, labels beneath, the unit on the last */
+.v-dumbbell .d-axis{position:relative;height:var(--s8)}
+.v-dumbbell .d-line{position:absolute;left:0;right:0;top:var(--s2);height:1px;background:var(--track)}
+.v-dumbbell .d-tick{position:absolute;top:var(--s2);left:calc(var(--t) * 100%);width:1px;height:var(--s1);background:var(--track)}
+.v-dumbbell .d-tick.last{left:auto;right:0}
+.v-dumbbell .d-lab{position:absolute;top:var(--s3);left:calc(var(--t) * 100%);transform:translateX(-50%);
+  font-size:var(--text-xs);font-weight:500;line-height:16px;letter-spacing:-.1px;
+  color:var(--general-foreground);opacity:.4;white-space:nowrap}
+.v-dumbbell .d-lab.first{left:0;transform:none}
+.v-dumbbell .d-lab.last{left:auto;right:0;transform:none}
+/* guard: the engine's keyboard-focus selector is not scoped to a row, so focus on one
+   range lights every pill in the card. Rows that are neither focused, hovered nor
+   held keep their resting pill. */
+.v-dumbbell [data-row]:not(:has(.cc-range:focus-visible)):not(:hover):not(.live) .cc-pill{
+  background:var(--surface);border-color:transparent;box-shadow:0 1px 2px rgb(10 42 92/.32);outline:none}
+.v-dumbbell [data-row]:not(:has(.cc-range:focus-visible)):not(:hover):not(.live) .cc-pill-ic{display:none}
+@media(prefers-reduced-motion:no-preference){
+  .v-dumbbell .d-now,.v-dumbbell .d-add{transition:left var(--tune-t) var(--tune-ease),width var(--tune-t) var(--tune-ease)}
+  .v-dumbbell .d-base{transition:opacity var(--t-fast)}
+  .v-dumbbell .cc-pill{transition:left var(--tune-t) var(--tune-ease),box-shadow var(--t-fast),background var(--t-fast)}
+  .v-dumbbell .live .d-now,.v-dumbbell .live .d-add{transition:left .13s var(--tune-ease),width .13s var(--tune-ease)}
+  .v-dumbbell .live .cc-pill{transition:left .13s var(--tune-ease)}
+}
+
+.v-rows .r-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name save" "rail rail";
+  align-items:center;column-gap:var(--s4);row-gap:var(--s1);padding-top:var(--s3)}
+.v-rows .r-row .cc-n{grid-area:name}
+.v-rows .r-row .cc-save{grid-area:save}
+.v-rows .r-rail{grid-area:rail;position:relative;height:46px;--knob:20px}
+.v-rows .r-track{position:absolute;left:0;right:0;top:22px;height:2px;border-radius:1px;background:var(--track)}
+.v-rows .r-fill,.v-rows .r-add{position:absolute;top:22px;height:2px;border-radius:1px}
+.v-rows .r-fill{left:0;background:var(--general-foreground);width:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--a0))}
+.v-rows .r-add{left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--a0));background:var(--general-primary);
+  width:calc((100% - var(--knob)) * (var(--a) - var(--a0)))}
+.v-rows .cc-pill{top:12px;left:var(--x,0px)}
+/* the input covers this row's headroom only, its 120px thumb centred on the pill's point */
+.v-rows .cc-range{top:3px;height:40px;--thumb-w:120px;
+  left:calc((100% - var(--knob)) * var(--a0) + var(--knob) / 2 - 60px);
+  width:calc((100% - var(--knob)) * (var(--amax) - var(--a0)) + 120px)}
+.v-rows .cc-range::-webkit-slider-thumb{margin-top:9px}
+@media(prefers-reduced-motion:no-preference){
+  .v-rows .r-fill,.v-rows .r-add{transition:width var(--tune-t) var(--tune-ease),left var(--tune-t) var(--tune-ease)}
+  .v-rows .cc-pill{transition:left var(--tune-t) var(--tune-ease),box-shadow var(--t-fast),background var(--t-fast)}
+  .v-rows .live .r-add{transition:width .13s var(--tune-ease)}
+  .v-rows .live .cc-pill{transition:left .13s var(--tune-ease)}
+}
+/* ---- static preview: two states per approach, no logic ---- */
+.st-wrap{display:flex;flex-direction:column;gap:var(--s6);scroll-margin-top:var(--s8)}
+.st-pair{display:grid;grid-template-columns:568px 568px;gap:var(--s8);align-items:start}
+.st-state{display:flex;flex-direction:column;gap:var(--s3)}
+.st-state>span{font-size:var(--text-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.st-head{display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap}
+.st-head .cc-vname{margin-top:0}
+.cc-card{pointer-events:none}
+.cc-card .cc-go{pointer-events:none}
+@media(max-width:1240px){.st-pair{grid-template-columns:minmax(0,568px)}}
+</style></head><body>
+<div class="gal">
+  <header class="gal-head">
+    <h1>The spend calculator, drawn as a chart</h1>
+    <p>Five approaches, each shown twice: at rest, and while Building materials is at the top of its scale and Tools &amp; workwear has been raised. Static preview — no logic behind it; pick one and it gets built into the page.</p>
+    <nav class="gal-nav"><a href="#s-rows"><b>R</b>Today’s control</a><a href="#s-bars"><b>1</b>Bars</a><a href="#s-columns"><b>2</b>Columns</a><a href="#s-dumbbell"><b>3</b>Dumbbell</a><a href="#s-bullet"><b>4</b>Bullet</a><a href="#s-composition"><b>5</b>Composition</a></nav>
+  </header>
+  <div class="gal-list">
+  
+    <section class="st-wrap" id="s-rows">
+      <div class="st-head"><span class="cc-eyebrow">Reference</span><h2 class="cc-vname">Today’s control</h2></div>
+      <p class="cc-blurb" style="margin-top:0;max-width:64ch">The current slider rows, for comparison. Same engine, same numbers.</p>
+      <div class="st-pair">
+        <div class="st-state"><span>At rest</span><article class="cc-card" data-variant="rows">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total">+266.700</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-rows"><div class="cc-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div>
+      <div class="r-row cc-rowhit" data-row="mat">
+        <span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="126900">+126.900</span><em>kr. a year</em></b>
+        <span class="r-rail" style="--a0: 0.2843; --a: 0.2843; --amax: 0.9510;">
+          <i class="r-track"></i><i class="r-fill"></i><i class="r-add"></i>
+          <span class="cc-pill" style="--x: 137.0px;">2,1M<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="r-row cc-rowhit" data-row="tool">
+        <span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="50500">+50.500</span><em>kr. a year</em></b>
+        <span class="r-rail" style="--a0: 0.0886; --a: 0.0886; --amax: 0.7553;">
+          <i class="r-track"></i><i class="r-fill"></i><i class="r-add"></i>
+          <span class="cc-pill" style="--x: 42.7px;">665K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="r-row cc-rowhit" data-row="frg">
+        <span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="r-rail" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105;">
+          <i class="r-track"></i><i class="r-fill"></i><i class="r-add"></i>
+          <span class="cc-pill" style="--x: 21.1px;">329K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="r-row cc-rowhit" data-row="fuel">
+        <span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="r-rail" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374;">
+          <i class="r-track"></i><i class="r-fill"></i><i class="r-add"></i>
+          <span class="cc-pill" style="--x: 34.1px;">531K<em>kr.</em></span>
+          
+        </span>
+      </div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset" hidden="">Reset to my invoices</button><span class="cc-adj" hidden="">Adjusted numbers · 0 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+        <div class="st-state"><span>While setting</span><article class="cc-card" data-variant="rows">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total band">+672K–760K</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-rows"><div class="cc-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div>
+      <div class="r-row cc-rowhit set" data-row="mat">
+        <span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr." aria-label="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="424466">+395K–454K</span><em>kr. a year</em></b>
+        <span class="r-rail" style="--a0: 0.2843; --a: 0.9510; --amax: 0.9510;">
+          <i class="r-track"></i><i class="r-fill"></i><i class="r-add"></i>
+          <span class="cc-pill" style="--x: 339.0px;">+5M<em>kr.</em><button type="button" class="cc-go" data-id="mat">Contact sales</button></span>
+          
+        </span>
+      </div>
+      <div class="r-row cc-rowhit set" data-row="tool">
+        <span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr." aria-label="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="202425">+188K–217K</span><em>kr. a year</em></b>
+        <span class="r-rail" style="--a0: 0.0886; --a: 0.3553; --amax: 0.7553;">
+          <i class="r-track"></i><i class="r-fill"></i><i class="r-add"></i>
+          <span class="cc-pill" style="--x: 171.3px;">2,5M–2,9M<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="r-row cc-rowhit" data-row="frg">
+        <span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="r-rail" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105;">
+          <i class="r-track"></i><i class="r-fill"></i><i class="r-add"></i>
+          <span class="cc-pill" style="--x: 21.1px;">329K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="r-row cc-rowhit" data-row="fuel">
+        <span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="r-rail" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374;">
+          <i class="r-track"></i><i class="r-fill"></i><i class="r-add"></i>
+          <span class="cc-pill" style="--x: 34.1px;">531K<em>kr.</em></span>
+          
+        </span>
+      </div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset">Reset to my invoices</button><span class="cc-adj">Adjusted numbers · 2 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+      </div>
+    </section>
+    <section class="st-wrap" id="s-bars">
+      <div class="st-head"><span class="cc-eyebrow">Approach 1</span><h2 class="cc-vname">Bars</h2><span class="cc-kind">Horizontal bar chart</span></div>
+      <p class="cc-blurb" style="margin-top:0;max-width:64ch">How big each area is next to the others on one honest scale — and how far up that scale 5M kr. more would take it.</p>
+      <div class="st-pair">
+        <div class="st-state"><span>At rest</span><article class="cc-card" data-variant="bars">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total">+266.700</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-bars"><div class="cc-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div><div class="b-plot"><i class="b-grid" style="--f:0.3333"></i><i class="b-grid" style="--f:0.6667"></i>
+      <div class="b-row cc-rowhit" data-row="mat">
+        <span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="126900">+126.900</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.2843; --a: 0.2843; --amax: 0.9510;">
+          <i class="b-fill"></i><i class="b-add"></i>
+          <span class="cc-pill" style="--x: 132.7px;">2,1M<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="tool">
+        <span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="50500">+50.500</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0886; --a: 0.0886; --amax: 0.7553;">
+          <i class="b-fill"></i><i class="b-add"></i>
+          <span class="cc-pill" style="--x: 34.5px;">665K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="frg">
+        <span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105;">
+          <i class="b-fill"></i><i class="b-add"></i>
+          <span class="cc-pill" style="--x: 12.0px;">329K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="fuel">
+        <span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374;">
+          <i class="b-fill"></i><i class="b-add"></i>
+          <span class="cc-pill" style="--x: 25.5px;">531K<em>kr.</em></span>
+          
+        </span>
+      </div><div class="b-axis" aria-hidden="true"><span class="b-tick lo" style="--f:0.0000">0</span><span class="b-tick" style="--f:0.3333">2,5M</span><span class="b-tick" style="--f:0.6667">5M</span><span class="b-tick hi" style="--f:1.0000">7,5M</span></div></div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset" hidden="">Reset to my invoices</button><span class="cc-adj" hidden="">Adjusted numbers · 0 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+        <div class="st-state"><span>While setting</span><article class="cc-card" data-variant="bars">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total band">+672K–760K</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-bars"><div class="cc-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div><div class="b-plot"><i class="b-grid" style="--f:0.3333"></i><i class="b-grid" style="--f:0.6667"></i>
+      <div class="b-row cc-rowhit set" data-row="mat">
+        <span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr." aria-label="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="424466">+395K–454K</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.2843; --a: 0.9510; --amax: 0.9510;">
+          <i class="b-fill"></i><i class="b-add"></i>
+          <span class="cc-pill" style="--x: 315.0px;">+5M<em>kr.</em><button type="button" class="cc-go" data-id="mat">Contact sales</button></span>
+          
+        </span>
+      </div>
+      <div class="b-row cc-rowhit set" data-row="tool">
+        <span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr." aria-label="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="202425">+188K–217K</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0886; --a: 0.3553; --amax: 0.7553;">
+          <i class="b-fill"></i><i class="b-add"></i>
+          <span class="cc-pill" style="--x: 168.4px;">2,5M–2,9M<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="frg">
+        <span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105;">
+          <i class="b-fill"></i><i class="b-add"></i>
+          <span class="cc-pill" style="--x: 12.0px;">329K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="fuel">
+        <span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374;">
+          <i class="b-fill"></i><i class="b-add"></i>
+          <span class="cc-pill" style="--x: 25.5px;">531K<em>kr.</em></span>
+          
+        </span>
+      </div><div class="b-axis" aria-hidden="true"><span class="b-tick lo" style="--f:0.0000">0</span><span class="b-tick" style="--f:0.3333">2,5M</span><span class="b-tick" style="--f:0.6667">5M</span><span class="b-tick hi" style="--f:1.0000">7,5M</span></div></div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset">Reset to my invoices</button><span class="cc-adj">Adjusted numbers · 2 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+      </div>
+    </section>
+    <section class="st-wrap" id="s-columns">
+      <div class="st-head"><span class="cc-eyebrow">Approach 2</span><h2 class="cc-vname">Columns</h2><span class="cc-kind">Vertical column chart</span></div>
+      <p class="cc-blurb" style="margin-top:0;max-width:64ch">Which area is the big one, and by how much: the columns share one scale, so height is money and what you add grows out of the top.</p>
+      <div class="st-pair">
+        <div class="st-state"><span>At rest</span><article class="cc-card" data-variant="columns">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total">+266.700</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-columns"><div class="c-chart"><div class="c-axis" aria-hidden="true"><span class="c-tick is-base" style="--f:0.0000"><span>0</span></span><span class="c-tick" style="--f:0.3333"><span>2,5M</span></span><span class="c-tick" style="--f:0.6667"><span>5M</span></span><span class="c-tick" style="--f:1.0000"><span>7,5M</span></span></div><div class="c-cols">
+      <div class="c-col cc-rowhit" data-row="mat" style="--b: 0.2843; --m: 0.9510; --a: 0.2843;">
+        <div class="c-stack">
+          <i class="c-base"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--dx: 0.0px;">2,1M<em>kr.</em></span>
+          
+        </div>
+        <div class="c-lab"><span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="126900">+126.900</span><em>kr. a year</em></b></div>
+      </div>
+      <div class="c-col cc-rowhit" data-row="tool" style="--b: 0.0886; --m: 0.7553; --a: 0.0886;">
+        <div class="c-stack">
+          <i class="c-base"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--dx: 0.0px;">665K<em>kr.</em></span>
+          
+        </div>
+        <div class="c-lab"><span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="50500">+50.500</span><em>kr. a year</em></b></div>
+      </div>
+      <div class="c-col cc-rowhit" data-row="frg" style="--b: 0.0438; --m: 0.7105; --a: 0.0438;">
+        <div class="c-stack">
+          <i class="c-base"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--dx: 0.0px;">329K<em>kr.</em></span>
+          
+        </div>
+        <div class="c-lab"><span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b></div>
+      </div>
+      <div class="c-col cc-rowhit" data-row="fuel" style="--b: 0.0708; --m: 0.7374; --a: 0.0708;">
+        <div class="c-stack">
+          <i class="c-base"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--dx: 0.0px;">531K<em>kr.</em></span>
+          
+        </div>
+        <div class="c-lab"><span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b></div>
+      </div></div></div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset" hidden="">Reset to my invoices</button><span class="cc-adj" hidden="">Adjusted numbers · 0 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+        <div class="st-state"><span>While setting</span><article class="cc-card" data-variant="columns">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total band">+672K–760K</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-columns"><div class="c-chart"><div class="c-axis" aria-hidden="true"><span class="c-tick is-base" style="--f:0.0000"><span>0</span></span><span class="c-tick" style="--f:0.3333"><span>2,5M</span></span><span class="c-tick" style="--f:0.6667"><span>5M</span></span><span class="c-tick" style="--f:1.0000"><span>7,5M</span></span></div><div class="c-cols">
+      <div class="c-col cc-rowhit" data-row="mat" style="--b: 0.2843; --m: 0.9510; --a: 0.9510;">
+        <div class="c-stack">
+          <i class="c-base"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--dx: 36.5px;">+5M<em>kr.</em><button type="button" class="cc-go" data-id="mat">Contact sales</button></span>
+          
+        </div>
+        <div class="c-lab"><span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr." aria-label="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="424466">+395K–454K</span><em>kr. a year</em></b></div>
+      </div>
+      <div class="c-col cc-rowhit" data-row="tool" style="--b: 0.0886; --m: 0.7553; --a: 0.3553;">
+        <div class="c-stack">
+          <i class="c-base"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--dx: 0.0px;">2,5M–2,9M<em>kr.</em></span>
+          
+        </div>
+        <div class="c-lab"><span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr." aria-label="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="202425">+188K–217K</span><em>kr. a year</em></b></div>
+      </div>
+      <div class="c-col cc-rowhit" data-row="frg" style="--b: 0.0438; --m: 0.7105; --a: 0.0438;">
+        <div class="c-stack">
+          <i class="c-base"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--dx: 0.0px;">329K<em>kr.</em></span>
+          
+        </div>
+        <div class="c-lab"><span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b></div>
+      </div>
+      <div class="c-col cc-rowhit" data-row="fuel" style="--b: 0.0708; --m: 0.7374; --a: 0.0708;">
+        <div class="c-stack">
+          <i class="c-base"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--dx: 0.0px;">531K<em>kr.</em></span>
+          
+        </div>
+        <div class="c-lab"><span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b></div>
+      </div></div></div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset">Reset to my invoices</button><span class="cc-adj">Adjusted numbers · 2 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+      </div>
+    </section>
+    <section class="st-wrap" id="s-dumbbell">
+      <div class="st-head"><span class="cc-eyebrow">Approach 3</span><h2 class="cc-vname">Dumbbell</h2><span class="cc-kind">Dot plot (from → to)</span></div>
+      <p class="cc-blurb" style="margin-top:0;max-width:64ch">Today and what you set, as two dots on one money scale — the distance between them is the spend you add, and the same distance is the same money on every row.</p>
+      <div class="st-pair">
+        <div class="st-state"><span>At rest</span><article class="cc-card" data-variant="dumbbell">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total">+266.700</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-dumbbell"><div class="cc-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div><div class="d-plot">
+      <div class="d-row cc-rowhit" data-row="mat">
+        <span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="126900">+126.900</span><em>kr. a year</em></b>
+        <span class="d-rail tight" style="--a0: 0.2843; --a: 0.2843; --amax: 0.9510; --tw: 96px;">
+          <i class="d-grid" style="--t:0.3333"></i><i class="d-grid" style="--t:0.6667"></i><i class="d-track"></i><i class="d-add"></i><i class="d-base"></i><i class="d-now"></i>
+          <span class="cc-pill" style="--x: 142.7px;">2,1M<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="d-row cc-rowhit" data-row="tool">
+        <span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="50500">+50.500</span><em>kr. a year</em></b>
+        <span class="d-rail tight" style="--a0: 0.0886; --a: 0.0886; --amax: 0.7553; --tw: 96px;">
+          <i class="d-grid" style="--t:0.3333"></i><i class="d-grid" style="--t:0.6667"></i><i class="d-track"></i><i class="d-add"></i><i class="d-base"></i><i class="d-now"></i>
+          <span class="cc-pill" style="--x: 44.5px;">665K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="d-row cc-rowhit" data-row="frg">
+        <span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="d-rail tight" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105; --tw: 96px;">
+          <i class="d-grid" style="--t:0.3333"></i><i class="d-grid" style="--t:0.6667"></i><i class="d-track"></i><i class="d-add"></i><i class="d-base"></i><i class="d-now"></i>
+          <span class="cc-pill" style="--x: 33.0px;">329K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="d-row cc-rowhit" data-row="fuel">
+        <span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="d-rail tight" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374; --tw: 96px;">
+          <i class="d-grid" style="--t:0.3333"></i><i class="d-grid" style="--t:0.6667"></i><i class="d-track"></i><i class="d-add"></i><i class="d-base"></i><i class="d-now"></i>
+          <span class="cc-pill" style="--x: 35.5px;">531K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="d-axis" aria-hidden="true"><i class="d-line"></i><i class="d-tick" style="--t:0.0000"></i><i class="d-tick" style="--t:0.3333"></i><i class="d-tick" style="--t:0.6667"></i><i class="d-tick last" style="--t:1.0000"></i><span class="d-lab num first" style="--t:0.0000">0</span><span class="d-lab num" style="--t:0.3333">2,5M</span><span class="d-lab num" style="--t:0.6667">5M</span><span class="d-lab num last" style="--t:1.0000">7,5M kr.</span></div>
+    </div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset" hidden="">Reset to my invoices</button><span class="cc-adj" hidden="">Adjusted numbers · 0 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+        <div class="st-state"><span>While setting</span><article class="cc-card" data-variant="dumbbell">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total band">+672K–760K</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-dumbbell"><div class="cc-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div><div class="d-plot">
+      <div class="d-row cc-rowhit" data-row="mat">
+        <span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr." aria-label="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="424466">+395K–454K</span><em>kr. a year</em></b>
+        <span class="d-rail" style="--a0: 0.2843; --a: 0.9510; --amax: 0.9510; --tw: 277px;">
+          <i class="d-grid" style="--t:0.3333"></i><i class="d-grid" style="--t:0.6667"></i><i class="d-track"></i><i class="d-add"></i><i class="d-base"></i><i class="d-now"></i>
+          <span class="cc-pill" style="--x: 420.5px;">+5M<em>kr.</em><button type="button" class="cc-go" data-id="mat">Contact sales</button></span>
+          
+        </span>
+      </div>
+      <div class="d-row cc-rowhit" data-row="tool">
+        <span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr." aria-label="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="202425">+188K–217K</span><em>kr. a year</em></b>
+        <span class="d-rail" style="--a0: 0.0886; --a: 0.3553; --amax: 0.7553; --tw: 102px;">
+          <i class="d-grid" style="--t:0.3333"></i><i class="d-grid" style="--t:0.6667"></i><i class="d-track"></i><i class="d-add"></i><i class="d-base"></i><i class="d-now"></i>
+          <span class="cc-pill" style="--x: 178.4px;">2,5M–2,9M<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="d-row cc-rowhit" data-row="frg">
+        <span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="d-rail tight" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105; --tw: 96px;">
+          <i class="d-grid" style="--t:0.3333"></i><i class="d-grid" style="--t:0.6667"></i><i class="d-track"></i><i class="d-add"></i><i class="d-base"></i><i class="d-now"></i>
+          <span class="cc-pill" style="--x: 33.0px;">329K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="d-row cc-rowhit" data-row="fuel">
+        <span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="d-rail tight" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374; --tw: 96px;">
+          <i class="d-grid" style="--t:0.3333"></i><i class="d-grid" style="--t:0.6667"></i><i class="d-track"></i><i class="d-add"></i><i class="d-base"></i><i class="d-now"></i>
+          <span class="cc-pill" style="--x: 35.5px;">531K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="d-axis" aria-hidden="true"><i class="d-line"></i><i class="d-tick" style="--t:0.0000"></i><i class="d-tick" style="--t:0.3333"></i><i class="d-tick" style="--t:0.6667"></i><i class="d-tick last" style="--t:1.0000"></i><span class="d-lab num first" style="--t:0.0000">0</span><span class="d-lab num" style="--t:0.3333">2,5M</span><span class="d-lab num" style="--t:0.6667">5M</span><span class="d-lab num last" style="--t:1.0000">7,5M kr.</span></div>
+    </div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset">Reset to my invoices</button><span class="cc-adj">Adjusted numbers · 2 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+      </div>
+    </section>
+    <section class="st-wrap" id="s-bullet">
+      <div class="st-head"><span class="cc-eyebrow">Approach 4</span><h2 class="cc-vname">Bullet</h2><span class="cc-kind">Bullet graph</span></div>
+      <p class="cc-blurb" style="margin-top:0;max-width:64ch">Every area on one three-band scale: how big it is today, how far you have pushed it, and how much of the range is left — read at a glance, no gridlines.</p>
+      <div class="st-pair">
+        <div class="st-state"><span>At rest</span><article class="cc-card" data-variant="bullet">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total">+266.700</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-bullet"><div class="cc-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div>
+      <div class="b-row cc-rowhit" data-row="mat">
+        <span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="126900">+126.900</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.2843; --a: 0.2843; --amax: 0.9510;">
+          <span class="b-scale" aria-hidden="true"><i></i><i></i><i></i></span>
+          <i class="b-bar"></i><i class="b-add"></i><i class="b-tick"></i>
+          <span class="cc-pill" style="--x: 131.7px;">2,1M<em>kr.</em></span>
+          <span class="b-hit"></span>
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="tool">
+        <span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="50500">+50.500</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0886; --a: 0.0886; --amax: 0.7553;">
+          <span class="b-scale" aria-hidden="true"><i></i><i></i><i></i></span>
+          <i class="b-bar"></i><i class="b-add"></i><i class="b-tick"></i>
+          <span class="cc-pill" style="--x: 33.5px;">665K<em>kr.</em></span>
+          <span class="b-hit"></span>
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="frg">
+        <span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105;">
+          <span class="b-scale" aria-hidden="true"><i></i><i></i><i></i></span>
+          <i class="b-bar"></i><i class="b-add"></i><i class="b-tick"></i>
+          <span class="cc-pill" style="--x: 11.0px;">329K<em>kr.</em></span>
+          <span class="b-hit"></span>
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="fuel">
+        <span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374;">
+          <span class="b-scale" aria-hidden="true"><i></i><i></i><i></i></span>
+          <i class="b-bar"></i><i class="b-add"></i><i class="b-tick"></i>
+          <span class="cc-pill" style="--x: 24.5px;">531K<em>kr.</em></span>
+          <span class="b-hit"></span>
+        </span>
+      </div><div class="b-axis" aria-hidden="true"><span style="--t:0.0000">0</span><span style="--t:0.3333">2,5M</span><span style="--t:0.6667">5M</span><span style="--t:1.0000">7,5M</span></div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset" hidden="">Reset to my invoices</button><span class="cc-adj" hidden="">Adjusted numbers · 0 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+        <div class="st-state"><span>While setting</span><article class="cc-card" data-variant="bullet">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total band">+672K–760K</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-bullet"><div class="cc-th" aria-hidden="true"><span>Areas</span><span>Savings</span></div>
+      <div class="b-row cc-rowhit" data-row="mat">
+        <span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr." aria-label="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="424466">+395K–454K</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.2843; --a: 0.9510; --amax: 0.9510;">
+          <span class="b-scale" aria-hidden="true"><i></i><i></i><i></i></span>
+          <i class="b-bar"></i><i class="b-add"></i><i class="b-tick"></i>
+          <span class="cc-pill" style="--x: 315.0px;">+5M<em>kr.</em><button type="button" class="cc-go" data-id="mat">Contact sales</button></span>
+          <span class="b-hit"></span>
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="tool">
+        <span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr." aria-label="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr."></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="202425">+188K–217K</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0886; --a: 0.3553; --amax: 0.7553;">
+          <span class="b-scale" aria-hidden="true"><i></i><i></i><i></i></span>
+          <i class="b-bar"></i><i class="b-add"></i><i class="b-tick"></i>
+          <span class="cc-pill" style="--x: 167.4px;">2,5M–2,9M<em>kr.</em></span>
+          <span class="b-hit"></span>
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="frg">
+        <span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105;">
+          <span class="b-scale" aria-hidden="true"><i></i><i></i><i></i></span>
+          <i class="b-bar"></i><i class="b-add"></i><i class="b-tick"></i>
+          <span class="cc-pill" style="--x: 11.0px;">329K<em>kr.</em></span>
+          <span class="b-hit"></span>
+        </span>
+      </div>
+      <div class="b-row cc-rowhit" data-row="fuel">
+        <span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="b-rail" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374;">
+          <span class="b-scale" aria-hidden="true"><i></i><i></i><i></i></span>
+          <i class="b-bar"></i><i class="b-add"></i><i class="b-tick"></i>
+          <span class="cc-pill" style="--x: 24.5px;">531K<em>kr.</em></span>
+          <span class="b-hit"></span>
+        </span>
+      </div><div class="b-axis" aria-hidden="true"><span style="--t:0.0000">0</span><span style="--t:0.3333">2,5M</span><span style="--t:0.6667">5M</span><span style="--t:1.0000">7,5M</span></div><div class="cc-rest"><span class="cc-n"><span>4 other areas</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset">Reset to my invoices</button><span class="cc-adj">Adjusted numbers · 2 areas</span></div>
+          <p class="cc-note" hidden="">Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year. Everything follows what you set — the figures above and every agreement.</p>
+        </article></div>
+      </div>
+    </section>
+    <section class="st-wrap" id="s-composition">
+      <div class="st-head"><span class="cc-eyebrow">Approach 5</span><h2 class="cc-vname">Composition</h2><span class="cc-kind">Stacked total + controls</span></div>
+      <p class="cc-blurb" style="margin-top:0;max-width:64ch">How the year’s spend splits across the areas — and how the balance shifts as you raise one.</p>
+      <div class="st-pair">
+        <div class="st-state"><span>At rest</span><article class="cc-card" data-variant="composition">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total">+266.700</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-composition">
+      <div class="c-head"><span class="c-head-l">Total spend</span>
+        <b class="c-total"><span class="c-total-n" data-n="4820000">4,8M</span><em>kr. a year</em></b></div>
+      <div class="c-bar" role="img" aria-label="Total spend 4,8M kr. a year: Building materials 44%, Tools &amp; workwear 14%, Freight &amp; delivery 7%, Fuel &amp; transport 11%, 4 other areas 24%"><i class="c-seg" data-seg="mat" style="--w: 0.4424;"></i><i class="c-seg" data-seg="tool" style="--w: 0.1379;"></i><i class="c-seg" data-seg="frg" style="--w: 0.0682;"></i><i class="c-seg" data-seg="fuel" style="--w: 0.1101;"></i><i class="c-seg" data-seg="rest" style="--w: 0.2414;"></i></div>
+      <div class="cc-th" aria-hidden="true"><span>Areas · share of spend</span><span>Savings</span></div>
+      
+      <div class="c-row cc-rowhit" data-row="mat">
+        <span class="c-name"><i class="c-chip" aria-hidden="true"></i><span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><span class="c-share" data-n="44.238589211618255">44%</span></span>
+        <b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="126900">+126.900</span><em>kr. a year</em></b>
+        <span class="c-rail" style="--a0: 0.2843; --a: 0.2843; --amax: 0.9510;">
+          <i class="c-track"></i><i class="c-fill"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--x: 137.0px;">2,1M<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="c-row cc-rowhit" data-row="tool">
+        <span class="c-name"><i class="c-chip" aria-hidden="true"></i><span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><span class="c-share" data-n="13.79253112033195">14%</span></span>
+        <b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="50500">+50.500</span><em>kr. a year</em></b>
+        <span class="c-rail" style="--a0: 0.0886; --a: 0.0886; --amax: 0.7553;">
+          <i class="c-track"></i><i class="c-fill"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--x: 42.7px;">665K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="c-row cc-rowhit" data-row="frg">
+        <span class="c-name"><i class="c-chip" aria-hidden="true"></i><span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><span class="c-share" data-n="6.821576763485478">7%</span></span>
+        <b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="c-rail" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105;">
+          <i class="c-track"></i><i class="c-fill"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--x: 21.1px;">329K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="c-row cc-rowhit" data-row="fuel">
+        <span class="c-name"><i class="c-chip" aria-hidden="true"></i><span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><span class="c-share" data-n="11.010373443983402">11%</span></span>
+        <b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="c-rail" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374;">
+          <i class="c-track"></i><i class="c-fill"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--x: 34.1px;">531K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="cc-rest"><span class="cc-n"><span>4 other areas</span><span class="c-share c-share-rest" data-n="24">24%</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset" hidden="">Reset to my invoices</button><span class="cc-adj" hidden="">Adjusted numbers · 0 areas</span></div>
+          <p class="cc-note" hidden="">The bar is the whole year’s spend, split by area; the rows under it are its legend and its controls. Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year — raise one and its slice grows while the others give way.</p>
+        </article></div>
+        <div class="st-state"><span>While setting</span><article class="cc-card" data-variant="composition">
+          <div class="cc-h1"><h2>Savings still open, by category</h2>
+            <button type="button" class="info-dot" aria-label="How the chart works"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 11v5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 7.7h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg></button></div>
+          <p class="cc-sub"><b class="cc-total band">+672K–760K</b> kr. a year, from the agreements you have not activated yet</p>
+          <div class="cc-body v-composition">
+      <div class="c-head"><span class="c-head-l">Total spend</span>
+        <b class="c-total"><span class="c-total-n" data-n="11820000">11,1M–12,5M</span><em>kr. a year</em></b></div>
+      <div class="c-bar" role="img" aria-label="Total spend 11,1M–12,5M kr. a year: Building materials 60%, Tools &amp; workwear 23%, Freight &amp; delivery 3%, Fuel &amp; transport 4%, 4 other areas 10%"><i class="c-seg set" data-seg="mat" style="--w: 0.6034;"></i><i class="c-seg set" data-seg="tool" style="--w: 0.2254;"></i><i class="c-seg thin" data-seg="frg" style="--w: 0.0278;"></i><i class="c-seg" data-seg="fuel" style="--w: 0.0449;"></i><i class="c-seg" data-seg="rest" style="--w: 0.0984;"></i></div>
+      <div class="cc-th" aria-hidden="true"><span>Areas · share of spend</span><span>Savings</span></div>
+      
+      <div class="c-row cc-rowhit set" data-row="mat">
+        <span class="c-name"><i class="c-chip" aria-hidden="true"></i><span class="cc-n"><span>Building materials</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr." aria-label="You set 6,6M–7,6M kr. a year here. Your invoices say 2.132.300 kr."></span></span><span class="c-share" data-n="60.3409475465313">60%</span></span>
+        <b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="424466">+395K–454K</span><em>kr. a year</em></b>
+        <span class="c-rail" style="--a0: 0.2843; --a: 0.9510; --amax: 0.9510;">
+          <i class="c-track"></i><i class="c-fill"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--x: 339.0px;">+5M<em>kr.</em><button type="button" class="cc-go" data-id="mat">Contact sales</button></span>
+          
+        </span>
+      </div>
+      <div class="c-row cc-rowhit set" data-row="tool">
+        <span class="c-name"><i class="c-chip" aria-hidden="true"></i><span class="cc-n"><span>Tools &amp; workwear</span><span class="cc-flag" tabindex="0" role="note" data-tip="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr." aria-label="You set 2,5M–2,9M kr. a year here. Your invoices say 664.800 kr."></span></span><span class="c-share" data-n="22.544839255499156">23%</span></span>
+        <b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="202425">+188K–217K</span><em>kr. a year</em></b>
+        <span class="c-rail" style="--a0: 0.0886; --a: 0.3553; --amax: 0.7553;">
+          <i class="c-track"></i><i class="c-fill"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--x: 171.3px;">2,5M–2,9M<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="c-row cc-rowhit" data-row="frg">
+        <span class="c-name"><i class="c-chip" aria-hidden="true"></i><span class="cc-n"><span>Freight &amp; delivery</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><span class="c-share" data-n="2.781725888324873">3%</span></span>
+        <b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="26300">+26.300</span><em>kr. a year</em></b>
+        <span class="c-rail" style="--a0: 0.0438; --a: 0.0438; --amax: 0.7105;">
+          <i class="c-track"></i><i class="c-fill"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--x: 21.1px;">329K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="c-row cc-rowhit" data-row="fuel">
+        <span class="c-name"><i class="c-chip" aria-hidden="true"></i><span class="cc-n"><span>Fuel &amp; transport</span><span class="cc-flag" tabindex="0" role="note" data-tip="" aria-label="" hidden=""></span></span><span class="c-share" data-n="4.489847715736041">4%</span></span>
+        <b class="cc-save" style="--ch: 10ch;"><span class="cc-money" data-n="14800">+14.800</span><em>kr. a year</em></b>
+        <span class="c-rail" style="--a0: 0.0708; --a: 0.0708; --amax: 0.7374;">
+          <i class="c-track"></i><i class="c-fill"></i><i class="c-add"></i>
+          <span class="cc-pill" style="--x: 34.1px;">531K<em>kr.</em></span>
+          
+        </span>
+      </div>
+      <div class="cc-rest"><span class="cc-n"><span>4 other areas</span><span class="c-share c-share-rest" data-n="10">10%</span></span><span class="cc-rest-sub">1,2M kr. a year · not tuned here</span><b class="cc-save"><span class="cc-money">+48.200</span><em>kr. a year</em></b></div></div>
+          <div class="cc-foot"><button type="button" class="linkbtn cc-reset">Reset to my invoices</button><span class="cc-adj">Adjusted numbers · 2 areas</span></div>
+          <p class="cc-note" hidden="">The bar is the whole year’s spend, split by area; the rows under it are its legend and its controls. Each area starts at what your invoices say you buy there today and can be raised by up to 5M kr. a year — raise one and its slice grows while the others give way.</p>
+        </article></div>
+      </div>
+    </section>
+  </div>
+</div>
+</body></html>
