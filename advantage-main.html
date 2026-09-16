@@ -754,7 +754,15 @@ body.ledger-on{--appbar-h:80px}
   white-space:nowrap;line-height:1.2}
 .bs-v{display:flex;align-items:baseline;gap:4px;font-size:var(--text-2xl);font-weight:700;letter-spacing:-.4px;
   line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bs-v{transition:color var(--t)}
 .bs-v.good{color:var(--sentiment-positive-ink)}
+/* adjusted figures read the same here as on the cards they stand for: the
+   slider's blue, one step deeper on spend (the figure the user set) than on
+   savings (what it produced) */
+.bs-kpi.is-tuned .bs-v,
+.bs-kpi.is-tuned .bs-v.good{color:var(--general-primary)}
+.bs-kpi.is-tuned[data-kpi="spend"] .bs-v{color:var(--general-primary-deep)}
+@media(prefers-reduced-motion:reduce){.bs-v{transition:none}}
 .bs-v em{font-style:normal;font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
 .bs-sep{width:1px;height:32px;background:var(--hairline)}
 /* the token that resets the figures stands right of the tiles in this state, so
@@ -997,11 +1005,10 @@ body.ledger-on{--appbar-h:80px}
 .qa{position:fixed;right:var(--qa-right,var(--s6));bottom:var(--s6);z-index:40;
   display:flex;flex-direction:column;align-items:flex-end;gap:var(--s3);
   transition:opacity var(--t),transform var(--t),right var(--t)}
-/* the activity rail owns the right edge and has its own collapse control at the
-   foot — the shortcut stands beside it rather than on top of it, and follows it
-   in and out as it collapses or the page drops it entirely */
-body:has(#activityRail:not([hidden])){--qa-right:calc(320px + var(--s6))}
-body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
+/* the activity rail owns the right edge — the shortcut stands beside its icon
+   strip rather than on top of it, and steps further in when a panel opens */
+body:has(#activityRail:not([hidden])){--qa-right:calc(var(--act-strip) + var(--s6))}
+body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + var(--act-panel) + var(--s6))}
 /* the shortcut has no job while the panel it opens is already open */
 .qa.hid{opacity:0;transform:translateY(10px) scale(.96);pointer-events:none}
 
@@ -3779,32 +3786,81 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
    every page for every persona (see #activityRail in the shell markup); visibility
    and .canvas's reserved padding are both driven by updateActivityRail() in JS
    rather than a plain media query, since "hidden" is now also a user choice, not
-   just a viewport constraint. */
-.nc-activity{position:fixed;top:var(--appbar-h);right:0;bottom:0;width:320px;
-  border-left:1px solid var(--hairline);background:var(--surface);
-  padding:var(--s8) var(--s6) 0;overflow-y:auto;z-index:5;
-  display:flex;flex-direction:column;transition:width var(--t),top var(--t)}
+   just a viewport constraint.
+
+   Shape: a permanent icon strip on the edge, and ONE panel that opens beside it
+   when a strip icon is pressed — closed is the resting state. A rail that is open
+   by default spends 320px of every window on something the reader did not ask
+   for; an icon strip costs 64px and still says a panel is there. Pressing the
+   icon that is already lit closes it again, so the same control both opens and
+   dismisses and there is no separate collapse button to find. */
+body{--act-strip:64px;--act-panel:320px}
+.nc-activity{position:fixed;top:var(--appbar-h);right:0;bottom:0;width:var(--act-strip);
+  border-left:1px solid var(--hairline);background:var(--surface);z-index:5;
+  display:flex;flex-direction:column;transition:top var(--t)}
 /* same trap as .page[hidden] below: this display:flex overrides the [hidden] UA
    rule, so updateActivityRail's rail.hidden did nothing and the fixed rail sat
    on top of the content on every window under 1440px */
 .nc-activity[hidden]{display:none!important}
-.nc-activity-body{flex:1 1 auto;min-height:0}
-body.activity-on .canvas{padding-right:calc(320px + var(--s10,40px))}
-/* collapsed: an icon-width strip, exactly like .rail.mini on the left */
-.nc-activity.mini{width:76px;padding-left:0;padding-right:0}
-body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
-.nc-activity.mini .nc-activity-body{display:none}
-.nc-activity.mini .act-mini{display:flex}
-.nc-activity-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s4)}
-.nc-activity-head h3{font-size:var(--text-lg);font-weight:600}
-/* ---- the rail's contents: what to do next, then what just happened ---- */
+body.activity-on .canvas{padding-right:calc(var(--act-strip) + var(--s6))}
+body.activity-on.activity-open .canvas{
+  padding-right:calc(var(--act-strip) + var(--act-panel) + var(--s8))}
+
+/* ---- the strip: one button per panel, always on the edge ---- */
+.act-strip{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;
+  gap:2px;padding:var(--s3) 0;overflow:visible}
+.act-tab{position:relative;flex:0 0 auto;width:40px;height:40px;border:none;padding:0;
+  background:none;border-radius:var(--rounded-full);display:grid;place-items:center;
+  cursor:pointer;color:var(--general-muted-foreground);
+  transition:background var(--t-fast),color var(--t-fast)}
+.act-tab svg{width:21px;height:21px}
+.act-tab:hover{background:var(--general-muted);color:var(--general-foreground)}
+.act-tab:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+.act-tab[aria-expanded="true"]{background:var(--brand-ice);color:var(--general-primary)}
+/* the lit tab marks the seam it opened, the way a tab marks its own panel */
+.act-tab[aria-expanded="true"]::before{content:"";position:absolute;
+  left:calc(20px - var(--act-strip) / 2);top:50%;transform:translateY(-50%);
+  width:3px;height:26px;border-radius:0 2px 2px 0;background:var(--general-primary)}
+/* count badge, only where a count means something */
+.act-tab b{position:absolute;top:-1px;right:-1px;min-width:17px;height:17px;padding:0 4px;
+  border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--general-primary);color:#fff;font-size:11px;font-weight:700;
+  border:2px solid var(--surface)}
+/* tooltip to the left, same recipe as .rail.mini .ni::after on the other edge.
+   The lit tab names itself in the panel header already, so it keeps quiet. */
+.act-tab::after{content:attr(data-tip);position:absolute;right:calc(100% + 10px);top:50%;
+  transform:translateY(-50%) translateX(4px);
+  padding:6px 9px;border-radius:var(--rounded-sm);background:var(--sidebar-foreground);
+  color:#fff;font-size:13px;font-weight:500;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity var(--t-fast),transform var(--t-fast)}
+.act-tab:hover::after,.act-tab:focus-visible::after{opacity:1;transform:translateY(-50%)}
+.act-tab[aria-expanded="true"]::after{display:none}
+.act-strip-div{flex:0 0 auto;width:24px;height:1px;background:var(--hairline);margin:var(--s2) 0}
+
+/* ---- the panel: to the left of the strip, one at a time ---- */
+.act-panel{position:absolute;top:0;bottom:0;right:100%;width:var(--act-panel);
+  background:var(--surface);border-left:1px solid var(--hairline);
+  display:flex;flex-direction:column;
+  opacity:0;transform:translateX(10px);pointer-events:none;
+  transition:opacity var(--t),transform var(--t)}
+.nc-activity.open .act-panel{opacity:1;transform:none;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){.act-panel{transition:none}}
+.act-panel-h{flex:0 0 auto;display:flex;align-items:flex-start;gap:var(--s3);
+  padding:var(--s6) var(--s4) var(--s4) var(--s6)}
+.act-panel-h>div{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.act-panel-h h3{font-size:var(--text-xl);letter-spacing:-.3px;line-height:1.25}
+.act-panel-x{flex:0 0 auto;width:32px;height:32px;margin-top:-2px;border:none;padding:0;
+  background:none;border-radius:var(--rounded-full);display:grid;place-items:center;
+  cursor:pointer;color:var(--general-muted-foreground);transition:var(--t-fast)}
+.act-panel-x svg{width:18px;height:18px}
+.act-panel-x:hover{background:var(--general-muted);color:var(--general-foreground)}
+.nc-activity-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 var(--s6) var(--s8)}
+/* an empty panel still has to say something */
+.act-empty{padding:var(--s8) 0;text-align:center;font-size:14px;
+  color:var(--general-muted-foreground)}
+/* ---- the panels' contents ---- */
 .act-eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
   color:var(--general-muted-foreground)}
-.act-head{display:flex;align-items:center;gap:var(--s3);margin:var(--s1) 0 var(--s4)}
-.act-head h3{flex:1 1 auto;font-size:var(--text-xl);letter-spacing:-.3px}
-.act-count{flex:0 0 auto;min-width:26px;height:26px;padding:0 7px;border-radius:var(--rounded-full);
-  display:grid;place-items:center;background:var(--general-secondary);
-  color:var(--general-primary);font-size:13px;font-weight:700}
 /* next-best-action cards. The first is the one we'd pick, so it carries the tint */
 .act-nba{display:flex;flex-direction:column;gap:var(--s2)}
 .act-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:var(--s3);
@@ -3821,9 +3877,9 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .act-card b{display:block;margin-top:var(--s2);font-size:15px;font-weight:650;letter-spacing:-.2px}
 .act-card span.sub{display:block;margin-top:2px;font-size:13px;color:var(--general-muted-foreground)}
 .act-card svg{width:18px;height:18px;color:var(--general-primary);flex:0 0 auto}
-/* recent activity */
-.act-recent{display:flex;align-items:baseline;gap:var(--s3);margin:var(--s8) 0 var(--s2)}
-.act-recent h3{flex:1 1 auto;font-size:var(--text-lg);letter-spacing:-.2px}
+/* recent activity: the log, then the way out of it */
+.act-recent{display:flex;align-items:baseline;gap:var(--s3);margin:var(--s4) 0 0;
+  padding-top:var(--s4);border-top:1px solid var(--hairline)}
 .act-log{display:flex;flex-direction:column}
 .act-row{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s3) 0;
   border-top:1px solid var(--hairline)}
@@ -3864,27 +3920,6 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .req-pill.booked{background:#d9f2ef;color:var(--sentiment-positive)}
 .req-pill::before{content:"";width:6px;height:6px;border-radius:var(--rounded-full);
   background:currentColor}
-/* collapsed rail: icons only */
-.act-mini{display:none;flex-direction:column;align-items:center;gap:var(--s3);padding-top:var(--s2)}
-.act-mini-ic{position:relative;width:44px;height:44px;border-radius:var(--rounded-md);
-  display:grid;place-items:center;background:var(--general-muted);color:var(--general-foreground)}
-.act-mini-ic svg{width:20px;height:20px}
-.act-mini-ic b{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;
-  border-radius:var(--rounded-full);display:grid;place-items:center;
-  background:var(--general-primary);color:#fff;font-size:11px;font-weight:700}
-/* the collapse control: reuses .railtog wholesale, mirrored to sit at the rail's
-   own foot and rotate the opposite way */
-.activity-tog{margin-top:auto;position:sticky;bottom:0;background:var(--surface)}
-.nc-activity.mini .activity-tog{justify-content:center;padding:0}
-.nc-activity.mini .activity-tog svg{transform:rotate(180deg)}
-.nc-activity.mini .activity-tog span{display:none}
-/* tooltip on the collapsed icon, same pattern as .rail.mini .ni::after */
-.nc-activity.mini .nc-activity-ill::after{content:attr(data-tip);position:absolute;
-  right:calc(100% + 12px);top:50%;transform:translateY(-50%) translateX(4px);
-  padding:6px 9px;border-radius:var(--rounded-sm);background:var(--sidebar-foreground);
-  color:#fff;font-size:13px;font-weight:500;white-space:nowrap;pointer-events:none;
-  opacity:0;transition:opacity var(--t-fast),transform var(--t-fast)}
-.nc-activity.mini .nc-activity-ill:hover::after{opacity:1;transform:translateY(-50%)}
 
 /* collapsible supporting sections: the method and the timeline are read once,
    so they fold away and leave the agreements and the saving in front */
@@ -6388,9 +6423,9 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
            Hidden until the moment; wired by ledgerWatch(). -->
       <div class="bar-scrolled" id="barScrolled" aria-hidden="true">
         <div class="bs-kpis" role="group" aria-label="Your figures, live">
-          <button type="button" class="bs-kpi" data-go=".nc-ov"><span class="bs-l" data-ld="savL"></span><b class="bs-v good"><span data-ld="sav"></span><em>kr.</em></b></button>
+          <button type="button" class="bs-kpi" data-kpi="spend" data-go=".nc-ov"><span class="bs-l" data-ld="spL"></span><b class="bs-v"><span data-ld="sp"></span><em>kr.</em></b></button>
           <i class="bs-sep" aria-hidden="true"></i>
-          <button type="button" class="bs-kpi" data-go=".nc-ov"><span class="bs-l" data-ld="spL"></span><b class="bs-v"><span data-ld="sp"></span><em>kr.</em></b></button>
+          <button type="button" class="bs-kpi" data-kpi="savings" data-go=".nc-ov"><span class="bs-l" data-ld="savL"></span><b class="bs-v good"><span data-ld="sav"></span><em>kr.</em></b></button>
         </div>
         <span class="spacer"></span>
       </div>
@@ -6623,15 +6658,22 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
              inline-size, which implies contain:layout and would turn it into the
              fixed-position containing block instead of the viewport). -->
         <aside id="activityRail" class="nc-activity" hidden>
-          <div class="nc-activity-body" id="activityBody"></div>
-          <!-- collapsed: the icons only, so the rail still reports state at 76px -->
-          <div class="act-mini" id="activityMini" aria-hidden="true"></div>
-          <!-- same collapse affordance as the left nav's #railTog, mirrored: chevron +
-               label at the foot of the rail, collapsing to an icon-width strip -->
-          <button type="button" class="railtog activity-tog" id="activityTog" aria-expanded="true" aria-label="Collapse Advantage activity">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l6 7-6 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4v16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
-            <span>Collapse</span>
-          </button>
+          <!-- the panel: one open at a time, opening to the LEFT of the strip so the
+               strip never moves and the icon that was pressed stays under the cursor -->
+          <section class="act-panel" id="activityPanel" aria-labelledby="activityTitle" inert>
+            <header class="act-panel-h">
+              <div>
+                <span class="act-eyebrow" id="activityEyebrow"></span>
+                <h3 id="activityTitle" tabindex="-1"></h3>
+              </div>
+              <button type="button" class="act-panel-x" id="activityClose" aria-label="Close panel">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              </button>
+            </header>
+            <div class="nc-activity-body" id="activityBody"></div>
+          </section>
+          <!-- the strip: rendered by renderActivityRail() so its badges stay live -->
+          <div class="act-strip" id="activityStrip" role="group" aria-label="Advantage panels"></div>
         </aside>
 
       </main>
@@ -7967,9 +8009,7 @@ $('#bannerX').addEventListener('click', () => {
   updateActivityRail();
 });
 $('#erpPill').addEventListener('click', openDataCenter);
-$('#activityTog').addEventListener('click', () => {
-  activityMini = !activityMini; persist(); updateActivityRail();
-});
+$('#activityClose').addEventListener('click', () => setActivityTab(null));
 /* the announcement banner is global, so its message has to suit the persona.
    A new customer's figures really are generated from a peer average and saying so
    up front is the honest framing; an existing customer's come from their own
@@ -8738,16 +8778,36 @@ const RAIL_ICON = {
 
 function askAssistant(q){ toggleAgent(true); agentAsk(q); }
 
-function renderActivityRail(){
-  const body = $('#activityBody'), mini = $('#activityMini');
-  if(!body) return;
-  const d = railData();
-  body.innerHTML = `
-    <span class="act-eyebrow">${d.kicker}</span>
-    <div class="act-head">
-      <h3>${d.title}</h3>
-      <span class="act-count">${d.actions.length}</span>
-    </div>
+/* ---------- the right rail's panels ----------
+   Three things the rail used to stack in one 320px column, now one per icon. A
+   single scrolling column meant the log pushed the actions out of sight on any
+   short window; as separate panels each one opens at the top of its own space.
+   Order is the order they matter in: what to do, what you asked for, what we did. */
+const ACT_PANELS = [
+  {k:'actions',  n:'Next best actions'},
+  {k:'requests', n:'Your requests'},
+  {k:'activity', n:'Recent activity'}
+];
+/* one stroke weight, one 24 grid, round caps — the same drawing rules as the
+   left nav's icons, so the two edges of the app look drawn by the same hand */
+const PANEL_ICON = {
+  actions:'<path d="M13.2 2.8L5 13.6h5.3L9.9 21.2 18.6 10.4h-5.3l-.1-7.6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  requests:'<path d="M21 3L3 10.2l7.4 3.4L13.8 21 21 3zM21 3l-10.6 10.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  activity:'<circle cx="12" cy="12" r="8.6" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.2V12l3.2 1.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  ask:'<path d="M12 5.2v13.6M5.2 12h13.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'
+};
+
+/* the heading each panel writes for itself: the eyebrow names the tool (it is the
+   only place the lit icon says what it is), the title says what it is showing now */
+function actPanelHead(k, d){
+  if(k === 'actions')  return {eyebrow:d.kicker, title:d.title};
+  if(k === 'requests') return {eyebrow:'Your requests',
+    title:REQS.length ? `${REQS.length} with your advisor` : 'Nothing sent yet'};
+  return {eyebrow:'Recent activity', title:'What we did for you'};
+}
+
+function actBodyActions(d){
+  return `
     <div class="act-nba">
       ${d.actions.map((a, i) => `
       <button type="button" class="act-card${a.lead ? ' lead' : ''}" data-act="${i}">
@@ -8758,13 +8818,14 @@ function renderActivityRail(){
         </span>
         ${ARROW}
       </button>`).join('')}
-    </div>
+    </div>`;
+}
 
-    ${REQS.length ? `
-    <div class="act-recent">
-      <h3>Your requests</h3>
-      <span class="act-count">${REQS.length}</span>
-    </div>
+function actBodyRequests(){
+  if(!REQS.length) return `
+    <p class="act-empty">Nothing sent yet. Ask your advisor about an agreement and
+      it will show its progress here.</p>`;
+  return `
     <div class="act-reqs">
       ${REQS.map(q => `
       <button type="button" class="act-req" data-req="${q.id}">
@@ -8772,12 +8833,11 @@ function renderActivityRail(){
         <span class="req-pill${q.kind === 'meeting' ? ' booked' : reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
         <span class="act-req-s">${reqSub(q)}</span>
       </button>`).join('')}
-    </div>` : ''}
+    </div>`;
+}
 
-    <div class="act-recent">
-      <h3>Recent activity</h3>
-      <button type="button" class="linkbtn" id="actAll">See all</button>
-    </div>
+function actBodyActivity(d){
+  return `
     <div class="act-log">
       ${d.log.map(l => `
       <div class="act-row">
@@ -8786,11 +8846,58 @@ function renderActivityRail(){
         ${l.v ? `<span class="act-v ${l.up ? 'up' : 'dn'}">${l.v}</span>` : ''}
       </div>`).join('')}
     </div>
-`;
+    <div class="act-recent">
+      <button type="button" class="linkbtn" id="actAll">See all activity</button>
+    </div>`;
+}
+
+/* the strip. Rebuilt whenever the data behind a badge changes — never on a tab
+   press, which only re-lights the buttons that are already there so the one under
+   the cursor keeps its focus ring. */
+function renderActivityRail(){
+  const strip = $('#activityStrip');
+  if(!strip) return;
+  const d = railData();
+  const badge = {actions:d.actions.length, requests:REQS.length, activity:0};
+
+  strip.innerHTML = ACT_PANELS.map(p => `
+    <button type="button" class="act-tab" data-panel="${p.k}" data-tip="${p.n}"
+      aria-controls="activityPanel" aria-expanded="${activityTab === p.k}" aria-label="${p.n}">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${PANEL_ICON[p.k]}</svg>
+      ${badge[p.k] ? `<b>${badge[p.k]}</b>` : ''}
+    </button>`).join('') + `
+    <span class="act-strip-div" aria-hidden="true"></span>
+    <button type="button" class="act-tab" id="activityAsk" data-tip="New question"
+      aria-label="Ask the assistant a new question">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${PANEL_ICON.ask}</svg>
+    </button>`;
+
+  strip.querySelectorAll('[data-panel]').forEach(b =>
+    b.addEventListener('click', () => setActivityTab(b.dataset.panel)));
+  /* the assistant already has a panel of its own; this is one more door to it,
+     not a fourth tab — so the rail closes behind it rather than fighting for
+     the same edge */
+  $('#activityAsk').addEventListener('click', () => { setActivityTab(null); toggleAgent(true); });
+
+  renderActivityPanel(d);
+}
+
+function renderActivityPanel(d){
+  const body = $('#activityBody');
+  if(!body || !activityTab) return;
+  d = d || railData();
+  const head = actPanelHead(activityTab, d);
+  $('#activityEyebrow').textContent = head.eyebrow;
+  $('#activityTitle').textContent = head.title;
+  body.innerHTML = activityTab === 'actions'  ? actBodyActions(d)
+                 : activityTab === 'requests' ? actBodyRequests()
+                 : actBodyActivity(d);
+  body.scrollTop = 0;
 
   $$('#activityBody .act-card').forEach(b =>
     b.addEventListener('click', () => d.actions[+b.dataset.act].go()));
-  $('#actAll').addEventListener('click', () => $('#bellBtn').click());
+  const all = $('#actAll');
+  if(all) all.addEventListener('click', () => $('#bellBtn').click());
   /* a request opens its status, on its own category's page: the sheet is where the
      answer is, the page behind it is the context for it. Already there? Just the
      sheet — re-rendering the page the user is reading would throw away their scroll. */
@@ -8800,10 +8907,15 @@ function renderActivityRail(){
     if(!(catTabAt && catTabAt.r.id === q.catId)) openCatTab(q.catId);
     openReqStatus(q.id);
   }));
+}
 
-  if(mini) mini.innerHTML = `
-    <span class="act-mini-ic" title="${d.actions.length} actions">
-      ${RAIL_ICON.info}<b>${d.actions.length}</b></span>`;
+/* press an icon to open its panel; press the lit one again to close. One control
+   for both directions is why there is no separate collapse button any more. */
+function setActivityTab(k){
+  activityTab = (k && k !== activityTab) ? k : null;
+  persist();
+  if(activityTab) renderActivityPanel();
+  updateActivityRail();
 }
 
 function updateActivityRail(){
@@ -8811,12 +8923,14 @@ function updateActivityRail(){
   if(!rail) return;
   const show = innerWidth >= 1440;
   rail.hidden = !show;
-  rail.classList.toggle('mini', activityMini);
+  const open = show && !!activityTab;
+  rail.classList.toggle('open', open);
   document.body.classList.toggle('activity-on', show);
-  document.body.classList.toggle('activity-mini', activityMini);
-  const t = $('#activityTog');
-  t.setAttribute('aria-expanded', String(!activityMini));
-  t.setAttribute('aria-label', activityMini ? 'Expand Advantage activity' : 'Collapse Advantage activity');
+  document.body.classList.toggle('activity-open', open);
+  const panel = $('#activityPanel');
+  if(panel) panel.inert = !open;
+  $$('#activityStrip [data-panel]').forEach(b =>
+    b.setAttribute('aria-expanded', String(open && b.dataset.panel === activityTab)));
   if(show){
     const bar = $('.appbar');
     /* only what lies above the bar (the banner) is measured; the bar's own height
@@ -8834,6 +8948,10 @@ function updateActivityRail(){
   }
 }
 addEventListener('resize', updateActivityRail);
+/* Escape closes the open panel, like every other overlay in the app */
+addEventListener('keydown', e => {
+  if(e.key === 'Escape' && activityTab) setActivityTab(null);
+});
 
 function ncMiniCatRow(r){
   const money = catMoney(r);
@@ -9395,10 +9513,12 @@ function dashModelPeer(){
    benchmark) rather than a previously tuned number. */
 const TUNE_N = 4;                       /* how many areas get a slider */
 let spendTune = {};                     /* {areaId: factor}; absent = actual */
-/* how the control is drawn: 'bar' (the thick rail, Figma 15624:3033) or 'line'
-   (the 2px line with the pill). Same control either way — the skin only says
-   what the eye sees. */
-let tuneSkin = 'bar';
+/* how the control is drawn: 'line' (the 2px line with the pill) or 'bar' (the
+   thick rail, Figma 15624:3033). Same control either way — the skin only says
+   what the eye sees. The line is the default: the calculator sits inside a card
+   next to the ranked lists, and a 2px rule reads as a reading rather than as a
+   second chart competing with them. */
+let tuneSkin = 'line';
 
 const tuneFactor  = id => spendTune[id] || 1;
 const tuneCount   = () => Object.keys(spendTune).length;
@@ -9783,6 +9903,10 @@ function ledgerPaint(m){
   if(sav.nf) animNum(q('sav'), sav.n, sav.nf); else q('sav').textContent = sav.v;
   q('spL').textContent = sp.l;
   if(sp.nf) animNum(q('sp'), sp.n, sp.nf); else q('sp').textContent = sp.v;
+  /* same test the cards use, so the bar and the cards can never disagree about
+     which of the two figures the user has set */
+  ld.querySelector('[data-kpi="savings"]').classList.toggle('is-tuned', cardTuned(sav));
+  ld.querySelector('[data-kpi="spend"]').classList.toggle('is-tuned', cardTuned(sp));
 }
 function ledgerWatch(root){
   if(ledgerObs){ ledgerObs.disconnect(); ledgerObs = null; }
@@ -11531,7 +11655,10 @@ let ncSize = 'medium';
 let ncPeers = 148;
 let ncErpConnected = false;
 let ncGettingStartedHidden = false;
-let activityMini = false;
+/* which right-rail panel is open, or null for closed — and closed is where it
+   starts: the rail announces itself with an icon strip, it does not seize 320px
+   of the window before anyone has asked it anything */
+let activityTab = null;
 /* saved agreements. Anette asked for a way to "select one or more that you want
    to check into or read more about" — this is that, as the card's fav toggle. */
 let savedAgr = new Set();
@@ -16708,8 +16835,8 @@ function tourScript(){
          b:'Categories on the left, the assistant’s three recommended moves on the right. Both open the detail in place, with a way back.'}
       : {sel:dashRoot() + ' .nc-bento-row', t:'What to do next',
          b:'What is still open, by category, and the assistant’s three biggest moves beside it. Opening one shows how we worked the number out before you commit to anything.'},
-    {sel:'#activityRail', t:'What just happened',
-     b:'Next best actions at the top, then a log of everything we did on your behalf. Collapse it any time from the bottom of the rail.'}
+    {sel:'#activityRail', t:'Everything we did for you',
+     b:'Three panels behind the icons on this edge: what to do next, the requests you have sent, and a log of everything we did on your behalf. Press an icon to open one, press it again to close it.'}
   ];
 }
 function tourStart(){
@@ -16806,7 +16933,7 @@ function persist(){
       req: ROWS.flatMap(r => r.agr.map((a,i) => a.req ? r.id + ':' + i : null)).filter(Boolean),
       unread: NOTES.map(n => n.unread ? 1 : 0),
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
-      newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityMini,
+      newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityTab,
       savedAgr: [...savedAgr], agrCardStyle, agrViewStyle, catViewStyle, catAgrView, catTabSkin,
       spendTune, tuneSkin,
       notifPrefs, seenTour
@@ -16842,7 +16969,7 @@ function applySaved(d){
   if(typeof d.ncPeers === 'number') ncPeers = d.ncPeers;
   if(typeof d.ncErpConnected === 'boolean') ncErpConnected = d.ncErpConnected;
   if(typeof d.ncGettingStartedHidden === 'boolean') ncGettingStartedHidden = d.ncGettingStartedHidden;
-  if(typeof d.activityMini === 'boolean') activityMini = d.activityMini;
+  if(d.activityTab === null || ACT_PANELS.some(p => p.k === d.activityTab)) activityTab = d.activityTab;
   if(Array.isArray(d.savedAgr)) savedAgr = new Set(d.savedAgr);
   if(['brand','photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
   if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
