@@ -782,6 +782,18 @@ body.ledger-on{--appbar-h:80px}
 .search svg{width:17px;height:17px;color:var(--general-muted-foreground);flex:0 0 auto}
 .search input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:var(--text-sm)}
 .search input::placeholder{color:#8f8f8f}
+/* one clear control, ours: the browser's own ✕ inside type=search is unstyled and
+   would sit beside it */
+.search input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+/* the clear the field grows on the catalogue pages, where it filters the page
+   instead of navigating: in navigator mode Enter empties it, so there was never
+   anything to clear */
+.search-x{width:26px;height:26px;display:grid;place-items:center;border:none;cursor:pointer;flex:0 0 auto;
+  border-radius:var(--rounded-full);background:var(--general-muted);
+  color:var(--general-muted-foreground);transition:color var(--t-fast),background var(--t-fast)}
+.search-x:hover{background:var(--general-secondary);color:var(--general-foreground)}
+.search-x svg{width:10px;height:10px}
+.search-x[hidden]{display:none!important}
 .search kbd{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
   padding:0 5px;border-radius:var(--rounded-xs);background:var(--surface);border:1px solid var(--sidebar-border);
   box-shadow:var(--shadow-2xs);font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground)}
@@ -1606,22 +1618,8 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .sup-tools{display:flex;flex-direction:column;gap:var(--s4)}
 /* tight group: the field and the sort segment are one row of controls */
 .sup-tools-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3)}
-.sup-search{position:relative;flex:1 1 300px;max-width:440px}
-.sup-search>svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);
-  width:16px;height:16px;color:var(--general-muted-foreground);pointer-events:none}
-.sup-search input{width:100%;height:44px;padding:0 46px 0 42px;
-  border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
-  background:var(--general-input);font-size:var(--text-sm);box-shadow:var(--shadow-xs)}
-.sup-search input::placeholder{color:var(--general-muted-foreground)}
-.sup-search input:hover{border-color:var(--card-stroke-hover)}
-.sup-search input:focus-visible{outline:2px solid var(--general-primary);outline-offset:-1px}
-.sup-search-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);
-  width:28px;height:28px;display:grid;place-items:center;border:none;cursor:pointer;
-  border-radius:var(--rounded-full);background:var(--general-muted);
-  color:var(--general-muted-foreground);transition:color var(--t-fast),background var(--t-fast)}
-.sup-search-x:hover{background:var(--general-secondary);color:var(--general-foreground)}
-.sup-search-x svg{width:11px;height:11px}
-.sup-search-x[hidden]{display:none!important}
+/* the text search left this block: on the catalogue pages the app bar's own field
+   is the page's search (pageSearchSet), so the row holds only the status pills */
 /* sort is a segmented control, not a select: two options, and the app already
    speaks .pill-opt for "one of these is on" */
 .sup-sort{display:flex;align-items:center;gap:var(--s2);flex:0 0 auto}
@@ -2108,8 +2106,8 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
   padding:var(--s8) 0}
 .cat-mast-eyebrow{display:block;margin-bottom:var(--s4);font-size:12px;font-weight:650;
   letter-spacing:.12em;text-transform:uppercase;color:var(--general-primary)}
-.cat-mast h1{font-family:var(--font-sans);font-size:clamp(34px,3.4vw,44px);font-weight:800;
-  letter-spacing:-1.6px;line-height:1.05;text-wrap:balance}
+.cat-mast h1{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-.8px;line-height:1.1;text-wrap:balance}
 .cat-mast-sub{margin-top:var(--s4);font-size:var(--text-base);line-height:1.55;
   color:var(--general-muted-foreground)}
 /* the money, given room rather than a tinted box */
@@ -3795,7 +3793,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
    icon that is already lit closes it again, so the same control both opens and
    dismisses and there is no separate collapse button to find. */
 body{--act-strip:64px;--act-panel:320px}
-.nc-activity{position:fixed;top:var(--appbar-h);right:0;bottom:0;width:var(--act-strip);
+.nc-activity{position:fixed;top:calc(var(--appbar-h) + var(--bar-page-h,0px));right:0;bottom:0;width:var(--act-strip);
   border-left:1px solid var(--hairline);background:var(--surface);z-index:5;
   display:flex;flex-direction:column;transition:top var(--t)}
 /* same trap as .page[hidden] below: this display:flex overrides the [hidden] UA
@@ -3976,8 +3974,9 @@ body.activity-on.activity-open .canvas{
      the claim, then the one figure it rests on, written as prose
      beneath, the controls on a hairline
    Suppliers fills the right-hand slot with supplier marks and Areas puts a
-   distribution spine under the text. This page keeps that column empty: a report
-   opens on a season's worth of buying, and the sentence is the whole subject. */
+   distribution spine under the text. This page fills it with the portal's bar
+   mark: a report is a series that climbs, and that is the one shape the subject
+   has before you read a single figure. */
 .rp-mast-wrap{position:relative;isolation:isolate;margin-top:var(--s4)}
 /* the ambient glow the card floats in, plus a lobe up in the top-left — the third
    corner, so no two heroes in the app read as the same asset. Both are oversized
@@ -3997,9 +3996,13 @@ body.activity-on.activity-open .canvas{
 }
 
 .rp-mast{position:relative;z-index:1;overflow:hidden;
-  display:grid;grid-template-columns:minmax(0,1fr);
-  grid-template-areas:"txt" "find" "ctl";
-  row-gap:var(--s8);align-items:start;
+  /* the mark's column is a fraction rather than shrink-to-fit, so the mark has a
+     field to sit in the middle of instead of a right edge to hang off. The
+     sentence still leads: at .42fr the text column is wide enough that neither the
+     heading nor the paragraph reaches its own max-width. */
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.42fr);
+  grid-template-areas:"txt art" "find art" "ctl ctl";
+  column-gap:var(--s12);row-gap:var(--s8);align-items:start;
   padding:var(--s8);
   border:1px solid #ffffffe8;border-radius:var(--rounded-2xl);
   background:
@@ -4056,6 +4059,20 @@ body.activity-on.activity-open .canvas{
 .rp-find b.warn{color:var(--sentiment-negative)}
 .rp-find em{font-style:normal;font-weight:650;color:var(--general-foreground)}
 
+/* ---------- the mark ----------
+   The portal's bar mark, taken from the design file as vector so it stays crisp at
+   any height. It is DECORATION and nothing else: no axis, no labels, no gridlines,
+   no tick — and aria-hidden, so a screen reader is never handed a chart that does
+   not exist. Every real figure on this page is written out in type, and on a page
+   whose whole claim is that its numbers came off actual invoices, an ascending
+   series that means nothing must not be mistakable for one that does.
+   It sits centred in its own column on both axes, which pulls it well clear of the
+   card's right edge — a mark this small hung off the corner reads as something
+   that fell there, where centred in a field of its own it reads as placed. */
+.rp-art{grid-area:art;align-self:center;
+  display:flex;align-items:center;justify-content:center;pointer-events:none}
+.rp-art svg{display:block;width:auto;height:clamp(158px,15.5vw,218px)}
+
 /* ---------- the controls ----------
    In the hero, on a hairline, in the slot Areas gives its spine. The report type
    is on the left because it rewrites everything above it; period and export are a
@@ -4081,10 +4098,20 @@ body.activity-on.activity-open .canvas{
   background:#ffffffc4;border-color:#ffffffe8}
 .rp-exp svg{width:15px;height:15px}
 @container page (max-width:900px){
-  .rp-mast{padding:var(--s6)}
+  /* the column tightens with the card: below this the mark's field would be paid
+     for out of the sentence, and the sentence is the page */
+  .rp-mast{padding:var(--s6);column-gap:var(--s8);
+    grid-template-columns:minmax(0,1fr) minmax(0,.34fr)}
+  .rp-art svg{height:clamp(120px,15vw,162px)}
   .rp-find{max-width:56ch}
 }
 @container page (max-width:700px){
+  /* one column, and the mark goes rather than stacking: it carries no information,
+     so a band of its own would be a band of nothing — and beside the sentence at
+     this width it would crush the one thing the hero is actually for. */
+  .rp-mast{grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"txt" "find" "ctl"}
+  .rp-art{display:none}
   .rp-ctl{flex-direction:column;align-items:stretch}
   .rp-ctl-r{justify-content:space-between}
   .rp-ctl .seg{justify-content:space-between}
@@ -5002,97 +5029,91 @@ body.activity-on.activity-open .canvas{
    height scale per control row, or the row reads as two rows that happen to touch */
 .sup-tools-row .agc-pill{height:44px;padding:0 var(--s5,20px)}
 
-/* ---------- the pinned line ----------
-   The catalogue is long, so the controls have to stay reachable from halfway down
-   it. But pinning the control block WHOLE put a second slab of chrome under an
-   appbar that is already 68px and already holds a search field — two bars, two
-   search fields twenty pixels apart, and 190px of furniture before the first card.
-   So the block itself goes back to being ordinary page furniture, exactly as it
-   was: no stickiness, no glass, three rows, scrolls away with the page. What pins
-   instead is ONE 56px line, and only once the real controls have left the view.
-   Three rows become one by changing what the controls ARE, not by squeezing them:
-   the status pills and the seventeen category chips collapse into two menus, and
-   the result bar's count moves to the end of the same line.
-   Structure: .sup-pin is a zero-height sticky ANCHOR, so the line costs the page
-   no layout whatsoever — the bar is absolutely positioned inside it and hangs
-   below the top edge. The negative margin is the one thing a zero-height element
-   still needs: it cancels the flex gap #viewSup would otherwise put around it. */
-.sup-pin{position:sticky;top:0;z-index:12;height:0;margin-top:calc(var(--s8) * -1)}
-/* the bar bleeds to the canvas edges, and --page-gut is the page's own gutter —
-   so the bleed is exact at every width and can never open a horizontal scrollbar */
-.sup-pin-in{position:absolute;top:0;left:calc(var(--page-gut) * -1);right:calc(var(--page-gut) * -1);
-  display:flex;align-items:center;gap:var(--s2);height:56px;padding:0 var(--page-gut);
-  background:#ffffffe6;
-  -webkit-backdrop-filter:blur(20px) saturate(165%);backdrop-filter:blur(20px) saturate(165%);
-  border-bottom:1px solid var(--hairline);
-  box-shadow:0 6px 12px -10px #0000004d;
-  visibility:hidden;opacity:0;transform:translateY(-6px);pointer-events:none;
-  transition:opacity var(--t),transform var(--t),visibility 0s linear .28s}
-.sup-pin.on .sup-pin-in{visibility:visible;opacity:1;transform:none;pointer-events:auto;
-  transition:opacity var(--t),transform var(--t),visibility 0s}
-@media (prefers-reduced-motion:reduce){
-  .sup-pin-in{transform:none;transition:opacity var(--t-fast),visibility 0s linear .15s}
-  .sup-pin.on .sup-pin-in{transform:none;transition:opacity var(--t-fast),visibility 0s}
-}
-/* one line means one scale: a 36px field and 36px pills, every one of them a step
-   down from the appbar's 42px search, so the line reads as subordinate to the bar
-   rather than as a rival to it. And the field sits hard left while the appbar's
-   search is centred — the two share a horizontal band but never a vertical axis,
-   which is what stops them reading as a stack. */
-.sup-pin-q{position:relative;flex:0 1 280px;min-width:132px}
-.sup-pin-q>svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);
-  width:15px;height:15px;color:var(--general-muted-foreground);pointer-events:none}
-.sup-pin-q input{width:100%;height:36px;padding:0 34px 0 36px;
-  border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
-  background:var(--general-input);font-size:var(--text-sm)}
-.sup-pin-q input::placeholder{color:var(--general-muted-foreground)}
-.sup-pin-q input:hover{border-color:var(--card-stroke-hover)}
-.sup-pin-q input:focus-visible{outline:2px solid var(--general-primary);outline-offset:-1px}
-.sup-pin-x{position:absolute;right:6px;top:50%;transform:translateY(-50%);
-  width:24px;height:24px;display:grid;place-items:center;border:none;cursor:pointer;
-  border-radius:var(--rounded-full);background:var(--general-muted);
-  color:var(--general-muted-foreground);transition:color var(--t-fast),background var(--t-fast)}
-.sup-pin-x:hover{background:var(--general-secondary);color:var(--general-foreground)}
-.sup-pin-x svg{width:10px;height:10px}
-.sup-pin-x[hidden]{display:none!important}
-.sup-pin-in .spacer{flex:1 1 auto}
-.sup-pin-n{flex:0 0 auto;font-size:var(--text-sm);color:var(--general-muted-foreground);white-space:nowrap}
-.sup-pin-n b{color:var(--general-foreground);font-weight:650}
-.sup-pin-sep{flex:0 0 auto;width:1px;height:16px;background:var(--hairline)}
-.sup-pin-in .sup-clear{flex:0 0 auto;white-space:nowrap}
-.sup-pin-in .sup-clear[hidden],.sup-pin-sep[hidden]{display:none!important}
-.sup-pin .agc-pill{max-width:210px}
-.sup-pin .agc-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sup-pin .agc-pill .chev{width:12px;height:12px;flex:0 0 auto;opacity:.55}
+/* ---------- the page's row of the bar ----------
+   The catalogue pages are long, and their controls sat at the top, so filtering
+   from halfway down meant scrolling back. Two answers were tried and rejected:
+   pinning the whole control block (a second slab under the bar — two bars, two
+   search fields), then a separate one-line strip pinned on the canvas (lighter,
+   still a second bar colliding with the first). This is the third, and it is the
+   move the file already makes on the Overview: the bar stops being the app's and
+   becomes the page's. Once a page's own controls have scrolled out, the bar grows
+   one row and holds them — status and category (or first letter) as two menus,
+   the live count, Clear all. One slab, one wash, one hairline. At rest nothing
+   changes: 68px, the page block where it always was.
+   The text search does not come down here at all. The bar's own field IS the
+   page's search on these two pages (pageSearchSet), so there is exactly one text
+   field in the chrome, ever — the thing the Airbnb reference actually gets right.
+   Height is a token, like --appbar-h: the fixed activity rail and the assistant
+   rail start where the bar ends, and must follow it. */
+body{--bar-page-h:0px}
+body.bar-page-on{--bar-page-h:56px}
+.bar-page{flex:0 0 auto;position:relative;z-index:6;height:var(--bar-page-h);
+  background:#f4f4f5;border-bottom:0;transition:height var(--t)}
+/* the hairline moves from the bar's foot to the row's, so the two read as one
+   object with one edge rather than a bar with a tray stuck under it */
+body.bar-page-on .bar-page{border-bottom:1px solid var(--hairline)}
+body.bar-page-on .appbar{border-bottom-color:transparent}
+/* the row's contents arrive after the slot has its height and leave before it
+   loses it: opacity does the fade, visibility keeps a hidden row out of the tab
+   order. Aligned to the page's content edge by barPageAlign(), not centred under
+   the search — the content is a left-aligned column and the filters act on it. */
+.bp-in{position:absolute;inset:0;display:flex;align-items:center;gap:var(--s2);min-width:0;
+  padding-left:var(--bp-left,var(--s6));padding-right:var(--bp-right,var(--s6));
+  visibility:hidden;opacity:0;transition:opacity var(--t-fast),visibility 0s linear .28s}
+body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-fast) .16s,visibility 0s}
+/* the row's controls are one step down from the bar's 42px field, so the row
+   reads as subordinate — but the hit area is the house floor: a 44px target
+   drawn around a 36px pill, the same trick the brand mark uses */
+.bp-in .agc-pill{position:relative;max-width:220px}
+.bp-in .agc-pill::after{content:"";position:absolute;inset:-4px;border-radius:inherit}
+.bp-in .agc-pill>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bp-in .agc-pill .chev{width:12px;height:12px;flex:0 0 auto;opacity:.55}
 /* a trigger holding a filter wears it. Not aria-pressed — these open a menu, they
    are not toggles, and the page's own chips already own that attribute */
-.sup-pin .agc-pill.is-set{background:var(--brand-ice);border-color:var(--general-border);
+.bp-in .agc-pill.is-set{background:var(--brand-ice);border-color:var(--general-border);
   color:var(--general-primary)}
-/* the count on the line is the count the result bar carries on the page — below
-   this width there is no room for both it and two named filters, and the filters
-   are the part you came back up for */
-@container page (max-width:760px){.sup-pin-n,.sup-pin-sep{display:none}}
+.bp-in .spacer{flex:1 1 auto;min-width:var(--s2)}
+.bp-n{flex:0 0 auto;font-size:var(--text-sm);color:var(--general-muted-foreground);white-space:nowrap}
+.bp-n b{color:var(--general-foreground);font-weight:650}
+.bp-sep{flex:0 0 auto;width:1px;height:16px;background:var(--hairline)}
+.bp-in .sup-clear{flex:0 0 auto;white-space:nowrap}
+.bp-in .sup-clear[hidden],.bp-sep[hidden]{display:none!important}
+/* the slot sits outside .page, so these are viewport rules on the appbar's own
+   breakpoints — a @container page rule here would never fire */
+@media(max-width:760px){.bp-n,.bp-sep{display:none}}
+@media(max-width:620px){.bp-in .agc-pill{max-width:150px}}
 
 /* ---------- the two menus ----------
-   Seventeen categories cannot be a chip rail on a 56px line, so on the pinned line
-   they are a list. The items carry the SAME data-supcat / data-supstatus contract
-   as the chips on the page, which is what lets one set of wiring drive both without
-   knowing there are two of them. */
-.sup-pop{position:relative;flex:0 0 auto}
-.sup-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:5;
-  min-width:232px;max-height:320px;overflow-y:auto;overscroll-behavior:contain;
+   Seventeen categories cannot be a chip rail on a 56px row, and a chip rail in
+   the header is eighteen tab stops between the search and the bell. So on the row
+   they are a list — two stops, opened on the chosen item. The items carry the
+   same data-supcat / data-supstatus / data-agcst / data-agcaz contract as the
+   controls on the page, and one delegated listener on the slot drives them all. */
+.bp-pop{position:relative;flex:0 1 auto;min-width:0}
+.bp-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:5;
+  min-width:232px;max-height:min(360px,calc(100vh - var(--appbar-h) - var(--bar-page-h) - var(--s6)));
+  overflow-y:auto;overscroll-behavior:contain;
   padding:var(--s2);border:1px solid var(--card-stroke);border-radius:var(--rounded-md);
   background:var(--surface);box-shadow:var(--shadow-lg)}
-.sup-menu[hidden]{display:none!important}
-.sup-menu button{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
-  width:100%;height:34px;padding:0 var(--s2) 0 var(--s3);border:none;background:none;cursor:pointer;
+.bp-menu[hidden]{display:none!important}
+.bp-menu button{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  width:100%;height:40px;padding:0 var(--s2) 0 var(--s3);border:none;background:none;cursor:pointer;
   border-radius:var(--rounded-sm);font-size:var(--text-sm);font-weight:500;
   color:var(--general-foreground);text-align:left}
-.sup-menu button:hover{background:var(--general-muted)}
-.sup-menu button:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
-.sup-menu button[aria-pressed="true"]{background:var(--brand-ice);color:var(--general-primary);font-weight:650}
-.sup-menu button svg{width:14px;height:14px;flex:0 0 auto;opacity:0}
-.sup-menu button[aria-pressed="true"] svg{opacity:1}
+.bp-menu button:hover{background:var(--general-muted)}
+.bp-menu button:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
+.bp-menu button[aria-pressed="true"]{background:var(--brand-ice);color:var(--general-primary);font-weight:650}
+.bp-menu button svg{width:14px;height:14px;flex:0 0 auto;opacity:0}
+.bp-menu button[aria-pressed="true"] svg{opacity:1}
+/* first letters are a grid, not a list: 27 rows would scroll, 27 cells scan */
+.bp-menu.is-az{display:grid;grid-template-columns:repeat(7,40px);gap:4px;min-width:0}
+.bp-menu.is-az button{justify-content:center;padding:0;font-weight:650;
+  font-size:13px;color:var(--general-muted-foreground)}
+.bp-menu.is-az button:first-child{grid-column:1 / -1;justify-content:flex-start;padding:0 var(--s3);
+  color:var(--general-foreground);font-weight:500;font-size:var(--text-sm)}
+.bp-menu.is-az button svg{display:none}
+.bp-menu.is-az button[aria-pressed="true"]{color:var(--general-primary)}
+
 
 /* ---------- the suppliers hero: a surface, not a heading on the canvas ----------
    The page used to open on a bare h1 over the same white the cards sit on, so
@@ -6404,6 +6425,9 @@ body.activity-on.activity-open .canvas{
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
         <input id="appSearch" type="search" placeholder="Search suppliers, agreements, areas…" aria-label="Search"
           autocomplete="off" role="combobox" aria-expanded="false" aria-controls="searchPop" aria-autocomplete="list">
+        <button type="button" class="search-x" id="appSearchX" aria-label="Clear search" hidden>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
         <kbd>⌘</kbd><kbd>K</kbd>
         <div class="search-pop" id="searchPop" role="listbox" aria-label="Search results" hidden></div>
       </div>
@@ -6486,6 +6510,15 @@ body.activity-on.activity-open .canvas{
       </div>
       </div>
     </header>
+
+    <!-- the page's row of the bar. Empty and 0px until a catalogue page's own
+         controls have scrolled out; then the page mounts its filters here and the
+         bar grows to hold them (barPageWatch / barPageMount). Outside <header> on
+         purpose: these are the page's controls, not the site's banner, and here
+         they land in the tab order right after the bar, before the nav rail. -->
+    <div class="bar-page" id="barPage" role="region" aria-label="Page filters" aria-hidden="true">
+      <div class="bp-in" id="bpIn"></div>
+    </div>
 
     <div class="appbody">
       <nav class="rail" id="rail" aria-label="Main">
@@ -8938,7 +8971,7 @@ function updateActivityRail(){
        figures the rail moves with it instead of sitting under a stale number */
     const top = bar ? Math.round(bar.getBoundingClientRect().top) : 0;
     if(bar && bar.getBoundingClientRect().height > 0){
-      rail.style.top = `calc(${top}px + var(--appbar-h))`;
+      rail.style.top = `calc(${top}px + var(--appbar-h) + var(--bar-page-h,0px))`;
     }else{
       /* the app is still hidden, so there is nothing to measure yet — leave the
          CSS default in place and try again once it has been laid out */
@@ -11099,21 +11132,107 @@ function supCardHTML(c){
    Two dimensions are added: status (what this supplier already is to us) and
    sort (biggest saving / A–Z), both derived from supMeta, both clearable. */
 let supQuery = '', supCat = 'all', supStatus = 'all', supSort = 'curated';
-/* the observer that raises and lowers the pinned line. Held at module scope so a
-   re-render replaces it rather than stacking a new one on top of the last —
-   renderSup rebuilds #viewSup from scratch every visit. */
-let supStickIO = null;
-/* "a click anywhere else closes the menu", wired ONCE at load rather than per
-   render: renderSup runs again on every visit to the page, and a listener added
-   there would stack a new copy each time. The triggers stop their own click from
-   reaching this, so opening a menu never immediately closes it. */
-addEventListener('click', () => supPinClose());
+/* ================= the page's row of the bar =================
+   The Overview's ledger already turns the bar into the page's once its figures
+   have scrolled out. This is the same move for the two catalogue pages, with
+   their filters: a slot under the bar (#barPage) that a page MOUNTS its controls
+   into, and that opens only while the page's own control block is above the top
+   of the canvas. Both facts are DERIVED from one IntersectionObserver on that
+   block rather than toggled at every call site — a hidden view measures 0×0, so
+   the same callback that raises the row also stands it down when the view goes
+   (openCatTab, a drill-down, a nav change), the way ledgerWatch reads `shown`.
+   A tenant is a plain object: label, html(), paint(count), pick(button), clear(),
+   and the search it lends the bar's field. */
+let barPageTenant = null, supStickIO = null, agaStickIO = null;
 
-/* the pinned line's menus, closed. `refocus` returns focus to the trigger, which
-   is what Escape owes the keyboard — a click does not, or the ring reappears on a
-   button the pointer already left. */
-function supPinClose(refocus){
-  $$('#viewSup .sup-menu').forEach(m => {
+function barPageMount(t){
+  const slot = $('#barPage'), inn = $('#bpIn');
+  if(!slot || !inn) return;
+  if(barPageTenant !== t){
+    bpMenuClose();
+    barPageTenant = t;
+    inn.innerHTML = t.html();
+    slot.setAttribute('aria-label', t.label);
+  }
+  t.paint();
+  barPageAlign();
+}
+/* only the tenant that owns the slot may open or close it: when one page hides
+   and the next shows in the same frame the two callbacks arrive in no fixed
+   order, and the leaving page must not close a row the arriving page just took */
+function barPageShow(t, on){
+  if(barPageTenant !== t) return;
+  if(document.body.classList.contains('bar-page-on') === on) return;
+  document.body.classList.toggle('bar-page-on', on);
+  $('#barPage').setAttribute('aria-hidden', String(!on));
+  if(on) barPageAlign(); else bpMenuClose();
+}
+/* the row starts on the page's content edge and ends on it — measured off .page
+   itself, so a collapsed nav rail, an open activity rail or a narrower window all
+   keep it true, the same way ledgerAlign() reads the Overview's cards */
+function barPageAlign(){
+  const slot = $('#barPage'), pg = $('.page');
+  if(!slot || !pg || pg.hidden) return;
+  const s = slot.getBoundingClientRect(), p = pg.getBoundingClientRect();
+  if(!s.width || !p.width) return;
+  const cs = getComputedStyle(pg);
+  slot.style.setProperty('--bp-left',  `${Math.max(0, Math.round(p.left + parseFloat(cs.paddingLeft) - s.left))}px`);
+  slot.style.setProperty('--bp-right', `${Math.max(0, Math.round(s.right - (p.right - parseFloat(cs.paddingRight))))}px`);
+}
+/* ---------- filtering from the row keeps you at the results ----------
+   Applying a filter from the pinned row usually SHRINKS the page: three shelves
+   become a handful of cards. Left alone, the browser clamps the scroll, the
+   control block slides back into view, and the row you just used stands down —
+   it reads as the page resetting. So while the row is open the results body
+   keeps at least a viewport of height (nothing to clamp against) and the canvas
+   is brought to the results' top, a step under the bar: the block stays just
+   above, the row stays, and what you filtered for is the first thing on screen.
+   Browse mode (no filter) is three shelves and tall on its own, so the reserved
+   height comes off again there. */
+function barPageHoldResults(bodyEl, filtering){
+  const canvas = $('#canvas');
+  if(!bodyEl || !canvas) return;
+  if(!filtering) bodyEl.style.minHeight = '';
+  if(!document.body.classList.contains('bar-page-on')) return;
+  if(filtering) bodyEl.style.minHeight = `${canvas.clientHeight}px`;
+  /* the body's top a step (--s4) under the bar; the block above it ends a further
+     --s8 up, which keeps it "scrolled past" for the observer that owns the row */
+  const target = Math.max(0, Math.round(canvas.scrollTop
+    + (bodyEl.getBoundingClientRect().top - canvas.getBoundingClientRect().top) - 16));
+  if(Math.abs(canvas.scrollTop - target) > 1) canvas.scrollTop = target;
+}
+/* one observer per page, on the page's own control block. `shown` and `above`
+   together decide everything: the field's mode, what the slot holds, whether
+   the row is open. Re-armed by each render, since the block is rebuilt. */
+function barPageWatch(el, t){
+  const canvas = $('#canvas');
+  if(!el || !canvas || !('IntersectionObserver' in window)) return null;
+  const io = new IntersectionObserver(([e]) => {
+    if(!e) return;
+    const r = e.boundingClientRect;
+    const shown = r.height > 0 && el.isConnected;
+    /* out above, not merely out below: the row is for what you have scrolled past */
+    const above = !e.isIntersecting && r.bottom <= (e.rootBounds ? e.rootBounds.top : 0) + 8;
+    if(shown){ barPageMount(t); pageSearchSet(t.search); }
+    else pageSearchClear(t.search);
+    barPageShow(t, shown && above);
+  }, {root:canvas, threshold:0});
+  io.observe(el);
+  return io;
+}
+/* the row moves with the canvas: a rail opening or closing, a window resizing */
+if('ResizeObserver' in window){
+  const cv = $('#canvas');
+  if(cv) new ResizeObserver(() => barPageAlign()).observe(cv);
+}
+
+/* ---- the menus on the row ----
+   One delegated listener on the slot, wired once at load: the slot's contents
+   are replaced per tenant, the slot itself never is. A trigger toggles its own
+   menu; an item hands itself to the tenant; "a click anywhere else closes" is
+   the document listener — the trigger stops its own click reaching it. */
+function bpMenuClose(refocus){
+  $$('#barPage .bp-menu').forEach(m => {
     if(m.hidden) return;
     m.hidden = true;
     const b = m.previousElementSibling;
@@ -11122,6 +11241,105 @@ function supPinClose(refocus){
     if(refocus) b.focus();
   });
 }
+addEventListener('click', () => bpMenuClose());
+(() => {
+  const slot = $('#barPage'); if(!slot) return;
+  slot.addEventListener('click', e => {
+    const trig = e.target.closest('.bp-pop > .agc-pill');
+    if(trig){
+      e.stopPropagation();
+      const menu = trig.nextElementSibling;
+      const wasOpen = menu && !menu.hidden;
+      bpMenuClose();
+      if(!menu || wasOpen) return;
+      menu.hidden = false;
+      trig.setAttribute('aria-expanded', 'true');
+      /* opened on the chosen row, and scrolled within the MENU only — a plain
+         focus() would scroll the canvas behind it */
+      const cur = menu.querySelector('[aria-pressed="true"]') || menu.firstElementChild;
+      if(cur){ cur.focus({preventScroll:true}); menu.scrollTop = Math.max(0, cur.offsetTop - 8); }
+      return;
+    }
+    const item = e.target.closest('.bp-menu button');
+    if(item && barPageTenant){ barPageTenant.pick(item); return; }
+    if(e.target.closest('[data-bp-clear]') && barPageTenant) barPageTenant.clear();
+  });
+  slot.addEventListener('keydown', e => {
+    if(e.key !== 'Escape' || !$('#barPage .bp-menu:not([hidden])')) return;
+    e.stopPropagation();          /* an open menu owns Escape before any drawer does */
+    bpMenuClose(true);
+  });
+})();
+
+/* the pieces every tenant's row is built from */
+const bpPop = (id, label, menuLabel, items, cls = '') => `
+  <div class="bp-pop">
+    <button type="button" class="agc-pill" id="${id}" aria-haspopup="true" aria-expanded="false"><span>${label}</span>${SUP_CHEV}</button>
+    <div class="bp-menu${cls ? ' ' + cls : ''}" role="group" aria-label="${menuLabel}" hidden>${items}</div>
+  </div>`;
+const bpTail = `
+  <span class="spacer"></span>
+  <span class="bp-n" id="bpN"></span>
+  <span class="bp-sep" id="bpSep" aria-hidden="true" hidden></span>
+  <button type="button" class="sup-clear" data-bp-clear hidden>Clear all</button>`;
+/* the tail of the row, painted: the count, and Clear all only when there is
+   something to clear. Not a live region — the page's own result bar already is
+   one, and two would announce every change twice. */
+function bpPaintTail(count, filtering){
+  const n = $('#bpN'); if(!n) return;
+  n.innerHTML = `<b>${count} agreement${count === 1 ? '' : 's'}</b>`;
+  $('#bpSep').hidden = !filtering;
+  const c = $('#barPage [data-bp-clear]'); if(c) c.hidden = !filtering;
+}
+const bpTrigger = (id, label, set) => {
+  const b = $('#' + id); if(!b) return;
+  b.firstElementChild.textContent = label;
+  b.classList.toggle('is-set', set);
+};
+
+/* ================= the bar's field becomes the page's =================
+   #appSearch is a navigator: type, pick, and it OPENS something. On the two
+   catalogue pages the same field filters what is on screen instead — the
+   navigator's popover stays shut, the placeholder says whose field it is, and
+   Escape clears. This is what lets the row below carry no field of its own:
+   one text field in the chrome, on every page. Off the page, the navigator is
+   restored with its combobox semantics exactly as they were. */
+let pageSearch = null;
+const PAGE_SEARCH_ATTRS = ['role', 'aria-expanded', 'aria-controls', 'aria-autocomplete'];
+let pageSearchDefaults = null;
+function pageSearchSet(t){
+  const inp = $('#appSearch');
+  if(!inp) return;
+  if(!pageSearchDefaults){
+    pageSearchDefaults = {placeholder: inp.placeholder};
+    PAGE_SEARCH_ATTRS.forEach(a => pageSearchDefaults[a] = inp.getAttribute(a));
+  }
+  const pop = $('#searchPop'); if(pop) pop.hidden = true;
+  if(t){
+    if(pageSearch !== t){
+      pageSearch = t;
+      inp.placeholder = t.placeholder;
+      PAGE_SEARCH_ATTRS.forEach(a => inp.removeAttribute(a));
+    }
+  }else if(pageSearch){
+    pageSearch = null;
+    inp.placeholder = pageSearchDefaults.placeholder;
+    PAGE_SEARCH_ATTRS.forEach(a => { if(pageSearchDefaults[a] != null) inp.setAttribute(a, pageSearchDefaults[a]); });
+    inp.value = '';
+  }
+  pageSearchPaint();
+}
+/* only the page that lent the field may take it back */
+function pageSearchClear(t){ if(pageSearch === t) pageSearchSet(null); }
+/* the field shows the page's query — written only when it differs, so the one
+   person it is already right for, the one typing into it, keeps their caret */
+function pageSearchPaint(){
+  const inp = $('#appSearch'); if(!inp) return;
+  const v = pageSearch ? pageSearch.read() : '';
+  if(inp.value !== v) inp.value = v;
+  const x = $('#appSearchX'); if(x) x.hidden = !(pageSearch && v);
+}
+
 
 const SUP_CATS = () => [...new Set(SUPPLIERS.flatMap(sh => sh.cards.map(c => c.cat)).filter(Boolean))];
 
@@ -11179,7 +11397,6 @@ const supFiltering = () =>
 
 function supResetAll(){
   supQuery = ''; supCat = 'all'; supStatus = 'all'; supSort = 'curated';
-  const q = $('#supQ'); if(q) q.value = '';
   renderSupBody();
 }
 
@@ -11207,32 +11424,41 @@ function renderSupBar(count){
     <button type="button" class="sup-clear" id="supClearAll">Clear all</button>`;
 }
 
-/* ---------- the pinned line ----------
-   Same state as the block on the page, said in one line: the two menu triggers
-   wear the filter they are holding instead of a generic label, so the line reads
-   as a sentence about the current view rather than as a row of empty controls.
-   Called from renderSupBody, so it can never disagree with what is on screen. */
-function renderSupPin(count){
-  const st = $('#supPinStB'); if(!st) return;
-  const cur = SUP_STATUS.find(s => s.id === supStatus) || SUP_STATUS[0];
-  st.firstElementChild.textContent = cur.l;
-  st.classList.toggle('is-set', supStatus !== 'all');
+/* ---------- the Suppliers tenant of the bar's row ----------
+   Same state as the block on the page, said in one line: the two triggers wear
+   the filter they are holding instead of a generic label, so the row reads as a
+   sentence about the current view rather than as a row of empty controls. */
+let supLastCount = 0;
+const BP_SUP = {
+  label:'Suppliers filters',
+  search:{placeholder:'Search supplier or category', read:() => supQuery,
+    write(q){ supQuery = q; renderSupBody(); }},
+  html(){
+    return bpPop('bpStB', 'All suppliers', 'Filter by status', SUP_STATUS.map(st => `
+        <button type="button" data-supstatus="${st.id}" aria-pressed="${supStatus === st.id}"><span>${st.l}</span>${SUP_TICK}</button>`).join(''))
+      + bpPop('bpCatB', 'All categories', 'Filter by category', `
+        <button type="button" data-supcat="all" aria-pressed="${supCat === 'all'}"><span>All categories</span>${SUP_TICK}</button>`
+        + SUP_CATS().map(cat => `
+        <button type="button" data-supcat="${cat}" aria-pressed="${supCat === cat}"><span>${cat}</span>${SUP_TICK}</button>`).join(''))
+      + bpTail;
+  },
+  paint(count){
+    if(count != null) supLastCount = count;
+    const cur = SUP_STATUS.find(s => s.id === supStatus) || SUP_STATUS[0];
+    bpTrigger('bpStB',  cur.l, supStatus !== 'all');
+    bpTrigger('bpCatB', supCat === 'all' ? 'All categories' : supCat, supCat !== 'all');
+    $$('#barPage [data-supcat]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.supcat === supCat)));
+    $$('#barPage [data-supstatus]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.supstatus === supStatus)));
+    bpPaintTail(supLastCount, supFiltering());
+  },
+  pick(b){
+    if(b.dataset.supcat) supCat = b.dataset.supcat;
+    if(b.dataset.supstatus) supStatus = b.dataset.supstatus;
+    renderSupBody();
+  },
+  clear(){ supResetAll(); }
+};
 
-  const cat = $('#supPinCatB');
-  cat.firstElementChild.textContent = supCat === 'all' ? 'All categories' : supCat;
-  cat.classList.toggle('is-set', supCat !== 'all');
-
-  /* only write the field when it actually differs: the person typing into it is
-     the one case where it is already right, and assigning would move their caret */
-  const q = $('#supPinQ');
-  if(q.value !== supQuery) q.value = supQuery;
-  $('#supPinQX').hidden = !supQuery;
-
-  $('#supPinN').innerHTML = `<b>${count} agreement${count === 1 ? '' : 's'}</b>`;
-  const filtering = supFiltering();
-  $('#supPinSep').hidden = !filtering;
-  $('#supPinClear').hidden = !filtering;
-}
 
 /* ---------- body ---------- */
 /* the "own" shelf wraps its grid in a grey tray (.sup-tray); the other shelves
@@ -11277,7 +11503,7 @@ function renderSupBody(){
         <button class="btn btn-secondary" id="supReset">Clear search &amp; filters</button>
       </div>`;
     const reset = $('#supReset');
-    if(reset) reset.addEventListener('click', () => { supResetAll(); $('#supQ').focus(); });
+    if(reset) reset.addEventListener('click', () => { supResetAll(); const f = $('#appSearch'); if(f) f.focus(); });
   }
 
   /* the head is never re-rendered — the search field must not lose focus — so its
@@ -11286,9 +11512,10 @@ function renderSupBody(){
     b.setAttribute('aria-pressed', String(b.dataset.supcat === supCat)));
   $$('#viewSup [data-supstatus]').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.supstatus === supStatus)));
-  $('#supQX').hidden = !supQuery;
   renderSupBar(count);
-  renderSupPin(count);
+  if(barPageTenant === BP_SUP) BP_SUP.paint(count); else supLastCount = count;
+  pageSearchPaint();
+  barPageHoldResults(body, filtering);
   wireAgrFav('#supBody');
 }
 
@@ -11320,16 +11547,7 @@ function renderSup(){
     </header>
     </div>
     <div class="sup-tools">
-        <div class="sup-tools-row">
-          <div class="sup-search">
-            ${SUP_GLASS}
-            <input id="supQ" type="text" autocomplete="off" spellcheck="false"
-              placeholder="Search supplier or category" aria-label="Search suppliers">
-            <button class="sup-search-x" id="supQX" aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-            </button>
-          </div>
-          <span class="spacer"></span>
+        <div class="sup-tools-row" role="group" aria-label="Filter by status">
           ${SUP_STATUS.map(st => `
             <button type="button" class="agc-pill" data-supstatus="${st.id}"
               aria-pressed="${supStatus === st.id}">${st.l}</button>`).join('')}
@@ -11343,36 +11561,8 @@ function renderSup(){
         </div>
         <div class="sup-bar" id="supBar" role="status" aria-live="polite"></div>
     </div>
-    <div class="sup-pin" id="supPin">
-      <div class="sup-pin-in">
-        <div class="sup-pin-q">
-          ${SUP_GLASS}
-          <input id="supPinQ" type="text" autocomplete="off" spellcheck="false"
-            placeholder="Search catalogue" aria-label="Search suppliers">
-          <button type="button" class="sup-pin-x" id="supPinQX" aria-label="Clear search" hidden>${SUP_X}</button>
-        </div>
-        <div class="sup-pop">
-          <button type="button" class="agc-pill" id="supPinStB" aria-haspopup="true" aria-expanded="false"><span>All suppliers</span>${SUP_CHEV}</button>
-          <div class="sup-menu" role="group" aria-label="Filter by status" hidden>
-            ${SUP_STATUS.map(st => `
-              <button type="button" data-supstatus="${st.id}" aria-pressed="${supStatus === st.id}"><span>${st.l}</span>${SUP_TICK}</button>`).join('')}
-          </div>
-        </div>
-        <div class="sup-pop">
-          <button type="button" class="agc-pill" id="supPinCatB" aria-haspopup="true" aria-expanded="false"><span>All categories</span>${SUP_CHEV}</button>
-          <div class="sup-menu" role="group" aria-label="Filter by category" hidden>
-            <button type="button" data-supcat="all" aria-pressed="${supCat === 'all'}"><span>All categories</span>${SUP_TICK}</button>
-            ${SUP_CATS().map(cat => `
-              <button type="button" data-supcat="${cat}" aria-pressed="${supCat === cat}"><span>${cat}</span>${SUP_TICK}</button>`).join('')}
-          </div>
-        </div>
-        <span class="spacer"></span>
-        <span class="sup-pin-n" id="supPinN"></span>
-        <span class="sup-pin-sep" id="supPinSep" aria-hidden="true" hidden></span>
-        <button type="button" class="sup-clear" id="supPinClear" hidden>Clear all</button>
-      </div>
-    </div>
     <div id="supBody"></div>`;
+
 
   /* the plus field follows the pointer: two custom properties on the hero move the
      centre of the mask disc in ::after. Coalesced into one rAF so a fast sweep
@@ -11392,76 +11582,13 @@ function renderSup(){
     });
   }
 
-  /* the pinned line exists ONLY while the real controls are off screen — while any
-     part of the block is still in view there is nothing to replace, and a duplicate
-     of a visible control is just noise. One callback at the crossing rather than a
-     handler on every scroll event, watched against #canvas, the element that
-     actually scrolls. */
+  /* the bar's row and the bar's field are both derived from where this block is
+     (barPageWatch). Re-armed here because the block is rebuilt on every visit. */
   if(supStickIO) supStickIO.disconnect();
-  const toolsEl = $('#viewSup .sup-tools'), pinEl = $('#supPin'), scroller = $('#canvas');
-  if(toolsEl && pinEl && scroller && 'IntersectionObserver' in window){
-    supStickIO = new IntersectionObserver(([e]) => {
-      /* renderSup() runs while #viewSup is still hidden on a shell boot, and a
-         display:none element measures 0×0 and reads as "not intersecting" — which
-         would raise the line over a page nobody is looking at yet. The observer
-         fires again the moment the view is revealed. */
-      const r = e.boundingClientRect;
-      if(!r.width && !r.height) return;
-      pinEl.classList.toggle('on', !e.isIntersecting);
-      if(e.isIntersecting) supPinClose();
-    }, {root:scroller, threshold:0});
-    supStickIO.observe(toolsEl);
-  }
+  supStickIO = barPageWatch($('#viewSup .sup-tools'), BP_SUP);
 
-  /* the line's search and the page's search are one field in two places: whichever
-     is on screen writes supQuery, and renderSupPin copies the value back into the
-     other one so scrolling never shows a field that disagrees with the results */
-  const pq = $('#supPinQ');
-  const pqSync = () => {
-    supQuery = pq.value;
-    const main = $('#supQ'); if(main) main.value = pq.value;
-    renderSupBody();
-  };
-  pq.addEventListener('input', pqSync);
-  pq.addEventListener('keydown', e => {
-    if(e.key === 'Escape' && pq.value){ e.stopPropagation(); pq.value = ''; pqSync(); }
-  });
-  $('#supPinQX').addEventListener('click', () => { pq.value = ''; pqSync(); pq.focus(); });
-  $('#supPinClear').addEventListener('click', () => supResetAll());
-
-  /* the two menus: one open at a time, opened on the chosen row so a long category
-     list does not start at the top when you are eight items down it */
-  $$('#viewSup .sup-pop > .agc-pill').forEach(btn => {
-    const menu = btn.nextElementSibling;
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const wasOpen = !menu.hidden;
-      supPinClose();
-      if(wasOpen) return;
-      menu.hidden = false;
-      btn.setAttribute('aria-expanded', 'true');
-      const cur = menu.querySelector('[aria-pressed="true"]') || menu.firstElementChild;
-      /* preventScroll, then scroll the MENU only: a plain focus() would scroll the
-         canvas behind it and drag the whole catalogue under the line */
-      if(cur){ cur.focus({preventScroll:true}); menu.scrollTop = Math.max(0, cur.offsetTop - 8); }
-    });
-  });
-  pinEl.addEventListener('keydown', e => {
-    if(e.key !== 'Escape') return;
-    if(!$('#viewSup .sup-menu:not([hidden])')) return;
-    e.stopPropagation();          /* an open menu owns Escape before any drawer does */
-    supPinClose(true);
-  });
-
-  const q = $('#supQ');
-  q.addEventListener('input', () => { supQuery = q.value; renderSupBody(); });
-  q.addEventListener('keydown', e => {
-    if(e.key === 'Escape' && q.value){ e.stopPropagation(); q.value = ''; supQuery = ''; renderSupBody(); }
-  });
-  $('#supQX').addEventListener('click', () => {
-    q.value = ''; supQuery = ''; renderSupBody(); q.focus();
-  });
   $$('#viewSup [data-supcat]').forEach(b => b.addEventListener('click', () => {
+
     supCat = b.dataset.supcat; renderSupBody();
   }));
   $$('#viewSup [data-supstatus]').forEach(b => b.addEventListener('click', () => {
@@ -11475,7 +11602,7 @@ function renderSup(){
     const tok = e.target.closest('[data-suptok]');
     if(!tok) return;
     const k = tok.dataset.suptok;
-    if(k === 'q'){ supQuery = ''; $('#supQ').value = ''; }
+    if(k === 'q') supQuery = '';
     if(k === 'cat')  supCat = 'all';
     if(k === 'st')   supStatus = 'all';
     if(k === 'sort') supSort = 'curated';
@@ -14284,6 +14411,9 @@ function agpBandHTML(parts, facts){
    objects should not be two cards. */
 /* filter state for the catalogue */
 let agcStatus = 'all', agcQuery = '', agcLetter = 'all';
+/* the rows renderAgreements() last drew, for the bar's row to filter by — its
+   handlers live outside the render's closure */
+let AGA_ALL = [], agaLastCount = 0;
 
 function agaCardHTML({r, a, i}){
   const rate = Math.round(a.save / a.covers * 100);
@@ -14345,23 +14475,15 @@ const AGC_STATUS = [
 ];
 
 /* ---------- the controls ----------
-   The Suppliers rhythm exactly: search and status on one row at one height, the
-   letters scrolled on a single row below it, and one live result line that both
+   The Suppliers rhythm exactly: the status pills on one row (the search is the
+   bar's own field on this page — pageSearchSet), the letters scrolled on a single
+   row below it, and one live result line that both
    counts the hits and lets every applied filter be removed where it is named.
    The head is never re-rendered — the search field must not lose focus — so the
    pills are re-synced rather than rebuilt. */
 function agaControlsHTML(all){
   return `
-    <div class="sup-tools-row">
-      <div class="sup-search">
-        ${SUP_GLASS}
-        <input id="agcQ" type="text" autocomplete="off" spellcheck="false"
-          placeholder="Search supplier or area" aria-label="Search agreements">
-        <button class="sup-search-x" id="agcQX" aria-label="Clear search" hidden>
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-      <span class="spacer"></span>
+    <div class="sup-tools-row" role="group" aria-label="Filter by status">
       ${AGC_STATUS.map(st => `
         <button type="button" class="agc-pill" data-agcst="${st.id}"
           aria-pressed="${agcStatus === st.id}">${st.l}</button>`).join('')}
@@ -14394,9 +14516,41 @@ function renderAgcBar(all, count){
     <button type="button" class="sup-clear" id="agcClearAll">Clear all</button>`;
 }
 
+/* ---------- the Agreements tenant of the bar's row ----------
+   Status as a menu, the first letter as a grid of letters (27 cells scan, 27 rows
+   would scroll), the count, Clear all. Same contract as the Suppliers tenant. */
+const BP_AGS = {
+  label:'Agreements filters',
+  search:{placeholder:'Search supplier or area', read:() => agcQuery,
+    write(q){ agcQuery = q; renderAgaBody(AGA_ALL); }},
+  html(){
+    return bpPop('bpAgStB', 'All agreements', 'Filter by status', AGC_STATUS.map(st => `
+        <button type="button" data-agcst="${st.id}" aria-pressed="${agcStatus === st.id}"><span>${st.l}</span>${SUP_TICK}</button>`).join(''))
+      + bpPop('bpAzB', 'Any first letter', 'Filter by first letter', `
+        <button type="button" data-agcaz="all" aria-pressed="${agcLetter === 'all'}"><span>Any first letter</span>${SUP_TICK}</button>`
+        + agaLetters(AGA_ALL).map(L => `
+        <button type="button" data-agcaz="${L}" aria-pressed="${agcLetter === L}"><span>${L}</span>${SUP_TICK}</button>`).join(''), 'is-az')
+      + bpTail;
+  },
+  paint(count){
+    if(count != null) agaLastCount = count;
+    const cur = AGC_STATUS.find(s => s.id === agcStatus) || AGC_STATUS[0];
+    bpTrigger('bpAgStB', cur.l, agcStatus !== 'all');
+    bpTrigger('bpAzB', agcLetter === 'all' ? 'Any first letter' : `Starts with ${agcLetter}`, agcLetter !== 'all');
+    $$('#barPage [data-agcst]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.agcst === agcStatus)));
+    $$('#barPage [data-agcaz]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.agcaz === agcLetter)));
+    bpPaintTail(agaLastCount, agcFiltering());
+  },
+  pick(b){
+    if(b.dataset.agcst) agcStatus = b.dataset.agcst;
+    if(b.dataset.agcaz) agcLetter = b.dataset.agcaz;
+    renderAgaBody(AGA_ALL);
+  },
+  clear(){ agcResetAll(AGA_ALL); }
+};
+
 function agcResetAll(all){
   agcQuery = ''; agcStatus = 'all'; agcLetter = 'all';
-  const q = $('#agcQ'); if(q) q.value = '';
   agcSyncPills(); renderAgaBody(all);
 }
 function agcSyncPills(){
@@ -14423,7 +14577,7 @@ function renderAgaBody(all){
         <button class="btn btn-secondary" id="agcReset">Clear search &amp; filters</button>
       </div>`;
   const reset = $('#agcReset');
-  if(reset) reset.addEventListener('click', () => { agcResetAll(all); $('#agcQ').focus(); });
+  if(reset) reset.addEventListener('click', () => { agcResetAll(all); const f = $('#appSearch'); if(f) f.focus(); });
   /* the card is one hit area, keyboard included — the same contract the supplier
      grid uses, since it is the same card */
   $$('#agaBody [data-agopen]').forEach(li => {
@@ -14436,9 +14590,11 @@ function renderAgaBody(all){
       if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
     });
   });
-  const x = $('#agcQX'); if(x) x.hidden = !agcQuery;
   agcSyncPills();
   renderAgcBar(all, hits.length);
+  if(barPageTenant === BP_AGS) BP_AGS.paint(hits.length); else agaLastCount = hits.length;
+  pageSearchPaint();
+  barPageHoldResults(el, agcFiltering());
 }
 
 function wireAgaControls(all){
@@ -14448,19 +14604,6 @@ function wireAgaControls(all){
   $$('#agaControls [data-agcaz]').forEach(b => b.addEventListener('click', () => {
     agcLetter = b.dataset.agcaz; renderAgaBody(all);
   }));
-  const q = $('#agcQ');
-  if(q){
-    q.addEventListener('input', () => { agcQuery = q.value; renderAgaBody(all); });
-    q.addEventListener('keydown', e => {
-      if(e.key === 'Escape' && q.value){
-        e.stopPropagation(); q.value = ''; agcQuery = ''; renderAgaBody(all);
-      }
-    });
-  }
-  const x = $('#agcQX');
-  if(x) x.addEventListener('click', () => {
-    const f = $('#agcQ'); f.value = ''; agcQuery = ''; renderAgaBody(all); f.focus();
-  });
   /* the bar's contents change on every render, so its handlers are delegated from
      the element itself, which does not */
   const bar = $('#agcBar');
@@ -14469,7 +14612,7 @@ function wireAgaControls(all){
     const tok = e.target.closest('[data-agctok]');
     if(!tok) return;
     const k = tok.dataset.agctok;
-    if(k === 'q'){ agcQuery = ''; $('#agcQ').value = ''; }
+    if(k === 'q') agcQuery = '';
     if(k === 'st') agcStatus = 'all';
     if(k === 'az') agcLetter = 'all';
     renderAgaBody(all);
@@ -14625,7 +14768,11 @@ function renderAgreements(){
     </div>`;
 
   /* ---- wiring ---- */
+  AGA_ALL = all;
   renderAgaBody(all); wireAgaControls(all);
+  /* the bar's row and the bar's field follow this block, as on Suppliers */
+  if(agaStickIO) agaStickIO.disconnect();
+  agaStickIO = barPageWatch($('#agaControls'), BP_AGS);
   const pick = v => { const [id, i] = v.split(':'); const r = ROWS.find(x => x.id === id);
     return {r, a:r.agr[+i], i:+i}; };
   $$('#viewAgreements [data-agopen]').forEach(b => b.addEventListener('click', e => {
@@ -14713,7 +14860,41 @@ const RP_IC = {
   info:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v5.5M12 7.8h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   dl:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v10.5M8 11l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 18.5h15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   warn:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 9.5v4M12 16.6h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10.3 4.4L3.1 17a2 2 0 001.7 3h14.4a2 2 0 001.7-3L13.7 4.4a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
-  idle:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 10h17" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 14.5h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-dasharray="2 3"/></svg>'
+  idle:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 10h17" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 14.5h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-dasharray="2 3"/></svg>',
+
+  /* The hero mark — the portal's three-bar illustration, lifted from the design
+     file (AdvantageNordic-Portal, node 118:10) as vector. Two changes on the way
+     in: the file's #F5F5F5 canvas rect is dropped so the mark sits ON the frosted
+     card instead of punching a grey hole in it, and the seven userSpaceOnUse
+     gradients collapse to four in objectBoundingBox units — the three bars share
+     one ramp and one edge ramp, since each ran bottom-to-top over its own box
+     anyway. The ids are namespaced: this document is one file with 130-odd inline
+     SVGs in it, and a bare "paint0_linear" would be claimed by whichever one the
+     browser resolved first. The viewBox is trimmed to the artwork's true bounds —
+     the strokes land exactly on 0 top and left — so height alone sizes it with no
+     phantom padding to centre against. */
+  mark:'<svg viewBox="0 0 171.174 250.406" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">'
+    + '<path d="M8.42865 250.406C3.77363 250.406 0 246.632 0 241.977C0 237.322 3.77364 233.548 8.42865 233.548L162.745 233.548C167.4 233.548 171.174 237.322 171.174 241.977C171.174 246.632 167.4 250.406 162.745 250.406L8.42865 250.406Z" fill="url(#rpMarkRail)"/>'
+    + '<rect x="125.121" y="0" width="35.5514" height="222.191" rx="11.5041" fill="url(#rpMarkTall)"/>'
+    + '<rect x="64.0078" y="100.853" width="35.5514" height="121.338" rx="11.5041" fill="url(#rpMarkBar)"/>'
+    + '<rect x="2.87109" y="154.059" width="35.5514" height="68.1314" rx="11.5041" fill="url(#rpMarkBar)"/>'
+    + '<rect x="124.61" y="2.3617" width="36.5763" height="217.467" rx="9.14239" stroke="url(#rpMarkEdge)" stroke-width="4.7234"/>'
+    + '<rect x="63.4984" y="103.214" width="36.5763" height="116.614" rx="9.14239" stroke="url(#rpMarkEdge)" stroke-width="4.7234"/>'
+    + '<rect x="2.3617" y="156.421" width="36.5763" height="63.408" rx="9.14239" stroke="url(#rpMarkEdge)" stroke-width="4.7234"/>'
+    + '<defs>'
+    + '<linearGradient id="rpMarkRail" x1="1" y1="0.5" x2="0" y2="0.5">'
+      + '<stop offset="0.0154" stop-color="#A6B6F3"/><stop offset="0.2338" stop-color="#051BD5"/>'
+      + '<stop offset="0.47" stop-color="#051BD5"/><stop offset="0.7047" stop-color="#0B00AB"/></linearGradient>'
+    + '<linearGradient id="rpMarkTall" x1="0.5" y1="1" x2="0.5" y2="0">'
+      + '<stop offset="0.0154" stop-color="#C2CFFF"/><stop offset="0.3494" stop-color="#051BD5"/>'
+      + '<stop offset="0.5583" stop-color="#051BD5"/><stop offset="0.7639" stop-color="#0B00AB"/></linearGradient>'
+    + '<linearGradient id="rpMarkBar" x1="0.5" y1="1" x2="0.5" y2="0">'
+      + '<stop offset="0.0154" stop-color="#A6B6F3"/><stop offset="0.2338" stop-color="#051BD5"/>'
+      + '<stop offset="0.47" stop-color="#051BD5"/><stop offset="0.7047" stop-color="#0B00AB"/></linearGradient>'
+    + '<linearGradient id="rpMarkEdge" x1="0.5" y1="1" x2="0.5" y2="0">'
+      + '<stop stop-color="#B5C5FF"/><stop offset="0.47" stop-color="#2D3ECE"/>'
+      + '<stop offset="1" stop-color="#0133FA"/></linearGradient>'
+    + '</defs></svg>'
 };
 
 /* a spend or a count is not a saving, so it does not get saveFig()'s "+".
@@ -15113,6 +15294,8 @@ function renderReports(){
         </div>
 
         <p class="rp-find${r.est ? ' est' : ''}">${r.find}</p>
+
+        <div class="rp-art" aria-hidden="true">${RP_IC.mark}</div>
 
         <div class="rp-ctl">
           <div class="seg" role="group" aria-label="Report">
@@ -17046,6 +17229,7 @@ function searchFind(q){
 function searchRender(){
   const pop = $('#searchPop'), inp = $('#appSearch');
   if(!pop || !inp) return;
+  if(pageSearch){ pop.hidden = true; return; }
   const q = inp.value;
   searchHits = searchFind(q);
   const open = !!q.trim();
@@ -17073,10 +17257,28 @@ function searchOpen(i){
 }
 (() => {
   const inp = $('#appSearch'); if(!inp) return;
-  inp.addEventListener('input', () => { searchAt = 0; searchRender(); });
-  inp.addEventListener('focus', searchRender);
-  inp.addEventListener('blur', () => setTimeout(() => { const p = $('#searchPop'); if(p) p.hidden = true; inp.setAttribute('aria-expanded', 'false'); }, 120));
+  /* on a catalogue page the field is the page's (pageSearchSet): every keystroke
+     filters the grid, the navigator stays shut, and Escape clears before it blurs */
+  inp.addEventListener('input', () => {
+    if(pageSearch){ pageSearch.write(inp.value); return; }
+    searchAt = 0; searchRender();
+  });
+  inp.addEventListener('focus', () => { if(!pageSearch) searchRender(); });
+  inp.addEventListener('blur', () => setTimeout(() => { const p = $('#searchPop'); if(p) p.hidden = true; if(!pageSearch) inp.setAttribute('aria-expanded', 'false'); }, 120));
+  const x = $('#appSearchX');
+  if(x) x.addEventListener('click', () => {
+    if(!pageSearch) return;
+    inp.value = ''; pageSearch.write(''); inp.focus();
+  });
   inp.addEventListener('keydown', e => {
+    if(pageSearch){
+      if(e.key === 'Enter') e.preventDefault();
+      else if(e.key === 'Escape'){
+        if(inp.value){ e.stopPropagation(); inp.value = ''; pageSearch.write(''); }
+        else inp.blur();
+      }
+      return;
+    }
     if(e.key === 'ArrowDown'){ e.preventDefault(); searchAt = Math.min(searchHits.length - 1, searchAt + 1); searchRender(); }
     else if(e.key === 'ArrowUp'){ e.preventDefault(); searchAt = Math.max(0, searchAt - 1); searchRender(); }
     else if(e.key === 'Enter'){ e.preventDefault(); searchOpen(searchAt); }
