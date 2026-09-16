@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&display=swap">
+  <style>
+    body{margin:0;font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-size:16px;line-height:1.5;color:#0f0f0f;background:#ffffff;-webkit-font-smoothing:antialiased}
+    a{color:#1b64dc}a:hover{color:#12459f}
+    .pill{display:inline-flex;align-items:center;gap:7px;height:44px;padding:0 20px;
+      border:1px solid #e7e7ea;border-radius:9999px;background:#ffffff;font-size:14px;font-weight:600;color:#0f0f0f}
+    .pill.on{background:#edf5ff;border-color:#bdd7ff;color:#1b64dc}
+    .pill.sm{height:32px;padding:0 12px;font-size:13px}
+    .card{display:flex;flex-direction:column;padding:20px;border:1px solid #e7e7ea;border-radius:16px;background:#ffffff}
+    .logo{width:56px;height:56px;border-radius:12px;background:#edf5ff;color:#1b64dc;
+      display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;letter-spacing:.02em}
+    .nm{margin-top:16px;font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.25}
+    .cat{margin-top:2px;font-size:14px;color:#6e6e6e}
+    .ben{margin-top:16px;padding-top:16px;border-top:1px solid #ececec}
+    .ben span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6e6e6e}
+    .ben b{display:block;margin-top:4px;font-size:18px;font-weight:700;letter-spacing:-.3px}
+    .flag{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;
+      letter-spacing:.04em;text-transform:uppercase;color:#c43b00}
+    .flag i{display:block;width:18px;height:1px;background:#c43b00}
+  </style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;width:1240px;height:720px;overflow:hidden;background:#ffffff">
+
+  <!-- appbar -->
+  <div style="display:flex;align-items:center;gap:16px;height:68px;flex:0 0 auto;padding:0 24px;
+    border-bottom:1px solid #ececec;background:linear-gradient(180deg,#ffffff 0%,#fbfbfc 42%,#f4f4f5 100%)">
+    <div style="display:flex;align-items:center;gap:8px;flex:0 0 auto">
+      <div style="width:28px;height:28px;border-radius:8px;background:#000a45"></div>
+      <div style="font-size:15px;font-weight:700;letter-spacing:-.2px">Advantage</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px;width:460px;height:42px;padding:0 12px 0 16px;
+      background:#ffffff;border:1px solid #ececec;border-radius:9999px">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="flex:0 0 auto;color:#6e6e6e">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+        <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div style="flex:1;font-size:14px;color:#6e6e6e">Search suppliers, agreements, areas…</div>
+      <div style="display:flex;gap:4px">
+        <div style="width:22px;height:22px;border-radius:6px;border:1px solid #ececec;background:#fafafa;
+          display:flex;align-items:center;justify-content:center;font-size:11px;color:#6e6e6e">&#8984;</div>
+        <div style="width:22px;height:22px;border-radius:6px;border:1px solid #ececec;background:#fafafa;
+          display:flex;align-items:center;justify-content:center;font-size:11px;color:#6e6e6e">K</div>
+      </div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="width:28px;height:28px;border-radius:9999px;background:#edf5ff;color:#1b64dc;flex:0 0 auto;
+      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">SI</div>
+  </div>
+
+  <!-- canvas -->
+  <div style="flex:1 1 auto;min-height:0;position:relative;background:#ffffff">
+
+    <!-- the docked tray, as it ships today -->
+    <div style="margin:0 20px;padding:12px;border:1px solid #e7e7ea;border-top-color:transparent;
+      border-radius:0 0 16px 16px;background:#ffffff;box-shadow:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+      display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px;flex:1 1 300px;max-width:440px;height:44px;
+          padding:0 16px;border:1px solid #e0e0e0;border-radius:9999px;background:#ffffff;box-shadow:0 1px 2px 0 #0000000d">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex:0 0 auto;color:#6e6e6e">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+            <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div style="flex:1;font-size:14px;color:#6e6e6e">Search supplier or category</div>
+        </div>
+        <div style="flex:1"></div>
+        <div style="display:flex;gap:8px">
+          <div class="pill on">All suppliers</div>
+          <div class="pill">Active for you</div>
+          <div class="pill">Not on agreement yet</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;overflow:hidden">
+        <div class="pill sm on">All categories</div>
+        <div class="pill sm">Building materials</div>
+        <div class="pill sm">Fuel &amp; transport</div>
+        <div class="pill sm">Office supplies</div>
+        <div class="pill sm">Tools &amp; workwear</div>
+        <div class="pill sm">Freight &amp; delivery</div>
+        <div class="pill sm">Machine rental</div>
+        <div class="pill sm">Telecom &amp; IT</div>
+      </div>
+      <div style="margin-top:4px;font-size:14px;color:#6e6e6e">
+        <b style="color:#0f0f0f;font-weight:650">24 agreements</b> in the catalogue, in 3 lists — the same 24 the Agreements page counts
+      </div>
+    </div>
+
+    <!-- content crushed underneath -->
+    <div style="padding:32px 32px 0;display:flex;flex-direction:column;gap:16px">
+      <div>
+        <div style="font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:#6e6e6e;
+          font-family:ui-monospace,SFMono-Regular,Menlo,monospace">In use for your company</div>
+        <div style="margin-top:4px;font-size:20px;font-weight:600;letter-spacing:-.6px">Already earning you money</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+        <div class="card"><div class="logo">TE</div><div class="nm">Telenor</div><div class="cat">Telecom &amp; IT</div></div>
+        <div class="card"><div class="logo">CI</div><div class="nm">Circle K</div><div class="cat">Fuel &amp; transport</div></div>
+        <div class="card"><div class="logo">AH</div><div class="nm">Ahlsell</div><div class="cat">Building materials</div></div>
+      </div>
+    </div>
+
+    <!-- annotations -->
+    <div style="position:absolute;left:32px;top:-56px"></div>
+    <div style="position:absolute;right:24px;top:8px;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+      <div class="flag"><i></i>two search fields, 20px apart</div>
+    </div>
+    <div style="position:absolute;left:24px;top:172px;display:flex;flex-direction:column;gap:6px">
+      <div class="flag"><i></i>188px of chrome before the first card</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

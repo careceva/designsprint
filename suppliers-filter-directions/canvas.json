@@ -1,0 +1,29 @@
+{
+  "artboards": [
+    { "file": "Today.dc.html",      "title": "Today — the problem",   "x": 0,    "y": 0,    "w": 1240, "h": 720 },
+    { "file": "Main.dc.html",       "title": "A · The bar turns",     "x": 0,    "y": 980,  "w": 1240, "h": 720 },
+    { "file": "DirectionB.dc.html", "title": "B · Filter rail",       "x": 1360, "y": 980,  "w": 1240, "h": 720 },
+    { "file": "DirectionC.dc.html", "title": "C · One line",          "x": 0,    "y": 1960, "w": 1240, "h": 720 },
+    { "file": "DirectionD.dc.html", "title": "D · Handle, not a bar", "x": 1360, "y": 1960, "w": 1240, "h": 720 }
+  ],
+  "annotations": [
+    { "id": "brief", "x": 0, "y": -150, "w": 1240,
+      "text": "Suppliers · pinned filter controls\nThe catalogue is long, so the controls have to stay reachable. But the block is three rows tall and it pins directly under a 68px app bar that already holds a search field — two bars, two search fields, ~190px of chrome before the first card.\nFour ways out, each on a different axis: merge into the bar / move off the horizontal / compress / remove." },
+
+    { "id": "today", "x": 0, "y": 735, "w": 1240,
+      "text": "What ships now. The tray docks under the bar and keeps all three rows: 44px search + status pills, the category chip rail, the result line. Two search fields sit 20px apart and the catalogue starts 190px down." },
+
+    { "id": "dir-a", "x": 0, "y": 1715, "w": 1240,
+      "text": "A · THE BAR TURNS — nothing pins. Scrolled past the hero, the app bar's own global search becomes the supplier search, and status + category collapse into two dropdowns beside it with the live count at the far end. At rest the full control block stays on the page exactly as it is today.\nWhy: one bar, ever. Zero added chrome, and the app already does this — the Overview swaps the bar's contents on scroll (.appbar.ledger-on), so the mechanic and the motion exist.\nTradeoff: global search is displaced while you're on Suppliers, and 17 categories have to live in a dropdown." },
+
+    { "id": "dir-b", "x": 1360, "y": 1715, "w": 1240,
+      "text": "B · FILTER RAIL — the filters leave the horizontal plane. A 232px sticky column holds search, status and every category as a vertical list with counts; the shelves take the rest.\nWhy: two bars cannot collide if there is only one. 17 categories become scannable instead of a chip rail you have to scroll sideways, and counts per category are finally visible.\nTradeoff: costs ~270px of width, needs a fallback under ~1100px, and it is the biggest change to the page's composition." },
+
+    { "id": "dir-c", "x": 0, "y": 2695, "w": 1240,
+      "text": "C · ONE LINE — keep pinning, but collapse three rows into one 60px line: a 280px search at the far left, status and categories as dropdowns, count and Clear at the right.\nWhy: smallest change, filters stay zero clicks away, and 190px of chrome becomes 60px. The pinned search sits hard left while the bar's search is centred, so they never stack on the same axis.\nTradeoff: still two bars. It is subordinate rather than absent, and categories cost one click." },
+
+    { "id": "dir-d", "x": 1360, "y": 2695, "w": 1240,
+      "text": "D · HANDLE, NOT A BAR — nothing pins at the top. The controls scroll away and a single pill parks at the bottom carrying the live count; pressing it raises the full control block as a sheet.\nWhy: the top of the page stays entirely content. No collision to solve because there is no second bar.\nTradeoff: filters are hidden behind a press, and the pill competes with the existing assistant FAB at bottom-right." }
+  ],
+  "launch": { "view": "canvas" }
+}

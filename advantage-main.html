@@ -21,6 +21,11 @@
   --general-foreground:#0f0f0f;
   --general-primary:#1b64dc;
   --general-primary-foreground:#fafafa;
+  /* the same blue taken down two steps. Used where two adjusted figures sit side
+     by side and both are the user's: the saving keeps the slider's blue, the
+     spend it was worked out from takes the deeper one, so the pair reads as
+     cause and effect rather than as two equal headlines. */
+  --general-primary-deep:#12459f;
   --general-secondary:#dbe9ff;
   --general-secondary-foreground:#1c1c1c;
   --general-muted:#f2f2f2;
@@ -1163,10 +1168,15 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
 .canvas{flex:1 1 auto;min-width:0;overflow:auto;background:var(--surface)}
 /* container, not viewport: opening a side panel shrinks the canvas without changing the
    window, so the card's breakpoints have to respond to the space it actually has */
+/* the gutter is a token, not a number repeated in two places: anything that wants
+   to bleed past the content column to the canvas edge (the Suppliers pinned line)
+   has to know exactly how wide the gutter currently is, or it either leaves a seam
+   or opens a horizontal scrollbar */
 .page{container-type:inline-size;container-name:page;
-  width:100%;max-width:1200px;margin:0 auto;padding:var(--s12) var(--s8) var(--s16);
+  --page-gut:var(--s8);
+  width:100%;max-width:1200px;margin:0 auto;padding:var(--s12) var(--page-gut) var(--s16);
   display:flex;flex-direction:column;gap:var(--s8)}
-@media(max-width:760px){.page{padding:var(--s8) var(--s4) var(--s12)}}
+@media(max-width:760px){.page{--page-gut:var(--s4);padding:var(--s8) var(--page-gut) var(--s12)}}
 
 /* --- site footer --- one per canvas, last child, so it follows whatever view is
    showing (inside or outside .page). Same column as .page; a hairline above,
@@ -2878,21 +2888,52 @@ body:has(#activityRail.mini:not([hidden])){--qa-right:calc(76px + var(--s6))}
 .nc-hello-txt{flex:1 1 400px;min-width:0;display:flex;flex-direction:column;gap:var(--s3)}
 .nc-hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
 .nc-hello p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:60ch}
-/* the assistant's hello: a tinted invitation rather than another grey card, so it
-   reads as the one warm, human thing on a page otherwise made of figures */
-.nc-asst{flex:0 1 380px;display:flex;align-items:center;gap:var(--s4);text-align:left;
+/* the way into the assistant. Not a greeting — a greeting says nothing and every
+   dashboard ships one. The assistant asks first, in this account's own words: a
+   real question built from these categories and figures, typed out and cycled.
+   What is on screen is what the click sends, so the composer never receives a
+   question the user did not read. */
+.nc-ask{flex:0 1 420px;display:flex;align-items:center;gap:var(--s4);text-align:left;
   padding:var(--s5,20px);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
-  background:none;cursor:pointer;
-  transition:border-color var(--t-fast),background var(--t-fast),transform .1s ease}
-.nc-asst:hover{border-color:var(--general-border);background:var(--brand-ice)}
-.nc-asst:active{transform:translateY(1px)}
-/* no chip behind the emoji — a white circle on a background-less card is invisible,
-   so the wave just sits larger on its own */
-.nc-asst-wave{flex:0 0 auto;font-size:30px;line-height:1}
-.nc-asst-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
-.nc-asst-txt b{font-size:var(--text-lg);font-weight:600;color:var(--general-foreground)}
-.nc-asst-txt>span{font-size:16px;color:var(--general-muted-foreground)}
-.nc-asst-mark{flex:0 0 auto;width:20px;height:20px;opacity:.9}
+  cursor:pointer;
+  /* the tint is anchored at the mark and fades out across the block — the warmth
+     comes from where the assistant is, rather than washing the whole card */
+  background:radial-gradient(135% 155% at 6% 0%,var(--brand-ice) 0%,#edf5ff00 58%),var(--surface);
+  transition:border-color var(--t-fast),box-shadow var(--t-fast),transform .1s ease}
+.nc-ask:hover{border-color:var(--general-border);box-shadow:0 8px 20px -14px #1b64dc80}
+.nc-ask:active{transform:translateY(1px)}
+.nc-ask:focus-visible{outline-offset:3px;border-radius:var(--rounded-lg)}
+/* top-aligned, not centred: the mark belongs beside the first line of the
+   question, and the question is the thing that changes height */
+.nc-ask-mark{align-self:flex-start;margin-top:3px;width:26px;height:26px}
+.nc-ask-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+/* two lines held open whatever the question's length: a longer one wrapping
+   mid-keystroke must not shunt the page underneath it */
+.nc-ask-q{display:flex;align-items:center;min-height:calc(2 * 1.3em);
+  font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
+  letter-spacing:-.3px;line-height:1.3;color:var(--general-foreground)}
+.nc-ask-t{display:inline}
+/* the caret trails the text inline, so it sits after the last character even
+   once the question has wrapped */
+.nc-ask-t::after{content:"";display:inline-block;width:2px;height:1.02em;
+  margin-left:3px;vertical-align:-.12em;border-radius:1px;
+  background:var(--general-primary);animation:nc-ask-blink 1.05s steps(1,end) infinite}
+/* nothing is typing, so nothing should carry a caret */
+.nc-ask.static .nc-ask-t::after{display:none}
+@keyframes nc-ask-blink{0%,45%{opacity:1}46%,100%{opacity:0}}
+.nc-ask-do{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.nc-ask-go{flex:0 0 auto;width:32px;height:32px;display:grid;place-items:center;
+  border-radius:var(--rounded-full);border:1px solid var(--sidebar-border);
+  background:var(--surface);color:var(--general-foreground);box-shadow:var(--shadow-xs);
+  transition:background-color var(--t-fast),border-color var(--t-fast),
+             color var(--t-fast),transform var(--t-fast)}
+.nc-ask:hover .nc-ask-go{background:var(--general-primary);border-color:transparent;
+  color:var(--general-primary-foreground);transform:translateX(2px)}
+.nc-ask-go svg{width:16px;height:16px}
+/* once the row has wrapped the block owns the line — a 420px column stranded on
+   its own row reads like a mistake */
+@media(max-width:860px){.nc-ask{flex:1 1 100%}}
+@media(prefers-reduced-motion:reduce){.nc-ask-t::after{animation:none}}
 /* no hairline between sections: the distance does the separating. 64px, two
    steps up from the 32px the rule used to lean on — except the category
    breakdown, which continues the invoice-savings figure above it and sits
@@ -4225,6 +4266,10 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 .nc-ov-card-v{transition:color var(--t)}
 .nc-ov-card.is-tuned .nc-ov-card-v,
 .nc-ov-card.is-tuned .nc-ov-card-v.accent{color:var(--general-primary)}
+/* spend is the figure the user set, savings is what it produced — same blue,
+   one step deeper, so the two adjusted cards are not two equal headlines */
+.nc-ov-card.is-tuned[data-card="spend"] .nc-ov-card-v,
+.nc-ov-card.is-tuned[data-card="spend"]>.nc-ov-card-x{color:var(--general-primary-deep)}
 .ov-was{display:flex;gap:var(--s2);align-items:baseline;min-width:0;
   font-size:var(--text-sm);line-height:1.45;font-variant-numeric:tabular-nums;
   visibility:hidden;opacity:0;transform:translateY(-3px)}
@@ -4921,6 +4966,98 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
 /* the status pills sat at 36px beside a 44px search field in the same row — one
    height scale per control row, or the row reads as two rows that happen to touch */
 .sup-tools-row .agc-pill{height:44px;padding:0 var(--s5,20px)}
+
+/* ---------- the pinned line ----------
+   The catalogue is long, so the controls have to stay reachable from halfway down
+   it. But pinning the control block WHOLE put a second slab of chrome under an
+   appbar that is already 68px and already holds a search field — two bars, two
+   search fields twenty pixels apart, and 190px of furniture before the first card.
+   So the block itself goes back to being ordinary page furniture, exactly as it
+   was: no stickiness, no glass, three rows, scrolls away with the page. What pins
+   instead is ONE 56px line, and only once the real controls have left the view.
+   Three rows become one by changing what the controls ARE, not by squeezing them:
+   the status pills and the seventeen category chips collapse into two menus, and
+   the result bar's count moves to the end of the same line.
+   Structure: .sup-pin is a zero-height sticky ANCHOR, so the line costs the page
+   no layout whatsoever — the bar is absolutely positioned inside it and hangs
+   below the top edge. The negative margin is the one thing a zero-height element
+   still needs: it cancels the flex gap #viewSup would otherwise put around it. */
+.sup-pin{position:sticky;top:0;z-index:12;height:0;margin-top:calc(var(--s8) * -1)}
+/* the bar bleeds to the canvas edges, and --page-gut is the page's own gutter —
+   so the bleed is exact at every width and can never open a horizontal scrollbar */
+.sup-pin-in{position:absolute;top:0;left:calc(var(--page-gut) * -1);right:calc(var(--page-gut) * -1);
+  display:flex;align-items:center;gap:var(--s2);height:56px;padding:0 var(--page-gut);
+  background:#ffffffe6;
+  -webkit-backdrop-filter:blur(20px) saturate(165%);backdrop-filter:blur(20px) saturate(165%);
+  border-bottom:1px solid var(--hairline);
+  box-shadow:0 6px 12px -10px #0000004d;
+  visibility:hidden;opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity var(--t),transform var(--t),visibility 0s linear .28s}
+.sup-pin.on .sup-pin-in{visibility:visible;opacity:1;transform:none;pointer-events:auto;
+  transition:opacity var(--t),transform var(--t),visibility 0s}
+@media (prefers-reduced-motion:reduce){
+  .sup-pin-in{transform:none;transition:opacity var(--t-fast),visibility 0s linear .15s}
+  .sup-pin.on .sup-pin-in{transform:none;transition:opacity var(--t-fast),visibility 0s}
+}
+/* one line means one scale: a 36px field and 36px pills, every one of them a step
+   down from the appbar's 42px search, so the line reads as subordinate to the bar
+   rather than as a rival to it. And the field sits hard left while the appbar's
+   search is centred — the two share a horizontal band but never a vertical axis,
+   which is what stops them reading as a stack. */
+.sup-pin-q{position:relative;flex:0 1 280px;min-width:132px}
+.sup-pin-q>svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;color:var(--general-muted-foreground);pointer-events:none}
+.sup-pin-q input{width:100%;height:36px;padding:0 34px 0 36px;
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  background:var(--general-input);font-size:var(--text-sm)}
+.sup-pin-q input::placeholder{color:var(--general-muted-foreground)}
+.sup-pin-q input:hover{border-color:var(--card-stroke-hover)}
+.sup-pin-q input:focus-visible{outline:2px solid var(--general-primary);outline-offset:-1px}
+.sup-pin-x{position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  width:24px;height:24px;display:grid;place-items:center;border:none;cursor:pointer;
+  border-radius:var(--rounded-full);background:var(--general-muted);
+  color:var(--general-muted-foreground);transition:color var(--t-fast),background var(--t-fast)}
+.sup-pin-x:hover{background:var(--general-secondary);color:var(--general-foreground)}
+.sup-pin-x svg{width:10px;height:10px}
+.sup-pin-x[hidden]{display:none!important}
+.sup-pin-in .spacer{flex:1 1 auto}
+.sup-pin-n{flex:0 0 auto;font-size:var(--text-sm);color:var(--general-muted-foreground);white-space:nowrap}
+.sup-pin-n b{color:var(--general-foreground);font-weight:650}
+.sup-pin-sep{flex:0 0 auto;width:1px;height:16px;background:var(--hairline)}
+.sup-pin-in .sup-clear{flex:0 0 auto;white-space:nowrap}
+.sup-pin-in .sup-clear[hidden],.sup-pin-sep[hidden]{display:none!important}
+.sup-pin .agc-pill{max-width:210px}
+.sup-pin .agc-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sup-pin .agc-pill .chev{width:12px;height:12px;flex:0 0 auto;opacity:.55}
+/* a trigger holding a filter wears it. Not aria-pressed — these open a menu, they
+   are not toggles, and the page's own chips already own that attribute */
+.sup-pin .agc-pill.is-set{background:var(--brand-ice);border-color:var(--general-border);
+  color:var(--general-primary)}
+/* the count on the line is the count the result bar carries on the page — below
+   this width there is no room for both it and two named filters, and the filters
+   are the part you came back up for */
+@container page (max-width:760px){.sup-pin-n,.sup-pin-sep{display:none}}
+
+/* ---------- the two menus ----------
+   Seventeen categories cannot be a chip rail on a 56px line, so on the pinned line
+   they are a list. The items carry the SAME data-supcat / data-supstatus contract
+   as the chips on the page, which is what lets one set of wiring drive both without
+   knowing there are two of them. */
+.sup-pop{position:relative;flex:0 0 auto}
+.sup-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:5;
+  min-width:232px;max-height:320px;overflow-y:auto;overscroll-behavior:contain;
+  padding:var(--s2);border:1px solid var(--card-stroke);border-radius:var(--rounded-md);
+  background:var(--surface);box-shadow:var(--shadow-lg)}
+.sup-menu[hidden]{display:none!important}
+.sup-menu button{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  width:100%;height:34px;padding:0 var(--s2) 0 var(--s3);border:none;background:none;cursor:pointer;
+  border-radius:var(--rounded-sm);font-size:var(--text-sm);font-weight:500;
+  color:var(--general-foreground);text-align:left}
+.sup-menu button:hover{background:var(--general-muted)}
+.sup-menu button:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
+.sup-menu button[aria-pressed="true"]{background:var(--brand-ice);color:var(--general-primary);font-weight:650}
+.sup-menu button svg{width:14px;height:14px;flex:0 0 auto;opacity:0}
+.sup-menu button[aria-pressed="true"] svg{opacity:1}
 
 /* ---------- the suppliers hero: a surface, not a heading on the canvas ----------
    The page used to open on a bare h1 over the same white the cards sit on, so
@@ -9035,8 +9172,16 @@ function dashModelOwn(){
     helloSub: newCount
       ? `Where your agreements stand today — ${newCount} new ${newCount === 1 ? 'one is' : 'ones are'} tagged New below.`
       : `Where your agreements stand today.`,
-    asstSub: 'Ask me anything about your agreements',
-    asstAsk: `Which of my agreements is worth the most right now?`,
+    /* what the assistant asks on her behalf. Each one is a question this account
+       can actually be asked — the area named is her own biggest open one — and
+       each lands on a different answer: what to do, where the money is, whether
+       to believe the figures, who she buys from. */
+    asks: [
+      `Where should I start?`,
+      first && `What is left in ${first.n.toLowerCase()}?`,
+      `How do you know these figures are right?`,
+      `Which suppliers am I buying from?`,
+    ].filter(Boolean),
     ovAria: 'Your year so far',
     ovTitle: tuned ? 'Savings on the spend you have set'
            : partial ? 'Savings on your invoices' : 'Savings confirmed on your own invoices',
@@ -9076,6 +9221,12 @@ function dashModelOwn(){
          in view under the number the user has set */
       /* a sum with a set spend in it is a projection and prints as its band; a
          tuned area whose live agreement is not landing leaves the sum exact */
+      {l: tuned ? 'Spend a year' : 'Spend, last 12 months', v: tuned ? spendBand(spend) : fmt(spend),
+       n:spend, nf:v => tuned ? spendBand(v) : fmt(v), u:'kr. / year', trend:'flat',
+       cap: tuned ? `Across ${rows.length} areas · ${tn} set by you`
+                  : `Across ${rows.length} purchasing categories`,
+       was:{l:'Your actual spend', n:rows.reduce((s, r) => s + (r.amtActual === undefined ? r.amt : r.amtActual), 0)},
+       spark:DASH_SPARK_SPEND, tone:'flat', amp:.45, go:'spend'},
       {l: tuned ? 'Savings a year' : 'Saved, last 12 months', v: tuned ? saveBand(saveRun) : fmt(saveRun),
        n:saveRun, nf:v => tuned ? saveBand(v) : fmt(v), u:'kr. / year',
        accent:true, trend:'',
@@ -9083,12 +9234,6 @@ function dashModelOwn(){
                   : `${fmt(Math.round(saveRun * yearFrac))} kr. landed so far this year`,
        was:{l:'Your actual savings', n:landing.reduce((s, a) => s + (a.saveActual === undefined ? a.save : a.saveActual), 0)},
        spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
-      {l: tuned ? 'Spend a year' : 'Spend, last 12 months', v: tuned ? spendBand(spend) : fmt(spend),
-       n:spend, nf:v => tuned ? spendBand(v) : fmt(v), u:'kr. / year', trend:'flat',
-       cap: tuned ? `Across ${rows.length} areas · ${tn} set by you`
-                  : `Across ${rows.length} purchasing categories`,
-       was:{l:'Your actual spend', n:rows.reduce((s, r) => s + (r.amtActual === undefined ? r.amt : r.amtActual), 0)},
-       spark:DASH_SPARK_SPEND, tone:'flat', amp:.45, go:'spend'},
       {l:'Agreements in use', v:`${reqAgs.length}`,
        n:reqAgs.length, nf:v => `${Math.round(v)}`, trend:'rise',
        cap:`${agrTotal - reqAgs.length} more are open to you`,
@@ -9152,8 +9297,15 @@ function dashModelPeer(){
     helloSub: `Your account is live. Every figure below is what ${state.industry.toLowerCase()}
       companies your size actually achieve on Advantage agreements — connect your
       data to make them exact.`,
-    asstSub: 'I can help you get started',
-    asstAsk: `I'm new here — how do I get started with Advantage?`,
+    /* his account has no invoices behind it yet, so the verification question has
+       no answer to give — what a new customer actually wants to know is where to
+       begin, what the benchmark says about his widest gap, and what this costs */
+    asks: [
+      `Where should I start?`,
+      topCat && `How much do I spend on ${topCat.n.toLowerCase()}?`,
+      `Which agreement should I activate?`,
+      `What does Advantage cost me?`,
+    ].filter(Boolean),
     gettingStarted: NC_SHOW_GETTING_STARTED && !ncGettingStartedHidden ? ncGettingStartedHTML() : '',
     ovAria: 'Your benchmark',
     ovTitle: tuned ? 'Savings on the spend you have set'
@@ -9174,12 +9326,6 @@ function dashModelPeer(){
          which is exactly what the labels then say */
       /* the same ±15% band(), rebuilt per frame so a travelling range stays a
          range instead of snapping from one pair of numbers to another */
-      {l: tuned ? 'You could save' : 'They save',
-       v:`+${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}`,
-       n:p.saved, nf:v => `+${fmtCompact(Math.round(v * .85))}–${fmtCompact(Math.round(v * 1.15))}`,
-       u:'kr. / year',
-       accent:true, trend:'', cap:'Can be more or less than this',
-       spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
       {l: tuned ? 'You buy' : 'They buy',
        v:`${fmtCompact(spendLow)}–${fmtCompact(spendHigh)}`,
        n:p.spend, nf:v => `${fmtCompact(Math.round(v * .85))}–${fmtCompact(Math.round(v * 1.15))}`,
@@ -9187,6 +9333,12 @@ function dashModelPeer(){
        trend:'flat', cap: tuned ? `Across ${ROWS.length} areas · ${tn} set by you`
                                 : `Across ${ROWS.length} purchasing categories`,
        spark:DASH_SPARK_SPEND, tone:'flat', amp:.45, go:'spend'},
+      {l: tuned ? 'You could save' : 'They save',
+       v:`+${fmtCompact(saveLow)}–${fmtCompact(saveHigh)}`,
+       n:p.saved, nf:v => `+${fmtCompact(Math.round(v * .85))}–${fmtCompact(Math.round(v * 1.15))}`,
+       u:'kr. / year',
+       accent:true, trend:'', cap:'Can be more or less than this',
+       spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
       {l:'Agreements in use', v:`${p.agrInUse}`,
        n:p.agrInUse, nf:v => `${Math.round(v)}`, trend:'rise',
        cap:`${agrTotalNow() - p.agrInUse} more are open to you`,
@@ -9931,13 +10083,16 @@ function dashHTML(m, rowId){
         <h1 class="dash-h1" tabindex="-1">${m.hello}</h1>
         <p>${m.helloSub}</p>
       </div>
-      <button type="button" class="nc-asst dash-asst">
-        <span class="nc-asst-wave" aria-hidden="true">👋</span>
-        <span class="nc-asst-txt">
-          <b>Hi, I'm your assistant</b>
-          <span>${m.asstSub}</span>
+      <!-- the question itself is written by wireAskLine, a character at a time;
+           aria-label carries the stable action plus whatever is currently asked,
+           so the changing text is never announced as it types -->
+      <button type="button" class="nc-ask dash-asst" aria-label="Ask the saving assistant">
+        <img class="sda nc-ask-mark" src="${SDA_MARK}" alt="">
+        <span class="nc-ask-body">
+          <span class="nc-ask-q" aria-hidden="true"><span class="nc-ask-t"></span></span>
+          <span class="nc-ask-do">Ask the saving assistant</span>
         </span>
-        <img class="sda nc-asst-mark" src="${SDA_MARK}" alt="">
+        <span class="nc-ask-go" aria-hidden="true">${ARROW}</span>
       </button>
     </header>
 
@@ -10089,11 +10244,62 @@ function wireDash(root, m){
     ncGettingStartedHidden = true; persist(); renderHome();
   });
   wireDashTune(root);
-  const askAbout = text => { toggleAgent(true); agentAsk(text); };
-  $(`${root} .dash-asst`).addEventListener('click', () => askAbout(m.asstAsk));
+  wireAskLine(root, m);
   wireDashAsk(root, m);
   $(`${root} .dash-method`).addEventListener('click', m.method);
   setTimeout(() => { const h = $(`${root} .dash-h1`); if(h) h.focus({preventScroll:true}); }, 50);
+}
+
+/* The hero's way into the assistant. It asks rather than greets: one of the
+   account's own questions is typed out, held, erased, and the next one takes its
+   place. The click always sends `cur` — the whole question, not the half of it
+   that happens to be on screen mid-keystroke — so what is read is what is asked.
+
+   No timer is tracked across renders: a repaint replaces the button, and every
+   tick stops the chain the moment its element leaves the document. While the
+   block is hovered, focused, or on the persona's hidden copy of the page, the
+   question simply stays where it is — something you are about to click must not
+   move, and an off-screen page has nothing to say. */
+function wireAskLine(root, m){
+  const el = $(`${root} .dash-asst`);
+  if(!el) return;
+  const t = el.querySelector('.nc-ask-t');
+  const qs = (m.asks || []).filter(Boolean);
+  if(!t || !qs.length) return;
+
+  let i = 0, cur = qs[0], held = false;
+  const label = () => el.setAttribute('aria-label', `Ask the saving assistant: ${cur}`);
+  el.addEventListener('click', () => { toggleAgent(true); agentAsk(cur); });
+  const hold = on => () => { held = on; };
+  el.addEventListener('pointerenter', hold(true));
+  el.addEventListener('pointerleave', hold(false));
+  el.addEventListener('focus', hold(true));
+  el.addEventListener('blur', hold(false));
+
+  /* one question, no caret, nothing moving — the cycle is the flourish, and the
+     question is the part that carries the meaning */
+  if(RM || qs.length === 1){
+    el.classList.add('static'); t.textContent = cur; label();
+    return;
+  }
+
+  const at = (fn, ms) => setTimeout(() => { if(el.isConnected) fn(); }, ms);
+  const paused = () => held || el.offsetParent === null;
+  /* the jitter is what separates typing from a progress bar */
+  const type = n => {
+    t.textContent = cur.slice(0, n);
+    if(n < cur.length) return at(() => type(n + 1), 18 + Math.random() * 32);
+    label(); wait();
+  };
+  const wait = () => at(() => paused() ? wait() : erase(cur.length), 3400);
+  const erase = n => {
+    t.textContent = cur.slice(0, n);
+    if(n) return at(() => erase(n - 1), 11);
+    i = (i + 1) % qs.length; cur = qs[i];
+    at(() => type(1), 240);
+  };
+  label();
+  type(1);
 }
 
 function wireDashAsk(root, m){
@@ -10668,6 +10874,9 @@ const supWallHTML = () => `
 const SUP_CHECK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const SUP_GLASS = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/><path d="M16.2 16.2L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
 const SUP_X     = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+/* the pinned line's two menu triggers, and the tick that marks the chosen row */
+const SUP_CHEV  = '<svg class="chev" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const SUP_TICK  = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 /* artwork where the matched agreement has any, the category glyph where it does
    not — initials say less about a coffee supplier than a cup does */
@@ -10766,6 +10975,29 @@ function supCardHTML(c){
    Two dimensions are added: status (what this supplier already is to us) and
    sort (biggest saving / A–Z), both derived from supMeta, both clearable. */
 let supQuery = '', supCat = 'all', supStatus = 'all', supSort = 'curated';
+/* the observer that raises and lowers the pinned line. Held at module scope so a
+   re-render replaces it rather than stacking a new one on top of the last —
+   renderSup rebuilds #viewSup from scratch every visit. */
+let supStickIO = null;
+/* "a click anywhere else closes the menu", wired ONCE at load rather than per
+   render: renderSup runs again on every visit to the page, and a listener added
+   there would stack a new copy each time. The triggers stop their own click from
+   reaching this, so opening a menu never immediately closes it. */
+addEventListener('click', () => supPinClose());
+
+/* the pinned line's menus, closed. `refocus` returns focus to the trigger, which
+   is what Escape owes the keyboard — a click does not, or the ring reappears on a
+   button the pointer already left. */
+function supPinClose(refocus){
+  $$('#viewSup .sup-menu').forEach(m => {
+    if(m.hidden) return;
+    m.hidden = true;
+    const b = m.previousElementSibling;
+    if(!b) return;
+    b.setAttribute('aria-expanded', 'false');
+    if(refocus) b.focus();
+  });
+}
 
 const SUP_CATS = () => [...new Set(SUPPLIERS.flatMap(sh => sh.cards.map(c => c.cat)).filter(Boolean))];
 
@@ -10851,6 +11083,33 @@ function renderSupBar(count){
     <button type="button" class="sup-clear" id="supClearAll">Clear all</button>`;
 }
 
+/* ---------- the pinned line ----------
+   Same state as the block on the page, said in one line: the two menu triggers
+   wear the filter they are holding instead of a generic label, so the line reads
+   as a sentence about the current view rather than as a row of empty controls.
+   Called from renderSupBody, so it can never disagree with what is on screen. */
+function renderSupPin(count){
+  const st = $('#supPinStB'); if(!st) return;
+  const cur = SUP_STATUS.find(s => s.id === supStatus) || SUP_STATUS[0];
+  st.firstElementChild.textContent = cur.l;
+  st.classList.toggle('is-set', supStatus !== 'all');
+
+  const cat = $('#supPinCatB');
+  cat.firstElementChild.textContent = supCat === 'all' ? 'All categories' : supCat;
+  cat.classList.toggle('is-set', supCat !== 'all');
+
+  /* only write the field when it actually differs: the person typing into it is
+     the one case where it is already right, and assigning would move their caret */
+  const q = $('#supPinQ');
+  if(q.value !== supQuery) q.value = supQuery;
+  $('#supPinQX').hidden = !supQuery;
+
+  $('#supPinN').innerHTML = `<b>${count} agreement${count === 1 ? '' : 's'}</b>`;
+  const filtering = supFiltering();
+  $('#supPinSep').hidden = !filtering;
+  $('#supPinClear').hidden = !filtering;
+}
+
 /* ---------- body ---------- */
 /* the "own" shelf wraps its grid in a grey tray (.sup-tray); the other shelves
    and the search results sit on the page plane as before */
@@ -10905,6 +11164,7 @@ function renderSupBody(){
     b.setAttribute('aria-pressed', String(b.dataset.supstatus === supStatus)));
   $('#supQX').hidden = !supQuery;
   renderSupBar(count);
+  renderSupPin(count);
   wireAgrFav('#supBody');
 }
 
@@ -10959,6 +11219,35 @@ function renderSup(){
         </div>
         <div class="sup-bar" id="supBar" role="status" aria-live="polite"></div>
     </div>
+    <div class="sup-pin" id="supPin">
+      <div class="sup-pin-in">
+        <div class="sup-pin-q">
+          ${SUP_GLASS}
+          <input id="supPinQ" type="text" autocomplete="off" spellcheck="false"
+            placeholder="Search catalogue" aria-label="Search suppliers">
+          <button type="button" class="sup-pin-x" id="supPinQX" aria-label="Clear search" hidden>${SUP_X}</button>
+        </div>
+        <div class="sup-pop">
+          <button type="button" class="agc-pill" id="supPinStB" aria-haspopup="true" aria-expanded="false"><span>All suppliers</span>${SUP_CHEV}</button>
+          <div class="sup-menu" role="group" aria-label="Filter by status" hidden>
+            ${SUP_STATUS.map(st => `
+              <button type="button" data-supstatus="${st.id}" aria-pressed="${supStatus === st.id}"><span>${st.l}</span>${SUP_TICK}</button>`).join('')}
+          </div>
+        </div>
+        <div class="sup-pop">
+          <button type="button" class="agc-pill" id="supPinCatB" aria-haspopup="true" aria-expanded="false"><span>All categories</span>${SUP_CHEV}</button>
+          <div class="sup-menu" role="group" aria-label="Filter by category" hidden>
+            <button type="button" data-supcat="all" aria-pressed="${supCat === 'all'}"><span>All categories</span>${SUP_TICK}</button>
+            ${SUP_CATS().map(cat => `
+              <button type="button" data-supcat="${cat}" aria-pressed="${supCat === cat}"><span>${cat}</span>${SUP_TICK}</button>`).join('')}
+          </div>
+        </div>
+        <span class="spacer"></span>
+        <span class="sup-pin-n" id="supPinN"></span>
+        <span class="sup-pin-sep" id="supPinSep" aria-hidden="true" hidden></span>
+        <button type="button" class="sup-clear" id="supPinClear" hidden>Clear all</button>
+      </div>
+    </div>
     <div id="supBody"></div>`;
 
   /* the plus field follows the pointer: two custom properties on the hero move the
@@ -10978,6 +11267,67 @@ function renderSup(){
       });
     });
   }
+
+  /* the pinned line exists ONLY while the real controls are off screen — while any
+     part of the block is still in view there is nothing to replace, and a duplicate
+     of a visible control is just noise. One callback at the crossing rather than a
+     handler on every scroll event, watched against #canvas, the element that
+     actually scrolls. */
+  if(supStickIO) supStickIO.disconnect();
+  const toolsEl = $('#viewSup .sup-tools'), pinEl = $('#supPin'), scroller = $('#canvas');
+  if(toolsEl && pinEl && scroller && 'IntersectionObserver' in window){
+    supStickIO = new IntersectionObserver(([e]) => {
+      /* renderSup() runs while #viewSup is still hidden on a shell boot, and a
+         display:none element measures 0×0 and reads as "not intersecting" — which
+         would raise the line over a page nobody is looking at yet. The observer
+         fires again the moment the view is revealed. */
+      const r = e.boundingClientRect;
+      if(!r.width && !r.height) return;
+      pinEl.classList.toggle('on', !e.isIntersecting);
+      if(e.isIntersecting) supPinClose();
+    }, {root:scroller, threshold:0});
+    supStickIO.observe(toolsEl);
+  }
+
+  /* the line's search and the page's search are one field in two places: whichever
+     is on screen writes supQuery, and renderSupPin copies the value back into the
+     other one so scrolling never shows a field that disagrees with the results */
+  const pq = $('#supPinQ');
+  const pqSync = () => {
+    supQuery = pq.value;
+    const main = $('#supQ'); if(main) main.value = pq.value;
+    renderSupBody();
+  };
+  pq.addEventListener('input', pqSync);
+  pq.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && pq.value){ e.stopPropagation(); pq.value = ''; pqSync(); }
+  });
+  $('#supPinQX').addEventListener('click', () => { pq.value = ''; pqSync(); pq.focus(); });
+  $('#supPinClear').addEventListener('click', () => supResetAll());
+
+  /* the two menus: one open at a time, opened on the chosen row so a long category
+     list does not start at the top when you are eight items down it */
+  $$('#viewSup .sup-pop > .agc-pill').forEach(btn => {
+    const menu = btn.nextElementSibling;
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const wasOpen = !menu.hidden;
+      supPinClose();
+      if(wasOpen) return;
+      menu.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+      const cur = menu.querySelector('[aria-pressed="true"]') || menu.firstElementChild;
+      /* preventScroll, then scroll the MENU only: a plain focus() would scroll the
+         canvas behind it and drag the whole catalogue under the line */
+      if(cur){ cur.focus({preventScroll:true}); menu.scrollTop = Math.max(0, cur.offsetTop - 8); }
+    });
+  });
+  pinEl.addEventListener('keydown', e => {
+    if(e.key !== 'Escape') return;
+    if(!$('#viewSup .sup-menu:not([hidden])')) return;
+    e.stopPropagation();          /* an open menu owns Escape before any drawer does */
+    supPinClose(true);
+  });
 
   const q = $('#supQ');
   q.addEventListener('input', () => { supQuery = q.value; renderSupBody(); });
@@ -15559,7 +15909,7 @@ function peekContent(type){
   if(type === 'usage') return {
     tone:'rise',
     title:'Agreements working for you',
-    lead:`<b>${card.n}</b> agreement${card.n === 1 ? ' is' : 's are'} in force, saving ${pkKr(m.cards[0].n)} a year.
+    lead:`<b>${card.n}</b> agreement${card.n === 1 ? ' is' : 's are'} in force, saving ${pkKr((m.cards.find(c => c.go === 'savings') || {n:0}).n)} a year.
       ${openAgs.length} more ${openAgs.length === 1 ? 'is' : 'are'} already priced for you, worth ${pkKr(remaining)} a year
       — activate one and it starts landing on the next invoice.`,
     listH:'In use',

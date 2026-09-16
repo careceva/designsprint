@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&display=swap">
+  <style>
+    body{margin:0;font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-size:16px;line-height:1.5;color:#0f0f0f;background:#ffffff;-webkit-font-smoothing:antialiased}
+    a{color:#1b64dc}a:hover{color:#12459f}
+    .card{display:flex;flex-direction:column;padding:20px;border:1px solid #e7e7ea;border-radius:16px;background:#ffffff}
+    .logo{width:56px;height:56px;border-radius:12px;background:#edf5ff;color:#1b64dc;
+      display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;letter-spacing:.02em}
+    .nm{margin-top:16px;font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.25}
+    .cat{margin-top:2px;font-size:14px;color:#6e6e6e}
+    .ben{margin-top:16px;padding-top:16px;border-top:1px solid #ececec}
+    .ben span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6e6e6e}
+    .ben b{display:block;margin-top:4px;font-size:18px;font-weight:700;letter-spacing:-.3px}
+    .eyebrow{font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:#6e6e6e;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  </style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;width:1240px;height:720px;overflow:hidden;background:#ffffff">
+
+  <div style="display:flex;align-items:center;gap:16px;height:68px;flex:0 0 auto;padding:0 24px;
+    border-bottom:1px solid #ececec;background:linear-gradient(180deg,#ffffff 0%,#fbfbfc 42%,#f4f4f5 100%)">
+    <div style="width:28px;height:28px;border-radius:8px;background:#000a45;flex:0 0 auto"></div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px;width:460px;height:42px;padding:0 16px;
+      background:#ffffff;border:1px solid #ececec;border-radius:9999px">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="flex:0 0 auto;color:#6e6e6e">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+        <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div style="flex:1;font-size:14px;color:#6e6e6e">Search suppliers, agreements, areas…</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="width:28px;height:28px;border-radius:9999px;background:#edf5ff;color:#1b64dc;flex:0 0 auto;
+      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">SI</div>
+  </div>
+
+  <!-- canvas: nothing pinned at the top at all -->
+  <div style="flex:1 1 auto;min-height:0;position:relative;padding:32px 32px 0;
+    display:flex;flex-direction:column;gap:32px;background:#ffffff">
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <div class="eyebrow">In use for your company</div>
+        <div style="margin-top:4px;font-size:20px;font-weight:600;letter-spacing:-.6px">Already earning you money</div>
+        <div style="margin-top:4px;font-size:14px;color:#6e6e6e">Three agreements matched against your own invoices.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+        <div class="card">
+          <div class="logo">TE</div><div class="nm">Telenor</div><div class="cat">Telecom &amp; IT</div>
+          <div class="ben"><span>Your benefit</span><b>18 400 kr. / year</b></div>
+        </div>
+        <div class="card">
+          <div class="logo">CI</div><div class="nm">Circle K</div><div class="cat">Fuel &amp; transport</div>
+          <div class="ben"><span>Your benefit</span><b>31 900 kr. / year</b></div>
+        </div>
+        <div class="card">
+          <div class="logo">AH</div><div class="nm">Ahlsell</div><div class="cat">Building materials</div>
+          <div class="ben"><span>Your benefit</span><b>52 100 kr. / year</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <div class="eyebrow">Worth the most to you</div>
+        <div style="margin-top:4px;font-size:20px;font-weight:600;letter-spacing:-.6px">Not on agreement yet</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+        <div class="card" style="height:150px"><div class="logo">PR</div><div class="nm">Preem</div><div class="cat">Fuel &amp; transport</div></div>
+        <div class="card" style="height:150px"><div class="logo">RA</div><div class="nm">Ramirent</div><div class="cat">Machine rental</div></div>
+        <div class="card" style="height:150px"><div class="logo">ST</div><div class="nm">Staples</div><div class="cat">Office supplies</div></div>
+      </div>
+    </div>
+
+    <!-- the handle: the only pinned thing on the page -->
+    <div style="position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center;pointer-events:none">
+      <div style="display:flex;align-items:center;gap:14px;height:48px;padding:0 10px 0 20px;
+        border:1px solid #e7e7ea;border-radius:9999px;background:#ffffffeb;
+        box-shadow:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a">
+        <div style="display:flex;align-items:center;gap:9px;font-size:14px;font-weight:650;color:#0f0f0f">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:#1b64dc">
+            <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          Filter catalogue
+        </div>
+        <div style="width:1px;height:20px;background:#ececec"></div>
+        <div style="font-size:14px;color:#6e6e6e"><b style="color:#0f0f0f;font-weight:650">24</b> agreements</div>
+        <div style="width:28px;height:28px;border-radius:9999px;background:#f2f2f2;
+          display:flex;align-items:center;justify-content:center">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="color:#6e6e6e">
+            <path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
