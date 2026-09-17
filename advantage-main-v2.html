@@ -4243,6 +4243,11 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 .rp-tbl tbody th,.rp-tbl tfoot th{font-family:var(--font-body);font-size:15px;
   font-weight:600;text-transform:none;letter-spacing:normal;
   color:var(--general-foreground)}
+/* the line table carries three text columns among its figures; they read left,
+   in body figures, like the item name beside them */
+.rp-tbl .txt{text-align:left;font-variant-numeric:normal;font-weight:400;
+  color:var(--general-muted-foreground)}
+.rp-lines td:first-child,.rp-lines th:first-child{min-width:190px}
 .rp-tbl td:not(:first-child),.rp-tbl th:not(:first-child){text-align:right;
   font-variant-numeric:tabular-nums}
 .rp-tbl td:first-child,.rp-tbl th:first-child{white-space:normal;min-width:150px}
@@ -4871,7 +4876,7 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 .ar-card.flash{animation:arFlash 1.4s ease-out}
 @media (prefers-reduced-motion:reduce){
   .ar-spine-bar i{animation:none;transform:none}
-  .ar-card.flash{animation:none;border-color:var(--general-primary)}
+  .ar-card.flash{animation:none;box-shadow:0 0 0 3px rgb(27 100 220/.38)}
 }
 
 /* ---------- section heading ---------- */
@@ -4959,36 +4964,32 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 @container page (max-width:1040px){.ar-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @container page (max-width:660px){.ar-list{grid-template-columns:minmax(0,1fr)}}
 
-.ar-card{position:relative;display:flex;flex-direction:column;width:100%;text-align:left;
-  cursor:pointer;padding:var(--s6);
-  border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
+.ar-card{position:relative;display:flex;flex-direction:column;gap:var(--s2);width:100%;
+  text-align:left;cursor:pointer;padding:var(--s4);
+  border:0;border-radius:var(--rounded-lg);
   background:var(--surface);
-  --tint:rgb(var(--b,33 112 237)/.05);--tint-edge:rgb(var(--b,33 112 237)/.22);
-  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
-.ar-card:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
+  --tint:rgb(var(--b,33 112 237)/.14);
+  transition:box-shadow var(--t-fast)}
+/* no box at rest: the content sits on the canvas. Hover draws a 4px band of the
+   area's tint around it, the way a video card lights up in a feed — the band is
+   the frame, so nothing else needs one */
+.ar-card:hover{box-shadow:0 0 0 4px var(--tint)}
 .ar-card:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
-.ar-card .ar-ic{width:56px;height:56px;display:grid;place-items:center;
-  border-radius:var(--rounded-md);background:rgb(var(--b,33 112 237)/.09);
-  color:rgb(var(--b,33 112 237));
-  box-shadow:inset 0 0 0 1px rgb(var(--b,33 112 237)/.14)}
-.ar-card .ar-ic svg{width:26px;height:26px}
-/* the status badge, top-right, aligned to the top edge of the tile */
-.ar-card .aga-st{position:absolute;top:var(--s6);right:var(--s6);
-  padding:4px 10px;border-radius:var(--rounded-full);
-  font-size:12px;font-weight:650;white-space:nowrap;
-  background:var(--general-muted);color:var(--general-muted-foreground)}
-.ar-card .aga-st.on{background:#d9f2ef;color:var(--sentiment-positive)}
-.ar-card .aga-n{margin-top:var(--s6);font-family:var(--font-sans);font-size:var(--text-lg);
+/* icon and name on one line: a bare glyph in the area's ink, no tile behind it */
+.ar-card-hd{display:flex;align-items:center;gap:var(--s3);min-width:0}
+.ar-card .ar-ic{flex:0 0 auto;width:24px;height:24px;display:grid;place-items:center;
+  color:rgb(var(--b,33 112 237))}
+.ar-card .ar-ic svg{width:24px;height:24px}
+.ar-card .aga-n{margin-top:0;font-family:var(--font-sans);font-size:var(--text-lg);
   font-weight:700;letter-spacing:-.3px;line-height:1.25}
 /* the recommendation, said once and quietly: the argument for it is the row above,
    this is only the cross-reference back to it */
-.ar-rec-pip{display:inline-flex;align-items:center;gap:5px;margin-top:var(--s2);
+.ar-rec-pip{display:inline-flex;align-items:center;gap:5px;
   font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
   color:var(--general-primary)}
 .ar-rec-pip::before{content:"";width:5px;height:5px;border-radius:var(--rounded-full);
   background:var(--general-primary)}
-.ar-meta{margin-top:var(--s2);font-size:var(--text-sm);line-height:1.5;
+.ar-meta{font-size:var(--text-sm);line-height:1.5;
   color:var(--general-muted-foreground)}
 .ar-meta b{font-weight:700;color:var(--general-foreground)}
 .ar-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s4);
@@ -6244,48 +6245,45 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 .pk-checks i{flex:0 0 auto;width:20px;height:20px;margin-top:2px;border-radius:var(--rounded-full);
   display:grid;place-items:center;background:rgb(var(--pk-tone-rgb)/.14);color:var(--pk-tone)}
 .pk-checks i svg{width:11px;height:11px}
-/* artwork band: the animated demo on the left, one stat and one small card on the
-   right. Both grounds are the same quiet grey; the tone comes in as a wash from
-   one corner, as the page heroes do. */
-.pk-art{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:var(--s3);margin-top:var(--s12)}
-.pk-fig{position:relative;overflow:hidden;min-height:500px;border-radius:var(--rounded-md);
-  background:#f6f7f9;
-  background-image:radial-gradient(120% 90% at 0% 100%,rgb(var(--pk-tone-rgb)/.22),transparent 62%)}
-/* five switch rows are taller than one slider row: the agreements demo gets more room */
-.pk-fig:has(.pkd-agr){min-height:540px}
-.pk-side{display:grid;grid-template-rows:auto minmax(0,1fr);gap:var(--s3);min-width:0}
-.pk-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  gap:var(--s3);min-height:232px;padding:var(--s12) var(--s8);border-radius:var(--rounded-md);background:#f6f7f9}
-.pk-stat b{display:flex;align-items:baseline;gap:6px;font-size:var(--text-5xl);font-weight:800;
-  letter-spacing:-2px;line-height:1;color:var(--pk-tone);font-variant-numeric:tabular-nums}
-.pk-stat b small{font-size:var(--text-xl);font-weight:600;letter-spacing:-.4px;color:var(--general-muted-foreground)}
-.pk-stat span{font-size:var(--text-sm);line-height:1.45;color:var(--general-foreground);max-width:28ch;text-wrap:balance}
-.pk-mini{position:relative;overflow:hidden;display:flex;align-items:flex-end;
-  padding:var(--s8) var(--s8) 0;border-radius:var(--rounded-md);background:#f6f7f9;
-  background-image:radial-gradient(110% 80% at 100% 100%,rgb(var(--pk-tone-rgb)/.2),transparent 62%)}
-.pk-mini-card{width:100%;padding:var(--s5,20px) var(--s6) var(--s6);
-  background:var(--surface);border-radius:var(--rounded-sm) var(--rounded-sm) 0 0;
-  box-shadow:var(--shadow-lg),0 0 0 1px #0000000a}
-.pk-mini-h{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--s4)}
-.pk-bars{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
-.pk-bars li{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n v" "b b";
-  column-gap:var(--s3);row-gap:6px;font-size:var(--text-xs)}
-.pk-bars li span{grid-area:n;color:var(--general-muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pk-bars li b{grid-area:v;font-weight:600;font-variant-numeric:tabular-nums}
-.pk-bars li i{grid-area:b;position:relative;height:6px;border-radius:3px;background:var(--general-muted);overflow:hidden}
-.pk-bars li i::after{content:"";position:absolute;inset:0;width:var(--w,0%);border-radius:3px;background:var(--pk-tone)}
-/* the three things the detailed page does, under the artwork */
-.pk-ben{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s8);margin-top:var(--s12)}
-.pk-ben i{display:grid;place-items:center;width:40px;height:40px;
-  border:1px solid var(--card-stroke);border-radius:var(--rounded-sm);background:var(--surface);color:var(--pk-tone)}
-.pk-ben i svg{width:20px;height:20px}
-.pk-ben p{margin-top:var(--s6);font-size:var(--text-base);line-height:1.55;text-wrap:pretty}
+/* ---- the exact figures ----
+   The animated demo, the single stat and the three benefit tiles that used to
+   fill the lower half are gone. What a reader wants from a summary card is the
+   other two figures beside the one they pressed, and the way to the lines behind
+   all three — so that is what the band is now.
+
+   One card, three columns divided by hairlines rather than three boxes: the
+   figures belong to one statement, and a rule says that where a border would
+   have made three separate claims. */
+.pk-figs{margin-top:var(--s12)}
+.pk-figs-h{display:block;font-size:var(--text-xs);font-weight:600;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:var(--s4)}
+.pk-figs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:hidden;
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface)}
+.pk-figs-c{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s6);
+  border-left:1px solid var(--hairline)}
+.pk-figs-c:first-child{border-left:none}
+/* the figure the reader actually pressed, named quietly: a tinted ground, not a
+   second border — the card already has all the edges it needs */
+.pk-figs-c.is-on{background:var(--brand-ice)}
+.pk-figs-l{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.pk-figs-v{display:flex;flex-wrap:wrap;align-items:baseline;
+  font-size:var(--text-3xl);font-weight:800;letter-spacing:-.8px;line-height:1.1;
+  color:var(--general-foreground);font-variant-numeric:tabular-nums}
+.pk-figs-v small{margin-left:5px;font-size:var(--text-sm);font-weight:600;
+  letter-spacing:0;color:var(--general-muted-foreground)}
+/* green only where the money has landed on an invoice; blue for the bonus, which
+   is exact but not yet paid — the same rule the Overview cards follow */
+.pk-figs-c.t-good .pk-figs-v{color:var(--sentiment-positive)}
+.pk-figs-c.t-rise .pk-figs-v{color:var(--general-primary)}
+.pk-figs-s{font-size:var(--text-xs);line-height:1.5;color:var(--general-muted-foreground);text-wrap:pretty}
+.pk-figs-foot{margin-top:var(--s4);font-size:var(--text-sm);line-height:1.55;
+  color:var(--general-muted-foreground);max-width:78ch;text-wrap:pretty}
 @media(max-width:1000px){
   .pk-b{padding:var(--s12) var(--s8) var(--s8)}
   .pk-head{grid-template-columns:1fr;gap:var(--s8);padding-right:var(--s12)}
-  .pk-art,.pk-ben{grid-template-columns:1fr}
-  .pk-fig{min-height:440px}
-  .pk-fig:has(.pkd-agr){min-height:540px}
+  .pk-figs-grid{grid-template-columns:1fr}
+  .pk-figs-c{border-left:none;border-top:1px solid var(--hairline)}
+  .pk-figs-c:first-child{border-top:none}
 }
 @media(max-width:600px){
   .pk{width:calc(100vw - 16px);max-height:calc(100vh - 16px)}
@@ -6294,104 +6292,7 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
   .pk-x{top:var(--s4);right:var(--s4)}
 }
 
-/* ---------- the demo inside .pk-fig ----------
-   Two of the app's own components, redrawn small: the summary tile from the top of
-   the Overview and one row of the spend sliders beneath it. The knob glides through
-   the row's real stops and both figures follow — the point being that the tile is
-   not a fixed fact but an answer to "what if we buy more". */
-.pkd{position:absolute;inset:0;font-size:var(--text-sm);
-  --pk-ease:cubic-bezier(.22,.9,.24,1);--pk-t:.7s}
-.pkd-tile{position:absolute;top:var(--s8);left:var(--s8);width:min(300px,calc(100% - var(--s16)));
-  display:flex;flex-direction:column;gap:var(--s1);padding:var(--s5,20px) var(--s6);
-  background:var(--surface);border-radius:var(--rounded-sm);box-shadow:var(--shadow-lg),0 0 0 1px #0000000a}
-.pkd-tile-l{font-size:var(--text-xs);color:var(--general-muted-foreground)}
-.pkd-tile-v{display:flex;align-items:baseline;gap:4px;font-size:var(--text-3xl);font-weight:800;
-  letter-spacing:-.8px;line-height:1.1;color:var(--general-foreground);font-variant-numeric:tabular-nums}
-.pkd-tile-v.good{color:var(--sentiment-positive)}
-.pkd-tile-v small{font-size:var(--text-xs);font-weight:600;letter-spacing:0;color:var(--general-muted-foreground)}
-.pkd-pill{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin-top:var(--s2);
-  padding:3px 9px;border-radius:var(--rounded-full);background:var(--brand-ice);color:var(--general-primary);
-  font-size:var(--text-xs);font-weight:600;opacity:0;transform:translateY(4px);
-  transition:opacity var(--t),transform var(--t)}
-.pkd-pill.is-on{opacity:1;transform:none}
-.pkd-pill i{width:8px;height:8px;border-radius:var(--rounded-full);background:var(--general-primary)}
-.pkd-row{position:absolute;left:var(--s16);right:var(--s8);bottom:var(--s12);
-  padding:var(--s5,20px) var(--s6) var(--s6);
-  background:var(--surface);border-radius:var(--rounded-sm);box-shadow:var(--shadow-lg),0 0 0 1px #0000000a}
-.pkd-row-h{display:block;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);margin-bottom:var(--s3)}
-.pkd-tr{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name save" "rail rail";
-  column-gap:var(--s4);row-gap:var(--s2);align-items:center}
-.pkd-n{grid-area:name;font-weight:600}
-.pkd-save{grid-area:save;display:flex;align-items:baseline;gap:5px;font-weight:700;
-  color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
-.pkd-save em{font-style:normal;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
-/* the demo rail is the page's rail, drawn again: a 2px grey line, the actual in
-   ink, the added spend in blue, and the white pill carrying the figure at the end
-   of the line. Only the timing is the demo's own. */
-.pkd-rail{grid-area:rail;position:relative;height:46px;margin-top:var(--s2);--knob:20px}
-.pkd-rail::before{content:"";position:absolute;left:0;right:0;top:calc(var(--knob) / 2 - 1px);height:2px;
-  border-radius:1px;background:#e3e3e3}
-.pkd-fill,.pkd-add{position:absolute;top:calc(var(--knob) / 2 - 1px);height:2px;border-radius:1px;
-  transition:width var(--pk-t) var(--pk-ease),left var(--pk-t) var(--pk-ease)}
-.pkd-fill{left:0;width:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p0,0));
-  background:var(--general-foreground)}
-.pkd-add{left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p0,0));
-  width:calc((100% - var(--knob)) * (var(--p,0) - var(--p0,0)));border-radius:0 1px 1px 0;
-  background:var(--general-primary)}
-.pkd-knob{display:none}
-.pkd-val{position:absolute;left:min(calc((100% - var(--knob)) * var(--p,0)),calc(100% - 96px));
-  top:calc(var(--knob) / 2 - 11px);height:22px;box-sizing:border-box;
-  display:flex;align-items:center;padding:0 var(--s2);white-space:nowrap;
-  border-radius:var(--rounded-full);background:var(--surface);box-shadow:0 1px 2px rgb(10 42 92/.32);
-  font-size:var(--text-xs);font-weight:500;letter-spacing:-.1px;font-variant-numeric:tabular-nums;
-  color:var(--general-foreground);
-  transition:left var(--pk-t) var(--pk-ease)}
-.pkd-val em{font-style:normal;margin-left:.25em}
-/* the bar skin, for the demo: same track, knob and in-bar figure as the page */
-.pkd-rail.pkd-bar{--knob:16px}
-.pkd-rail.pkd-bar::before{top:15px;height:16px;border-radius:var(--rounded-full)}
-.pkd-rail.pkd-bar .pkd-fill,.pkd-rail.pkd-bar .pkd-add{top:15px;height:16px}
-.pkd-rail.pkd-bar .pkd-fill{border-radius:8px 3px 3px 8px}
-.pkd-rail.pkd-bar .pkd-add{border-radius:0 3px 3px 0}
-.pkd-rail.pkd-bar .pkd-knob{display:block;position:absolute;top:23px;
-  left:calc(var(--knob) / 2 + (100% - var(--knob)) * var(--p,0));
-  width:16px;height:16px;box-sizing:border-box;border-radius:var(--rounded-full);
-  background:var(--general-foreground);border:1px solid #e3e3e3;transform:translate(-50%,-50%);
-  transition:left var(--pk-t) var(--pk-ease)}
-.pkd-rail.pkd-bar .pkd-knob::after{content:"";position:absolute;left:50%;top:50%;width:1.5px;height:5px;
-  border-radius:1px;background:var(--surface);transform:translate(-50%,-50%)}
-.pkd-rail.pkd-bar .pkd-val{left:calc((100% - var(--knob)) * var(--p,0) - 6px);
-  top:23px;height:auto;padding:0;border:none;background:none;box-shadow:none;
-  transform:translate(-100%,-50%);font-size:11px;letter-spacing:-.08px;color:var(--surface)}
-.pkd-cap{position:absolute;left:var(--s8);bottom:var(--s4);font-size:var(--text-xs);color:var(--general-muted-foreground)}
-/* the agreements demo: the same tile, and a short list with a switch per agreement.
-   One by one the open ones switch on and the two figures in the tile move. */
-.pkd-tile-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);width:min(380px,calc(100% - var(--s16)))}
-.pkd-tile-2>div{display:flex;flex-direction:column;gap:var(--s1);min-width:0}
-.pkd-list{position:absolute;left:var(--s16);right:var(--s8);bottom:var(--s12);padding:var(--s2) var(--s6);
-  background:var(--surface);border-radius:var(--rounded-sm);box-shadow:var(--shadow-lg),0 0 0 1px #0000000a}
-.pkd-ag{display:flex;align-items:center;gap:var(--s3);padding:10px 0;border-top:1px solid var(--hairline)}
-.pkd-ag:first-child{border-top:none}
-.pkd-ag-n{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;font-weight:600;line-height:1.3;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pkd-ag-n em{font-style:normal;font-size:var(--text-xs);font-weight:400;color:var(--general-muted-foreground)}
-.pkd-ag-s{display:flex;align-items:baseline;gap:4px;font-weight:700;font-variant-numeric:tabular-nums;
-  color:var(--general-muted-foreground);transition:color var(--t)}
-.pkd-ag-s em{font-style:normal;font-size:var(--text-xs);font-weight:500}
-.pkd-ag.on .pkd-ag-s{color:var(--sentiment-positive)}
-.pkd-sw{flex:0 0 auto;position:relative;width:34px;height:20px;border-radius:var(--rounded-full);
-  background:#d4d4d8;transition:background var(--t)}
-.pkd-sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:var(--rounded-full);
-  background:var(--surface);box-shadow:var(--shadow-xs);transition:transform var(--t)}
-.pkd-ag.on .pkd-sw{background:var(--sentiment-positive)}
-.pkd-ag.on .pkd-sw i{transform:translateX(14px)}
-@media(prefers-reduced-motion:reduce){
-  .pks,.pk,.pkd-fill,.pkd-add,.pkd-knob,.pkd-val,.pkd-pill,.pkd-sw,.pkd-sw i,.pkd-ag-s{transition:none}
-}
-@media(max-width:600px){
-  .pkd-row,.pkd-list{left:var(--s4);right:var(--s4)}
-  .pkd-tile{left:var(--s4);top:var(--s4)}
-}
+@media(prefers-reduced-motion:reduce){.pks,.pk{transition:none}}
 
 </style>
 </head>
@@ -10355,7 +10256,7 @@ function wireDash(root, m){
      up one click further */
   q('[data-drill]').forEach(b => b.addEventListener('click', e => {
     if(b.classList.contains('is-tuned') && e.target.closest('.nc-ov-card-x')){ tuneReset(); return; }
-    openPeek(b.dataset.drill);
+    openPeek(b.dataset.card || b.dataset.drill);
   }));
   q('.seg [data-style]').forEach(b => b.addEventListener('click', () => {
     agrCardStyle = b.dataset.style; persist(); renderHome();
@@ -15260,6 +15161,75 @@ function rpUsage(m){
    benchmark caveat — and nothing else on the page knows about it. Switching the
    report rewrites the headline, so the switch lives in the hero rather than on a
    toolbar underneath it: on this page the type is the subject, not a filter. */
+/* ---- the lines behind every figure on this page ----
+   The rest of the report adds up by category; this is the ledger underneath it.
+   basketRows() is the same seeded basket the agreement pages and the summary
+   overlays print, and the date seed is the one pkLines() uses — so a line here
+   is the line they show, on the same day, at the same amount. The period factor
+   is applied exactly as rpModel() applies it to everything else, so the total
+   reconciles with the tables above.
+
+   Only lines an agreement covers are here. Spend bought at list price has no
+   agreed rate to report against; it sits in the category tables above, priced as
+   the opportunity it is. */
+function rpLineRows(){
+  if(newCustomer) return [];
+  const f = RP_PERIOD[rpPeriod].f, sc = n => Math.round(n * f);
+  return live().flatMap(r => r.agr.filter(a => a.req).flatMap(a => {
+    const rnd = rngOf('lines:' + a.n);
+    const landed = agLanding(a);
+    return basketRows(r, a).map(l => {
+      const d = new Date(); d.setDate(d.getDate() - Math.floor(rnd() * 75) - 2);
+      return {n:l.n, sup:a.n, cat:r.n, date:d,
+              dateL:`${d.getDate()} ${MONTH_ABBR[d.getMonth()]}`,
+              spend:sc(l.spend), save:landed ? sc(l.save) : 0,
+              rate:r.rate, landed};
+    });
+  }));
+}
+
+function rpLinesHTML(){
+  const rows = rpLineRows().sort((a, b) => b.date - a.date);
+  if(!rows.length) return '';
+  const tSpend = rows.reduce((s, l) => s + l.spend, 0);
+  const tSave  = rows.reduce((s, l) => s + l.save, 0);
+  const sups   = new Set(rows.map(l => l.sup)).size;
+  return `
+  <section class="rp-sec" id="rpLines">
+    <div class="rp-head">
+      <h2>Line by line</h2>
+      <p>Every invoice line an agreement priced in ${RP_PERIOD[rpPeriod].of}, newest first —
+        what was bought, who from, what it cost, and what the agreed rate took off it.
+        ${fmt(rows.length)} lines across ${sups} supplier${sups === 1 ? '' : 's'}.</p>
+    </div>
+    <div class="rp-tblwrap">
+      <table class="rp-tbl rp-lines">
+        <caption>Invoice lines · ${RP_PERIOD[rpPeriod].n}</caption>
+        <thead><tr>
+          <th scope="col">Item</th><th scope="col" class="txt">Supplier</th>
+          <th scope="col" class="txt">Category</th><th scope="col" class="txt">Settled</th>
+          <th scope="col">Spend, kr.</th><th scope="col">Saved, kr.</th>
+          <th scope="col">Rate</th></tr></thead>
+        <tbody>${rows.map(l => `<tr${l.save ? '' : ' class="idle"'}>
+          <th scope="row">${l.n}</th>
+          <td class="txt">${l.sup}</td>
+          <td class="txt">${l.cat}</td>
+          <td class="txt">${l.dateL}</td>
+          <td>${fmt(l.spend)}</td>
+          <td class="${l.save ? 'pos' : 'none'}">${l.save ? '+' + fmt(l.save) : 'not landed yet'}</td>
+          <td>−${l.rate}%</td></tr>`).join('')}</tbody>
+        <tfoot><tr><th scope="row">Total</th>
+          <td class="txt"></td><td class="txt"></td><td class="txt"></td>
+          <td>${fmt(tSpend)}</td><td class="pos">+${fmt(tSave)}</td><td></td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <p class="rp-foot">A line reads <b>not landed yet</b> where the agreement is live and
+      priced but no invoice has come in at the new rate — the spend is real, the saving
+      is not counted until one does.</p>
+  </section>`;
+}
+
 function renderReports(){
   const m = rpModel({real:true});
   const r = (rpType === 'spending' ? rpSpending : rpType === 'usage' ? rpUsage : rpSavings)(m);
@@ -15308,6 +15278,7 @@ function renderReports(){
       </div>
 
       ${r.secs}
+      ${rpLinesHTML()}
     </div>`;
 
   /* — the plotted field follows the pointer: two custom properties on the hero move
@@ -16176,175 +16147,17 @@ const DRILL_VIEWS = ['#viewDash', '#viewSup', '#viewOpp', '#viewCatTab', '#viewD
   '#viewAgreements', '#viewReports', '#viewAreas', '#viewNewCustomer', '#viewSavings'];
 
 /* ---------------- Card peek ----------------
-   The three Overview cards used to jump straight to their drill page. Now they
-   open a summary first: what the figure is, what is still open, the one control
-   that moves it, and a clear way through to the detailed page. Every number in
-   here comes from the same model the cards are drawn from, so the two never
-   disagree; the artwork is the only thing that projects, and it says so. */
-let pkRun = 0, pkReturn = null;
+   An Overview card opens a summary first, not a page. The summary says what the
+   figure is, prints all three exact figures beside it, lists the lines it is made
+   of, and hands over to the report that prints every one of them. Every number
+   comes from the same model the cards are drawn from, so the two can never
+   disagree — not even mid-drag on a spend slider. */
+let pkReturn = null;
 const PK_IC = {
-  trend:'<path d="M4 17l5.5-5.5 3.5 3.5L20 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5 8H20v5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
-  layers:'<path d="M12 4l8 4.5-8 4.5-8-4.5L12 4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 13l8 4.5 8-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
-  sliders:'<path d="M4 8h16M4 16h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="9.5" cy="8" r="2.5" fill="#fff" stroke="currentColor" stroke-width="1.7"/><circle cx="15" cy="16" r="2.5" fill="#fff" stroke="currentColor" stroke-width="1.7"/>',
-  pie:'<path d="M12 3a9 9 0 109 9h-9V3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M15 3.5A9 9 0 0120.5 9H15V3.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
-  list:'<path d="M9 7h11M9 12h11M9 17h11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="4.8" cy="7" r="1.1" fill="currentColor"/><circle cx="4.8" cy="12" r="1.1" fill="currentColor"/><circle cx="4.8" cy="17" r="1.1" fill="currentColor"/>',
-  doc:'<path d="M7 3h7l4 4v14H7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.5 14l2 2 3.5-3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
-  plus:'<rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M12 8.5v7M8.5 12h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
   expand:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M10 19H5v-5M19 5l-6 6M5 19l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   reset:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 10a8 8 0 0113.9-3.2M19.5 14a8 8 0 01-13.9 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18.6 3.2v3.6H15M5.4 20.8v-3.6H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 };
 const pkKr = n => `<b>${fmt(n)} kr.</b>`;
-
-/* one eased travel for a figure in the demo. Not animNum: that one keys off the
-   element's previous render, and these figures are told where to go. */
-function pkTween(el, from, to, fmtFn, dur = 650){
-  if(!el) return;
-  if(RM || from === to){ el.textContent = fmtFn(to); return; }
-  const t0 = performance.now(), run = pkRun;
-  const step = now => {
-    if(run !== pkRun) return;
-    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-    el.textContent = fmtFn(Math.round(from + (to - from) * e));
-    if(k < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-  /* frames can be throttled while the tab is not in front; the figure still has
-     to land on its exact destination, not a frame short of it */
-  setTimeout(() => { if(run === pkRun) el.textContent = fmtFn(to); }, dur + 60);
-}
-const pkAfter = (ms, fn) => { const run = pkRun; setTimeout(() => { if(run === pkRun) fn(); }, ms); };
-
-/* the spend-slider demo, for the Savings and Spend cards. One real row — the one
-   whose live agreements weigh most, so the tile actually moves — through its own
-   stops, with the tile above following by exactly what the real page would add. */
-function pkDemoTune(type, m){
-  const {top} = tuneRows();
-  if(!top.length) return {html:'', start(){}};
-  const heldOf = r => r.agr.filter(a => a.req).reduce((s, a) => s + (a.saveActual === undefined ? a.save : a.saveActual), 0);
-  const r = type === 'savings' && !newCustomer ? [...top].sort((a, b) => heldOf(b) - heldOf(a))[0] : top[0];
-  /* three points on the real scale: today, then two steps up it — the same
-     square-law rail the page draws, so the demo knob lands where the real one would */
-  const base = areaBase(r) || 1, g = tuneFactor(r.id);
-  const stops = [base, base + tuneDelta(40), base + tuneDelta(55)];
-  const bIdx = 0, last = stops.length - 1;
-  const pos = i => tuneAt(r, stops[i] - base).toFixed(4);
-  const path = [bIdx, Math.min(bIdx + 1, last), Math.min(bIdx + 2, last), Math.min(bIdx + 1, last), bIdx];
-  const card = m.cards.find(c => c.go === type) || {n:0};
-  const head0 = card.n || 0;
-  const fmtHead = newCustomer && card.nf ? card.nf : fmt;
-  const r100 = n => Math.round(n / 100) * 100;
-  const headAt = f => Math.abs(f - g) < 1e-9 ? head0 : r100(type === 'spend'
-    ? head0 + areaBase(r) * (f - g)
-    : head0 + (newCustomer ? areaBase(r) * r.rate / 100 : heldOf(r)) * (f - g));
-  const rowSaveAt = f => Math.abs(f - 1) < 1e-9 ? Math.round(areaBaseMoney(r)) : r100(areaBaseMoney(r) * f);
-  const fmtPlus = v => `+${fmt(v)}`;
-  /* the label follows the real card: a twelve-month fact at rest, a run-rate once moved */
-  const labelAt = i => i === bIdx
-    ? (type === 'spend' ? 'Spend, last 12 months' : 'Saved, last 12 months')
-    : (type === 'spend' ? 'Spend a year' : 'Savings a year');
-  const startIdx = RM ? Math.min(bIdx + 2, last) : bIdx;
-  const f0 = stops[startIdx] / base;
-  const html = `
-    <div class="pkd pkd-tune" aria-hidden="true">
-      <div class="pkd-tile">
-        <span class="pkd-tile-l" data-pk-label>${labelAt(startIdx)}</span>
-        <b class="pkd-tile-v${type === 'savings' ? ' good' : ''}"><span data-pk-head>${fmtHead(headAt(f0))}</span><small>kr. / year</small></b>
-        <span class="pkd-pill${startIdx === bIdx ? '' : ' is-on'}" data-pk-pill><i></i>Adjusted numbers · 1 area</span>
-      </div>
-      <div class="pkd-row">
-        <span class="pkd-row-h">Savings still open, by category</span>
-        <div class="pkd-tr">
-          <span class="pkd-n">${r.n}</span>
-          <span class="pkd-rail pkd-${tuneSkin}${startIdx === bIdx ? '' : ' set'}" data-pk-rail style="--p:${pos(startIdx)};--p0:${pos(bIdx)}">
-            <i class="pkd-fill"></i><i class="pkd-add"></i><i class="pkd-knob"></i>
-            <span class="pkd-val"><span data-pk-spend>${fmtCompact(stops[startIdx])}</span><em>kr.</em></span>
-          </span>
-          <b class="pkd-save"><span data-pk-save>${fmtPlus(rowSaveAt(f0))}</span><em>kr. a year</em></b>
-        </div>
-      </div>
-      <span class="pkd-cap">Illustration · the real sliders sit under “Savings still open, by category”</span>
-    </div>`;
-  const start = () => {
-    if(RM) return;
-    const root = $('#pkFig'); if(!root) return;
-    const rail = root.querySelector('[data-pk-rail]'), pill = root.querySelector('[data-pk-pill]');
-    const head = root.querySelector('[data-pk-head]'), sp = root.querySelector('[data-pk-spend]'), sv = root.querySelector('[data-pk-save]');
-    const lab = root.querySelector('[data-pk-label]');
-    let cur = bIdx;
-    const go = i => {
-      const fFrom = stops[cur] / base, fTo = stops[i] / base;
-      rail.style.setProperty('--p', pos(i));
-      rail.classList.toggle('set', i !== bIdx);
-      pill.classList.toggle('is-on', i !== bIdx);
-      lab.textContent = labelAt(i);
-      pkTween(head, headAt(fFrom), headAt(fTo), fmtHead, 700);
-      pkTween(sp, stops[cur], stops[i], fmtCompact, 700);
-      pkTween(sv, rowSaveAt(fFrom), rowSaveAt(fTo), fmtPlus, 700);
-      cur = i;
-    };
-    const loop = k => {
-      const i = path[k % path.length];
-      pkAfter(k === 0 ? 1100 : 1500, () => { go(i); loop(k + 1); });
-    };
-    loop(1);
-  };
-  return {html, start};
-}
-
-/* the agreements demo: two that are live, three that are open, and the open ones
-   switch on one at a time while the count and the saving in the tile follow */
-function pkDemoAgr(m){
-  const all = live().flatMap(r => r.agr.map(a => ({a, r})));
-  const held = all.filter(x => x.a.req).sort((x, y) => y.a.save - x.a.save).slice(0, 2);
-  const open = all.filter(x => !x.a.req).sort((x, y) => y.a.save - x.a.save).slice(0, 3);
-  if(!open.length) return {html:'', start(){}};
-  const cCard = m.cards.find(c => c.go === 'usage'), sCard = m.cards.find(c => c.go === 'savings');
-  const count0 = cCard ? cCard.n : held.length, head0 = sCard ? sCard.n : 0;
-  const fmtHead = newCustomer && sCard && sCard.nf ? sCard.nf : fmt;
-  const openSum = open.reduce((s, x) => s + x.a.save, 0);
-  const html = `
-    <div class="pkd pkd-agr" aria-hidden="true">
-      <div class="pkd-tile pkd-tile-2">
-        <div><span class="pkd-tile-l">Agreements in use</span>
-          <b class="pkd-tile-v"><span data-pk-count>${RM ? count0 + open.length : count0}</span></b></div>
-        <div><span class="pkd-tile-l">Savings a year</span>
-          <b class="pkd-tile-v good"><span data-pk-head>${fmtHead(RM ? head0 + openSum : head0)}</span><small>kr.</small></b></div>
-      </div>
-      <div class="pkd-list">
-        ${[...held, ...open].map((x, i) => `
-        <div class="pkd-ag${x.a.req || RM ? ' on' : ''}" data-pk-ag="${i}">
-          <span class="pkd-sw"><i></i></span>
-          <span class="pkd-ag-n">${x.a.n}<em>${x.r.n}${x.a.req ? '' : ' · open to you'}</em></span>
-          <b class="pkd-ag-s">+${fmt(x.a.save)}<em>kr. / year</em></b>
-        </div>`).join('')}
-      </div>
-      <span class="pkd-cap">Illustration · each agreement you activate starts landing on the next invoice</span>
-    </div>`;
-  const start = () => {
-    if(RM) return;
-    const root = $('#pkFig'); if(!root) return;
-    const cnt = root.querySelector('[data-pk-count]'), head = root.querySelector('[data-pk-head]');
-    const rows = open.map((x, i) => root.querySelector(`[data-pk-ag="${held.length + i}"]`));
-    let count = count0, sum = head0;
-    const cycle = () => {
-      open.forEach((x, i) => pkAfter(1300 + i * 1400, () => {
-        rows[i].classList.add('on');
-        pkTween(cnt, count, count + 1, v => `${Math.round(v)}`, 400);
-        pkTween(head, sum, sum + x.a.save, fmtHead, 700);
-        count += 1; sum += x.a.save;
-      }));
-      pkAfter(1300 + open.length * 1400 + 2200, () => {
-        rows.forEach(el => el.classList.remove('on'));
-        pkTween(cnt, count, count0, v => `${Math.round(v)}`, 400);
-        pkTween(head, sum, head0, fmtHead, 700);
-        count = count0; sum = head0;
-        pkAfter(900, cycle);
-      });
-    };
-    cycle();
-  };
-  return {html, start};
-}
 
 /* The lines behind a figure. There is no transaction ledger in the prototype, so
    the lines are the same seeded basket rows the drill pages print for each
@@ -16362,116 +16175,118 @@ function pkLines(agrs){
 const pkList = (rows, val) => `<ul class="pk-list">${rows.map(x => `
   <li><span class="pk-list-n">${x.n}<em>${x.sub}</em></span><b class="${val === 'good' ? 'good' : ''}">${x.v}</b></li>`).join('')}</ul>`;
 
-/* a three-line "by category" card for the right column */
-function pkBars(items){
-  const max = Math.max(1, ...items.map(x => x.v));
-  return `<ul class="pk-bars">${items.map(x => `
-    <li><span>${x.n}</span><i style="--w:${(x.v / max * 100).toFixed(1)}%"></i><b>${fmtCompact(x.v)}</b></li>`).join('')}</ul>`;
-}
+/* What a summary card opens.
 
+   The card asserts one figure. This says what that figure is, prints the three
+   exact figures the Overview carries — spend, savings and cash back, so none of
+   them has to be looked up separately — lists the invoice lines behind it, and
+   hands over to the report that prints every one of them.
+
+   The animated slider demo and the three benefit tiles that used to fill the
+   lower half are gone. The demo was selling a control the reader already has on
+   the page behind this overlay, and the tiles described a page rather than
+   showing it. The figures and the lines are the evidence. */
 function peekContent(type){
   const m = dashModel(), rows = live();
   const reqAgs   = rows.flatMap(r => r.agr.filter(a => a.req));
   const landing  = reqAgs.filter(agLanding), dormant = reqAgs.filter(agDormant), pending = reqAgs.filter(agPending);
-  const idleSum  = dormant.reduce((s, a) => s + a.save, 0);
-  const pendSum  = pending.reduce((s, a) => s + a.save, 0);
   const openAgs  = rows.flatMap(r => r.agr.filter(a => !a.req).map(a => ({...a, cat:r.n}))).sort((a, b) => b.save - a.save);
   const openCats = rows.filter(r => potOf(r) > 0).sort((a, b) => potOf(b) - potOf(a));
   const remaining = openCats.reduce((s, r) => s + potOf(r), 0);
   const spend    = rows.reduce((s, r) => s + r.amt, 0);
-  const covered  = landing.reduce((s, a) => s + a.covers, 0);
+  const covered  = newCustomer ? peerProfile().covered : landing.reduce((s, a) => s + a.covers, 0);
   const pct      = spend ? Math.round(covered / spend * 100) : 0;
   const invoices = rows.reduce((s, r) => s + r.inv, 0), suppliers = rows.reduce((s, r) => s + r.sup, 0);
-  const agrTotal = rows.reduce((n, r) => n + r.agr.length, 0);
-  const bonus    = bonusOn(covered).total;
-  const card     = m.cards.find(c => c.go === type) || {n:0, v:'0'};
-  const partial  = partialData(), tuned = tuneActive();
+  const bonus    = newCustomer ? peerProfile().bonus.total : bonusOn(covered).total;
   const catsWord = n => `categor${n === 1 ? 'y' : 'ies'}`;
-  const setSpend = {l:'Set your spend', go:() => {
-    catViewStyle = 'tune'; persist();
-    goNav('dashboard'); renderHome();
-    const el = $(`${dashRoot()} .tune-range`);
-    if(el) el.scrollIntoView({block:'center', behavior:RM ? 'auto' : 'smooth'});
-  }};
+
+  /* the three figures are read straight off the model's own cards, so this
+     overlay can never quote a different number from the card that opened it —
+     including while a spend slider is held down */
+  const cardOf = k => m.cards.find(c => cardKey(c) === k) || {};
+  const figs = [
+    {k:'spend', ...cardOf('spend'),
+     sub: newCustomer
+       ? `The median for ${(state.industry || 'similar').toLowerCase()} companies in your size band`
+       : `${fmt(invoices)} invoices from ${suppliers} suppliers, across ${rows.length} purchasing categories`},
+    {k:'savings', ...cardOf('savings'), tone:'good',
+     sub: newCustomer
+       ? `What companies your size take off the same agreements`
+       : `Matched line by line on ${landing.length} live agreement${landing.length === 1 ? '' : 's'} — nothing projected`},
+    {k:'bonus', ...cardOf('bonus'), tone:'rise',
+     sub: newCustomer
+       ? `A volume bonus on what runs through the agreements, paid each February`
+       : `A volume bonus on the ${fmtCompact(covered)} kr. that ran through your agreements, paid each February`}
+  ];
+
+  const foot = newCustomer
+    ? `These are peer-group figures, not your own accounting. The report shows how they are
+       built — and prints your own lines, item by item, the moment you connect your invoices.`
+    : `The report behind this panel prints the lines these figures are made of — what was
+       bought, from whom, on what date, and what the agreed rate took off it.`;
+
+  /* which report answers this card, and where in it the lines are */
+  const REPORT = {spend:'spending', savings:'savings', bonus:'savings', usage:'usage'};
 
   if(type === 'spend') return {
-    tone:'flat',
+    tone:'flat', figs, foot, on:'spend', report:REPORT.spend,
     title:'Where your money goes',
     lead: newCustomer
       ? `Companies your size buy about ${pkKr(spend)} a year across ${rows.length} purchasing categories.
-         The detailed page shows how that splits, category by category, and what an agreement is worth in each.`
+         The report shows how that splits, category by category, and what an agreement is worth in each.`
       : `${pkKr(spend)} a year across ${rows.length} purchasing categories and ${suppliers} suppliers.
          ${pct}% of it runs through an Advantage agreement — the rest is still bought at list price.`,
     listH:'Largest payments',
     list:pkList(pkLines(rows.flatMap(r => r.agr.map(a => ({r, a}))))
       .sort((x, y) => y.spend - x.spend).slice(0, 4)
-      .map(x => ({n:x.n, sub:`${x.sup} · ${x.date}`, v:`${fmt(x.spend)} kr.`}))),
-    primary:{l:'Open Spending', go:() => openDrill('spend')},
-    secondary:setSpend,
-    stat:{big:`${pct}<small>%</small>`, cap:'of your spend runs through an Advantage agreement today'},
-    miniH:'Spend by category',
-    mini:pkBars([...rows].sort((a, b) => b.amt - a.amt).slice(0, 3).map(r => ({n:r.n, v:r.amt}))),
-    ben:[
-      {ic:PK_IC.pie,     txt:'Every category ranked by what goes through it — and how much of that is priced by an agreement.'},
-      {ic:PK_IC.list,    txt:'The suppliers behind each figure, so a category is never just a total.'},
-      {ic:PK_IC.sliders, txt:'Set what you expect to buy next year and see what an agreement would be worth there.'}
-    ],
-    demo:pkDemoTune('spend', m)
+      .map(x => ({n:x.n, sub:`${x.sup} · ${x.date}`, v:`${fmt(x.spend)} kr.`})))
   };
 
-  /* the count used to be read off the Overview's "Agreements in use" card; that
-     card is now Cash back, so this panel counts the agreements itself */
+  if(type === 'bonus') return {
+    tone:'rise', figs, foot, on:'bonus', report:REPORT.bonus,
+    title:'Cash back on what runs through your agreements',
+    lead: `${pkKr(bonus)} a year, paid out in one go each February. It is a volume bonus:
+      ${pkKr(covered)} of what you buy ran through an Advantage agreement over the last twelve
+      months, and the bonus is paid on that volume — on top of the discount already taken off
+      the invoice, not instead of it.`,
+    listH:'How the tiers add up',
+    list:pkList(bonusOn(covered).lines.map(l => ({
+      n:`${String(l.rate).replace('.', ',')}% tier`,
+      sub:`on ${fmtCompact(l.vol)} kr. of the ${fmtCompact(covered)} kr.`,
+      v:`+${fmt(l.paid)} kr.`})), 'good')
+  };
+
   if(type === 'usage') return {
-    tone:'rise',
+    tone:'rise', figs, foot, on:'savings', report:REPORT.usage,
     title:'Agreements working for you',
-    lead:`<b>${reqAgs.length}</b> agreement${reqAgs.length === 1 ? ' is' : 's are'} in force, saving ${pkKr((m.cards.find(c => c.go === 'savings') || {n:0}).n)} a year.
+    lead:`<b>${reqAgs.length}</b> agreement${reqAgs.length === 1 ? ' is' : 's are'} in force.
       ${openAgs.length} more ${openAgs.length === 1 ? 'is' : 'are'} already priced for you, worth ${pkKr(remaining)} a year
       — activate one and it starts landing on the next invoice.`,
     listH:'In use',
     list:pkList(rows.flatMap(r => r.agr.filter(a => a.req).map(a => ({r, a})))
       .sort((x, y) => y.a.save - x.a.save).slice(0, 4)
       .map(({r, a}) => ({n:a.n, sub:(agrCardBenefits(r, a)[0] || {}).t || r.n,
-        v:`−${Math.round(a.save / Math.max(1, a.covers) * 100)}%`})), 'good'),
-    primary:{l:'Open Agreement usage', go:() => openDrill('usage')},
-    secondary:{l:'See agreements open to you', go:() => goNav('agreements')},
-    stat:{big:`${reqAgs.length}<small>of ${agrTotal}</small>`, cap:`agreements in force · ${agrTotal - reqAgs.length} more are open to you`},
-    miniH:'Open to you, by saving',
-    mini:pkBars(openAgs.slice(0, 3).map(a => ({n:a.n, v:a.save}))),
-    ben:[
-      {ic:PK_IC.doc,  txt:'Every live agreement, with the spend it was priced to cover against what actually went through.'},
-      {ic:DASH_CLOCK_IC, txt:'Live but idle: agreements where the price is agreed and the orders still go somewhere else.'},
-      {ic:PK_IC.plus, txt:'The ones you have not activated yet, each priced on your own buying — and what each is worth.'}
-    ],
-    demo:pkDemoAgr(m)
+        v:`−${Math.round(a.save / Math.max(1, a.covers) * 100)}%`})), 'good')
   };
 
+  const saved = cardOf('savings').n || 0;
   return {
-    tone:'good',
-    title: tuned ? 'Savings on the spend you have set'
+    tone:'good', figs, foot, on:'savings', report:REPORT.savings,
+    title: tuneActive() ? 'Savings on the spend you have set'
          : newCustomer ? 'What companies like yours save'
          : 'Savings read off your own invoices',
     lead: newCustomer
-      ? `Companies your size save ${card.v.replace(/<[^>]*>/g, '')} kr. a year on Advantage agreements.
+      ? `Companies your size save ${(cardOf('savings').v || '').replace(/<[^>]*>/g, '')} kr. a year on Advantage agreements.
          Your own figure starts the moment we read your first invoice.`
-      : `${pkKr(card.n)} a year is landing from ${landing.length} agreement${landing.length === 1 ? '' : 's'},
+      : `${pkKr(saved)} a year is landing from ${landing.length} agreement${landing.length === 1 ? '' : 's'},
          matched line by line against ${fmt(invoices)} invoices.${remaining
-           ? ` Another ${pkKr(remaining)} a year is still open in ${openCats.length} ${catsWord(openCats.length)} you already buy in.` : ''}`,
+           ? ` Another ${pkKr(remaining)} a year is still open in ${openCats.length} ${catsWord(openCats.length)} you already buy in.` : ''}${
+         pending.length ? ` ${pending.length} more ${pending.length === 1 ? 'is' : 'are'} agreed and waiting for a first invoice at the new rate.` : ''}${
+         dormant.length ? ` ${dormant.length} ${dormant.length === 1 ? 'is' : 'are'} live with nothing bought through ${dormant.length === 1 ? 'it' : 'them'}.` : ''}`,
     listH:'Where it came from',
     list:pkList(pkLines(rows.flatMap(r => r.agr.filter(agLanding).map(a => ({r, a}))))
       .sort((x, y) => y.save - x.save).slice(0, 4)
-      .map(x => ({n:x.n, sub:`${x.sup} · ${x.date}`, v:`+${fmt(x.save)} kr.`})), 'good'),
-    primary:{l:'Open Savings', go:() => openDrill('savings')},
-    secondary:setSpend,
-    stat:{big:`${fmtCompact(remaining)}<small>kr.</small>`,
-          cap:`a year still open in ${openCats.length} ${catsWord(openCats.length)}, from agreements you have not activated yet`},
-    miniH:'Still open, by category',
-    mini:pkBars(openCats.slice(0, 3).map(r => ({n:r.n, v:potOf(r)}))),
-    ben:[
-      {ic:PK_IC.trend,   txt:'Only savings already seen on an invoice count. Nothing here is projected, banded or benchmarked.'},
-      {ic:PK_IC.layers,  txt:'Category by category: what has landed, what is agreed but not invoiced yet, and what is still open.'},
-      {ic:PK_IC.sliders, txt:'Set what you expect to buy next year and every figure follows — the discount rates stay as they are.'}
-    ],
-    demo:pkDemoTune('savings', m)
+      .map(x => ({n:x.n, sub:`${x.sup} · ${x.date}`, v:`+${fmt(x.save)} kr.`})), 'good')
   };
 }
 
@@ -16486,33 +16301,45 @@ function openPeek(type){
         <h2 id="pkT" tabindex="-1">${c.title}</h2>
         <p class="pk-lead">${c.lead}</p>
         <div class="pk-cta">
-          <button type="button" class="btn btn-primary" data-pk-go="primary">${c.primary.l}${DR_IC.go}</button>
-          <button type="button" class="btn btn-secondary" data-pk-go="secondary">${c.secondary.l}</button>
+          <button type="button" class="btn btn-primary" data-pk-report="${c.report}">Read more in Reports${DR_IC.go}</button>
         </div>
       </div>
       <div class="pk-side-list"><span class="pk-list-h">${c.listH}</span>${c.list}</div>
     </div>
-    <div class="pk-art">
-      <div class="pk-fig" id="pkFig">${c.demo.html}</div>
-      <div class="pk-side">
-        <div class="pk-stat"><b>${c.stat.big}</b><span>${c.stat.cap}</span></div>
-        <div class="pk-mini"><div class="pk-mini-card"><span class="pk-mini-h">${c.miniH}</span>${c.mini}</div></div>
+    <div class="pk-figs">
+      <span class="pk-figs-h">The exact figures</span>
+      <div class="pk-figs-grid">
+        ${c.figs.map(f => `
+        <div class="pk-figs-c${f.tone ? ' t-' + f.tone : ''}${f.k === c.on ? ' is-on' : ''}">
+          <span class="pk-figs-l">${f.l || ''}</span>
+          <b class="pk-figs-v">${f.v || '—'}${f.u ? `<small>${f.u}</small>` : ''}</b>
+          <span class="pk-figs-s">${f.sub}</span>
+        </div>`).join('')}
       </div>
-    </div>
-    <div class="pk-ben">${c.ben.map(b => `
-      <div><i><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${b.ic}</svg></i><p>${b.txt}</p></div>`).join('')}</div>`;
+      <p class="pk-figs-foot">${c.foot}</p>
+    </div>`;
   $('#pkBody').scrollTop = 0;
-  $('#pkBody [data-pk-go="primary"]').addEventListener('click', () => { closePeek(); c.primary.go(); });
-  $('#pkBody [data-pk-go="secondary"]').addEventListener('click', () => { closePeek(); c.secondary.go(); });
+  $('#pkBody [data-pk-report]').addEventListener('click', e => {
+    closePeek(); openReportLines(e.currentTarget.dataset.pkReport);
+  });
   $('#pks').classList.add('on');
   pk.classList.add('on');
   pk.setAttribute('aria-hidden', 'false');
-  pkRun++;
-  c.demo.start();
   setTimeout(() => { const h = $('#pkT'); if(h) h.focus(); }, 120);
 }
+
+/* the one way out of a peek: the matching report, scrolled to the line-level
+   table — which is the thing the overlay promises and cannot itself show */
+function openReportLines(kind){
+  rpType = RP_TYPES.some(t => t.k === kind) ? kind : 'savings';
+  goNav('reports');
+  requestAnimationFrame(() => {
+    const el = $('#rpLines');
+    if(el) el.scrollIntoView({block:'start', behavior:RM ? 'auto' : 'smooth'});
+  });
+}
+
 function closePeek(){
-  pkRun++;
   $('#pks').classList.remove('on');
   $('#pk').classList.remove('on');
   $('#pk').setAttribute('aria-hidden', 'true');
@@ -16673,9 +16500,10 @@ function areaPickHTML(p){
 /* ---------- the list card ----------
    Still lean on purpose — a brief per card is a page you read rather than a list
    you scan. What is added is the money, because the list is SORTED by it: sorting
-   by a figure the card never shows is a list nobody can follow. The rate moves
-   into the meta line beside the agreement counts, where it is context rather
-   than the headline. */
+   by a figure the card never shows is a list nobody can follow. The rate sits in
+   the meta line beside the agreement counts, where it is context rather than the
+   headline. No availability badge: the meta line already says how many agreements
+   there are and how many are in use, so the badge was the same fact twice. */
 function areaCardHTML(r, o){
   o = o || {};
   const on  = r.agr.filter(a => a.req).length;
@@ -16684,9 +16512,10 @@ function areaCardHTML(r, o){
   <li><button type="button" class="ar-card" data-area="${r.id}" id="arc-${r.id}"
     style="--b:${areaInk(r)}"
     aria-label="${r.n}: ${off ? `${off} agreement${off === 1 ? '' : 's'} available` : 'all agreements in use'}, ${r.rate}% average saving.">
-    <span class="aga-st${off ? '' : ' on'}">${off ? `${off} available` : 'All in use'}</span>
-    <span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[r.id] || ''}</svg></span>
-    <b class="aga-n">${r.n}</b>
+    <span class="ar-card-hd">
+      <span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[r.id] || ''}</svg></span>
+      <b class="aga-n">${r.n}</b>
+    </span>
     ${o.flag ? `<span class="ar-rec-pip">Recommended above</span>` : ''}
     <span class="ar-meta"><b>${r.rate}%</b> average saving ·
       <b>${r.agr.length}</b> agreements, <b>${on}</b> in use</span>
