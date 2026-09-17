@@ -3739,19 +3739,22 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .nc-rec-txt b{font-weight:600}
 /* the rate, drawn: two rows at 19% and 11% were two identical grey pills, which
    is the one thing a reader of this card actually needs to be able to compare.
-   The track is the full text column, so the bars share one baseline and one
-   ceiling and the gap between them is legible at a glance. */
-/* thinner and a tint rather than the full accent: the capsule above is the
-   card's graph and these are a row-level aside. Two things at full strength on
-   one card would be two graphs arguing. */
-.nc-rec-bar{height:4px;border-radius:var(--rounded-full);background:var(--general-muted);
-  overflow:hidden}
-.nc-rec-bar i{display:block;height:100%;border-radius:inherit;
-  background:var(--brand-cornflower);transform-origin:left center}
+   It was a rule under the text; a dial beside the figure says the same share in
+   the row's own right-hand column, so the text block stays one clean paragraph
+   and the comparison sits next to the number it belongs to.
+   A tint rather than the full accent: the capsule above is the card's graph and
+   these are a row-level aside. Two things at full strength on one card would be
+   two graphs arguing. */
+.nc-rec-dial{flex:0 0 auto;width:30px;height:30px}
+.nc-rec-dial .trk{fill:none;stroke:var(--general-muted);stroke-width:7}
+.nc-rec-dial .fil{fill:none;stroke:var(--brand-cornflower);stroke-width:7;
+  transform:rotate(-90deg);transform-origin:50% 50%}
 @media (prefers-reduced-motion:no-preference){
-  .nc-rec-bar i{animation:nc-rec-grow .55s cubic-bezier(.22,.9,.24,1) var(--d,0s) both}
+  .nc-rec-dial .fil{animation:nc-rec-grow .55s cubic-bezier(.22,.9,.24,1) var(--d,0s) both}
 }
-@keyframes nc-rec-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* the ring draws itself on from twelve o'clock: the dash gap is held at 100 while
+   the visible run grows from nothing to the row's own share */
+@keyframes nc-rec-grow{from{stroke-dasharray:0 100}to{stroke-dasharray:var(--p) 100}}
 /* the assistant card's money pill */
 .nc-rec-val{flex:0 0 auto;padding:4px var(--s3);
   border:1px solid #00968930;border-radius:var(--rounded-md);background:#f4fcfb;
@@ -3761,7 +3764,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
    not wear the money pill or it reads as an amount */
 .nc-rec-val.state{border-color:var(--hairline);background:var(--general-muted);
   color:var(--general-muted-foreground);font-weight:600}
-/* a rate wears no pill at all: its bar already carries the emphasis, and a third
+/* a rate wears no pill at all: its dial already carries the emphasis, and a third
    pill on the same list would flatten the money and the state back into it */
 .nc-rec-val.rate{padding:4px 0 4px var(--s3);border-color:transparent;background:none;
   font-size:var(--text-lg);color:var(--general-foreground);letter-spacing:-.3px}
@@ -4399,8 +4402,8 @@ body.activity-on.activity-open .canvas{
 }
 .dr-mast{position:relative;z-index:1;overflow:hidden;
   display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.78fr);
-  grid-template-areas:"txt led" "find led" "ctl ctl";
-  grid-template-rows:auto 1fr auto;
+  grid-template-areas:"txt led" "find led" "sup sup" "ctl ctl";
+  grid-template-rows:auto 1fr auto auto;
   column-gap:var(--s12);row-gap:var(--s8);align-items:start;
   padding:var(--s8);
   border:1px solid #ffffff;border-radius:var(--rounded-2xl);
@@ -4446,7 +4449,10 @@ body.activity-on.activity-open .canvas{
 .dr-find.est b{font-size:clamp(25px,2.6vw,34px);letter-spacing:-1.1px}
 .dr-find b small{font-size:var(--text-xl);font-weight:700;letter-spacing:-.5px;
   color:var(--general-muted-foreground)}
-.dr-find b.pos{color:var(--sentiment-positive)}
+/* the ink step, not the fill step: this exact figure is printed a second time,
+   in green, as the last row of the ledger 60px to its right. Two greens for one
+   number is a mistake you only see once both are green. */
+.dr-find b.pos{color:var(--sentiment-positive-ink)}
 .dr-find em{font-style:normal;font-weight:650;color:var(--general-foreground)}
 
 /* ---- the ledger: the arithmetic, stated ----
@@ -4481,6 +4487,25 @@ body.activity-on.activity-open .canvas{
   border-top:1px solid #cfdff3;
   font-size:12.5px;line-height:1.45;color:#4a6da3}
 
+/* ---- the three facts the claim leans on ----
+   These used to sit on the canvas below the hero, which left the hero's left
+   column with 150px of nothing under the sentence while the ledger ran on down
+   the right. Full width inside the card instead: the slack is now enclosed
+   breathing room between the claim and its support rather than a hole, the
+   labels get 300px each instead of 150, and the hero carries the whole answer —
+   what, how much it leans on, and the arithmetic — before the page scrolls.
+   One size step down from the canvas version, so three figures under a 54px
+   headline read as support and not as three more headlines. */
+.dr-mast-sup{grid-area:sup;min-width:0}
+.dr-mast-sup .rp-stats{padding-top:var(--s5,20px);border-top-color:rgb(27 100 220/.13)}
+.dr-mast-sup .rp-stat+.rp-stat{border-left-color:rgb(27 100 220/.13)}
+.dr-mast-sup .rp-stat b{font-size:var(--text-2xl);letter-spacing:-.6px}
+.dr-mast-sup .rp-stat.est b{font-size:var(--text-lg);letter-spacing:-.2px}
+.dr-mast-sup .rp-stat span{max-width:30ch}
+@container page (max-width:820px){
+  .dr-mast-sup .rp-stat+.rp-stat{border-top-color:rgb(27 100 220/.13)}
+}
+
 .dr-ctl{grid-area:ctl;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;
   padding-top:var(--s6);border-top:1px solid rgb(27 100 220/.13)}
 .dr-ctl-sp{flex:1 1 auto}
@@ -4490,7 +4515,7 @@ body.activity-on.activity-open .canvas{
 
 @container page (max-width:900px){
   .dr-mast{grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"txt" "find" "led" "ctl";grid-template-rows:auto;
+    grid-template-areas:"txt" "find" "sup" "led" "ctl";grid-template-rows:auto;
     padding:var(--s6)}
   .dr-find{max-width:56ch}
 }
@@ -4542,7 +4567,13 @@ body.activity-on.activity-open .canvas{
    own two-colour meaning. Green there means "money taken"; on the spending and
    usage pages the split is "on agreement / not", which is not a good-vs-bad
    axis and must not be coloured like one. */
-.dr-page .rp-track i.cov{background:rgb(var(--b,27 100 220))}
+/* one fill, one key. The category ink lives on the icon tile; on the track it
+   put five colours under a legend with one blue dot beside the words that name
+   them, which is a key that does not key anything. */
+.dr-page .rp-track i.cov{background:var(--general-primary)}
+/* and a realised bar whose figure is a benchmark does not get the verified green
+   either — the bar and the number beside it have to say the same thing */
+.dr-page .rp-track i.done.est{background:var(--general-muted-foreground);opacity:.42}
 .dr-page .rp-track i.rest{background:var(--general-muted-foreground);opacity:.26}
 .dr-page .rp-key i.cov{background:var(--general-primary)}
 /* the borrowed .rp-tbl / .rp-stat green is a fill colour used as type here; on
@@ -4550,6 +4581,8 @@ body.activity-on.activity-open .canvas{
 .dr-page .rp-tbl .pos{color:var(--sentiment-positive-ink)}
 .dr-page .rp-tbl .neg{color:#c43b00}
 .dr-page .rp-stat b.pos{color:var(--sentiment-positive-ink)}
+.dr-page .fig-actual{color:var(--sentiment-positive-ink)}
+.dr-grp-v .fig-actual,.dr-ag-v .fig-actual{font-weight:inherit}
 .dr-page .rp-stat b.warn{color:#c43b00}
 .dr-page .rp-bar-v{color:var(--sentiment-positive-ink)}
 .dr-page .rp-key i.rest{background:var(--general-muted-foreground);opacity:.32}
@@ -4606,6 +4639,59 @@ body.activity-on.activity-open .canvas{
 .dr-samp svg{flex:0 0 auto;width:16px;height:16px;margin-top:2px;
   color:var(--general-primary)}
 .dr-samp b{font-weight:650}
+
+/* ---- act two: what is still on the table ----
+   The savings page turns here, and the turn has to be visible or the reader
+   carries the first act's certainty into the second one. So the opportunity gets
+   its own claim rule rather than a sentence inside the hero: the figure at stat
+   size, the sentence that excludes it from the saving above, and the key to the
+   two inks the figure is printed in — which is the thing that could never fit on
+   one line of hero prose. Hairlines, not a card: this is a seam in the page, not
+   another object on it. */
+.dr-claim{display:grid;grid-template-columns:auto minmax(0,1fr);
+  align-items:baseline;gap:var(--s2) var(--s6);
+  margin-bottom:var(--s8);padding:var(--s5,20px) 0;
+  border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+.dr-claim-v{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
+  letter-spacing:-.9px;line-height:1.05;white-space:nowrap;
+  font-variant-numeric:tabular-nums;color:var(--general-foreground)}
+/* the figure prints its kinds in their own inks; at display size they need the
+   display weight back, or the estimated half reads as a caption */
+.dr-claim-v .fig-doc,.dr-claim-v .fig-est{font-weight:800}
+.dr-claim-v .fig-est{text-decoration-thickness:2px}
+.dr-claim-v .fig-sep{font-weight:400;letter-spacing:0}
+.dr-claim-v small{font-family:var(--font-body);font-size:14px;font-weight:500;
+  letter-spacing:0;color:var(--general-muted-foreground)}
+.dr-claim-tx{align-self:center;max-width:62ch;
+  font-size:15px;line-height:1.55;color:var(--general-muted-foreground)}
+.dr-claim-tx b{font-weight:650;color:var(--general-foreground)}
+.dr-claim .fig-key{grid-column:2;align-self:start;margin-top:calc(var(--s1) * -1)}
+@container page (max-width:820px){
+  .dr-claim{grid-template-columns:minmax(0,1fr);gap:var(--s3)}
+  .dr-claim .fig-key{grid-column:1}
+}
+/* still-open money is not green — nothing has come off an invoice yet. Each
+   figure keeps the ink of its own kind (brand for exact, muted dotted for a
+   benchmark), so .dr-grp-v and .dr-ag-v only hold the weight. Exposed spend is
+   the one act-two figure that IS a verdict, and keeps the warn ink. */
+.dr-act2 .dr-grp-v:not(.warn),.dr-ag-v.open{color:var(--general-foreground)}
+.dr-grp-v.warn{color:#c43b00}
+.dr-grp-v small,.dr-ag-v small{font-size:13px;font-weight:600;
+  letter-spacing:0;color:var(--general-muted-foreground)}
+.dr-act2 .dr-grp-v .fig-est,.dr-ag-v .fig-est{font-weight:600}
+/* the track in act two: act one's flat mint was a bar you had to know was there
+   at 8px against the grey trough, but eight rows in eight category inks turn a
+   ranked list into a zebra — and the icon tile already carries each category's
+   colour. One quiet brand tint instead: these bars exist to be compared with
+   each other, and comparison is easiest in a single ink. Not green, because
+   nothing here has come off an invoice. */
+.dr-act2 .rp-track i.open{background:rgb(27 100 220/.34)}
+/* spending's and usage's act two draw the uncovered part alone, where the page's
+   default .26 is a bar you have to hunt for. It stays grey rather than taking
+   the warn ink of the figure beside it: act one's key already calls this fill
+   "bought at list price", and the same words in two colours on one page reads as
+   a bug. The verdict lives on the number; the bar only has to be legible. */
+.dr-act2 .rp-track i.rest{background:var(--general-muted-foreground);opacity:.42}
 
 /* ---- what to do about it ----
    Every one of these pages ends on the move it implies. A drill-down that stops
@@ -9411,10 +9497,14 @@ function dashModelOwn(){
         : 'Every category you buy in is on an agreement.'
     },
     recHead:'What to do next',
-    recNote: second ? 'each move against the biggest one open' : '',
+    recNote: remaining + idleSum ? 'each move as a share of everything still open' : '',
     /* zero unless there are two magnitudes to compare: one move drawn at full
        width is a rule that looks like a measurement and isn't one */
-    barMax: second ? Math.max(...recs.map(x => x.bar || 0)) : 0,
+    /* the ceiling is the whole opportunity — every krone not yet activated, plus
+       the money sitting in agreements nothing is bought through — so a ring is
+       this move's slice of the total rather than its size next to its neighbour */
+    barMax: remaining + idleSum,
+    barLabel: 'of everything still open to you',
     recs,
     ask: `Where should ${state.company} go next?`,
     agrTitle: 'Opportunities by agreement',
@@ -9440,6 +9530,9 @@ function dashModelPeer(){
   const [spendLow, spendHigh] = band(p.spend);
   const byRate = [...ROWS].sort((a, b) => b.rate - a.rate);
   const topCat = byRate[0], secondCat = byRate[1];
+  /* what a named category is worth to her, from the same peer cats the gauge and
+     the drill-down read — an idle area's whole earnable, 0 once it is in use */
+  const peerPot = id => (p.cats.find(c => c.id === id) || {}).potential || 0;
   /* when she sets her own spend the cards stop being somebody else's: the rates
      are still the peer group's, which is why the figures stay a band */
   const tuned = tuneActive(), tn = tuneCount();
@@ -9510,14 +9603,18 @@ function dashModelPeer(){
         : 'Peers your size are on an agreement everywhere.'
     },
     recHead:'What to do next',
-    recNote: `rates against ${BEST_CAT_DISCOUNT}%, the best rate open to you`,
-    barMax: BEST_CAT_DISCOUNT,
+    recNote: p.potential ? 'each move as a share of everything still open' : '',
+    /* the printed value stays the discount rate — that is what picks these two
+       rows — but the ring is money, so it means the same thing here as on Bob's
+       card: this category's share of the whole opportunity */
+    barMax: p.potential,
+    barLabel: 'of everything still open to you',
     recs: [
-      /* bar, not just the printed value: it is the magnitude the row is drawn
-         from, and the only figure on this card comparable row to row */
-      {ic:CAT_ICON[topCat.id] || '', val:`${topCat.rate}%`, bar:topCat.rate, rate:true,
+      /* bar, not the printed value: the rate picks the row, the money draws the
+         ring — a share of a total has to be a share of an amount */
+      {ic:CAT_ICON[topCat.id] || '', val:`${topCat.rate}%`, bar:peerPot(topCat.id), rate:true,
        txt:`Start with <b>${topCat.n}</b> — the widest discount gap in your peer group.`},
-      {ic:CAT_ICON[secondCat.id] || '', val:`${secondCat.rate}%`, bar:secondCat.rate, rate:true,
+      {ic:CAT_ICON[secondCat.id] || '', val:`${secondCat.rate}%`, bar:peerPot(secondCat.id), rate:true,
        txt:`<b>${secondCat.n}</b> is the next best entry point for companies your size.`},
       {ic:DASH_ERP_IC, val:'Auto',
        txt:`Connect your ERP to keep every number accurate, automatically.`},
@@ -10196,20 +10293,28 @@ function dashGaugeHTML(g){
     </figure>`;
 }
 
-function dashRecHTML(rec, i, barMax){
+function dashRecHTML(rec, i, barMax, barLabel){
   /* money wears the potential pill (dotted variant for an estimate); a state
      ("Idle", "Live", "Estimated") wears the grey one so it cannot read as an amount */
   const kind = rec.rate ? ' rate' : rec.bar ? (/fig-est/.test(rec.val) ? ' est' : '') : ' state';
-  /* a bar only when there is a ceiling to draw it against: with one move open,
-     barMax equals the only magnitude and a lone full-width rule says nothing */
+  /* the dial takes the leading slot the category icon used to hold, and barMax is
+     now the whole opportunity rather than the biggest single move — so the three
+     rings are three slices of one pie and can be read as parts of a total, which
+     a category glyph never said and a per-row bar only implied. A row with no
+     magnitude of its own (the ERP / estimates note) keeps its icon, so the text
+     column still starts on one line down the list. */
   const w = rec.bar && barMax ? Math.min(100, Math.round(rec.bar / barMax * 100)) : 0;
+  const lab = `${w}%${barLabel ? ` ${barLabel}` : ''}`;
   return `
     <li class="nc-rec-row">
-      <span class="nc-rec-ic"><svg viewBox="0 0 24 24" fill="none">${rec.ic}</svg></span>
+      ${w ? `<svg class="nc-rec-dial" viewBox="0 0 36 36" role="img" aria-label="${lab}"
+        style="--p:${w};--d:${(i * .07).toFixed(2)}s"><title>${lab}</title>
+        <circle class="trk" cx="18" cy="18" r="14.5"/>
+        <circle class="fil" cx="18" cy="18" r="14.5" pathLength="100"
+          stroke-dasharray="${w} 100"/></svg>`
+        : `<span class="nc-rec-ic"><svg viewBox="0 0 24 24" fill="none">${rec.ic}</svg></span>`}
       <span class="nc-rec-body">
         <span class="nc-rec-txt">${rec.txt}</span>
-        ${w ? `<span class="nc-rec-bar" style="--d:${(i * .07).toFixed(2)}s"
-          ><i style="width:${w}%"></i></span>` : ''}
       </span>
       <span class="nc-rec-val${kind}">${rec.val}</span>
     </li>`;
@@ -10223,7 +10328,7 @@ function dashAdvisoryHTML(m){
     <h2 class="nc-advisory-title">${m.advTitle}</h2>
     ${dashGaugeHTML(m.gauge)}
     <h3 class="nc-rec-head">${m.recHead}${m.recNote ? `<span>${m.recNote}</span>` : ''}</h3>
-    <ul class="nc-rec-list">${m.recs.map((r, i) => dashRecHTML(r, i, m.barMax)).join('')}</ul>
+    <ul class="nc-rec-list">${m.recs.map((r, i) => dashRecHTML(r, i, m.barMax, m.barLabel)).join('')}</ul>
     <button type="button" class="btn btn-primary nc-advisory-cta dash-ask">Ask the saving assistant</button>
     <footer class="nc-advisory-foot">
       <img class="sda" src="${SDA_MARK}" alt="">
@@ -14928,7 +15033,7 @@ function rpModel({real = false} = {}){
       return {
         id:c.id, n:c.n, rate:c.rate, sup:row.sup,
         inv:sc(c.inv), spend:sc(c.spend),
-        realised:sc(c.saved), potential:c.potential, est:true, peer:true,
+        realised:sc(c.saved), potential:c.potential, est:true, estR:true, estP:true, peer:true,
         agrs: c.inUse ? [{n:c.agr, cat:c.n, catId:c.id,
                           covers:sc(Math.round(c.spend * 0.72)),
                           vol:sc(Math.round(c.spend * 0.72)),
@@ -14949,6 +15054,13 @@ function rpModel({real = false} = {}){
         realised:sc(on.filter(agLanding).reduce((s, a) => s + a.save, 0)),
         potential:potOf(r),
         est:!exact && (on.some(a => isEstimated(a)) || r.agr.some(a => !a.req && isEstimated(a))),
+        /* the same split the page-level estR/estP make, per category: what has
+           LANDED can be exact while what is still open is a benchmark, and a
+           category that prints an exact 78.400 next to an estimated +108K–146K
+           is telling the truth twice, not contradicting itself. `est` above is
+           the OR of the two and must never be used to draw either one. */
+        estR:!exact && on.some(a => agLanding(a) && isEstimated(a)),
+        estP:!exact && r.agr.some(a => !a.req && isEstimated(a)),
         peer:false,
         /* a dormant agreement is live at an agreed price with nothing going
            through it — so its covered volume is the expectation and its actual
@@ -14988,6 +15100,13 @@ function rpModel({real = false} = {}){
        agreements landing next to twenty estimated ones is an exact saving and an
        estimated opportunity, not one blurred figure. */
     est:cats.some(c => c.est),
+    /* MONEY THAT WENT OUT is never an estimate. Spend, the volume the agreements
+       cover, and everything cut from them are read straight off the invoices —
+       only an agreement's SAVING can be a benchmark. The Spending page was
+       banding its own total at ±15% while its ledger said "matched line by
+       line", because it drew every figure from `est`. The one customer whose
+       spend really is an estimate is the one who has given us no invoices. */
+    estS:newCustomer,
     estR:agrs.some(a => a.est && a.landing !== false && !a.dormant && !a.pending) || (newCustomer && agrs.length > 0),
     estP:!exact && live().some(r => r.agr.some(a => !a.req && isEstimated(a))),
     peer:newCustomer, real:exact,
@@ -15014,7 +15133,10 @@ function rpSavings(m){
   const best = rows.find(c => c.realised) || rows[0];
   return {
   h1:'What the agreements gave back',
-  est:m.est,
+  /* the headline figure's own kind, not the page's — see drSavings(). m.est is
+     true whenever ANYTHING here is estimated, and it was drawing an exact,
+     line-matched saving in the muted dotted setting reserved for estimates. */
+  est:m.estR,
   find:`<b class="pos">${rpNum(m.realised, m.estR)}<small> kr.</small></b>
     came off ${m.peer ? `the invoices of companies your size` : `your invoices`} in
     ${m.period.of}, through <em>${m.landing.length} ${m.landing.length === 1 ? 'agreement' : 'agreements'}</em>${
@@ -15044,10 +15166,10 @@ function rpSavings(m){
           return `<li class="rp-bar-row">
             <span class="rp-bar-n">${c.n}</span>
             <span class="rp-bar-v${c.realised ? '' : ' zero'}">${c.realised
-              ? rpNum(c.realised, c.est) + ' kr.'
+              ? rpNum(c.realised, c.estR) + ' kr.'
               : 'Nothing yet'}</span>
             <span class="rp-track" style="--i:${i}" role="img"
-              aria-label="${c.n}: ${c.realised ? rpNum(c.realised, c.est) + ' kroner realised' : 'nothing realised'}, ${rpSave(c.potential, c.est)} kroner still available">
+              aria-label="${c.n}: ${c.realised ? rpNum(c.realised, c.estR) + ' kroner realised' : 'nothing realised'}, ${rpSave(c.potential, c.estP)} kroner still available">
               <i class="done" style="width:${(c.realised / max * 100).toFixed(1)}%"></i>
               <i class="open" style="width:${(c.potential / max * 100).toFixed(1)}%"></i>
             </span>
@@ -15426,6 +15548,16 @@ const drRow = (op, label, sub, val, tone, sum) => `
 const drSample = txt => `
   <p class="dr-samp">${DR_IC.peer}<span>${txt}</span></p>`;
 
+/* A REALISED SAVING, DRAWN IN THE KIND IT ACTUALLY IS. Green is money that came
+   off an invoice — everywhere else in this file, and on the Overview card this
+   page opens from. A peer median has not come off anything, so it takes the
+   muted dotted estimate setting instead, however positive it is. Passing a
+   benchmark through the positive ink is the same mistake as printing an exact
+   figure as a range, in the other direction. */
+const savedInk = (n, est) => est
+  ? `<span class="fig-est">+${estRange(n)}</span>`
+  : `<span class="fig-actual">+${fmt(n)}</span>`;
+
 /* the seeded twelve-month curve the agreement page already draws, reused so the
    two never tell different stories about the same agreement */
 function drMonths(a, total){
@@ -15528,13 +15660,43 @@ const drTrack = (i, parts, label) => `
     ${parts.map(p => `<i class="${p.c}" style="width:${p.w.toFixed(1)}%"></i>`).join('')}
   </span>`;
 
-/* ---------- 1 · Savings ---------- */
+/* ---------- 1 · Savings ----------
+   Two acts, in the order the reader arrived in. You clicked a savings figure, so
+   act one is that figure and nothing else: the claim, three facts that support
+   it, the arithmetic, and the categories it actually came out of. Act two is
+   what is still on the table — marked as a turn, stated as its own claim, and
+   explicitly excluded from the figure above, so an estimated opportunity never
+   props up an invoice-verified saving.
+
+   The split also settles a provenance bug this page carried: `m.est` is true if
+   ANYTHING on the page is estimated, and it was drawing the exact, line-matched
+   headline in the muted dotted setting reserved for estimates — the same figure
+   the ledger beside it prints in green. Every figure now declares its own kind:
+   estR for what landed, estP for what is still open. */
 function drSavings(m){
-  const cats = drCats(m).sort((a, b) => (b.realised + b.potential) - (a.realised + a.potential));
-  const max = Math.max(1, ...cats.map(c => c.realised + c.potential));
-  const rate = m.volume ? (m.realised / m.volume * 100) : 0;
+  const cats  = drCats(m);
+  const rate  = m.volume ? (m.realised / m.volume * 100) : 0;
   const bonus = bonusOn(m.volume);
-  const best = [...cats].sort((a, b) => b.potential - a.potential)[0];
+
+  /* act one reads only what earned, ranked by what it earned; act two only what
+     is still open, ranked by that. A category in both lists is not a duplicate —
+     it is two different facts about the same area of spend, and the body of each
+     row says so. */
+  const earned  = cats.filter(c => c.realised).sort((a, b) => b.realised - a.realised);
+  const openCat = cats.filter(c => c.potential).sort((a, b) => b.potential - a.potential);
+  const maxR = Math.max(1, ...earned.map(c => c.realised));
+  const maxP = Math.max(1, ...openCat.map(c => c.potential));
+  const best = openCat[0];
+  const top  = earned[0];
+  const openAgrs = openCat.reduce((s, c) => s + c.open.length, 0);
+  const openRows = () => live().flatMap(r => r.agr).filter(a => !a.req);
+  const catsWord = n => `categor${n === 1 ? 'y' : 'ies'}`;
+
+  /* a category's still-open money in its own ink: exact where it was read off a
+     document, a banded range where it is a benchmark, never blended into one
+     figure. Bob's rows go through potHTML(), which only splits the total potOf()
+     already gave the model; Fanny has one kind, so she gets one figure. */
+  const potInk = c => m.peer ? figHTML(c.potential, true) : potHTML(c.row.agr || []);
 
   const led = m.peer ? `
     <div class="dr-led">
@@ -15542,7 +15704,7 @@ function drSavings(m){
       ${drRow('', 'Median peer spend', `${ncPeers} companies like yours`, rpNum(m.spend, true))}
       ${drRow('×', 'Agreed rate where they buy on agreement',
         `weighted across ${m.agrs.length} categories they cover`, `−${rate.toFixed(1)}%`)}
-      ${drRow('=', 'Saving a company like yours takes', '', rpNum(m.realised, true), 'pos', true)}
+      ${drRow('=', 'Saving a company like yours takes', '', rpNum(m.realised, true), '', true)}
       <p class="dr-led-note">${drCohort()} The band is ±15% — half of them land inside
         it. Connect your invoices and this becomes one exact figure.</p>
     </div>` : `
@@ -15567,76 +15729,107 @@ function drSavings(m){
 
   return {
     h1: m.peer ? 'Where a saving like yours comes from' : 'Where your saving came from',
-    est: m.est,
+    /* the headline figure's OWN kind, not the page's. Exact ⇒ it is set in the
+       positive ink, the same green the ledger prints the same number in. */
+    est: m.estR,
     find: `<b class="pos">${rpNum(m.realised, m.estR)}<small> kr.</small></b>
       came off ${m.peer ? 'the invoices of companies your size' : 'your invoices'} in
-      ${m.period.of}. Another <em>${rpPot(m)} kr. a year</em> is
-      priced and waiting in agreements nobody has switched on.`,
+      ${m.period.of}, through <em>${m.landing.length} agreement${m.landing.length === 1 ? '' : 's'}</em>
+      in <em>${earned.length} of the ${cats.length} ${catsWord(cats.length)}</em>
+      ${m.peer ? 'they buy in' : 'you buy in'}.`,
     led,
+    /* three facts about the saving. The opportunity used to lead this row, which
+       put an estimate in the first supporting position under a verified claim. */
     stats: `
-      ${rpStat(rpPot(m) + ' <small>kr./year</small>',
-        'Still priced and waiting, if you switch the rest on', '', m.est)}
+      ${top
+        ? rpStat(rpSave(top.realised, top.estR) + ' <small>kr.</small>',
+            `From ${top.n.toLowerCase()}, the single biggest source of it`,
+            top.estR ? '' : 'pos', top.estR)
+        : rpStat(`${m.landing.length}`,
+            'Agreements landing a saving on an invoice today', '')}
       ${rpStat(rpPct(m.volume, m.spend) + '<small>%</small>',
         'Of everything you buy goes through an agreement', '')}
-      ${rpStat(`${fmt(cats.filter(c => c.realised).length)} <small>of ${cats.length}</small>`,
+      ${rpStat(`${fmt(earned.length)} <small>of ${cats.length}</small>`,
         'Categories earning something today',
-        cats.every(c => c.realised) ? 'pos' : '')}`,
+        earned.length === cats.length ? 'pos' : earned.length ? '' : 'warn')}`,
     secs: `
       <section class="rp-sec">
         <div class="rp-head">
-          <h2>Every category, opened up</h2>
-          <p>Ranked by what each is worth in total. The solid part has landed; the pale
-            part is agreed pricing nobody has switched to yet. Open one to see the
-            agreements behind it and the lines they price.</p>
+          <h2>Where it came from</h2>
+          <p>Only the ${catsWord(earned.length)} that actually took money off an invoice,
+            ranked by how much. Open one to see the agreements behind it and the lines
+            they price.</p>
         </div>
+        ${earned.length ? `
         <ul class="dr-drill">
-          ${cats.map((c, i) => {
+          ${earned.map((c, i) => {
             const body = `
-              ${c.agrs.length ? `
-                <p class="dr-sub">Earning today</p>
-                <ul class="dr-ags">
-                  ${c.agrs.map(a => `<li class="dr-ag">
-                    <span class="dr-tag on">Live</span>
-                    <span class="dr-ag-n">${a.n}</span>
-                    <span class="dr-ag-v">${rpSave(a.save, m.est)} kr.</span>
-                  </li>`).join('')}
-                </ul>
-                ${m.peer ? drSample(`These lines are what the median company in your trade
-                  buys through this agreement — <b>not your invoices</b>. Yours will differ;
-                  upload them and this table becomes your own.`) : ''}
-                ${c.agrs.map(a => drLines(c.row, a, m.est)).join('')}` : `
-                <p class="dr-sub">Nothing earning here yet</p>`}
-              ${c.open.length ? `
-                <p class="dr-sub">Priced, not switched on</p>
-                <ul class="dr-ags">
-                  ${c.open.map(a => `<li class="dr-ag">
-                    <span class="dr-tag">Ready</span>
-                    <span class="dr-ag-n">${a.n}${a.isNew ? ' <em>· new</em>' : ''}</span>
-                    <span class="dr-ag-v">${rpSave(a.save, m.est)} kr./year</span>
-                  </li>`).join('')}
-                </ul>` : ''}`;
+              <p class="dr-sub">What is earning here</p>
+              <ul class="dr-ags">
+                ${c.agrs.map(a => `<li class="dr-ag">
+                  <span class="dr-tag on">Live</span>
+                  <span class="dr-ag-n">${a.n}</span>
+                  <span class="dr-ag-v">${savedInk(a.save, a.est)} kr.</span>
+                </li>`).join('')}
+              </ul>
+              ${m.peer ? drSample(`These lines are what the median company in your trade
+                buys through this agreement — <b>not your invoices</b>. Yours will differ;
+                upload them and this table becomes your own.`) : ''}
+              ${c.agrs.map(a => drLines(c.row, a, a.est)).join('')}`;
             return drGroup(c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
               c.n, `${c.sup} suppliers · ${fmt(c.inv)} invoices`,
-              c.realised ? rpSave(c.realised, m.est) + ' kr.' : 'Nothing yet',
-              c.realised ? 'pos' : 'zero',
-              drTrack(i, [
-                {c:'done', w:c.realised / max * 100},
-                {c:'open', w:c.potential / max * 100}
-              ], `${c.n}: ${fmt(c.realised)} kroner realised, ${fmt(c.potential)} still available`),
+              savedInk(c.realised, c.estR) + ' kr.', '',
+              drTrack(i, [{c:'done' + (c.estR ? ' est' : ''), w:c.realised / maxR * 100}],
+                `${c.n}: ${fmt(c.realised)} kroner, ${rpPct(c.realised, m.realised)}% of the saving`),
+              body, i);
+          }).join('')}
+        </ul>` : `
+        <p class="dr-samp">${DR_IC.peer}<span>Nothing has landed on an invoice yet in
+          ${m.period.of}. Everything you have is still in the ${catsWord(openCat.length)}
+          below.</span></p>`}
+      </section>
+
+      ${openCat.length ? `
+      <section class="rp-sec dr-act2">
+        <div class="rp-head"><h2>What is still on the table</h2></div>
+        <div class="dr-claim">
+          <b class="dr-claim-v">${rpPot(m)}<small> kr. a year</small></b>
+          <p class="dr-claim-tx">is already priced in ${openAgrs} agreement${openAgrs === 1 ? '' : 's'}
+            nobody has switched on, across ${openCat.length} of the ${catsWord(cats.length)}
+            ${m.peer ? 'a company like yours buys in' : 'you buy in'}.
+            <b>None of it is in the figure above.</b> That one is what has already come off
+            an invoice; this is what has not.</p>
+          ${m.peer ? '' : figKeyHTML(openRows())}
+        </div>
+        <ul class="dr-drill">
+          ${openCat.map((c, i) => {
+            const body = `
+              <p class="dr-sub">Priced, not switched on</p>
+              <ul class="dr-ags">
+                ${c.open.map(a => `<li class="dr-ag">
+                  <span class="dr-tag">Ready</span>
+                  <span class="dr-ag-n">${a.n}${a.isNew ? ' <em>· new</em>' : ''}</span>
+                  <span class="dr-ag-v open">${figHTML(a.save, isEstimated(a))} kr.</span>
+                </li>`).join('')}
+              </ul>
+              ${c.realised ? `<p class="dr-samp">${DR_IC.peer}<span>${c.n} is already earning
+                <b>${savedInk(c.realised, c.estR)} kr.</b> — the agreements above are on top of
+                that, not instead of it.</span></p>` : ''}`;
+            return drGroup('op-' + c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
+              c.n, `${c.open.length} agreement${c.open.length === 1 ? '' : 's'} ready · ${c.sup} suppliers`,
+              `${potInk(c)}<small> a year</small>`, '',
+              drTrack(i, [{c:'open', w:c.potential / maxP * 100}],
+                `${c.n}: ${fmt(c.potential)} kroner a year still available`),
               body, i);
           }).join('')}
         </ul>
-        <div class="rp-key">
-          <span><i class="done"></i>Realised — ${m.period.n.toLowerCase()}</span>
-          <span><i class="open"></i>Still available, per year</span>
-        </div>
-      </section>
+      </section>` : ''}
 
       ${best && best.potential ? `
       <div class="dr-next">
         <span class="dr-next-tx">
           <b>${best.n} is the biggest one left</b>
-          <span>${rpSave(best.potential, m.est)} kr. a year is already priced there across
+          <span>${rpSave(best.potential, best.estP)} kr. a year is already priced there across
             ${best.open.length} agreement${best.open.length === 1 ? '' : 's'} nobody has
             switched on.</span>
         </span>
@@ -15651,25 +15844,81 @@ function drSavings(m){
 const drCohort = () => `Median of ${ncPeers} ${(state.industry || 'similar').toLowerCase()}
   companies, 10–49 employees, in your region.`;
 
-/* ---------- 2 · Spending ---------- */
+/* ---------- 2 · Spending ----------
+   Two acts, like the savings page, but the axis is different: there the split is
+   what has happened against what has not, here it is what is covered against
+   what is exposed. And the exposure is two different problems that the old
+   single list buried in one another — a category where an agreement exists but
+   the orders keep going elsewhere is a redirection; a category with no agreement
+   at all is a signature. They are not fixed the same way, so they are not listed
+   together.
+
+   Every figure on this page is money that actually went out, read off invoices.
+   None of it is banded any more: `m.est` says "some agreement's SAVING is a
+   benchmark", which has nothing to do with what the invoices totalled, and it
+   was printing a line-matched 4,1M as "4,1M–5,5M" under a ledger that said
+   "matched line by line". Spend reads m.estS. */
 function drSpending(m){
   const cats = drCats(m).sort((a, b) => b.spend - a.spend);
   const max = Math.max(1, ...cats.map(c => c.spend));
-  const worst = [...cats].sort((a, b) =>
-    (b.spend - b.agrs.reduce((s, x) => s + x.vol, 0)) -
-    (a.spend - a.agrs.reduce((s, x) => s + x.vol, 0)))[0];
-  const worstOff = worst ? worst.spend - worst.agrs.reduce((s, x) => s + x.vol, 0) : 0;
+  /* what actually WENT THROUGH at the agreed rate, not what the agreements were
+     priced to cover. The ledger's bottom line is spend − volume, and these two
+     lists claim to decompose it: read covers here instead and the page prints a
+     total its own parts do not add up to. The difference between the two is the
+     usage gap, which is the Agreement-usage page's subject, not this one's. */
+  const covOf = c => c.agrs.reduce((s, a) => s + a.vol, 0);
+  const offOf = c => Math.max(0, c.spend - covOf(c));
+
+  const held   = cats.filter(c => c.agrs.length);
+  const naked  = cats.filter(c => !c.agrs.length);
+  const leak   = held.reduce((s, c) => s + offOf(c), 0);
+  const nakedSpend = naked.reduce((s, c) => s + c.spend, 0);
+  const worst  = [...cats].sort((a, b) => offOf(b) - offOf(a))[0];
+  const worstOff = worst ? offOf(worst) : 0;
+  const catsWord = n => `categor${n === 1 ? 'y' : 'ies'}`;
+
+  /* one category's body, written once — the two lists differ in what they are
+     ranked by and what the row is for, not in what is inside it */
+  const catBody = c => {
+    const off = offOf(c);
+    const sups = (c.row.top || '').split('·').map(x => x.trim()).filter(Boolean);
+    const onAgr = n => c.agrs.some(a => a.n.startsWith(n.split(' ')[0]));
+    return `
+      ${sups.length ? `
+        <p class="dr-sub">Who you buy from here</p>
+        <ul class="dr-ags">
+          ${sups.map(n => `<li class="dr-ag">
+            <span class="dr-tag${onAgr(n) ? ' on' : ''}">${onAgr(n) ? 'On agreement' : 'No agreement'}</span>
+            <span class="dr-ag-n">${n}</span>
+            <span class="dr-ag-v idle">—</span>
+          </li>`).join('')}
+        </ul>` : ''}
+      <p class="dr-sub">What the money goes on</p>
+      ${m.peer ? drSample(`This is what the median company in your trade buys in
+        ${c.n.toLowerCase()} — <b>not your invoices</b>. Upload yours and this
+        table becomes your own.`) : ''}
+      ${drSpendLines(c.row, c, m.estS)}
+      ${off ? `
+        <p class="dr-sub">Off agreement here</p>
+        <ul class="dr-ags">
+          <li class="dr-ag">
+            <span class="dr-tag idle">Unpriced</span>
+            <span class="dr-ag-n">${rpNum(off, m.estS)} kr. bought at list price</span>
+            <span class="dr-ag-v">−${c.rate}% available</span>
+          </li>
+        </ul>` : ''}`;
+  };
 
   const led = `
     <div class="dr-led">
       <span class="dr-led-h">Where the money splits</span>
       ${drRow('', m.peer ? 'Median peer spend' : 'Everything you bought',
         `${cats.length} purchasing categories · ${fmt(m.invoices)} invoices`,
-        rpNum(m.spend, m.est))}
+        rpNum(m.spend, m.estS))}
       ${drRow('−', 'Bought on an agreement',
         `${rpPct(m.volume, m.spend)}% of it, across ${m.landing.length} agreement${m.landing.length === 1 ? '' : 's'}`,
-        rpNum(m.volume, m.est))}
-      ${drRow('=', 'Bought at whatever the price was', '', rpNum(m.off, m.est), 'warn', true)}
+        rpNum(m.volume, m.estS))}
+      ${drRow('=', 'Bought at whatever the price was', '', rpNum(m.off, m.estS), 'warn', true)}
       <p class="dr-led-note">${m.peer
         ? drCohort() + ' Every figure on this page is that median, banded ±15%.'
         : `Read off ${fmt(m.invoices)} invoices from ${fmt(tot('sup'))} suppliers, matched line by line.`}</p>
@@ -15677,76 +15926,75 @@ function drSpending(m){
 
   return {
     h1: m.peer ? 'Where a company like yours spends' : 'Where your money goes',
-    est: m.est,
-    find: `<b>${rpNum(m.spend, m.est)}<small> kr.</small></b> went out in ${m.period.of},
-      across ${cats.length} purchasing categories. <em>${rpNum(m.off, m.est)} kr.</em> of it
-      was bought at list price, with no agreement behind it.`,
+    est: m.estS,
+    find: `<b>${rpNum(m.spend, m.estS)}<small> kr.</small></b> went out in ${m.period.of},
+      across ${cats.length} purchasing categories and ${fmt(m.invoices)} invoices.
+      <em>${rpPct(m.volume, m.spend)}%</em> of it was bought on an agreement you
+      already have.`,
     led,
     stats: `
-      ${rpStat(rpNum(m.volume, m.est) + ' <small>kr.</small>',
-        'Bought through an agreement you already have', '', m.est)}
-      ${rpStat(rpPct(m.off, m.spend) + '<small>%</small>',
-        'Of spend still bought at whatever the price was', m.off ? 'warn' : 'pos')}
-      ${rpStat(`${fmt(cats.length)} <small>areas</small>`,
-        `${cats.filter(c => !c.agrs.length).length} of them with no agreement at all`, '')}`,
+      ${rpStat(rpNum(m.volume, m.estS) + ' <small>kr.</small>',
+        'Bought through an agreement you already have', '', m.estS)}
+      ${rpStat(rpNum(leak, m.estS) + ' <small>kr.</small>',
+        `Leaking past the agreements you hold, in ${held.length} ${catsWord(held.length)}`,
+        leak ? 'warn' : 'pos', m.estS)}
+      ${rpStat(rpNum(nakedSpend, m.estS) + ' <small>kr.</small>',
+        `Spent in ${naked.length} ${catsWord(naked.length)} with no agreement at all`,
+        naked.length ? 'warn' : 'pos', m.estS)}`,
     secs: `
       <section class="rp-sec">
         <div class="rp-head">
-          <h2>Every category, opened up</h2>
-          <p>Ranked by spend. The solid part is bought on an agreement; the rest is not.
-            Open one to see who you buy from there and what the money actually goes on.</p>
+          <h2>Where you already have an agreement</h2>
+          <p>${held.length} ${catsWord(held.length)}, ranked by spend. The solid part went
+            through the agreement; the rest went out beside it at list price — same
+            category, same suppliers, no agreed rate. Open one to see who you buy from
+            and what the money goes on.</p>
         </div>
+        ${held.length ? `
         <ul class="dr-drill">
-          ${cats.map((c, i) => {
-            const cov = c.agrs.reduce((s, a) => s + a.covers, 0);
-            const off = Math.max(0, c.spend - cov);
-            const sups = (c.row.top || '').split('·').map(x => x.trim()).filter(Boolean);
-            const body = `
-              ${sups.length ? `
-                <p class="dr-sub">Who you buy from here</p>
-                <ul class="dr-ags">
-                  ${sups.map(n => `<li class="dr-ag">
-                    <span class="dr-tag${c.agrs.some(a => a.n.startsWith(n.split(' ')[0])) ? ' on' : ''}">${
-                      c.agrs.some(a => a.n.startsWith(n.split(' ')[0])) ? 'On agreement' : 'No agreement'}</span>
-                    <span class="dr-ag-n">${n}</span>
-                    <span class="dr-ag-v idle">—</span>
-                  </li>`).join('')}
-                </ul>` : ''}
-              <p class="dr-sub">What the money goes on</p>
-              ${m.peer ? drSample(`This is what the median company in your trade buys in
-                ${c.n.toLowerCase()} — <b>not your invoices</b>. Upload yours and this
-                table becomes your own.`) : ''}
-              ${drSpendLines(c.row, c, m.est)}
-              ${off ? `
-                <p class="dr-sub">Off agreement here</p>
-                <ul class="dr-ags">
-                  <li class="dr-ag">
-                    <span class="dr-tag idle">Unpriced</span>
-                    <span class="dr-ag-n">${rpNum(off, m.est)} kr. bought at list price</span>
-                    <span class="dr-ag-v">−${c.rate}% available</span>
-                  </li>
-                </ul>` : ''}`;
-            return drGroup(c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
-              c.n, `${c.sup} suppliers · ${rpPct(c.spend, m.spend)}% of all spend`,
-              rpNum(c.spend, m.est) + ' kr.', '',
-              drTrack(i, [
-                {c:'cov',  w:cov / max * 100},
-                {c:'rest', w:off / max * 100}
-              ], `${c.n}: ${fmt(cov)} kroner on agreement, ${fmt(off)} not`),
-              body, i);
-          }).join('')}
+          ${held.map((c, i) => drGroup(c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
+            c.n, `${rpPct(covOf(c), c.spend)}% of it on agreement · ${c.sup} suppliers`,
+            rpNum(c.spend, m.estS) + ' kr.', '',
+            drTrack(i, [
+              {c:'cov',  w:covOf(c) / max * 100},
+              {c:'rest', w:offOf(c) / max * 100}
+            ], `${c.n}: ${fmt(covOf(c))} kroner on agreement, ${fmt(offOf(c))} not`),
+            catBody(c), i)).join('')}
         </ul>
         <div class="rp-key">
           <span><i class="cov"></i>Bought on an agreement</span>
           <span><i class="rest"></i>Bought at list price</span>
-        </div>
+        </div>` : `
+        <p class="dr-samp">${DR_IC.peer}<span>You have no agreement in force in any
+          category yet, so every krone below is at list price.</span></p>`}
       </section>
+
+      ${naked.length ? `
+      <section class="rp-sec dr-act2">
+        <div class="rp-head"><h2>Where you have none</h2></div>
+        <div class="dr-claim">
+          <b class="dr-claim-v">${rpNum(nakedSpend, m.estS)}<small> kr.</small></b>
+          <p class="dr-claim-tx">went out in ${naked.length} ${catsWord(naked.length)} with
+            no agreement behind a single krone of it — ${rpPct(nakedSpend, m.spend)}% of
+            everything ${m.peer ? 'a company like yours buys' : 'you bought'} in
+            ${m.period.of}. <b>None of this is the leakage above.</b> There the agreement
+            exists and the orders went elsewhere; here there is nothing to order against.</p>
+        </div>
+        <ul class="dr-drill">
+          ${naked.map((c, i) => drGroup('nk-' + c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
+            c.n, `${c.sup} suppliers · ${fmt(c.inv)} invoices · every krone at list price`,
+            rpNum(c.spend, m.estS) + ' kr.', 'warn',
+            drTrack(i, [{c:'rest', w:c.spend / max * 100}],
+              `${c.n}: ${fmt(c.spend)} kroner, none of it on an agreement`),
+            catBody(c), i)).join('')}
+        </ul>
+      </section>` : ''}
 
       ${worst && worstOff ? `
       <div class="dr-next">
         <span class="dr-next-tx">
           <b>${worst.n} is the biggest gap</b>
-          <span>${rpNum(worstOff, m.est)} kr. of it goes out with no agreement behind it,
+          <span>${rpNum(worstOff, m.estS)} kr. of it goes out with no agreement behind it,
             in a category where ${worst.rate}% is already negotiated.</span>
         </span>
         <button type="button" class="btn btn-primary" data-drcat="${worst.id}">Open ${worst.n}${DR_IC.go}</button>
@@ -15754,19 +16002,33 @@ function drSpending(m){
   };
 }
 
-/* ---------- 3 · Agreement usage ---------- */
+/* ---------- 3 · Agreement usage ----------
+   Two acts, the same as its siblings: what is carrying volume, then what is
+   agreed and idle. The old single list ranked all of them by covered spend and
+   left the reader to spot which rows said "Nothing yet" — but an idle agreement
+   is the entire subject of this page, and a subject does not go in a footnote.
+
+   Covered spend and volume are read off invoices, so they print exact: `m.est`
+   is about whether an agreement's SAVING is a benchmark, which says nothing
+   about what actually went through it. They read m.estS. */
 function drUsage(m){
   const cats = drCats(m);
   const rowOf = id => cats.find(c => c.id === id) || {row:{id}, rate:0};
   const ags = [...m.agrs].sort((a, b) => b.covers - a.covers);
   const max = Math.max(1, ...ags.map(a => a.covers));
   const idle = m.idle;
+  /* act one is what is carrying volume, act two what is agreed and standing
+     still. Both are ranked by the spend they were priced to cover, so a row's
+     width means the same thing in either list. */
+  const running = ags.filter(a => a.vol);
+  const stalled = ags.filter(a => !a.vol);
+  const stalledCov = stalled.reduce((t, a) => t + a.covers, 0);
   const gap = m.covered - m.volume;
   const readyN = cats.reduce((n, c) => n + c.open.length, 0);
 
   if(!ags.length) return {
     h1:'Nothing is running through an agreement yet',
-    est:m.est, led:'',
+    est:m.estS, led:'',
     find:`You have <b>0</b> agreements in force, so there is nothing to report on here yet.
       <em>${readyN} ${readyN === 1 ? 'is' : 'are'}</em> priced and ready to switch on.`,
     stats:'',
@@ -15784,69 +16046,99 @@ function drUsage(m){
       <span class="dr-led-h">What is actually flowing</span>
       ${drRow('', `${ags.length} agreement${ags.length === 1 ? '' : 's'} in force`,
         `out of ${ags.length + readyN} open to you`, `${ags.length}`)}
-      ${drRow('', 'Spend they were priced to cover', '', rpNum(m.covered, m.est))}
+      ${drRow('', 'Spend they were priced to cover', '', rpNum(m.covered, m.estS))}
       ${drRow('−', 'Spend that actually went through them',
-        `${rpPct(m.volume, m.covered)}% of what they cover`, rpNum(m.volume, m.est))}
+        `${rpPct(m.volume, m.covered)}% of what they cover`, rpNum(m.volume, m.estS))}
       ${drRow('=', 'Agreed, but nothing running through it', '',
-        rpNum(gap, m.est), gap ? 'warn' : 'pos', true)}
+        rpNum(gap, m.estS), gap ? 'warn' : 'pos', true)}
       <p class="dr-led-note">${m.peer
         ? drCohort() + ' Usage is the median pattern, not a promise about your own buying.'
         : `An agreement can be live and still earn nothing — the price is agreed, but the
            orders keep going somewhere else. That gap is what this page is for.`}</p>
     </div>`;
 
+  /* one agreement row, written once: the two lists differ in what they mean, not
+     in what is inside a row */
+  const agRow = (a, i, pre) => {
+    const c = rowOf(a.catId);
+    const body = `
+      <p class="dr-sub">Month by month</p>
+      ${a.vol ? drMonths(a, a.vol) : `
+        <p class="dr-samp">${DR_IC.peer}<span>Nothing has gone through this agreement,
+          so there is no year to draw. The price below is agreed and waiting.</span></p>`}
+      <p class="dr-sub">What it prices</p>
+      ${m.peer ? drSample(`These lines are the median pattern for this agreement in your
+        trade — <b>not your invoices</b>.`) : ''}
+      ${drLines(c.row, a.save ? a : {n:a.n, covers:a.covers,
+        save:Math.round(a.covers * (c.rate || 8) / 100)}, a.est)}`;
+    /* the unused remainder only earns a segment when there is one. An agreement
+       that is running carries its whole covered volume, so drawing a second fill
+       of zero width left act one with a two-colour key explaining a colour that
+       was never on the page. */
+    const unused = Math.max(0, a.covers - a.vol);
+    return drGroup(pre + 'ag' + i, brandOf(a.n), CAT_ICON[a.catId] || '',
+      a.n, a.vol
+        ? `${a.cat} · ${rpPct(a.vol, m.volume)}% of everything bought on agreement`
+        : `${a.cat} · priced for ${rpNum(a.covers, m.estS)} kr., nothing bought`,
+      a.vol ? rpNum(a.vol, m.estS) + ' kr.' : 'Nothing yet',
+      a.vol ? '' : 'zero',
+      drTrack(i, a.vol
+        ? [{c:'cov', w:a.vol / max * 100}].concat(unused ? [{c:'rest', w:unused / max * 100}] : [])
+        : [{c:'rest', w:a.covers / max * 100}],
+        `${a.n}: ${fmt(a.vol)} of ${fmt(a.covers)} kroner covered`),
+      body, i);
+  };
+
   return {
     h1: m.peer ? 'What companies like yours actually use' : 'What is actually going through them',
-    est: m.est,
+    est: m.estS,
     find: `<b>${ags.length}</b> agreement${ags.length === 1 ? ' is' : 's are'} in force, carrying
-      <em>${rpNum(m.volume, m.est)} kr.</em> of ${m.period.of}'s buying.
-      ${idle.length
-        ? `<em>${idle.length}</em> of them ${idle.length === 1 ? 'is' : 'are'} live at an agreed
-           price with nothing running through ${idle.length === 1 ? 'it' : 'them'}.`
-        : `Every one of them is carrying volume.`}`,
+      <em>${rpNum(m.volume, m.estS)} kr.</em> of what ${m.peer ? 'they bought' : 'you bought'}
+      in ${m.period.of}${
+      running.length === ags.length ? ' — every one of them is earning its place' : ''}.`,
     led,
     stats: `
       ${rpStat(rpPct(m.volume, m.covered) + '<small>%</small>',
         'Of the spend they cover is actually going through them',
         rpPct(m.volume, m.covered) > 80 ? 'pos' : 'warn')}
-      ${rpStat(rpNum(gap, m.est) + ' <small>kr.</small>',
-        'Agreed pricing nothing is being bought against', gap ? 'warn' : '', m.est)}
+      ${rpStat(rpNum(gap, m.estS) + ' <small>kr.</small>',
+        'Agreed pricing nothing is being bought against', gap ? 'warn' : '', m.estS)}
       ${rpStat(`${readyN}`, 'More agreements priced and waiting to be switched on', '')}`,
     secs: `
       <section class="rp-sec">
         <div class="rp-head">
-          <h2>Every agreement, opened up</h2>
-          <p>Ranked by the spend each was priced to cover. The filled part is what actually
-            went through it. Open one to see its year month by month and the lines it prices.</p>
+          <h2>What is carrying volume</h2>
+          <p>${running.length} agreement${running.length === 1 ? '' : 's'} with money running
+            through ${running.length === 1 ? 'it' : 'them'}, ranked by the spend each was
+            priced to cover. The filled part is what actually went through; the rest is
+            covered spend still going elsewhere. Open one to see its year month by month
+            and the lines it prices.</p>
         </div>
         <ul class="dr-drill">
-          ${ags.map((a, i) => {
-            const c = rowOf(a.catId);
-            const body = `
-              <p class="dr-sub">Month by month</p>
-              ${a.vol ? drMonths(a, a.vol) : `
-                <p class="dr-samp">${DR_IC.peer}<span>Nothing has gone through this agreement,
-                  so there is no year to draw. The price below is agreed and waiting.</span></p>`}
-              <p class="dr-sub">What it prices</p>
-              ${m.peer ? drSample(`These lines are the median pattern for this agreement in your
-                trade — <b>not your invoices</b>.`) : ''}
-              ${drLines(c.row, a.save ? a : {n:a.n, covers:a.covers,
-                save:Math.round(a.covers * (c.rate || 8) / 100)}, m.est)}`;
-            return drGroup('ag' + i, brandOf(a.n), CAT_ICON[a.catId] || '',
-              a.n, `${a.cat}${a.dormant ? ' · agreed, not used' : ''}`,
-              a.vol ? rpNum(a.vol, m.est) + ' kr.' : 'Nothing yet',
-              a.vol ? '' : 'zero',
-              drTrack(i, [{c:'cov', w:a.vol / max * 100},
-                          {c:'rest', w:Math.max(0, a.covers - a.vol) / max * 100}],
-                `${a.n}: ${fmt(a.vol)} of ${fmt(a.covers)} kroner covered`),
-              body, i);
-          }).join('')}
+          ${running.map((a, i) => agRow(a, i, '')).join('')}
         </ul>
+        ${running.some(a => a.covers > a.vol) ? `
         <div class="rp-key">
           <span><i class="cov"></i>Invoiced through the agreement</span>
           <span><i class="rest"></i>Spend it covers, unused</span>
-        </div>
+        </div>` : ''}
       </section>
+
+      ${stalled.length ? `
+      <section class="rp-sec dr-act2">
+        <div class="rp-head"><h2>Agreed, and standing still</h2></div>
+        <div class="dr-claim">
+          <b class="dr-claim-v">${rpNum(stalledCov, m.estS)}<small> kr. of buying</small></b>
+          <p class="dr-claim-tx">is already priced in ${stalled.length}
+            agreement${stalled.length === 1 ? '' : 's'} that nothing has gone through —
+            ${stalled.map(a => a.n).join(', ')}. <b>None of it is in the figure above.</b>
+            The rate is agreed and waiting; the orders are still going somewhere else, so
+            pointing the next one here is the whole fix.</p>
+        </div>
+        <ul class="dr-drill">
+          ${stalled.map((a, i) => agRow(a, i, 'st')).join('')}
+        </ul>
+      </section>` : ''}
 
       ${idle.length ? `
       <div class="dr-next">
@@ -15881,6 +16173,7 @@ function renderDrill(){
           <div class="dr-mast-txt"><h1 id="drT" tabindex="-1">${r.h1}</h1></div>
           <p class="dr-find${r.est ? ' est' : ''}">${r.find}</p>
           ${r.led}
+          ${r.stats ? `<div class="dr-mast-sup"><div class="rp-stats">${r.stats}</div></div>` : ''}
           <div class="dr-ctl">
             <div class="seg" role="group" aria-label="Period">
               ${Object.entries(RP_PERIOD).map(([k, v]) => `<button type="button" data-drper="${k}"
@@ -15894,14 +16187,13 @@ function renderDrill(){
       </div>
       </div>
 
+      ${m.peer ? `
       <div class="dr-lede">
-        ${m.peer ? `
         <p class="rp-note">${RP_IC.info}<span>Nothing here is your own accounting yet.
           ${drCohort()} Figures are shown as a band because that is honestly how much we
           know before you connect anything. <b>Upload your invoices and every number on
-          this page becomes yours, exact to the krone.</b></span></p>` : ''}
-        ${r.stats ? `<div class="rp-stats">${r.stats}</div>` : ''}
-      </div>
+          this page becomes yours, exact to the krone.</b></span></p>
+      </div>` : ''}
 
       ${r.secs}
     </div>`;
