@@ -4693,6 +4693,33 @@ body.activity-on.activity-open .canvas{
    a bug. The verdict lives on the number; the bar only has to be legible. */
 .dr-act2 .rp-track i.rest{background:var(--general-muted-foreground);opacity:.42}
 
+/* the marked breakdown: a row per kind of money, ruled apart rather than boxed,
+   the tag doing the marking and the sentence saying what the fix is */
+.dr-kinds{list-style:none;display:flex;flex-direction:column;
+  margin-bottom:var(--s8)}
+.dr-kind{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:baseline;gap:var(--s2) var(--s4);
+  padding:var(--s4) 0;border-bottom:1px solid var(--hairline)}
+.dr-kind:first-child{border-top:1px solid var(--hairline)}
+.dr-kind .dr-tag{align-self:center}
+.dr-kind-w{min-width:0;font-size:14px;line-height:1.45;color:var(--general-muted-foreground)}
+.dr-kind-v{font-size:var(--text-lg);font-weight:700;white-space:nowrap;
+  font-variant-numeric:tabular-nums;color:var(--general-foreground)}
+.dr-kind-v small{font-size:13px;font-weight:500;color:var(--general-muted-foreground)}
+@container page (max-width:640px){
+  .dr-kind{grid-template-columns:minmax(0,1fr) auto}
+  .dr-kind .dr-tag{grid-column:1;justify-self:start}
+  .dr-kind-v{grid-row:1;grid-column:2}
+  .dr-kind-w{grid-column:1 / -1}
+}
+/* inside an opened category the breakdown is an aside, not the section's spine */
+.dr-grp-b .dr-kinds{margin-bottom:0}
+.dr-grp-b .dr-kind{padding:var(--s3) 0}
+/* where the second act's money actually comes from, said once with the paperclip
+   that opens the data page — eight of these, one per row, would be noise */
+.dr-claim-src{grid-column:2;align-self:start;margin-top:calc(var(--s1) * -1)}
+@container page (max-width:820px){ .dr-claim-src{grid-column:1} }
+
 /* ---- what to do about it ----
    Every one of these pages ends on the move it implies. A drill-down that stops
    at the number leaves the reader with a fact and no handle. */
@@ -15543,6 +15570,34 @@ const drRow = (op, label, sub, val, tone, sum) => `
     <span class="dr-led-v${tone ? ' ' + tone : ''}">${val}</span>
   </div>`;
 
+/* ---- the marking: three kinds of money that did not go through us ----
+   "Not on an agreement" is three different situations with three different
+   fixes, and a page that prints one total for all three has told the reader
+   nothing they can act on. An agreement that is switched on and being walked
+   past is a redirection; one priced and never switched on is a signature; a
+   supplier we hold nothing for is a negotiation. Each kind keeps the tag it
+   already wears elsewhere in this file, so the words are the marking and the
+   colour never has to carry it alone. */
+const DR_KIND = [
+  {k:'ready', tag:'',     n:'Priced, never switched on',
+   why:'Agreed rates waiting at suppliers you already buy from. Switching one on is a signature, not a project.'},
+  {k:'idle',  tag:'idle', n:'Switched on, walked past',
+   why:'You hold the agreement and the orders went around it. Nothing to sign — the next order just has to point at it.'},
+  {k:'none',  tag:'',     n:'Nothing held here',
+   why:'Suppliers Advantage has no agreement with yet. This is the part we would have to go and negotiate.'}
+];
+const drKinds = (k, m) => {
+  const rows = DR_KIND.filter(d => k[d.k] > 0);
+  if(!rows.length) return '';
+  return `<ul class="dr-kinds">
+    ${rows.map(d => `<li class="dr-kind">
+      <span class="dr-tag${d.tag ? ' ' + d.tag : ''}">${d.n}</span>
+      <span class="dr-kind-w">${d.why}</span>
+      <b class="dr-kind-v">${rpNum(k[d.k], m.estS)}<small> kr.</small></b>
+    </li>`).join('')}
+  </ul>`;
+};
+
 /* Fanny's pages carry a line-level table too, and it has to be impossible to
    read it as her own ledger. One band, in the estimate tint, saying so. */
 const drSample = txt => `
@@ -15845,50 +15900,79 @@ const drCohort = () => `Median of ${ncPeers} ${(state.industry || 'similar').toL
   companies, 10–49 employees, in your region.`;
 
 /* ---------- 2 · Spending ----------
-   Two acts, like the savings page, but the axis is different: there the split is
-   what has happened against what has not, here it is what is covered against
-   what is exposed. And the exposure is two different problems that the old
-   single list buried in one another — a category where an agreement exists but
-   the orders keep going elsewhere is a redirection; a category with no agreement
-   at all is a signature. They are not fixed the same way, so they are not listed
-   together.
+   Two acts, split by WHERE THE KNOWLEDGE COMES FROM rather than by coverage.
+   Act one is the money that actually ran through an Advantage agreement: our own
+   record, read off the agreement. Act two is everything else, which we know only
+   because the customer connected their ledger — read off their invoices, not off
+   anything of ours. That is the honest hierarchy on a page whose whole claim is
+   that the figures are invoice-verified, and it is the one split that tells the
+   reader which half of the page Advantage is answerable for.
 
-   Every figure on this page is money that actually went out, read off invoices.
-   None of it is banded any more: `m.est` says "some agreement's SAVING is a
-   benchmark", which has nothing to do with what the invoices totalled, and it
-   was printing a line-matched 4,1M as "4,1M–5,5M" under a ledger that said
-   "matched line by line". Spend reads m.estS. */
+   The coverage split this replaced was also mislabelled: it headed its second
+   act "Where you have none", when in this data every krone is spent with a
+   supplier Advantage already holds an agreement for — Freight, Telecom and Site
+   services each have two or three priced and ready. Nothing is uncovered; it is
+   just not switched on, which is a different sentence entirely.
+
+   Every figure here is money that went out, read off invoices, so none of it is
+   banded — see m.estS. */
 function drSpending(m){
   const cats = drCats(m).sort((a, b) => b.spend - a.spend);
-  const max = Math.max(1, ...cats.map(c => c.spend));
-  /* what actually WENT THROUGH at the agreed rate, not what the agreements were
-     priced to cover. The ledger's bottom line is spend − volume, and these two
-     lists claim to decompose it: read covers here instead and the page prints a
-     total its own parts do not add up to. The difference between the two is the
-     usage gap, which is the Agreement-usage page's subject, not this one's. */
-  const covOf = c => c.agrs.reduce((s, a) => s + a.vol, 0);
-  const offOf = c => Math.max(0, c.spend - covOf(c));
-
-  const held   = cats.filter(c => c.agrs.length);
-  const naked  = cats.filter(c => !c.agrs.length);
-  const leak   = held.reduce((s, c) => s + offOf(c), 0);
-  const nakedSpend = naked.reduce((s, c) => s + c.spend, 0);
-  const worst  = [...cats].sort((a, b) => offOf(b) - offOf(a))[0];
-  const worstOff = worst ? offOf(worst) : 0;
+  const max  = Math.max(1, ...cats.map(c => c.spend));
   const catsWord = n => `categor${n === 1 ? 'y' : 'ies'}`;
 
-  /* one category's body, written once — the two lists differ in what they are
-     ranked by and what the row is for, not in what is inside it */
+  const thruOf  = c => c.agrs.reduce((s, a) => s + a.vol, 0);
+  const foundOf = c => Math.max(0, c.spend - thruOf(c));
+
+  /* the three kinds inside "found in your data", per category. An agreement can
+     be switched on and still have the orders going around it, which is not the
+     same thing as having no agreement at all, and the page has to say which.
+
+     The split is a real partition of the row, never a sum of `covers`: two
+     agreements available in one category can be priced against the same krone —
+     three more were negotiated for this account only this week — so adding their
+     covered spend overstates. Only an agreement you HOLD pins an exact amount
+     (what it covered, minus what ran through it). Everything past that is
+     divided by a question with a yes/no answer: is anything priced here at all. */
+  const kindsOf = c => {
+    const idle = c.agrs.reduce((s, a) => s + Math.max(0, a.covers - a.vol), 0);
+    const rest = Math.max(0, foundOf(c) - idle);
+    const priced = (c.open || []).length > 0;
+    return {idle, ready:priced ? rest : 0, none:priced ? 0 : rest};
+  };
+
+  const thru   = cats.filter(c => thruOf(c));
+  const found  = cats.filter(c => foundOf(c));
+  const idleT  = cats.reduce((s, c) => s + kindsOf(c).idle, 0);
+  const readyT = cats.reduce((s, c) => s + kindsOf(c).ready, 0);
+  const noneT  = Math.max(0, m.off - idleT - readyT);
+  const maxThru  = Math.max(1, ...thru.map(thruOf));
+  const maxFound = Math.max(1, ...found.map(foundOf));
+  const worst = [...cats].sort((a, b) => foundOf(b) - foundOf(a))[0];
+  const worstOff = worst ? foundOf(worst) : 0;
+  const liveIn = c => c.agrs.filter(a => a.vol).map(a => a.n).join(' and ');
+
+  /* how a category's found-in-your-data money is made up, in one line under its
+     name. The kinds are the marking: the reader should never have to open a row
+     to know whether the agreement is missing, waiting, or being walked past. */
+  const kindLine = c => {
+    const k = kindsOf(c);
+    return [k.ready && `${rpNum(k.ready, m.estS)} priced, not switched on`,
+            k.idle  && `${rpNum(k.idle, m.estS)} walked past a live agreement`,
+            k.none  && `${rpNum(k.none, m.estS)} nothing held`]
+      .filter(Boolean).join(' · ');
+  };
+
   const catBody = c => {
-    const off = offOf(c);
+    const k = kindsOf(c);
     const sups = (c.row.top || '').split('·').map(x => x.trim()).filter(Boolean);
-    const onAgr = n => c.agrs.some(a => a.n.startsWith(n.split(' ')[0]));
+    const onAgr = n => c.agrs.some(a => a.vol && a.n.startsWith(n.split(' ')[0]));
     return `
       ${sups.length ? `
         <p class="dr-sub">Who you buy from here</p>
         <ul class="dr-ags">
           ${sups.map(n => `<li class="dr-ag">
-            <span class="dr-tag${onAgr(n) ? ' on' : ''}">${onAgr(n) ? 'On agreement' : 'No agreement'}</span>
+            <span class="dr-tag${onAgr(n) ? ' on' : ''}">${onAgr(n) ? 'Through Advantage' : 'Not through us'}</span>
             <span class="dr-ag-n">${n}</span>
             <span class="dr-ag-v idle">—</span>
           </li>`).join('')}
@@ -15898,15 +15982,9 @@ function drSpending(m){
         ${c.n.toLowerCase()} — <b>not your invoices</b>. Upload yours and this
         table becomes your own.`) : ''}
       ${drSpendLines(c.row, c, m.estS)}
-      ${off ? `
-        <p class="dr-sub">Off agreement here</p>
-        <ul class="dr-ags">
-          <li class="dr-ag">
-            <span class="dr-tag idle">Unpriced</span>
-            <span class="dr-ag-n">${rpNum(off, m.estS)} kr. bought at list price</span>
-            <span class="dr-ag-v">−${c.rate}% available</span>
-          </li>
-        </ul>` : ''}`;
+      ${k.idle || k.ready || k.none ? `
+        <p class="dr-sub">Not through us, and why</p>
+        ${drKinds(k, m)}` : ''}`;
   };
 
   const led = `
@@ -15915,10 +15993,10 @@ function drSpending(m){
       ${drRow('', m.peer ? 'Median peer spend' : 'Everything you bought',
         `${cats.length} purchasing categories · ${fmt(m.invoices)} invoices`,
         rpNum(m.spend, m.estS))}
-      ${drRow('−', 'Bought on an agreement',
+      ${drRow('−', 'Ran through an Advantage agreement',
         `${rpPct(m.volume, m.spend)}% of it, across ${m.landing.length} agreement${m.landing.length === 1 ? '' : 's'}`,
         rpNum(m.volume, m.estS))}
-      ${drRow('=', 'Bought at whatever the price was', '', rpNum(m.off, m.estS), 'warn', true)}
+      ${drRow('=', 'Found in your own data, not ours', '', rpNum(m.off, m.estS), 'warn', true)}
       <p class="dr-led-note">${m.peer
         ? drCohort() + ' Every figure on this page is that median, banded ±15%.'
         : `Read off ${fmt(m.invoices)} invoices from ${fmt(tot('sup'))} suppliers, matched line by line.`}</p>
@@ -15928,64 +16006,67 @@ function drSpending(m){
     h1: m.peer ? 'Where a company like yours spends' : 'Where your money goes',
     est: m.estS,
     find: `<b>${rpNum(m.spend, m.estS)}<small> kr.</small></b> went out in ${m.period.of},
-      across ${cats.length} purchasing categories and ${fmt(m.invoices)} invoices.
-      <em>${rpPct(m.volume, m.spend)}%</em> of it was bought on an agreement you
-      already have.`,
+      across ${cats.length} purchasing categories. <em>${rpPct(m.volume, m.spend)}%</em> of it
+      ran through an Advantage agreement; the rest we know about only because
+      ${m.peer ? 'companies like yours report it' : `you connected ${state.source}`}.`,
     led,
     stats: `
       ${rpStat(rpNum(m.volume, m.estS) + ' <small>kr.</small>',
-        'Bought through an agreement you already have', '', m.estS)}
-      ${rpStat(rpNum(leak, m.estS) + ' <small>kr.</small>',
-        `Leaking past the agreements you hold, in ${held.length} ${catsWord(held.length)}`,
-        leak ? 'warn' : 'pos', m.estS)}
-      ${rpStat(rpNum(nakedSpend, m.estS) + ' <small>kr.</small>',
-        `Spent in ${naked.length} ${catsWord(naked.length)} with no agreement at all`,
-        naked.length ? 'warn' : 'pos', m.estS)}`,
+        'Ran through an agreement at the rate we negotiated', '', m.estS)}
+      ${rpStat(rpNum(readyT, m.estS) + ' <small>kr.</small>',
+        'Went to suppliers whose agreed pricing is sitting unswitched',
+        readyT ? 'warn' : 'pos', m.estS)}
+      ${m.peer
+        ? rpStat(`${ncPeers}`, 'Companies in the cohort these figures are read from', '')
+        : rpStat(`${fmt(m.invoices)} <small>invoices</small>`,
+            `Read from ${state.source} to find everything above`, '')}`,
     secs: `
       <section class="rp-sec">
         <div class="rp-head">
-          <h2>Where you already have an agreement</h2>
-          <p>${held.length} ${catsWord(held.length)}, ranked by spend. The solid part went
-            through the agreement; the rest went out beside it at list price — same
-            category, same suppliers, no agreed rate. Open one to see who you buy from
-            and what the money goes on.</p>
+          <h2>What you bought through Advantage</h2>
+          <p>${thru.length ? `${thru.length} ${catsWord(thru.length)} where money actually ran
+            through an agreement at the rate we negotiated. This half of the page is our own
+            record — the figures come from the agreements, not from your books.`
+            : 'Nothing has run through an agreement yet, so this is empty.'}</p>
         </div>
-        ${held.length ? `
+        ${thru.length ? `
         <ul class="dr-drill">
-          ${held.map((c, i) => drGroup(c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
-            c.n, `${rpPct(covOf(c), c.spend)}% of it on agreement · ${c.sup} suppliers`,
-            rpNum(c.spend, m.estS) + ' kr.', '',
-            drTrack(i, [
-              {c:'cov',  w:covOf(c) / max * 100},
-              {c:'rest', w:offOf(c) / max * 100}
-            ], `${c.n}: ${fmt(covOf(c))} kroner on agreement, ${fmt(offOf(c))} not`),
+          ${thru.map((c, i) => drGroup(c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
+            c.n, `${liveIn(c)} · ${rpPct(thruOf(c), c.spend)}% of what you spend here`,
+            rpNum(thruOf(c), m.estS) + ' kr.', '',
+            drTrack(i, [{c:'cov', w:thruOf(c) / maxThru * 100}],
+              `${c.n}: ${fmt(thruOf(c))} kroner through an Advantage agreement`),
             catBody(c), i)).join('')}
-        </ul>
-        <div class="rp-key">
-          <span><i class="cov"></i>Bought on an agreement</span>
-          <span><i class="rest"></i>Bought at list price</span>
-        </div>` : `
-        <p class="dr-samp">${DR_IC.peer}<span>You have no agreement in force in any
-          category yet, so every krone below is at list price.</span></p>`}
+        </ul>` : `
+        <p class="dr-samp">${DR_IC.peer}<span>No agreement has carried an order yet. Everything
+          below is money we can see but had no hand in.</span></p>`}
       </section>
 
-      ${naked.length ? `
+      ${found.length ? `
       <section class="rp-sec dr-act2">
-        <div class="rp-head"><h2>Where you have none</h2></div>
+        <div class="rp-head"><h2>What we found in the data you sent</h2></div>
         <div class="dr-claim">
-          <b class="dr-claim-v">${rpNum(nakedSpend, m.estS)}<small> kr.</small></b>
-          <p class="dr-claim-tx">went out in ${naked.length} ${catsWord(naked.length)} with
-            no agreement behind a single krone of it — ${rpPct(nakedSpend, m.spend)}% of
-            everything ${m.peer ? 'a company like yours buys' : 'you bought'} in
-            ${m.period.of}. <b>None of this is the leakage above.</b> There the agreement
-            exists and the orders went elsewhere; here there is nothing to order against.</p>
+          <b class="dr-claim-v">${rpNum(m.off, m.estS)}<small> kr.</small></b>
+          <p class="dr-claim-tx">went out without passing through an Advantage agreement —
+            ${rpPct(m.off, m.spend)}% of everything ${m.peer ? 'a company like yours buys' : 'you bought'}
+            in ${m.period.of}. <b>None of this is our record.</b> ${m.peer
+              ? 'It is the median pattern for your trade, not your own ledger.'
+              : `We know it only because you connected ${state.source}; it is read off your
+                 invoices line by line.`}</p>
+          ${m.peer ? '' : `<span class="dr-claim-src">${docChip(
+            /* a page-level source mark, so it has to name the whole ledger. Handed
+               a real row it would quote that one category's invoice count as if it
+               were the lot; handed a synthetic one it says 1.284. Kari's sources
+               are per-document, so hers still resolves off a real row. */
+            partialData() ? cats[0].row : {inv:m.invoices}, null, true)}</span>`}
         </div>
+        ${drKinds({idle:idleT, ready:readyT, none:noneT}, m)}
         <ul class="dr-drill">
-          ${naked.map((c, i) => drGroup('nk-' + c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
-            c.n, `${c.sup} suppliers · ${fmt(c.inv)} invoices · every krone at list price`,
-            rpNum(c.spend, m.estS) + ' kr.', 'warn',
-            drTrack(i, [{c:'rest', w:c.spend / max * 100}],
-              `${c.n}: ${fmt(c.spend)} kroner, none of it on an agreement`),
+          ${found.map((c, i) => drGroup('fd-' + c.id, AREA_INK[c.id] || '27 100 220', CAT_ICON[c.id] || '',
+            c.n, kindLine(c) || `${c.sup} suppliers · ${fmt(c.inv)} invoices`,
+            rpNum(foundOf(c), m.estS) + ' kr.', 'warn',
+            drTrack(i, [{c:'rest', w:foundOf(c) / maxFound * 100}],
+              `${c.n}: ${fmt(foundOf(c))} kroner that did not go through an agreement`),
             catBody(c), i)).join('')}
         </ul>
       </section>` : ''}
@@ -15994,14 +16075,13 @@ function drSpending(m){
       <div class="dr-next">
         <span class="dr-next-tx">
           <b>${worst.n} is the biggest gap</b>
-          <span>${rpNum(worstOff, m.estS)} kr. of it goes out with no agreement behind it,
+          <span>${rpNum(worstOff, m.estS)} kr. of it goes out without touching an agreement,
             in a category where ${worst.rate}% is already negotiated.</span>
         </span>
         <button type="button" class="btn btn-primary" data-drcat="${worst.id}">Open ${worst.n}${DR_IC.go}</button>
       </div>` : ''}`
   };
 }
-
 /* ---------- 3 · Agreement usage ----------
    Two acts, the same as its siblings: what is carrying volume, then what is
    agreed and idle. The old single list ranked all of them by covered spend and
