@@ -69,14 +69,23 @@ jobs:
 
           mkdir -p "${{ steps.dest.outputs.dir }}"
 
-          # --delete keeps the folder honest about removed files. The excludes
-          # are protected on the receiving side too, so publishing main never
-          # deletes the per-branch previews sitting under /preview.
+          # ALLOWLIST. Only the prototypes and the images they load are
+          # published. Everything else in this repository stays off the site:
+          # planning documents, the gap analysis, agent configuration, notes,
+          # backups and exploration folders. Anything that should be shared
+          # has to be added here deliberately.
+          #
+          # The protect rules stop --delete from removing things the site owns
+          # rather than the branch: the per-branch previews under /preview, and
+          # the two files this workflow generates.
           rsync -a --delete \
-            --exclude '.git/' \
-            --exclude '.github/' \
-            --exclude '.nojekyll' \
-            --exclude '/preview/' \
+            --filter 'protect /preview/' \
+            --filter 'protect /.nojekyll' \
+            --filter 'protect /previews.html' \
+            --include '/assets/' \
+            --include '/assets/**' \
+            --include '/*.html' \
+            --exclude '*' \
             source/ "${{ steps.dest.outputs.dir }}/"
 
           # Pages runs Jekyll otherwise, which drops files starting with "_".
