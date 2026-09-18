@@ -1,0 +1,167 @@
+name: Branch previews
+
+# Publishes every branch to its own folder on the gh-pages branch, so several
+# rounds of review can be open at the same time:
+#
+#   main                    ->  https://<owner>.github.io/<repo>/
+#   my-active-agreements    ->  https://<owner>.github.io/<repo>/preview/my-active-agreements/
+#
+# Set Settings > Pages > Source to "Deploy from a branch", branch gh-pages,
+# folder / (root). After that this workflow keeps the site up to date and the
+# Pages setting never needs touching again.
+
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# One publish at a time, so two pushes cannot clobber each other's folder.
+concurrency:
+  group: branch-previews
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pushed branch
+        uses: actions/checkout@v4
+        with:
+          path: source
+          fetch-depth: 1
+
+      - name: Work out where this branch is published
+        id: dest
+        run: |
+          set -euo pipefail
+          branch="$GITHUB_REF_NAME"
+          slug=$(printf '%s' "$branch" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed -e 's/[^a-z0-9._-]/-/g' -e 's/-\{2,\}/-/g' -e 's/^-//' -e 's/-$//')
+          if [ "$branch" = "main" ]; then
+            echo "dir=site" >>"$GITHUB_OUTPUT"
+            echo "path=" >>"$GITHUB_OUTPUT"
+          else
+            echo "dir=site/preview/$slug" >>"$GITHUB_OUTPUT"
+            echo "path=preview/$slug/" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Copy this branch into the preview site
+        run: |
+          set -euo pipefail
+          repo="https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git"
+
+          if git clone --depth 1 --branch gh-pages "$repo" site 2>/dev/null; then
+            echo "Existing preview site checked out."
+          else
+            echo "No preview site yet; starting one."
+            git clone --depth 1 "$repo" site
+            git -C site checkout --orphan gh-pages
+            git -C site rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          mkdir -p "${{ steps.dest.outputs.dir }}"
+
+          # --delete keeps the folder honest about removed files. The excludes
+          # are protected on the receiving side too, so publishing main never
+          # deletes the per-branch previews sitting under /preview.
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude '.nojekyll' \
+            --exclude '/preview/' \
+            source/ "${{ steps.dest.outputs.dir }}/"
+
+          # Pages runs Jekyll otherwise, which drops files starting with "_".
+          touch site/.nojekyll
+
+      - name: Build the index of live previews
+        run: |
+          set -euo pipefail
+          {
+            echo '<!doctype html><meta charset="utf-8">'
+            echo '<title>Advantage previews</title>'
+            echo '<style>'
+            echo 'body{font:16px/1.7 system-ui,sans-serif;margin:0;padding:3rem 1rem;'
+            echo 'background:#fafafa;color:#0f0f0f}'
+            echo '@media(prefers-color-scheme:dark){body{background:#0b0d12;color:#f2f4f8}'
+            echo 'a{color:#6fa2ff}}'
+            echo 'main{max-width:44rem;margin:0 auto}'
+            echo 'h1{font-size:1.4rem;margin:0 0 1.5rem}'
+            echo 'ul{list-style:none;padding:0}'
+            echo 'li{padding:.6rem 0;border-top:1px solid #8883}'
+            echo '</style><main><h1>Advantage branch previews</h1><ul>'
+            echo '<li><a href="./advantage-main-v2.html">main</a></li>'
+            if [ -d site/preview ]; then
+              for d in site/preview/*/; do
+                [ -d "$d" ] || continue
+                n=$(basename "$d")
+                echo "<li><a href=\"./preview/$n/advantage-main-v2.html\">$n</a></li>"
+              done
+            fi
+            echo '</ul></main>'
+          } >site/previews.html
+
+      - name: Publish
+        run: |
+          set -euo pipefail
+          cd site
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # The prototypes are large, so gh-pages is kept to a single commit
+          # rather than accumulating a copy of the site per push.
+          git checkout --orphan _publish
+          git add -A
+          git commit -q -m "Publish ${GITHUB_REF_NAME} (${GITHUB_SHA:0:7})"
+          git push --force origin _publish:gh-pages
+
+      - name: Report the link
+        run: |
+          set -euo pipefail
+          owner=$(printf '%s' "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')
+          base="https://${owner}.github.io/${GITHUB_REPOSITORY#*/}"
+          {
+            echo "### Preview published"
+            echo ""
+            echo "- ${base}/${{ steps.dest.outputs.path }}advantage-main-v2.html"
+            echo "- ${base}/${{ steps.dest.outputs.path }}advantage-main.html"
+            echo ""
+            echo "All live previews: ${base}/previews.html"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+  comment:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Put the preview link on the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          branch="${{ github.head_ref }}"
+          slug=$(printf '%s' "$branch" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed -e 's/[^a-z0-9._-]/-/g' -e 's/-\{2,\}/-/g' -e 's/^-//' -e 's/-$//')
+          owner=$(printf '%s' "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')
+          base="https://${owner}.github.io/${GITHUB_REPOSITORY#*/}/preview/${slug}"
+
+          body=$(printf '%s\n' \
+            "**Preview for \`${branch}\`**" \
+            "" \
+            "- [advantage-main-v2.html](${base}/advantage-main-v2.html)" \
+            "- [advantage-main.html](${base}/advantage-main.html)" \
+            "" \
+            "Updates on every push to this branch. Leave review comments here." )
+
+          # Replace the previous link comment instead of stacking a new one.
+          if ! gh pr comment "${{ github.event.number }}" --body "$body" --edit-last 2>/dev/null; then
+            gh pr comment "${{ github.event.number }}" --body "$body"
+          fi
