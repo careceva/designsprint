@@ -67,26 +67,39 @@ jobs:
             git -C site rm -rf . >/dev/null 2>&1 || true
           fi
 
-          mkdir -p "${{ steps.dest.outputs.dir }}"
+          dest="${{ steps.dest.outputs.dir }}"
+
+          # Empty this branch's slot FIRST, then copy into it. rsync --delete
+          # cannot be used for this: it deliberately protects excluded files on
+          # the receiving side, so anything published by an earlier version of
+          # this workflow would survive the exclude list forever.
+          #
+          # Publishing main clears the site root but keeps /preview, so the
+          # other branches' previews are left alone.
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            find site -mindepth 1 -maxdepth 1 \
+              ! -name '.git' \
+              ! -name 'preview' \
+              ! -name '.nojekyll' \
+              ! -name 'previews.html' \
+              -exec rm -rf {} +
+          else
+            rm -rf "$dest"
+          fi
+          mkdir -p "$dest"
 
           # ALLOWLIST. Only the prototypes and the images they load are
           # published. Everything else in this repository stays off the site:
           # planning documents, the gap analysis, agent configuration, notes,
           # backups and exploration folders. Anything that should be shared
           # has to be added here deliberately.
-          #
-          # The protect rules stop --delete from removing things the site owns
-          # rather than the branch: the per-branch previews under /preview, and
-          # the two files this workflow generates.
-          rsync -a --delete \
-            --filter 'protect /preview/' \
-            --filter 'protect /.nojekyll' \
-            --filter 'protect /previews.html' \
+          rsync -a \
+            --exclude '.DS_Store' \
             --include '/assets/' \
             --include '/assets/**' \
             --include '/*.html' \
             --exclude '*' \
-            source/ "${{ steps.dest.outputs.dir }}/"
+            source/ "$dest/"
 
           # Pages runs Jekyll otherwise, which drops files starting with "_".
           touch site/.nojekyll
