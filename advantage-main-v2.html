@@ -3214,6 +3214,10 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
   .pkg .seg button,.pkg-ov .seg button{padding:0 var(--s3);white-space:nowrap}
   .pkg-n > span{white-space:normal;overflow:visible;line-height:1.3}
 }
+/* four tabs since the card leads with Active: in a narrow cell the strip
+   scrolls sideways rather than pushing the card wider than its column */
+.pkg-tabs{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+.pkg-tabs::-webkit-scrollbar{display:none}
 .pkg-state em{font-style:normal}
 .pkg-pct{flex:0 0 auto;min-width:52px;text-align:right;font-size:var(--text-base);font-weight:600;
   letter-spacing:-.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -8704,7 +8708,9 @@ const PKG_EXTRA = [
   {cat:'ctr', n:'Mathem Business',        pct:7},
   {cat:'ctr', n:'Out of Home',            pct:10}
 ];
-const PKG_TABS = [{k:'all', n:'Package'}, {k:'again', n:'Use again'}, {k:'fav', n:'Favourites'}];
+/* the card leads with what is switched on; the whole package is one tab further */
+const PKG_TABS = [{k:'on', n:'Active'}, {k:'all', n:'Package'},
+  {k:'again', n:'Use again'}, {k:'fav', n:'Favourites'}];
 
 /* one ink per supplier, hand-tuned where a hand has been (the brand cards, the
    catalogue), sampled from the artwork otherwise */
@@ -8743,6 +8749,11 @@ function pkgAll(){
 const pkgLastDays = n => 3 + seedOf('last:' + n) % 26;
 function pkgRows(tab){
   const all = pkgAll();
+  /* switched on, live before requested, then by what each one still has open */
+  if(tab === 'on') return all.filter(x => x.on).sort((p, q) =>
+    (p.pending ? 1 : 0) - (q.pending ? 1 : 0)
+    || ((q.a ? q.a.save : 0) - (p.a ? p.a.save : 0))
+    || (q.pct - p.pct));
   if(tab === 'again') return all.filter(x => x.again).sort((p, q) => q.a.covers - p.a.covers);
   if(tab === 'fav')   return all.filter(x => savedAgr.has(x.n)).sort((p, q) => p.n.localeCompare(q.n));
   /* switched on first (live before requested), then the biggest open money,
@@ -8783,6 +8794,10 @@ function pkgTabsHTML(tab){
   </div>`;
 }
 function pkgEmptyHTML(tab, inSheet){
+  if(tab === 'on') return `<p class="pkg-empty">Nothing switched on yet. ${inSheet
+    ? 'Switch one on from the package and it starts working on your next invoice.'
+    : `<button type="button" class="linkbtn" data-pkg-all="1">Open the package</button>
+       and switch on the agreements you already buy through.`}</p>`;
   if(tab === 'again') return `<p class="pkg-empty">Nothing bought through an agreement yet. Once an
     invoice lands on one you have switched on, it shows up here for a quick reorder.</p>`;
   return inSheet
@@ -8796,16 +8811,24 @@ const PKG_CARD_ROWS = 8;
 function pkgCardHTML(){
   const all = pkgAll(), rows = pkgRows(pkgTab);
   const on = all.filter(x => x.on).length;
+  const waiting = all.filter(x => x.on && x.pending).length;
   const shown = pkgTab === 'all' ? rows.slice(0, Math.max(PKG_CARD_ROWS, on)) : rows;
   const sub = pkgTab === 'again'
     ? 'Agreements you already buy through. One press back to the supplier.'
     : pkgTab === 'fav'
     ? 'The agreements you saved with the heart.'
-    : `${all.length} agreements negotiated for ${newCustomer ? 'companies like yours' : 'your account'} · ${
-        on ? `${on} active` : 'none active yet'}`;
+    : pkgTab === 'all'
+    ? `${all.length} agreements negotiated for ${newCustomer ? 'companies like yours' : 'your account'} · ${
+        on ? `${on} active` : 'none active yet'}`
+    /* the card's own tab: what is switched on, and what that is out of. A count,
+       not a figure — what each one is worth belongs on its own page */
+    : on
+    ? `${on} of ${all.length} agreements in your package are switched on${
+        waiting ? ` · ${waiting} waiting for a first invoice at the new rate` : ''}`
+    : `None of your ${all.length} agreements are switched on yet`;
   return `
     <div class="pkg">
-      <div class="tune-h1"><h2>Your agreement package</h2></div>
+      <div class="tune-h1"><h2>My active agreements</h2></div>
       <p class="nc-sub nc-mini-sub">${sub}</p>
       ${pkgTabsHTML(pkgTab)}
       ${shown.length
@@ -8839,7 +8862,7 @@ function wirePkgEl(el){
   el.addEventListener('click', e => {
     const tab = e.target.closest('[data-pkg-tab]');
     if(tab){ pkgTab = tab.dataset.pkgTab; persist(); pkgRefresh(); return; }
-    if(e.target.closest('[data-pkg-all]')){ openPackage(pkgTab); return; }
+    if(e.target.closest('[data-pkg-all]')){ openPackage(pkgTab === 'on' ? 'all' : pkgTab); return; }
     const row = e.target.closest('.pkg-row');
     if(row) pkgOpen(row.dataset.pkg);
   });
@@ -12220,7 +12243,7 @@ let agrViewStyle = 'impact';
 /* four readings of the category figures: a menu, a ranking, a whole, a first move */
 let catViewStyle = 'list';
 /* which of the package card's three lists is showing: the package, use again, favourites */
-let pkgTab = 'all';
+let pkgTab = 'on';
 /* the category page's agreements: cards argue, the list scans. Cards by default. */
 let catAgrView = 'cards';
 /* 'white' is the original all-white page, anything else is the hero card sitting on
@@ -18068,7 +18091,7 @@ function applySaved(d){
   if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
   if(['list','bars','split','focus','brands','why','story','tune'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
   if(['bar','line'].includes(d.tuneSkin)) tuneSkin = d.tuneSkin;
-  if(['all','again','fav'].includes(d.pkgTab)) pkgTab = d.pkgTab;
+  if(['on','all','again','fav'].includes(d.pkgTab)) pkgTab = d.pkgTab;
   /* factors, never the scaled figures: the actuals in ROWS stay the baseline, so
      a reload re-derives from invoices rather than from an already-tuned number */
   if(d.spendTune && typeof d.spendTune === 'object'){
