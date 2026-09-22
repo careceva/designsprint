@@ -32,6 +32,12 @@
   /* #707070 lands at 4.42 on --general-muted, two hundredths under the floor.
      #6e6e6e is visually the same grey and clears it on every surface here. */
   --general-muted-foreground:#6e6e6e;
+  /* the grey a tile sits on inside a white card — the move tiles, the gauge's
+     track, the agreement cards — and the shade it takes under a pointer or a
+     finger. One step lighter and cooler than --general-muted, so a tile reads as
+     a surface rather than as a disabled control. */
+  --surface-tile:#f5f6f7;
+  --surface-tile-pressed:#eef0f2;
   --general-accent:#ff9b3d;
   --general-accent-foreground:#1c1c1c;
   --general-destructive:#dc2626;
@@ -550,6 +556,14 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .toastc-tx b{font-family:var(--font-sans);font-size:var(--text-xl);letter-spacing:-.3px}
 .toastc-tx p{margin-top:5px;font-size:var(--text-base);line-height:1.5;color:var(--general-muted-foreground)}
 .toastc-tx p b{font-size:inherit;color:var(--general-foreground)}
+/* two more tones for the same card: brand for "off you go", amber-orange for
+   "this one is not live yet" */
+.toastc.brand .toastc-card{box-shadow:var(--shadow-xl),0 0 0 6px #1b64dc14}
+.toastc.brand .toastc-ic{background:var(--brand-ice);color:var(--general-primary);
+  box-shadow:0 0 0 8px #1b64dc12}
+.toastc.warn .toastc-card{box-shadow:var(--shadow-xl),0 0 0 6px #f54a0014}
+.toastc.warn .toastc-ic{background:#fff0e8;color:var(--sentiment-negative-ink-on-tint);
+  box-shadow:0 0 0 8px #f54a0012}
 @media(prefers-reduced-motion:reduce){
   .toastc-card{transition:opacity .2s ease}.toastc-card{transform:none}}
 .qa-ctl{display:flex;align-items:center;justify-content:center;gap:var(--s4);margin-top:var(--s4)}
@@ -856,6 +870,29 @@ body.ledger-on{--appbar-h:80px}
 .up-persona-txt b{font-weight:600}
 .up-persona-txt span{font-size:12px;color:var(--general-muted-foreground)}
 
+/* one group, one rhythm: the bar's icon controls sit 4px apart so they read as a
+   set, and the bar's own gap separates that set from the pill and the account. */
+.bar-tools{display:flex;align-items:center;gap:var(--s1);flex:0 0 auto}
+.ibtn{position:relative;width:38px;height:38px;display:grid;place-items:center;background:none;
+  border:none;cursor:pointer;border-radius:var(--rounded-full);color:var(--sidebar-foreground);
+  transition:var(--t-fast)}
+.ibtn:hover{background:var(--general-muted)}
+.ibtn svg{width:20px;height:20px}
+.ibtn::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);left:50%;
+  transform:translateX(-50%) translateY(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
+  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
+  white-space:nowrap;pointer-events:none;opacity:0;z-index:36;box-shadow:var(--shadow-md);
+  transition:opacity var(--t-fast),transform var(--t-fast)}
+.ibtn:hover::after,.ibtn:focus-visible::after{opacity:1;transform:translateX(-50%)}
+/* the panel opens from this control, so a tooltip under an open one is noise */
+.ibtn[aria-expanded="true"]::after{display:none}
+/* the assistant: the only coloured mark in the group. The artwork is dark, so it
+   keeps its white plate rather than taking the row's line-glyph treatment. */
+.ibtn.agent-i .sda{width:24px;height:24px}
+.ibtn.agent-i:hover{background:var(--brand-ice)}
+.ibtn.agent-i[aria-expanded="true"]{background:var(--brand-ice);
+  box-shadow:inset 0 0 0 1px var(--general-border)}
+
 /* notifications */
 .notif{position:relative;flex:0 0 auto}
 .bell{position:relative;width:38px;height:38px;display:grid;place-items:center;background:none;
@@ -933,8 +970,6 @@ body.ledger-on{--appbar-h:80px}
 .ni.on{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
 .ni .nic{width:22px;height:22px;flex:0 0 auto;display:grid;place-items:center}
 .ni .nic svg{width:20px;height:20px}
-/* the discovery mark matches the SDA mark's optical size */
-.ni.hero .nic,.ni.hero .nic svg{width:22px;height:22px}
 .ni .nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   transition:opacity var(--t-fast)}
 .ni .nb{flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--rounded-full);
@@ -943,19 +978,6 @@ body.ledger-on{--appbar-h:80px}
 .rail.mini .ni{justify-content:center;padding:0}
 .rail.mini .ni .nt{opacity:0;width:0;flex:0 0 0}
 .rail.mini .ni .nb{position:absolute;top:5px;right:9px;min-width:16px;height:16px;padding:0 4px;font-size:13px}
-/* highlighted first entry — last of the two cards at the top of the rail, so its bottom
-   margin is what separates that pair from the plain menu items below (holds when mini) */
-.ni.hero{height:auto;padding:var(--s3);margin-bottom:var(--s6);align-items:flex-start;
-  background:linear-gradient(160deg,#edf5ff,#f7fbff);border:1px solid var(--general-border);
-  color:var(--general-foreground)}
-.ni.hero:hover{border-color:var(--brand-cornflower);background:linear-gradient(160deg,#e4efff,#f2f8ff)}
-.ni.hero .nic{color:var(--general-primary)}
-.ni.hero .hb{display:flex;flex-direction:column;gap:2px;min-width:0}
-.ni.hero .hb b{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
-.ni.hero .hb span{font-size:13px;color:var(--general-muted-foreground);line-height:1.4}
-.rail.mini .ni.hero{padding:0;height:44px;align-items:center;justify-content:center;
-  border-color:transparent;background:var(--brand-ice)}
-.rail.mini .ni.hero .hb{display:none}
 /* tooltip when collapsed */
 .rail.mini .ni::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
   transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
@@ -974,41 +996,9 @@ body.ledger-on{--appbar-h:80px}
 .rail.mini .railtog svg{transform:rotate(180deg)}
 .rail.mini .railtog span{display:none}
 
-/* --- AI agent: rail entry, always present, above the nav ---
-   This is the app's most-used capability and it used to look like a quiet nav item.
-   Now it is the one filled, brand-coloured control in the rail: nothing else here
-   competes with it, which is the whole point. */
-.agent-btn{position:relative;flex:0 0 auto;display:flex;align-items:center;gap:var(--s3);width:100%;
-  padding:var(--s4) var(--s3);margin-bottom:var(--s4);cursor:pointer;text-align:left;
-  border:1px solid transparent;border-radius:var(--rounded-lg);
-  background:linear-gradient(140deg,#1b64dc,#0b3fa0 60%,#0b00ab);color:#fff;
-  box-shadow:0 1px 2px #0b00ab33,inset 0 1px 0 #ffffff26;
-  transition:box-shadow var(--t-fast),transform .1s ease,filter var(--t-fast)}
-.agent-btn:hover{filter:brightness(1.08);box-shadow:0 4px 14px #1b64dc42}
-.agent-btn:active{transform:translateY(1px)}
-.agent-btn[aria-expanded="true"]{box-shadow:0 0 0 3px #1b64dc33}
-/* the mark ships as dark artwork, so it needs a light plate on the blue */
-.agent-btn .sda{padding:5px;width:30px;height:30px;border-radius:var(--rounded-sm);
-  background:#ffffff;box-sizing:border-box}
 .sda{width:22px;height:22px;flex:0 0 auto;display:block}
-.agent-btn .ab{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
-.agent-btn .ab b{font-size:var(--text-sm);font-weight:650;white-space:nowrap}
-.agent-btn .ab span{font-size:13px;color:#dbe9ff;white-space:nowrap}
-/* a live dot, because the assistant is answering now rather than "available" */
-.agent-btn .ab b::after{content:"";display:inline-block;width:6px;height:6px;margin-left:7px;
-  vertical-align:middle;border-radius:var(--rounded-full);background:#7ee0d0;
-  box-shadow:0 0 0 3px #7ee0d033}
-.rail.mini .agent-btn .sda{width:34px;height:34px}
-.rail.mini .agent-btn{justify-content:center;padding:0;height:44px}
-.rail.mini .agent-btn .ab{display:none}
-.rail.mini .agent-btn::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;
-  transform:translateY(-50%) translateX(-4px);padding:5px 10px;border-radius:var(--rounded-sm);
-  background:var(--brand-midnight);color:var(--surface);font-size:var(--text-xs);font-weight:500;
-  white-space:nowrap;pointer-events:none;opacity:0;z-index:5;box-shadow:var(--shadow-md);
-  transition:opacity var(--t-fast),transform var(--t-fast)}
-.rail.mini .agent-btn:hover::after{opacity:1;transform:translateY(-50%)}
 
-/* --- AI agent panel (left of the canvas) --- */
+/* --- AI agent panel (right of the canvas) --- */
 /* --- Quick ask: the assistant's shortcut, bottom-right ---
    The rail entry stays the front door. This is the doorbell — reachable from
    wherever the cursor already is, on every page, without crossing the screen.
@@ -1099,7 +1089,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .ap.on{width:var(--apw)}
 .ap.wide.on{width:var(--apw-wide)}
 .app-p{width:var(--apw);height:100%;display:flex;flex-direction:column;
-  background:var(--surface);border-right:1px solid var(--hairline)}
+  background:var(--surface);border-left:1px solid var(--hairline)}
 .ap.wide .app-p{width:var(--apw-wide)}
 .ap-h{flex:0 0 auto;display:flex;align-items:flex-start;gap:var(--s2);padding:var(--s6) var(--s5,20px) var(--s4)}
 .ap-h>div{flex:1;min-width:0}
@@ -1456,8 +1446,8 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
    than a paint chart. Deepens a step on hover the way their photo brightens */
 .agb-band{position:relative;width:100%;aspect-ratio:5/4;flex:0 0 auto;margin-bottom:var(--s3);
   display:grid;place-items:center;overflow:hidden;border-radius:var(--rounded-lg);
-  background:#f5f6f7;transition:background var(--t-fast)}
-.agb:hover .agb-band{background:#eceef0}
+  background:var(--surface-tile);transition:background var(--t-fast)}
+.agb:hover .agb-band{background:var(--surface-tile-pressed)}
 /* the wordmark sits straight on the grey, no plate. The @64px files are opaque
    white, so the image is multiplied onto the tile: white becomes the tile, the
    ink stays the ink (a 4% darkening on #f5f6f7 that nobody can see). */
@@ -2874,7 +2864,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 /* full canvas width, not .page's 1200px (padding included) — that's what left
    only ~750px for .nc-main once the sidebar and gap were subtracted. .nc-main
    below gets its own full 1200px; the activity rail's own space is now reserved
-   on .canvas itself (body.activity-on .canvas), the same way for every view, so
+   on the column row (body.activity-on .appbody), the same way for every view, so
    this only needs .page's ordinary symmetric padding. */
 .nc-page{width:100%;padding:var(--s12) var(--s8) var(--s16)}
 .nc-shell{position:relative}
@@ -2893,6 +2883,52 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .nc-hello-txt{flex:1 1 400px;min-width:0;display:flex;flex-direction:column;gap:var(--s3)}
 .nc-hello h1{font-size:var(--text-4xl);letter-spacing:-1.3px}
 .nc-hello p{font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground);max-width:60ch}
+/* the way into the assistant. Not a greeting — a greeting says nothing and every
+   dashboard ships one. The assistant asks first, in this account's own words: a
+   real question built from these categories and figures, typed out and cycled.
+   What is on screen is what the click sends, so the composer never receives a
+   question the user did not read. */
+.nc-ask{flex:0 1 420px;display:flex;align-items:center;gap:var(--s4);text-align:left;
+  padding:var(--s5,20px);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  cursor:pointer;
+  /* the tint is anchored at the mark and fades out across the block — the warmth
+     comes from where the assistant is, rather than washing the whole card */
+  background:radial-gradient(135% 155% at 6% 0%,var(--brand-ice) 0%,#edf5ff00 58%),var(--surface);
+  transition:border-color var(--t-fast),box-shadow var(--t-fast),transform .1s ease}
+.nc-ask:hover{border-color:var(--general-border);box-shadow:0 8px 20px -14px #1b64dc80}
+.nc-ask:active{transform:translateY(1px)}
+.nc-ask:focus-visible{outline-offset:3px;border-radius:var(--rounded-lg)}
+/* top-aligned, not centred: the mark belongs beside the first line of the
+   question, and the question is the thing that changes height */
+.nc-ask-mark{align-self:flex-start;margin-top:3px;width:26px;height:26px}
+.nc-ask-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+/* two lines held open whatever the question's length: a longer one wrapping
+   mid-keystroke must not shunt the page underneath it */
+.nc-ask-q{display:flex;align-items:center;min-height:calc(2 * 1.3em);
+  font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;
+  letter-spacing:-.3px;line-height:1.3;color:var(--general-foreground)}
+.nc-ask-t{display:inline}
+/* the caret trails the text inline, so it sits after the last character even
+   once the question has wrapped */
+.nc-ask-t::after{content:"";display:inline-block;width:2px;height:1.02em;
+  margin-left:3px;vertical-align:-.12em;border-radius:1px;
+  background:var(--general-primary);animation:nc-ask-blink 1.05s steps(1,end) infinite}
+/* nothing is typing, so nothing should carry a caret */
+.nc-ask.static .nc-ask-t::after{display:none}
+@keyframes nc-ask-blink{0%,45%{opacity:1}46%,100%{opacity:0}}
+.nc-ask-do{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.nc-ask-go{flex:0 0 auto;width:32px;height:32px;display:grid;place-items:center;
+  border-radius:var(--rounded-full);border:1px solid var(--sidebar-border);
+  background:var(--surface);color:var(--general-foreground);box-shadow:var(--shadow-xs);
+  transition:background-color var(--t-fast),border-color var(--t-fast),
+             color var(--t-fast),transform var(--t-fast)}
+.nc-ask:hover .nc-ask-go{background:var(--general-primary);border-color:transparent;
+  color:var(--general-primary-foreground);transform:translateX(2px)}
+.nc-ask-go svg{width:16px;height:16px}
+/* once the row has wrapped the block owns the line — a 420px column stranded on
+   its own row reads like a mistake */
+@media(max-width:860px){.nc-ask{flex:1 1 100%}}
+@media(prefers-reduced-motion:reduce){.nc-ask-t::after{animation:none}}
 /* no hairline between sections: the distance does the separating. 64px, two
    steps up from the 32px the rule used to lean on — except the category
    breakdown, which continues the invoice-savings figure above it and sits
@@ -3152,14 +3188,22 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .pkg-item + .pkg-item .pkg-row::before{content:'';position:absolute;top:0;
   left:calc(var(--s3) + 44px + var(--s3));right:var(--s3);
   border-top:1px solid var(--hairline);transition:opacity var(--t-fast)}
-.pkg-row:hover,.pkg-row:focus-visible{background:rgb(var(--b)/.07);
-  box-shadow:inset 0 0 0 1px rgb(var(--b)/.16)}
+/* the tint alone carries the state. The brand rim that used to sit under it was a
+   second channel for the same thing, and its strength swung per supplier —
+   invisible on the yellows, a hard box on the blues. */
+.pkg-row:focus-visible{background:rgb(var(--b)/.07);
+  outline:2px solid var(--general-primary);outline-offset:-2px}
 .pkg-row:active{background:rgb(var(--b)/.11)}
-.pkg-row:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
 /* a lit row has no rules touching it — above or below */
-.pkg-row:hover::before,.pkg-row:focus-visible::before,
-.pkg-item:hover + .pkg-item .pkg-row::before,
+.pkg-row:focus-visible::before,
 .pkg-item:focus-within + .pkg-item .pkg-row::before{opacity:0}
+/* hover is a mouse state: ungated, the first tap on a phone paints the row and
+   leaves it painted until something else is tapped */
+@media (hover:hover) and (pointer:fine){
+  .pkg-row:hover{background:rgb(var(--b)/.07)}
+  .pkg-row:hover::before,
+  .pkg-item:hover + .pkg-item .pkg-row::before{opacity:0}
+}
 /* the tile: the @64px files are opaque white, so the wordmark is multiplied
    onto the tile and the tile can turn the brand's own colour under it */
 .pkg-logo{flex:0 0 auto;width:44px;height:44px;display:grid;place-items:center;
@@ -3169,8 +3213,11 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .pkg-logo.mark img{width:100%;height:100%;object-fit:cover;mix-blend-mode:normal}
 .pkg-logo.init{background:rgb(var(--b)/.10);color:rgb(var(--b));
   font-weight:700;font-size:var(--text-xs);letter-spacing:.02em}
-.pkg-row:hover .pkg-logo:not(.mark),.pkg-row:focus-visible .pkg-logo:not(.mark){background:rgb(var(--b)/.13)}
-.pkg-t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.pkg-row:focus-visible .pkg-logo:not(.mark){background:rgb(var(--b)/.13)}
+@media (hover:hover) and (pointer:fine){
+  .pkg-row:hover .pkg-logo:not(.mark){background:rgb(var(--b)/.13)}
+}
+.pkg-t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--s1)}
 .pkg-n{display:flex;align-items:center;min-width:0;font-size:var(--text-base);font-weight:600;
   letter-spacing:-.2px;line-height:1.35}
 .pkg-n > span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -3198,12 +3245,141 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
   letter-spacing:-.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .pkg-go{flex:0 0 auto;width:16px;height:16px;color:#a3a3a3;
   transition:color var(--t-fast),translate var(--t-fast)}
-.pkg-row:hover .pkg-go,.pkg-row:focus-visible .pkg-go{color:var(--general-foreground);translate:2px 0}
+.pkg-row:focus-visible .pkg-go{color:var(--general-foreground);translate:2px 0}
+@media (hover:hover) and (pointer:fine){
+  .pkg-row:hover .pkg-go{color:var(--general-foreground);translate:2px 0}
+}
 .pkg-empty{padding:var(--s6) var(--s3) var(--s3);font-size:var(--text-sm);line-height:1.55;
   color:var(--general-muted-foreground);max-width:46ch}
 .pkg-empty .linkbtn{font-size:inherit}
-.pkg .cv-foot{justify-content:flex-end}
-@media(prefers-reduced-motion:reduce){.pkg-row,.pkg-logo,.pkg-go{transition:none}}
+/* the card fills its cell and the footer sits on the cell's floor, level with the
+   advisory's own footer beside it. Three rows or eight, the card ends where the
+   cell ends, and what air there is falls between the list and the footer —
+   inside the card — rather than under a footer that has run out of things to say. */
+.nc-bento-cell:has(> .pkg){display:flex;flex-direction:column}
+.pkg{flex:1 1 auto;display:flex;flex-direction:column}
+.pkg .cv-foot{justify-content:flex-end;margin-top:auto;padding-top:var(--s4)}
+/* under the list: what the rows have in common, said once and in the muted ink —
+   how many of the figures above were read off invoices, and whose terms come up
+   next. Facts, no control: this is what stands in the card's air, so it must not
+   read as a second set of moves beside the advisory's.
+   Two forms. A long list gets it as a line under a hairline. A short one — three
+   rows or fewer, the card mostly air — gets the same facts as the caption of a
+   drawing, the way the none-state has one: the invoice again, now with a tag
+   clipped to each line that has an agreement on it. The drawing is the count. */
+.pkg-ledger{margin:var(--s4) calc(var(--s3) * -1) 0;padding:var(--s4) var(--s3) 0;
+  border-top:1px solid var(--hairline);
+  font-size:var(--text-sm);line-height:1.45;color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums}
+.pkg-ledger p{display:flex;flex-wrap:wrap;column-gap:var(--s4);row-gap:var(--s1)}
+.pkg-ledger p > * + *::before{content:'· '}
+/* in the illustrated form the footer's link comes up and rides the caption's
+   line: what is left of the card below it is air, and a link on its own at the
+   floor of that air was the one thing down there */
+.pkg-ledger .linkbtn{font:inherit;font-weight:500}
+/* the illustrated form takes the air and centres in it; no rule above, the
+   distance from the list does the separating */
+.pkg-ledger.ill{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:var(--s4);padding:var(--s8) var(--s3) var(--s6);
+  border-top:0;text-align:center}
+.pkg-ledger.ill p{justify-content:center;max-width:34ch;line-height:1.6}
+/* a tag whose rate has not landed yet is drawn open, and fainter */
+.pkg-ill-a.pend{opacity:.28}
+/* stacked bento: there is no air to stand in, so the drawing goes and the facts
+   fall back to the plain line */
+@media(max-width:860px){
+  .pkg-ledger.ill{flex:0 0 auto;align-items:flex-start;gap:0;
+    padding:var(--s4) var(--s3) 0;border-top:1px solid var(--hairline);text-align:left}
+  .pkg-ledger.ill .pkg-ill{display:none}
+  .pkg-ledger.ill p{justify-content:flex-start;max-width:none;line-height:1.45}
+}
+/* ---- the Overview card's own row ----
+   Taller than the sheet's (76px against 60), a 48px tile, and four columns:
+   tile, name + why, money, the CTA. No chevron — a labelled button and a grey
+   glyph saying the same thing less clearly is one affordance too many. The row is
+   a div, not a button, so the CTA beside it can be a real button; the name
+   carries a stretched link over the row instead, which is what makes the row
+   clickable and what a keyboard lands on. */
+.pkg-crow{display:grid;align-items:center;
+  grid-template-columns:auto minmax(0,1fr) auto auto;
+  grid-template-areas:'logo text money cta';
+  column-gap:var(--s3);row-gap:var(--s1);
+  min-height:76px;padding:var(--s3);border-radius:var(--rounded-md)}
+.pkg-crow > .pkg-logo{grid-area:logo}
+.pkg-crow > .pkg-t{grid-area:text}
+.pkg-crow > .pkg-money{grid-area:money}
+.pkg-crow > .pkg-cta{grid-area:cta}
+/* the rule starts where the name starts, at the wider tile */
+.pkg-item + .pkg-item .pkg-crow::before{left:calc(var(--s3) + 48px + var(--s3))}
+.pkg-crow .pkg-logo{width:48px;height:48px;border-radius:var(--rounded-md)}
+.pkg-crow .pkg-logo img{width:40px;height:40px}
+/* the area is a qualifier of the name, so it sits on the name's line, quieter —
+   line two is kept free for the one thing worth reading there: why this
+   agreement is not landing */
+.pkg-crow .pkg-n{min-width:0;align-items:baseline;column-gap:var(--s2);letter-spacing:-.2px}
+.pkg-cat{flex:0 0 auto;font-size:var(--text-sm);font-weight:400;letter-spacing:0;
+  color:var(--general-muted-foreground)}
+/* the why-line wraps rather than clips: "nothing bought through it in 138 days"
+   is the whole point of the row and must not end in an ellipsis */
+.pkg-crow .pkg-s{white-space:normal;overflow:visible;line-height:1.45;max-width:46ch}
+.pkg-open{display:block;min-width:0;padding:0;border:0;background:none;
+  font:inherit;color:inherit;letter-spacing:inherit;text-align:left;cursor:pointer;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pkg-open::after{content:'';position:absolute;inset:0;border-radius:var(--rounded-md)}
+.pkg-open:focus-visible{outline:none}
+.pkg-item:has(.pkg-open:focus-visible) .pkg-crow{background:rgb(var(--b)/.07);
+  outline:2px solid var(--general-primary);outline-offset:-2px}
+.pkg-item:has(.pkg-open:focus-visible) .pkg-crow::before,
+.pkg-item:focus-within + .pkg-item .pkg-crow::before{opacity:0}
+/* a row is a control, not text: no grey tap flash over it, no long-press callout
+   on the supplier name, and no 300ms double-tap-zoom window */
+.pkg-row,.pkg-open,.pkg-cta,.pkg-heart{-webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  touch-action:manipulation}
+/* the money. A saving that has landed on an invoice is exact and green; one that
+   has not is the same amount drawn as a potential — the ink is the provenance */
+.pkg-money{display:flex;flex-direction:column;align-items:flex-end;gap:var(--s1);
+  text-align:right;white-space:nowrap}
+.pkg-fig{font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;
+  font-variant-numeric:tabular-nums}
+.pkg-fig small{font-size:var(--text-sm);font-weight:600}
+/* the darker green throughout, as the drill-down pages do it: #009689 is a fill
+   colour and drops under 4.5:1 at the size the "kr." is set */
+.pkg-fig:has(.fig-actual),.pkg-fig:has(.fig-actual) small,
+.pkg-fig .fig-actual{color:var(--sentiment-positive-ink)}
+.pkg-fig:has(.fig-doc),.pkg-fig:has(.fig-doc) small{color:var(--general-primary)}
+.pkg-fig:has(.fig-est),.pkg-fig:has(.fig-est) small{color:var(--general-muted-foreground)}
+.pkg-money em{font-style:normal;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+/* the CTA rides above the stretched link. It used to fade in on row hover, which
+   left the row's only real action permanently washed out on a phone. */
+.pkg-cta{position:relative;z-index:1;
+  transition:background-color var(--t-fast),border-color var(--t-fast)}
+.pkg-cta:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+@media (pointer:coarse){.pkg-cta{height:44px}}
+/* narrow cell: the money drops under the name, the CTA keeps the right-hand
+   column across both lines */
+@container (max-width:520px){
+  .pkg-crow{grid-template-columns:auto minmax(0,1fr) auto;
+    grid-template-areas:'logo text cta' 'logo money cta'}
+  .pkg-crow > .pkg-logo,.pkg-crow > .pkg-cta{align-self:center}
+  .pkg-money{flex-direction:row;align-items:baseline;gap:var(--s2);text-align:left;
+    align-self:start;justify-self:start}
+}
+/* ---- nothing switched on: the drawing, a hairline, and the three to look at ---- */
+.pkg-none{display:flex;flex-direction:column;align-items:center;gap:var(--s4);
+  padding:var(--s8) var(--s3) var(--s6);text-align:center}
+/* centred copy needs a caption measure, not a reading measure */
+.pkg-none p{max-width:34ch;font-size:var(--text-sm);line-height:1.6;
+  color:var(--general-muted-foreground)}
+.pkg-ill{width:126px;height:100px;color:#d8d8de}
+.pkg-ill-a{color:var(--general-primary);opacity:.5}
+/* the rule spans the list it divides — the list is pulled out to the tile edge */
+.pkg-none-sep{margin:0 calc(var(--s3) * -1);padding:var(--s4) var(--s3) 0;
+  border-top:1px solid var(--hairline)}
+.pkg .pkg-none-sep + .pkg-list{margin-top:var(--s2)}
+/* the subtitle already carries its own bottom margin */
+.pkg .pkg-list{margin-top:0}
+@media(prefers-reduced-motion:reduce){.pkg-row,.pkg-logo,.pkg-go,.pkg-cta{transition:none}}
 
 /* the whole package, in the peek sheet: narrower than the figure sheets (a list
    has one column), the tabs and the search staying put while fifty rows scroll
@@ -3227,11 +3403,17 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .pkg-ov .pkg-list.flat{margin-top:var(--s4)}
 .pkg-ov .pkg-pct{margin-right:36px}
 .pkg-heart{position:absolute;top:50%;right:calc(var(--s3) + 16px + var(--s2));translate:0 -50%;
-  width:32px;height:32px;display:grid;place-items:center;border:none;border-radius:var(--rounded-full);
+  z-index:1;width:32px;height:32px;display:grid;place-items:center;border:none;border-radius:var(--rounded-full);
   background:none;color:#a3a3a3;cursor:pointer;
   transition:color var(--t-fast),background var(--t-fast),transform var(--t-fast)}
+/* the pill stays 32px; the target under it is 44, because a near-miss here does
+   not do nothing — it opens the supplier */
+.pkg-heart::after{content:'';position:absolute;top:50%;left:50%;translate:-50% -50%;
+  width:44px;height:44px;border-radius:var(--rounded-full)}
 .pkg-heart svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linejoin:round}
-.pkg-heart:hover{background:rgb(var(--b)/.10);color:var(--general-foreground)}
+@media (hover:hover) and (pointer:fine){
+  .pkg-heart:hover{background:rgb(var(--b)/.10);color:var(--general-foreground)}
+}
 .pkg-heart:active{transform:scale(.9)}
 .pkg-heart.on{color:var(--general-destructive)}
 .pkg-heart.on svg{fill:currentColor}
@@ -3760,7 +3942,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .nc-advisory-title{text-align:center}
 .nc-gauge-wrap{margin:var(--s6) auto 0;max-width:212px;text-align:center}
 .nc-gauge{display:block;width:100%;height:auto;overflow:visible}
-.nc-gauge-track{fill:none;stroke:var(--general-muted);stroke-width:14;stroke-linecap:round}
+.nc-gauge-track{fill:none;stroke:var(--surface-tile);stroke-width:14;stroke-linecap:round}
 /* the fill sits on the track with the same cap, so at low percentages the two
    round ends nest instead of the fill's cap hanging off the end of the arc */
 .nc-gauge-fill{fill:none;stroke-width:14;stroke-linecap:round;
@@ -3785,66 +3967,69 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 @keyframes nc-gauge-sweep{from{stroke-dashoffset:100}}
 
 /* the list under the graph is a second group, so it gets a header the way a
-   grouped iOS list does — the note is the scale its rules are drawn against */
-.nc-rec-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
-  flex-wrap:wrap;margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid var(--hairline);
-  font-size:15px;font-weight:600;color:var(--general-foreground)}
-.nc-rec-head span{font-size:13px;font-weight:400;color:var(--general-muted-foreground)}
-/* the recommendations and the tuner sit side by side in the bento row, so they
-   have to be one component seen twice, not two. The tuner is hairline-separated
-   rows on white with the money in a tinted pill; these were tinted blocks with a
-   bare green number. The tinted container is gone and the pill is shared, so the
-   two halves now read at the same weight. */
-.nc-rec-list{margin-top:var(--s4);list-style:none}
-.nc-rec-row{display:flex;align-items:center;gap:var(--s4);
-  padding:var(--s4) 0;border-bottom:1px solid var(--hairline)}
-.nc-rec-list>li:last-child{border-bottom:none}
-.nc-rec-ic{flex:0 0 auto;width:30px;height:30px;border-radius:var(--rounded-sm);
-  display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary)}
-.nc-rec-ic svg{width:16px;height:16px}
-.nc-rec-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
-.nc-rec-txt{font-size:15px;line-height:1.4;color:var(--general-foreground)}
-.nc-rec-txt b{font-weight:600}
-/* the rate, drawn: two rows at 19% and 11% were two identical grey pills, which
-   is the one thing a reader of this card actually needs to be able to compare.
-   It was a rule under the text; a dial beside the figure says the same share in
-   the row's own right-hand column, so the text block stays one clean paragraph
-   and the comparison sits next to the number it belongs to.
-   A tint rather than the full accent: the capsule above is the card's graph and
-   these are a row-level aside. Two things at full strength on one card would be
-   two graphs arguing. */
-.nc-rec-dial{flex:0 0 auto;width:30px;height:30px}
-.nc-rec-dial .trk{fill:none;stroke:var(--general-muted);stroke-width:7}
-.nc-rec-dial .fil{fill:none;stroke:var(--brand-cornflower);stroke-width:7;
-  transform:rotate(-90deg);transform-origin:50% 50%}
-@media (prefers-reduced-motion:no-preference){
-  .nc-rec-dial .fil{animation:nc-rec-grow .55s cubic-bezier(.22,.9,.24,1) var(--d,0s) both}
+   grouped iOS list does: smaller and in the muted ink, so the two tile titles
+   under it are the loudest words in the group, not a third title beside them.
+   Space is the only separator — the tiles' own grey does the sectioning. */
+.nc-rec-head{margin-top:var(--s12);
+  font-size:var(--text-sm);font-weight:600;color:var(--general-muted-foreground)}
+/* two moves, two tiles side by side. Each is one button: a grey square with the
+   move written top-left, its money bottom-left and a white arrow square in the
+   bottom-right corner — the corner is the affordance, the whole tile is the
+   target. Radii step down with nesting: cell 16 → tile 12 → arrow square 8. The
+   height is the content's: sentence, a --s12 breath, the money — no fixed floor. */
+.nc-rec-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s3);
+  margin-top:var(--s5,20px);list-style:none}
+@media(max-width:620px){.nc-rec-list{grid-template-columns:1fr}}
+/* the li is a flex box so the button stretches to the row: two sentences of
+   different length still put their arrow squares on one line */
+.nc-rec-list>li{display:flex}
+.nc-move{display:flex;flex-direction:column;justify-content:space-between;gap:var(--s12);
+  width:100%;padding:var(--s6);border:0;border-radius:var(--rounded-md);
+  background:var(--surface-tile);color:var(--general-foreground);font:inherit;text-align:left;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  transition:background-color var(--t-fast),transform .16s cubic-bezier(.16,1,.3,1)}
+/* press: the tile itself gives, and darkens — the darkening is outside the hover
+   gate on purpose, so a finger gets the same answer a pointer does */
+.nc-move:active{transform:scale(.98);background:var(--surface-tile-pressed)}
+.nc-move:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+/* the sentence: the area carries the weight, the reason sits under it in the same
+   size — one voice, two inks, no label above it */
+.nc-move-txt{font-size:var(--text-base);line-height:1.4}
+.nc-move-txt b{display:block;font-weight:600}
+.nc-move-txt span{color:var(--general-muted-foreground)}
+.nc-move-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s3)}
+/* the money, one figure per line, each in its own ink: blue came off a document,
+   dotted grey is still an estimate, one weight lighter as everywhere else in the
+   file. Stacked rather than " · "-joined because the tile is narrow, and because
+   verified-then-estimated is the order the whole page keeps. A rate (no invoices
+   to price it) is plain foreground. */
+.nc-move-val{display:flex;flex-direction:column;gap:var(--s1);min-width:0;
+  font-size:var(--text-xl);font-weight:700;letter-spacing:-.02em;line-height:1.1;
+  font-variant-numeric:tabular-nums;color:var(--general-foreground);white-space:nowrap}
+.nc-move-val .fig-sep{display:none}
+.nc-move-val .fig-est{font-weight:600}
+/* the arrow square: flat white on the grey — the fill contrast already draws its
+   edge, so it carries no shadow. On hover the arrow leans into the direction it
+   goes; that lean and the tile's tint land together. */
+.nc-move-go{flex:0 0 auto;width:44px;height:44px;display:grid;place-items:center;
+  border-radius:var(--rounded-sm);background:var(--surface);color:var(--general-foreground)}
+.nc-move-go svg{width:20px;height:20px;transition:transform .16s cubic-bezier(.16,1,.3,1)}
+@media (hover:hover) and (pointer:fine){
+  .nc-move:hover{background:var(--surface-tile-pressed)}
+  .nc-move:hover .nc-move-go svg{transform:translateX(2px)}
 }
-/* the ring draws itself on from twelve o'clock: the dash gap is held at 100 while
-   the visible run grows from nothing to the row's own share */
-@keyframes nc-rec-grow{from{stroke-dasharray:0 100}to{stroke-dasharray:var(--p) 100}}
-/* the assistant card's money pill */
-.nc-rec-val{flex:0 0 auto;padding:4px var(--s3);
-  border:1px solid #00968930;border-radius:var(--rounded-md);background:#f4fcfb;
-  font-size:15px;font-weight:700;color:var(--sentiment-positive-ink);
-  font-variant-numeric:tabular-nums;white-space:nowrap}
-/* a non-money value ("Idle", "Live", "Auto") is a state, not a saving — it must
-   not wear the money pill or it reads as an amount */
-.nc-rec-val.state{border-color:var(--hairline);background:var(--general-muted);
-  color:var(--general-muted-foreground);font-weight:600}
-/* a rate wears no pill at all: its dial already carries the emphasis, and a third
-   pill on the same list would flatten the money and the state back into it */
-.nc-rec-val.rate{padding:4px 0 4px var(--s3);border-color:transparent;background:none;
-  font-size:var(--text-lg);color:var(--general-foreground);letter-spacing:-.3px}
-/* centred with the title and the dial above it — a self-contained pill, not a
-   full-bleed bar welded to the card edge */
-.nc-advisory-cta{align-self:center;margin:var(--s5,20px) 0 var(--s4);padding:0 var(--s5,20px);
-  border-radius:var(--rounded-full);height:40px;font-size:15px}
+@media(prefers-reduced-motion:reduce){
+  .nc-move{transition:background-color var(--t-fast)}
+  .nc-move:active{transform:none}
+  .nc-move-go svg{transition:none}
+  .nc-move:hover .nc-move-go svg{transform:none}
+}
 /* full-bleed footer: the negative margin has to match .nc-bento-cell's padding
    (--s8 each side, so --s16 of extra width) or it won't reach the card edges */
 .nc-advisory-foot{display:flex;align-items:center;justify-content:center;gap:var(--s2);
   width:calc(100% + var(--s16));margin:auto calc(var(--s8) * -1) 0;
-  padding:var(--s4) var(--s8);border-top:1px solid var(--hairline);
+  padding:var(--s4) var(--s8);
   font-size:13px;color:var(--general-muted-foreground)}
 .nc-advisory-foot .sda{width:16px;height:16px}
 
@@ -3871,9 +4056,18 @@ body{--act-strip:64px;--act-panel:320px}
    rule, so updateActivityRail's rail.hidden did nothing and the fixed rail sat
    on top of the content on every window under 1440px */
 .nc-activity[hidden]{display:none!important}
-body.activity-on .canvas{padding-right:calc(var(--act-strip) + var(--s6))}
-body.activity-on.activity-open .canvas{
-  padding-right:calc(var(--act-strip) + var(--act-panel) + var(--s8))}
+/* The strip owns the right margin and never moves off it. What it costs is
+   reserved on the row of columns, not on the canvas alone — so the assistant
+   panel, which is the last column in that row, opens flush against the strip
+   rather than underneath it. When an activity panel is open too, the row gives
+   up that width as well and the assistant stands to the left of both.
+   The totals are what .canvas used to carry on its own, so the page's content
+   edge lands exactly where it did. */
+body.activity-on .appbody{padding-right:var(--act-strip)}
+body.activity-on.activity-open .appbody{
+  padding-right:calc(var(--act-strip) + var(--act-panel))}
+body.activity-on .canvas{padding-right:var(--s6)}
+body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 
 /* ---- the strip: one button per panel, always on the edge ---- */
 .act-strip{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;
@@ -5736,84 +5930,99 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
    a heading of its own invention. */
 .agp-sec{display:flex;flex-direction:column;min-width:0}
 
-/* ---------- .agy · one agreement you hold ----------
+/* ---------- .agx · one agreement in activation ----------
    The same row species as the Areas shortlist (.ar-pick): full width, on the
    canvas rather than inside a tray, a real card stroke, and the supplier's own
-   ink only in the tile and in the hover wash. It was nested inside an .oc-panel
-   before, which made every row a card inside a card.
-   Flat, like .agd: tile, eyebrow, name, figure, stepper and date rail are all
-   direct children placed by area. It is NOT one hit area — it contains a
-   <details> and its own buttons — so the NAME is the affordance instead. */
+   ink only in the tile and in the hover wash. Only an agreement still between
+   "request sent" and "saving verified" is drawn as this row — once it is
+   verified, or if it is live and not being used, it sits in the catalogue below
+   with everything else, marked. Flat, like .agd: tile, eyebrow, name, figure,
+   the next date and the timeline are direct children placed by area. It is NOT
+   one hit area — the NAME is the affordance. */
 .agp-list{list-style:none;display:flex;flex-direction:column;gap:var(--s4)}
-.agy{--tint:rgb(var(--b,33 112 237)/.05);--tint-edge:rgb(var(--b,33 112 237)/.22);
+.agx{--tint:rgb(var(--b,33 112 237)/.05);--tint-edge:rgb(var(--b,33 112 237)/.22);
   display:grid;
-  grid-template-columns:auto minmax(0,1fr) minmax(216px,264px);
+  grid-template-columns:auto minmax(0,1fr) auto;
   grid-template-areas:
-    "tile eye  cal"
-    "tile name cal"
-    "tile fig  cal"
-    "flag flag cal"
-    "step step cal"
-    "act  act  cal";
-  /* the date rail spans every row, and when it is the taller column the browser
-     hands its slack out EQUALLY to all six — which opens a gap between the name
-     and the stepper. Sizing the first five to their content sends the slack to
-     the last row instead, where it is just empty space at the foot of the card. */
-  grid-template-rows:repeat(5,min-content) 1fr;
+    "tile eye  next"
+    "tile name next"
+    "tile fig  next"
+    "step step step"
+    "note note note";
+  grid-template-rows:repeat(3,min-content) auto auto;
   column-gap:var(--s6);align-items:start;
   padding:var(--s6);border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
   background:var(--surface);
   transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
-.agy:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
+.agx:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
   border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
-.agy:focus-within{border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
-/* the one that is agreed and not being used is the only row allowed to break the
-   stroke — it is the single thing on this page that needs answering */
-.agy.flagged{border-color:#f54a0038}
+.agx:focus-within{border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
 /* nested radius steps down: 16px row, 12px tile */
-.agy .agc-logo{grid-area:tile;width:64px;height:64px;border-radius:var(--rounded-md)}
+.agx .agc-logo{grid-area:tile;width:64px;height:64px;border-radius:var(--rounded-md)}
 /* the name as the navigation: a real button, so one Tab stop and one Enter */
-.agy-open{grid-area:name;justify-self:start;display:inline-flex;align-items:center;gap:var(--s2);
+.agx-open{grid-area:name;justify-self:start;display:inline-flex;align-items:center;gap:var(--s2);
   margin-top:2px;padding:0;border:0;background:none;cursor:pointer;text-align:left;
   font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;
   line-height:1.25;color:var(--general-foreground)}
-.agy-open svg{flex:0 0 auto;width:17px;height:17px;color:var(--general-primary);
+.agx-open svg{flex:0 0 auto;width:17px;height:17px;color:var(--general-primary);
   transition:transform var(--t-fast)}
-.agy-open:hover{color:var(--general-primary)}
-.agy-open:hover svg{transform:translateX(3px)}
-.agy:hover .agy-open svg{transform:translateX(3px)}
-.agy-open:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px;
+.agx-open:hover{color:var(--general-primary)}
+.agx-open:hover svg,.agx:hover .agx-open svg{transform:translateX(3px)}
+.agx-open:focus-visible{outline:2px solid var(--general-primary);outline-offset:3px;
   border-radius:var(--rounded-xs)}
 @media (prefers-reduced-motion:reduce){
-  .agy-open:hover svg,.agy:hover .agy-open svg{transform:none}
+  .agx-open:hover svg,.agx:hover .agx-open svg{transform:none}
 }
-/* the eyebrow carries the category and, when it applies, the one word of alarm */
-.agy .agd-eye{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+/* the eyebrow carries the category and the one word of state */
+.agx .agd-eye{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
 .agy-chip{padding:2px 8px;border-radius:var(--rounded-full);
   font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-  background:var(--general-muted);color:var(--general-muted-foreground)}
+  background:var(--general-secondary);color:var(--general-primary)}
 .agy-chip.warn{background:#f54a0014;color:#a33200}
 .agy-chip.ok{background:#d9f2ef;color:var(--sentiment-positive)}
-.agy .agd-fig{margin-top:var(--s3)}
-/* the dormant note: a left rule, not a tinted panel — a box inside a card reads
-   as a second card, and this is one sentence, not an object */
-.agy-flag{grid-area:flag;margin-top:var(--s4);display:flex;gap:var(--s2);align-items:flex-start;
-  padding-left:var(--s3);border-left:1px solid var(--sentiment-negative);
-  font-size:13.5px;line-height:1.55;color:var(--general-muted-foreground)}
-.agy-flag svg{flex:0 0 auto;width:17px;height:17px;margin-top:1px;color:var(--sentiment-negative)}
-.agy-flag b{color:var(--general-foreground);font-weight:650}
-/* the stepper: the existing component, unchanged, in its own area. .opp-fold
-   already brings the hairline that separates it from the identity block, so the
-   spacing above it is halved rather than doubled. */
-.agy>.opp-fold{grid-area:step;min-width:0;margin-top:var(--s4);padding-top:var(--s4)}
-.agy>.opp-fold>summary h3{font-size:var(--text-base)}
+.agx .agd-fig{margin-top:var(--s3)}
+/* the one date that matters while it is in flight, on the far edge, behind the
+   hairline the category tab's rail uses — the same .agy-date, so the two pages
+   print the same next step the same way */
+.agx>.agy-date{grid-area:next;align-self:stretch;max-width:250px;
+  padding-left:var(--s6);border-left:1px solid var(--hairline)}
 /* the badge earns a second state: all four done is not "step 5 of 4" */
 .act-now.done{background:#00968916;color:var(--sentiment-positive)}
 /* a step whose expected date has passed. We say we are chasing — which the
    product does — and never that anything came back. */
 .stp.due .stp-tx em{color:var(--sentiment-negative)}
 .stepper.live .stp.now .stp-tx em{color:var(--general-primary)}
-.agy-act{grid-area:act;margin-top:var(--s5,20px);display:flex;flex-wrap:wrap;gap:var(--s2)}
+
+/* ---------- the horizontal timeline ----------
+   The same four ACT_STEPS as the vertical stepper, laid left to right: the row
+   is wide and the question is "how far along", and a distance reads on an axis
+   before it reads down a list. The connector runs from each mark to the next
+   and the completed stretch of it is the progress bar — the same rule the
+   vertical one follows, turned on its side. */
+.hstep{grid-area:step;list-style:none;margin-top:var(--s6);padding-top:var(--s6);
+  border-top:1px solid var(--hairline);
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:var(--s4)}
+.hstp{position:relative;display:flex;flex-direction:column;min-width:0}
+/* from just past this mark to just short of the next: 36px clears the 28px
+   mark and its breath, and the negative right edge reaches into the column gap */
+.hstp::before{content:"";position:absolute;top:13px;left:36px;right:calc(8px - var(--s4));
+  height:2px;border-radius:1px;background:var(--hairline)}
+.hstp:last-child::before{display:none}
+.hstep.live .hstp.done::before{background:var(--sentiment-positive)}
+.hstp .stp-mark{margin-bottom:var(--s3)}
+.hstep.live .hstp.done .stp-mark{background:var(--sentiment-positive);color:#fff}
+.hstep.live .hstp.now .stp-mark{background:var(--general-primary);color:#fff;
+  box-shadow:0 0 0 4px #1b64dc1f}
+.hstp-tx{display:flex;flex-direction:column;gap:2px;min-width:0;padding-right:var(--s2)}
+.hstp-tx b{font-size:var(--text-sm);font-weight:650;color:var(--general-foreground)}
+.hstp-tx em{font-style:normal;font-size:12px;font-weight:600;
+  color:var(--general-muted-foreground)}
+.hstep.live .hstp.now .hstp-tx em{color:var(--general-primary)}
+.hstp.due .hstp-tx em{color:var(--sentiment-negative)}
+/* steps still ahead stay quiet — four equally-loud columns say nothing about
+   where you are */
+.hstep.live .hstp.todo b{color:var(--general-muted-foreground);font-weight:600}
+.agx>.stepper-note{grid-area:note}
 
 /* the date rail: the calendar dimension, divided by a hairline that runs the
    WHOLE height of the row rather than stopping where its own content ends —
@@ -5837,40 +6046,44 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 .agy-date.soon svg,.agy-date.soon .agy-date-v{color:var(--general-primary)}
 
 @container page (max-width:860px){
-  .agy{grid-template-columns:auto minmax(0,1fr);grid-template-rows:none;
+  .agx{grid-template-columns:auto minmax(0,1fr);
     grid-template-areas:
       "tile eye"
       "tile name"
       "tile fig"
-      "flag flag"
-      "cal  cal"
+      "next next"
       "step step"
-      "act  act"}
+      "note note"}
+  .agx>.agy-date{max-width:none;margin-top:var(--s5,20px);padding-left:0;border-left:0}
   .agy-cal{margin-top:var(--s5,20px);padding-left:0;padding-top:var(--s5,20px);
     border-left:0;border-top:1px solid var(--hairline);
     flex-direction:row;flex-wrap:wrap;gap:var(--s6)}
   .agy-cal .agy-date{flex:1 1 200px}
 }
+/* narrower than four columns can carry, the timeline stands back up: the
+   connector drops to the vertical recipe and the steps stack */
+@container page (max-width:760px){
+  .hstep{grid-template-columns:minmax(0,1fr);row-gap:var(--s5,20px)}
+  .hstp{flex-direction:row;gap:var(--s4)}
+  .hstp::before{top:30px;left:13px;right:auto;bottom:calc(-1 * var(--s5,20px) - 2px);
+    width:2px;height:auto}
+  .hstp .stp-mark{margin-bottom:0}
+  .hstp-tx{padding-top:3px}
+}
 @container page (max-width:480px){
-  .agy{padding:var(--s5,20px);column-gap:var(--s4)}
-  .agy .agc-logo{width:52px;height:52px}
+  .agx{padding:var(--s5,20px);column-gap:var(--s4)}
+  .agx .agc-logo{width:52px;height:52px}
 }
 
 /* ---------- the empty state ----------
    No agreements yet is Fanny's likely reality, so it gets the same row, in
-   preview: the stepper's own not-yet-started mode beside the three dates we
-   WILL keep. */
-.agy.agy-pre{grid-template-columns:minmax(0,1fr) minmax(216px,264px);
-  grid-template-areas:"eye  cal" "name cal" "step cal";
-  grid-template-rows:min-content min-content 1fr}
-.agy.agy-pre:hover{background:var(--surface);border-color:var(--card-stroke);box-shadow:none}
-.agy-pre .agy-pre-t{grid-area:name;margin-top:2px;font-family:var(--font-sans);
+   preview: the timeline's own not-yet-started mode, nothing dated. */
+.agx.agx-pre{grid-template-columns:minmax(0,1fr);
+  grid-template-areas:"eye" "name" "step" "note";
+  grid-template-rows:min-content min-content auto auto}
+.agx.agx-pre:hover{background:var(--surface);border-color:var(--card-stroke);box-shadow:none}
+.agx-pre .agx-pre-t{grid-area:name;margin-top:2px;font-family:var(--font-sans);
   font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.25}
-.agy-pre .agy-date-v{color:var(--general-muted-foreground);font-weight:650}
-@container page (max-width:860px){
-  .agy.agy-pre{grid-template-columns:minmax(0,1fr);grid-template-rows:none;
-    grid-template-areas:"eye" "name" "cal" "step"}
-}
 
 /* ---------- the catalogue ----------
    The controls carry the Suppliers rhythm exactly — a 44px search and 44px
@@ -5885,9 +6098,41 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 /* the pills sit at the far end of the search row */
 .agp-tools .spacer{flex:1 1 auto}
 .agp-tools .agc-pill{height:44px;padding:0 var(--s5,20px)}
+/* the name row: a quick search and the first letter are two ways of asking the
+   same question — "the one called…" — so they share a row, the field fixed at
+   the left and the letters scrolling beside it. The field is a second door to
+   the same query the bar's field holds (agcQuery): type in either, both show it.
+   36px, the letters' height — one scale per control row. */
+.agp-name{display:flex;align-items:center;gap:var(--s2);min-width:0}
+.agc-q{flex:0 0 auto;display:flex;align-items:center;gap:var(--s2);width:240px;height:36px;
+  padding:0 var(--s2) 0 var(--s3);
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-sm);
+  background:var(--surface);color:var(--general-muted-foreground);
+  transition:border-color var(--t-fast)}
+.agc-q:hover{border-color:var(--card-stroke-hover)}
+.agc-q:focus-within{border-color:var(--general-primary);
+  box-shadow:0 0 0 3px rgb(27 100 220/.14)}
+.agc-q>svg{flex:0 0 auto;width:15px;height:15px}
+.agc-q input{flex:1 1 auto;min-width:0;height:100%;border:0;background:none;padding:0;
+  font:inherit;font-size:13px;font-weight:500;color:var(--general-foreground);
+  -webkit-appearance:none;appearance:none}
+.agc-q input::-webkit-search-cancel-button,.agc-q input::-webkit-search-decoration{
+  -webkit-appearance:none;appearance:none}
+.agc-q input:focus{outline:none}
+.agc-q input::placeholder{color:var(--general-muted-foreground)}
+.agc-qx{flex:0 0 auto;display:grid;place-items:center;width:22px;height:22px;
+  border:0;border-radius:var(--rounded-full);background:none;cursor:pointer;
+  color:var(--general-muted-foreground)}
+.agc-qx:hover{background:var(--general-muted);color:var(--general-foreground)}
+.agc-qx svg{width:12px;height:12px}
+.agc-qx[hidden]{display:none}
+@container page (max-width:660px){
+  .agp-name{flex-wrap:wrap}
+  .agc-q{width:100%}
+}
 /* one row, scrolled: an A–Z that wraps is two rows of chrome before any content.
    The bar is hidden; wheel, trackpad and touch all still move it. */
-.agp-az{display:flex;flex-direction:row;flex-wrap:nowrap;gap:6px;
+.agp-az{flex:1 1 auto;display:flex;flex-direction:row;flex-wrap:nowrap;gap:6px;
   overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
   padding:0 3px 2px;margin:0 -3px}
 .agp-az::-webkit-scrollbar{display:none}
@@ -5909,10 +6154,29 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
   overflow:hidden;line-height:1.2}
 
-/* ---------- catalogue: .agd, with the ones you hold marked ----------
-   Same card the client signed off on. In use gets the positive ground the app
-   already uses for an active agreement (.agr.on), a green eyebrow with a tick,
-   and no fav toggle — you cannot shortlist what you already have. */
+/* ---------- catalogue: the ones you hold come first ----------
+   Two labelled runs of the same card, one grid rhythm: a hairline label rather
+   than a box of their own, because the group is a sort order, not a different
+   object. Same card the client signed off on. */
+.aga-grp{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s4);
+  font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.aga-grp em{font-style:normal;font-weight:600;letter-spacing:0;color:var(--general-muted-foreground)}
+.aga-grp::after{content:"";flex:1 1 auto;height:1px;background:var(--hairline)}
+#agaBody .supd-grid+.aga-grp{margin-top:var(--s8)}
+/* an agreement you hold carries its own figure rather than the catalogue's
+   average: what it saves a year, in the ink of how well we know that — solid
+   green only once it has been read off an invoice */
+.sup-rate b:has(.fig-doc){color:var(--general-primary)}
+.sup-rate b:has(.fig-est){color:var(--general-muted-foreground);font-weight:600;letter-spacing:-.6px}
+.sup-rate b .fig-est{font-weight:inherit}
+/* the one that is agreed and not being used says so in a line, not a panel — the
+   buyer contact lives on the agreement's own page, one click in */
+.sup-id:has(+.aga-note){margin-bottom:var(--s3)}
+.aga-note{display:flex;gap:var(--s2);align-items:flex-start;margin-bottom:var(--s6);
+  font-size:12.5px;line-height:1.45;color:var(--general-muted-foreground)}
+.aga-note svg{flex:0 0 auto;width:15px;height:15px;margin-top:1px;color:var(--sentiment-negative)}
+.aga-note b{color:var(--general-foreground);font-weight:650}
 .agd.mine{background:#f4fcfb;border-color:#00968947}
 .agd.mine:hover{background:#eaf9f7;border-color:#00968973}
 .agd.mine .agd-eye{color:var(--sentiment-positive);display:flex;align-items:center;gap:5px}
@@ -6167,13 +6431,6 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 .ar-fig b:has(.fig-doc),.ar-pick-fig b:has(.fig-doc),.agd-fig:has(.fig-doc),.agr-card-price b:has(.fig-doc){color:var(--general-primary)}
 .ar-fig b:has(.fig-est),.ar-pick-fig b:has(.fig-est),.agd-fig:has(.fig-est),.agr-card-price b:has(.fig-est){color:var(--general-muted-foreground)}
 .agd-fig:has(.fig-actual){color:var(--sentiment-positive)}
-/* the potential pill and the slider money follow the same ink */
-.nc-rec-val{border-color:color-mix(in srgb,var(--general-primary) 22%,var(--surface));
-  background:var(--brand-ice);color:var(--general-primary)}
-.nc-rec-val .fig-doc,.nc-rec-val .fig-est{color:inherit}
-.nc-rec-val.est{border-color:var(--hairline);background:var(--general-muted);color:var(--general-muted-foreground)}
-.dsc-v.pos{color:var(--general-primary)}
-.dsc-v .fig-doc,.dsc-v .fig-est{color:inherit}
 /* the attachment mark */
 .doc-chip{display:inline-flex;align-items:center;gap:5px;padding:0;border:0;background:none;
   color:var(--general-muted-foreground);font:inherit;cursor:pointer;vertical-align:middle}
@@ -6241,33 +6498,6 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 .search-t span{font-size:var(--text-sm);color:var(--general-muted-foreground);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .search-none{margin:0;padding:var(--s3) var(--s4);font-size:var(--text-sm);color:var(--general-muted-foreground)}
-/* weekly discovery — the page shares the agreements page's mast type, and each
-   finding is a .card-shaped row; the eyebrow is .act-eyebrow's recipe */
-.dsc{display:flex;flex-direction:column;gap:var(--s8);padding-bottom:var(--s12)}
-.dsc-head{display:flex;flex-direction:column;gap:var(--s2)}
-.dsc-head h1{margin:0}
-.dsc-head p{margin:0;max-width:64ch;font-size:var(--text-lg);line-height:1.55;color:var(--general-muted-foreground)}
-.dsc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--s3)}
-.dsc-btn{display:grid;grid-template-columns:1fr auto;grid-template-areas:"eye v" "t v" "s v" "act v";
-  column-gap:var(--s6);row-gap:var(--s1);width:100%;text-align:left;padding:var(--s6);
-  border:1px solid var(--hairline);border-radius:var(--rounded-xl);background:var(--surface);
-  box-shadow:var(--shadow-sm);font:inherit;color:inherit;cursor:pointer}
-.dsc-btn:hover{border-color:var(--general-primary)}
-.dsc-eye{grid-area:eye;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--general-muted-foreground)}
-.dsc-item.warn .dsc-eye,.dsc-item.idle .dsc-eye{color:var(--sentiment-negative-ink-on-tint)}
-.dsc-item.new .dsc-eye,.dsc-item.quick .dsc-eye{color:var(--sentiment-positive-ink)}
-.dsc-t{grid-area:t;font-size:var(--text-xl);font-weight:600;letter-spacing:-.3px}
-.dsc-s{grid-area:s;font-size:var(--text-base);line-height:1.5;color:var(--general-muted-foreground);max-width:60ch}
-.dsc-v{grid-area:v;align-self:center;font-style:normal;font-weight:700;font-size:var(--text-xl);
-  letter-spacing:-.3px;white-space:nowrap}
-.dsc-v.pos{color:var(--sentiment-positive)}
-.dsc-v.neg{color:var(--sentiment-negative)}
-.dsc-act{grid-area:act;margin-top:var(--s2);display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--text-sm);font-weight:600;color:var(--general-primary)}
-.dsc-act svg{width:14px;height:14px}
-@media (max-width:640px){.dsc-btn{grid-template-columns:1fr;grid-template-areas:"eye" "t" "s" "v" "act"}.dsc-v{margin-top:var(--s2)}}
-
 /* ---------- card peek: the large overlay behind each Overview summary card ----------
    A card no longer jumps straight to its drill page. It opens a summary first —
    the claim, the lines behind it, and what the detailed page adds — stacked in
@@ -6476,23 +6706,31 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
       </div>
       <div class="erp tune-pill" id="tunePill" hidden></div>
       <button class="erp" id="erpPill"></button>
-      <div class="notif">
-        <button class="bell" id="bellBtn" aria-label="Notifications" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5a6 6 0 1112 0c0 4.7 1.9 5.7 1.9 5.7H4.1S6 14.2 6 9.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 004 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-          <span class="bdg" id="bellBadge">0</span>
-        </button>
-        <div class="npop" id="npop" role="region" aria-label="Notifications">
-          <div class="np-h">
-            <b>Notifications</b>
-            <span class="spacer"></span>
-            <button class="linkbtn" id="npAll">Mark all read</button>
-            <button class="npgear" id="npGear" aria-pressed="false" aria-label="Notification settings">
-              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1A1.7 1.7 0 008.9 19a1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1A1.7 1.7 0 004.6 8.9a1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-            </button>
+      <!-- the bar's icon set: notifications and the assistant, one group on the
+           bar's right edge, just before the account. -->
+      <div class="bar-tools">
+        <div class="notif">
+          <button class="bell" id="bellBtn" aria-label="Notifications" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5a6 6 0 1112 0c0 4.7 1.9 5.7 1.9 5.7H4.1S6 14.2 6 9.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 004 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span class="bdg" id="bellBadge">0</span>
+          </button>
+          <div class="npop" id="npop" role="region" aria-label="Notifications">
+            <div class="np-h">
+              <b>Notifications</b>
+              <span class="spacer"></span>
+              <button class="linkbtn" id="npAll">Mark all read</button>
+              <button class="npgear" id="npGear" aria-pressed="false" aria-label="Notification settings">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1A1.7 1.7 0 008.9 19a1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1A1.7 1.7 0 004.6 8.9a1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+            <div class="np-prefs" id="npPrefs" hidden></div>
+            <div class="np-b" id="npBody"></div>
           </div>
-          <div class="np-prefs" id="npPrefs" hidden></div>
-          <div class="np-b" id="npBody"></div>
         </div>
+        <button class="ibtn agent-i" id="agentBtn" type="button" data-tip="Saving assistant"
+          aria-expanded="false" aria-label="Saving assistant">
+          <img class="sda" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">
+        </button>
       </div>
       <div class="userwrap">
       <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
@@ -6543,73 +6781,12 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 
     <div class="appbody">
       <nav class="rail" id="rail" aria-label="Main">
-        <button class="agent-btn" id="agentBtn" data-tip="Saving assistant" aria-expanded="false">
-          <img class="sda" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">
-          <span class="ab"><b>Saving assistant</b><span>Ask it anything</span></span>
-        </button>
         <div class="nav" id="nav"></div>
         <button class="railtog" id="railTog" aria-label="Collapse navigation" aria-expanded="true">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-6 7 6 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
           <span>Collapse</span>
         </button>
       </nav>
-
-      <!-- AI agent — opens on the left, beside the rail, pushing the canvas over -->
-      <aside class="ap" id="ap" aria-labelledby="apT">
-        <div class="app-p">
-          <header class="ap-h">
-            <div>
-              <div class="ap-eyebrow">Made to make your procurement easier</div>
-              <h3 id="apT" tabindex="-1">Saving assistant <img class="sda" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt=""></h3>
-            </div>
-            <button class="apx" id="apWide" aria-label="Expand panel">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 20h5v-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4l6 6M20 20l-6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
-            </button>
-            <button class="apx" id="apX" aria-label="Close panel">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            </button>
-          </header>
-
-          <div class="ap-b">
-            <!-- what the assistant was opened ABOUT: set when someone asks from an
-                 agreement card, so the panel never opens on a blank box -->
-            <div class="ap-subj" id="apSubject" hidden></div>
-            <!-- requests the user has sent, in the assistant too: they were created
-                 by a conversation, so this is where people look for them -->
-            <div class="ap-reqs-wrap" id="apReqs" hidden></div>
-            <!-- the conversation. Starts with one opening line from the assistant
-                 rather than a wall of canned prompts: the panel's job is to be typed
-                 into, and three example questions were furniture in front of that. -->
-            <!-- two conversations, one panel: the AI and the named advisor were both
-                 sitting in here at once, so there was no way to tell who a message
-                 was going to. The tab picks the recipient; the composer is shared. -->
-            <div class="ap-tabs" role="tablist" aria-label="Who you are talking to">
-              <button type="button" class="ap-tab" id="apTabAi" role="tab" data-aptab="ai">
-                <img class="sda" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">Assistant</button>
-              <button type="button" class="ap-tab" id="apTabPeter" role="tab" data-aptab="peter">
-                <span class="ap-tab-av" aria-hidden="true">PL</span>Peter Lund
-                <i class="ap-tab-live" aria-hidden="true"></i></button>
-            </div>
-            <div class="ap-pane" id="apPane"></div>
-          </div>
-
-          <footer class="ap-f">
-            <div class="ap-in">
-              <textarea id="apInput" rows="1" placeholder="Ask the saving assistant…"></textarea>
-              <div class="ap-in-r">
-                <button class="apattach" aria-label="Attach a file">
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  <span>attach</span>
-                </button>
-                <span class="spacer"></span>
-                <button class="apsend" id="apSend" aria-label="Send">
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M3 20.5L21 12 3 3.5l3.4 8.5L3 20.5z" fill="currentColor"/></svg>
-                </button>
-              </div>
-            </div>
-          </footer>
-        </div>
-      </aside>
 
       <main class="canvas" id="canvas">
         <div class="page">
@@ -6659,7 +6836,6 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
         <!-- WEEKLY DISCOVERY — what changed since Monday, each finding opening
              where it can be acted on. The rail item pointed here for a long time
              and showed the Overview. -->
-        <section id="viewDiscover" hidden></section>
 
         </div>
 
@@ -6731,6 +6907,64 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
         </aside>
 
       </main>
+
+      <!-- AI agent — opens on the right, past the canvas, following the mark in
+           the bar that opens it, and stops at the pinned activity strip. -->
+      <aside class="ap" id="ap" aria-labelledby="apT">
+        <div class="app-p">
+          <header class="ap-h">
+            <div>
+              <div class="ap-eyebrow">Made to make your procurement easier</div>
+              <h3 id="apT" tabindex="-1">Saving assistant <img class="sda" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt=""></h3>
+            </div>
+            <button class="apx" id="apWide" aria-label="Expand panel">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 20h5v-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4l6 6M20 20l-6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+            </button>
+            <button class="apx" id="apX" aria-label="Close panel">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </header>
+
+          <div class="ap-b">
+            <!-- what the assistant was opened ABOUT: set when someone asks from an
+                 agreement card, so the panel never opens on a blank box -->
+            <div class="ap-subj" id="apSubject" hidden></div>
+            <!-- requests the user has sent, in the assistant too: they were created
+                 by a conversation, so this is where people look for them -->
+            <div class="ap-reqs-wrap" id="apReqs" hidden></div>
+            <!-- the conversation. Starts with one opening line from the assistant
+                 rather than a wall of canned prompts: the panel's job is to be typed
+                 into, and three example questions were furniture in front of that. -->
+            <!-- two conversations, one panel: the AI and the named advisor were both
+                 sitting in here at once, so there was no way to tell who a message
+                 was going to. The tab picks the recipient; the composer is shared. -->
+            <div class="ap-tabs" role="tablist" aria-label="Who you are talking to">
+              <button type="button" class="ap-tab" id="apTabAi" role="tab" data-aptab="ai">
+                <img class="sda" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">Assistant</button>
+              <button type="button" class="ap-tab" id="apTabPeter" role="tab" data-aptab="peter">
+                <span class="ap-tab-av" aria-hidden="true">PL</span>Peter Lund
+                <i class="ap-tab-live" aria-hidden="true"></i></button>
+            </div>
+            <div class="ap-pane" id="apPane"></div>
+          </div>
+
+          <footer class="ap-f">
+            <div class="ap-in">
+              <textarea id="apInput" rows="1" placeholder="Ask the saving assistant…"></textarea>
+              <div class="ap-in-r">
+                <button class="apattach" aria-label="Attach a file">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <span>attach</span>
+                </button>
+                <span class="spacer"></span>
+                <button class="apsend" id="apSend" aria-label="Send">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M3 20.5L21 12 3 3.5l3.4 8.5L3 20.5z" fill="currentColor"/></svg>
+                </button>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </aside>
     </div>
 
   </div>
@@ -6914,21 +7148,27 @@ function renderLogin(){
   }
 }
 
-function showToast(amount){
+/* one centred card, three tones: the green activation one it was written for,
+   and the brand/amber ones the package card's webshop CTA needs */
+function showToastCard(ic, title, body, tone){
   const wrap = document.createElement('div');
-  wrap.className = 'toastc';
+  wrap.className = 'toastc' + (tone ? ' ' + tone : '');
   wrap.setAttribute('role', 'status');
   wrap.setAttribute('aria-live', 'polite');
   wrap.innerHTML = `<div class="toastc-card">
-      <span class="toastc-ic" aria-hidden="true">${TICK}</span>
-      <div class="toastc-tx"><b>Congratulations! 🎉</b>
-        <p>You're saving <b>${amount}</b> — starting from now on.</p></div>
+      <span class="toastc-ic" aria-hidden="true">${ic}</span>
+      <div class="toastc-tx"><b>${title}</b><p>${body}</p></div>
     </div>`;
   const dismiss = () => { wrap.classList.remove('show'); setTimeout(() => wrap.remove(), 450); };
   document.body.appendChild(wrap);
   requestAnimationFrame(() => wrap.classList.add('show'));
   wrap.addEventListener('click', dismiss);
-  setTimeout(dismiss, 4000);
+  setTimeout(dismiss, 4500);
+}
+const SHOP_IC = '<svg viewBox="0 0 24 24" fill="none"><path d="M3.2 4.5h2.3l2.4 10.2a2 2 0 0 0 2 1.6h7.3a2 2 0 0 0 1.9-1.5L20.8 8H6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10.5" cy="20" r="1.5" fill="currentColor"/><circle cx="16.8" cy="20" r="1.5" fill="currentColor"/></svg>';
+function showToast(amount){
+  showToastCard(TICK, 'Congratulations! 🎉',
+    `You're saving <b>${amount}</b> — starting from now on.`);
 }
 
 /* ---------------- 4 · data set (read-only; rows can be hidden) ---------------- */
@@ -7103,8 +7343,6 @@ function injectNew6(){
 
 /* ---------------- 6 · app shell ---------------- */
 const NAV = [
-  {id:'discover', n:'Weekly discovery', hero:true, sub:'4 new findings since Monday',
-   icon:'<path d="M12 3l2.1 4.7 4.9.6-3.6 3.4.9 5-4.3-2.5-4.3 2.5.9-5L5 8.3l4.9-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'},
   /* same glyph as the Dashboard entry in advantage-autopilot.html */
   {id:'dashboard', n:'Overview',
    icon:'<rect x="3" y="3" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.6" stroke="currentColor" stroke-width="1.7"/>'},
@@ -7117,8 +7355,6 @@ const NAV = [
   {id:'agreements', n:'Agreements', badge:'',
    icon:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 16c1.5-2.5 2.5-2.5 3 0s1.5 1 3-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
 ];
-/* the rail reads as two groups: the two highlighted cards (Saving assistant + Weekly
-   discovery), then the plain menu starting at Dashboard, which is where we land. */
 let navAt = 'dashboard';
 /* v2 always opens in the "established account" state: realised figures from day one,
    not a pending/day-one framing — there's no onboarding moment to contrast it against. */
@@ -7126,68 +7362,6 @@ let fwd6 = true;
 /* shown once per tab, right after login — explains estimated vs verified data
    before the user could mistake a benchmark number for their real one */
 let seenWelcome = false;
-
-/* ---------- Weekly discovery ----------
-   The findings are derived, never typed: the agreements tagged new, the supplier
-   that raised its price, the live agreements nothing runs through, and the
-   widest-gap quick win — the same facts the rail, the notifications and the
-   Overview read, so the count in the nav is the count on the page. */
-function discoverFindings(){
-  const f = [];
-  const all = live().flatMap(r => r.agr.map((a, i) => ({r, a, i})));
-  all.filter(x => x.a.isNew && !x.a.req).forEach(x => f.push({
-    k:'new', eye:'New agreement', t:x.a.n,
-    s:isEstimated(x.a)
-      ? `${x.r.n} · ${Math.round(x.a.save / x.a.covers * 100)}% under list, on about ${fmtCompact(x.a.covers)} kr. a year`
-      : `${x.r.n} · ${Math.round(x.a.save / x.a.covers * 100)}% under the ${fmt(x.a.covers)} kr. you spend with them today`,
-    v:`${figHTML(x.a.save, isEstimated(x.a))} kr. a year`, tone:'pos', act:'Open the agreement',
-    go:() => openCatTab(x.r.id, x.i)}));
-  const rise = priceRiseOf();
-  if(rise) f.push({k:'warn', eye:'Price rise', t:`${rise.a.n} raised prices ${rise.pct}%`,
-    s:`${rise.r.n} · ${rise.when} · the group rate is the contract, so this can be challenged`,
-    v:`−${fmt(rise.cost)} kr. a year`, tone:'neg', act:'See the agreement',
-    go:() => openCatTab(rise.r.id, rise.i)});
-  all.filter(x => agDormant(x.a)).forEach(x => f.push({
-    k:'idle', eye:'Not being used', t:x.a.n,
-    s:`${x.r.n} · live at the agreed price, but no invoice through it in ${agQuietDays(x.a)} days`,
-    v:`${fmt(x.a.save)} kr. a year not landing`, tone:'neg', act:'Contact the buyer',
-    go:() => openContactBuyer(x.r, x.a)}));
-  const quickRow = live().find(r => r.quick);
-  const quick = quickRow ? quickRow.agr.map((a, i) => ({r:quickRow, a, i})).filter(x => !x.a.req).sort((p, q) => q.a.save - p.a.save)[0] : null;
-  if(quick) f.push({k:'quick', eye:'Quick win', t:quick.a.n,
-    s:`${quick.r.n} · the widest gap against list price in your account, ${quick.r.rate}%, on the smallest spend`,
-    v:`${figHTML(quick.a.save, isEstimated(quick.a))} kr. a year`, tone:'pos', act:'Open the agreement',
-    go:() => openCatTab(quick.r.id, quick.i)});
-  return f;
-}
-function renderDiscover(){
-  const el = $('#viewDiscover'); if(!el) return;
-  const f = discoverFindings();
-  el.innerHTML = `
-    <div class="dsc">
-      <header class="dsc-head">
-        <span class="act-eyebrow">Since Monday</span>
-        <h1 id="dscT" tabindex="-1">Weekly discovery</h1>
-        <p>${f.length ? `${f.length} thing${f.length === 1 ? '' : 's'} changed in your account this week. Each one
-          opens where you can act on it${partialData() ? '' : ', and every figure is read off your own invoices'}.` :
-          'Nothing new this week — every agreement is where it should be.'}</p>
-      </header>
-      <ol class="dsc-list">
-        ${f.map((x, i) => `
-        <li class="dsc-item ${x.k}">
-          <button type="button" class="dsc-btn" data-dsc="${i}">
-            <span class="dsc-eye">${x.eye}</span>
-            <b class="dsc-t">${x.t}</b>
-            <span class="dsc-s">${x.s}</span>
-            <em class="dsc-v ${x.tone}">${x.v}</em>
-            <span class="dsc-act">${x.act}${ARROW}</span>
-          </button>
-        </li>`).join('')}
-      </ol>
-    </div>`;
-  $$('#viewDiscover [data-dsc]').forEach(b => b.addEventListener('click', () => f[+b.dataset.dsc].go()));
-  setTimeout(() => { const h = $('#dscT'); if(h) h.focus({preventScroll:true}); }, 50);
-}
 
 function renderNav(){
   /* the badge is the number of activated agreements that still need something to
@@ -7197,22 +7371,12 @@ function renderNav(){
     const n = ROWS.flatMap(r => r.agr).filter(a => a.req && (agStage(a) < 4 || agDormant(a))).length;
     ag.badge = n ? String(n) : '';
   }
-  /* the discovery count is the number of findings the page actually lists */
-  const dsc = NAV.find(i => i.id === 'discover');
-  if(dsc && !newCustomer){
-    const n = discoverFindings().length;
-    dsc.sub = n ? `${n} new finding${n === 1 ? '' : 's'} since Monday` : 'Nothing new this week';
-  }
-  $('#nav').innerHTML = NAV.map(i => i.hero
-    ? `<button class="ni hero${navAt===i.id?' on':''}" data-nav="${i.id}" data-tip="${i.n}">
-         <span class="nic"><svg viewBox="0 0 24 24" fill="none">${i.icon}</svg></span>
-         <span class="hb"><b>${i.n}</b><span>${i.sub}</span></span>
-       </button>`
-    : `<button class="ni${navAt===i.id?' on':''}" data-nav="${i.id}" data-tip="${i.n}">
-         <span class="nic"><svg viewBox="0 0 24 24" fill="none">${i.icon}</svg></span>
-         <span class="nt">${i.n}</span>
-         ${i.badge ? `<span class="nb">${i.badge}</span>` : ''}
-       </button>`
+  $('#nav').innerHTML = NAV.map(i =>
+    `<button class="ni${navAt===i.id?' on':''}" data-nav="${i.id}" data-tip="${i.n}">
+       <span class="nic"><svg viewBox="0 0 24 24" fill="none">${i.icon}</svg></span>
+       <span class="nt">${i.n}</span>
+       ${i.badge ? `<span class="nb">${i.badge}</span>` : ''}
+     </button>`
   ).join('');
   $$('#nav [data-nav]').forEach(b => b.addEventListener('click', () => goNav(b.dataset.nav)));
 }
@@ -7282,15 +7446,12 @@ function setView(){
   const dv = $('#viewDrill'); if(dv) dv.hidden = true;
   const arv = $('#viewAreas'); if(arv) arv.hidden = !areas;
   $('#viewSup').hidden = !sup;
-  const dsc = navAt === 'discover';
-  $('#viewDash').hidden = sup || ncDash || ags || rep || areas || dsc;
-  const dv2 = $('#viewDiscover'); if(dv2) dv2.hidden = !dsc;
+  $('#viewDash').hidden = sup || ncDash || ags || rep || areas;
   const nc = $('#viewNewCustomer'); if(nc) nc.hidden = !ncDash;
   $('#canvas').scrollTop = 0;
   /* an agreement was activated somewhere else since the Overview was drawn — the
      figures on it are now wrong, so it is rebuilt before it is shown again */
   if(dashDirty && !$('#viewDash').hidden && !newCustomer){ renderDash(); dashDirty = false; }
-  if(dsc) renderDiscover();
   if(sup) renderSup();
   if(ags) renderAgreements();
   if(rep) renderReports();
@@ -7338,7 +7499,7 @@ $('#apWide').addEventListener('click', () => {
 });
 
 /* ---------- quick ask ----------
-   The rail entry is the front door and stays where it is; this is the doorbell.
+   The mark in the bar is the front door and stays where it is; this is the doorbell.
    It is a shortcut, not a second assistant: a question typed here is handed to
    apSend() and the rail panel opens on the answer, so there is one thread and
    one history no matter which control was used to start talking. */
@@ -8679,14 +8840,19 @@ function pkgLogoHTML(n){
   return `<span class="pkg-logo${l.mark ? ' mark' : ''}"${l.bg ? ` style="background:${l.bg}"` : ''}>
     <img src="assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
 }
+/* a customer with no data of her own has nothing switched on. Her roster is a
+   copy of Bob's (DATASETS.fanny === ROWS_BOB), req flags and all, and those are
+   his activations — letting them through would print HIS invoice-verified saving
+   green on HER card, which is the one thing green is not allowed to mean. */
+const pkgOn = a => !newCustomer && !!a.req;
 /* the roster: what ROWS prices, then what the package holds beyond it */
 function pkgAll(){
   const seen = new Set(), out = [];
   live().forEach(r => r.agr.forEach((a, i) => {
     seen.add(a.n);
     out.push({n:a.n, cat:r.id, catN:r.n, pct:Math.round(a.save / a.covers * 100) || r.rate,
-      r, a, i, on:!!a.req, pending:agPending(a), again:agLanding(a), isNew:!!a.isNew,
-      b:pkgInk(a.n)});
+      r, a, i, on:pkgOn(a), pending:pkgOn(a) && agPending(a), again:pkgOn(a) && agLanding(a),
+      isNew:!!a.isNew, b:pkgInk(a.n)});
   }));
   PKG_EXTRA.forEach(x => {
     if(seen.has(x.n)) return;
@@ -8756,38 +8922,171 @@ function pkgEmptyHTML(tab, inSheet){
     : `<p class="pkg-empty">No favourites yet. <button type="button" class="linkbtn" data-pkg-all="1">Open
     the package</button> and tap the heart on any agreement to keep it here.</p>`;
 }
-/* the card. Eight rows: every agreement that is switched on, then the biggest
-   still-open ones to fill — the whole package is one press further. */
-const PKG_CARD_ROWS = 8;
+/* ---------- the card: what is switched on, and what each one is worth ----------
+   No tabs here. The card answers one question — "which agreements am I actually
+   saving through, and how much" — and the whole package is one press further, in
+   the sheet, where the tabs and the search still live.
+   Each row carries its own provenance, never the card's: a saving that has come
+   off an invoice is exact and green, one that has not is the same figure drawn as
+   a potential, with the reason it is not landing under the name. */
+/* line two, and only when there is a line two. The area is a label, not news —
+   it rides on the name's line. This says why the row is not landing, or what an
+   agreement she has not switched on would cover. A landing row says nothing:
+   the green figure beside it has already said it. */
+function pkgCardNote(x){
+  if(!x.a) return '';
+  if(x.on && agDormant(x.a)) return `Nothing bought through it in ${agQuietDays(x.a)} days`;
+  if(x.on && x.pending)      return 'Waiting for the first invoice';
+  if(!x.on)                  return `Covers about ${fmtCompact(x.a.covers)} kr. a year`;
+  return '';
+}
+/* the money: verified money on the left of the line the app draws everywhere —
+   actualHTML for what landed, figHTML for what has not, never the two blended */
+function pkgCardMoneyHTML(x){
+  if(!x.a) return '';
+  if(x.on && agLanding(x.a)) return `
+    <b class="pkg-fig">${actualHTML(x.a.save)}<small> kr.</small></b>
+    <em>saved a year</em>`;
+  return `
+    <b class="pkg-fig">${figHTML(x.a.save, isEstimated(x.a))}<small> kr.</small></b>
+    <em>${x.on ? (agDormant(x.a) ? 'not landing yet' : 'once it lands') : 'a year'}</em>`;
+}
+/* One row. The name carries a stretched link over the whole row so the CTA beside
+   it can be a real button rather than a button inside a button. */
+function pkgCardRowHTML(x, cta){
+  const money = pkgCardMoneyHTML(x), note = pkgCardNote(x);
+  const save = x.a ? (x.on && agLanding(x.a) ? `${fmt(x.a.save)} kr. saved a year`
+    : `${saveFig(x.a.save, isEstimated(x.a))} kr. a year`) : '';
+  return `
+    <li class="pkg-item" style="--b:${x.b}">
+      <div class="pkg-row pkg-crow" data-pkg="${apEsc(x.n)}">
+        ${pkgLogoHTML(x.n)}
+        <span class="pkg-t">
+          <span class="pkg-n">
+            <button type="button" class="pkg-open" data-pkg="${apEsc(x.n)}"
+              aria-label="${apEsc(`${x.n}, ${x.catN}${save ? `: ${save}` : ''}`)}">${x.n}</button>
+            ${x.isNew ? '<span class="cnew">New</span>' : ''}
+            <span class="pkg-cat" aria-hidden="true">${x.catN}</span>
+          </span>
+          ${note ? `<span class="pkg-s">${note}</span>` : ''}
+        </span>
+        ${money ? `<span class="pkg-money">${money}</span>` : ''}
+        <button type="button" class="btn btn-secondary btn-sm pkg-cta" data-${cta.act}="${apEsc(x.n)}"
+          aria-label="${apEsc(`${cta.label}, ${x.n}`)}">${cta.label}</button>
+      </div>
+    </li>`;
+}
+const PKG_SHOP_CTA  = {act:'shop',  label:'Webshop'};
+const PKG_CHECK_CTA = {act:'check', label:'Check'};
+
+/* the line drawing for an account with nothing switched on: an invoice with an
+   agreement tag clipped onto it — the tag is the rate, the invoice is where it
+   has to land before any of it is money. Muted line work, the tag in brand ink. */
+const PKG_ILL = `<svg class="pkg-ill" viewBox="0 0 126 100" fill="none" aria-hidden="true" focusable="false">
+  <path d="M20 10h44a6 6 0 016 6v62a6 6 0 01-6 6H20a6 6 0 01-6-6V16a6 6 0 016-6z" stroke="currentColor" stroke-width="2"/>
+  <path d="M24 26h36M24 37h36M24 48h21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <path d="M24 70h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 6"/>
+  <g class="pkg-ill-a">
+    <path d="M77 44h27a7 7 0 017 7v18a7 7 0 01-7 7H77L62 60l15-16z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="78.5" cy="60" r="3.5" stroke="currentColor" stroke-width="2"/>
+    <path d="M89 55h13M89 66h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>`;
+
+/* the three worth looking at first, for an account with nothing switched on:
+   priced agreements only, so every row can carry a figure */
+function pkgFirstLook(){
+  return pkgRows('all').filter(x => x.a && !x.on).slice(0, 3);
+}
+function pkgNoneHTML(){
+  const picks = pkgFirstLook();
+  return `
+    <div class="pkg-none">
+      ${PKG_ILL}
+      <p>Switch one on and its rate starts landing on your own invoices.</p>
+    </div>
+    ${picks.length ? `
+      <div class="pkg-none-sep"><span class="act-eyebrow">Start here</span></div>
+      <ol class="pkg-list">${picks.map(x => pkgCardRowHTML(x, PKG_CHECK_CTA)).join('')}</ol>` : ''}`;
+}
+
+/* what the rows share, said once. How many of the figures above were read off
+   invoices — the same predicate as the green on the card, so the two can never
+   disagree — and whose terms come up first. Nothing here is a control. */
+function pkgCardFacts(rows){
+  const facts = [];
+  const landed = rows.filter(x => x.a && agLanding(x.a)).length;
+  if(landed && state.invoices){
+    const inv = `your ${fmt(state.invoices)} ${state.invoices === 1 ? 'invoice' : 'invoices'}`;
+    facts.push(landed === rows.length
+      ? `${rows.length === 1 ? 'Verified' : `All ${rows.length} verified`} against ${inv}`
+      : `${landed} of ${rows.length} verified against ${inv}`);
+  } else if(rows.some(x => x.pending)){
+    facts.push('Nothing verified yet — the first invoice at the new rate is still to come');
+  }
+  const next = rows.filter(x => x.a).map(x => ({x, d:agRenewDate(x.a)}))
+    .sort((p, q) => p.d - q.d)[0];
+  if(next) facts.push(`${next.x.n} renews ${agFmtShort(next.d)}`);
+  return facts;
+}
+/* the none-state's invoice, one chapter on: a tag clipped to each line that has
+   an agreement on it, in the same brand ink. One tag per active row, top down;
+   a rate still waiting for its first invoice is drawn open. Lines without a tag
+   are just what an invoice has. */
+const PKG_ILL_Y = [28, 50, 72];
+function pkgFewIll(rows){
+  const tags = rows.slice(0, PKG_ILL_Y.length).map((x, i) => {
+    const cy = PKG_ILL_Y[i];
+    return `<g class="pkg-ill-a${x.pending ? ' pend' : ''}">
+      <path d="M77 ${cy - 9}h22a5 5 0 015 5v8a5 5 0 01-5 5H77L66 ${cy}l11-9z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"${
+        x.pending ? ' stroke-dasharray="3 3"' : ''}/>
+      <circle cx="82" cy="${cy}" r="2.2" stroke="currentColor" stroke-width="2"/>
+      <path d="M88 ${cy}h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </g>`;
+  }).join('');
+  return `<svg class="pkg-ill" viewBox="0 0 126 100" fill="none" aria-hidden="true" focusable="false">
+    <path d="M20 10h44a6 6 0 016 6v62a6 6 0 01-6 6H20a6 6 0 01-6-6V16a6 6 0 016-6z" stroke="currentColor" stroke-width="2"/>
+    ${PKG_ILL_Y.map(y => `<path d="M24 ${y}h32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`).join('')}
+    ${tags}
+  </svg>`;
+}
+/* three rows or fewer and the card is mostly air: the facts come as the caption
+   of the drawing, standing in that air. More than three and they are a line
+   under the list, and the card is as long as its list makes it. */
+const PKG_FEW = 3;
+const pkgFew = rows => rows.length > 0 && rows.length <= PKG_FEW;
+/* `link` is the see-all control: in the illustrated form it ends the caption
+   and the card has no footer; in the line form it stays where it was */
+function pkgCardLedgerHTML(rows, link){
+  const facts = pkgCardFacts(rows);
+  if(pkgFew(rows)){
+    const items = [...facts.map(f => `<span>${f}</span>`), `<span>${link}</span>`];
+    return `<div class="pkg-ledger ill">${pkgFewIll(rows)}<p>${items.join('')}</p></div>`;
+  }
+  if(!facts.length) return '';
+  return `<div class="pkg-ledger"><p>${facts.map(f => `<span>${f}</span>`).join('')}</p></div>`;
+}
 function pkgCardHTML(){
-  const all = pkgAll(), rows = pkgRows(pkgTab);
-  const on = all.filter(x => x.on).length;
-  const waiting = all.filter(x => x.on && x.pending).length;
-  const shown = pkgTab === 'all' ? rows.slice(0, Math.max(PKG_CARD_ROWS, on)) : rows;
-  const sub = pkgTab === 'again'
-    ? 'Agreements you already buy through. One press back to the supplier.'
-    : pkgTab === 'fav'
-    ? 'The agreements you saved with the heart.'
-    : pkgTab === 'all'
-    ? `${all.length} agreements negotiated for ${newCustomer ? 'companies like yours' : 'your account'} · ${
-        on ? `${on} active` : 'none active yet'}`
-    /* the card's own tab: what is switched on, and what that is out of. A count,
-       not a figure — what each one is worth belongs on its own page */
-    : on
-    ? `${on} of ${all.length} agreements in your package are switched on${
-        waiting ? ` · ${waiting} waiting for a first invoice at the new rate` : ''}`
-    : `None of your ${all.length} agreements are switched on yet`;
+  const all = pkgAll(), rows = pkgRows('on');
+  const on = rows.length, waiting = rows.filter(x => x.pending).length;
+  const none = !on;
+  /* a count, not a figure: what each one is worth is on its own row now */
+  const sub = none
+    ? `${all.length} negotiated for ${newCustomer ? 'companies like yours' : 'your account'}. None switched on yet.`
+    : `${on} of ${all.length} switched on.${
+        waiting ? ` ${waiting} ${waiting === 1 ? 'is' : 'are'} waiting for a first invoice.` : ''}`;
+  const seeAll = `<button type="button" class="linkbtn" data-pkg-all="1">See all ${all.length} in the package</button>`;
   return `
     <div class="pkg">
       <div class="tune-h1"><h2>My active agreements</h2></div>
       <p class="nc-sub nc-mini-sub">${sub}</p>
-      ${pkgTabsHTML(pkgTab)}
-      ${shown.length
-        ? `<ol class="pkg-list">${shown.map(x => pkgRowHTML(x, {tab:pkgTab})).join('')}</ol>`
-        : pkgEmptyHTML(pkgTab)}
-      <div class="cv-foot">
-        <button type="button" class="linkbtn" data-pkg-all="1">See all ${all.length} in the package</button>
-      </div>
+      ${none
+        /* the illustrated first-look state is for an account that has never
+           activated anything — anyone else gets the plain line back */
+        ? (newCustomer ? pkgNoneHTML() : pkgEmptyHTML('on'))
+        : `<ol class="pkg-list">${rows.map(x => pkgCardRowHTML(x, PKG_SHOP_CTA)).join('')}</ol>${
+            pkgCardLedgerHTML(rows, seeAll)}`}
+      ${none || !pkgFew(rows) ? `<div class="cv-foot">${seeAll}</div>` : ''}
     </div>`;
 }
 /* where a row goes: its priced agreement page, else its area, else the catalogue */
@@ -8811,12 +9110,28 @@ function pkgRefresh(){
 }
 function wirePkgEl(el){
   el.addEventListener('click', e => {
-    const tab = e.target.closest('[data-pkg-tab]');
-    if(tab){ pkgTab = tab.dataset.pkgTab; persist(); pkgRefresh(); return; }
-    if(e.target.closest('[data-pkg-all]')){ openPackage(pkgTab === 'on' ? 'all' : pkgTab); return; }
+    /* the CTA sits inside the row and is not the row: it is read first, and the
+       row's own click never fires behind it */
+    const shop = e.target.closest('[data-shop]');
+    if(shop){ e.stopPropagation(); pkgShop(shop.dataset.shop); return; }
+    const check = e.target.closest('[data-check]');
+    if(check){ e.stopPropagation(); pkgOpen(check.dataset.check); return; }
+    if(e.target.closest('[data-pkg-all]')){ openPackage('all'); return; }
     const row = e.target.closest('.pkg-row');
     if(row) pkgOpen(row.dataset.pkg);
   });
+}
+/* the webshop CTA. The prototype stays where it is — what the press is really
+   telling you is whether the agreement price is on the account yet, which is the
+   one thing you cannot see from the supplier's own front page. */
+function pkgShop(n){
+  const x = pkgAll().find(q => q.n === n);
+  if(!x) return;
+  const live = !x.a || !x.pending;
+  showToastCard(SHOP_IC, `Over to ${x.n}`, live
+    ? 'Your agreement price is already on the account — anything you buy here counts towards the saving.'
+    : 'The agreement price is not live on this account yet. Buy now and it is still at list price — we will tell you the moment it switches.',
+    live ? 'brand' : 'warn');
 }
 
 /* ---------- the sheet: the whole package ---------- */
@@ -9648,29 +9963,19 @@ function dashModelOwn(){
   const newCount  = openAgrs.filter(x => x.a.isNew).length;
   const newOnes   = openAgrs.filter(x => x.a.isNew);
   const openIn    = r => r.agr.filter(a => !a.req).length;
-  /* bar is the raw magnitude the row's rule is drawn from — optional, because a
-     state row ("Idle", "Live") has no magnitude to draw */
-  const rec = (ic, txt, val, bar) => ({ic, txt, val, bar});
+  /* two moves, two tiles: the area, one clause of reason, the money, and a button
+     that says exactly where it goes. The third row went with the sentences — a
+     dormant agreement and an "these are still estimates" note are caveats, and a
+     caveat in a list of actions is the thing that stops the list being read. */
+  const rec = (r, sub, val, cta, bar) => ({cat:r.id, n:r.n, sub, val, cta, bar});
   const first = openCats[0], second = openCats[1];
   const estOfRow = r => r.agr.some(a => !a.req && isEstimated(a));
-  const recs = [
-    first && rec(CAT_ICON[first.id] || '',
-      `Start with <b>${first.n}</b> — ${openIn(first)} agreement${openIn(first) === 1 ? '' : 's'}
-        you have not activated, at ${first.rate}% under ${estOfRow(first) ? 'list price' : 'what you pay there today'}.`,
-      figHTML(potOf(first), estOfRow(first)), potOf(first)),
-    second && rec(CAT_ICON[second.id] || '',
-      `<b>${second.n}</b> is the next biggest, at ${second.rate}% under ${estOfRow(second) ? 'list price' : "today's prices"}.`,
-      figHTML(potOf(second), estOfRow(second)), potOf(second)),
-    dormant.length
-      ? rec(DASH_CLOCK_IC, `<b>${dormant[0].n}</b> is live, but nothing has been bought
-          through it in ${agQuietDays(dormant[0])} days — ${fmt(dormant[0].save)} kr. a year
-          agreed and not landing. Usually an old supplier account still set as the default.`,
-          `+${fmt(dormant[0].save)}`, dormant[0].save)
-      : partialData()
-      ? rec(DASH_ERP_IC, `<b>${estAgrN()} agreements</b> are still estimates — the dotted figures.
-          One invoice per area, or a connection, makes them exact.`, 'Estimated')
-      : rec(DASH_ERP_IC, `Your accounting data syncs on its own — every figure here moves with it.`, 'Live'),
-  ].filter(Boolean);
+  const move = r => r && rec(r,
+    `${openIn(r)} agreement${openIn(r) === 1 ? '' : 's'} at ${r.rate}% under ${estOfRow(r) ? 'list price' : 'what you pay today'}`,
+    potHTML(r.agr),
+    `See the ${openIn(r)} agreement${openIn(r) === 1 ? '' : 's'}`,
+    potOf(r));
+  const recs = [move(first), move(second)].filter(Boolean);
   const movesWorth = recs.reduce((s, x) => s + (x.bar || 0), 0);
   const movesN     = recs.filter(x => x.bar).length;
   const movesEst   = [first, second].filter(Boolean).some(estOfRow);
@@ -9691,6 +9996,16 @@ function dashModelOwn(){
     helloSub: newCount
       ? `Where your agreements stand today — ${newCount} new ${newCount === 1 ? 'one is' : 'ones are'} tagged New below.`
       : `Where your agreements stand today.`,
+    /* what the assistant asks on her behalf. Each one is a question this account
+       can actually be asked — the area named is her own biggest open one — and
+       each lands on a different answer: what to do, where the money is, whether
+       to believe the figures, who she buys from. */
+    asks: [
+      `Where should I start?`,
+      first && `What is left in ${first.n.toLowerCase()}?`,
+      `How do you know these figures are right?`,
+      `Which suppliers am I buying from?`,
+    ].filter(Boolean),
     ovAria: 'Your year so far',
     ovTitle: tuned ? 'Savings on the spend you have set'
            : partial ? 'Savings on your invoices' : 'Savings confirmed on your own invoices',
@@ -9714,7 +10029,7 @@ function dashModelOwn(){
         ? ` Another ${fmt(pendSum)} kr. a year is agreed in ${pending.length} agreement${pending.length === 1 ? '' : 's'}
            waiting for ${pending.length === 1 ? 'its' : 'their'} first invoice at the new rate — it is not counted until then.` : ''}${idleSum
         ? ` ${fmt(idleSum)} kr. a year sits in ${dormant.length} live agreement${dormant.length === 1 ? '' : 's'}
-           nothing is bought through${dormant.length === 1 ? '' : ''} — see <b>What to do next</b>.` : ''}`,
+           nothing is bought through.` : ''}`,
     methodLabel: 'Where these come from',
     method: openDataCenter,
     cards: [
@@ -9755,7 +10070,7 @@ function dashModelOwn(){
     /* the title is the SUM OF THE LIST BENEATH IT — the three moves it names are
        the three rows the card shows, not a different three */
     advTitle: movesN
-      ? `${MOVE_N[movesN]} move${movesN === 1 ? '' : 's'} worth ${potHTML([first, second].filter(Boolean).flatMap(r => r.agr).concat(dormant.length ? [{...dormant[0], req:false}] : []), false)} kr. a year`
+      ? `${MOVE_N[movesN]} move${movesN === 1 ? '' : 's'} worth ${potHTML([first, second].filter(Boolean).flatMap(r => r.agr), false)} kr. a year`
       : 'Every agreement is already active',
     /* the dial reads spend going through a verified agreement — a true part of a
        real whole. The arc it has NOT filled is the point of the card: that is the
@@ -9769,14 +10084,6 @@ function dashModelOwn(){
         : 'Every category you buy in is on an agreement.'
     },
     recHead:'What to do next',
-    recNote: remaining + idleSum ? 'each move as a share of everything still open' : '',
-    /* zero unless there are two magnitudes to compare: one move drawn at full
-       width is a rule that looks like a measurement and isn't one */
-    /* the ceiling is the whole opportunity — every krone not yet activated, plus
-       the money sitting in agreements nothing is bought through — so a ring is
-       this move's slice of the total rather than its size next to its neighbour */
-    barMax: remaining + idleSum,
-    barLabel: 'of everything still open to you',
     recs,
     ask: `Where should ${state.company} go next?`,
     agrTitle: 'Opportunities by agreement',
@@ -9813,6 +10120,15 @@ function dashModelPeer(){
     helloSub: `Your account is live. Every figure below is what ${state.industry.toLowerCase()}
       companies your size actually achieve on Advantage agreements — connect your
       data to make them exact.`,
+    /* his account has no invoices behind it yet, so the verification question has
+       no answer to give — what a new customer actually wants to know is where to
+       begin, what the benchmark says about his widest gap, and what this costs */
+    asks: [
+      `Where should I start?`,
+      topCat && `How much do I spend on ${topCat.n.toLowerCase()}?`,
+      `Which agreement should I activate?`,
+      `What does Advantage cost me?`,
+    ].filter(Boolean),
     gettingStarted: NC_SHOW_GETTING_STARTED && !ncGettingStartedHidden ? ncGettingStartedHTML() : '',
     ovAria: 'Your benchmark',
     ovTitle: tuned ? 'Savings on the spend you have set'
@@ -9846,8 +10162,12 @@ function dashModelPeer(){
        u:'kr. / year',
        accent:true, trend:'', cap:'Can be more or less than this',
        spark:DASH_SPARK_SAVE, tone:'good', go:'savings'},
-      {l:'Agreements in use', v:`${p.agrInUse}`,
-       n:p.agrInUse, nf:v => `${Math.round(v)}`, trend:'rise',
+      /* stays "They" even once she has tuned her own spend: the count is still
+         the peer group's, not hers, and the unit carries the word the label
+         used to spend on */
+      {l:'They use', v:`${p.agrInUse}`,
+       n:p.agrInUse, nf:v => `${Math.round(v)}`, u:'agreements',
+       trend:'rise',
        cap:`${agrTotalNow() - p.agrInUse} more are open to you`,
        spark:DASH_SPARK_COUNT, tone:'rise', go:'usage'}
     ],
@@ -9866,22 +10186,15 @@ function dashModelPeer(){
         : 'Peers your size are on an agreement everywhere.'
     },
     recHead:'What to do next',
-    recNote: p.potential ? 'each move as a share of everything still open' : '',
-    /* the printed value stays the discount rate — that is what picks these two
-       rows — but the ring is money, so it means the same thing here as on Bob's
-       card: this category's share of the whole opportunity */
-    barMax: p.potential,
-    barLabel: 'of everything still open to you',
-    recs: [
-      /* bar, not the printed value: the rate picks the row, the money draws the
-         ring — a share of a total has to be a share of an amount */
-      {ic:CAT_ICON[topCat.id] || '', val:`${topCat.rate}%`, bar:peerPot(topCat.id), rate:true,
-       txt:`Start with <b>${topCat.n}</b> — the widest discount gap in your peer group.`},
-      {ic:CAT_ICON[secondCat.id] || '', val:`${secondCat.rate}%`, bar:peerPot(secondCat.id), rate:true,
-       txt:`<b>${secondCat.n}</b> is the next best entry point for companies your size.`},
-      {ic:DASH_ERP_IC, val:'Auto',
-       txt:`Connect your ERP to keep every number accurate, automatically.`},
-    ],
+    /* the printed value stays the discount rate — she has no invoices, so a rate
+       is the only figure on these two rows that is hers to act on. The ERP row
+       went: connecting is the whole page's standing offer, not a third move. */
+    recs: [topCat, secondCat].map((c, i) => ({
+      cat:c.id, n:c.n, val:`${c.rate}%`, rate:true, bar:peerPot(c.id),
+      sub: i ? 'The next best entry point for companies your size'
+             : 'The widest discount gap in your peer group',
+      cta:`See the ${c.agr.length} agreement${c.agr.length === 1 ? '' : 's'}`
+    })),
     ask: `What should ${state.company} do first to start saving?`,
     agrTitle: 'Opportunities by agreement',
     agrSub: 'What other companies use and save.',
@@ -10556,30 +10869,23 @@ function dashGaugeHTML(g){
     </figure>`;
 }
 
-function dashRecHTML(rec, i, barMax, barLabel){
-  /* money wears the potential pill (dotted variant for an estimate); a state
-     ("Idle", "Live", "Estimated") wears the grey one so it cannot read as an amount */
-  const kind = rec.rate ? ' rate' : rec.bar ? (/fig-est/.test(rec.val) ? ' est' : '') : ' state';
-  /* the dial takes the leading slot the category icon used to hold, and barMax is
-     now the whole opportunity rather than the biggest single move — so the three
-     rings are three slices of one pie and can be read as parts of a total, which
-     a category glyph never said and a per-row bar only implied. A row with no
-     magnitude of its own (the ERP / estimates note) keeps its icon, so the text
-     column still starts on one line down the list. */
-  const w = rec.bar && barMax ? Math.min(100, Math.round(rec.bar / barMax * 100)) : 0;
-  const lab = `${w}%${barLabel ? ` ${barLabel}` : ''}`;
+function dashRecHTML(rec){
+  /* the whole tile is one button, so the precise action ("See the 4 agreements")
+     is its spoken name — the arrow square is the visible affordance, not a second
+     control. The money is printed the way the title above prints it — the
+     verified part and the estimated part each in their own ink, stacked, the
+     verified one first; a rate (no invoice has priced it) is plain foreground. */
+  const kind = rec.rate ? ' rate' : '';
   return `
-    <li class="nc-rec-row">
-      ${w ? `<svg class="nc-rec-dial" viewBox="0 0 36 36" role="img" aria-label="${lab}"
-        style="--p:${w};--d:${(i * .07).toFixed(2)}s"><title>${lab}</title>
-        <circle class="trk" cx="18" cy="18" r="14.5"/>
-        <circle class="fil" cx="18" cy="18" r="14.5" pathLength="100"
-          stroke-dasharray="${w} 100"/></svg>`
-        : `<span class="nc-rec-ic"><svg viewBox="0 0 24 24" fill="none">${rec.ic}</svg></span>`}
-      <span class="nc-rec-body">
-        <span class="nc-rec-txt">${rec.txt}</span>
-      </span>
-      <span class="nc-rec-val${kind}">${rec.val}</span>
+    <li>
+      <button type="button" class="nc-move" data-cat="${rec.cat}">
+        <span class="nc-move-txt"><b>${rec.n}</b><span>${rec.sub}</span></span>
+        <span class="nc-move-foot">
+          <span class="nc-move-val${kind}">${rec.val}</span>
+          <span class="nc-move-go" aria-hidden="true">${ARROW}</span>
+        </span>
+        <span class="sr">${rec.cta}</span>
+      </button>
     </li>`;
 }
 
@@ -10590,9 +10896,8 @@ function dashAdvisoryHTML(m){
   return `
     <h2 class="nc-advisory-title">${m.advTitle}</h2>
     ${dashGaugeHTML(m.gauge)}
-    <h3 class="nc-rec-head">${m.recHead}${m.recNote ? `<span>${m.recNote}</span>` : ''}</h3>
-    <ul class="nc-rec-list">${m.recs.map((r, i) => dashRecHTML(r, i, m.barMax, m.barLabel)).join('')}</ul>
-    <button type="button" class="btn btn-primary nc-advisory-cta dash-ask">Ask the saving assistant</button>
+    <h3 class="nc-rec-head">${m.recHead}</h3>
+    <ul class="nc-rec-list">${m.recs.map(dashRecHTML).join('')}</ul>
     <footer class="nc-advisory-foot">
       <img class="sda" src="${SDA_MARK}" alt="">
       <span>Powered by the Advantage saving assistant</span>
@@ -10608,6 +10913,17 @@ function dashHTML(m, rowId){
         <h1 class="dash-h1" tabindex="-1">${m.hello}</h1>
         <p>${m.helloSub}</p>
       </div>
+      <!-- the question itself is written by wireAskLine, a character at a time;
+           aria-label carries the stable action plus whatever is currently asked,
+           so the changing text is never announced as it types -->
+      <button type="button" class="nc-ask dash-asst" aria-label="Ask the saving assistant">
+        <img class="sda nc-ask-mark" src="${SDA_MARK}" alt="">
+        <span class="nc-ask-body">
+          <span class="nc-ask-q" aria-hidden="true"><span class="nc-ask-t"></span></span>
+          <span class="nc-ask-do">Ask the saving assistant</span>
+        </span>
+        <span class="nc-ask-go" aria-hidden="true">${ARROW}</span>
+      </button>
     </header>
 
     ${m.gettingStarted || ''}
@@ -10668,12 +10984,6 @@ function dashHTML(m, rowId){
               aria-controls="${rowId}" aria-label="More agreements">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>` : ''}
-          <div class="seg" role="group" aria-label="Card style">
-            <button type="button" data-style="brand" aria-pressed="${agrCardStyle === 'brand'}">Brand</button>
-            <button type="button" data-style="simple" aria-pressed="${agrCardStyle === 'simple'}">Simple</button>
-            <button type="button" data-style="photo" aria-pressed="${agrCardStyle === 'photo'}">Photo</button>
-            <button type="button" data-style="detail" aria-pressed="${agrCardStyle === 'detail'}">Detail</button>
-          </div>
         </div>
       </div>
       ${!m.agrs.length
@@ -10699,9 +11009,6 @@ function wireDash(root, m){
   q('[data-drill]').forEach(b => b.addEventListener('click', e => {
     if(b.classList.contains('is-tuned') && e.target.closest('.nc-ov-card-x')){ tuneReset(); return; }
     openPeek(b.dataset.drill);
-  }));
-  q('.seg [data-style]').forEach(b => b.addEventListener('click', () => {
-    agrCardStyle = b.dataset.style; persist(); renderHome();
   }));
   q('.seg [data-cv]').forEach(b => b.addEventListener('click', () => {
     catViewStyle = b.dataset.cv; persist(); renderHome();
@@ -10759,14 +11066,71 @@ function wireDash(root, m){
     ncGettingStartedHidden = true; persist(); renderHome();
   });
   wireDashTune(root);
+  wireAskLine(root, m);
   wireDashAsk(root, m);
   $(`${root} .dash-method`).addEventListener('click', m.method);
   setTimeout(() => { const h = $(`${root} .dash-h1`); if(h) h.focus({preventScroll:true}); }, 50);
 }
 
+/* The hero's way into the assistant. It asks rather than greets: one of the
+   account's own questions is typed out, held, erased, and the next one takes its
+   place. The click always sends `cur` — the whole question, not the half of it
+   that happens to be on screen mid-keystroke — so what is read is what is asked.
+
+   No timer is tracked across renders: a repaint replaces the button, and every
+   tick stops the chain the moment its element leaves the document. While the
+   block is hovered, focused, or on the persona's hidden copy of the page, the
+   question simply stays where it is — something you are about to click must not
+   move, and an off-screen page has nothing to say. */
+function wireAskLine(root, m){
+  const el = $(`${root} .dash-asst`);
+  if(!el) return;
+  const t = el.querySelector('.nc-ask-t');
+  const qs = (m.asks || []).filter(Boolean);
+  if(!t || !qs.length) return;
+
+  let i = 0, cur = qs[0], held = false;
+  const label = () => el.setAttribute('aria-label', `Ask the saving assistant: ${cur}`);
+  el.addEventListener('click', () => { toggleAgent(true); agentAsk(cur); });
+  const hold = on => () => { held = on; };
+  el.addEventListener('pointerenter', hold(true));
+  el.addEventListener('pointerleave', hold(false));
+  el.addEventListener('focus', hold(true));
+  el.addEventListener('blur', hold(false));
+
+  /* one question, no caret, nothing moving — the cycle is the flourish, and the
+     question is the part that carries the meaning */
+  if(RM || qs.length === 1){
+    el.classList.add('static'); t.textContent = cur; label();
+    return;
+  }
+
+  const at = (fn, ms) => setTimeout(() => { if(el.isConnected) fn(); }, ms);
+  const paused = () => held || el.offsetParent === null;
+  /* the jitter is what separates typing from a progress bar */
+  const type = n => {
+    t.textContent = cur.slice(0, n);
+    if(n < cur.length) return at(() => type(n + 1), 18 + Math.random() * 32);
+    label(); wait();
+  };
+  const wait = () => at(() => paused() ? wait() : erase(cur.length), 3400);
+  const erase = n => {
+    t.textContent = cur.slice(0, n);
+    if(n) return at(() => erase(n - 1), 11);
+    i = (i + 1) % qs.length; cur = qs[i];
+    at(() => type(1), 240);
+  };
+  label();
+  type(1);
+}
+
+/* everything inside the advisory card that can be pressed is bound here, and
+   only here — tuneSettle() rebuilds that card's HTML on every slider release and
+   re-runs this, so a listener bound anywhere else would die on the first tune */
 function wireDashAsk(root, m){
   const ask = $(`${root} .dash-ask`);
   if(ask) ask.addEventListener('click', () => { toggleAgent(true); agentAsk(m.ask); });
+  $$(`${root} .nc-move`).forEach(b => b.addEventListener('click', () => openCatTab(b.dataset.cat)));
   /* last, and only once the markup is in the document — the measurement needs a
      real width to wrap against */
   dashReserve(root);
@@ -12103,9 +12467,6 @@ let agrCardStyle = 'brand';
 let agrViewStyle = 'impact';
 /* four readings of the category figures: a menu, a ranking, a whole, a first move */
 let catViewStyle = 'list';
-/* which of the package card's four lists is showing: active, the package,
-   use again, favourites */
-let pkgTab = 'on';
 /* the category page's agreements: cards argue, the list scans. Cards by default. */
 let catAgrView = 'cards';
 /* 'white' is the original all-white page, anything else is the hero card sitting on
@@ -14592,34 +14953,63 @@ function agCalHTML(a){
     </div>`;
 }
 
-/* ---------- one agreement you hold ----------
-   Flat, like .agd: no wrappers, every element placed by grid area. Unlike .agd
-   it is not one hit area — it holds a <details> and its own buttons — so the
-   NAME is the button, which is also the one thing you would click. */
-function agyCardHTML({r, a, i}){
-  const idle = agDormant(a), done = agComplete(a), est = isEstimated(a);
-  const dates = agStepDates(a);
+/* ---------- the horizontal timeline ----------
+   The same four steps as agStepperHTML(), laid left to right for the row of
+   agreements in activation — and cut to a name and a date each. The marks and
+   the connector already say what is done, what is next and what is ahead; the
+   sentence under every step said it a third time. What each step means lives
+   one level deeper, on the agreement's own page. Called with no agreement it
+   is the preview — nothing started. */
+function agHStepHTML(a){
+  const live = !!a, at = live ? agDone(a) : -1;
+  const dates = live ? agStepDates(a) : [], t = agToday();
   return `
-  <li class="agy${idle ? ' flagged' : ''}" style="--b:${brandOf(a.n)}">
+  <ol class="hstep${live ? ' live' : ''}" aria-label="Activation timeline">
+    ${ACT_STEPS.map((st, i) => {
+      const state = !live ? 'todo' : i < at ? 'done' : i === at ? 'now' : 'todo';
+      const late = state === 'now' && dates[i] <= t;
+      const when = state === 'done' ? agFmtShort(dates[i])
+        : state === 'now' ? (late ? `Late — chasing` : `Expected ${agFmtShort(dates[i])}`)
+        : st.w;
+      return `
+      <li class="hstp ${state}${late ? ' due' : ''}">
+        <span class="stp-mark">${state === 'done' ? TICK : i + 1}</span>
+        <span class="hstp-tx">
+          <b>${AG_STEPS[i]}</b>
+          <em>${when}</em>
+        </span>
+      </li>`;
+    }).join('')}
+  </ol>`;
+}
+
+/* ---------- one agreement in activation ----------
+   Requested and not yet verified — the only state that needs a row of its own,
+   because it is the only one that is still moving. Flat, like .agd: every
+   element placed by grid area. The NAME is the button, since the row holds the
+   timeline and is not one hit area. The figure is drawn as a potential (doc or
+   estimate ink, with its plus) and never as a saving: nothing has landed yet. */
+function agxCardHTML({r, a, i}){
+  const est = isEstimated(a), at = agDone(a), dates = agStepDates(a);
+  const late = dates[at] <= agToday();
+  return `
+  <li class="agx" style="--b:${brandOf(a.n)}">
     ${agrLogoTile(a.n)}
-    <span class="agd-eye">${r.n}${idle
-      ? '<span class="agy-chip warn">Not being used</span>'
-      : done ? '<span class="agy-chip ok">Verified</span>' : ''}</span>
-    <button type="button" class="agy-open" data-agopen="${r.id}:${i}">
+    <span class="agd-eye">${r.n}<span class="agy-chip">In progress</span></span>
+    <button type="button" class="agx-open" data-agopen="${r.id}:${i}">
       ${a.n}${agIc('go')}</button>
-    <span class="agd-fig"><b>${done && !idle ? actualHTML(a.save) : figHTML(a.save, est)} kr.</b><em>a
-      year${done && !idle ? ', landing now' : ''}</em>${est ? estChip() : done && !idle ? '' : docChip(r, a)}</span>
-    ${idle ? `
-    <p class="agy-flag">${agIc('alert')}<span>The rate is agreed and live, but
-      <b>no invoices have come through it in ${agQuietDays(a)} days</b> — so the saving
-      is not landing. Usually an old supplier account still set as the default.</span></p>` : ''}
-    ${agStepperHTML(a)}
-    ${agCalHTML(a)}
-    ${idle ? `
-    <div class="agy-act">
-      <button type="button" class="btn btn-primary btn-sm" data-buyer="${r.id}:${i}">Contact the buyer</button>
-      <button type="button" class="btn btn-secondary btn-sm" data-agopen="${r.id}:${i}">See the agreement</button>
-    </div>` : ''}
+    <span class="agd-fig"><b>${figHTML(a.save, est)} kr.</b><em>a year</em>${
+      est ? estChip() : docChip(r, a)}</span>
+    <span class="agy-date ${late ? 'due' : 'soon'}">
+      ${featIcon('clock')}
+      <span class="agy-date-k">Next</span>
+      <span class="agy-date-v">${AG_STEPS[at]}</span>
+      <span class="agy-date-s">${late ? 'Late — we’re chasing the supplier' : agRel(dates[at])}</span>
+    </span>
+    ${agHStepHTML(a)}
+    <p class="stepper-note">${late
+      ? 'We’ve chased the supplier. Nothing for you to do.'
+      : 'Nothing for you to do. We chase the supplier if a step runs late.'}</p>
   </li>`;
 }
 
@@ -14698,14 +15088,27 @@ let AGA_ALL = [], agaLastCount = 0;
 
 function agaCardHTML({r, a, i}){
   const rate = Math.round(a.save / a.covers * 100);
+  const mine = !!a.req, idle = mine && agDormant(a), pend = mine && agPending(a);
+  const est = isEstimated(a);
   /* the status names the SAME three states the hero band draws, so a card can
      never say "In use" about an agreement the band calls "Not being used" */
-  const st = !a.req ? 'Available' : agDormant(a) ? 'Not being used'
-           : agPending(a) ? 'In progress' : 'Verified';
+  const st = !mine ? 'Available' : idle ? 'Not being used' : pend ? 'In progress' : 'Verified';
+  /* the catalogue's average for one you could take; for one you hold, what it
+     saves a year — solid and green only once read off an invoice, and drawn as a
+     potential (doc or estimate ink) while it is still in flight or not being
+     bought through */
+  const landed = mine && !idle && !pend;
+  const foot = !mine
+    ? `<b>${rate}%</b><em>average saving</em>`
+    : `<b>${landed ? actualHTML(a.save) : figHTML(a.save, est)} kr.</b><em>${
+        idle ? 'a year agreed, not landing' : pend ? 'a year once verified' : 'a year, landing now'}</em>`;
+  const footLabel = !mine ? `${rate}% average saving`
+    : `${saveFig(a.save, est).replace('+', '')} kroner a year${
+        idle ? ' agreed, not landing' : pend ? ' once verified' : ', landing now'}`;
   return `
     <li class="aga sup-card" data-agopen="${r.id}:${i}" tabindex="0" role="button"
       style="--b:${brandOf(a.n)}"
-      aria-label="Open the ${a.n} agreement — ${r.n}, ${rate}% average saving, ${st.toLowerCase()}${
+      aria-label="Open the ${a.n} agreement — ${r.n}, ${footLabel}, ${st.toLowerCase()}${
         a.isNew && !a.req ? ', new this quarter' : ''}">
       <span class="sup-id">
         ${agrLogoTile(a.n)}
@@ -14713,10 +15116,14 @@ function agaCardHTML({r, a, i}){
           <b class="aga-n">${a.n}${a.isNew && !a.req ? '<span class="cnew">New</span>' : ''}</b>
           <span class="aga-cat">${r.n}</span>
         </span>
-        <span class="aga-st${a.req ? ' on' : ''}${a.req && agDormant(a) ? ' idle' : ''}">${st}</span>
+        <span class="aga-st${mine ? ' on' : ''}${idle ? ' idle' : ''}">${st}</span>
       </span>
+      ${idle ? `
+      <p class="aga-note">${agIc('alert')}<span>The rate is live, but <b>no invoices have
+        come through it in ${agQuietDays(a)} days</b> — usually an old supplier account
+        still set as the default.</span></p>` : ''}
       <span class="sup-foot">
-        <span class="sup-rate"><b>${rate}%</b><em>average saving</em></span>
+        <span class="sup-rate">${foot}</span>
         <span class="sup-go" aria-hidden="true">${ARROW}</span>
       </span>
     </li>`;
@@ -14756,10 +15163,11 @@ const AGC_STATUS = [
 ];
 
 /* ---------- the controls ----------
-   The Suppliers rhythm exactly: the status pills on one row (the search is the
-   bar's own field on this page — pageSearchSet), the letters scrolled on a single
-   row below it, and one live result line that both
-   counts the hits and lets every applied filter be removed where it is named.
+   The Suppliers rhythm: the status pills on one row, then the name row — a quick
+   search beside the letters, two doors to the same narrowing — and one live
+   result line that both counts the hits and lets every applied filter be removed
+   where it is named. The search here and the bar's field (pageSearchSet) hold the
+   SAME query, agcQuery: typing in either shows in both.
    The head is never re-rendered — the search field must not lose focus — so the
    pills are re-synced rather than rebuilt. */
 function agaControlsHTML(all){
@@ -14769,12 +15177,29 @@ function agaControlsHTML(all){
         <button type="button" class="agc-pill" data-agcst="${st.id}"
           aria-pressed="${agcStatus === st.id}">${st.l}</button>`).join('')}
     </div>
-    <div class="agp-az" role="group" aria-label="Filter by first letter">
-      <button type="button" data-agcaz="all" aria-pressed="${agcLetter === 'all'}">All</button>
-      ${agaLetters(all).map(L => `<button type="button" data-agcaz="${L}"
-        aria-pressed="${agcLetter === L}">${L}</button>`).join('')}
+    <div class="agp-name">
+      <label class="agc-q">
+        ${SUP_GLASS}
+        <input id="agcQ" type="search" autocomplete="off" spellcheck="false"
+          placeholder="Search supplier or area" aria-label="Search supplier or area"
+          value="${agcQuery.replace(/"/g, '&quot;')}">
+        <button type="button" class="agc-qx" id="agcQX" aria-label="Clear search"
+          ${agcQuery.trim() ? '' : 'hidden'}>${SUP_X}</button>
+      </label>
+      <div class="agp-az" role="group" aria-label="Filter by first letter">
+        <button type="button" data-agcaz="all" aria-pressed="${agcLetter === 'all'}">All</button>
+        ${agaLetters(all).map(L => `<button type="button" data-agcaz="${L}"
+          aria-pressed="${agcLetter === L}">${L}</button>`).join('')}
+      </div>
     </div>
     <div class="sup-bar agp-bar" id="agcBar" role="status" aria-live="polite"></div>`;
+}
+/* the field shows the query — written only when it differs, so whoever is typing
+   into it keeps their caret; the same rule pageSearchPaint() follows */
+function agcSearchPaint(){
+  const f = $('#agcQ'); if(!f) return;
+  if(f.value !== agcQuery) f.value = agcQuery;
+  const x = $('#agcQX'); if(x) x.hidden = !agcQuery.trim();
 }
 
 function renderAgcBar(all, count){
@@ -14845,8 +15270,18 @@ function renderAgaBody(all){
   const el = $('#agaBody');
   if(!el) return;
   const hits = agaMatches(all);
+  /* the ones you hold first — needing a look, then still moving, then settled,
+     money inside each — and the rest in the roster's order. A label over each
+     run only when both are there: one run labelled is a heading over nothing. */
+  const rank = x => agDormant(x.a) ? 0 : agPending(x.a) ? 1 : 2;
+  const held = hits.filter(x => x.a.req).sort((p, q) => rank(p) - rank(q) || q.a.save - p.a.save);
+  const open = hits.filter(x => !x.a.req);
+  const grid = xs => `<ul class="supd-grid">${xs.map(agaCardHTML).join('')}</ul>`;
+  const grp  = (l, xs) => `<h3 class="aga-grp">${l} <em>${xs.length}</em></h3>`;
   el.innerHTML = hits.length
-    ? `<ul class="supd-grid">${hits.map(agaCardHTML).join('')}</ul>`
+    ? (held.length && open.length
+        ? grp('In use', held) + grid(held) + grp('Available', open) + grid(open)
+        : grid(held.length ? held : open))
     : `
       <div class="sup-empty">
         <span class="sup-empty-ic" aria-hidden="true">${SUP_GLASS}</span>
@@ -14858,7 +15293,9 @@ function renderAgaBody(all){
         <button class="btn btn-secondary" id="agcReset">Clear search &amp; filters</button>
       </div>`;
   const reset = $('#agcReset');
-  if(reset) reset.addEventListener('click', () => { agcResetAll(all); const f = $('#appSearch'); if(f) f.focus(); });
+  if(reset) reset.addEventListener('click', () => {
+    agcResetAll(all); const f = $('#agcQ') || $('#appSearch'); if(f) f.focus();
+  });
   /* the card is one hit area, keyboard included — the same contract the supplier
      grid uses, since it is the same card */
   $$('#agaBody [data-agopen]').forEach(li => {
@@ -14871,7 +15308,7 @@ function renderAgaBody(all){
       if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
     });
   });
-  agcSyncPills();
+  agcSyncPills(); agcSearchPaint();
   renderAgcBar(all, hits.length);
   if(barPageTenant === BP_AGS) BP_AGS.paint(hits.length); else agaLastCount = hits.length;
   pageSearchPaint();
@@ -14879,6 +15316,21 @@ function renderAgaBody(all){
 }
 
 function wireAgaControls(all){
+  /* every keystroke filters; Escape clears before it blurs — the bar's field's
+     contract, so the two doors behave the same */
+  const q = $('#agcQ');
+  if(q){
+    q.addEventListener('input', () => { agcQuery = q.value; renderAgaBody(all); });
+    q.addEventListener('keydown', e => {
+      if(e.key === 'Enter') e.preventDefault();
+      else if(e.key === 'Escape'){
+        if(q.value){ e.stopPropagation(); agcQuery = ''; renderAgaBody(all); }
+        else q.blur();
+      }
+    });
+  }
+  const qx = $('#agcQX');
+  if(qx) qx.addEventListener('click', () => { agcQuery = ''; renderAgaBody(all); if(q) q.focus(); });
   $$('#agaControls [data-agcst]').forEach(b => b.addEventListener('click', () => {
     agcStatus = b.dataset.agcst; renderAgaBody(all);
   }));
@@ -14910,9 +15362,10 @@ function renderAgreements(){
   const idle    = mine.filter(x => agDormant(x.a));
   const idleSum = idle.reduce((s, x) => s + x.a.save, 0);
   const estIdle = idle.some(x => isEstimated(x.a));
-  /* needs a look first, then still moving, then settled — and money inside each */
-  const rank = x => agDormant(x.a) ? 0 : agComplete(x.a) ? 2 : 1;
-  const held = [...mine].sort((p, q) => rank(p) - rank(q) || q.a.save - p.a.save);
+  /* the ones still moving: requested, not yet verified — furthest from done
+     first, and money inside each. Everything else you hold sits in the catalogue. */
+  const pend = mine.filter(x => agPending(x.a))
+    .sort((p, q) => agDone(p.a) - agDone(q.a) || q.a.save - p.a.save);
   const best = [...open].sort((p, q) => q.a.save - p.a.save)[0];
   const landing = mine.filter(x => !agDormant(x.a) && agComplete(x.a));
   const landSum = landing.reduce((s, x) => s + x.a.save, 0);
@@ -14967,19 +15420,21 @@ function renderAgreements(){
     </header>
     </div>`;
 
-  /* ---- the ones you hold, or the preview if you hold none ---- */
-  const heldHTML = mine.length ? `
+  /* ---- the ones in activation, or the preview if you hold none ----
+     Nothing in flight and something held: no section at all — the held ones are
+     the first run of the catalogue, and an empty section would be a heading
+     over nothing. */
+  const heldHTML = mine.length ? (pend.length ? `
     <section class="agp-sec" aria-labelledby="agpHeldH">
       <div class="ar-head">
         <div class="ar-head-t">
-          <h2 id="agpHeldH">The ${mine.length} you hold</h2>
-          <p>Four steps from request to a verified saving, each with the date it
-            happened. We only call it verified once the new rate has appeared on an
-            invoice we have read.</p>
+          <h2 id="agpHeldH">${pend.length === 1 ? 'One agreement' : `${pend.length} agreements`} in activation</h2>
+          <p>Requested, not yet verified. Verified means the new rate has shown up
+            on an invoice we’ve read.</p>
         </div>
       </div>
-      <ul class="agp-list">${held.map(agyCardHTML).join('')}</ul>
-    </section>` : `
+      <ul class="agp-list">${pend.map(agxCardHTML).join('')}</ul>
+    </section>` : '') : `
     <section class="agp-sec" aria-labelledby="agpHeldH">
       <div class="ar-head">
         <div class="ar-head-t">
@@ -14993,25 +15448,12 @@ function renderAgreements(){
         </div>` : ''}
       </div>
       <ul class="agp-list">
-        <li class="agy agy-pre">
+        <li class="agx agx-pre">
           <span class="agd-eye">Preview</span>
-          <b class="agy-pre-t">Any agreement, once you activate it</b>
-          ${oppTimelineHTML()}
-          <div class="agy-cal">
-            <span class="agy-date">${agIc('cal')}
-              <span class="agy-date-k">Activated</span>
-              <span class="agy-date-v">The day you say yes</span>
-              <span class="agy-date-s">Nothing changes on your side until then.</span></span>
-            <span class="agy-date">${featIcon('clock')}
-              <span class="agy-date-k">Next step</span>
-              <span class="agy-date-v">Five working days</span>
-              <span class="agy-date-s">If the supplier has not confirmed by then,
-                we chase them.</span></span>
-            <span class="agy-date">${agIc('renew')}
-              <span class="agy-date-k">Terms renew</span>
-              <span class="agy-date-v">Twelve months on</span>
-              <span class="agy-date-s">We tell you before they come up, not after.</span></span>
-          </div>
+          <b class="agx-pre-t">Any agreement, once you activate it</b>
+          ${agHStepHTML()}
+          <p class="stepper-note">Nothing changes until you say yes. You can stop
+            any time before the supplier confirms.</p>
         </li>
       </ul>
     </section>`;
@@ -15024,7 +15466,8 @@ function renderAgreements(){
         <div class="ar-head">
           <div class="ar-head-t">
             <h2 id="agpAllH">All ${all.length} agreements</h2>
-            <p>Every supplier agreement open to ${state.company}, in use or not.
+            <p>Every supplier agreement open to ${state.company} — the ${mine.length
+                ? `${mine.length} you hold first, then the rest` : 'whole catalogue'}.
               Filter by status or first letter, or search by supplier or area.</p>
           </div>
         </div>
@@ -17443,7 +17886,7 @@ function persist(){
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
       newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityTab,
       savedAgr: [...savedAgr], agrCardStyle, agrViewStyle, catViewStyle, catAgrView, catTabSkin,
-      spendTune, tuneSkin, pkgTab,
+      spendTune, tuneSkin,
       notifPrefs, seenTour
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
@@ -17479,11 +17922,9 @@ function applySaved(d){
   if(typeof d.ncGettingStartedHidden === 'boolean') ncGettingStartedHidden = d.ncGettingStartedHidden;
   if(d.activityTab === null || ACT_PANELS.some(p => p.k === d.activityTab)) activityTab = d.activityTab;
   if(Array.isArray(d.savedAgr)) savedAgr = new Set(d.savedAgr);
-  if(['brand','photo','detail','simple'].includes(d.agrCardStyle)) agrCardStyle = d.agrCardStyle;
   if(['impact','basket','compare'].includes(d.agrViewStyle)) agrViewStyle = d.agrViewStyle;
   if(['list','bars','split','focus','brands','why','story','tune'].includes(d.catViewStyle)) catViewStyle = d.catViewStyle;
   if(['bar','line'].includes(d.tuneSkin)) tuneSkin = d.tuneSkin;
-  if(['on','all','again','fav'].includes(d.pkgTab)) pkgTab = d.pkgTab;
   /* factors, never the scaled figures: the actuals in ROWS stay the baseline, so
      a reload re-derives from invoices rather than from an already-tuned number */
   if(d.spendTune && typeof d.spendTune === 'object'){
