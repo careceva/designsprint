@@ -4506,9 +4506,9 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 @container page (max-width:600px){.rp-split-legend{grid-template-columns:1fr}}
 .rp-split-legend li{display:flex;align-items:baseline;gap:var(--s2);
   font-size:15px;line-height:1.4}
-/* the strip and its legend read from ONE categorical scale — AREA_INK, the same eight
-   inks the Areas spine uses — because eight segments in one blue is a bar you cannot
-   map a legend onto, and a legend nobody can map onto its chart is decoration */
+/* the strip and its legend read from ONE scale — AREA_INK, the brand ramp by spend
+   rank that the Areas spine and the Reports dashboard use — so a legend entry can
+   always be mapped back onto its segment */
 .rp-dot{flex:0 0 auto;width:9px;height:9px;border-radius:var(--rounded-full);
   background:rgb(var(--b,33 112 237));transform:translateY(-1px)}
 .rp-dot.off{background:var(--general-secondary)}
@@ -4677,6 +4677,8 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 /* the key: one entry per area that appears in the window, in the ranking's order
    and the ranking's inks — and each entry is the same picker the rows are */
 .rd-leg{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2)}
+.rd-leg>span{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 var(--s3) 0 var(--s2);
+  font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
 .rd-leg button{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 var(--s3) 0 var(--s2);
   border:none;border-radius:var(--rounded-full);background:none;cursor:pointer;font:inherit;
   font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);
@@ -7561,10 +7563,30 @@ let personaKey = 'bob';
 const ROWS = [];
 /* swap the roster's contents in place — deep-copied, so a demo activation never
    writes back into the authored data */
+/* ---- the area scale ----
+   The design system has one brand ramp and no categorical palette, so the eight
+   areas are not given eight hues. They take the ramp as an ORDERED scale: the
+   four biggest areas by annual spend wear midnight, primary-deep, primary and
+   cornflower, darkest first, and the other four fold into one neutral — the
+   name beside the mark, the key, the rows and the tables carry their identity.
+   The ranking is on the roster's annual spend, so switching a report's lens or
+   period never repaints an area, and Fanny (who reads Bob's roster) sees the
+   same assignment Bob does. Teal and orange-red are not in it: those mean
+   "came off an invoice" and "unused" everywhere else in the file. */
+const AREA_RAMP = ['0 10 69', '18 69 159', '27 100 220', '115 171 255'];   /* --brand-midnight, --general-primary-deep, --general-primary, --brand-cornflower */
+const AREA_REST = '110 110 110';                                          /* --general-muted-foreground */
+const AREA_INK  = {};
+function assignAreaInks(){
+  Object.keys(AREA_INK).forEach(k => delete AREA_INK[k]);
+  [...ROWS].sort((a, b) => b.amt - a.amt).forEach((r, i) => { AREA_INK[r.id] = AREA_RAMP[i] || AREA_REST; });
+}
+/* an area with its own step on the ramp; the rest are drawn as "Other areas" */
+const areaOwnInk = id => !!AREA_INK[id] && AREA_INK[id] !== AREA_REST;
 function applyDataset(key){
   const src = DATASETS[key] || ROWS_BOB;
   ROWS.length = 0;
   src.forEach(r => ROWS.push({...r, agr:r.agr.map(a => ({...a}))}));
+  assignAreaInks();
 }
 applyDataset(personaKey);
 /* an area is exact when every agreement in it is; the counts the pages quote are
@@ -16277,13 +16299,26 @@ function rdCeil(v){
   const step = v / pow >= 5 ? pow : v / pow >= 2 ? pow / 2 : pow / 5;
   return Math.ceil(v / step) * step;
 }
-const rdInk = id => AREA_INK[id] || '27 100 220';
+const rdInk = id => AREA_INK[id] || AREA_REST;
+/* the stack's series: each area with its own step on the ramp, then one "Other
+   areas" series for the rest, so the chart never asks a reader to tell four
+   greys apart — the rows and the tooltip name them */
+function rdStack(ranked, lens){
+  const own  = ranked.filter(c => areaOwnInk(c.id)).map(c => ({id:c.id, n:c.n, ink:rdInk(c.id), ids:[c.id], s:rdSeries('area:' + c.id, lens.area(c))}));
+  const rest = ranked.filter(c => !areaOwnInk(c.id));
+  if(rest.length){
+    const parts = rest.map(c => rdSeries('area:' + c.id, lens.area(c)));
+    const s = parts.reduce((acc, p) => acc.map((v, i) => v + p[i]), rdWindow().map(() => 0));
+    own.push({id:'other', n:rest.length === 1 ? rest[0].n : 'Other areas', ink:AREA_REST, ids:rest.map(c => c.id), s});
+  }
+  return own;
+}
 
 /* ---- panel 1 · the columns ---- */
 function rdColsPanel(m, lens, ranked){
   const win = rdWindow();
   const total = ranked.reduce((s, c) => s + lens.area(c), 0);
-  const series = ranked.map(c => ({c, s:rdSeries('area:' + c.id, lens.area(c))}));
+  const series = rdStack(ranked, lens);
   const months = win.map((x, i) => ({x, t:series.reduce((s, r) => s + r.s[i], 0)}));
   const max = Math.max(0, ...months.map(o => o.t));
   const yMax = rdCeil(max);
@@ -16303,10 +16338,10 @@ function rdColsPanel(m, lens, ranked){
   const cols = months.map((o, i) => {
     const segs = [...series].reverse().filter(r => r.s[i] > 0);
     const label = `${rdMonthLabel(o.x, true)}: ${rpNum(o.t, m.peer)} kroner` + (segs.length
-      ? `, most in ${segs[segs.length - 1].c.n.toLowerCase()}` : '');
+      ? `, most in ${segs[segs.length - 1].n.toLowerCase()}` : '');
     return `<span class="rd-col" data-mi="${i}" tabindex="0" role="img" aria-label="${label}">
-      ${segs.map(r => `<i class="rd-seg${rdArea === r.c.id ? ' on' : ''}" data-area="${r.c.id}"
-        style="--b:${rdInk(r.c.id)};--i:${i};height:${(r.s[i] / yMax * 100).toFixed(2)}%"></i>`).join('')}
+      ${segs.map(r => `<i class="rd-seg${rdArea && r.ids.includes(rdArea) ? ' on' : ''}" data-area="${r.id}"
+        style="--b:${r.ink};--i:${i};height:${(r.s[i] / yMax * 100).toFixed(2)}%"></i>`).join('')}
     </span>`;
   }).join('');
   return `<section class="rd-p w7">${head}
@@ -16320,9 +16355,11 @@ function rdColsPanel(m, lens, ranked){
       <div class="rd-x" aria-hidden="true">${win.map(x => `<span>${rdMonthLabel(x)}</span>`).join('')}</div>
     </div>
     <div class="rd-leg" role="group" aria-label="Areas in the chart">
-      ${series.filter(r => lens.area(r.c) > 0).map(r => `<button type="button" class="${rdArea === r.c.id ? 'on' : ''}"
-        data-rdarea="${r.c.id}" aria-pressed="${rdArea === r.c.id}" style="--b:${rdInk(r.c.id)}">
-        <span class="rd-dot" aria-hidden="true"></span>${r.c.n}</button>`).join('')}
+      ${series.filter(r => r.s.some(v => v > 0)).map(r => r.id === 'other' && r.ids.length > 1
+        ? `<span style="--b:${r.ink}"><span class="rd-dot" aria-hidden="true"></span>${r.n}</span>`
+        : `<button type="button" class="${rdArea === r.ids[0] ? 'on' : ''}"
+        data-rdarea="${r.ids[0]}" aria-pressed="${rdArea === r.ids[0]}" style="--b:${r.ink}">
+        <span class="rd-dot" aria-hidden="true"></span>${r.n}</button>`).join('')}
     </div>
     <p class="rd-note floor">${RD_IC_NOTE}<span>Highest month: <b>${rdMonthLabel(months[peak].x, true)}</b>, ${rpNum(months[peak].t, m.peer)} kr.
       ${rdArea ? `The picked area is drawn in full; the rest step back.` : `Hover a column for the split.`}</span></p>
@@ -17790,16 +17827,8 @@ const areaHeld   = r => Math.round(r.agr.filter(a => a.req).reduce((s, a) => s +
 const areaEst    = r => r.agr.some(a => !a.req && isEstimated(a));
 const areaByCovers = r => [...r.agr].sort((a, b) => b.covers - a.covers);
 
-/* One ink per area, rather than the ink of whichever supplier happens to be
-   biggest in it. Borrowing brand colours gave five of the eight areas the same
-   fallback blue, so the spine could not be read against its own key — and a
-   categorical scale that repeats itself is not a scale. Green is deliberately not
-   in it: green is money everywhere else in this file, and an area is not money. */
-const AREA_INK = {
-  mat: '202 106 8',   tool:'190 24 60',   frg: '2 132 199',   fuel:'30 58 138',
-  tel: '219 39 119',  off: '109 40 217',  rent:'113 113 122', site:'124 45 18'
-};
-const areaInk = r => AREA_INK[r.id] || brandOf(areaByCovers(r)[0].n);
+/* the area's ink: assigned in assignAreaInks(), next to the data it ranks */
+const areaInk = r => AREA_INK[r.id] || AREA_REST;
 let areaSort = 'pot';
 
 const AR_DOC = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 3H8a2 2 0 00-2 2v14a2 2 0 002 2h8a2 2 0 002-2V7l-4-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
