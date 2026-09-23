@@ -4635,14 +4635,14 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
   max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rd-sel:hover{background-color:var(--brand-ice)}
 
-/* — the column chart: one column a month, stacked by area in the area inks.
-     Marks are thin and end on 4px corners; a 2px surface gap does the separating
-     between segments, never a stroke. Gridlines are recessive and there are three
-     of them. — */
-/* the plot takes whatever height the panel beside it sets — the ranking runs eight
-   rows deep, and a chart that stopped at 240px left a block of nothing under its key.
-   --rd-h is the floor, not the size; the segments are percentages of the plot, so
-   they follow it. */
+/* — the column chart: one column a month, stacked by the areas that matter for
+     the measure on screen. The ramp is the LENS's hue — the money-off-an-invoice
+     teal when the page reads savings, the brand blue when it reads spend or
+     volume — stepped by tint, darkest at the baseline, and everything past the
+     fourth area folds into one pale neutral. Columns are slimmer than their slot
+     so the chart breathes; a 2px surface gap separates segments and the topmost
+     one alone carries the rounded end, so a column reads as one bar with parts,
+     not as a stack of tiles. Gridlines are recessive and there are three. — */
 .rd-cols{--rd-h:240px;flex:1 1 auto;display:grid;grid-template-columns:auto minmax(0,1fr);
   grid-template-rows:minmax(var(--rd-h),1fr) auto;gap:0 var(--s3)}
 .rd-y{min-height:var(--rd-h);display:flex;flex-direction:column;justify-content:space-between;
@@ -4654,28 +4654,48 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 .rd-plot{position:relative;min-height:var(--rd-h)}
 .rd-grid{position:absolute;inset:0;pointer-events:none}
 .rd-grid i{position:absolute;left:0;right:0;height:1px;background:var(--hairline)}
-.rd-grid i:last-child{background:var(--card-stroke)}
-.rd-col-row{position:absolute;inset:0;display:flex;align-items:flex-end;gap:6px}
-.rd-col{flex:1 1 0;min-width:0;height:100%;display:flex;flex-direction:column;
-  justify-content:flex-end;gap:2px;cursor:default}
-.rd-col:hover .rd-seg{filter:brightness(1.08)}
-.rd-seg{flex:0 0 auto;width:100%;border-radius:2px;
-  background:rgb(var(--b,27 100 220));transform-origin:bottom center;
+.rd-grid i:last-child{background:var(--card-stroke-hover)}
+.rd-col-row{position:absolute;inset:0;display:flex;align-items:stretch}
+/* the slot is the hit target — the whole month, floor to ceiling — and the
+   column stands inside it at a fixed measure, so twelve months and three months
+   are drawn with the same pen */
+.rd-slot{position:relative;flex:1 1 0;min-width:0;display:flex;align-items:flex-end;
+  justify-content:center;padding:0 3px;cursor:default;outline:none}
+/* the hover band: a soft ice field behind the month, edge to edge of its slot,
+   so the pointer's month is legible before the tooltip has finished arriving */
+.rd-slot::before{content:"";position:absolute;inset:0 1px 0;border-radius:var(--rounded-sm);
+  background:var(--brand-ice);opacity:0;transition:opacity var(--t-fast)}
+@media (hover:hover){.rd-slot:hover::before{opacity:1}}
+.rd-slot:active::before,.rd-slot.pin::before,.rd-slot:focus-visible::before{opacity:1}
+.rd-slot{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.rd-slot:focus-visible{box-shadow:inset 0 0 0 2px var(--general-primary);border-radius:var(--rounded-sm)}
+.rd-col{position:relative;width:100%;max-width:36px;height:100%;display:flex;flex-direction:column;
+  justify-content:flex-end;gap:2px}
+.rd-seg{flex:0 0 auto;width:100%;border-radius:1px;
+  background:rgb(var(--b,27 100 220)/var(--a,1));transform-origin:bottom center;
   animation:drGrowY .5s cubic-bezier(.22,.9,.24,1) both;
   animation-delay:calc(var(--i,0) * 26ms);
-  transition:opacity var(--t-fast),filter var(--t-fast)}
-.rd-seg:first-child{border-radius:4px 4px 2px 2px}
-.rd-seg:last-child{border-radius:2px 2px 0 0}
-.rd-seg:only-child{border-radius:4px 4px 0 0}
+  transition:opacity var(--t-fast)}
+.rd-seg:first-child{border-radius:6px 6px 1px 1px}
+.rd-seg:last-child{border-radius:1px 1px 2px 2px}
+.rd-seg:only-child{border-radius:6px 6px 2px 2px}
 @media (prefers-reduced-motion:reduce){.rd-seg{animation:none}}
-/* a picked area keeps its ink; the rest step back to a tint of theirs, so the
+/* a picked area keeps its ink; the rest step back to a ghost of theirs, so the
    chart answers "when did THIS area happen" without redrawing */
-.rd-plot.sel .rd-seg:not(.on){opacity:.22}
-.rd-x{grid-column:2;display:flex;gap:6px;margin-top:var(--s2)}
+.rd-plot.sel .rd-seg:not(.on){opacity:.16}
+.rd-x{grid-column:2;display:flex;margin-top:var(--s2)}
 .rd-x span{flex:1 1 0;min-width:0;text-align:center;font-size:var(--text-xs);
   color:var(--general-muted-foreground);white-space:nowrap}
-/* the key: one entry per area that appears in the window, in the ranking's order
-   and the ranking's inks — and each entry is the same picker the rows are */
+.rd-x b{font-weight:500}
+/* twelve three-letter months do not fit a phone; the initials do, the way the
+   agreement page's month strip already abbreviates */
+.rd-x-s{display:none}
+@container page (max-width:600px){
+  .rd-x-l{display:none}.rd-x-s{display:inline}
+  .rd-col{max-width:22px}
+}
+/* the key: one entry per series in the stack, in stack order and the stack's inks,
+   and each named area's entry is the same picker the rows are */
 .rd-leg{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2)}
 .rd-leg>span{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 var(--s3) 0 var(--s2);
   font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
@@ -4683,25 +4703,32 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
   border:none;border-radius:var(--rounded-full);background:none;cursor:pointer;font:inherit;
   font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);
   transition:background var(--t-fast),color var(--t-fast)}
-.rd-leg button:hover{background:var(--general-muted);color:var(--general-foreground)}
+@media (hover:hover){.rd-leg button:hover{background:var(--general-muted);color:var(--general-foreground)}}
+.rd-leg button:active{background:var(--general-muted);color:var(--general-foreground)}
+.rd-leg button,.rd-row,.rd-ag{touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .rd-leg button:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
 .rd-leg button.on{background:var(--brand-ice);color:var(--general-foreground)}
 .rd-leg .rd-dot{width:8px;height:8px;border-radius:2px}
 .rd-p .rd-note.floor{margin-top:auto}
-/* the hover layer: one tooltip for the whole plot, filled per column */
-.rd-tip{position:absolute;z-index:3;bottom:calc(100% + 8px);left:0;min-width:200px;
-  padding:var(--s3) var(--s4);border-radius:var(--rounded-md);
-  background:var(--general-foreground);color:#fff;font-size:var(--text-xs);line-height:1.45;
-  box-shadow:var(--shadow-lg);pointer-events:none;opacity:0;transform:translate(-50%,4px);
+/* the hover layer: one tooltip for the whole plot, filled per month and parked
+   just above that month's column — the same white card as the rest of the page,
+   with a real offset shadow, not a black label */
+.rd-tip{position:absolute;z-index:3;left:0;bottom:0;min-width:210px;
+  padding:var(--s3) var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-md);
+  background:var(--surface);color:var(--general-foreground);font-size:var(--text-xs);line-height:1.45;
+  box-shadow:var(--shadow-lg);pointer-events:none;opacity:0;transform:translate(-50%,6px);
   transition:opacity var(--t-fast),transform var(--t-fast)}
 .rd-tip.show{opacity:1;transform:translate(-50%,0)}
-.rd-tip b{display:block;font-size:var(--text-sm);font-weight:700;margin-bottom:var(--s1);
-  font-variant-numeric:tabular-nums}
-.rd-tip-r{display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:0 var(--s2);align-items:center}
-.rd-tip-r i{width:8px;height:8px;border-radius:2px;background:rgb(var(--b,27 100 220))}
-.rd-tip-r span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
-.rd-tip-r.dim{opacity:.6}
-@media (prefers-reduced-motion:reduce){.rd-tip{transition:none}}
+.rd-tip b{display:flex;justify-content:space-between;gap:var(--s4);
+  font-size:var(--text-sm);font-weight:700;margin-bottom:var(--s2);font-variant-numeric:tabular-nums}
+.rd-tip b small{font-weight:500;color:var(--general-muted-foreground)}
+.rd-tip-r{display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:0 var(--s2);align-items:center;
+  color:var(--general-muted-foreground)}
+.rd-tip-r i{width:8px;height:8px;border-radius:2px;background:rgb(var(--b,27 100 220)/var(--a,1))}
+.rd-tip-r span:last-child{font-variant-numeric:tabular-nums;font-weight:600;color:var(--general-foreground)}
+.rd-tip-r.dim{opacity:.55}
+@media (prefers-reduced-motion:reduce){.rd-tip,.rd-slot::before{transition:none}}
 
 /* — the area rows: a ranked list, and the area picker. Each row is the control —
      name, figure, share and its own track. — */
@@ -4710,11 +4737,12 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
   align-items:center;gap:var(--s2) var(--s3);padding:var(--s2) var(--s3);
   border:none;border-radius:var(--rounded-md);background:none;cursor:pointer;
   text-align:left;font:inherit;color:inherit;transition:background var(--t-fast)}
-.rd-row:hover{background:var(--general-muted)}
+@media (hover:hover){.rd-row:hover{background:var(--general-muted)}}
+.rd-row:active{background:var(--general-muted)}
 .rd-row:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
 .rd-row.on{background:var(--brand-ice)}
 .rd-row.on:hover{background:var(--general-secondary)}
-.rd-dot{width:10px;height:10px;border-radius:3px;background:rgb(var(--b,27 100 220))}
+.rd-dot{width:10px;height:10px;border-radius:3px;background:rgb(var(--b,27 100 220)/var(--a,1))}
 .rd-row-n{min-width:0;font-size:var(--text-sm);font-weight:600;letter-spacing:-.1px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rd-row-n em{font-style:normal;display:block;margin-top:1px;font-size:var(--text-xs);
@@ -4727,13 +4755,16 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 .rd-row .rd-track{grid-column:2 / -1}
 .rd-track{display:flex;gap:2px;height:6px;border-radius:3px;background:var(--general-muted);overflow:hidden}
 .rd-track i{display:block;height:100%;min-width:2px;border-radius:3px;
-  background:rgb(var(--b,27 100 220));transform-origin:left center;
+  background:rgb(var(--b,27 100 220)/var(--a,1));transform-origin:left center;
   animation:rpGrow .62s cubic-bezier(.22,.9,.24,1) both;animation-delay:calc(var(--i,0) * 42ms)}
 .rd-track i.pos{background:var(--sentiment-positive)}
 .rd-track i.open{background:var(--rp-soft)}
 .rd-track i.zero{background:transparent}
-/* a pick re-renders the dashboard; the figures did not move, so nothing redraws */
-.rd.still .rd-seg,.rd.still .rd-track i{animation:none}
+/* a pick never redraws the dashboard: emphasis toggles in place, and only the
+   transaction panel underneath is rebuilt, so nothing grows in twice */
+.rd:not(.has-sel) .rd-note-sel,.rd.has-sel .rd-note-all{display:none}
+.rd-all{transition:opacity var(--t-fast)}
+.rd:not(.has-sel) .rd-all{opacity:0;visibility:hidden}
 @media (prefers-reduced-motion:reduce){.rd-track i{animation:none}}
 /* the reset under the list — a text control, since "all areas" is not an action */
 .rd-all{align-self:flex-start;margin-left:var(--s3)}
@@ -4745,7 +4776,8 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
   align-items:center;gap:var(--s4);padding:var(--s2) var(--s3);
   border:none;border-radius:var(--rounded-md);background:none;cursor:pointer;
   text-align:left;font:inherit;color:inherit;transition:background var(--t-fast)}
-.rd-ag:hover{background:var(--general-muted)}
+@media (hover:hover){.rd-ag:hover{background:var(--general-muted)}}
+.rd-ag:active{background:var(--general-muted)}
 .rd-ag:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
 .rd-ag.on{background:var(--brand-ice)}
 .rd-ag.on:hover{background:var(--general-secondary)}
@@ -7580,8 +7612,6 @@ function assignAreaInks(){
   Object.keys(AREA_INK).forEach(k => delete AREA_INK[k]);
   [...ROWS].sort((a, b) => b.amt - a.amt).forEach((r, i) => { AREA_INK[r.id] = AREA_RAMP[i] || AREA_REST; });
 }
-/* an area with its own step on the ramp; the rest are drawn as "Other areas" */
-const areaOwnInk = id => !!AREA_INK[id] && AREA_INK[id] !== AREA_REST;
 function applyDataset(key){
   const src = DATASETS[key] || ROWS_BOB;
   ROWS.length = 0;
@@ -16299,26 +16329,45 @@ function rdCeil(v){
   const step = v / pow >= 5 ? pow : v / pow >= 2 ? pow / 2 : pow / 5;
   return Math.ceil(v / step) * step;
 }
-const rdInk = id => AREA_INK[id] || AREA_REST;
-/* the stack's series: each area with its own step on the ramp, then one "Other
-   areas" series for the rest, so the chart never asks a reader to tell four
-   greys apart — the rows and the tooltip name them */
-function rdStack(ranked, lens){
-  const own  = ranked.filter(c => areaOwnInk(c.id)).map(c => ({id:c.id, n:c.n, ink:rdInk(c.id), ids:[c.id], s:rdSeries('area:' + c.id, lens.area(c))}));
-  const rest = ranked.filter(c => !areaOwnInk(c.id));
+/* ---- the dashboard's inks ----
+   The lens picks the hue and the measure picks the order. Savings are drawn in
+   the teal that means "came off an invoice" everywhere else in the file; spend
+   and volume in the brand blue. The four areas with the most of the measure take
+   four tints of that hue, darkest first, and the rest fold into one pale neutral
+   — so the chart's colour always belongs to what the chart is about, and an area
+   that earned money is never the grey one. The ranking is scale-free, so the
+   period never repaints an area; only the lens does, and the lens rewrites the
+   headline too. */
+const RD_HUE  = {savings:'0 150 137', spending:'27 100 220', usage:'27 100 220'};   /* --sentiment-positive, --general-primary */
+const RD_TINT = [1, .68, .42, .22];
+const RD_REST = {b:'110 110 110', a:.22};                                           /* --general-muted-foreground, ghosted */
+function rdInks(lens, ranked){
+  const map = {};
+  ranked.forEach((c, i) => { map[c.id] = i < RD_TINT.length && lens.area(c) > 0
+    ? {b:RD_HUE[lens.k] || RD_HUE.spending, a:RD_TINT[i]} : RD_REST; });
+  return map;
+}
+const rdInkCss = ink => `--b:${ink.b};--a:${ink.a}`;
+const rdOwn = ink => ink !== RD_REST;
+/* the stack's series: each area with its own tint, then one "Other areas" series
+   for the rest, so the chart never asks a reader to tell four ghosts apart — the
+   rows and the tooltip name them */
+function rdStack(ranked, lens, inks){
+  const own  = ranked.filter(c => rdOwn(inks[c.id])).map(c => ({id:c.id, n:c.n, ink:inks[c.id], ids:[c.id], s:rdSeries('area:' + c.id, lens.area(c))}));
+  const rest = ranked.filter(c => !rdOwn(inks[c.id]) && lens.area(c) > 0);
   if(rest.length){
     const parts = rest.map(c => rdSeries('area:' + c.id, lens.area(c)));
     const s = parts.reduce((acc, p) => acc.map((v, i) => v + p[i]), rdWindow().map(() => 0));
-    own.push({id:'other', n:rest.length === 1 ? rest[0].n : 'Other areas', ink:AREA_REST, ids:rest.map(c => c.id), s});
+    own.push({id:'other', n:rest.length === 1 ? rest[0].n : 'Other areas', ink:RD_REST, ids:rest.map(c => c.id), s});
   }
   return own;
 }
 
 /* ---- panel 1 · the columns ---- */
-function rdColsPanel(m, lens, ranked){
+function rdColsPanel(m, lens, ranked, inks){
   const win = rdWindow();
   const total = ranked.reduce((s, c) => s + lens.area(c), 0);
-  const series = rdStack(ranked, lens);
+  const series = rdStack(ranked, lens, inks);
   const months = win.map((x, i) => ({x, t:series.reduce((s, r) => s + r.s[i], 0)}));
   const max = Math.max(0, ...months.map(o => o.t));
   const yMax = rdCeil(max);
@@ -16339,10 +16388,10 @@ function rdColsPanel(m, lens, ranked){
     const segs = [...series].reverse().filter(r => r.s[i] > 0);
     const label = `${rdMonthLabel(o.x, true)}: ${rpNum(o.t, m.peer)} kroner` + (segs.length
       ? `, most in ${segs[segs.length - 1].n.toLowerCase()}` : '');
-    return `<span class="rd-col" data-mi="${i}" tabindex="0" role="img" aria-label="${label}">
-      ${segs.map(r => `<i class="rd-seg${rdArea && r.ids.includes(rdArea) ? ' on' : ''}" data-area="${r.id}"
-        style="--b:${r.ink};--i:${i};height:${(r.s[i] / yMax * 100).toFixed(2)}%"></i>`).join('')}
-    </span>`;
+    return `<span class="rd-slot" data-mi="${i}" tabindex="0" role="img" aria-label="${label}"><span class="rd-col">
+      ${segs.map(r => `<i class="rd-seg${rdArea && r.ids.includes(rdArea) ? ' on' : ''}" data-ids="${r.ids.join(' ')}"
+        style="${rdInkCss(r.ink)};--i:${i};height:${(r.s[i] / yMax * 100).toFixed(2)}%"></i>`).join('')}
+    </span></span>`;
   }).join('');
   return `<section class="rd-p w7">${head}
     <div class="rd-cols">
@@ -16352,22 +16401,22 @@ function rdColsPanel(m, lens, ranked){
         <div class="rd-col-row">${cols}</div>
         <div class="rd-tip" id="rdTip" role="status" aria-live="polite"></div>
       </div>
-      <div class="rd-x" aria-hidden="true">${win.map(x => `<span>${rdMonthLabel(x)}</span>`).join('')}</div>
+      <div class="rd-x" aria-hidden="true">${win.map(x => `<span><b class="rd-x-l">${rdMonthLabel(x)}</b><b class="rd-x-s">${MONTH_ABBR[x.m].charAt(0)}</b></span>`).join('')}</div>
     </div>
     <div class="rd-leg" role="group" aria-label="Areas in the chart">
       ${series.filter(r => r.s.some(v => v > 0)).map(r => r.id === 'other' && r.ids.length > 1
-        ? `<span style="--b:${r.ink}"><span class="rd-dot" aria-hidden="true"></span>${r.n}</span>`
+        ? `<span style="${rdInkCss(r.ink)}"><span class="rd-dot" aria-hidden="true"></span>${r.n}</span>`
         : `<button type="button" class="${rdArea === r.ids[0] ? 'on' : ''}"
-        data-rdarea="${r.ids[0]}" aria-pressed="${rdArea === r.ids[0]}" style="--b:${r.ink}">
+        data-rdarea="${r.ids[0]}" aria-pressed="${rdArea === r.ids[0]}" style="${rdInkCss(r.ink)}">
         <span class="rd-dot" aria-hidden="true"></span>${r.n}</button>`).join('')}
     </div>
     <p class="rd-note floor">${RD_IC_NOTE}<span>Highest month: <b>${rdMonthLabel(months[peak].x, true)}</b>, ${rpNum(months[peak].t, m.peer)} kr.
-      ${rdArea ? `The picked area is drawn in full; the rest step back.` : `Hover a column for the split.`}</span></p>
+      <span class="rd-note-all">Hover a column for the split.</span><span class="rd-note-sel">The picked area is drawn in full; the rest step back.</span></span></p>
   </section>`;
 }
 
 /* ---- panel 2 · the ranking, and the area picker ---- */
-function rdRankPanel(m, lens, ranked){
+function rdRankPanel(m, lens, ranked, inks){
   const total = ranked.reduce((s, c) => s + lens.area(c), 0);
   const maxV = Math.max(1, ...ranked.map(c => lens.k === 'savings' ? c.realised + c.potential
                                          : lens.k === 'usage' ? c.spend : lens.area(c)));
@@ -16391,7 +16440,7 @@ function rdRankPanel(m, lens, ranked){
       fills = `<i style="--i:${i};width:${(v / maxV * 100).toFixed(1)}%"></i>`;
     }
     return `<li><button type="button" class="rd-row${on ? ' on' : ''}" data-rdarea="${c.id}"
-        aria-pressed="${on}" style="--b:${rdInk(c.id)}">
+        aria-pressed="${on}" style="${rdInkCss(inks[c.id])}">
       <span class="rd-dot" aria-hidden="true"></span>
       <span class="rd-row-n">${c.n}<em>${sub}</em></span>
       <span class="rd-row-v${v ? ' ' + rdTone(lens, m) : ' zero'}">${v ? rdMoney(v, lens, m) : 'nothing'}</span>
@@ -16405,7 +16454,7 @@ function rdRankPanel(m, lens, ranked){
       <div class="rd-ph-r"><b class="rd-fig">${earning}<small> of ${ranked.length} areas</small></b></div>
     </div>
     <ul class="rd-rows">${rows}</ul>
-    ${rdArea ? `<button type="button" class="linkbtn rd-all" data-rdarea="">Show all areas</button>` : ''}
+    <button type="button" class="linkbtn rd-all" data-rdarea="">Show all areas</button>
   </section>`;
 }
 
@@ -16532,7 +16581,7 @@ function rdAreaTxPanel(m, lens, ranked){
       <div class="rd-ph-t"><h3>Transactions in ${c.n.toLowerCase()}</h3><p>${sub}</p></div>
       <div class="rd-ph-r">${rdSelect('rdAreaSel', opts, c.id)}</div>
     </div>`;
-  if(m.peer) return `<section class="rd-p">${head('The invoices behind this area, newest first.')}${rdEmptyOwn('Transactions')}</section>`;
+  if(m.peer) return `<section class="rd-p" id="rdAreaTx">${head('The invoices behind this area, newest first.')}${rdEmptyOwn('Transactions')}</section>`;
 
   const landing = c.agrs.filter(a => a.vol > 0);
   const on = landing.flatMap(a => rdAgrTx(c, a).rows.map(r => Object.assign(r, {on:true})));
@@ -16551,7 +16600,7 @@ function rdAreaTxPanel(m, lens, ranked){
   if(idle.length) notes.push(`<b>${idle.map(a => a.n).join(' and ')}</b> ${idle.length === 1 ? 'is' : 'are'} live at the agreed price with nothing invoiced through ${idle.length === 1 ? 'it' : 'them'} yet.`);
   if(estOff) notes.push(`Another <b>${fmt(offVol)} kr.</b> is our estimate for ${rdOffSups(c).join(', ')} — no invoice held for ${r && r.agr.some(a => !a.req) ? 'those suppliers' : 'them'}, so nothing to list.`);
 
-  if(!all.length) return `<section class="rd-p">${head('The invoices behind this area, newest first.')}
+  if(!all.length) return `<section class="rd-p" id="rdAreaTx">${head('The invoices behind this area, newest first.')}
     <div class="rd-empty"><b>No invoice held for ${c.n.toLowerCase()}</b>
       <p>${c.spend ? `The ${fmt(c.spend)} kr. spent here is estimated from companies your size. ` : ''}Upload one invoice from this area and its lines, its supplier and its rate show up here.</p>
       <button type="button" class="btn btn-secondary btn-sm" data-rddc="1">Upload an invoice</button></div>
@@ -16565,7 +16614,7 @@ function rdAreaTxPanel(m, lens, ranked){
     <td class="${t.save ? 'pos' : 'none'}">${t.save ? '+' + fmt(t.save) : 'none'}</td></tr>`).join('');
   const foot = `<th scope="row">${estOff ? 'Area total, incl. estimate' : N === all.length ? 'Total' : `All ${fmt(N)} invoices`}</th><td></td>
     <td>${fmt(c.spend)}</td><td class="pos">${c.realised ? '+' + fmt(c.realised) : '<span class="none">none</span>'}</td>`;
-  return `<section class="rd-p">
+  return `<section class="rd-p" id="rdAreaTx">
     ${head(`${fmt(N)} ${N === 1 ? 'invoice' : 'invoices'} in ${m.period.of} — ${rpPct(onVol, c.spend)}% of the money through an agreement, newest first.`)}
     ${rdTxTable(`Transactions in ${c.n} · ${m.period.n}`, ['Supplier · what', 'Date', 'Amount, kr.', 'Saving, kr.'], rows, foot)}
     <div class="rd-foot"><span>${N > all.length ? `Latest <b>${shown.length}</b> of ${fmt(N)} invoices; the totals are for all of them.` : `<b>${shown.length}</b> of ${all.length} invoices listed.`}</span>${rdShowAll('area', all.length, shown.length)}</div>
@@ -16582,13 +16631,13 @@ function rdAgrTxPanel(m, lens){
       <div class="rd-ph-t"><h3>${title}</h3><p>${sub}</p></div>
       ${agrs.length ? `<div class="rd-ph-r">${rdSelect('rdAgrSel', agrs.map(x => ({v:x.n, n:x.n})), a.n)}</div>` : ''}
     </div>`;
-  if(!a) return `<section class="rd-p">${head('Transactions through an agreement', 'The invoices that ran at an agreed rate, newest first.')}
+  if(!a) return `<section class="rd-p" id="rdAgrTx">${head('Transactions through an agreement', 'The invoices that ran at an agreed rate, newest first.')}
     <div class="rd-empty"><b>Nothing is running through an agreement yet</b>
       <p>Activate one and every invoice that runs through it lands here, with the saving its rate took off.</p>
       <button type="button" class="btn btn-secondary btn-sm" data-rpgo="agreements">See what is ready</button></div></section>`;
-  if(m.peer) return `<section class="rd-p">${head(`Transactions through ${a.n}`, 'The invoices that ran at the agreed rate, newest first.')}${rdEmptyOwn('Invoices')}</section>`;
+  if(m.peer) return `<section class="rd-p" id="rdAgrTx">${head(`Transactions through ${a.n}`, 'The invoices that ran at the agreed rate, newest first.')}${rdEmptyOwn('Invoices')}</section>`;
   const c = m.cats.find(x => x.id === a.catId) || m.cats[0];
-  if(!a.vol) return `<section class="rd-p">${head(`Transactions through ${a.n}`, `${a.cat} · live at the agreed price.`)}
+  if(!a.vol) return `<section class="rd-p" id="rdAgrTx">${head(`Transactions through ${a.n}`, `${a.cat} · live at the agreed price.`)}
     <div class="rd-empty"><b>Nothing has run through ${a.n} yet</b>
       <p>${a.pending ? 'The rate is agreed and the first invoice at the new price has not arrived.' : `The rate is signed, but the ${a.cat.toLowerCase()} you buy is still being invoiced by someone else.`}
         It covers ${fmt(a.covers)} kr. of spend, worth ${fmt(Math.round(a.covers * (c.rate || 0) / 100))} kr. a year at the agreed rate.</p></div></section>`;
@@ -16603,7 +16652,7 @@ function rdAgrTxPanel(m, lens){
     <td class="${t.save ? 'pos' : 'none'}">${t.save ? '+' + fmt(t.save) : 'none'}</td></tr>`).join('');
   const foot = `<th scope="row">${exact ? 'Total' : `All ${fmt(N)} invoices`}</th><td></td>
     <td>${fmt(a.vol)}</td><td class="pos">${a.save ? '+' + fmt(a.save) : '<span class="none">none</span>'}</td>`;
-  return `<section class="rd-p">
+  return `<section class="rd-p" id="rdAgrTx">
     ${head(`Transactions through ${a.n}`, `${a.cat} · ${fmt(N)} ${N === 1 ? 'invoice' : 'invoices'} at the agreed rate in ${m.period.of}, −${(a.save / a.vol * 100).toFixed(1)}% on each.`)}
     ${rdTxTable(`Transactions through ${a.n} · ${m.period.n}`, ['What · invoice', 'Date', 'Amount, kr.', 'Saving, kr.'], rows, foot)}
     <div class="rd-foot"><span>${exact ? `<b>${shown.length}</b> of ${all.length} invoices listed; they add up to the total.` : `Latest <b>${shown.length}</b> of ${fmt(N)} invoices; the totals are for all of them.`}</span>${rdShowAll('agr', all.length, shown.length)}</div>
@@ -16613,82 +16662,136 @@ function rdAgrTxPanel(m, lens){
 /* ---- the frame, and the wiring ----
    A pick re-renders only the dashboard, with the draw-in animation held still —
    the figures did not change, the emphasis did. */
-function rdHTML(m, still){
+function rdHTML(m){
   const lens = rdLens();
   const ranked = [...m.cats].sort((a, b) => lens.area(b) - lens.area(a) || b.spend - a.spend);
   if(rdArea && !m.cats.some(c => c.id === rdArea)) rdArea = null;
   if(rdAgr && !m.agrs.some(a => a.n === rdAgr)) rdAgr = null;
-  return `<div class="rd${still ? ' still' : ''}" id="rd">
-    ${rdColsPanel(m, lens, ranked)}
-    ${rdRankPanel(m, lens, ranked)}
+  const inks = rdInks(lens, ranked);
+  return `<div class="rd${rdArea ? ' has-sel' : ''}" id="rd">
+    ${rdColsPanel(m, lens, ranked, inks)}
+    ${rdRankPanel(m, lens, ranked, inks)}
     ${rdAgrPanel(m, lens)}
     ${rdAreaTxPanel(m, lens, ranked)}
     ${rdAgrTxPanel(m, lens)}
   </div>`;
 }
-function rdRerender(m, focusSel){
-  const el = $('#rd'); if(!el) return;
-  el.outerHTML = rdHTML(m, true);
-  rdWire(m);
+/* a pick is an emphasis change, not a data change: the chart, the key and the
+   rows toggle their classes where they stand (so the segments cross-fade on
+   their own opacity transition and nothing grows in twice), and only the
+   transaction panel that reads the pick is rebuilt. */
+function rdSwap(id, html){
+  const el = $('#' + id); if(!el) return;
+  el.outerHTML = html;
+}
+function rdPanels(m){
+  const lens = rdLens();
+  const ranked = [...m.cats].sort((a, b) => lens.area(b) - lens.area(a) || b.spend - a.spend);
+  return {lens, ranked};
+}
+function rdPickArea(m, id, focusSel){
+  rdArea = (!id || rdArea === id) ? null : id;
+  rdMore.area = false;
+  const root = $('#rd'); if(!root) return;
+  root.classList.toggle('has-sel', !!rdArea);
+  const plot = $('#rdPlot'); if(plot) plot.classList.toggle('sel', !!rdArea);
+  $$('#rd .rd-seg').forEach(seg => seg.classList.toggle('on', !!rdArea && seg.dataset.ids.split(' ').includes(rdArea)));
+  $$('#rd [data-rdarea]').forEach(b => {
+    const on = !!b.dataset.rdarea && b.dataset.rdarea === rdArea;
+    b.classList.toggle('on', on);
+    if(b.hasAttribute('aria-pressed')) b.setAttribute('aria-pressed', String(on));
+  });
+  const {lens, ranked} = rdPanels(m);
+  rdSwap('rdAreaTx', rdAreaTxPanel(m, lens, ranked));
+  rdWireTx(m);
   if(focusSel){ const f = $(focusSel); if(f) f.focus({preventScroll:true}); }
 }
-function rdWire(m){
-  const root = $('#rd'); if(!root) return;
-  const lens = rdLens();
-
-  /* the hover layer on the columns: one tooltip, filled per month */
-  const plot = $('#rdPlot'), tip = $('#rdTip');
-  if(plot && tip){
-    const ranked = [...m.cats].sort((a, b) => lens.area(b) - lens.area(a) || b.spend - a.spend);
-    const win = rdWindow();
-    const series = ranked.map(c => ({c, s:rdSeries('area:' + c.id, lens.area(c))}));
-    const show = col => {
-      const i = +col.dataset.mi;
-      const t = series.reduce((s, r) => s + r.s[i], 0);
-      const parts = series.filter(r => r.s[i] > 0).sort((p, q) => q.s[i] - p.s[i]);
-      tip.innerHTML = `<b>${rdMonthLabel(win[i], true)} · ${rdMoney(t, lens, m)} kr.</b>
-        ${parts.map(r => `<span class="rd-tip-r${rdArea && rdArea !== r.c.id ? ' dim' : ''}" style="--b:${rdInk(r.c.id)}">
-          <i></i><span>${r.c.n}</span><span>${rpNum(r.s[i], m.peer)}</span></span>`).join('')}`;
-      const x = col.offsetLeft + col.offsetWidth / 2;
-      const half = tip.offsetWidth / 2 || 100;
-      tip.style.left = `${Math.max(half, Math.min(plot.clientWidth - half, x))}px`;
-      tip.classList.add('show');
-    };
-    const hide = () => tip.classList.remove('show');
-    $$('#rdPlot .rd-col').forEach(col => {
-      col.addEventListener('pointerenter', () => show(col));
-      col.addEventListener('focus', () => show(col));
-      col.addEventListener('blur', hide);
-    });
-    plot.addEventListener('pointerleave', hide);
-  }
-
-  /* the pickers: an area row, the area select, an agreement row, the agreement select */
-  $$('#rd [data-rdarea]').forEach(b => b.addEventListener('click', () => {
-    const id = b.dataset.rdarea;
-    rdArea = (!id || rdArea === id) ? null : id;
-    rdMore.area = false;
-    rdRerender(m, rdArea ? `#rd [data-rdarea="${rdArea}"]` : '#rd .rd-row');
-  }));
-  const as = $('#rdAreaSel'); if(as) as.addEventListener('change', () => {
-    rdArea = as.value; rdMore.area = false; rdRerender(m, '#rdAreaSel');
+function rdPickAgr(m, name, focusSel){
+  rdAgr = rdAgr === name ? null : name;
+  rdMore.agr = false;
+  $$('#rd [data-rdagr]').forEach(b => {
+    const on = b.dataset.rdagr === rdAgr;
+    b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on));
   });
-  $$('#rd [data-rdagr]').forEach(b => b.addEventListener('click', () => {
-    rdAgr = rdAgr === b.dataset.rdagr ? null : b.dataset.rdagr;
-    rdMore.agr = false;
-    rdRerender(m, rdAgr ? `#rd [data-rdagr="${CSS.escape(rdAgr)}"]` : '#rd .rd-ag');
-  }));
+  const {lens} = rdPanels(m);
+  rdSwap('rdAgrTx', rdAgrTxPanel(m, lens));
+  rdWireTx(m);
+  if(focusSel){ const f = $(focusSel); if(f) f.focus({preventScroll:true}); }
+}
+/* the controls inside the two transaction panels — rebound whenever one is rebuilt */
+function rdWireTx(m){
+  const as = $('#rdAreaSel'); if(as) as.addEventListener('change', () => {
+    rdArea = null; rdPickArea(m, as.value, '#rdAreaSel');
+  });
   const gs = $('#rdAgrSel'); if(gs) gs.addEventListener('change', () => {
-    rdAgr = gs.value; rdMore.agr = false; rdRerender(m, '#rdAgrSel');
+    rdAgr = null; rdPickAgr(m, gs.value, '#rdAgrSel');
   });
   $$('#rd [data-rdmore]').forEach(b => b.addEventListener('click', () => {
     const k = b.dataset.rdmore; rdMore[k] = !rdMore[k];
-    rdRerender(m, `#rd [data-rdmore="${k}"]`);
+    const {lens, ranked} = rdPanels(m);
+    if(k === 'area') rdSwap('rdAreaTx', rdAreaTxPanel(m, lens, ranked));
+    else rdSwap('rdAgrTx', rdAgrTxPanel(m, lens));
+    rdWireTx(m);
+    const f = $(`#rd [data-rdmore="${k}"]`); if(f) f.focus({preventScroll:true});
   }));
   $$('#rd [data-rddc]').forEach(b => b.addEventListener('click', () => openDataCenter()));
   $$('#rd [data-rpgo]').forEach(b => b.addEventListener('click', () => {
     navAt = b.dataset.rpgo; renderNav(); setView();
   }));
+}
+function rdWire(m){
+  const root = $('#rd'); if(!root) return;
+  const lens = rdLens();
+
+  /* the hover layer on the columns: one tooltip, filled per month and parked
+     above that month's column. Coalesced into the pointer's own event, no rAF:
+     the work is one innerHTML and two style writes. */
+  const plot = $('#rdPlot'), tip = $('#rdTip');
+  if(plot && tip){
+    const ranked = [...m.cats].sort((a, b) => lens.area(b) - lens.area(a) || b.spend - a.spend);
+    const inks = rdInks(lens, ranked);
+    const win = rdWindow();
+    const series = ranked.map(c => ({c, s:rdSeries('area:' + c.id, lens.area(c))}));
+    const show = slot => {
+      const i = +slot.dataset.mi;
+      const t = series.reduce((s, r) => s + r.s[i], 0);
+      const parts = series.filter(r => r.s[i] > 0).sort((p, q) => q.s[i] - p.s[i]);
+      tip.innerHTML = `<b><span>${rdMonthLabel(win[i], true)}</span><span>${rdMoney(t, lens, m)} <small>kr.</small></span></b>
+        ${parts.map(r => `<span class="rd-tip-r${rdArea && rdArea !== r.c.id ? ' dim' : ''}" style="${rdInkCss(inks[r.c.id])}">
+          <i></i><span>${r.c.n}</span><span>${rpNum(r.s[i], m.peer)}</span></span>`).join('')}`;
+      const col = slot.querySelector('.rd-col');
+      const x = slot.offsetLeft + slot.offsetWidth / 2;
+      const half = tip.offsetWidth / 2 || 105;
+      const top = col ? [...col.children].reduce((h, seg) => h + seg.offsetHeight + 2, 0) : 0;
+      tip.style.left = `${Math.max(half, Math.min(plot.clientWidth - half, x))}px`;
+      tip.style.bottom = `${Math.min(plot.clientHeight - 8, top + 8)}px`;
+      tip.classList.add('show');
+    };
+    const hide = () => { tip.classList.remove('show'); $$('#rdPlot .rd-slot.pin').forEach(x => x.classList.remove('pin')); };
+    $$('#rdPlot .rd-slot').forEach(slot => {
+      slot.addEventListener('pointerenter', e => { if(e.pointerType !== 'touch') show(slot); });
+      slot.addEventListener('focus', () => show(slot));
+      slot.addEventListener('blur', hide);
+      /* a finger has no hover: the tap pins the month, the next tap elsewhere lets go */
+      slot.addEventListener('pointerdown', e => {
+        if(e.pointerType !== 'touch') return;
+        const was = slot.classList.contains('pin');
+        hide(); if(!was){ slot.classList.add('pin'); show(slot); }
+      });
+    });
+    plot.addEventListener('pointerleave', e => { if(e.pointerType !== 'touch') hide(); });
+    document.addEventListener('pointerdown', e => { if(!plot.contains(e.target)) hide(); }, {passive:true});
+  }
+
+  /* the pickers: an area row or key entry, an agreement row */
+  $$('#rd [data-rdarea]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.rdarea;
+    rdPickArea(m, id, id ? `#rd .rd-row[data-rdarea="${id}"]` : '#rd .rd-row');
+  }));
+  $$('#rd [data-rdagr]').forEach(b => b.addEventListener('click', () => {
+    rdPickAgr(m, b.dataset.rdagr, `#rd [data-rdagr="${CSS.escape(b.dataset.rdagr)}"]`);
+  }));
+  rdWireTx(m);
 }
 
 /* The shell. It owns the frame — hero, controls, the ruled figure band, the
