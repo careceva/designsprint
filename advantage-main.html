@@ -816,7 +816,7 @@ body.ledger-on{--appbar-h:80px}
   padding:0 5px;border-radius:var(--rounded-xs);background:var(--surface);border:1px solid var(--sidebar-border);
   box-shadow:var(--shadow-2xs);font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground)}
 /* connected ERP status */
-.erp{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s3) 0 var(--s3);
+.erp{display:flex;align-items:center;gap:var(--s2);height:44px;padding:0 var(--s4);
   background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
   box-shadow:var(--shadow-2xs);cursor:pointer;transition:var(--t-fast)}
 .erp:hover{border-color:var(--general-border);background:var(--brand-ice)}
@@ -831,7 +831,6 @@ body.ledger-on{--appbar-h:80px}
 .erp.none .et b{color:var(--general-primary)}
 @keyframes pip{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.5);opacity:0}}
 .erp .et{display:flex;flex-direction:column;line-height:1.25}
-.erp{padding-right:var(--s1)}
 .erp .et b{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
 /* sync — lives inside the pill, degrades to icon-only when the header tightens */
 .syncbtn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;
@@ -2751,7 +2750,8 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .agv .cmp-note{margin-top:0}
 /* the year in kroner on each side of the comparison */
 .cmp-kr{margin-top:var(--s4);font-size:var(--text-lg);font-weight:700;font-variant-numeric:tabular-nums}
-.cmp-kr small{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.cmp-kr span{display:block;margin-bottom:2px;font-size:var(--text-sm);font-weight:500;
+  color:var(--general-muted-foreground)}
 .cmp-c.win .cmp-kr{color:var(--sentiment-positive)}
 .cmp-c.estimated .cmp-kr{color:var(--general-muted-foreground)}
 @container catmain (max-width:560px){
@@ -3381,6 +3381,8 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .pkg-fig:has(.fig-doc),.pkg-fig:has(.fig-doc) small{color:var(--general-primary)}
 .pkg-fig:has(.fig-est),.pkg-fig:has(.fig-est) small{color:var(--general-muted-foreground)}
 .pkg-money em{font-style:normal;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+/* the "Start here" picks: no line two, so the figure and its "a year" share one baseline */
+.pkg-lean .pkg-money{flex-direction:row;align-items:baseline;gap:var(--s1)}
 /* the CTA rides above the stretched link. It used to fade in on row hover, which
    left the row's only real action permanently washed out on a phone. */
 .pkg-cta{position:relative;z-index:1;
@@ -3402,8 +3404,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 /* centred copy needs a caption measure, not a reading measure */
 .pkg-none p{max-width:34ch;font-size:var(--text-sm);line-height:1.6;
   color:var(--general-muted-foreground)}
-.pkg-ill{width:126px;height:100px;color:#d8d8de}
-.pkg-ill-a{color:var(--general-primary);opacity:.5}
+.pkg-ill{width:84px;height:84px}
 /* the rule spans the list it divides — the list is pulled out to the tile edge */
 .pkg-none-sep{margin:0 calc(var(--s3) * -1);padding:var(--s4) var(--s3) 0;
   border-top:1px solid var(--hairline)}
@@ -6800,13 +6801,6 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 .aga-st.on.idle{color:var(--sentiment-negative-ink-on-tint);border-color:currentColor}
 /* the price-rise notice: the same tint recipe as the negative chip, inside the
    page-level card so it steps the radius down to --rounded-lg */
-.cat-rise{border:1px solid color-mix(in srgb,var(--sentiment-negative) 30%,var(--surface));
-  border-radius:var(--rounded-lg);padding:var(--s6);
-  background:color-mix(in srgb,var(--sentiment-negative) 5%,var(--surface))}
-.cat-rise h3{display:flex;align-items:center;gap:var(--s2);margin:0;
-  font-size:var(--text-lg);letter-spacing:-.4px;color:var(--sentiment-negative-ink-on-tint)}
-.cat-rise h3 svg{width:20px;height:20px;flex:0 0 auto}
-.cat-rise p{margin:var(--s3) 0 var(--s4);max-width:64ch;font-size:var(--text-base);line-height:1.55}
 /* the way onward from an assistant reply: a small secondary pill, .btn-sm sized */
 .ap-go{display:inline-flex;align-items:center;gap:6px;margin-top:var(--s2);height:32px;
   padding:0 var(--s3);border:1px solid var(--hairline);border-radius:var(--rounded-full);
@@ -9295,12 +9289,12 @@ function pkgCardMoneyHTML(x){
 }
 /* One row. The name carries a stretched link over the whole row so the CTA beside
    it can be a real button rather than a button inside a button. */
-function pkgCardRowHTML(x, cta){
-  const money = pkgCardMoneyHTML(x), note = pkgCardNote(x);
+function pkgCardRowHTML(x, cta, lean){
+  const money = pkgCardMoneyHTML(x), note = lean ? '' : pkgCardNote(x);
   const save = x.a ? (x.on && agLanding(x.a) ? `${fmt(x.a.save)} kr. saved`
     : `${saveFig(x.a.save, isEstimated(x.a))} kr. a year`) : '';
   return `
-    <li class="pkg-item" style="--b:${x.b}">
+    <li class="pkg-item${lean ? ' pkg-lean' : ''}" style="--b:${x.b}">
       <div class="pkg-row pkg-crow" data-pkg="${apEsc(x.n)}">
         ${pkgLogoHTML(x.n)}
         <span class="pkg-t">
@@ -9308,7 +9302,7 @@ function pkgCardRowHTML(x, cta){
             <button type="button" class="pkg-open" data-pkg="${apEsc(x.n)}"
               aria-label="${apEsc(`${x.n}, ${x.catN}${save ? `: ${save}` : ''}`)}">${x.n}</button>
             ${x.isNew ? '<span class="cnew">New</span>' : ''}
-            <span class="pkg-cat" aria-hidden="true">${x.catN}</span>
+            ${lean ? '' : `<span class="pkg-cat" aria-hidden="true">${x.catN}</span>`}
           </span>
           ${note ? `<span class="pkg-s">${note}</span>` : ''}
         </span>
@@ -9321,18 +9315,16 @@ function pkgCardRowHTML(x, cta){
 const PKG_SHOP_CTA  = {act:'shop',  label:'Webshop'};
 const PKG_CHECK_CTA = {act:'check', label:'Check'};
 
-/* the line drawing for an account with nothing switched on: an invoice with an
-   agreement tag clipped onto it — the tag is the rate, the invoice is where it
-   has to land before any of it is money. Muted line work, the tag in brand ink. */
-const PKG_ILL = `<svg class="pkg-ill" viewBox="0 0 126 100" fill="none" aria-hidden="true" focusable="false">
-  <path d="M20 10h44a6 6 0 016 6v62a6 6 0 01-6 6H20a6 6 0 01-6-6V16a6 6 0 016-6z" stroke="currentColor" stroke-width="2"/>
-  <path d="M24 26h36M24 37h36M24 48h21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  <path d="M24 70h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 6"/>
-  <g class="pkg-ill-a">
-    <path d="M77 44h27a7 7 0 017 7v18a7 7 0 01-7 7H77L62 60l15-16z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-    <circle cx="78.5" cy="60" r="3.5" stroke="currentColor" stroke-width="2"/>
-    <path d="M89 55h13M89 66h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </g>
+/* the artwork for an account with nothing switched on: a document with a plus,
+   brand-ink gradient (assets/add agreements.svg, inlined) */
+const PKG_ILL = `<svg class="pkg-ill" viewBox="0 0 84 84" fill="none" aria-hidden="true" focusable="false">
+  <path d="M71.0358 26.0892L52.6608 7.71422C52.2948 7.34868 51.8605 7.05883 51.3825 6.86121C50.9045 6.6636 50.3922 6.56209 49.875 6.5625H18.375C16.6345 6.5625 14.9653 7.25391 13.7346 8.48461C12.5039 9.71532 11.8125 11.3845 11.8125 13.125V70.875C11.8125 72.6155 12.5039 74.2847 13.7346 75.5154C14.9653 76.7461 16.6345 77.4375 18.375 77.4375H65.625C67.3655 77.4375 69.0347 76.7461 70.2654 75.5154C71.4961 74.2847 72.1875 72.6155 72.1875 70.875V28.875C72.1879 28.3578 72.0864 27.8455 71.8888 27.3675C71.6912 26.8895 71.4013 26.4552 71.0358 26.0892ZM52.5 18.7031L60.0469 26.25H52.5V18.7031ZM19.6875 69.5625V14.4375H44.625V30.1875C44.625 31.2318 45.0398 32.2333 45.7783 32.9717C46.5167 33.7102 47.5182 34.125 48.5625 34.125H64.3125V69.5625H19.6875ZM53.8125 49.875C53.8125 50.9193 53.3977 51.9208 52.6592 52.6592C51.9208 53.3977 50.9193 53.8125 49.875 53.8125H45.9375V57.75C45.9375 58.7943 45.5227 59.7958 44.7842 60.5342C44.0458 61.2727 43.0443 61.6875 42 61.6875C40.9557 61.6875 39.9542 61.2727 39.2158 60.5342C38.4773 59.7958 38.0625 58.7943 38.0625 57.75V53.8125H34.125C33.0807 53.8125 32.0792 53.3977 31.3408 52.6592C30.6023 51.9208 30.1875 50.9193 30.1875 49.875C30.1875 48.8307 30.6023 47.8292 31.3408 47.0908C32.0792 46.3523 33.0807 45.9375 34.125 45.9375H38.0625V42C38.0625 40.9557 38.4773 39.9542 39.2158 39.2158C39.9542 38.4773 40.9557 38.0625 42 38.0625C43.0443 38.0625 44.0458 38.4773 44.7842 39.2158C45.5227 39.9542 45.9375 40.9557 45.9375 42V45.9375H49.875C50.9193 45.9375 51.9208 46.3523 52.6592 47.0908C53.3977 47.8292 53.8125 48.8307 53.8125 49.875Z" fill="url(#pkg-ill-grad)"/>
+  <defs>
+    <linearGradient id="pkg-ill-grad" x1="24" y1="6.5625" x2="29.2175" y2="77.0141" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0133FA"/>
+      <stop offset="1" stop-color="#B5C5FF"/>
+    </linearGradient>
+  </defs>
 </svg>`;
 
 /* the three worth looking at first, for an account with nothing switched on:
@@ -9349,7 +9341,7 @@ function pkgNoneHTML(){
     </div>
     ${picks.length ? `
       <div class="pkg-none-sep"><span class="act-eyebrow">Start here</span></div>
-      <ol class="pkg-list">${picks.map(x => pkgCardRowHTML(x, PKG_CHECK_CTA)).join('')}</ol>` : ''}`;
+      <ol class="pkg-list">${picks.map(x => pkgCardRowHTML(x, PKG_CHECK_CTA, true)).join('')}</ol>` : ''}`;
 }
 
 /* what the rows share, said once. How many of the figures above were read off
@@ -14868,6 +14860,11 @@ function agrValueHTML(r, a){
   const d = CDET[a.n] || {ulabel:'price index · your basket = 100',
     a:`${100 - spread}–${100 + spread}`, b:String(100 - rate), bonus:'Standard terms', why:[]};
   const kr = n => cmpEst ? `about ${fmtCompact(n)}` : fmt(n);
+  /* the kroner on each card is SPEND, not saving — unlabelled, "423.700 kr." next
+     to a green card was read as the saving. The label says whose money and when. */
+  const krL = cmpEst ? ['Typical spend a year', 'Typical spend on the agreement']
+    : landing ? ['You’d spend a year at list price', 'You spend a year']
+    : ['You spend a year', 'You’d spend a year'];
 
   return `
   <section class="agv" aria-labelledby="agvH">
@@ -14893,7 +14890,7 @@ function agrValueHTML(r, a){
           <div class="cmp-sup">${a.n}</div>
           <div class="price">${d.a}</div>
           <div class="unit">${d.ulabel}</div>
-          <div class="cmp-kr">${kr(a.covers)} kr.<small> a year</small></div>
+          <div class="cmp-kr"><span>${krL[0]}</span>${kr(a.covers)} kr.</div>
           <div class="bonus">No agreement</div>
         </div>
         <div class="cmp-arrow">
@@ -14905,7 +14902,7 @@ function agrValueHTML(r, a){
           <div class="cmp-sup">${a.n}</div>
           <div class="price">${d.b}</div>
           <div class="unit">${d.ulabel}</div>
-          <div class="cmp-kr">${kr(a.covers - a.save)} kr.<small> a year</small></div>
+          <div class="cmp-kr"><span>${krL[1]}</span>${kr(a.covers - a.save)} kr.</div>
           <div class="bonus">${d.bonus === 'Standard terms' ? 'Group terms' : d.bonus}</div>
         </div>
       </div>
@@ -15040,21 +15037,6 @@ function renderCatTabAgreement(r, idx){
               : `<button class="btn btn-primary btn-block" id="catTabDeal">Talk to my advisor</button>`}`
     : `<button class="btn btn-primary btn-block" id="catTabActivate">Activate this agreement</button>
        ${challengeHTML}`;
-  /* the price rise the rail and the notifications point at lands HERE, on the
-     agreement that rose, with what it costs and the one thing to do about it */
-  const riseHTML = risen ? `
-    <section class="opp-sec cat-rise" aria-labelledby="catRiseH">
-      <h3 id="catRiseH">${agIc('alert')} ${a.n} raised prices ${rise.pct}% ${rise.when}</h3>
-      <p>On the ${fmt(a.covers)} kr. a year you buy through this agreement, that is about
-        <b>${fmt(rise.cost)} kr. a year</b> more than the rate agreed for the group — the
-        saving on this page is still ${fmt(a.save)} kr. against list, but ${fmt(rise.cost)} kr.
-        of it is now being given back. The group rate is the contract; a rise on top of it
-        can be challenged without leaving the supplier.</p>
-      <div class="opp-contact-actions">
-        <button type="button" class="btn btn-primary" id="catRiseChallenge">Challenge the price rise</button>
-        <button type="button" class="btn btn-secondary" id="catRiseAdvisor">Ask Peter to take it up</button>
-      </div>
-    </section>` : '';
 
   catTabShell(
     /* no back button of its own any more: the shell's breadcrumb already carries
@@ -15074,7 +15056,6 @@ function renderCatTabAgreement(r, idx){
           : {k:a.req && !pending ? 'You buy through them' : 'You spend with them', v:fmt(a.covers), s:'kr. a year'}
       ]),
     `
-    ${riseHTML}
     ${reqCardsHTML(mine ? [mine] : [])}
     ${agrValueHTML(r, a)}
     ${agrBenefitsHTML(r, a)}
@@ -15091,13 +15072,8 @@ function renderCatTabAgreement(r, idx){
   if(heroDeal) heroDeal.addEventListener('click', () => openAdvisorMeeting(r));
   const heroBuyer = $('#catTabBuyer');
   if(heroBuyer) heroBuyer.addEventListener('click', () => openContactBuyer(r, a));
-  ['#catTabChallenge', '#catRiseChallenge'].forEach(sel => {
+  ['#catTabChallenge'].forEach(sel => {
     const b = $(sel); if(b) b.addEventListener('click', () => openPriceChallenge(r, a));
-  });
-  const riseAdv = $('#catRiseAdvisor');
-  if(riseAdv) riseAdv.addEventListener('click', () => {
-    toggleAgent(true); apTab = 'peter'; renderApThread();
-    agentAsk(`${a.n} has raised prices ${priceRiseOf().pct}% — can you take it up with them on the group's behalf?`);
   });
   const upLink = $('#cmpUploadLink');
   if(upLink) upLink.addEventListener('click', e => { e.preventDefault(); openDataCenter(); });

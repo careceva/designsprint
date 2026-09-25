@@ -166,6 +166,8 @@ jobs:
       - name: Put the preview link on the pull request
         env:
           GH_TOKEN: ${{ github.token }}
+          # this job has no checkout, so gh can't read the repo from .git
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           branch="${{ github.head_ref }}"
