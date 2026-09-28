@@ -8712,7 +8712,7 @@ const agbLogo = name => {
   const l = AGB_LOGO[name];
   if(!l) return `<span class="agb-logo"><i>${initialsOf(name)}</i></span>`;
   return `<span class="agb-logo${l.mark ? ' mark' : ''}"${l.bg ? ` style="background:${l.bg}"` : ''}>
-    <img src="assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
+    <img src="../../../assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
 };
 /* ============================================================================
    THE AGREEMENT PACKAGE — the left bento cell on the Overview, and its sheet.
@@ -8841,7 +8841,7 @@ function pkgLogoHTML(n){
   const l = AGB_LOGO[n];
   if(!l) return `<span class="pkg-logo init" aria-hidden="true">${initialsOf(n)}</span>`;
   return `<span class="pkg-logo${l.mark ? ' mark' : ''}"${l.bg ? ` style="background:${l.bg}"` : ''}>
-    <img src="assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
+    <img src="../../../assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
 }
 /* a customer with no data of her own has nothing switched on. Her roster is a
    copy of Bob's (DATASETS.fanny === ROWS_BOB), req flags and all, and those are

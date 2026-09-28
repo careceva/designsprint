@@ -493,7 +493,7 @@ table.dt tr.off td{color:var(--general-muted-foreground)}
     <!-- ==================== LOGIN ==================== -->
     <section class="scr on mid" id="s-login" aria-labelledby="h-login">
       <div class="login">
-        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <img class="mark" src="../../../assets/advantage-logo.svg" alt="Advantage">
         <h1 id="h-login">Welcome</h1>
         <p class="lead">One number and one thing to do about it. Choose an account to sign in.</p>
 
@@ -526,7 +526,7 @@ table.dt tr.off td{color:var(--general-muted-foreground)}
   <div class="wrap">
 
     <header class="appbar">
-      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="brand"><img src="../../../assets/advantage-logo.svg" alt="Advantage"></span>
       <span class="spacer"></span>
       <div class="userwrap">
         <button class="user" id="userBtn" aria-label="Account menu" aria-expanded="false">
@@ -670,7 +670,7 @@ const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 function logoTile(name, cls){
   const b = BRAND[name];
   return b
-    ? `<span class="${cls}" style="background:${b.bg}"><img src="assets/company-logos/${b.f}" alt=""></span>`
+    ? `<span class="${cls}" style="background:${b.bg}"><img src="../../../assets/company-logos/${b.f}" alt=""></span>`
     : `<span class="${cls}"><span class="ini">${initials(name)}</span></span>`;
 }
 

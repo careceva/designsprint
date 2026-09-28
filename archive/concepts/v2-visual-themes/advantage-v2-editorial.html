@@ -3149,7 +3149,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   <!-- ==================== 1 · LOGIN ==================== -->
   <section class="scr on mid" id="s-login" aria-labelledby="h-login">
     <div class="login">
-      <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+      <img class="mark" src="../../../assets/advantage-logo.svg" alt="Advantage">
       <h1 id="h-login">Welcome</h1>
       <p class="lead">Your invoices already know where the money is going. Choose an account to sign in and we'll read them.</p>
 
@@ -3202,7 +3202,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
   <div class="wrap">
 
     <header class="appbar">
-      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="brand"><img src="../../../assets/advantage-logo.svg" alt="Advantage"></span>
       <span class="spacer"></span>
       <div class="search">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
@@ -3269,7 +3269,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
     <div class="appbody">
       <nav class="rail" id="rail" aria-label="Main">
         <button class="agent-btn" id="agentBtn" data-tip="Saving assistant" aria-expanded="false">
-          <img class="sda" src="assets/sda-mark.svg" alt="">
+          <img class="sda" src="../../../assets/sda-mark.svg" alt="">
           <span class="ab"><b>Saving assistant</b><span>Ask it anything</span></span>
         </button>
         <div class="nav" id="nav"></div>
@@ -3285,7 +3285,7 @@ body.activity-on.activity-mini .canvas{padding-right:calc(76px + var(--s8))}
           <header class="ap-h">
             <div>
               <div class="ap-eyebrow">Made to make your procurement easier</div>
-              <h3 id="apT" tabindex="-1">Saving assistant <img class="sda" src="assets/sda-mark.svg" alt=""></h3>
+              <h3 id="apT" tabindex="-1">Saving assistant <img class="sda" src="../../../assets/sda-mark.svg" alt=""></h3>
             </div>
             <button class="apx" id="apWide" aria-label="Expand panel">
               <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 20h5v-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4l6 6M20 20l-6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
@@ -3786,7 +3786,7 @@ function renderApSubject(){
   el.hidden = !apSubject;
   if(!apSubject) return;
   el.innerHTML = `
-    <img class="sda" src="assets/sda-mark.svg" alt="">
+    <img class="sda" src="../../../assets/sda-mark.svg" alt="">
     <span class="ap-subj-t"><span>Asking about</span><b>${apSubject}</b></span>
     <button type="button" class="ap-subj-x" id="apSubjX" aria-label="Clear subject">
       <svg viewBox="0 0 24 24" fill="none"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
@@ -4405,7 +4405,7 @@ function agrLogoChip(name){
   return `<span class="agr-chip"${brand
     ? ` style="background:${brand.bg}"`
     : ' data-initials="1"'}>${brand
-    ? `<img src="assets/company-logos/${brand.f}" alt="">`
+    ? `<img src="../../../assets/company-logos/${brand.f}" alt="">`
     : `<span class="agr-chip-i">${initialsOf(name)}</span>`}</span>`;
 }
 /* two curated reasons where we have them (CDET); a still-true, still-specific fallback
@@ -5027,7 +5027,7 @@ function renderNewCustomerDash(){
                 <b>Hi, I'm your assistant</b>
                 <span>I can help you get started</span>
               </span>
-              <img class="sda nc-asst-mark" src="assets/sda-mark.svg" alt="">
+              <img class="sda nc-asst-mark" src="../../../assets/sda-mark.svg" alt="">
             </button>
           </header>
 
@@ -5141,7 +5141,7 @@ function renderNewCustomerDash(){
                 </ul>
                 <button class="btn btn-primary nc-advisory-cta" id="ncAskAssistant">Ask the saving assistant</button>
                 <footer class="nc-advisory-foot">
-                  <img class="sda" src="assets/sda-mark.svg" alt="">
+                  <img class="sda" src="../../../assets/sda-mark.svg" alt="">
                   <span>Powered by the Advantage saving assistant</span>
                 </footer>
               </div>
@@ -6614,8 +6614,8 @@ function recommendedIdx(r){
 function agrLogoTile(name){
   const b = AGR_BRAND[name];
   if(b && b.bg.toLowerCase() !== '#ffffff')
-    return `<span class="agc-logo" style="background:${b.bg}"><img src="assets/company-logos/${b.f}" alt=""></span>`;
-  if(b) return `<span class="agc-logo tint"><img src="assets/company-logos/${b.f}" alt=""></span>`;
+    return `<span class="agc-logo" style="background:${b.bg}"><img src="../../../assets/company-logos/${b.f}" alt=""></span>`;
+  if(b) return `<span class="agc-logo tint"><img src="../../../assets/company-logos/${b.f}" alt=""></span>`;
   return `<span class="agc-logo tint"><span class="agc-logo-i">${initialsOf(name)}</span></span>`;
 }
 
@@ -6664,7 +6664,7 @@ function catOtherHTML(cur){
 const agrAskBtn = (catId, idx) => `
   <button type="button" class="ac-ask" data-ask="${idx}" data-askcat="${catId}"
     aria-label="Ask the saving assistant about this agreement">
-    <img src="assets/sda-mark.svg" alt="">Ask
+    <img src="../../../assets/sda-mark.svg" alt="">Ask
   </button>`;
 
 /* ============ price challenge ============
@@ -6785,7 +6785,7 @@ function renderPriceChallenge(){
       </div>
       <div id="pcQuoteWrap">${pcQuoteHTML()}</div>
       <div class="pc-eviq">
-        <div class="pc-evi-h"><img src="assets/sda-mark.svg" alt="">What we can put behind this</div>
+        <div class="pc-evi-h"><img src="../../../assets/sda-mark.svg" alt="">What we can put behind this</div>
         <ul class="pc-evi">
           ${pcEvidence(r, a).map(e => `<li><span class="pc-evi-ic">${TICK}</span><span>${e}</span></li>`).join('')}
         </ul>
@@ -6811,7 +6811,7 @@ function renderPriceChallenge(){
   } else if(step === 2){
     body.innerHTML = `
       <div class="pc-draft">
-        <div class="pc-draft-h"><img src="assets/sda-mark.svg" alt="">
+        <div class="pc-draft-h"><img src="../../../assets/sda-mark.svg" alt="">
           Drafted for you — edit anything before it goes
           <span class="spacer"></span>
           <button type="button" class="linkbtn" id="pcRedraft">Start over</button>
@@ -7147,7 +7147,7 @@ function renderCustomRequest(){
             ? `${named.length ? ', and ' : ''}${grp.count} more without an agreement` : ''}.</span>
       </div>
       <div class="pc-draft">
-        <div class="pc-draft-h"><img src="assets/sda-mark.svg" alt="">
+        <div class="pc-draft-h"><img src="../../../assets/sda-mark.svg" alt="">
           Drafted for you — edit anything before it goes
           <span class="spacer"></span>
           <button type="button" class="linkbtn" id="crRedraft">Start over</button>
@@ -7499,7 +7499,7 @@ function renderCatTab(r){
     const mine = reqForAgr(r.id, a.n);
     return `
     <li class="agc${a.req ? ' on' : ''}${i === recIdx ? ' rec' : ''}" style="--b:${brandOf(a.n)}">
-      ${i === recIdx ? `<div class="agc-rec"><img src="assets/sda-mark.svg" alt="">
+      ${i === recIdx ? `<div class="agc-rec"><img src="../../../assets/sda-mark.svg" alt="">
         Recommended by Advantage specialist</div>` : ''}
       ${agrAskBtn(r.id, i)}
       <div class="agc-top">
@@ -7536,7 +7536,7 @@ function renderCatTab(r){
     const rate = Math.round(a.save / a.covers * 100);
     return `
     <li class="ac${a.req ? ' on' : ''}${i === recIdx ? ' rec' : ''}" style="--b:${brandOf(a.n)}">
-      ${i === recIdx ? `<div class="agc-rec"><img src="assets/sda-mark.svg" alt="">
+      ${i === recIdx ? `<div class="agc-rec"><img src="../../../assets/sda-mark.svg" alt="">
         Recommended by Advantage specialist</div>` : ''}
       ${agrAskBtn(r.id, i)}
       <div class="ac-h">
@@ -8204,7 +8204,7 @@ function renderContactBuyer(){
       </ul>
     </div>
     <div class="pc-draft" style="margin-top:var(--s6)">
-      <div class="pc-draft-h"><img src="assets/sda-mark.svg" alt="">
+      <div class="pc-draft-h"><img src="../../../assets/sda-mark.svg" alt="">
         Drafted for you — edit anything before it goes</div>
       <textarea id="cbText" aria-label="Message to the buyer">Hi,
 

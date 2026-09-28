@@ -566,7 +566,7 @@ tfoot td{border-bottom:none;border-top:1px solid var(--hairline);background:#fcf
     <!-- ==================== LOGIN ==================== -->
     <section class="scr on mid" id="s-login" aria-labelledby="h-login">
       <div class="login">
-        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <img class="mark" src="../../../assets/advantage-logo.svg" alt="Advantage">
         <h1 id="h-login">Welcome</h1>
         <p class="lead">Every figure in here can be traced to where it came from — including
           the ones we had to estimate. Choose an account.</p>
@@ -598,7 +598,7 @@ tfoot td{border-bottom:none;border-top:1px solid var(--hairline);background:#fcf
 <div class="app" id="app">
   <div class="wrap">
     <header class="appbar">
-      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="brand"><img src="../../../assets/advantage-logo.svg" alt="Advantage"></span>
       <span class="spacer"></span>
       <button class="basis" id="basisPill" type="button"></button>
       <button class="btn btn-ghost btn-sm" id="methodTop" type="button">
@@ -799,7 +799,7 @@ function initialsOf(name){
 function logoChip(name){
   const l = LOGOS[name];
   return l
-    ? `<span class="logo" style="background:${l.bg}"><img src="assets/company-logos/${l.f}" alt=""></span>`
+    ? `<span class="logo" style="background:${l.bg}"><img src="../../../assets/company-logos/${l.f}" alt=""></span>`
     : `<span class="logo" data-initials="1">${esc(initialsOf(name))}</span>`;
 }
 

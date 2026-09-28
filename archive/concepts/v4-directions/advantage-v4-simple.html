@@ -167,7 +167,7 @@ main{flex:1;min-width:0;padding:var(--s8) var(--s6) var(--s12)}
 <!-- ============ login ============ -->
 <div class="login">
   <div class="login-box">
-    <img src="assets/advantage-logo.svg" alt="Advantage">
+    <img src="../../../assets/advantage-logo.svg" alt="Advantage">
     <h1>Welcome back</h1>
     <p>Choose an account to continue.</p>
     <div class="who">
@@ -186,7 +186,7 @@ main{flex:1;min-width:0;padding:var(--s8) var(--s6) var(--s12)}
 <!-- ============ app ============ -->
 <div class="app">
   <header class="top">
-    <img src="assets/advantage-logo.svg" alt="Advantage">
+    <img src="../../../assets/advantage-logo.svg" alt="Advantage">
     <span class="spacer"></span>
     <button class="btn btn-ghost btn-sm" onclick="signOut()">Switch account</button>
     <div class="me"><span class="av" id="meAv">BI</span><span id="meName">Bob</span></div>
@@ -348,7 +348,7 @@ function draw(){
         ${next.map(c => `
         <div class="card">
           <div class="logo" style="background:${c.logo ? c.bg : 'var(--ice)'};${c.logo ? '' : 'color:var(--primary)'}">
-            ${c.logo ? `<img src="assets/company-logos/${c.logo}" alt="">`
+            ${c.logo ? `<img src="../../../assets/company-logos/${c.logo}" alt="">`
                      : c.deal.split(' ').map(w => w[0]).slice(0,2).join('')}
           </div>
           <h3>${c.deal}</h3>

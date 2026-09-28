@@ -592,7 +592,7 @@ body.in-app .flow{display:none}
     <!-- ==================== 1 · LOGIN ==================== -->
     <section class="scr on mid" id="s-login" aria-labelledby="h-login">
       <div class="login">
-        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <img class="mark" src="../../../assets/advantage-logo.svg" alt="Advantage">
         <h1 id="h-login">Welcome</h1>
         <p class="lead">You are not buying alone. 2.850 companies pool their purchasing here — that pool is why your prices look the way they do.</p>
 
@@ -631,7 +631,7 @@ body.in-app .flow{display:none}
   <div class="wrap">
 
     <header class="appbar">
-      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="brand"><img src="../../../assets/advantage-logo.svg" alt="Advantage"></span>
       <span class="spacer"></span>
       <button class="poolpill" id="poolPill" type="button">
         <span class="live" aria-hidden="true"></span>
@@ -899,7 +899,7 @@ function initials(name){
 function supChip(name){
   const a = SUP_ART[name];
   return `<span class="sup"><span class="lg"${a ? ` style="background:${a.bg}"` : ''}>${a
-    ? `<img src="assets/company-logos/${a.f}" alt="">`
+    ? `<img src="../../../assets/company-logos/${a.f}" alt="">`
     : `<span class="ini">${initials(name)}</span>`}</span>${name}</span>`;
 }
 const icon = id => `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[id]}</svg>`;

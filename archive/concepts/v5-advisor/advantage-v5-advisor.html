@@ -621,7 +621,7 @@ body.in-app .flow{display:none}
   <main class="stage">
     <section class="scr on mid" id="s-login" aria-labelledby="h-login">
       <div class="login">
-        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <img class="mark" src="../../../assets/advantage-logo.svg" alt="Advantage">
         <h1 id="h-login" tabindex="-1">Welcome</h1>
         <p class="lead">We read your invoices and tell you what to do next. Pick an account.</p>
         <div class="card login-choice">
@@ -653,7 +653,7 @@ body.in-app .flow{display:none}
   <div class="wrap">
 
     <header class="appbar">
-      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="brand"><img src="../../../assets/advantage-logo.svg" alt="Advantage"></span>
       <span class="spacer"></span>
       <div class="erp" id="erpPill"><span class="live"></span><span id="erpTxt">Visma.net connected</span></div>
       <div class="userwrap">
@@ -698,7 +698,7 @@ body.in-app .flow{display:none}
 <!-- assistant -->
 <aside class="asst" id="asst" aria-label="Advantage assistant" aria-hidden="true">
   <div class="asst-h">
-    <img src="assets/sda-mark.svg" alt="">
+    <img src="../../../assets/sda-mark.svg" alt="">
     <b>Assistant</b>
     <button class="asst-x" id="asstX" aria-label="Close assistant">
       <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
@@ -961,7 +961,7 @@ $('#railTog').addEventListener('click', () => {
    ========================================================================== */
 function renderAdvisor(){
   const q = queue();
-  const parts = ['<div class="adv-head"><img src="assets/sda-mark.svg" alt="">' +
+  const parts = ['<div class="adv-head"><img src="../../../assets/sda-mark.svg" alt="">' +
     '<span><b>Your advisor</b><span>One thing at a time</span></span></div>'];
 
   if(q.length){
@@ -976,7 +976,7 @@ function renderAdvisor(){
   const topic = q.length ? q[0].n : 'my agreements';
   parts.push('<div class="hand"><p class="hand-t">Rather not do it yourself?</p>' +
     '<button class="handoff" data-ask="' + esc(topic) + '">' +
-      '<span class="hic"><img src="assets/sda-mark.svg" alt=""></span>' +
+      '<span class="hic"><img src="../../../assets/sda-mark.svg" alt=""></span>' +
       '<span class="htx"><b>Ask the assistant</b><span>Answers now, any hour</span></span>' +
       '<span class="hgo">' + CHEV + '</span></button>' +
     '<button class="handoff" data-book="' + esc(topic) + '">' +
@@ -1164,7 +1164,7 @@ function agrCard(c, a){
   const on = inUse.has(c.id);
   const b = BRAND[a.n];
   const chip = '<span class="agr-chip"' + (b ? ' style="background:' + b.bg + '"' : '') + '>' +
-    (b ? '<img src="assets/company-logos/' + b.f + '" alt="">'
+    (b ? '<img src="../../../assets/company-logos/' + b.f + '" alt="">'
        : '<span class="ini">' + initialsOf(a.n) + '</span>') + '</span>';
   return '<button class="agr' + (on ? '' : ' idle') + '" data-agr="' + esc(a.n) +
     '" data-cat="' + c.id + '">' + chip +
@@ -1506,7 +1506,7 @@ function openAgreement(btn){
   const b = BRAND[a.n];
   $('#dlg').innerHTML =
     '<div class="dlg-top"><span class="agr-chip"' + (b ? ' style="background:' + b.bg + '"' : '') +
-      '>' + (b ? '<img src="assets/company-logos/' + b.f + '" alt="">'
+      '>' + (b ? '<img src="../../../assets/company-logos/' + b.f + '" alt="">'
                 : '<span class="ini">' + initialsOf(a.n) + '</span>') + '</span>' +
     '<span><b id="dlgT">' + a.n + '</b><span>' + c.n + ' · ' +
       (on ? 'in use' : 'ready to use') + '</span></span></div>' +

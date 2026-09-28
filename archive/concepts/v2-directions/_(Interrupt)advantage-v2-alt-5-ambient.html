@@ -661,7 +661,7 @@ table.st tr.tot td{font-weight:700;border-bottom:none;border-top:2px solid var(-
   <main class="stage">
     <section class="scr on mid" id="s-login" aria-labelledby="h-login">
       <div class="login">
-        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <img class="mark" src="../../../assets/advantage-logo.svg" alt="Advantage">
         <h1 id="h-login" tabindex="-1">Welcome</h1>
         <p class="lead">Advantage runs in the background and reads your invoices. Signing in is the rare
           part — mostly it writes to you.</p>
@@ -697,7 +697,7 @@ table.st tr.tot td{font-weight:700;border-bottom:none;border-top:2px solid var(-
   <div class="wrap">
 
     <header class="appbar noprint">
-      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="brand"><img src="../../../assets/advantage-logo.svg" alt="Advantage"></span>
       <span class="spacer"></span>
       <span class="svc" id="svcPill"><span class="dot"></span><span id="svcTxt">Watching</span></span>
       <div class="userwrap">
@@ -1294,7 +1294,7 @@ function renderDigest(){
        <small>${esc(d.figNote || 'kr. a year')}</small></div>`;
   const supStr = d.sup ? `<span class="dec-sup">
       <span class="logo ${d.sup.cls || ''}">${d.sup.logo
-        ? `<img src="assets/company-logos/${d.sup.logo}" alt="">`
+        ? `<img src="../../../assets/company-logos/${d.sup.logo}" alt="">`
         : `<b style="font-size:10px;font-weight:700">${esc(initials(d.sup.n))}</b>`}</span>
       <span><b>${esc(d.sup.n)}</b> · <span class="muted">${esc(d.sup.sub)}</span></span></span>` : '';
   const ctaStr = d.cta
@@ -1324,7 +1324,7 @@ function renderDigest(){
       <h2 class="mail-subj">${esc(d.subject)}</h2>
       <p class="mail-pre">${esc(d.pre)}</p>
       <div class="mail-from">
-        <span class="mail-av"><img src="assets/sda-mark.svg" alt=""></span>
+        <span class="mail-av"><img src="../../../assets/sda-mark.svg" alt=""></span>
         <span class="mail-from-t">
           <b>Advantage</b>
           <span>digest@advantage.dk → ${esc(P.mail)}</span>
@@ -1503,7 +1503,7 @@ function renderReach(){
   let panel;
   if(!connected){
     panel = `<div class="adv-panel">
-      <div class="adv-p-h"><img src="assets/advantage-logo.svg" alt="Advantage"><span class="sep"></span>
+      <div class="adv-p-h"><img src="../../../assets/advantage-logo.svg" alt="Advantage"><span class="sep"></span>
         <span class="t">Inactive — nothing connected</span></div>
       <div class="adv-resolved"><span class="ic">${DASHC}</span>
         <span>Once your accounting system is connected, this panel checks every purchase invoice against
@@ -1512,7 +1512,7 @@ function renderReach(){
     </div>`;
   } else if(erpState === 'open'){
     panel = `<div class="adv-panel" id="advPanel">
-      <div class="adv-p-h"><img src="assets/advantage-logo.svg" alt="Advantage"><span class="sep"></span>
+      <div class="adv-p-h"><img src="../../../assets/advantage-logo.svg" alt="Advantage"><span class="sep"></span>
         <span class="t">Off-agreement supplier</span>
         <button class="mail-ic x" type="button" id="advX" aria-label="Dismiss this warning">
           <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
@@ -1520,7 +1520,7 @@ function renderReach(){
       <div class="adv-p-b">
         <div class="adv-p-fig"><b>${fmt(ERP_SAVE)} kr.</b><span>on this invoice</span></div>
         <div class="adv-p-tx"><span class="logo lg" style="float:left;margin:2px var(--s3) 0 0">
-            <img src="assets/company-logos/bygma-logo-png_seeklogo-381076.png" alt=""></span>
+            <img src="../../../assets/company-logos/bygma-logo-png_seeklogo-381076.png" alt=""></span>
           <b>${esc(ERP.supplier)} is off-agreement.</b> The same four lines through
           ${esc(ERP.frame)} price ${ERP_PCT}% lower — ${fmt(ERP.net)} kr. becomes
           ${fmt(ERP.net - ERP_SAVE)} kr. You hold that agreement already; this order simply did not go
@@ -1601,7 +1601,7 @@ function renderReach(){
         const c = f.cat ? cat(f.cat) : null;
         const risk = f.kind === 'risk';
         return `<div class="msg">
-          <span class="msg-av"><img src="assets/sda-mark.svg" alt=""></span>
+          <span class="msg-av"><img src="../../../assets/sda-mark.svg" alt=""></span>
           <div class="msg-c">
             <div class="msg-h"><b>Advantage</b><span class="bot">app</span><time>${esc(f.when)}</time></div>
             <div class="msg-card">
@@ -1623,7 +1623,7 @@ function renderReach(){
   $('#chatWin').innerHTML = `
     <div class="chat-tb">
       <span class="msg-av" style="width:26px;height:26px;border-radius:var(--rounded-xs)">
-        <img src="assets/sda-mark.svg" alt="" style="width:16px;height:16px"></span>
+        <img src="../../../assets/sda-mark.svg" alt="" style="width:16px;height:16px"></span>
       <b>Indkøb</b><span>Teams channel · ${esc(P.company)}</span></div>
     <div class="chat-b">${chatMsgs}</div>
     <div class="chat-in">Write a message…</div>`;
@@ -1636,7 +1636,7 @@ function renderStatement(){
   const est = !P.connected;
   const rows = CATS.filter(c => ACTIVE.includes(c.k));
   const logoFor = c => `<span class="logo ${c.cls || ''}">${c.logo
-      ? `<img src="assets/company-logos/${c.logo}" alt="">`
+      ? `<img src="../../../assets/company-logos/${c.logo}" alt="">`
       : `<b style="font-size:9px;font-weight:700">${esc(initials(c.ag))}</b>`}</span>`;
 
   const catRows = rows.map(c => `
@@ -1656,7 +1656,7 @@ function renderStatement(){
 
   $('#stmtBody').innerHTML = `
     <div class="stmt-h">
-      <img src="assets/advantage-logo.svg" alt="Advantage">
+      <img src="../../../assets/advantage-logo.svg" alt="Advantage">
       <div class="who"><b>${esc(P.company)}</b>${esc(P.user)}<br>${esc(P.industry)}</div>
     </div>
     <div class="stmt-t">
@@ -1734,7 +1734,7 @@ function renderStatement(){
 
     <div class="stmt-sign">
       <div class="sign-b">
-        <img class="sign-mark" src="assets/sda-mark.svg" alt="">
+        <img class="sign-mark" src="../../../assets/sda-mark.svg" alt="">
         <b>Advantage · Visma Danmark</b><br>
         ${est
           ? 'This is a projection, not a statement. It carries no signature because there is nothing to attest to yet.'

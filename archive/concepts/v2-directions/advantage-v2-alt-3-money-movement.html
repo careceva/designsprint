@@ -666,7 +666,7 @@ table.tbl tr.tot td{border-bottom:none;border-top:2px solid var(--general-foregr
   <main class="stage">
     <section class="scr on mid" id="s-login">
       <div class="login">
-        <img class="mark" src="assets/advantage-logo.svg" alt="Advantage">
+        <img class="mark" src="../../../assets/advantage-logo.svg" alt="Advantage">
         <h1>Money movement</h1>
         <p class="lead">Every activation, who has been told, and whether the next invoice
           actually carried the agreed rate.</p>
@@ -701,7 +701,7 @@ table.tbl tr.tot td{border-bottom:none;border-top:2px solid var(--general-foregr
   <div class="wrap">
 
     <header class="appbar">
-      <span class="brand"><img src="assets/advantage-logo.svg" alt="Advantage"></span>
+      <span class="brand"><img src="../../../assets/advantage-logo.svg" alt="Advantage"></span>
       <span class="spacer"></span>
       <button class="erp" id="erpPill" type="button"></button>
       <div class="userwrap">
@@ -863,7 +863,7 @@ const LOGOS = {
 function logoHtml(name, cls){
   const l = LOGOS[name];
   if(l) return `<span class="logo ${cls||''}" style="background:${l.bg}">
-    <img src="assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
+    <img src="../../../assets/company-logos/${l.f}" alt="" loading="lazy"></span>`;
   return `<span class="logo ${cls||''}" aria-hidden="true">${esc(initials(name))}</span>`;
 }
 
