@@ -5829,19 +5829,29 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 .hy-ring{position:relative;width:clamp(180px,20vw,232px);aspect-ratio:1;border-radius:50%;outline:none}
 .hy-ring:focus-visible{outline:2px solid var(--general-primary);outline-offset:6px}
 .hy-svg{display:block;width:100%;height:100%;overflow:visible}
-.hy-track{fill:none;stroke:rgb(27 100 220/.07);stroke-width:18}
+.hy-track{fill:none;stroke:rgb(27 100 220/.07);stroke-width:22}
 .hy-ring:not(.empty) .hy-track{stroke:transparent}
-.hy-arc{fill:none;stroke:rgb(var(--b)/var(--a));stroke-width:18;stroke-linecap:round;cursor:pointer;
-  transition:opacity var(--t-fast),stroke var(--t-fast),stroke-width 200ms var(--hx-ease)}
-.hy-dot{fill:rgb(var(--b)/var(--a));cursor:pointer;transform-box:fill-box;transform-origin:center;
-  transition:opacity var(--t-fast),fill var(--t-fast)}
-.hy-ring.lit .hy-arc.on{stroke:rgb(var(--b));stroke-width:22}
-.hy-ring.lit .hy-dot.on{fill:rgb(var(--b))}
-@media (hover:hover) and (pointer:fine){.hy-arc:hover{stroke-width:22}}
-.hy-sweep{fill:none;stroke:#fff;stroke-width:44;stroke-dasharray:100 100;stroke-dashoffset:0}
+/* a segment is two layers: a paler shell of its own tint that shows only beyond
+   the outer edge, and the band on top, outlined in white so the two read as a
+   rim rather than one soft edge. The band is its tint laid on white (--c), so it
+   is opaque and the shell cannot show through it. Lit, it steps out a little and
+   takes its full colour. */
+/* scoped to the ring so it outranks the shared [data-seg] transition, which has no transform */
+.hy-ring .hy-seg{cursor:pointer;transform-box:view-box;transform-origin:100px 100px;
+  transition:opacity var(--t-fast),transform 220ms var(--hx-ease)}
+.hy-arc{fill:rgb(var(--c));stroke:#fff;stroke-width:2.5;stroke-linejoin:round;paint-order:stroke;
+  transition:fill var(--t-fast)}
+.hy-shell{fill:rgb(var(--c)/.34);transform-box:view-box;transform-origin:100px 100px;
+  transition:fill var(--t-fast)}
+.hy-dot{transform-box:fill-box;transform-origin:center}
+.hy-ring.lit .hy-seg.on{transform:scale(1.03)}
+.hy-ring.lit .hy-seg.on .hy-arc{fill:rgb(var(--b))}
+.hy-ring.lit .hy-seg.on .hy-shell{fill:rgb(var(--b)/.34)}
+@media (prefers-reduced-motion:reduce){.hy-ring.lit .hy-seg.on{transform:none}}
+.hy-sweep{fill:none;stroke:#fff;stroke-width:48;stroke-dasharray:100 100;stroke-dashoffset:0}
 .hy-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:2px;padding:0 var(--s8);text-align:center;pointer-events:none}
-.hy-cf{font-family:var(--font-sans);font-size:clamp(22px,2.3vw,30px);font-weight:600;line-height:1.1;
+.hy-cf{font-family:var(--font-sans);font-size:clamp(22px,2.2vw,28px);font-weight:600;line-height:1.1;
   letter-spacing:-.03em;color:var(--sentiment-positive-ink);font-variant-numeric:tabular-nums}
 .hy-cf.none{font-size:var(--text-xl);color:var(--general-muted-foreground)}
 .hy-cf small{font-size:var(--text-sm);font-weight:600;letter-spacing:0;color:var(--general-muted-foreground)}
@@ -5851,20 +5861,23 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 
 /* the ring's entrance, once a session: a single stroke sweeps round from twelve
    o'clock and reveals every arc as it passes, the ring winds the last few degrees
-   into place, a dot lands with a small overshoot as the sweep reaches it, and the
-   total rises in behind */
+   into place, a dot lands with a small overshoot as the sweep reaches it, each
+   shell slides out from under its band just after, and the total rises in behind */
 .hy-svg{animation:hyWind 1100ms var(--hx-ease) backwards}
 .hy-sweep{animation:hySweep 950ms cubic-bezier(.65,0,.35,1) backwards}
 .hy-dot{animation:hyPop 420ms cubic-bezier(.34,1.56,.64,1) backwards;animation-delay:calc(var(--d,0) * 950ms)}
+.hy-shell{animation:hyShell 520ms var(--hx-ease) backwards;animation-delay:calc(260ms + var(--d,0) * 950ms)}
 .hy-centre{animation:hyRise 500ms var(--hx-ease) 300ms backwards}
 @keyframes hyWind{from{transform:rotate(-40deg)}}
 @keyframes hySweep{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
 @keyframes hyPop{from{opacity:0;transform:scale(.4)}}
+@keyframes hyShell{from{opacity:0;transform:scale(.95)}}
 @keyframes hyRise{from{opacity:0;transform:translateY(6px)}}
-.hy-ring.still .hy-svg,.hy-ring.still .hy-sweep,.hy-ring.still .hy-dot,.hy-ring.still .hy-centre{animation:none}
+.hy-ring.still .hy-svg,.hy-ring.still .hy-sweep,.hy-ring.still .hy-dot,.hy-ring.still .hy-shell,
+.hy-ring.still .hy-centre{animation:none}
 @media (prefers-reduced-motion:reduce){
   .hy-svg{animation:hxFade 200ms ease backwards}
-  .hy-sweep,.hy-dot,.hy-centre{animation:none}
+  .hy-sweep,.hy-dot,.hy-shell,.hy-centre{animation:none}
 }
 
 @container page (max-width:780px){
@@ -18803,40 +18816,68 @@ function hyRuledHTML(s, still){
     </header>`;
 }
 
-/* the ring: one arc per area the saving came from, largest first from twelve
-   o'clock, the gaps wide enough to survive the round caps. An area too small to
-   draw as an arc becomes a dot on the ring, as in the mockup. */
+/* the ring: one segment per area the saving came from, largest first from twelve
+   o'clock. A segment is a band with softly rounded corners, and the gaps between
+   bands keep one width from the inside to the outside: the ends run parallel,
+   not along the radius. Each band sits on a shell of its own tint that shows
+   only past its outer edge. An area too small to draw as a band becomes a dot on
+   the ring, as in the mockup. Angles are radians, clockwise from three o'clock;
+   the group they are drawn in turns them a quarter back to twelve. */
+const HY_R = {r0:69, r1:91, g:1.5, cr:3.5, lip:5, dot:7.5};
+const hyPt = (r, t) => `${(100 + r * Math.cos(t)).toFixed(2)} ${(100 + r * Math.sin(t)).toFixed(2)}`;
+function hyBand(r0, r1, a0, a1, g, cr){
+  /* where a corner meets the straight end: s is +1 at the start, -1 at the end */
+  const end = (a, s, rho) => {
+    const d = rho * Math.cos(Math.asin((g + cr) / rho));
+    return `${(100 + d * Math.cos(a) - s * g * Math.sin(a)).toFixed(2)} ${(100 + d * Math.sin(a) + s * g * Math.cos(a)).toFixed(2)}`;
+  };
+  const po = Math.asin((g + cr) / (r1 - cr)), pi = Math.asin((g + cr) / (r0 + cr));
+  const big = p => (a1 - a0 - 2 * p > Math.PI ? 1 : 0);
+  return `M${hyPt(r1, a0 + po)}A${r1} ${r1} 0 ${big(po)} 1 ${hyPt(r1, a1 - po)}`
+    + `A${cr} ${cr} 0 0 1 ${end(a1, -1, r1 - cr)}L${end(a1, -1, r0 + cr)}`
+    + `A${cr} ${cr} 0 0 1 ${hyPt(r0, a1 - pi)}A${r0} ${r0} 0 ${big(pi)} 0 ${hyPt(r0, a0 + pi)}`
+    + `A${cr} ${cr} 0 0 1 ${end(a0, 1, r0 + cr)}L${end(a0, 1, r1 - cr)}`
+    + `A${cr} ${cr} 0 0 1 ${hyPt(r1, a0 + po)}Z`;
+}
+/* a whole ring, for the one area that holds all of it: drawn even-odd */
+const hyWhole = (r0, r1) => [r1, r0].map(r =>
+  `M${100 - r} 100a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z`).join('');
+/* the tint laid on white, so the band is opaque over its shell */
+function hyInk(ink){
+  const mix = v => Math.round(255 - (255 - v) * ink.a);
+  return `${rdInkCss(ink)};--c:${ink.b.split(' ').map(v => mix(+v)).join(' ')}`;
+}
 function hyRingMarks(parts){
-  const R = 80, SW = 18, C = 2 * Math.PI * R, DOT = 6.5;
-  if(!parts.length) return {marks:'', C};
-  if(parts.length === 1){
-    const p = parts[0];
-    return {C, marks:`<circle class="hy-arc" data-seg="${p.id}" data-key="${p.id}" cx="100" cy="100" r="${R}"
-      style="${rdInkCss(p.ink)}"/>`};
-  }
+  const {r0, r1, g, cr, lip, dot} = HY_R, TAU = 2 * Math.PI, Rm = (r0 + r1) / 2;
+  const seg = (p, d, body) => `<g class="hy-seg" data-seg="${p.id}" data-key="${p.id}"
+    style="${hyInk(p.ink)};--d:${d.toFixed(3)}">${body}</g>`;
+  if(!parts.length) return {marks:''};
+  if(parts.length === 1) return {marks:seg(parts[0], 0,
+    `<path class="hy-shell" fill-rule="evenodd" d="${hyWhole(r0 + lip, r1 + lip)}"/>
+     <path class="hy-arc" fill-rule="evenodd" d="${hyWhole(r0, r1)}"/>`)};
   const tiny = p => p.p < 3;
-  const GAP = SW + 12;
-  const dots = parts.filter(tiny).length;
-  const avail = C - parts.length * GAP - dots * DOT * 2;
+  const slot = (2 * dot + 2 * g + 3) / Rm;          /* a dot's share of the turn, gaps included */
+  const open = TAU - parts.filter(tiny).length * slot;
   const arcTot = parts.filter(p => !tiny(p)).reduce((t, p) => t + p.v, 0) || 1;
-  let at = GAP / 2;
+  let at = 0;
   const marks = parts.map(p => {
     let el;
     if(tiny(p)){
-      const mid = at + DOT, th = mid / C * 2 * Math.PI;
-      el = `<circle class="hy-dot" data-seg="${p.id}" data-key="${p.id}" r="${DOT}"
-        cx="${(100 + R * Math.cos(th)).toFixed(2)}" cy="${(100 + R * Math.sin(th)).toFixed(2)}"
-        style="${rdInkCss(p.ink)};--d:${(mid / C).toFixed(3)}"/>`;
-      at += DOT * 2 + GAP;
+      const mid = at + slot / 2, sh = Rm + lip / 2;
+      el = seg(p, mid / TAU, `<g class="hy-dot">
+        <circle class="hy-shell" r="${dot + lip / 2}" cx="${(100 + sh * Math.cos(mid)).toFixed(2)}" cy="${(100 + sh * Math.sin(mid)).toFixed(2)}"/>
+        <circle class="hy-arc" r="${dot}" cx="${(100 + Rm * Math.cos(mid)).toFixed(2)}" cy="${(100 + Rm * Math.sin(mid)).toFixed(2)}"/></g>`);
+      at += slot;
     } else {
-      const L = avail * p.v / arcTot;
-      el = `<circle class="hy-arc" data-seg="${p.id}" data-key="${p.id}" cx="100" cy="100" r="${R}"
-        style="${rdInkCss(p.ink)};stroke-dasharray:${L.toFixed(2)} ${C.toFixed(2)};stroke-dashoffset:${(-at).toFixed(2)}"/>`;
-      at += L + GAP;
+      const span = Math.max(.16, open * p.v / arcTot);
+      el = seg(p, (at + span / 2) / TAU,
+        `<path class="hy-shell" d="${hyBand(r0 + lip, r1 + lip, at, at + span, g, cr + 1)}"/>
+         <path class="hy-arc" d="${hyBand(r0, r1, at, at + span, g, cr)}"/>`);
+      at += span;
     }
     return el;
   }).join('');
-  return {marks, C};
+  return {marks};
 }
 function hyRingHTML(s, still){
   const P = s.saved.parts;
