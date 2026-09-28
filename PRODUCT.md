@@ -12,7 +12,7 @@ Primary user is the SMB owner or bookkeeper — the person who represents the wh
 
 ## Product Purpose
 
-Advantage surfaces where a small/medium business is overpaying versus available pre-negotiated agreements, by category (e.g. insurance, telecom, energy, office supplies), and lets the owner/bookkeeper activate a better agreement. Success is a correctly-priced first order placed on an activated agreement, not just activation itself (per `advantage-GAP-ANALYSIS.md`).
+Advantage surfaces where a small/medium business is overpaying versus available pre-negotiated agreements, by category (e.g. insurance, telecom, energy, office supplies), and lets the owner/bookkeeper activate a better agreement. Success is a correctly-priced first order placed on an activated agreement, not just activation itself (per `research/analysis/gap-analysis.md`).
 
 ## Positioning
 
@@ -24,15 +24,15 @@ Nordic SMB market (Norway/Sweden/Denmark). Agreements are organized by category 
 
 ## Capabilities and Constraints
 
-- Static HTML prototypes (no build framework/package.json) — each `advantage-*.html` file is a self-contained iteration; `advantage-v2-visual.html` is the most actively maintained one per recent history.
+- Static HTML prototypes (no build framework/package.json) — each page is a self-contained iteration. `advantage-main.html` at the repo root is the live prototype; forks, explorations and the archived concept rounds are laid out in `README.md`.
 - Nordic market only (NO/SE/DK); UI copy is English-only for now — do not add other-language copy without it being a deliberate, confirmed change.
 - Single-user assumption in current prototypes: no roles, invites, approvals, or multi-user activity. Treat this as current-state, not a locked-in constraint — flag rather than silently design around it if a task implies multiple users.
-- Savings/verification language ("verified from invoices") is a real product claim already in use; do not weaken or fabricate variations of it without checking `advantage-GAP-ANALYSIS.md`.
+- Savings/verification language ("verified from invoices") is a real product claim already in use; do not weaken or fabricate variations of it without checking `research/analysis/gap-analysis.md`.
 
 ## Evidence on Hand
 
-- `advantage-GAP-ANALYSIS.md` — competitive analysis (vinst.no, seiva.se) and ranked feature gaps across the v3–v8 prototypes; treat as current strategic ground truth.
-- `advantage-ux/` and `advantage-ux/journey.json` — UX research artifacts (journey map, interview field kit, pain map, sales-rep interview).
+- `research/analysis/gap-analysis.md` — competitive analysis (vinst.no, seiva.se) and ranked feature gaps across the v3–v8 prototypes; treat as current strategic ground truth.
+- `research/` — UX research artifacts: the customer journey (`research/customer-journey/journey.json`), interview field kit, pain map, sales-rep interview.
 - No customer testimonials, logos, or real pricing are on hand — do not fabricate any for future design work.
 
 ## Product Principles

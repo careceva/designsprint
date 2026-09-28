@@ -89,17 +89,44 @@ jobs:
           mkdir -p "$dest"
 
           # ALLOWLIST. Only the prototypes and the images they load are
-          # published. Everything else in this repository stays off the site:
-          # planning documents, the gap analysis, agent configuration, notes,
-          # backups and exploration folders. Anything that should be shared
-          # has to be added here deliberately.
-          rsync -a \
+          # published: the main file, /assets, and the .html pages of the
+          # sections below. Everything else in this repository stays off the
+          # site: planning documents, the gap analysis, agent configuration,
+          # notes, backups, and the folders excluded first. Anything that
+          # should be shared has to be added here deliberately.
+          sections=(forks explorations research archive)
+          pages=()
+          for s in "${sections[@]}"; do
+            pages+=(--include "/$s/" --include "/$s/**/" --include "/$s/**.html")
+          done
+          rsync -a --prune-empty-dirs \
             --exclude '.DS_Store' \
+            --include '/advantage-main.html' \
             --include '/assets/' \
             --include '/assets/**' \
-            --include '/*.html' \
+            --exclude '/explorations/tune-states/' \
+            --exclude '/explorations/suppliers-filter/' \
+            --exclude '/research/customer-journey/' \
+            --exclude '/archive/backups/' \
+            --exclude '/archive/design-sprint-bundle/' \
+            "${pages[@]}" \
             --exclude '*' \
             source/ "$dest/"
+
+          # Every page used to sit at the repository root. Links to those old
+          # addresses were shared before the reorganization, so each one gets
+          # a small page that forwards to where the file lives now, keeping any
+          # ?query and #route. Only on the site: the repository root stays clean.
+          while IFS=$'\t' read -r old new; do
+            case "$old" in ''|'#'*) continue ;; esac
+            [ -e "$dest/$old" ] && continue
+            printf '%s\n' \
+              '<!doctype html><meta charset="utf-8"><title>Moved</title>' \
+              "<meta http-equiv=\"refresh\" content=\"0; url=$new\">" \
+              "<script>location.replace(\"$new\"+location.search+location.hash)</script>" \
+              "<p>This page moved to <a href=\"$new\">$new</a>.</p>" \
+              >"$dest/$old"
+          done <source/.github/moved-pages.tsv
 
           # Pages runs Jekyll otherwise, which drops files starting with "_".
           touch site/.nojekyll
@@ -120,12 +147,12 @@ jobs:
             echo 'ul{list-style:none;padding:0}'
             echo 'li{padding:.6rem 0;border-top:1px solid #8883}'
             echo '</style><main><h1>Advantage branch previews</h1><ul>'
-            echo '<li><a href="./advantage-main-v2.html">main</a></li>'
+            echo '<li><a href="./advantage-main.html">main</a></li>'
             if [ -d site/preview ]; then
               for d in site/preview/*/; do
                 [ -d "$d" ] || continue
                 n=$(basename "$d")
-                echo "<li><a href=\"./preview/$n/advantage-main-v2.html\">$n</a></li>"
+                echo "<li><a href=\"./preview/$n/advantage-main.html\">$n</a></li>"
               done
             fi
             echo '</ul></main>'
@@ -153,8 +180,8 @@ jobs:
           {
             echo "### Preview published"
             echo ""
-            echo "- ${base}/${{ steps.dest.outputs.path }}advantage-main-v2.html"
             echo "- ${base}/${{ steps.dest.outputs.path }}advantage-main.html"
+            echo "- ${base}/${{ steps.dest.outputs.path }}forks/advantage-main/v2-nav-redesign/advantage-main-v2.html"
             echo ""
             echo "All live previews: ${base}/previews.html"
           } >>"$GITHUB_STEP_SUMMARY"
@@ -166,6 +193,8 @@ jobs:
       - name: Put the preview link on the pull request
         env:
           GH_TOKEN: ${{ github.token }}
+          # this job has no checkout, so gh can't read the repo from .git
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           branch="${{ github.head_ref }}"
@@ -178,8 +207,8 @@ jobs:
           body=$(printf '%s\n' \
             "**Preview for \`${branch}\`**" \
             "" \
-            "- [advantage-main-v2.html](${base}/advantage-main-v2.html)" \
             "- [advantage-main.html](${base}/advantage-main.html)" \
+            "- [advantage-main-v2.html](${base}/forks/advantage-main/v2-nav-redesign/advantage-main-v2.html)" \
             "" \
             "Updates on every push to this branch. Leave review comments here." )
 

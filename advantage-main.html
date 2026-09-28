@@ -279,6 +279,9 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .lg-wall .agc-logo img{padding:9px}
 .lg-wall .agc-logo svg{width:22px;height:22px;color:rgb(var(--b,27 100 220))}
 .lg-wall .agc-logo.tint{background:#ffffffe0}
+/* an area's mark keeps the wall's white tile: here the tile is the unit of the
+   crowd, the same one every supplier logo wears */
+.lg-wall .agc-logo .cat-art{padding:6px}
 .lg-wall .agc-logo-i{font-size:var(--text-xs)}
 
 .lg-say h1{margin-top:var(--s8);max-width:17ch;
@@ -816,7 +819,7 @@ body.ledger-on{--appbar-h:80px}
   padding:0 5px;border-radius:var(--rounded-xs);background:var(--surface);border:1px solid var(--sidebar-border);
   box-shadow:var(--shadow-2xs);font-family:var(--font-mono);font-size:13px;color:var(--general-muted-foreground)}
 /* connected ERP status */
-.erp{display:flex;align-items:center;gap:var(--s2);height:38px;padding:0 var(--s3) 0 var(--s3);
+.erp{display:flex;align-items:center;gap:var(--s2);height:44px;padding:0 var(--s4);
   background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
   box-shadow:var(--shadow-2xs);cursor:pointer;transition:var(--t-fast)}
 .erp:hover{border-color:var(--general-border);background:var(--brand-ice)}
@@ -831,7 +834,6 @@ body.ledger-on{--appbar-h:80px}
 .erp.none .et b{color:var(--general-primary)}
 @keyframes pip{0%{transform:scale(.6);opacity:.5}70%,100%{transform:scale(1.5);opacity:0}}
 .erp .et{display:flex;flex-direction:column;line-height:1.25}
-.erp{padding-right:var(--s1)}
 .erp .et b{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
 /* sync — lives inside the pill, degrades to icon-only when the header tightens */
 .syncbtn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;
@@ -1247,10 +1249,11 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
   transition:background var(--t-fast)}
 .opp-legend-item:hover{background:var(--general-muted)}
 .opp-legend-item:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
-/* the icon: bigger, always the same single ink colour — identity only, not chart-tied */
-.opp-legend-ic{position:relative;flex:0 0 auto;width:44px;height:44px;border-radius:var(--rounded-md);
-  display:grid;place-items:center;background:var(--general-muted);color:var(--general-foreground)}
-.opp-legend-ic svg{width:24px;height:24px}
+/* an area's 3D mark (catArt), filling whatever box it is placed in. The marks
+   bring their own light and shadow, so no box behind them draws a tile. */
+.cat-art{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-select:none}
+/* the icon: identity only, not chart-tied */
+.opp-legend-ic{position:relative;flex:0 0 auto;width:44px;height:44px}
 .opp-legend-txt{flex:1 1 140px;min-width:0;font-size:var(--text-sm);font-weight:500;
   color:var(--general-foreground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* the two-line variant (name + peer-adoption sub-line, on the new-customer page)
@@ -2376,9 +2379,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
   box-shadow:0 8px 22px -8px #0f0f0f2b;transform:translateY(-2px)}
 .oc-card:active{transform:none}
 .oc-top{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s3)}
-.oc-ic{flex:0 0 auto;width:38px;height:38px;display:grid;place-items:center;
-  border-radius:var(--rounded-md);background:var(--brand-ice);color:var(--general-primary)}
-.oc-ic svg{width:20px;height:20px}
+.oc-ic{flex:0 0 auto;width:38px;height:38px}
 /* laid out side by side, not overlapped: at this size the fallback initials are
    two letters wide, and an avatar-style overlap slices the second one off */
 .oc-top .cv-brand-stack{margin-left:auto;width:auto;gap:4px}
@@ -2684,9 +2685,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 /* the category this request is about, in the same shape as the price challenge's
    supplier row — the two flows should open on the same kind of header. The tint
    stays reserved for selection, so it can only ever mean one thing in here. */
-.cat-ic{flex:0 0 auto;width:40px;height:40px;display:grid;place-items:center;
-  border-radius:var(--rounded-md);background:var(--brand-ice);color:var(--general-primary)}
-.cat-ic svg{width:21px;height:21px}
+.cat-ic{flex:0 0 auto;width:40px;height:40px}
 /* a quiet informational row: what is about to happen, stated once */
 .dlg-info{display:flex;align-items:flex-start;gap:var(--s3);margin-bottom:var(--s4);
   padding:var(--s3) var(--s4);border:1px solid var(--hairline);border-radius:var(--rounded-md);
@@ -2751,7 +2750,8 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .agv .cmp-note{margin-top:0}
 /* the year in kroner on each side of the comparison */
 .cmp-kr{margin-top:var(--s4);font-size:var(--text-lg);font-weight:700;font-variant-numeric:tabular-nums}
-.cmp-kr small{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.cmp-kr span{display:block;margin-bottom:2px;font-size:var(--text-sm);font-weight:500;
+  color:var(--general-muted-foreground)}
 .cmp-c.win .cmp-kr{color:var(--sentiment-positive)}
 .cmp-c.estimated .cmp-kr{color:var(--general-muted-foreground)}
 @container catmain (max-width:560px){
@@ -3124,9 +3124,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
   border-bottom:1px solid var(--hairline)}
 .sv-agr-rank{flex:0 0 auto;width:22px;font-size:13px;font-weight:700;
   color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
-.sv-agr-ic{flex:0 0 auto;width:40px;height:40px;border-radius:var(--rounded-md);
-  display:grid;place-items:center;background:var(--general-muted);color:var(--general-foreground)}
-.sv-agr-ic svg{width:21px;height:21px}
+.sv-agr-ic{flex:0 0 auto;width:40px;height:40px}
 .sv-agr-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
 .sv-agr-txt b{font-size:16px;font-weight:600}
 .sv-agr-txt span{font-size:15px;color:var(--general-muted-foreground)}
@@ -3381,6 +3379,8 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .pkg-fig:has(.fig-doc),.pkg-fig:has(.fig-doc) small{color:var(--general-primary)}
 .pkg-fig:has(.fig-est),.pkg-fig:has(.fig-est) small{color:var(--general-muted-foreground)}
 .pkg-money em{font-style:normal;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+/* the "Start here" picks: no line two, so the figure and its "a year" share one baseline */
+.pkg-lean .pkg-money{flex-direction:row;align-items:baseline;gap:var(--s1)}
 /* the CTA rides above the stretched link. It used to fade in on row hover, which
    left the row's only real action permanently washed out on a phone. */
 .pkg-cta{position:relative;z-index:1;
@@ -3402,8 +3402,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 /* centred copy needs a caption measure, not a reading measure */
 .pkg-none p{max-width:34ch;font-size:var(--text-sm);line-height:1.6;
   color:var(--general-muted-foreground)}
-.pkg-ill{width:126px;height:100px;color:#d8d8de}
-.pkg-ill-a{color:var(--general-primary);opacity:.5}
+.pkg-ill{width:84px;height:84px}
 /* the rule spans the list it divides — the list is pulled out to the tile edge */
 .pkg-none-sep{margin:0 calc(var(--s3) * -1);padding:var(--s4) var(--s3) 0;
   border-top:1px solid var(--hairline)}
@@ -4017,9 +4016,8 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .nc-move-txt{display:flex;flex-direction:column;gap:var(--s1);font-size:var(--text-base);line-height:1.45}
 .nc-move-txt b{font-weight:700;line-height:normal}
 .nc-move-txt span{color:var(--general-muted-foreground);max-width:262px}
-.nc-move-ic{flex:0 0 auto;width:66px;height:66px;border-radius:var(--rounded-full);
-  background:var(--move-tint);display:grid;place-items:center;
-  transition:transform .16s cubic-bezier(.16,1,.3,1),background-color var(--t-fast)}
+.nc-move-ic{flex:0 0 auto;width:72px;height:56px;
+  transition:transform .16s cubic-bezier(.16,1,.3,1)}
 /* the action row: the figure, and the action the tile performs. The action is
    hidden until the pointer arrives, then slides in beside the figure; where
    there is no pointer to arrive it is simply there. */
@@ -4031,8 +4029,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .nc-move-cta svg{width:16px;height:16px;flex:0 0 auto}
 .nc-move:focus-visible .nc-move-cta{opacity:1;transform:none}
 @media (hover:none){.nc-move-cta{opacity:1;transform:none}}
-.nc-move-ic img,.nc-move-ic svg{display:block;width:32px;height:32px}
-.nc-move-ic svg{color:var(--general-primary)}
+.nc-move-ic .cat-art{width:72px;height:72px;margin-top:-8px}
 /* the money, one figure per line, each in its own ink: blue came off a document,
    dotted grey is still an estimate, one weight lighter as everywhere else in the
    file. Verified-then-estimated is the order the whole page keeps. A rate (no
@@ -4048,7 +4045,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 @media (hover:hover) and (pointer:fine){
   .nc-move:hover{background:var(--move-tint)}
   .nc-move:hover::before,.nc-rec-list>li:hover+li .nc-move::before{opacity:0}
-  .nc-move:hover .nc-move-ic{transform:scale(1.06);background:var(--surface)}
+  .nc-move:hover .nc-move-ic{transform:scale(1.06)}
   .nc-move:hover .nc-move-cta{opacity:1;transform:none}
 }
 @media(prefers-reduced-motion:reduce){
@@ -5107,10 +5104,7 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
   transition:background var(--t-fast)}
 .dr-grp-h:hover{background:var(--general-muted)}
 .dr-grp-h:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
-.dr-grp-ic{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;
-  border-radius:var(--rounded-sm);
-  background:rgb(var(--b,27 100 220)/.10);color:rgb(var(--b,27 100 220))}
-.dr-grp-ic svg{width:18px;height:18px}
+.dr-grp-ic{flex:0 0 auto;width:34px;height:34px}
 .dr-grp-n{min-width:0;font-size:16px;font-weight:650;letter-spacing:-.2px}
 .dr-grp-n em{font-style:normal;display:block;margin-top:1px;
   font-size:13px;font-weight:500;color:var(--general-muted-foreground)}
@@ -5512,11 +5506,7 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 .ar-pick:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
   border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
 .ar-pick:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
-.ar-pick-ic{grid-area:ic;width:56px;height:56px;display:grid;place-items:center;
-  border-radius:var(--rounded-md);background:rgb(var(--b,33 112 237)/.09);
-  color:rgb(var(--b,33 112 237));
-  box-shadow:inset 0 0 0 1px rgb(var(--b,33 112 237)/.14)}
-.ar-pick-ic svg{width:26px;height:26px}
+.ar-pick-ic{grid-area:ic;width:56px;height:56px}
 .ar-pick-tag{grid-area:tag;font-size:11.5px;font-weight:700;letter-spacing:.09em;
   text-transform:uppercase;color:var(--general-primary)}
 .ar-pick-n{grid-area:name;margin-top:var(--s1);font-family:var(--font-sans);
@@ -5547,7 +5537,6 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
     grid-template-areas:"ic tag" "ic name" "why why" "rail rail";
     row-gap:0;column-gap:var(--s4)}
   .ar-pick-ic{width:44px;height:44px}
-  .ar-pick-ic svg{width:22px;height:22px}
   .ar-pick-rail{align-items:flex-start;text-align:left;gap:var(--s3);
     margin-top:var(--s4);padding:var(--s4) 0 0;
     border-left:none;border-top:1px solid var(--hairline)}
@@ -5577,12 +5566,12 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
   border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}}
 .ar-card{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .ar-card:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
-.ar-card .ar-ic{width:56px;height:56px;display:grid;place-items:center;
-  border-radius:var(--rounded-md);background:rgb(var(--b,33 112 237)/.09);
-  color:rgb(var(--b,33 112 237));
-  box-shadow:inset 0 0 0 1px rgb(var(--b,33 112 237)/.14)}
-.ar-card .ar-ic svg{width:26px;height:26px}
-/* the status badge, top-right, aligned to the top edge of the tile */
+/* the mark hangs a little past the text's left edge and into the padding above
+   and below its box, which is only its own air and shadow: the object itself
+   lines up with the badge and sits a tile's height above the name */
+.ar-card .ar-ic{width:76px;height:56px}
+.ar-card .ar-ic .cat-art{width:76px;height:76px;margin:-10px 0 0 -6px}
+/* the status badge, top-right, level with the top of the mark */
 .ar-card .aga-st{position:absolute;top:var(--s6);right:var(--s6);
   padding:4px 10px;border-radius:var(--rounded-full);
   font-size:12px;font-weight:650;white-space:nowrap;
@@ -6584,7 +6573,7 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 }
 .sc-row:first-child{border-top:none}
 .sc-row-n{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-sm);font-weight:600}
-.sc-row-n svg{width:18px;height:18px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.sc-row-n .cat-art{width:28px;height:28px;flex:0 0 auto}
 .sc-in{display:flex;align-items:center;gap:6px;height:38px;padding:0 var(--s3);
   border:1px solid var(--sidebar-border);border-radius:var(--rounded-sm);background:var(--surface)}
 .sc-in input{width:100%;min-width:0;border:none;background:none;font:inherit;
@@ -6800,13 +6789,6 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 .aga-st.on.idle{color:var(--sentiment-negative-ink-on-tint);border-color:currentColor}
 /* the price-rise notice: the same tint recipe as the negative chip, inside the
    page-level card so it steps the radius down to --rounded-lg */
-.cat-rise{border:1px solid color-mix(in srgb,var(--sentiment-negative) 30%,var(--surface));
-  border-radius:var(--rounded-lg);padding:var(--s6);
-  background:color-mix(in srgb,var(--sentiment-negative) 5%,var(--surface))}
-.cat-rise h3{display:flex;align-items:center;gap:var(--s2);margin:0;
-  font-size:var(--text-lg);letter-spacing:-.4px;color:var(--sentiment-negative-ink-on-tint)}
-.cat-rise h3 svg{width:20px;height:20px;flex:0 0 auto}
-.cat-rise p{margin:var(--s3) 0 var(--s4);max-width:64ch;font-size:var(--text-base);line-height:1.55}
 /* the way onward from an assistant reply: a small secondary pill, .btn-sm sized */
 .ap-go{display:inline-flex;align-items:center;gap:6px;margin-top:var(--s2);height:32px;
   padding:0 var(--s3);border:1px solid var(--hairline);border-radius:var(--rounded-full);
@@ -7432,8 +7414,7 @@ function renderLogin(){
     /* every supplier we hold real artwork for, then one glyph per area of spend */
     const marks = Object.keys(AGR_BRAND).map(n => ({ink:brandOf(n), art:agrLogoTile(n)}));
     const glyphs = live().map(r => ({ink:AGR_FALLBACK_B,
-      art:`<span class="agc-logo tint"><svg viewBox="0 0 24 24" fill="none">${
-        CAT_ICON[r.id] || ''}</svg></span>`}));
+      art:`<span class="agc-logo tint">${catArt(r.id, 'sm')}</span>`}));
     /* merged by fractional position rather than concatenated — six marks followed
        by eight glyphs reads as two blocks stuck together, not as one crowd */
     const tiles = [];
@@ -8766,17 +8747,17 @@ $('#personaKari').addEventListener('click', () => switchPersona('kari'));
 $('#personaFanny').addEventListener('click', () => switchPersona('fanny'));
 
 
-/* a simple line icon per purchasing category, same stroke weight as the supplier icons */
-const CAT_ICON = {
-  mat:'<rect x="3" y="5" width="18" height="6" rx="1.4" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13" width="18" height="6" rx="1.4" stroke="currentColor" stroke-width="1.7"/><path d="M9.5 5v6M14.5 13v6" stroke="currentColor" stroke-width="1.7"/>',
-  tool:'<circle cx="16.6" cy="7.4" r="4.4" stroke="currentColor" stroke-width="1.7"/><circle cx="16.6" cy="7.4" r="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M13.5 10.5L4.8 19.2a2.2 2.2 0 003.1 3.1l8.7-8.7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
-  fuel:'<rect x="4" y="3" width="9.5" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M7 7.5h3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.5 9.5H17a2 2 0 012 2v6a1.6 1.6 0 003.2 0v-6.8l-2.4-3.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
-  off:'<path d="M15.6 8.6v8a4.1 4.1 0 01-8.2 0V7.7a2.6 2.6 0 015.2 0v8.7a1.3 1.3 0 01-2.6 0V9.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
-  rent:'<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
-  frg:'<rect x="2" y="7" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M14 10h3.6l3.4 3.4V16h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/>',
-  tel:'<rect x="3" y="4" width="18" height="12" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M9 20h6M12 16v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
-  site:'<path d="M4 7h16M9.5 7V4.8h5V7M6 7l1 13.2h10L18 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.5 11v5.5M13.5 11v5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
+/* one 3D mark per purchasing category: the brand's two-colour set (light blue,
+   Ultramarine accents), one angle, light from the left, no tile behind it.
+   Two cuts. The full one carries the footprint shadow and white edges and is for
+   48px and up; the small one (svg-small) drops the shadow, the edges and anything
+   under two pixels, and is cropped to the object, for 18-44px. */
+const CAT_ART = {
+  mat:'building-materials', tool:'tools-workwear', fuel:'fuel-transport', off:'office-supplies',
+  rent:'machine-equipment', frg:'freight-delivery', tel:'telecom-it', site:'site-services'
 };
+const catArt = (id, sm) => CAT_ART[id] ? `<img class="cat-art" src="assets/advantage-3d-icons-two-colour/${
+  sm ? 'svg-small' : 'svg'}/advantage-icon-${CAT_ART[id]}-ultramarine${sm ? '-small' : ''}.svg" alt="" draggable="false">` : '';
 /* one free (Unsplash License) photo per category, for the category-tab hero banner —
    picked for the theme, not staged/posed shots, since it has to blend into a plain
    white page background rather than carry its own caption or subject in focus */
@@ -9295,12 +9276,12 @@ function pkgCardMoneyHTML(x){
 }
 /* One row. The name carries a stretched link over the whole row so the CTA beside
    it can be a real button rather than a button inside a button. */
-function pkgCardRowHTML(x, cta){
-  const money = pkgCardMoneyHTML(x), note = pkgCardNote(x);
+function pkgCardRowHTML(x, cta, lean){
+  const money = pkgCardMoneyHTML(x), note = lean ? '' : pkgCardNote(x);
   const save = x.a ? (x.on && agLanding(x.a) ? `${fmt(x.a.save)} kr. saved`
     : `${saveFig(x.a.save, isEstimated(x.a))} kr. a year`) : '';
   return `
-    <li class="pkg-item" style="--b:${x.b}">
+    <li class="pkg-item${lean ? ' pkg-lean' : ''}" style="--b:${x.b}">
       <div class="pkg-row pkg-crow" data-pkg="${apEsc(x.n)}">
         ${pkgLogoHTML(x.n)}
         <span class="pkg-t">
@@ -9308,7 +9289,7 @@ function pkgCardRowHTML(x, cta){
             <button type="button" class="pkg-open" data-pkg="${apEsc(x.n)}"
               aria-label="${apEsc(`${x.n}, ${x.catN}${save ? `: ${save}` : ''}`)}">${x.n}</button>
             ${x.isNew ? '<span class="cnew">New</span>' : ''}
-            <span class="pkg-cat" aria-hidden="true">${x.catN}</span>
+            ${lean ? '' : `<span class="pkg-cat" aria-hidden="true">${x.catN}</span>`}
           </span>
           ${note ? `<span class="pkg-s">${note}</span>` : ''}
         </span>
@@ -9321,18 +9302,16 @@ function pkgCardRowHTML(x, cta){
 const PKG_SHOP_CTA  = {act:'shop',  label:'Webshop'};
 const PKG_CHECK_CTA = {act:'check', label:'Check'};
 
-/* the line drawing for an account with nothing switched on: an invoice with an
-   agreement tag clipped onto it — the tag is the rate, the invoice is where it
-   has to land before any of it is money. Muted line work, the tag in brand ink. */
-const PKG_ILL = `<svg class="pkg-ill" viewBox="0 0 126 100" fill="none" aria-hidden="true" focusable="false">
-  <path d="M20 10h44a6 6 0 016 6v62a6 6 0 01-6 6H20a6 6 0 01-6-6V16a6 6 0 016-6z" stroke="currentColor" stroke-width="2"/>
-  <path d="M24 26h36M24 37h36M24 48h21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  <path d="M24 70h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 6"/>
-  <g class="pkg-ill-a">
-    <path d="M77 44h27a7 7 0 017 7v18a7 7 0 01-7 7H77L62 60l15-16z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-    <circle cx="78.5" cy="60" r="3.5" stroke="currentColor" stroke-width="2"/>
-    <path d="M89 55h13M89 66h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </g>
+/* the artwork for an account with nothing switched on: a document with a plus,
+   brand-ink gradient (assets/add agreements.svg, inlined) */
+const PKG_ILL = `<svg class="pkg-ill" viewBox="0 0 84 84" fill="none" aria-hidden="true" focusable="false">
+  <path d="M71.0358 26.0892L52.6608 7.71422C52.2948 7.34868 51.8605 7.05883 51.3825 6.86121C50.9045 6.6636 50.3922 6.56209 49.875 6.5625H18.375C16.6345 6.5625 14.9653 7.25391 13.7346 8.48461C12.5039 9.71532 11.8125 11.3845 11.8125 13.125V70.875C11.8125 72.6155 12.5039 74.2847 13.7346 75.5154C14.9653 76.7461 16.6345 77.4375 18.375 77.4375H65.625C67.3655 77.4375 69.0347 76.7461 70.2654 75.5154C71.4961 74.2847 72.1875 72.6155 72.1875 70.875V28.875C72.1879 28.3578 72.0864 27.8455 71.8888 27.3675C71.6912 26.8895 71.4013 26.4552 71.0358 26.0892ZM52.5 18.7031L60.0469 26.25H52.5V18.7031ZM19.6875 69.5625V14.4375H44.625V30.1875C44.625 31.2318 45.0398 32.2333 45.7783 32.9717C46.5167 33.7102 47.5182 34.125 48.5625 34.125H64.3125V69.5625H19.6875ZM53.8125 49.875C53.8125 50.9193 53.3977 51.9208 52.6592 52.6592C51.9208 53.3977 50.9193 53.8125 49.875 53.8125H45.9375V57.75C45.9375 58.7943 45.5227 59.7958 44.7842 60.5342C44.0458 61.2727 43.0443 61.6875 42 61.6875C40.9557 61.6875 39.9542 61.2727 39.2158 60.5342C38.4773 59.7958 38.0625 58.7943 38.0625 57.75V53.8125H34.125C33.0807 53.8125 32.0792 53.3977 31.3408 52.6592C30.6023 51.9208 30.1875 50.9193 30.1875 49.875C30.1875 48.8307 30.6023 47.8292 31.3408 47.0908C32.0792 46.3523 33.0807 45.9375 34.125 45.9375H38.0625V42C38.0625 40.9557 38.4773 39.9542 39.2158 39.2158C39.9542 38.4773 40.9557 38.0625 42 38.0625C43.0443 38.0625 44.0458 38.4773 44.7842 39.2158C45.5227 39.9542 45.9375 40.9557 45.9375 42V45.9375H49.875C50.9193 45.9375 51.9208 46.3523 52.6592 47.0908C53.3977 47.8292 53.8125 48.8307 53.8125 49.875Z" fill="url(#pkg-ill-grad)"/>
+  <defs>
+    <linearGradient id="pkg-ill-grad" x1="24" y1="6.5625" x2="29.2175" y2="77.0141" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0133FA"/>
+      <stop offset="1" stop-color="#B5C5FF"/>
+    </linearGradient>
+  </defs>
 </svg>`;
 
 /* the three worth looking at first, for an account with nothing switched on:
@@ -9349,7 +9328,7 @@ function pkgNoneHTML(){
     </div>
     ${picks.length ? `
       <div class="pkg-none-sep"><span class="act-eyebrow">Start here</span></div>
-      <ol class="pkg-list">${picks.map(x => pkgCardRowHTML(x, PKG_CHECK_CTA)).join('')}</ol>` : ''}`;
+      <ol class="pkg-list">${picks.map(x => pkgCardRowHTML(x, PKG_CHECK_CTA, true)).join('')}</ol>` : ''}`;
 }
 
 /* what the rows share, said once. How many of the figures above were read off
@@ -10066,7 +10045,7 @@ function ncMiniCatRow(r){
   return `
     <li class="opp-legend-item" data-cat="${r.id}" tabindex="0" role="button"
       aria-label="${r.n}: ${newCustomer ? 'typically ' : ''}${fmt(money)} kr./year">
-      <span class="opp-legend-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
+      <span class="opp-legend-ic">${catArt(r.id, 'sm')}</span>
       <span class="opp-legend-txt">${r.n}</span>
       <b class="opp-legend-amt">${cvFig(money)} kr.</b>
       <svg class="opp-legend-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -11256,33 +11235,24 @@ function dashCardHTML(c){
    photograph bleeding off the right edge, and the arrow square goes — the whole
    tile was always the button, the arrow only a sign of it. Scoped to one account
    so it can be read against the plain tiles on another; widen by adding a key. */
-/* off for every account: the Figma design (node 135:325) draws the area's mark
-   in a white disc, not a photograph. Add a persona key to try the artwork. */
+/* off for every account: the Figma design (node 135:325) draws the area's mark,
+   not a photograph. Add a persona key to try the artwork. */
 const MOVE_ART_FOR = new Set([]);
 const MOVE_ART = {
   mat: 'assets/unsplash_TpZL2Tm_z5U.png',   /* stacked timber */
   tool:'assets/unsplash_9OB46apMbC4.png'    /* a red site helmet */
 };
-/* the design's own marks for the two areas it drew (assets/icons, untouched);
-   any other area that ranks into the two moves falls back to the file's line
-   icon in the same white disc */
-const MOVE_ICON = {
-  mat: 'assets/icons/move-building-materials.svg',
-  tool:'assets/icons/move-tools-workwear.svg'
-};
 const MOVE_TINT = {mat:'var(--cat-mat-tint)', tool:'var(--cat-tool-tint)'};
 function dashRecHTML(rec, art){
   /* the whole tile is one button; the precise action ("See the 4 agreements")
      sits beside the figure and shows itself on hover, so the tile says what it
-     does before it is pressed — the disc is the area's mark, not a control. The
+     does before it is pressed — the 3D mark is the area's, not a control. The
      money is printed the way the title above prints it — the verified part and
      the estimated part each in their own ink, stacked, the verified one first;
      a rate (no invoice has priced it) is plain foreground. */
   const kind = rec.rate ? ' rate' : '';
   const pic = art && MOVE_ART[rec.cat];
-  const ic = MOVE_ICON[rec.cat]
-    ? `<img src="${MOVE_ICON[rec.cat]}" alt="" width="32" height="32" draggable="false">`
-    : `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[rec.cat] || ''}</svg>`;
+  const ic = catArt(rec.cat);
   return `
     <li>
       <button type="button" class="nc-move" data-cat="${rec.cat}"
@@ -11860,7 +11830,7 @@ function renderSavings(){
               ${p.inUse.slice().sort((a, b) => b.saved - a.saved).map((c, i) => `
               <li class="sv-agr">
                 <span class="sv-agr-rank">${i + 1}</span>
-                <span class="sv-agr-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[c.id] || ''}</svg></span>
+                <span class="sv-agr-ic">${catArt(c.id, 'sm')}</span>
                 <span class="sv-agr-txt">
                   <b>${c.agr}</b>
                   <span>${c.n} · ${fmt(c.spend)} kr. of spend covered</span>
@@ -13766,7 +13736,7 @@ function catOtherHTML(cur){
       <li><button type="button" class="oc-card" data-oc="${r.id}"
         style="--b:${brandOf([...r.agr].sort((a, b) => b.covers - a.covers)[0].n)}">
         <span class="oc-top">
-          <span class="oc-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
+          <span class="oc-ic">${catArt(r.id, 'sm')}</span>
           <span class="cv-brand-stack">
             ${[...r.agr].sort((a, b) => b.covers - a.covers).slice(0, 3).map(a =>
               `<span class="cv-bchip" style="--b:${brandOf(a.n)}">${agrLogoChip(a.n)}</span>`).join('')}
@@ -14082,7 +14052,7 @@ const CHECK_SM = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" 
    for this list — a padlock for a held price and a return arrow — at the same 1.7
    stroke on the same 24 grid, so the six read as one family */
 const CR_ICON = {
-  delivery:CAT_ICON.frg,
+  delivery:'<rect x="2" y="7" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M14 10h3.6l3.4 3.4V16h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/>',
   payment:FEAT_SVG.clock,
   rebate:FEAT_SVG.bonus,
   service:FEAT_SVG.group,
@@ -14164,7 +14134,7 @@ function renderCustomRequest(){
   if(step === 1){
     body.innerHTML = `
       <div class="pc-sup">
-        <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg></span>
+        <span class="cat-ic">${catArt(r.id, 'sm')}</span>
         <span class="pc-sup-id"><b>${r.n}</b>
           <span>${fmt(r.amt)} kr. a year · ${r.sup} suppliers · ${r.inv} invoices</span></span>
       </div>
@@ -14868,6 +14838,11 @@ function agrValueHTML(r, a){
   const d = CDET[a.n] || {ulabel:'price index · your basket = 100',
     a:`${100 - spread}–${100 + spread}`, b:String(100 - rate), bonus:'Standard terms', why:[]};
   const kr = n => cmpEst ? `about ${fmtCompact(n)}` : fmt(n);
+  /* the kroner on each card is SPEND, not saving — unlabelled, "423.700 kr." next
+     to a green card was read as the saving. The label says whose money and when. */
+  const krL = cmpEst ? ['Typical spend a year', 'Typical spend on the agreement']
+    : landing ? ['You’d spend a year at list price', 'You spend a year']
+    : ['You spend a year', 'You’d spend a year'];
 
   return `
   <section class="agv" aria-labelledby="agvH">
@@ -14893,7 +14868,7 @@ function agrValueHTML(r, a){
           <div class="cmp-sup">${a.n}</div>
           <div class="price">${d.a}</div>
           <div class="unit">${d.ulabel}</div>
-          <div class="cmp-kr">${kr(a.covers)} kr.<small> a year</small></div>
+          <div class="cmp-kr"><span>${krL[0]}</span>${kr(a.covers)} kr.</div>
           <div class="bonus">No agreement</div>
         </div>
         <div class="cmp-arrow">
@@ -14905,7 +14880,7 @@ function agrValueHTML(r, a){
           <div class="cmp-sup">${a.n}</div>
           <div class="price">${d.b}</div>
           <div class="unit">${d.ulabel}</div>
-          <div class="cmp-kr">${kr(a.covers - a.save)} kr.<small> a year</small></div>
+          <div class="cmp-kr"><span>${krL[1]}</span>${kr(a.covers - a.save)} kr.</div>
           <div class="bonus">${d.bonus === 'Standard terms' ? 'Group terms' : d.bonus}</div>
         </div>
       </div>
@@ -15040,21 +15015,6 @@ function renderCatTabAgreement(r, idx){
               : `<button class="btn btn-primary btn-block" id="catTabDeal">Talk to my advisor</button>`}`
     : `<button class="btn btn-primary btn-block" id="catTabActivate">Activate this agreement</button>
        ${challengeHTML}`;
-  /* the price rise the rail and the notifications point at lands HERE, on the
-     agreement that rose, with what it costs and the one thing to do about it */
-  const riseHTML = risen ? `
-    <section class="opp-sec cat-rise" aria-labelledby="catRiseH">
-      <h3 id="catRiseH">${agIc('alert')} ${a.n} raised prices ${rise.pct}% ${rise.when}</h3>
-      <p>On the ${fmt(a.covers)} kr. a year you buy through this agreement, that is about
-        <b>${fmt(rise.cost)} kr. a year</b> more than the rate agreed for the group — the
-        saving on this page is still ${fmt(a.save)} kr. against list, but ${fmt(rise.cost)} kr.
-        of it is now being given back. The group rate is the contract; a rise on top of it
-        can be challenged without leaving the supplier.</p>
-      <div class="opp-contact-actions">
-        <button type="button" class="btn btn-primary" id="catRiseChallenge">Challenge the price rise</button>
-        <button type="button" class="btn btn-secondary" id="catRiseAdvisor">Ask Peter to take it up</button>
-      </div>
-    </section>` : '';
 
   catTabShell(
     /* no back button of its own any more: the shell's breadcrumb already carries
@@ -15074,7 +15034,6 @@ function renderCatTabAgreement(r, idx){
           : {k:a.req && !pending ? 'You buy through them' : 'You spend with them', v:fmt(a.covers), s:'kr. a year'}
       ]),
     `
-    ${riseHTML}
     ${reqCardsHTML(mine ? [mine] : [])}
     ${agrValueHTML(r, a)}
     ${agrBenefitsHTML(r, a)}
@@ -15091,13 +15050,8 @@ function renderCatTabAgreement(r, idx){
   if(heroDeal) heroDeal.addEventListener('click', () => openAdvisorMeeting(r));
   const heroBuyer = $('#catTabBuyer');
   if(heroBuyer) heroBuyer.addEventListener('click', () => openContactBuyer(r, a));
-  ['#catTabChallenge', '#catRiseChallenge'].forEach(sel => {
+  ['#catTabChallenge'].forEach(sel => {
     const b = $(sel); if(b) b.addEventListener('click', () => openPriceChallenge(r, a));
-  });
-  const riseAdv = $('#catRiseAdvisor');
-  if(riseAdv) riseAdv.addEventListener('click', () => {
-    toggleAgent(true); apTab = 'peter'; renderApThread();
-    agentAsk(`${a.n} has raised prices ${priceRiseOf().pct}% — can you take it up with them on the group's behalf?`);
   });
   const upLink = $('#cmpUploadLink');
   if(upLink) upLink.addEventListener('click', e => { e.preventDefault(); openDataCenter(); });
@@ -17094,7 +17048,7 @@ function drGroup(id, ink, icon, name, sub, val, tone, track, body, i){
     <li class="dr-grp" style="--b:${ink}">
       <button type="button" class="dr-grp-h" data-drg="${id}" aria-expanded="false"
         aria-controls="drb-${id}">
-        <span class="dr-grp-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none">${icon}</svg></span>
+        <span class="dr-grp-ic" aria-hidden="true">${icon}</span>
         <span class="dr-grp-n">${name}${sub ? `<em>${sub}</em>` : ''}</span>
         <span class="dr-grp-v${tone ? ' ' + tone : ''}">${val}</span>
         <span class="dr-grp-x" aria-hidden="true">${DR_IC.chev}</span>
@@ -17225,7 +17179,7 @@ function drSavings(m){
                 buys through this agreement — <b>not your invoices</b>. Yours will differ;
                 upload them and this table becomes your own.`) : ''}
               ${c.agrs.map(a => drLines(c.row, a, a.est)).join('')}`;
-            return drGroup(c.id, AREA_HUE, CAT_ICON[c.id] || '',
+            return drGroup(c.id, AREA_HUE, catArt(c.id, 'sm'),
               c.n, `${c.sup} suppliers · ${fmt(c.inv)} invoices`,
               savedInk(c.realised, c.estR) + ' kr.', '',
               drTrack(i, [{c:'done' + (c.estR ? ' est' : ''), w:c.realised / maxR * 100}],
@@ -17264,7 +17218,7 @@ function drSavings(m){
               ${c.realised ? `<p class="dr-samp">${DR_IC.peer}<span>${c.n} is already earning
                 <b>${savedInk(c.realised, c.estR)} kr.</b> — the agreements above are on top of
                 that, not instead of it.</span></p>` : ''}`;
-            return drGroup('op-' + c.id, AREA_HUE, CAT_ICON[c.id] || '',
+            return drGroup('op-' + c.id, AREA_HUE, catArt(c.id, 'sm'),
               c.n, `${c.open.length} agreement${c.open.length === 1 ? '' : 's'} ready · ${c.sup} suppliers`,
               `${potInk(c)}<small> a year</small>`, '',
               drTrack(i, [{c:'open', w:c.potential / maxP * 100}],
@@ -17425,7 +17379,7 @@ function drSpending(m){
         </div>
         ${thru.length ? `
         <ul class="dr-drill">
-          ${thru.map((c, i) => drGroup(c.id, AREA_HUE, CAT_ICON[c.id] || '',
+          ${thru.map((c, i) => drGroup(c.id, AREA_HUE, catArt(c.id, 'sm'),
             c.n, `${liveIn(c)} · ${rpPct(thruOf(c), c.spend)}% of what you spend here`,
             rpNum(thruOf(c), m.estS) + ' kr.', '',
             drTrack(i, [{c:'cov', w:thruOf(c) / maxThru * 100}],
@@ -17456,7 +17410,7 @@ function drSpending(m){
         </div>
         ${drKinds({idle:idleT, ready:readyT, none:noneT}, m)}
         <ul class="dr-drill">
-          ${found.map((c, i) => drGroup('fd-' + c.id, AREA_HUE, CAT_ICON[c.id] || '',
+          ${found.map((c, i) => drGroup('fd-' + c.id, AREA_HUE, catArt(c.id, 'sm'),
             c.n, kindLine(c) || `${c.sup} suppliers · ${fmt(c.inv)} invoices`,
             rpNum(foundOf(c), m.estS) + ' kr.', 'warn',
             drTrack(i, [{c:'rest', w:foundOf(c) / maxFound * 100}],
@@ -17550,7 +17504,7 @@ function drUsage(m){
        of zero width left act one with a two-colour key explaining a colour that
        was never on the page. */
     const unused = Math.max(0, a.covers - a.vol);
-    return drGroup(pre + 'ag' + i, brandOf(a.n), CAT_ICON[a.catId] || '',
+    return drGroup(pre + 'ag' + i, brandOf(a.n), catArt(a.catId, 'sm'),
       a.n, a.vol
         ? `${a.cat} · ${rpPct(a.vol, m.volume)}% of everything bought on agreement`
         : `${a.cat} · priced for ${rpNum(a.covers, m.estS)} kr., nothing bought`,
@@ -18041,7 +17995,7 @@ function areaPickHTML(p){
   <li><button type="button" class="ar-pick" data-area="${r.id}"
     style="--b:${areaInk(r)}"
     aria-label="${p.tag}: ${r.n}. Opens the area.">
-    <span class="ar-pick-ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[r.id] || ''}</svg></span>
+    <span class="ar-pick-ic">${catArt(r.id)}</span>
     <span class="ar-pick-tag">${p.tag}</span>
     <b class="ar-pick-n">${r.n}</b>
     <span class="ar-pick-why">${p.why}</span>
@@ -18067,7 +18021,7 @@ function areaCardHTML(r, o){
     style="--b:${areaInk(r)}"
     aria-label="${r.n}: ${off ? `${off} agreement${off === 1 ? '' : 's'} available` : 'all agreements in use'}, ${r.rate}% average saving.">
     <span class="aga-st${off ? '' : ' on'}">${off ? `${off} available` : 'All in use'}</span>
-    <span class="ar-ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${CAT_ICON[r.id] || ''}</svg></span>
+    <span class="ar-ic">${catArt(r.id)}</span>
     <b class="aga-n">${r.n}</b>
     ${o.flag ? `<span class="ar-rec-pip">Recommended above</span>` : ''}
     <span class="ar-meta"><b>${r.rate}%</b> average saving ·
@@ -18529,7 +18483,7 @@ function renderCalculator(){
         const v = Math.max(0, scState[r.id] || 0);
         return `
         <div class="sc-row">
-          <span class="sc-row-n"><svg viewBox="0 0 24 24" fill="none">${CAT_ICON[r.id] || ''}</svg>${r.n}</span>
+          <span class="sc-row-n">${catArt(r.id, 'sm')}${r.n}</span>
           <label class="sc-in">
             <input type="number" min="0" step="1000" value="${v}" data-sc="${r.id}"
               aria-label="Annual spend on ${r.n}, kroner">
