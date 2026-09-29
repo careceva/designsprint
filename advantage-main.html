@@ -8475,10 +8475,8 @@ function enterAppShell(){
   updateActivityRail();
   inApp = true;
   persist();
-  /* not on the category tab: that page opens in its own tab, so a direct load has
-     no carried-over sessionStorage and the dashboard's "your dashboard is live"
-     modal would open over a page that isn't the dashboard */
-  if(!seenWelcome && !new URLSearchParams(location.search).has('catView')) openWelcome();
+  /* the welcome modal no longer opens on entry — the app lands straight on the
+     page; it is still one click away under the user menu's "Data confidence intro" */
 }
 
 function enterApp(){
