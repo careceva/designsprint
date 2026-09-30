@@ -17,10 +17,11 @@ forks/                     full copies of the main file that went their own way
     v3-collapsible-rail/     v2 with the collapsible rail and the assistant ask block back
 
 explorations/              one feature studied off the main file, in versions
+  index.html                 a page linking every exploration
   agreement-hero/v1/         agreement page hero: logo, Spending × Discount, reports
   areas-heroes/v1/           hero treatments for the Areas page
   calc-charts/v1/            the Tune calculator as a chart, five approaches
-  content-feedback/v1/       copy and content feedback, built on agreement-hero v1
+  content-feedback/v1/       copy and content feedback on the agreement and category pages
   sales-analysis/v1/         the sales-analysis table integration
   tune-states/v1/            Tune calculator states a–d
   suppliers-filter/v1/       filter bar directions for Suppliers and Agreements
