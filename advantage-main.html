@@ -4295,22 +4295,68 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
    sit on a row directly above it, because the report type rewrites everything in
    it: the switch is over what it changes, as a segmented control is over the
    chart it drives. The report type is on the left; period and export are a pair
-   on the right because they only re-cut what is already chosen. */
+   on the right because they only re-cut what is already chosen.
+   The two switches used to be one component doing two jobs — same track, same
+   thumb, same type — so the row read as six equal buttons, not "what" and "when".
+   Now they are two materials. The report is the row's one raised control, a step
+   larger, because it rewrites the page. The period is outlined in Export's own
+   border with a flat fill, because like Export it only acts on what is chosen. */
 .rp-top{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s4)}
 .rp-top>.hx{margin-top:0}
-.rp-ctl{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+/* the pair wraps to a line of its own, left-aligned, exactly when it stops fitting */
+.rp-ctl{display:flex;align-items:center;gap:var(--s3) var(--s4);flex-wrap:wrap}
 .rp-ctl-sp{flex:1 1 auto}
 .rp-ctl-r{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
-/* period sits beside an export button, so it takes the tighter geometry the
-   category page's seg already uses when it has to share a row */
-.rp-per.seg button{padding:0 var(--s3)}
-/* matches the seg's 38px outer height exactly, so the control row has one baseline */
-.rp-exp{height:38px;padding:0 var(--s4);font-size:var(--text-xs)}
-.rp-exp svg{width:15px;height:15px}
-@container page (max-width:700px){
-  .rp-ctl{flex-direction:column;align-items:stretch}
-  .rp-ctl-r{justify-content:space-between}
-  .rp-ctl .seg{justify-content:space-between}
+
+/* one thumb per switch, travelling to the pressed segment. It spans the track and
+   is clipped down to the segment, so the travel is a clip-path transition (no
+   layout) and a second press mid-way redirects it from wherever it is. Until
+   rpThumb() has measured (.ready), the pressed button paints its own fill. */
+.rp-seg{position:relative;isolation:isolate}
+.rp-seg button{white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:color var(--t-fast),transform 160ms ease-out}
+.rp-seg button:active{transform:scale(0.97)}
+/* the keyboard ring hugs the pill inside the track instead of squaring it off */
+.rp-seg button:focus-visible{outline-offset:0;border-radius:var(--rounded-full)}
+.rp-thumb{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0}
+.rp-thumb i{position:absolute;inset:0;border-radius:var(--rounded-full);
+  transition:clip-path 200ms cubic-bezier(0.77, 0, 0.175, 1)}
+.rp-seg.ready .rp-thumb{opacity:1}
+.rp-ctl .rp-seg.ready button[aria-pressed="true"]{background:none;box-shadow:none}
+
+/* the report: raised white thumb on the filled track, 42px outer */
+.rp-type button{height:36px;padding:0 var(--s4);font-size:var(--text-sm)}
+.rp-type button[aria-pressed="true"]{box-shadow:var(--shadow-sm)}
+.rp-type .rp-thumb i{background:var(--surface)}
+/* --shadow-sm re-spelled as a filter so it follows the clipped shape; drop-shadow
+   has no spread, so the token's -1px layer tightens its blur instead */
+.rp-type .rp-thumb{filter:drop-shadow(0 1px 3px #0000001a) drop-shadow(0 1px 1px #0000001a)}
+
+/* the period: outlined track, flat fill, no lift — 36px outer, like Export */
+.rp-per.seg{padding:2px;background:none;box-shadow:inset 0 0 0 1px var(--sidebar-border)}
+.rp-per.seg button{padding:0 var(--s3);font-size:var(--text-xs)}
+.rp-per.seg button[aria-pressed="true"]{background:var(--general-muted);box-shadow:none}
+.rp-per .rp-thumb i{background:var(--general-muted)}
+
+.rp-exp{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+/* a finger leaves hover behind on whatever it tapped last */
+@media (hover:none){
+  .rp-exp.btn-secondary:hover:not([disabled]){background:var(--surface);border-color:var(--sidebar-border)}
+}
+@media (pointer:coarse){
+  .rp-seg button,.rp-exp{height:44px}
+}
+/* a phone: every control full width, segments equal where the labels allow */
+@container page (max-width:520px){
+  .rp-ctl,.rp-ctl-r{flex-direction:column;align-items:stretch}
+  .rp-ctl-sp{display:none}
+  .rp-ctl .rp-seg button{flex:1 1 0;padding:0 var(--s2)}
+  .rp-exp{align-self:flex-start}
+}
+/* "Last 12 months · Year to date · Last 3 months" stops fitting a 320px phone */
+@container page (max-width:400px){
+  .rp-per-w{display:none}
+  .rp-type button{font-size:var(--text-xs)}
 }
 
 
@@ -5385,6 +5431,18 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
   .hy-ringbox{justify-self:start;align-items:flex-start}
 }
 
+/* one height for every page's hero, so moving between Suppliers, Areas, Reports
+   and Agreements never shifts the page under the card. Each card used to size to
+   its own artwork (366–403px). The Areas ring is the tallest, and 408px is its peak (403px, where the
+   two figures wrap) rounded up to the 8px grid, so no page outgrows the others.
+   A floor, not a fixed height, so a longer key can never be clipped. The Ring
+   cards keep their left cluster centred on the hairline as they grow; Suppliers
+   gives the spare room to its text row, so its figures stay on the bottom rule.
+   Once the cards stack into one column their contents differ too much for one
+   height, and each takes its own. */
+.hy,.ph-sup{min-height:408px}
+@container page (max-width:780px){.hy,.ph-sup{min-height:0}}
+
 /* the reader asked for less glass: the heroes go solid and drop the blur, and
    keep everything else — the bloom behind them still lights the page */
 @media (prefers-reduced-transparency:reduce){
@@ -5766,7 +5824,7 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 /* frosted, not tinted: the card is translucent white and blurs the bloom behind
    it, and the inset highlight is the lit top edge that makes glass read as glass */
 .ph-sup{position:relative;z-index:1;
-  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:1fr auto;align-items:center;
   column-gap:var(--s8);row-gap:var(--s6);overflow:hidden;
   margin-top:0;padding:var(--s8);
   border:1px solid #ffffffe8;border-radius:var(--rounded-2xl);
@@ -8475,10 +8533,8 @@ function enterAppShell(){
   updateActivityRail();
   inApp = true;
   persist();
-  /* not on the category tab: that page opens in its own tab, so a direct load has
-     no carried-over sessionStorage and the dashboard's "your dashboard is live"
-     modal would open over a page that isn't the dashboard */
-  if(!seenWelcome && !new URLSearchParams(location.search).has('catView')) openWelcome();
+  /* the welcome modal no longer opens on entry — the app lands straight on the
+     page; it is still one click away under the user menu's "Data confidence intro" */
 }
 
 function enterApp(){
@@ -15829,7 +15885,7 @@ const yearFracNow = () => {
 const RP_PERIOD = {
   '12m':{n:'Last 12 months', f:1,    of:'the last twelve months'},
   'ytd':{n:'Year to date',   get f(){ return yearFracNow(); }, of:'the year so far'},
-  'q':  {n:'Last quarter',   f:0.25, of:'the last quarter'}
+  'q':  {n:'Last 3 months',  f:0.25, of:'the last three months'}
 };
 const RP_TYPES = [
   {k:'savings',  n:'Savings'},
@@ -16111,7 +16167,7 @@ const rdTone = (lens, m) => m.peer ? '' : lens.tone;
 
 /* ---- the time axis ----
    The months the period covers, oldest first. Last 12 months ends on this month;
-   year to date starts in January; last quarter is the three months to now. */
+   year to date starts in January; the last three months end on this one. */
 function rdWindow(){
   const now = new Date(), y = now.getFullYear(), mo = now.getMonth();
   const n = rpPeriod === 'ytd' ? mo + 1 : rpPeriod === 'q' ? 3 : 12;
@@ -16664,7 +16720,7 @@ function rpHeroHTML(m, r, still){
     <header class="hx hy rp-hy" data-field>
       <span class="hy-field dots" data-field-layer aria-hidden="true"></span>
       <div class="hy-t2">
-        <span class="hy-eye">${rpSpan()}</span>
+        <span class="hy-eye">${RP_PERIOD[rpPeriod].n} · ${rpSpan()}</span>
         <h1 id="rpT" tabindex="-1">${r.h1}</h1>
       </div>
       <i class="hy-vr" aria-hidden="true"></i>
@@ -16714,34 +16770,79 @@ function rpColsWire(){
   });
 }
 
+/* the two switches. Built once and then kept: a press flips aria-pressed where
+   the buttons stand and the thumb travels. Rebuilding them with the page made the
+   selection jump, and handed focus to a freshly built button — a ring on the
+   period and none on the report, two looks for the one "chosen" state. Kept, the
+   pressed button simply keeps its focus, and the keyboard stays where it was. */
+const rpSegHTML = (cls, label, attr, items, cur) => `
+  <div class="seg rp-seg ${cls}" role="group" aria-label="${label}">
+    <span class="rp-thumb" aria-hidden="true"><i></i></span>
+    ${items.map(([k, n]) => `<button type="button" data-${attr}="${k}"
+      aria-pressed="${cur === k}">${n}</button>`).join('')}
+  </div>`;
+const rpCtlHTML = () => `
+  <div class="rp-ctl">
+    ${rpSegHTML('rp-type', 'Report', 'rptype', RP_TYPES.map(t => [t.k, t.n]), rpType)}
+    <span class="rp-ctl-sp"></span>
+    <div class="rp-ctl-r">
+      ${rpSegHTML('rp-per', 'Period', 'rpper', Object.entries(RP_PERIOD).map(([k, v]) =>
+        [k, v.n.replace(/^Last /, '<span class="rp-per-w">Last </span>')]), rpPeriod)}
+      <button type="button" class="btn btn-secondary btn-sm rp-exp" id="rpExport"
+        title="Export is not built in this prototype">${RP_IC.dl}Export CSV</button>
+    </div>
+  </div>`;
+
+/* the thumb, clipped to the pressed segment. Layout offsets rather than client
+   rects, because the button being pressed is mid-way through its 0.97 press. */
+function rpThumb(seg, move){
+  const th = seg.querySelector('.rp-thumb i'), on = seg.querySelector('[aria-pressed="true"]');
+  if(!th || !on || !seg.clientWidth) return;     /* hidden: the observer places it once shown */
+  const l = on.offsetLeft, t = on.offsetTop;
+  const clip = `inset(${t}px ${seg.clientWidth - l - on.offsetWidth}px ` +
+    `${seg.clientHeight - t - on.offsetHeight}px ${l}px round 9999px)`;
+  if(th.style.clipPath === clip && seg.classList.contains('ready')) return;
+  if(!move || !seg.classList.contains('ready')) th.style.transition = 'none';
+  th.style.clipPath = clip;
+  if(th.style.transition){ th.getBoundingClientRect(); th.style.transition = ''; }
+  seg.classList.add('ready');
+}
+function rpCtlPaint(move){
+  $$('#viewReports [data-rptype]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.rptype === rpType)));
+  $$('#viewReports [data-rpper]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.rpper === rpPeriod)));
+  $$('#viewReports .rp-seg').forEach(s => rpThumb(s, move));
+}
+/* wired once, with the controls. The observer re-seats a thumb without travel
+   whenever a track or a label changes size: the font arriving, the row stacking
+   on a phone, the view being shown after it was built hidden. */
+let rpCtlRO = null;
+function rpCtlWire(){
+  const ctl = $('#viewReports .rp-ctl');
+  ctl.addEventListener('click', e => {
+    const t = e.target.closest('[data-rptype]'), p = e.target.closest('[data-rpper]');
+    if(t && rpType !== t.dataset.rptype){ rpType = t.dataset.rptype; renderReports(true); }
+    else if(p && rpPeriod !== p.dataset.rpper){ rpPeriod = p.dataset.rpper; renderReports(true); }
+  });
+  $('#rpExport').addEventListener('click', () => alert(
+    `Export is not built in this prototype.\n\nThe real thing would download the ` +
+    `${(RP_TYPES.find(t => t.k === rpType) || RP_TYPES[0]).n.toLowerCase()} report for ` +
+    `${RP_PERIOD[rpPeriod].n.toLowerCase()} as CSV.`));
+  if(rpCtlRO) rpCtlRO.disconnect();
+  if(!window.ResizeObserver) return;
+  rpCtlRO = new ResizeObserver(es =>
+    new Set(es.map(e => e.target.closest('.rp-seg'))).forEach(s => rpThumb(s, false)));
+  $$('#viewReports .rp-seg, #viewReports .rp-seg button').forEach(n => rpCtlRO.observe(n));
+}
+
 /* The shell. It owns the frame — the controls, the card, the benchmark caveat —
-   and nothing else on the page knows about it. */
-function renderReports(){
+   and nothing else on the page knows about it. The controls are built on the
+   first render only; every later one swaps the card and everything under it.
+   `move` is a press on a switch: its thumb travels rather than cuts. */
+function renderReports(move){
   const m = rpModel({real:true});
   const r = (rpType === 'spending' ? rpSpending : rpType === 'usage' ? rpUsage : rpSavings)(m);
-  const typeName = (RP_TYPES.find(t => t.k === rpType) || RP_TYPES[0]).n;
 
-  $('#viewReports').innerHTML = `
-    <div class="rp-page">
-      <div class="rp-top">
-        <div class="rp-ctl">
-          <div class="seg" role="group" aria-label="Report">
-            ${RP_TYPES.map(t => `<button type="button" data-rptype="${t.k}"
-              aria-pressed="${rpType === t.k}">${t.n}</button>`).join('')}
-          </div>
-          <span class="rp-ctl-sp"></span>
-          <div class="rp-ctl-r">
-            <div class="seg rp-per" role="group" aria-label="Period">
-              ${Object.entries(RP_PERIOD).map(([k, v]) => `<button type="button" data-rpper="${k}"
-                aria-pressed="${rpPeriod === k}">${v.n}</button>`).join('')}
-            </div>
-            <button type="button" class="btn btn-secondary rp-exp" id="rpExport"
-              title="Export is not built in this prototype">${RP_IC.dl}Export CSV</button>
-          </div>
-        </div>
-        ${rpHeroHTML(m, r, rpDrawn)}
-      </div>
-
+  const rest = `
       ${m.peer ? `
       <p class="rp-note">${RP_IC.info}<span>Every figure on this page is a
         <b>benchmark estimate</b>, not your own accounting: it is the median of
@@ -16750,8 +16851,25 @@ function renderReports(){
         <b>Connect your invoices and this page reports your own numbers</b>,
         exact to the krone.</span></p>` : ''}
 
-      ${rdHTML(m)}
+      ${rdHTML(m)}`;
+
+  const top = $('#viewReports .rp-top');
+  if(!top){
+    $('#viewReports').innerHTML = `
+    <div class="rp-page">
+      <div class="rp-top">
+        ${rpCtlHTML()}
+        ${rpHeroHTML(m, r, rpDrawn)}
+      </div>
+      ${rest}
     </div>`;
+    rpCtlWire();
+  }else{
+    top.querySelector(':scope > .hx').outerHTML = rpHeroHTML(m, r, rpDrawn);
+    while(top.nextElementSibling) top.nextElementSibling.remove();
+    top.insertAdjacentHTML('afterend', rest);
+  }
+  rpCtlPaint(move === true);
 
   rpDrawn = true;
   /* the plotted field follows the pointer */
@@ -16759,23 +16877,6 @@ function renderReports(){
   rpColsWire();
 
   /* — wiring — */
-  $$('#viewReports [data-rptype]').forEach(b => b.addEventListener('click', () => {
-    if(rpType === b.dataset.rptype) return;
-    rpType = b.dataset.rptype; renderReports();
-    /* the headline is what changed, so that is where focus goes — and the button
-       that was pressed no longer exists after the re-render */
-    const h = $('#rpT'); if(h) h.focus();
-  }));
-  $$('#viewReports [data-rpper]').forEach(b => b.addEventListener('click', () => {
-    if(rpPeriod === b.dataset.rpper) return;
-    rpPeriod = b.dataset.rpper; renderReports();
-    /* the period only re-cuts what is already on screen, so focus stays on the
-       control the user is still working with rather than jumping to the title */
-    const p = $(`#viewReports [data-rpper="${rpPeriod}"]`); if(p) p.focus();
-  }));
-  $('#rpExport').addEventListener('click', () => alert(
-    `Export is not built in this prototype.\n\nThe real thing would download the ` +
-    `${typeName.toLowerCase()} report for ${RP_PERIOD[rpPeriod].n.toLowerCase()} as CSV.`));
   $$('#viewReports [data-rpgo]:not(#rd *)').forEach(b => b.addEventListener('click', () => {
     navAt = b.dataset.rpgo; renderNav(); setView();
   }));
