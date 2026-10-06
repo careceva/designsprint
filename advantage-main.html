@@ -2065,11 +2065,9 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .cat-tab-wrap{--general-primary:#0071e3;--brand-ice:#f0f7ff;--general-secondary:#e8f2ff;
   max-width:1180px;margin:0 auto;background:var(--surface);
   border:none;border-radius:0;
-  /* 64px of top padding was set when this page opened straight onto its title.
-     It now opens onto a breadcrumb, so that 64px sat above a 13px line and read as
-     the page having fallen down the screen. The bottom keeps its full 64px — that
-     one is the end of the document, not a gap. */
-  box-shadow:none;padding:var(--s6) var(--s4) var(--s16)}
+  /* sides only: .page already pads the top and the bottom, and a second layer
+     here stacked onto both — 72px over the breadcrumb, 128px under the page */
+  box-shadow:none;padding:0 var(--s4)}
 /* no align-items:start — the hero column needs to STRETCH to the full height of the
    (much taller) right column, so its sticky child has room to stay pinned for the
    whole scroll instead of releasing almost immediately. This is what actually makes
@@ -2128,16 +2126,57 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 /* the fact strip: two cells, label over value, hairline above like every section */
 .cat-mast-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:var(--s4) var(--s6);
   margin:var(--s6) 0 0;padding-top:var(--s6);border-top:1px solid var(--hairline)}
-.cat-mast-facts div{display:flex;flex-direction:column;gap:2px;min-width:0}
-.cat-mast-facts dt{font-size:var(--text-xs);font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+.cat-mast-facts div{display:grid;grid-row:span 2;grid-template-rows:subgrid;row-gap:var(--s1);min-width:0}
+/* labels in plain sentence case — no tracked capitals */
+.cat-mast-facts dt,.cat-mast-lbl{font-size:var(--text-sm);font-weight:500;
   color:var(--general-muted-foreground)}
 .cat-mast-facts dd{margin:0;font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;
   letter-spacing:-.3px;color:var(--general-foreground);font-variant-numeric:tabular-nums}
 .cat-mast-facts dd small{margin-left:4px;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
 .cat-mast-facts dd .fig-est{font-weight:600}
+/* the agreement's strip is the working behind the figure — spending × discount.
+   The operator sits in the middle of the gap, on the value line */
+.cat-mast-eq{grid-template-columns:1fr 1fr;column-gap:var(--s8)}
+.cat-mast-eq dd{position:relative}
+.cat-mast-op{position:absolute;right:100%;margin-right:calc(var(--s8) / 2);transform:translateX(50%);
+  font-weight:500;color:var(--general-muted-foreground)}
+/* the agreement's logo: the package card's 48px tile, radius and all */
+.cat-mast{--mastLogo:48px}
+/* the logo on its own line above the name, so the whole card keeps one left edge */
+.cat-mast-name{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4)}
+.cat-mast-figv{display:flex;flex-direction:column;gap:var(--s1)}
+.cat-mast-name h1{min-width:0}
+/* the category hero: the supplier count over the title as one tight group, then
+   one gap for every block below it instead of a margin on each */
+.cat-mast-head{display:flex;flex-direction:column;gap:var(--s2)}
+.cat-mast-head .cat-mast-eyebrow{margin:0}
+.cat-mast:has(>.cat-mast-head){gap:var(--s6)}
+.cat-mast:has(>.cat-mast-head)>*{margin-top:0}
+.cat-mast:has(>.cat-mast-head) .cat-mast-facts{margin:0}
+/* the source takes its own line under the label — in 318px the two never fit on
+   one, and the dot between them was left hanging at the end of the first */
+.cat-mast:has(>.cat-mast-head) .cat-mast-cap{flex-direction:column;align-items:flex-start;gap:var(--s1)}
+.cat-mast:has(>.cat-mast-head) .cat-mast-dot{display:none}
+/* the category title with its info mark, centred on the title's first line */
+.cat-mast-title{display:flex;align-items:flex-start;gap:var(--s2)}
+.cat-mast-title h1{min-width:0}
+.cat-mast-title .info-tip{flex:0 0 auto;margin:calc((var(--text-3xl) * 1.1 - 20px) / 2) 0 0}
+.cat-mast-title .info-tip::after{left:0;transform:translateX(0) translateY(-4px);width:340px}
+.cat-mast-title .info-tip:hover::after,.cat-mast-title .info-tip:focus-visible::after{transform:translateX(0) translateY(0)}
+@media (hover:none){
+  .cat-mast-title .info-tip{cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .cat-mast-title .info-tip:focus::after{opacity:1;transform:translateX(0) translateY(0)}
+  .cat-mast-stick:has(.info-tip:focus){z-index:3}
+}
+@media (pointer:coarse){
+  .cat-mast-title .info-tip{width:44px;height:44px;margin:calc((var(--text-3xl) * 1.1 - 44px) / 2) -12px 0 -12px}
+}
+.cat-mast-name .pkg-logo{width:var(--mastLogo);height:var(--mastLogo);border-radius:var(--rounded-md)}
+.cat-mast-name .pkg-logo img{width:82%;height:82%}
+.cat-mast-name .pkg-logo.mark img{width:100%;height:100%}
 .cat-mast-fig b{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;
   letter-spacing:-1.2px;line-height:1.1;color:var(--sentiment-positive)}
-.cat-mast-fig>span{font-size:13px;color:var(--general-muted-foreground)}
+.cat-mast-fig>span{font-size:var(--text-sm);color:var(--general-muted-foreground)}
 .cat-mast-fig b>span{font-size:inherit}
 /* the hero figure takes its kind's ink — unit included: landed green, exact
    potential brand blue, estimate muted and dotted */
@@ -2173,10 +2212,12 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
    media query never fires for that, a container query does */
 @container page (max-width:1000px){
   /* the right column is too narrow for paired facts long before the page is */
-  .ac-feats{grid-template-columns:1fr}
   .pc-reasons,.cmp{grid-template-columns:1fr}
 }
 @container page (max-width:780px){
+  .cat-mast-title{position:relative}
+  .cat-mast-title .info-tip{position:static}
+  .cat-mast-title .info-tip::after{left:0;right:0;width:auto}
   .cat-tab-grid{grid-template-columns:1fr;gap:var(--s8)}
   .cat-mast-stick{position:static}
   .cat-mast{padding:0 0 var(--s8);
@@ -2189,66 +2230,113 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
    column, each carrying what actually decides the question: the money, the status,
    four key facts, and two actions (open it, or push back on the price). */
 .cat-agrs-head{display:flex;align-items:flex-end;justify-content:space-between;
-  gap:var(--s4);margin-bottom:var(--s6);flex-wrap:wrap}
-.cat-agrs-head h3{font-size:var(--text-xl);letter-spacing:-.4px}
+  gap:var(--s4);flex-wrap:wrap}
+/* 30 / 24 / 18: hero title, section title, row name — the section title has to
+   sit a clear step above the rows or it reads as one more of them */
+.cat-agrs-head h3{font-size:var(--text-2xl);letter-spacing:-.5px}
 .cat-agrs-head p{margin-top:var(--s1);font-size:var(--text-sm);line-height:1.5;
   color:var(--general-muted-foreground);max-width:52ch}
+/* a head and its list are spaced by one gap, not a margin under the head */
+.cat-tab-main>section:has(>.cat-agrs-head){display:flex;flex-direction:column;gap:var(--s6)}
 .cat-agr-cards{list-style:none;display:flex;flex-direction:column;gap:var(--s4)}
 /* --general-border is a light BLUE (#bdd7ff); on a page this white it made every
    card look faintly selected. A neutral grey rule states the card's edge without
    claiming a state. */
-/* position:relative is load-bearing: .ac-ask inside is absolutely positioned, and
-   without a positioned ancestor here it escaped the row and pinned itself to the
-   top-left of the page. .agc had it, .ac did not. */
+/* position:relative is load-bearing: the stretched ::after of Read more is sized
+   to the nearest positioned ancestor, and that has to be the row. No overflow
+   clip — the Ask mark sits outside the row's edge. The whole row is one tap
+   target, so a long press must not select its text or raise the callout. */
 .ac{position:relative;border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);
-  background:var(--surface);overflow:hidden;
-  transition:background var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
-.ac:hover{background:linear-gradient(var(--tint),var(--tint)),var(--surface);
-  border-color:var(--tint-edge);box-shadow:var(--shadow-sm)}
-/* the facts band is a shade of white, so on the hover ground it would read as a
-   lighter stripe than the card around it — it merges instead */
-.ac-feats{transition:background var(--t-fast)}
-.ac:hover .ac-feats{background:transparent}
+  background-color:var(--surface);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  transition:background-color var(--t-fast),border-color var(--t-fast)}
 .ac.on{border-color:#00968947}
-/* the right padding reserves the Ask lane, the same way the card view does, so the
-   discount pill and the hover mark can never overlap */
-.ac-h{display:flex;align-items:center;gap:var(--s4);
-  padding:var(--s5,20px) 76px var(--s5,20px) var(--s5,20px);flex-wrap:wrap}
-.ac-h .ac-id{flex:1 1 200px}
-.ac-h .agr-chip{margin:0;width:44px;height:44px;box-shadow:none}
-.ac-h .agr-chip img{padding:5px}
-.ac-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
-.ac-id b{font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px}
+/* the ground answers the part of the row that opens the agreement, not the
+   buttons sitting on it: pointing at Ask or the advisor tints nothing. A plain
+   colour, not a gradient layer, so it fades with the border instead of snapping. */
+@media (hover:hover) and (pointer:fine){
+  .ac:has(.ac-more:hover){background-color:color-mix(in srgb,rgb(var(--b,33 112 237)) 6%,var(--surface));
+    border-color:var(--tint-edge)}
+  .ac:has(.ac-more:hover) .ac-more svg{transform:translateX(3px)}
+}
+/* and a press shows under a finger, where there is no hover to lean on */
+.ac:has(.ac-more:active){background-color:color-mix(in srgb,rgb(var(--b,33 112 237)) 11%,var(--surface));
+  border-color:var(--tint-edge)}
+/* a list row: logo, name and status, the discount as the trailing value. A grid,
+   so a long name wraps inside its own column instead of pushing the discount onto
+   a line of its own. The name and the number share a first baseline. */
+.ac-h{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;
+  align-items:center;gap:var(--s4);padding:var(--s5,20px)}
+/* the header carries the supplier's own ink at rest — the same 6% the row takes
+   on hover — so each row is told apart by its brand before it is read. The row
+   does not clip, so the header rounds its own top corners. */
+.ac-h{background-color:color-mix(in srgb,rgb(var(--b,33 112 237)) 6%,var(--surface));
+  border-radius:calc(var(--rounded-lg) - 1px) calc(var(--rounded-lg) - 1px) 0 0}
+.ac-h .agr-chip{margin:0;width:52px;height:52px;box-shadow:none;align-self:center}
+.ac-h .agr-chip img{padding:6px}
+.ac-id{min-width:0;display:flex;flex-direction:column;gap:var(--s2);align-self:baseline}
+.ac-id b{font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.3}
 .ac-badges{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
-.ac-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;
-  border-radius:var(--rounded-full);font-size:12px;font-weight:650;white-space:nowrap}
+.ac-pill{display:inline-flex;align-items:center;gap:var(--s1);padding:var(--s1) var(--s2);
+  border-radius:var(--rounded-full);font-size:var(--text-xs);font-weight:650;line-height:1.2;
+  white-space:nowrap}
 .ac-pill.live{background:#d9f2ef;color:var(--sentiment-positive)}
 .ac-pill.ready{background:var(--general-secondary);color:var(--general-primary)}
 .ac-pill.rate{background:var(--general-muted);color:var(--general-foreground)}
+.ac-pill.none{background:var(--general-muted);color:var(--general-muted-foreground)}
 .ac-pill svg{width:12px;height:12px}
-/* the discount, in the row's own right-hand slot — the same single highlighted
-   fact the card leads with, so the two views say the same thing in the same words */
-.ac-key{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;
-  padding:var(--s2) var(--s4);border-radius:var(--rounded-full);background:var(--brand-ice);
-  font-size:var(--text-sm);font-weight:700;color:var(--general-primary);white-space:nowrap}
-.ac-key svg{flex:0 0 auto;width:15px;height:15px}
-/* the benefits — two columns so three of them cost one band, not three rows */
-.ac-feats{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);
-  gap:var(--s3) var(--s6);padding:var(--s4) var(--s5,20px);
-  border-top:1px solid var(--hairline);background:#fcfcfd}
-@container catmain (max-width:560px){.ac-feats{grid-template-columns:1fr}}
-.ac-feats li{display:flex;gap:var(--s2);font-size:var(--text-sm);line-height:1.45;
-  font-weight:600}
+/* the discount is the row's trailing value: the number leads, what it is
+   measured against sits under it, both right-aligned so the rows scan as a column */
+.ac-key{display:flex;flex-direction:column;align-items:flex-end;gap:var(--s1);align-self:baseline;
+  text-align:right;font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground);
+  white-space:nowrap}
+.ac-key b{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:800;line-height:1.05;
+  letter-spacing:-.02em;color:var(--general-primary);font-variant-numeric:tabular-nums}
+/* the benefits: one column, so each reads on one line; two only where the row is
+   wide enough for that to stay true. No band behind them — one hairline under the
+   header, and benefits and actions read as one body. */
+.ac-feats{list-style:none;display:grid;grid-template-columns:minmax(0,1fr);
+  gap:var(--s2) var(--s6);padding:var(--s4) var(--s5,20px);border-top:1px solid var(--hairline)}
+@container catmain (min-width:800px){.ac-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ac-feats li{display:flex;gap:var(--s2);font-size:var(--text-sm);line-height:1.45;text-wrap:pretty}
 .ac-feats svg{flex:0 0 auto;width:15px;height:15px;margin-top:3px;
   color:var(--sentiment-positive)}
 .ac-f{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;
-  padding:var(--s4) var(--s5,20px);border-top:1px solid var(--hairline)}
+  padding:0 var(--s5,20px) var(--s5,20px)}
 .ac-f .spacer{flex:1 1 auto}
-/* the leverage line: the one number that makes a price challenge credible */
-.ac-lev{display:flex;align-items:center;gap:var(--s2);font-size:12.5px;
-  color:var(--general-muted-foreground)}
-.ac-lev svg{width:14px;height:14px;color:var(--general-accent)}
-.ac-lev b{color:var(--general-foreground);font-weight:650}
+/* the row's buttons sit above the stretched Read more */
+.ac-f .btn{position:relative;z-index:2}
+@media (pointer:coarse){.ac-f .btn,.cat-mast-act .btn{height:44px}}
+/* Read more opens the agreement; its ::after covers the whole row, so the row's
+   hover ground is a real affordance, not decoration */
+.ac-more{display:inline-flex;align-items:center;gap:var(--s1);min-height:36px;
+  font-size:var(--text-sm);font-weight:600;text-decoration:none}
+.ac-more svg{width:16px;height:16px;transition:transform var(--t-fast)}
+.ac-more::after{content:'';position:absolute;inset:0;z-index:1;border-radius:inherit}
+.ac-more:hover{text-decoration:none}
+.ac-more:focus-visible{outline:none}
+.ac:has(.ac-more:focus-visible){outline:2px solid var(--general-primary);outline-offset:2px}
+@container catmain (max-width:520px){
+  .ac-h{grid-template-columns:auto minmax(0,1fr) auto}
+  .ac-h .ac-ask{grid-column:1 / -1;justify-self:start}
+  .ac-key{white-space:normal;max-width:12ch}
+}
+/* the suppliers with no agreement, so the list adds up to the count over the
+   title: one card, a hairline between names, no actions */
+.ac-off{border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);background:var(--surface)}
+.ac-off ul{list-style:none}
+.ac-off-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
+  gap:var(--s4);padding:var(--s3) var(--s5,20px)}
+.ac-off-row+.ac-off-row{border-top:1px solid var(--hairline)}
+/* no brand to tint with: the initials take a neutral ink, which also reads as "not yet" */
+.ac-off-row{--b:110 110 120}
+.ac-off-row .agr-chip{margin:0;width:36px;height:36px;box-shadow:none;align-self:center}
+.ac-off-row .agr-chip-i{font-size:var(--text-xs)}
+.ac-off-row b{min-width:0;font-size:var(--text-base);font-weight:600}
+.ac-off-ic{--b:120 120 128;background:var(--general-muted)}
+.ac-off-ic svg{width:18px;height:18px;color:var(--general-muted-foreground)}
+.ac-off-all{display:block;padding:0 var(--s5,20px) var(--s4);font-size:var(--text-sm);font-weight:600}
 
 /* ---------- skin: the hero as a card, behind a toggle ----------
    No page ground: the canvas stays white and ALL the visual interest goes into
@@ -2387,6 +2475,10 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .oc-card:active{transform:none}
 .oc-top{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s3)}
 .oc-ic{flex:0 0 auto;width:38px;height:38px}
+/* an agreement card leads with the supplier's tile where a category has its icon */
+.oc-top .pkg-logo{width:38px;height:38px;border-radius:var(--rounded-sm)}
+.oc-top .pkg-logo img{width:32px;height:32px}
+.oc-top .pkg-logo.mark img{width:100%;height:100%}
 /* laid out side by side, not overlapped: at this size the fallback initials are
    two letters wide, and an avatar-style overlap slices the second one off */
 .oc-top .cv-brand-stack{margin-left:auto;width:auto;gap:4px}
@@ -2439,20 +2531,46 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
    A quiet mark that appears on hover or keyboard focus. It carries the assistant's
    own logo rather than a generic chat bubble: the point is that the answer comes
    from Advantage's data about this agreement, not from a support inbox. */
-.ac-ask{position:absolute;top:var(--s3);right:var(--s3);z-index:2;
-  display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px 0 8px;
-  border:1px solid var(--general-border);border-radius:var(--rounded-full);
-  background:var(--surface);box-shadow:var(--shadow-sm);cursor:pointer;
-  font-size:12.5px;font-weight:650;color:var(--general-primary);
-  opacity:0;transform:translateY(-4px);pointer-events:none;
-  transition:opacity var(--t-fast),transform var(--t-fast),background var(--t-fast)}
-.ac-ask img{width:16px;height:16px;display:block}
-.ac:hover .ac-ask,.ac:focus-within .ac-ask,
-.agc:hover .ac-ask,.agc:focus-within .ac-ask{opacity:1;transform:none;pointer-events:auto}
-/* keyboard users never hover: the button reveals itself when it takes focus */
-.ac-ask:focus-visible{opacity:1;transform:none;pointer-events:auto}
-.ac-ask:hover{background:var(--brand-ice)}
-@media(hover:none){.ac-ask{opacity:1;transform:none;pointer-events:auto}}
+/* the Ask mark: the assistant's own green-to-blue on a 2px ring (1.5px snaps to
+   a hairline on 1x screens), so it reads as the assistant before anything else.
+   Inside the row, and always shown, wherever there is no hover or no gutter. */
+.ac-ask{position:relative;z-index:2;display:grid;place-items:center;width:36px;height:36px;
+  padding:0;border:2px solid transparent;border-radius:var(--rounded-full);cursor:pointer;
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,
+    linear-gradient(135deg,#57b844,#2170ed 60%,#0b00ab) border-box;
+  box-shadow:0 4px 12px -4px rgb(33 112 237/.4);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:opacity 160ms cubic-bezier(.23,1,.32,1),transform 160ms cubic-bezier(.23,1,.32,1)}
+.ac-ask img{width:20px;height:20px;display:block}
+/* the hover glow is its own layer, so it fades on opacity instead of repainting */
+.ac-ask::after{content:'';position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;
+  box-shadow:0 6px 16px -4px rgb(33 112 237/.5);opacity:0;transition:opacity var(--t-fast)}
+@media (hover:hover) and (pointer:fine){.ac-ask:hover::after{opacity:1}}
+.ac-ask:active{transform:scale(.97)}
+.ac-ask:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+@media (pointer:coarse){.ac-ask{width:44px;height:44px}}
+/* where the page leaves a gutter and the pointer can hover: the mark waits just
+   outside the row's right edge, centred on the header, and comes in when the row
+   is pointed at or focused */
+@container page (min-width:781px){
+  @media (hover:hover) and (pointer:fine){
+    .ac-h{grid-template-columns:auto minmax(0,1fr) auto}
+    .ac-h .ac-ask{position:absolute;top:50%;left:calc(100% + 1px + var(--s2));translate:0 -50%;
+      opacity:0;transform:translateX(-4px);pointer-events:none}
+    /* the gap between row and mark belongs to the mark, so crossing it keeps
+       the row hovered and the mark on screen */
+    .ac-h .ac-ask::before{content:'';position:absolute;top:0;bottom:0;right:100%;
+      width:calc(var(--s2) + 3px)}
+    .ac:hover .ac-ask,.ac:focus-within .ac-ask{opacity:1;transform:none;pointer-events:auto}
+    .ac:hover .ac-ask:active{transform:scale(.97)}
+  }
+}
+/* reduced motion keeps the fades and drops the movement */
+@media (prefers-reduced-motion:reduce){
+  .ac .ac-ask,.ac:hover .ac-ask,.ac .ac-ask:active,.ac:hover .ac-ask:active,
+  .ac:has(.ac-more:hover) .ac-more svg{transform:none}
+  .ac,.ac-ask,.ac-ask::after{transition-duration:.15s!important}
+}
 
 /* ---------- category page: the agreements as cards ----------
    The list answers "what is here"; the cards argue. Two figures get their own band
@@ -2479,15 +2597,6 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .agc.on{border-color:#00968947}
 /* the recommended one gets a header band across the top of the card, in both
    views — it is a sentence, not a label, and it needs the full width to say it */
-.agc.rec,.ac.rec{border-color:#bdd7ff;box-shadow:0 0 0 3px #1b64dc12}
-.agc-rec{display:flex;align-items:center;gap:7px;padding:var(--s2) var(--s5,20px);
-  background:var(--brand-ice);border-bottom:1px solid #bdd7ff;
-  font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-  color:var(--general-primary)}
-.agc-rec img{width:14px;height:14px;flex:0 0 auto}
-/* the hover mark drops below the band on a recommended card so the two never
-   share the same 32px of the top edge */
-.agc.rec .ac-ask,.ac.rec .ac-ask{top:calc(var(--s3) + 30px)}
 /* the right padding permanently reserves the Ask lane, so the mark can never
    land on top of the name however long it is */
 .agc-top{padding:var(--s5,20px) 72px 0 var(--s4)}
@@ -2806,6 +2915,18 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
 .agm-faq dt{font-size:var(--text-base);font-weight:650;color:var(--general-foreground)}
 .agm-faq dd{margin:var(--s1) 0 0;font-size:var(--text-sm);line-height:1.6}
 .agm-body .stepper-note{margin-top:0}
+/* uploaded documents: count beside the title, one hairline row per file */
+.agdoc-n{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.agdoc-list{list-style:none;margin:0;padding:0}
+.agdoc{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) 0;border-top:1px solid var(--hairline)}
+.agdoc:first-child{border-top:0;padding-top:0}
+.agdoc-ic{flex:0 0 auto;display:grid;place-items:center;width:36px;height:36px;
+  border-radius:var(--rounded-sm);background:var(--general-muted);color:var(--general-foreground)}
+.agdoc-ic svg{width:16px;height:16px}
+.agdoc-t{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.4}
+.agdoc-t b{font-size:var(--text-sm);font-weight:600;color:var(--general-foreground);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.agdoc-t span{font-size:var(--text-xs)}
 @container catmain (max-width:560px){.agm-kv>div{grid-template-columns:1fr;gap:2px}}
 /* the in-use timeline and renewal date are shared with the Agreements page, which
    keeps its own sizes; on this page they meet the 13px floor like everything else */
@@ -5446,7 +5567,7 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 /* the reader asked for less glass: the heroes go solid and drop the blur, and
    keep everything else — the bloom behind them still lights the page */
 @media (prefers-reduced-transparency:reduce){
-  .dr-mast,.ph-sup,.lg-door{background:var(--surface);
+  .dr-mast,.ph-sup,.lg-door,.skin-under .cat-mast{background:var(--surface);
     -webkit-backdrop-filter:none;backdrop-filter:none}
 }
 
@@ -6792,7 +6913,7 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
 
 </style>
 </head>
-<body>
+<body ontouchstart="">
 
 <div class="flow">
 
@@ -8580,7 +8701,7 @@ function renderWelcome(){
       + 'useful enough to act on now, and replaced the moment a real agreement or '
       + 'spend report arrives.'
     : partialData()
-    ? `${KARI_DOCS.invoices.length} invoices and a spend report make ${exactAgrN()} of your ${exactAgrN() + estAgrN()} agreements exact. `
+    ? `${KARI_DOCS.invoices.length} supplier reports and a spend report make ${exactAgrN()} of your ${exactAgrN() + estAgrN()} agreements exact. `
       + 'Dotted figures are estimates until a document covers them.'
     : `Every figure of yours is read straight from ${fmt(tot('inv'))} invoices, so nothing on `
       + 'your pages is an estimate. The one distinction we do draw: a saving only counts '
@@ -9583,7 +9704,7 @@ function renderErpPill(){
   pill.classList.toggle('none', !connected || partial);
   const estN = partial ? estAgrN() : 0;
   pill.setAttribute('aria-label', partial
-    ? `${KARI_DOCS.invoices.length} invoices and ${KARI_DOCS.reports.length} spend report uploaded, ${estN} agreements still estimated. Open your data.`
+    ? `${KARI_DOCS.invoices.length} supplier reports and ${KARI_DOCS.reports.length} spend report uploaded, ${estN} agreements still estimated. Open your data.`
     : connected
     ? `Data source: ${state.source} connected. Open data confidence.`
     : 'No data connected. Connect a data source.');
@@ -10339,7 +10460,7 @@ function dashModelOwn(){
     ovTip: tuned
       ? `These figures follow the spend you set in ${tn} area${tn === 1 ? '' : 's'}, not your invoices. The discount rates are unchanged.`
       : partial
-      ? `Read from ${KARI_DOCS.invoices.length} invoices and ${KARI_DOCS.reports.length} spend report. Solid figures are exact; dotted ones are estimates until we read a document for them.`
+      ? `Read from ${KARI_DOCS.invoices.length} supplier reports and ${KARI_DOCS.reports.length} spend report. Solid figures are exact; dotted ones are estimates until we read a document for them.`
       : `Read off ${fmt(invoices)} invoices from ${suppliers} suppliers. Only savings already seen on an invoice count${
           pendSum ? ` — ${fmt(pendSum)} kr. is agreed but not invoiced yet` : ''}${
           idleSum ? `${pendSum ? ', and' : ' —'} ${fmt(idleSum)} kr. sits in agreements nothing is bought through` : ''}.`,
@@ -12719,6 +12840,9 @@ const CDET = {
    passed off as fact. manualVerified lets the Data Center "upload" flow flip one
    over to verified without needing a real backend behind it. */
 let manualVerified = new Set();
+/* the agreement page's document list: uploads per agreement name, and the held
+   documents the customer deleted ('inv:<supplier>' / 'rep:<report name>') */
+let docUploads = {}, docGone = new Set(), agDocsOpen = false;
 /* demo overrides, triggered from the account dropdown — "no data yet" and "fully
    verified" force every agreement to one state regardless of CDET/manualVerified,
    so the two extremes can be shown on demand without re-uploading one by one */
@@ -12852,8 +12976,6 @@ const ovColsHTML = () => `
     <button type="button" data-ov-cols="${n}" aria-pressed="${ovCols === n}" title="${t}" aria-label="${t}">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${OV_COLS_IC[n]}</svg></button>`).join('')}
   </span>`;
-/* the category page's agreements: cards argue, the list scans. Cards by default. */
-let catAgrView = 'cards';
 /* the hero card always sits on its bloom now — the Plain / Bloom inside / Bloom
    under toggle was a comparison aid, and the comparison has been decided */
 const catTabSkin = 'under';
@@ -12938,7 +13060,7 @@ function docOf(r, a){
   if(newCustomer) return null;
   if(!partialData()) return {kind:'erp', name:`${state.source} · ${fmt(r.inv)} invoices`};
   const inv = a && KARI_DOCS.invoices.find(d => d.sup === a.n);
-  if(inv) return {kind:'invoice', name:`${a.n.split(' ')[0]} invoice · ${inv.date}`};
+  if(inv) return {kind:'invoice', name:`${a.n.split(' ')[0]} report · ${inv.date}`};
   const rep = KARI_DOCS.reports.find(d => d.areas.includes(r.id));
   if(rep && (!a || !isEstimated(a))) return {kind:'report', name:rep.name};
   return null;
@@ -13058,7 +13180,7 @@ function renderDataCenter(){
       ${partialData() ? `
       <section class="dc-docs" aria-label="Documents we hold">
         <ul class="dc-doc-list">
-          ${KARI_DOCS.invoices.map(d => `<li class="dc-doc"><span class="dc-doc-k">Invoice</span><b>${d.sup}</b><span>${d.date}</span></li>`).join('')}
+          ${KARI_DOCS.invoices.map(d => `<li class="dc-doc"><span class="dc-doc-k">Supplier report</span><b>${d.sup}</b><span>${d.date}</span></li>`).join('')}
           ${KARI_DOCS.reports.map(d => `<li class="dc-doc"><span class="dc-doc-k">Spend report</span><b>${d.name}</b><span>${d.areas.map(id => (ROWS.find(r => r.id === id) || {}).n).join(' · ')}</span></li>`).join('')}
         </ul>
       </section>` : ''}
@@ -13551,7 +13673,7 @@ function figSource(r, a){
     src = `Benchmark · ${ncPeers} ${(state.industry || 'similar').toLowerCase()} companies your size`;
   }else if(partialData()){
     const exactN = agrs.filter(x => !isEstimated(x)).length, estN = agrs.length - exactN;
-    if(a) src = doc ? '' : 'Estimate · no document yet';
+    if(a) src = doc || !est ? '' : 'Estimate · no document yet';
     else if(!estN) tail = ` · ${agrs.length} agreement${agrs.length === 1 ? '' : 's'}`;
     else if(!exactN) src = 'Estimate · no document yet';
     else tail = ` · ${exactN} exact, ${estN} estimated`;
@@ -13571,8 +13693,12 @@ function figSource(r, a){
    The prose subtitle and note are gone from the hero; the main column argues
    the case, the hero states it. `facts` is [{k,v,s}]; `sub`/`desc` are kept
    in the signature for callers that still pass them and used only when no
-   facts are given. */
-function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML, estimated, figLabel, prov, actual, facts){
+   facts are given. `more.logo` sets a brand tile one title-line tall beside the
+   name; a fact with `op` prints that operator in the gap before its value;
+   `more.labelAbove` sets figLabel over the number instead of in the caption;
+   `more.infoTitle` moves the info mark from the caption to beside the title. */
+function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML, estimated, figLabel, prov, actual, facts, more = {}){
+  const eyebrow = tag ? `<span class="cat-mast-eyebrow">${tag}</span>` : '';
   const fig = actual ? actualHTML(save) : figHTML(save, estimated);
   const src = prov ? (prov.doc
     ? `<button type="button" class="doc-chip named" data-docgo="1" aria-label="Source: ${apEsc(prov.doc.name)} — open your data">${DOC_I}<span>${prov.doc.name}</span></button>`
@@ -13580,16 +13706,24 @@ function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML, estimated
   const info = prov ? `<span class="info-tip" tabindex="0" role="note"
         data-tip="${apEsc(prov.tip)}" aria-label="How this is calculated: ${apEsc(prov.tip)}">${INFO_I}</span>` : '';
   return `
-    <span class="cat-mast-eyebrow">${tag}</span>
-    <h1 class="cat-tab-title">${title}</h1>
+    ${more.infoTitle ? '' : eyebrow}
+    ${more.logo ? `<div class="cat-mast-name"${more.ink ? ` style="--b:${more.ink}"` : ''}>${more.logo}
+      <h1 class="cat-tab-title">${title}</h1></div>`
+      : more.infoTitle ? `<div class="cat-mast-head">${eyebrow}
+      <div class="cat-mast-title"><h1 class="cat-tab-title">${title}</h1>${info}</div></div>`
+      : `<h1 class="cat-tab-title">${title}</h1>`}
     ${facts ? '' : `<p class="cat-mast-sub">${sub}</p>`}
     <div class="cat-mast-fig">
+      ${more.labelAbove ? `<div class="cat-mast-figv"><span class="cat-mast-lbl">${figLabel}</span>
+      <b>${fig} kr.</b></div>
+      ${src || info ? `<span class="cat-mast-cap">${src}${info}</span>` : ''}` : `
       <b>${fig} kr.</b>
-      <span class="cat-mast-cap">${figLabel || 'potential saving a year'}${src ? `<i class="cat-mast-dot" aria-hidden="true"></i>${src}` : ''}${info}</span>
+      <span class="cat-mast-cap">${figLabel || 'potential saving a year'}${src ? `<i class="cat-mast-dot" aria-hidden="true"></i>${src}` : ''}${more.infoTitle ? '' : info}</span>`}
     </div>
     ${facts ? `
-    <dl class="cat-mast-facts">
-      ${facts.map(f => `<div><dt>${f.k}</dt><dd>${f.v}${f.s ? `<small>${f.s}</small>` : ''}</dd></div>`).join('')}
+    <dl class="cat-mast-facts${facts.some(f => f.op) ? ' cat-mast-eq' : ''}">
+      ${facts.map(f => `<div><dt>${f.k}</dt><dd>${f.op
+        ? `<span class="cat-mast-op" aria-hidden="true">${f.op}</span>` : ''}${f.v}${f.s ? `<small>${f.s}</small>` : ''}</dd></div>`).join('')}
     </dl>` : `<p class="cat-mast-note">${desc}</p>`}
     ${extraHTML ? `<div class="cat-mast-act">${extraHTML}</div>` : ''}`;
 }
@@ -13728,11 +13862,49 @@ function catOtherHTML(cur){
   </section>`;
 }
 
-/* the assistant mark that appears on an agreement card on hover */
+/* the suppliers in an area that Advantage has no agreement with, so the category
+   page lists every supplier its count names. Names are shown only where the area
+   is read off the customer's own documents; a benchmark count has nobody behind
+   it to name, so one row stands for the rest. */
+const OFF_SUP = {
+  mat: ['XL-BYG', 'Davidsen', 'Beijer Byggmaterial', 'Optimera', 'Carl Ras', 'Johannes Fog',
+        'Byggmakker', 'Neumann Bygg', 'Silvan Proff', 'Monter', 'Jem & Fix', 'Lavpris Træ', 'Nordic Timber'],
+  tool:['Würth Danmark', 'Snickers Workwear', 'Blåkläder', 'Makita Nordic', 'Toolstation',
+        'Mascot Workwear', 'Festool Nordic'],
+  fuel:['Circle K Business', 'OK Erhverv', 'Uno-X Erhverv'],
+  off: ['Staples Nordic', 'Ditto Erhverv', 'Kontorland', 'Viking Direct'],
+  rent:['Ramirent', 'Cramo', 'Riwal', 'GSV Udlejning'],
+  frg: ['GLS Erhverv', 'DHL Freight', 'Schenker', 'Danske Fragtmænd'],
+  tel: ['Telenor Erhverv', 'Atea', 'Dustin'],
+  site:['Marius Pedersen', 'Stena Recycling', 'Renosyd']
+};
+const supKnown = r => !newCustomer && areaExact(r);
+/* the list opens on four names and the rest are one tap away */
+let catOffAll = false;
+const OFF_SHOW = 4;
+function offSupHTML(r){
+  const n = Math.max(0, r.sup - r.agr.length);
+  if(!n) return '';
+  const names = (OFF_SUP[r.id] || []).slice(0, n);
+  const pill = '<span class="ac-pill none">No agreement</span>';
+  if(!supKnown(r) || names.length < n) return `
+    <li class="ac-off"><ul><li class="ac-off-row">
+      <span class="agr-chip ac-off-ic">${featIcon('group')}</span>
+      <b>${n} other supplier${n === 1 ? '' : 's'}</b>${pill}</li></ul></li>`;
+  const cut = names.length > OFF_SHOW + 1 && !catOffAll;
+  const shown = cut ? names.slice(0, OFF_SHOW) : names;
+  return `
+    <li class="ac-off"><ul>${shown.map(x => `<li class="ac-off-row">
+      ${agrLogoChip(x)}<b>${x}</b>${pill}</li>`).join('')}</ul>
+      ${names.length > OFF_SHOW + 1 ? `<button type="button" class="linkbtn ac-off-all" data-offall="1">
+        ${catOffAll ? 'Show fewer' : `Show all ${names.length}`}</button>` : ''}</li>`;
+}
+
+/* the assistant mark beside an agreement row */
 const agrAskBtn = (catId, idx) => `
   <button type="button" class="ac-ask" data-ask="${idx}" data-askcat="${catId}"
     aria-label="Ask the saving assistant about this agreement">
-    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">Ask
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">
   </button>`;
 
 /* ============ price challenge ============
@@ -14571,56 +14743,18 @@ function renderMeeting(){
    the agreements that deliver them, all in one place — while the supporting
    sections (terms, calculation, timeline, contact) scroll past on the right */
 function renderCatTab(r){
+  if(!catTabAt || catTabAt.r !== r) catOffAll = false;
   catTabAt = {r, agrIdx:null};
   const pot = potOf(r);
-  const recIdx = recommendedIdx(r);
 
-  /* — the card view: two up, each one arguing its own case — */
-  const cardsGrid = r.agr.map((a,i) => {
+  /* one row per agreement, read like a list row: logo, name and status, the
+     discount as the trailing value, then the Ask mark. "Read more" opens the
+     agreement and stretches over the row, so the hover ground is honest. */
+  const cards = r.agr.map((a,i) => {
     const rate = Math.round(a.save / a.covers * 100);
     const mine = reqForAgr(r.id, a.n);
     return `
-    <li class="agc${a.req ? ' on' : ''}${i === recIdx ? ' rec' : ''}" style="--b:${brandOf(a.n)}">
-      ${i === recIdx ? `<div class="agc-rec"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">
-        Recommended by Advantage specialist</div>` : ''}
-      ${agrAskBtn(r.id, i)}
-      <div class="agc-top">
-        ${agrLogoTile(a.n)}
-        <b class="agc-name">${a.n}${a.isNew ? '<span class="cnew">New</span>' : ''}</b>
-        <span class="ac-badges">
-          ${a.req
-            ? `<span class="ac-pill live">${TICK} In use</span>`
-            : `<span class="ac-pill ready">Ready to use</span>`}
-          ${isEstimated(a) ? estChip() : ''}
-        </span>
-      </div>
-      <p class="agc-desc">${agrWhy(r, a)[0]}</p>
-      <div class="agc-key">${TICK} ${rate}% under ${isEstimated(a) && !newCustomer ? 'list price' : 'the price on your invoices today'}</div>
-      <ul class="agc-bens">
-        ${agrCardBenefits(r, a).map(b => `
-          <li class="agc-ben">${TICK}<span>${b.t}</span></li>`).join('')}
-      </ul>
-      <div class="agc-f">
-        <button type="button" class="btn btn-primary btn-sm" data-agr="${i}">
-          ${a.req ? 'See the agreement' : 'View the agreement'}</button>
-        ${mine
-          ? `<button type="button" class="btn btn-secondary btn-sm" data-reqopen="${mine.id}">
-               <span class="req-pill${reqDays(mine) >= 5 ? ' chase' : ''}">${reqStage(mine)}</span>
-               Price request</button>`
-          : `<button type="button" class="btn btn-secondary btn-sm" data-advisor="${i}">
-               Talk to my advisor</button>`}
-      </div>
-      <div class="agc-lev">${featIcon('group')}<b>${memberCount(a.n)}</b> members use this</div>
-    </li>`;
-  }).join('');
-
-  const cards = r.agr.map((a,i) => {
-    const rate = Math.round(a.save / a.covers * 100);
-    return `
-    <li class="ac${a.req ? ' on' : ''}${i === recIdx ? ' rec' : ''}" style="--b:${brandOf(a.n)}">
-      ${i === recIdx ? `<div class="agc-rec"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzMSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPG1hc2sgaWQ9InNkYU1hc2siIHN0eWxlPSJtYXNrLXR5cGU6YWxwaGEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIzMSIgaGVpZ2h0PSIzNSI+CjxwYXRoIGQ9Ik0wIDBDMCAwIDguMzkyNTQgNy4xMTg2NCAxNS41IDcuMTE4NjRDMjIuNjA3NSA3LjExODY0IDMxIDAgMzEgMEMzMSAwIDI2LjIzMDggMTAuNDE5IDI2LjIzMDggMTcuNUMyNi4yMzA4IDI0LjU4MSAzMSAzNSAzMSAzNUMzMSAzNSAyMi42MDc1IDI3LjI4ODEgMTUuNSAyNy4yODgxQzguMzkyNTQgMjcuMjg4MSAwIDM1IDAgMzVDMCAzNSA0Ljc2OTIzIDI0LjU4MSA0Ljc2OTIzIDE3LjVDNC43NjkyMyAxMC40MTkgMCAwIDAgMFoiIGZpbGw9IiNEOUQ5RDkiLz4KPC9tYXNrPgo8ZyBtYXNrPSJ1cmwoI3NkYU1hc2spIj4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYwKSI+CjxwYXRoIGQ9Ik01Ny42MDczIDkuOTAxODVDNTcuNjA3MyAyMi4xODAyIDQ3Ljc0MzggMzIuMTMzOSAzNS41NzY2IDMyLjEzMzlDMjMuNDA5NCAzMi4xMzM5IDEzLjU0NTkgMjIuMTgwMiAxMy41NDU5IDkuOTAxODVDMTMuNTQ1OSAtMi4zNzY1NSAyMy40MDk0IC0xMi4zMzAyIDM1LjU3NjYgLTEyLjMzMDJDNDcuNzQzOCAtMTIuMzMwMiA1Ny42MDczIC0yLjM3NjU1IDU3LjYwNzMgOS45MDE4NVoiIGZpbGw9InVybCgjc2RhRzApIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYxKSI+CjxwYXRoIGQ9Ik0xNy43MjA2IDIyLjQ5NDhDMTcuNzIwNiAzNC45MTgzIDkuMTUwNDYgNDQuOTg5NiAtMS40MjEyOCA0NC45ODk2Qy0xMS45OTMgNDQuOTg5NiAtMjAuNTYzMSAzNC45MTgzIC0yMC41NjMxIDIyLjQ5NDhDLTIwLjU2MzEgMTAuMDcxMyAtMTEuOTkzIDAgLTEuNDIxMjggMEM5LjE1MDQ2IDAgMTcuNzIwNiAxMC4wNzEzIDE3LjcyMDYgMjIuNDk0OFoiIGZpbGw9InVybCgjc2RhRzEpIi8+CjwvZz4KPGcgZmlsdGVyPSJ1cmwoI3NkYUYyKSI+CjxwYXRoIGQ9Ik0yNS40MzUgMi4zMzY0MkMyNS40MzUgOS4xNTMxMSAyMC45ODcgMTQuNjc5MSAxNS41MDAxIDE0LjY3OTFDMTAuMDEzMSAxNC42NzkxIDUuNTY1MTIgOS4xNTMxMSA1LjU2NTEyIDIuMzM2NDJDNS41NjUxMiAtNC40ODAyNyAxMC4wMTMxIC0xMC4wMDYzIDE1LjUwMDEgLTEwLjAwNjNDMjAuOTg3IC0xMC4wMDYzIDI1LjQzNSAtNC40ODAyNyAyNS40MzUgMi4zMzY0MloiIGZpbGw9InVybCgjc2RhRzIpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjxnIGZpbHRlcj0idXJsKCNzZGFGMykiPgo8cGF0aCBkPSJNMjIuNDU5MyAyLjMzNjQyQzIyLjQ1OTMgNy4xMTE0OCAxOS4zNDM1IDEwLjk4MjQgMTUuNSAxMC45ODI0QzExLjY1NjQgMTAuOTgyNCA4LjU0MDU5IDcuMTExNDggOC41NDA1OSAyLjMzNjQyQzguNTQwNTkgLTIuNDM4NjQgMTEuNjU2NCAtNi4zMDk1OSAxNS41IC02LjMwOTU5QzE5LjM0MzUgLTYuMzA5NTkgMjIuNDU5MyAtMi40Mzg2NCAyMi40NTkzIDIuMzM2NDJaIiBmaWxsPSJ1cmwoI3NkYUczKSIgc3R5bGU9Im1peC1ibGVuZC1tb2RlOm92ZXJsYXkiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjc2RhRjQpIj4KPHBhdGggZD0iTTIwLjE4NTkgMy45NzE3MkMyMC4xODU5IDcuMTg2ODEgMTguMDg4IDkuNzkzMTUgMTUuNTAwMSA5Ljc5MzE1QzEyLjkxMjIgOS43OTMxNSAxMC44MTQzIDcuMTg2ODEgMTAuODE0MyAzLjk3MTcyQzEwLjgxNDMgMC43NTY2MzkgMTIuOTEyMiAtMS44NDk3IDE1LjUwMDEgLTEuODQ5N0MxOC4wODggLTEuODQ5NyAyMC4xODU5IDAuNzU2NjM5IDIwLjE4NTkgMy45NzE3MloiIGZpbGw9InVybCgjc2RhRzQpIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6b3ZlcmxheSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9InNkYUYwIiB4PSI3LjAyNDQxIiB5PSItMTguODUxNiIgd2lkdGg9IjU3LjEwNDQiIGhlaWdodD0iNTcuNTA3IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMSIgeD0iLTI3LjA4NDYiIHk9Ii02LjUyMTQ5IiB3aWR0aD0iNTEuMzI2NyIgaGVpZ2h0PSI1OC4wMzI1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjMuMjYwNzUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMiIgeD0iLTIuNjYxMzgiIHk9Ii0xOC4yMzI4IiB3aWR0aD0iMzYuMzIyOSIgaGVpZ2h0PSI0MS4xMzg0IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQuMTEzMjUiIHJlc3VsdD0iZSIvPjwvZmlsdGVyPgo8ZmlsdGVyIGlkPSJzZGFGMyIgeD0iNC40MjczNCIgeT0iLTEwLjQyMjgiIHdpZHRoPSIyMi4xNDUzIiBoZWlnaHQ9IjI1LjUxODUiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9InNoYXBlIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMi4wNTY2MyIgcmVzdWx0PSJlIi8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9InNkYUY0IiB4PSI5LjQ0MzE5IiB5PSItMy4yMjA3OSIgd2lkdGg9IjEyLjExMzgiIGhlaWdodD0iMTQuMzg1IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNjg1NTQyIiByZXN1bHQ9ImUiLz48L2ZpbHRlcj4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMCIgeDE9IjM2LjUxNjEiIHkxPSIyNC45MDQ5IiB4Mj0iMzUuNTU5NCIgeTI9Ii0xMS42ODk3IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzU3Qjg0NCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E0RTM5NiIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzEiIHgxPSItMC4yNjY1NTEiIHkxPSIxLjAzODU2IiB4Mj0iNi41NTMiIHkyPSIzMS43NDU2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzkzQkJGRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFCNjREQyIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzIiIHgxPSItMS42MDUyMyIgeTE9IjcuNTMyMDMiIHgyPSIzNi42Mjg5IiB5Mj0iOS4zNDA5NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU4RDMiLz48c3RvcCBvZmZzZXQ9IjAuNDU0NTU1IiBzdG9wLWNvbG9yPSIjRkNFN0QzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZGNkVEIi8+PC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJzZGFHMyIgeDE9IjMuNTE3NzkiIHkxPSI1Ljk3NTkzIiB4Mj0iMzAuMzAwNiIgeTI9IjcuMjQzMDYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZFOEQzIi8+PHN0b3Agb2Zmc2V0PSIwLjQ1NDU1NSIgc3RvcC1jb2xvcj0iI0ZDRTdEMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGRjZFRCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ic2RhRzQiIHgxPSI3LjQzMjM4IiB5MT0iNi40MjIyMiIgeDI9IjI1LjQ2NTUiIHkyPSI3LjI3NTM5IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRThEMyIvPjxzdG9wIG9mZnNldD0iMC40NTQ1NTUiIHN0b3AtY29sb3I9IiNGQ0U3RDMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkY2RUQiLz48L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">
-        Recommended by Advantage specialist</div>` : ''}
-      ${agrAskBtn(r.id, i)}
+    <li class="ac${a.req ? ' on' : ''}" style="--b:${brandOf(a.n)}">
       <div class="ac-h">
         ${agrLogoChip(a.n)}
         <span class="ac-id">
@@ -14632,33 +14766,32 @@ function renderCatTab(r){
             ${isEstimated(a) ? estChip() : ''}
           </span>
         </span>
-        <span class="ac-key">${TICK} ${rate}% under your invoice price</span>
+        <span class="ac-key"><b>${rate}%</b> under ${isEstimated(a) && !newCustomer ? 'list price' : 'your invoice price'}</span>
+        ${agrAskBtn(r.id, i)}
       </div>
       <ul class="ac-feats">
         ${agrCardBenefits(r, a).map(b => `<li>${TICK}<span>${b.t}</span></li>`).join('')}
       </ul>
       <div class="ac-f">
-        <button type="button" class="btn btn-primary btn-sm" data-agr="${i}">
-          ${a.req ? 'See the agreement' : 'View the agreement'}</button>
-        ${reqForAgr(r.id, a.n)
-          ? `<button type="button" class="btn btn-secondary btn-sm" data-reqopen="${reqForAgr(r.id, a.n).id}">
-               <span class="req-pill${reqDays(reqForAgr(r.id, a.n)) >= 5 ? ' chase' : ''}">${reqStage(reqForAgr(r.id, a.n))}</span>
-               Price request</button>`
-          : `<button type="button" class="btn btn-secondary btn-sm" data-advisor="${i}">
-               Talk to my advisor</button>`}
+        <button type="button" class="linkbtn ac-more" data-agr="${i}"
+          aria-label="Read more about ${apEsc(a.n)}">Read more${ARROW}</button>
         <span class="spacer"></span>
-        <span class="ac-lev">${featIcon('group')}<b>${memberCount(a.n)}</b> members use this</span>
+        ${mine
+          ? `<button type="button" class="btn btn-secondary btn-sm" data-reqopen="${mine.id}">
+               <span class="req-pill${reqDays(mine) >= 5 ? ' chase' : ''}">${reqStage(mine)}</span>
+               Price request</button>` : ''}
       </div>
     </li>`;
   }).join('');
 
   const inUse = r.agr.filter(a => a.req).length;
   const catEstimated = r.agr.some(a => !a.req && isEstimated(a));
+  const supN = Math.max(r.sup, r.agr.length);
   catTabShell(
     /* the hero no longer carries the agreement list: it was a white-on-white list
        inside a 380px column, which is precisely why the agreements disappeared.
        They are the decision, so they now lead the main column instead. */
-    catTabHeroHTML(r.id, 'Purchasing category', r.n, pot,
+    catTabHeroHTML(r.id, supKnown(r) ? `${supN} suppliers` : '', r.n, pot,
       !newCustomer && !areaExact(r)
         ? `${r.rate}% below list price. Companies your size spend about ${fmtCompact(r.amt)} kr. a year here.`
         : `${r.rate}% of ${fmt(r.amt)} kr. spent in this category, across ${r.sup} suppliers.`,
@@ -14672,28 +14805,22 @@ function renderCatTab(r){
               Track your request</button>`
          : `<button class="btn btn-primary btn-block" id="catTabDeal">Talk to my advisor</button>`}`,
       catEstimated, null, figSource(r), false, [
-        {k:'Group rate', v:`−${r.rate}%`, s:'vs list'},
+        {k:'Discount', v:`${r.rate}%`, s:'vs list'},
         newCustomer || !areaExact(r)
           ? {k:'Companies your size spend', v:figHTML(r.amt, true, false), s:'kr. a year'}
-          : {k:'You spend', v:fmt(r.amt), s:'kr. a year'},
-        {k:'Suppliers', v:String(r.sup), s:'in this area'}
-      ]),
+          : {k:'You spend', v:fmt(r.amt), s:'kr. a year'}
+      ], {infoTitle:true}),
     `
     ${reqCardsHTML(reqsFor(r.id))}
     <section>
       <div class="cat-agrs-head">
         <div>
-          <h3>${r.agr.length} agreements in ${r.n.toLowerCase()}</h3>
+          <h3>${supN} suppliers in ${r.n.toLowerCase()}</h3>
           <p>${inUse ? `${inUse} already in use. ` : ''}Open one to see how it compares with what you
             pay today — or push back on a supplier's price without leaving them.</p>
         </div>
-        <div class="seg" role="group" aria-label="How to show the agreements">
-          <button type="button" data-agrview="cards" aria-pressed="${catAgrView === 'cards'}">Cards</button>
-          <button type="button" data-agrview="list" aria-pressed="${catAgrView === 'list'}">List</button>
-        </div>
       </div>
-      <ul class="cat-agr-cards${catAgrView === 'cards' ? ' as-cards' : ''}">
-        ${catAgrView === 'cards' ? cardsGrid : cards}</ul>
+      <ul class="cat-agr-cards">${cards}${offSupHTML(r)}</ul>
     </section>
     ${catOtherHTML(r)}`
   );
@@ -14709,17 +14836,11 @@ function renderCatTab(r){
   }));
   wireReqCards('#viewCatTab');
   wireCatTabContact(`Tell me more about the ${r.n} opportunity`, r);
-  $$('#viewCatTab [data-agrview]').forEach(b => b.addEventListener('click', () => {
-    catAgrView = b.dataset.agrview; persist(); renderCatTab(r);
-  }));
   wireAgrAsk('#viewCatTab', r);
+  const offAll = $('#viewCatTab [data-offall]');
+  if(offAll) offAll.addEventListener('click', () => { catOffAll = !catOffAll; renderCatTab(r); });
   $$('#viewCatTab [data-agr]').forEach(b => b.addEventListener('click',
     () => renderCatTabAgreement(r, +b.dataset.agr)));
-  /* the card's secondary action is the advisor now — a button labelled "talk to my
-     advisor" that opened a supplier price-challenge letter would be a lying label.
-     The price challenge is still reachable from the agreement's own page. */
-  $$('#viewCatTab [data-advisor]').forEach(b => b.addEventListener('click',
-    () => openAdvisorMeeting(r)));
 }
 
 /* five plausible line items per category — enough to make the basket concrete
@@ -14802,23 +14923,10 @@ function agrValueHTML(r, a){
     <i class="agv-dot" style="left:${(spx(dotAt) / SW * 100).toFixed(2)}%;top:${(spy(months[dotAt]) / SH * 100).toFixed(2)}%"></i></span>`;
   const year = new Date().getFullYear();
 
-  /* today vs the agreement, carried over from the old Compare tab — with the
-     year in kroner on each side, which is what the Impact tab's two bars said */
-  const cmpEst = isEstimated(a);
-  const spread = Math.max(6, Math.round(rate * 0.7));
-  const d = CDET[a.n] || {ulabel:'price index · your basket = 100',
-    a:`${100 - spread}–${100 + spread}`, b:String(100 - rate), bonus:'Standard terms', why:[]};
-  const kr = n => cmpEst ? `about ${fmtCompact(n)}` : fmt(n);
-  /* the kroner on each card is SPEND, not saving — unlabelled, "423.700 kr." next
-     to a green card was read as the saving. The label says whose money and when. */
-  const krL = cmpEst ? ['Typical spend a year', 'Typical spend on the agreement']
-    : landing ? ['You’d spend a year at list price', 'You spend a year']
-    : ['You spend a year', 'You’d spend a year'];
-
   return `
   <section class="agv" aria-labelledby="agvH">
     <header class="agv-head">
-      <h2 id="agvH">What ${a.n} is worth to you</h2>
+      <h2 id="agvH">${landing ? 'Your savings' : 'What you could save'}</h2>
       <p>${landing ? 'Read off your invoices since the new price went live.'
         : est ? `Based on what companies your size buy from ${a.n}. Upload an invoice and it becomes your number.`
         : 'Worked out from your own invoices. Same goods, same delivery — only the price changes.'}</p>
@@ -14831,34 +14939,6 @@ function agrValueHTML(r, a){
         <dd role="img" aria-label="Saving month by month through ${year}${landing ? ', actual to date then projected' : ', projected'}">${spark}
           <span class="agv-proj-x" aria-hidden="true"><span>Jan</span><span>Dec</span></span></dd></div>
     </dl>
-
-    <div class="agv-vs">
-      <div class="cmp">
-        <div class="cmp-c${cmpEst ? ' estimated' : ''}">
-          <div class="ct">Today${cmpEst ? ' · estimated' : ''}</div>
-          <div class="cmp-sup">${a.n}</div>
-          <div class="price">${d.a}</div>
-          <div class="unit">${d.ulabel}</div>
-          <div class="cmp-kr"><span>${krL[0]}</span>${kr(a.covers)} kr.</div>
-          <div class="bonus">No agreement</div>
-        </div>
-        <div class="cmp-arrow">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <b>−${rate}%</b>
-        </div>
-        <div class="cmp-c win">
-          <div class="ct">${TICK} Advantage agreement</div>
-          <div class="cmp-sup">${a.n}</div>
-          <div class="price">${d.b}</div>
-          <div class="unit">${d.ulabel}</div>
-          <div class="cmp-kr"><span>${krL[1]}</span>${kr(a.covers - a.save)} kr.</div>
-          <div class="bonus">${d.bonus === 'Standard terms' ? 'Group terms' : d.bonus}</div>
-        </div>
-      </div>
-      ${cmpEst ? `<p class="cmp-note">${DASH_CIRCLE} Today's price is an industry-benchmark
-        estimate — we don't have your ${a.n} agreement or invoices yet.
-        <a href="#" id="cmpUploadLink">Upload it to see your exact number →</a></p>` : ''}
-    </div>
   </section>`;
 }
 
@@ -14881,7 +14961,6 @@ function agrBenefitsHTML(r, a){
     {k:'same', t:'Keep your account', s:'Same account, branch, delivery and invoicing. Only the price changes.'},
     {k:'shield', t:'We check every invoice', s:'If the price drifts from the agreed rate, we flag it and take it up for you.'}
   ];
-  const why = d.why || [];
   return `
   <section class="agbn" aria-labelledby="agbnH">
     <header class="agbn-head">
@@ -14892,8 +14971,6 @@ function agrBenefitsHTML(r, a){
       ${items.map(x => `<li class="agbn-item"><span class="agbn-ic">${featIcon(x.k)}</span>
         <span><b>${x.t}</b><p>${x.s}</p></span></li>`).join('')}
     </ul>
-    ${why.length ? `<div class="bc-why"><h3>Why we picked it for you</h3>
-      <ul>${why.map(w => `<li><span class="tick">${TICK}</span><span>${w}</span></li>`).join('')}</ul></div>` : ''}
   </section>`;
 }
 
@@ -14915,9 +14992,10 @@ function agrMoreHTML(r, a){
   const unit = d.ulabel.charAt(0).toUpperCase() + d.ulabel.slice(1);
   return `
   <section class="agm" aria-label="More about ${a.n}">
+    ${agDocsRowHTML(r, a)}
     ${a.req ? '' : row('How activating works', actStepperHTML(-1))}
     ${row('Prices and terms', kv([
-      ['Group rate', `−${rate}% against list price`],
+      ['Discount', `${rate}% off list price`],
       ['Price quoted as', unit],
       ['On top of the price', d.bonus === 'Standard terms' ? 'Nothing extra — standard group terms' : d.bonus],
       live ? ['Renews', `${agFmtDate(agRenewDate(a))} — we tell you before, not after`]
@@ -14950,6 +15028,112 @@ function agrMoreHTML(r, a){
   </section>`;
 }
 
+/* ---- the documents behind this agreement ----
+   What the customer sent that covers this agreement: a supplier report, a spend
+   report covering its area, and anything uploaded here. Deleting one removes the
+   file everywhere it is cited; a figure we already checked against it stays
+   checked. Uploading one makes the agreement exact, as the Your data page does. */
+function applyDocGone(){
+  KARI_DOCS.invoices = KARI_DOCS.invoices.filter(d => !docGone.has('inv:' + d.sup));
+  KARI_DOCS.reports  = KARI_DOCS.reports.filter(d => !docGone.has('rep:' + d.name));
+}
+function agDocsOf(r, a){
+  const out = (docUploads[a.n] || []).map(u => ({key:'up:' + u.id, name:u.name, meta:`Uploaded · ${u.date}`}));
+  if(partialData()){
+    KARI_DOCS.invoices.filter(d => d.sup === a.n).forEach(d =>
+      out.push({key:'inv:' + d.sup, name:`${a.n.split(' ')[0]} report`, meta:`Supplier report · ${d.date}`}));
+    KARI_DOCS.reports.filter(d => d.areas.includes(r.id)).forEach(d =>
+      out.push({key:'rep:' + d.name, name:d.name, meta:'Spend report'}));
+  }
+  return out;
+}
+function agDocsRowHTML(r, a){
+  const docs = agDocsOf(r, a);
+  return `
+    <details class="agm-row agdoc-row"${agDocsOpen ? ' open' : ''}>
+      <summary><h3>Uploaded documents</h3>${docs.length ? `<span class="agdoc-n">${docs.length}</span>` : ''}${AGM_ARROW}</summary>
+      <div class="agm-body">
+        ${docs.length ? `<ul class="agdoc-list">${docs.map(x => `
+          <li class="agdoc"><span class="agdoc-ic">${DOC_I}</span>
+            <span class="agdoc-t"><b>${apEsc(x.name)}</b><span>${x.meta}</span></span>
+            <button type="button" class="btn btn-ghost btn-sm" data-docdel="${apEsc(x.key)}"
+              aria-label="Delete ${apEsc(x.name)}">Delete</button></li>`).join('')}</ul>`
+          : '<p>None yet.</p>'}
+        <div><button type="button" class="btn btn-secondary btn-sm" id="agDocUp">Upload</button>
+          <input type="file" id="agDocFile" accept=".pdf,.csv,.xlsx,.png,.jpg" hidden></div>
+      </div>
+    </details>`;
+}
+function wireAgDocs(r, idx){
+  const a = r.agr[idx];
+  const redraw = () => {
+    const top = $('#canvas').scrollTop;
+    agDocsOpen = true; persist();
+    renderCatTabAgreement(r, idx);
+    agreementsChanged();
+    $('#canvas').scrollTop = top;
+    setTimeout(() => { const b = $('#agDocUp'); if(b) b.focus({preventScroll:true}); }, 80);
+  };
+  const row = $('.agdoc-row');
+  if(row) row.addEventListener('toggle', () => { agDocsOpen = row.open; });
+  $$('#viewCatTab [data-docdel]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.docdel;
+    if(k.startsWith('up:')) docUploads[a.n] = (docUploads[a.n] || []).filter(u => 'up:' + u.id !== k);
+    else { docGone.add(k); applyDocGone(); }
+    redraw();
+  }));
+  const up = $('#agDocUp'), file = $('#agDocFile');
+  if(up && file){
+    up.addEventListener('click', () => file.click());
+    file.addEventListener('change', () => {
+      if(!file.files.length) return;
+      const name = file.files[0].name;
+      up.disabled = true; up.textContent = 'Uploading…';
+      setTimeout(() => {
+        (docUploads[a.n] = docUploads[a.n] || []).unshift({id:Date.now().toString(36), name, date:agFmtDate(agToday())});
+        manualVerified.add(a.n);
+        redraw();
+      }, RM ? 200 : 900);
+    });
+  }
+}
+
+/* ---- other recommended agreements ----
+   The category page's recommended cards, one agreement each: the biggest
+   saving still on the table first, from any area. */
+function agrOtherHTML(cur){
+  const items = live().flatMap(r => r.agr.map((a, i) => ({r, a, i})))
+    .filter(x => !x.a.req && x.a !== cur)
+    .sort((p, q) => q.a.save - p.a.save)
+    .slice(0, 4);
+  if(!items.length) return '';
+  return `
+  <section class="oc">
+    <div class="cat-agrs-head">
+      <div>
+        <h3>Other recommended agreements</h3>
+        <p>Ranked by what is still on the table, biggest first.</p>
+      </div>
+    </div>
+    <div class="oc-panel">
+    <ul class="oc-grid">
+      ${items.map(({r, a, i}) => `
+      <li><button type="button" class="oc-card" data-ocagr="${r.id}:${i}" style="--b:${pkgInk(a.n)}">
+        <span class="oc-top">${pkgLogoHTML(a.n)}</span>
+        <span class="oc-id">
+          <b class="oc-n">${a.n}</b>
+          <span class="oc-meta">${r.n} · −${Math.round(a.save / a.covers * 100)}% vs list</span>
+        </span>
+        <span class="oc-f">
+          <span class="oc-v"><b>${saveFig(a.save, isEstimated(a))} kr.</b></span>
+          <span class="oc-go">${ARROW}</span>
+        </span>
+      </button></li>`).join('')}
+    </ul>
+    </div>
+  </section>`;
+}
+
 function renderCatTabAgreement(r, idx){
   catTabAt = {r, agrIdx:idx};
   const a = r.agr[idx];
@@ -14972,25 +15156,29 @@ function renderCatTabAgreement(r, idx){
   const stateHTML = !a.req ? ''
     : idle    ? `<span class="inuse idle">${agIc('alert')} Live, but not being used — no invoice through it in ${agQuietDays(a)} days</span>`
     : pending ? `<span class="inuse pending">${TICK} In progress — step ${agDone(a) + 1} of ${ACT_STEPS.length}, no invoice at the new rate yet</span>`
-    :           `<span class="inuse">${TICK} Verified — landing on every invoice since ${agFmtDate(agStepDates(a)[3])}</span>`;
-  const figLabel = !a.req ? 'potential saving a year'
-    : idle    ? 'a year agreed — not landing while nothing is bought through it'
-    : pending ? 'a year agreed — counts once the first invoice at the new rate is read'
-    :           'a year, landing now';
+    /* a landing agreement already says so in its figure — green, "landing now",
+       and the report it was read from — so it needs no status line of its own */
+    :           '';
+  /* a label above the number, like the strip's: short, and never "Savings" for
+     money that has not landed — the status line under the figure says why */
+  const figLabel = !a.req ? 'Potential savings'
+    : idle || pending ? 'Agreed savings'
+    :           'Savings';
   const activateHTML = a.req
     ? `${stateHTML}
        ${idle ? `<button class="btn btn-primary btn-block" id="catTabBuyer">Contact the buyer</button>
                  <button class="btn btn-secondary btn-block" id="catTabDeal">Talk to my advisor</button>`
               : risen ? `<button class="btn btn-primary btn-block" id="catTabChallenge">Challenge the ${rise.pct}% price rise</button>
                  <button class="btn btn-secondary btn-block" id="catTabDeal">Talk to my advisor</button>`
-              : `<button class="btn btn-primary btn-block" id="catTabDeal">Talk to my advisor</button>`}`
+              : `<button class="btn btn-primary btn-block" id="catTabShop">Webshop</button>
+                 <button class="btn btn-secondary btn-block" id="catTabDeal">Talk to my advisor</button>`}`
     : `<button class="btn btn-primary btn-block" id="catTabActivate">Activate this agreement</button>
        ${challengeHTML}`;
 
   catTabShell(
     /* no back button of its own any more: the shell's breadcrumb already carries
        the step up to ${r.n}, and two of them stacked was the bug */
-    catTabHeroHTML(r.id, r.n, a.n, a.save,
+    catTabHeroHTML(r.id, '', a.n, a.save,
       a.req && !pending
         ? `${rate}% below list price, on the ${fmt(a.covers)} kr. a year you buy through them.`
         : est
@@ -14999,24 +15187,34 @@ function renderCatTabAgreement(r, idx){
         ? `${rate}% below list price. Companies your size spend about ${fmtCompact(a.covers)} kr. a year with them.`
         : `${rate}% below what you pay today, on the ${fmt(a.covers)} kr. you already spend with them.`,
       agrWhy(r, a)[0], activateHTML, est, figLabel, figSource(r, a), landing, [
-        {k:'Group rate', v:`−${rate}%`, s:a.req && !pending ? 'vs list, on your invoices' : 'vs list'},
-        est
-          ? {k:'Companies your size spend', v:figHTML(a.covers, true, false), s:'kr. a year'}
-          : {k:a.req && !pending ? 'You buy through them' : 'You spend with them', v:fmt(a.covers), s:'kr. a year'}
-      ]),
+        /* the strip is the working behind the figure: spending × discount */
+        {k:est ? 'Typical spending' : 'Spending',
+         v:`${est ? figHTML(a.covers, true, false) : fmtCompact(a.covers)}/year`},
+        {k:'Discount', v:`${rate}%`, op:'×'}
+      ], {logo:pkgLogoHTML(a.n), ink:pkgInk(a.n), labelAbove:true}),
     `
-    ${reqCardsHTML(mine ? [mine] : [])}
     ${agrValueHTML(r, a)}
     ${agrBenefitsHTML(r, a)}
+    ${reqCardsHTML(mine ? [mine] : [])}
     ${/* an agreement in use shows the SAME dated timeline the Agreements page
           shows for it — one that has been live since last year cannot be sitting
           at "request sent today" here. Before activation the timeline is a
           preview, so it folds into the detail rows instead. */
       a.req ? agStepperHTML(a) + agCalHTML(a) : ''}
-    ${agrMoreHTML(r, a)}`
+    ${agrMoreHTML(r, a)}
+    ${agrOtherHTML(a)}`
   );
+  wireAgDocs(r, idx);
+  $$('#viewCatTab [data-ocagr]').forEach(b => b.addEventListener('click', () => {
+    const [id, i] = b.dataset.ocagr.split(':');
+    const next = ROWS.find(x => x.id === id);
+    if(next){ agDocsOpen = false; renderCatTabAgreement(next, +i); $('#canvas').scrollTop = 0;
+      document.title = `${next.agr[+i].n} · Advantage`; }
+  }));
   wireCatTabContact(`Tell me more about the ${a.n} agreement`, r);
   wireReqCards('#viewCatTab');
+  const heroShop = $('#catTabShop');
+  if(heroShop) heroShop.addEventListener('click', () => pkgShop(a.n));
   const heroDeal = $('#catTabDeal');
   if(heroDeal) heroDeal.addEventListener('click', () => openAdvisorMeeting(r));
   const heroBuyer = $('#catTabBuyer');
@@ -15024,8 +15222,6 @@ function renderCatTabAgreement(r, idx){
   ['#catTabChallenge'].forEach(sel => {
     const b = $(sel); if(b) b.addEventListener('click', () => openPriceChallenge(r, a));
   });
-  const upLink = $('#cmpUploadLink');
-  if(upLink) upLink.addEventListener('click', e => { e.preventDefault(); openDataCenter(); });
   const adv = $('#catTabAdvisor');
   if(adv) adv.addEventListener('click', () => openAdvisorMeeting(r));
   const actBtn = $('#catTabActivate');
@@ -17136,7 +17332,7 @@ function drSavings(m){
       ${drRow('=', 'Saving taken off the invoices', '', fmt(m.realised), 'pos', true)}
       <p class="dr-led-note">A volume bonus of ${fmt(bonus.total)} kr. a year sits on top,
         tiered on covered spend. ${partialData()
-          ? `Read from ${KARI_DOCS.invoices.length} invoices and a spend report.`
+          ? `Read from ${KARI_DOCS.invoices.length} supplier reports and a spend report.`
           : `Matched line by line against ${fmt(m.invoices)} invoices.`}${
         m.pending.length || m.idle.length ? ` Not counted here: ${[
           m.pending.length ? `${m.pending.map(a => a.n).join(' and ')} (agreed, no invoice at the new rate yet)` : '',
@@ -18876,9 +19072,9 @@ function persist(){
       unread: NOTES.map(n => n.unread ? 1 : 0),
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
       newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityTab,
-      savedAgr: [...savedAgr], agrCardStyle, catViewStyle, catAgrView, ovCols,
+      savedAgr: [...savedAgr], agrCardStyle, catViewStyle, ovCols,
       spendTune, tuneSkin,
-      notifPrefs, seenTour
+      notifPrefs, seenTour, docUploads, docGone: [...docGone]
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
 }
@@ -18904,6 +19100,8 @@ function applySaved(d){
   if(typeof d.fwd6 === 'boolean') fwd6 = d.fwd6;
   if(typeof d.seenWelcome === 'boolean') seenWelcome = d.seenWelcome;
   if(Array.isArray(d.manualVerified)) manualVerified = new Set(d.manualVerified);
+  if(d.docUploads && typeof d.docUploads === 'object') docUploads = d.docUploads;
+  if(Array.isArray(d.docGone)){ docGone = new Set(d.docGone); applyDocGone(); }
   if(typeof d.forceEstimated === 'boolean') forceEstimated = d.forceEstimated;
   if(typeof d.forceVerified === 'boolean') forceVerified = d.forceVerified;
   if(typeof d.newCustomer === 'boolean') newCustomer = d.newCustomer;
@@ -18924,7 +19122,6 @@ function applySaved(d){
       if(ROWS.some(r => r.id === k) && typeof v === 'number' && isFinite(v) && v > 0) spendTune[k] = v;
     });
   }
-  if(['cards','list'].includes(d.catAgrView)) catAgrView = d.catAgrView;
   if(d.notifPrefs && Array.isArray(d.notifPrefs.channels)) notifPrefs = d.notifPrefs;
   if(typeof d.seenTour === 'boolean') seenTour = d.seenTour;
 }
