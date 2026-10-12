@@ -22,6 +22,7 @@ explorations/              one feature studied off the main file, in versions
   areas-heroes/v1/           hero treatments for the Areas page
   calc-charts/v1/            the Tune calculator as a chart, five approaches
   content-feedback/v1/       copy and content feedback on the agreement and category pages
+  own-agreement/v1/          the company's own supplier agreements beside the negotiated ones
   sales-analysis/v1/         the sales-analysis table integration
   tune-states/v1/            Tune calculator states a–d
   suppliers-filter/v1/       filter bar directions for Suppliers and Agreements

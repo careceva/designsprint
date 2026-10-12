@@ -4216,6 +4216,40 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
   .nc-rec-art .nc-move-txt{max-width:none}
 }
 
+/* ---- the moves as rows (new customer) ----
+   Left: the area's name, the status as a label under it. Right: the two
+   figures stacked, each with its caption inline — Spent above, Saved below —
+   and a hairline with a small arrow between them, because the second comes
+   from the first. A chevron at the end; the whole row opens the spend page, where the
+   figures are typed in. The rows share the cell's slack as the designed tiles did. */
+.nc-rec-mv>li{display:flex;flex:1 1 auto}
+.mv{display:grid;grid-template-columns:minmax(0,1fr) auto 20px;align-items:center;gap:var(--s4);
+  width:100%;padding:var(--s4) var(--s2);border:0;border-top:1px solid var(--hairline);border-radius:0;
+  background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:background-color var(--t-fast)}
+.mv:hover{background:var(--surface-tile);border-radius:var(--rounded-md)}
+.mv:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px;border-radius:var(--rounded-md)}
+.mv-txt{display:flex;flex-direction:column;gap:var(--s1);min-width:0}
+.mv-txt b{font-size:var(--text-base);font-weight:700;line-height:1.3}
+.mv-st{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);line-height:1.4}
+.mv-st.done{color:var(--general-foreground)}
+/* two columns so the captions share a left edge and the figures a right edge */
+.mv-r{display:grid;grid-template-columns:auto auto;align-items:baseline;column-gap:var(--s2);row-gap:var(--s1);white-space:nowrap}
+.mv-cap{justify-self:start;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);line-height:1.3}
+.mv-fig{justify-self:end}
+.mv-fig{font-size:var(--text-xl);font-weight:700;letter-spacing:-.02em;line-height:1.2;font-variant-numeric:tabular-nums}
+.mv-fig .fig-est{font-weight:600}
+.mv-fig .mv-set{color:var(--general-primary)}
+.mv-fig small{margin-left:4px;font-size:var(--text-xs);font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
+/* the mark between the two: a hairline broken by a small arrow down */
+.mv-mark{grid-column:1 / -1;display:flex;align-items:center;gap:var(--s1);margin:2px 0;color:var(--general-muted-foreground)}
+.mv-mark::before,.mv-mark::after{content:'';flex:1 1 auto;border-top:1px solid var(--hairline)}
+.mv-mark svg{width:14px;height:14px;flex:0 0 auto}
+.mv-chev{width:20px;height:20px;color:var(--general-muted-foreground)}
+.mv-foot{width:calc(100% - var(--s8));margin:0;padding:var(--s3) var(--s2) 0;border-top:1px solid var(--hairline);
+  font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.mv-foot .linkbtn{font-size:var(--text-xs)}
+
 /* the activity rail: truly pinned to the browser window's right edge and the
    full viewport height below the app header — position:fixed rather than
    sticky, so it holds still regardless of how far the canvas scrolls, the way
@@ -4364,6 +4398,7 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
   white-space:nowrap;background:#fff2e0;color:#a35c00}
 .req-pill.chase{background:var(--general-secondary);color:var(--general-primary)}
 .req-pill.booked{background:#d9f2ef;color:var(--sentiment-positive)}
+.req-pill.sent{background:var(--general-secondary);color:var(--general-primary)}
 .req-pill::before{content:"";width:6px;height:6px;border-radius:var(--rounded-full);
   background:currentColor}
 
@@ -5144,6 +5179,128 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 }
 
 .dr-lede{display:flex;flex-direction:column;gap:var(--s8)}
+
+/* ---- the spend drill, as a journey ----
+   The Ring card the other pages open on, then two acts. Act one is what ran
+   through each agreement and what it saved — read off invoices, so it is the
+   only money on the page drawn in green. Act two is every other area: the spend
+   we read, or the industry median as a band, and what the negotiated rate would
+   save there. The spend cell of act two is an input: a typed figure is a tune
+   (spendTune), so the saving beside it, the act's total and the Overview follow.
+   No share of an area is ever shown — an invoice names one agreement's spend,
+   never the area. */
+.sp-top{display:flex;flex-direction:column;gap:var(--s4)}
+.sp-top>.hx{margin-top:0}
+.sp-hy h1{max-width:15ch}
+.sp-hy .hy-side{gap:var(--s3)}
+.sp-bar{display:flex;gap:3px;height:20px}
+.sp-bar i{min-width:7px;border-radius:5px;background:var(--k);transform-origin:left center;
+  animation:spSeg 620ms var(--hx-ease) backwards;animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes spSeg{from{transform:scaleX(0)}}
+.sp-hy.still .sp-bar i{animation:none}
+@media (prefers-reduced-motion:reduce){.sp-bar i{animation:none}}
+/* somebody else's median is drawn quieter than money of your own */
+.sp-hy.est .sp-bar i{opacity:.45}
+.sp-key{list-style:none;display:flex;flex-direction:column;margin:var(--s1) calc(-1 * var(--s3)) 0}
+.sp-key li{display:flex;align-items:center;gap:var(--s3);min-height:40px;padding:0 var(--s3);font-size:var(--text-sm);font-weight:500}
+.sp-key li::before{content:"";flex:0 0 auto;width:10px;height:10px;border-radius:3px;background:var(--k)}
+.sp-key span{flex:1 1 auto;min-width:0}
+.sp-key em{font-style:normal;font-weight:600;color:var(--general-muted-foreground);font-variant-numeric:tabular-nums;white-space:nowrap}
+/* the headline figure beside a section heading */
+.sp-lead{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.sp-lead b{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:700;letter-spacing:-.02em;line-height:1.1;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.sp-lead b .fig-est{font-weight:600}
+.sp-lead b small{font-size:var(--text-sm);font-weight:500;letter-spacing:0;color:var(--general-muted-foreground);margin-left:4px}
+.sp-lead .none,.sp-num .none,.sp-tf .none{color:var(--general-muted-foreground);font-weight:500}
+.sp-sep{color:var(--general-muted-foreground);font-weight:400}
+.sp-empty{padding:var(--s4) var(--s5,20px);border:1px dashed var(--sidebar-border);border-radius:var(--rounded-lg);
+  font-size:var(--text-sm);color:var(--general-muted-foreground)}
+/* a status is a fact about the row: text with a dot, never a mode */
+.sp-st{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);white-space:nowrap}
+.sp-st::before{content:'';width:6px;height:6px;border-radius:var(--rounded-full);background:currentColor;opacity:.55}
+.sp-st.done{color:var(--general-foreground)}
+.sp-st.on{color:var(--general-primary)}
+.sp-st.done::before,.sp-st.on::before{opacity:1}
+.sp-stc{display:inline-flex;align-items:center;gap:var(--s2);min-height:36px}
+.sp-stc .linkbtn{font-size:var(--text-xs)}
+/* the table: one shape for both acts */
+.sp-tb{border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);overflow:hidden}
+.sp-tb.a{--cols:minmax(0,1fr) 190px 170px}
+.sp-tb.b{--cols:minmax(0,1fr) 190px 170px 170px 24px}
+.sp-th{display:grid;grid-template-columns:var(--cols);gap:var(--s4);padding:var(--s3) var(--s5,20px);
+  font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);border-bottom:1px solid var(--hairline)}
+.sp-th .r,.sp-tr .r,.sp-tf .r{text-align:right}
+.sp-tb details{border-top:1px solid var(--hairline)}
+.sp-tb details:first-of-type,.sp-tb>.sp-tr:first-of-type{border-top:0}
+.sp-tb>.sp-tr{border-top:1px solid var(--hairline)}
+.sp-tb summary{list-style:none}
+.sp-tb summary::-webkit-details-marker{display:none}
+.sp-tb summary:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
+.sp-tr{display:grid;grid-template-columns:var(--cols);align-items:center;gap:var(--s4);min-height:60px;padding:var(--s3) var(--s5,20px);
+  transition:background var(--t-fast)}
+summary .sp-tr{cursor:pointer}
+@media (hover:hover){summary .sp-tr:hover{background:var(--surface-tile)}}
+.sp-area{display:flex;align-items:center;gap:var(--s3);min-width:0}
+.sp-ic{flex:0 0 auto;width:28px;height:28px}
+.sp-name{min-width:0}
+.sp-name b{display:block;font-size:var(--text-base);font-weight:600;letter-spacing:-.1px;line-height:1.3}
+.sp-name span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.4}
+.sp-num{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.sp-num .fig-est{font-weight:600}
+.sp-x{display:grid;place-items:center;width:24px;height:24px;color:var(--general-muted-foreground);transition:transform .18s ease}
+.sp-x svg{width:16px;height:16px}
+.sp-tb details[open] .sp-x{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.sp-x{transition:none}}
+.sp-tf{display:grid;grid-template-columns:var(--cols);gap:var(--s4);padding:var(--s3) var(--s5,20px);min-height:52px;align-items:center;
+  border-top:1px solid var(--hairline);background:var(--surface-tile);font-weight:600;font-variant-numeric:tabular-nums}
+.sp-tf .r{white-space:nowrap}
+.sp-tf .l{color:var(--general-muted-foreground);font-weight:500}
+.sp-tf .l b{color:var(--general-foreground);font-weight:600}
+.sp-tf .fig-actual{font-weight:700}
+.sp-tr.skip .sp-area,.sp-tr.skip .sp-num{opacity:.45}
+/* the spend cell as the input: the band is the placeholder, a read figure the value */
+.sp-in{display:flex;align-items:center;gap:6px;height:38px;padding:0 var(--s3);background:var(--general-input);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-sm);box-shadow:inset 0 1px 2px #0000000a;
+  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+@media (hover:hover){.sp-in:hover{border-color:#c9c9c9}}
+.sp-in:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.sp-in input{flex:1;width:100%;min-width:0;border:0;outline:0;background:none;text-align:right;font-weight:600;
+  font-variant-numeric:tabular-nums;caret-color:var(--general-primary)}
+.sp-in input::placeholder{color:var(--general-muted-foreground);font-weight:500;text-decoration:underline dotted currentColor;
+  text-decoration-thickness:1.5px;text-underline-offset:.16em}
+.sp-in .u{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.sp-in.ro{background:var(--surface-tile);border-color:transparent;box-shadow:none}
+/* the open row: the supplier and the actions */
+.sp-body{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s1) var(--s5,20px) var(--s6) calc(var(--s5,20px) + 28px + var(--s3))}
+.sp-f{display:flex;flex-direction:column;gap:6px;max-width:440px}
+.sp-f label{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
+.sp-f label i{font-style:normal;font-weight:400}
+.sp-field{display:flex;align-items:center;gap:var(--s2);height:44px;padding:0 var(--s4);background:var(--general-input);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);box-shadow:inset 0 1px 2px #0000000a}
+.sp-field:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.sp-field input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:var(--text-base);caret-color:var(--general-primary)}
+.sp-field input::placeholder{color:#8f8f8f}
+.sp-field.ro{background:var(--surface-tile);border-color:transparent;box-shadow:none}
+.sp-help{font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.45;display:inline-flex;align-items:center;gap:5px}
+.sp-help svg{width:14px;height:14px;color:var(--general-primary)}
+.sp-act{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;padding-top:var(--s2)}
+.sp-act .spacer{flex:1}
+.sp-act .linkbtn.quiet{color:var(--general-muted-foreground)}
+.sp-sent{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--text-sm)}
+.sp-sent svg{width:16px;height:16px;color:var(--sentiment-positive)}
+@container page (max-width:900px){
+  .sp-tb.a{--cols:minmax(0,1fr) 150px 130px}
+  .sp-tb.b{--cols:minmax(0,1fr) 150px 150px 24px}
+  .sp-tb .c-st{display:none}
+}
+@container page (max-width:620px){
+  .sp-tb.a{--cols:minmax(0,1fr) 130px}
+  .sp-tb.b{--cols:minmax(0,1fr) 150px 24px}
+  .sp-tb .c-save{display:none}
+  .sp-body{padding-left:var(--s5,20px)}
+}
+
 
 /* ---- the drill: category -> agreement -> the lines underneath ----
    This is the part Reports has no equivalent for. Each category opens to the
@@ -7949,7 +8106,7 @@ function renderApReqs(){
       ${REQS.map(q => `
       <button type="button" class="act-req" data-apreq="${q.id}">
         <b>${q.agr || q.catName}</b>
-        <span class="req-pill${q.kind === 'meeting' ? ' booked' : reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
+        <span class="req-pill${reqPillCls(q)}">${reqStage(q)}</span>
         <span class="act-req-s">${reqSub(q)}</span>
       </button>`).join('')}
     </div>`;
@@ -9800,14 +9957,22 @@ const reqWhen = q => { const d = reqDays(q);
 /* we chase at day five — that is a real thing the product does, so it is the only
    stage change we assert. An ANSWER is the supplier's move, never inferred here. */
 /* a meeting is not waiting on anybody — it is in the diary, so it never chases */
-const reqStage = q => q.kind === 'meeting' ? 'Booked'
+/* a review is with a person who has promised two working days, so it never
+   "chases" — its one stage is where it is */
+const reqStage = q => q.kind === 'meeting' ? 'Booked' : q.kind === 'review' ? 'With Peter'
   : reqDays(q) >= 5 ? 'Chasing' : 'Awaiting reply';
 const reqTitle = q => q.kind === 'meeting' ? `${ADVISOR.n} · ${q.catName}`
+  : q.kind === 'review' ? `Review · ${q.catName}`
   : q.agr ? `Better price · ${q.agr}`
   : `Better terms · ${q.catName}`;
 const reqSub = q => q.kind === 'meeting' ? `${q.chan} · ${q.when}`
+  : q.kind === 'review' ? `${q.spend ? fmt(q.spend) + ' kr. a year' : 'No figure yet'}${q.sup ? ' · ' + q.sup : ''} · ${reqWhen(q)}`
   : q.agr ? `Better price · ${reqWhen(q)}`
   : `Better terms · ${q.count} supplier${q.count > 1 ? 's' : ''} · ${reqWhen(q)}`;
+/* the pill a request wears in every list — one rule, so a kind cannot be
+   coloured one way in the rail and another on the page */
+const reqPillCls = q => q.kind === 'meeting' ? ' booked' : q.kind === 'review' ? ' sent'
+  : reqDays(q) >= 5 ? ' chase' : '';
 
 /* one refresh for every surface a request shows on, so the store stays the only
    source of truth and no caller has to remember the list */
@@ -9826,6 +9991,24 @@ addEventListener('storage', e => {
   REQS = readReqs();
   refreshRequestViews();
 });
+
+/* ---------------- area review: what the new customer has told us about an area ----------------
+   The supplier she buys from, and whether the area is hers at all. Her SPEND is
+   not kept here — it goes into spendTune exactly as a slider's does, so the figure
+   she gives is the figure every page then follows, and a Reset returns all of them
+   to the benchmark at once. Written by the spend page; read by the Overview's two
+   move rows. */
+let areaReview = {};        /* {areaId: {sup, skip}} */
+/* a review the spend page sent to Peter for this area: a request (REQS, kind
+   'review'), so it sits in the rail with everything else that has gone to him */
+const reviewReq = id => REQS.find(q => q.kind === 'review' && q.catId === id && !q.rest);
+function reviewState(r){
+  const v = areaReview[r.id] || {};
+  const spend = spendTune[r.id] ? areaSpend(r) : null;
+  const q = reviewReq(r.id) || null;
+  return {spend, sup:v.sup || '', skip:!!v.skip, req:q,
+          status:q ? 'sent' : (spend != null || v.sup) ? 'saved' : 'none'};
+}
 
 function railData(){
   if(newCustomer) return {
@@ -9963,7 +10146,7 @@ function actBodyRequests(){
       ${REQS.map(q => `
       <button type="button" class="act-req" data-req="${q.id}">
         <b>${q.agr || q.catName}</b>
-        <span class="req-pill${q.kind === 'meeting' ? ' booked' : reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
+        <span class="req-pill${reqPillCls(q)}">${reqStage(q)}</span>
         <span class="act-req-s">${reqSub(q)}</span>
       </button>`).join('')}
     </div>`;
@@ -10561,7 +10744,12 @@ function dashModelPeer(){
   const [saveLow,  saveHigh]  = band(p.saved);
   const [spendLow, spendHigh] = band(p.spend);
   const byRate = [...ROWS].sort((a, b) => b.rate - a.rate);
-  const topCat = byRate[0], secondCat = byRate[1];
+  /* an area she has marked not relevant leaves the two moves and the next one
+     by rate steps in — the card keeps offering two; the foot of the list names
+     the one that went, with the way back */
+  const skipped = byRate.filter(r => (areaReview[r.id] || {}).skip);
+  const pool = byRate.length - skipped.length >= 2 ? byRate.filter(r => !skipped.includes(r)) : byRate;
+  const topCat = pool[0], secondCat = pool[1];
   /* what a named category is worth to her, from the same peer cats the
      drill-down reads — an idle area's whole earnable, 0 once it is in use */
   const peerPot = id => (p.cats.find(c => c.id === id) || {}).potential || 0;
@@ -10636,24 +10824,29 @@ function dashModelPeer(){
     cats: byRate.slice(0, 6),
     /* the sum of the two tiles beneath, as the dotted range every figure of hers
        is — she has no invoice to price it from, and the line under says so */
-    advTitle: `Two moves worth ${figHTML(peerPot(topCat.id) + peerPot(secondCat.id) || p.saved, true, false)}&nbsp;kr. a year`,
+    /* the sum of the two rows beneath — the same two figures they print */
+    advTitle: `Two moves worth ${mvMoneyHTML(mvMoney(topCat).amt + mvMoney(secondCat).amt,
+      !!(spendTune[topCat.id] || spendTune[secondCat.id]), false)}&nbsp;kr. a year`,
     advSub: tuned
       ? 'On the spend you have set, at the rates companies like yours achieve — still an estimate.'
-      : 'What companies like yours save in these two areas — an estimate until you connect your data.',
-    /* the same figure the title prints, over the peer group's spend — so when
-       her two areas carry no open peer potential and the title falls back to the
-       median saving, the arc falls back with it rather than reading +0% */
-    uplift: (topCat.amt + secondCat.amt) ? Math.round((peerPot(topCat.id) + peerPot(secondCat.id) || p.saved) / (topCat.amt + secondCat.amt) * 100) : null,
+      : 'An estimate from companies like yours, until you add your spend.',
+    /* the arc's figure: the two moves' saving over the two areas' spend — the
+       same two figures the rows print, so it can never say more than they do */
+    uplift: (() => {
+      const sp = areaSpend(topCat) + areaSpend(secondCat);
+      return sp ? Math.round((mvMoney(topCat).amt + mvMoney(secondCat).amt) / sp * 100) : null;
+    })(),
     upliftLabel: 'Off what you still pay list price for',
     /* the printed value stays the discount rate — she has no invoices, so a rate
        is the only figure on these two rows that is hers to act on. The ERP row
        went: connecting is the whole page's standing offer, not a third move. */
     recs: [topCat, secondCat].map((c, i) => ({
-      cat:c.id, n:c.n, val:`${c.rate}%`, rate:true, bar:peerPot(c.id),
+      cat:c.id, n:c.n, r:c, val:`${c.rate}%`, rate:true, bar:peerPot(c.id),
       sub: i ? 'The next best entry point for companies your size'
              : 'The widest discount gap in your peer group',
       cta:`See the ${c.agr.length} agreement${c.agr.length === 1 ? '' : 's'}`
     })),
+    skipped,
     ask: `What should ${state.company} do first to start saving?`,
     agrTitle: 'Opportunities by agreement',
     agrSub: 'What other companies use and save.',
@@ -11308,7 +11501,41 @@ const MOVE_ART = {
   tool:'assets/unsplash_9OB46apMbC4.png'    /* a red site helmet */
 };
 const MOVE_TINT = {mat:'var(--cat-mat-tint)', tool:'var(--cat-tool-tint)'};
+/* ---- a move as a row (new customer) ----
+   Spent is the area's benchmark spend for a company her size — her own figure,
+   exact and in the slider's blue, once she has set it on the spend page. Saved
+   is that spend at the agreement rate, the ±15% estimate band (compounded with
+   the ±7% "you set this" band once the spend is hers). The status is a fact:
+   Not reviewed until she has given a figure, Reviewed after. */
+function mvMoney(r){
+  return {amt:Math.round(areaSpend(r) * r.rate / 100), on:!!spendTune[r.id]};
+}
+const mvMoneyHTML = (amt, on, plus = true) => on
+  ? `<span class="fig-est">${tuneMoneyStr(amt, true).replace(/^\+/, plus ? '+' : '')}</span>`
+  : figHTML(amt, true, plus);
+const MV_CHEV = '<svg class="mv-chev" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const MV_DOWN = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function moveTileHTML(rec){
+  const r = rec.r, s = reviewState(r), id = r.id, {amt, on} = mvMoney(r);
+  const done = s.spend != null;
+  const spent = done ? `<span class="mv-set">${fmt(s.spend)}</span>` : `<span class="fig-est">${estRange(areaBase(r))}</span>`;
+  return `
+    <li>
+      <button type="button" class="mv" data-cat="${id}">
+        <span class="mv-txt"><b>${r.n}</b>
+          <span class="mv-st${done || s.status === 'sent' ? ' done' : ''}">${s.status === 'sent' ? 'With Peter' : done ? 'Reviewed' : 'Not reviewed'}${s.sup ? ' · ' + apEsc(s.sup) : ''}</span></span>
+        <span class="mv-r">
+          <span class="mv-cap">Spent</span><span class="mv-fig">${spent}<small>kr.</small></span>
+          <span class="mv-mark" aria-hidden="true">${MV_DOWN}</span>
+          <span class="mv-cap">Saved</span><span class="mv-fig">${mvMoneyHTML(amt, on)}<small>kr.</small></span>
+        </span>
+        ${MV_CHEV}
+      </button>
+    </li>`;
+}
+
 function dashRecHTML(rec, art){
+  if(newCustomer && rec.r) return moveTileHTML(rec);
   /* the whole tile is one button; the precise action ("See the 4 agreements")
      sits beside the figure and shows itself on hover, so the tile says what it
      does before it is pressed — the 3D mark is the area's, not a control. The
@@ -11381,8 +11608,10 @@ function dashAdvisoryHTML(m){
       </div>
       ${m.uplift == null ? '' : moveArcHTML(m.uplift, m.upliftLabel)}
     </div>
-    <ul class="nc-rec-list${art ? ' nc-rec-art' : ''}">${
-      m.recs.map(r => dashRecHTML(r, art)).join('')}</ul>`;
+    <ul class="nc-rec-list${art ? ' nc-rec-art' : ''}${newCustomer ? ' nc-rec-mv' : ''}">${
+      m.recs.map(r => dashRecHTML(r, art)).join('')}</ul>${
+    (m.skipped || []).map(r => `
+    <p class="mv-foot">${r.n} · not relevant · <button type="button" class="linkbtn mv-undo" data-cat="${r.id}">Undo</button></p>`).join('')}`;
 }
 
 /* rowId, not a fixed id: both personas' copies of this page can be in the DOM at
@@ -11626,9 +11855,19 @@ function wireDashAsk(root, m){
   const ask = $(`${root} .dash-ask`);
   if(ask) ask.addEventListener('click', () => { toggleAgent(true); agentAsk(m.ask); });
   $$(`${root} .nc-move`).forEach(b => b.addEventListener('click', () => openCatTab(b.dataset.cat)));
+  wireMoves(root);
   /* last, and only once the markup is in the document — the measurement needs a
      real width to wrap against */
   dashReserve(root);
+}
+
+/* the rows open the spend page, where the figures are typed in */
+function wireMoves(root){
+  $$(`${root} .mv`).forEach(b => b.addEventListener('click', () => openDrill('spend')));
+  $$(`${root} .mv-undo`).forEach(b => b.addEventListener('click', () => {
+    const v = areaReview[b.dataset.cat]; if(v) delete v.skip;
+    tuneSettle(root);
+  }));
 }
 
 /* Every handler here writes ONE number — the factor for one area — and then asks
@@ -14481,7 +14720,7 @@ function reqCardsHTML(list){
           : `${q.count} supplier${q.count > 1 ? 's' : ''} · ${reqWhen(q).replace('sent', 'sent')} · reference ${q.ref}`}</span>
       </span>
       <span class="rq-go">
-        <span class="req-pill${q.kind === 'meeting' ? ' booked' : reqDays(q) >= 5 ? ' chase' : ''}">${reqStage(q)}</span>
+        <span class="req-pill${reqPillCls(q)}">${reqStage(q)}</span>
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </span>
     </button>`).join('')}
@@ -14493,9 +14732,50 @@ function wireReqCards(root){
     b.addEventListener('click', () => openReqStatus(b.dataset.reqopen)));
 }
 
+/* a review sent from the spend page: what went to Peter, and where it stands */
+function openReviewStatus(q){
+  flowDom('rq', 'Your request', `${q.catName} · sent to review`);
+  const body = $('#rqBody'), foot = $('#rqFoot');
+  $('#rqStep').textContent = reqStage(q);
+  const d = reqDays(q);
+  body.innerHTML = `
+    <div class="pc-sup">
+      <span class="rq-ic">${RQ_ICON}</span>
+      <span class="pc-sup-id"><b>${q.catName}</b><span>Review · reference ${q.ref}</span></span>
+      <span class="req-pill sent">${reqStage(q)}</span>
+    </div>
+    <div class="fld">
+      <div class="fld-h"><p class="pc-q">What you sent</p></div>
+      <ul class="rq-what">
+        <li>${q.spend ? `Spend ${fmt(q.spend)} kr. a year` : 'No spend figure yet'}</li>
+        ${q.sup ? `<li>Current supplier: ${apEsc(q.sup)}</li>` : ''}
+      </ul>
+    </div>
+    <div class="fld">
+      <div class="fld-h"><p class="pc-q">Where it stands</p></div>
+      <ol class="tline">
+        <li><span class="tn">${TICK}</span><span><b>${d === 0 ? 'Today' : `${d} day${d > 1 ? 's' : ''} ago`}</b> — sent to ${ADVISOR.n}</span></li>
+        <li><span class="tn">2</span><span><b>Within two working days</b> — Peter compares it with the
+          agreements in ${q.catName.toLowerCase()} and replies in Advantage activity</span></li>
+      </ol>
+    </div>`;
+  foot.innerHTML = `
+    <span class="spacer"></span>
+    <button class="btn btn-secondary" id="rqDrop">Withdraw</button>
+    <button class="btn btn-primary" id="rqDone">Done</button>`;
+  $('#rqDone').addEventListener('click', () => flowClose('rq'));
+  $('#rqDrop').addEventListener('click', () => {
+    dropReq(q.id);
+    flowClose('rq');
+    if(!$('#viewDrill').hidden && drillType === 'spend') renderDrill();
+    else if(newCustomer) renderHome();
+  });
+  flowOpen('rq');
+}
 function openReqStatus(id){
   const q = REQS.find(x => x.id === id);
   if(!q) return;
+  if(q.kind === 'review') return openReviewStatus(q);
   flowDom('rq', 'Your request', q.agr ? 'Better price requested' : 'Better terms requested');
   const body = $('#rqBody'), foot = $('#rqFoot');
   $('#rqStep').textContent = reqStage(q);
@@ -17796,7 +18076,339 @@ function drUsage(m){
    states would mean the Overview card, this page and Reports could each be
    showing a different twelve months, which is exactly the kind of quiet
    disagreement that makes a figure untrustworthy. */
+/* ==========================================================================
+   THE SPEND DRILL, AS A JOURNEY (replaces drSpending's two acts on this page)
+
+   The Ring card the other pages open on, then two acts.
+   Act one — "What you spend and save today": the areas where an agreement is
+   landing. The spend is what ran through the agreement, which is the one figure
+   an invoice actually gives, and the saving it earned, in green. Its total is the
+   hero's "Through an agreement".
+   Act two — "Not reviewed areas": every other area. The spend is what we read
+   (a ledger or an export covering the whole area), or the industry median as a
+   band; the saving is the negotiated rate on it. The spend cell is an input. A
+   typed figure is a TUNE — it goes into spendTune exactly as a slider's factor
+   does, so the saving beside it, the act's total, the tune pill and the Overview's
+   move rows all follow — and prints as a band, never as a verified figure.
+   A changed figure turns the status into Save; Saved, With Peter and Not relevant
+   follow from the row's actions. A review sent is a request (REQS, kind 'review').
+
+   No share of an area is shown anywhere: for a documents-only account we do not
+   know the area, only what went through its agreement. The same rule sets the
+   hero: it counts only what we know went out.
+   ========================================================================== */
+let spTyped = {};             /* {rowId: kr. a year} typed and not yet saved; cleared when the page opens */
+let spDrawn = false;          /* the band draws itself once a session */
+const SP_REST = ':rest';
+const SP_NONE = '<span class="none">—</span>';
+const spEsc = s => apEsc(String(s == null ? '' : s));
+const spNum = s => { const d = String(s).replace(/[^\d]/g, ''); return d ? +d : null; };
+/* what we KNOW of an area as a whole: a ledger, or an export that covers it. An
+   invoice names one agreement's spend, never the area. */
+const spWhole = id => !newCustomer && (!partialData() || KARI_DOCS.reports.some(d => d.areas.includes(id)));
+const spDocOf = c => partialData() ? `the ${KARI_DOCS.reports[0].name}` : `${state.source} · ${fmt(c.inv)} invoices`;
+const spSrcShort = () => partialData() ? `your ${KARI_DOCS.invoices.length + KARI_DOCS.reports.length} documents` : state.source;
+
+/* rpModel's categories, read as the two acts. Act two's figures are annual, the
+   units a spend is typed in; the hero and act one follow the period. */
+function spModel(){
+  const m = rpModel();
+  const cats = drCats(m);
+  const today = [], rows = [];
+  cats.forEach(c => {
+    const r = c.row;
+    const landing = m.peer ? [] : c.agrs.filter(a => a.vol > 0 && !a.dormant && !a.pending);
+    const held = m.peer ? [] : c.agrs;
+    const whole = spWhole(c.id);
+    const base = {art:c.id, catId:c.id, n:c.n, rate:c.rate, row:r, exact:whole,
+      openN:m.peer ? r.agr.length : (c.open || []).length,
+      sup:(r.top || '').split('·')[0].trim(), doc:spDocOf(c)};
+    if(landing.length){
+      today.push({...base, thru:landing.reduce((s, a) => s + a.vol, 0), saved:landing.reduce((s, a) => s + a.save, 0),
+        onName:landing.map(a => a.n).join(' and ')});
+      /* the part of the area that went past its agreement — only where a ledger shows it */
+      const amtThru = r.agr.filter(a => landing.some(l => l.n === a.n)).reduce((s, a) => s + a.covers, 0);
+      const left = areaBase(r) - Math.round(amtThru * areaMult());
+      if(whole && left > 0) rows.push({...base, id:c.id + SP_REST, kind:'open', isRest:true, fixed:true,
+        sub:`Outside ${landing.map(a => a.n).join(' and ')}`, amt:left, on:false});
+      return;
+    }
+    const idleA = held[0];
+    rows.push({...base, id:c.id, kind:idleA ? 'idle' : 'open', amt:areaSpend(r), on:!!spendTune[c.id],
+      idleLine:idleA ? (idleA.pending ? `${idleA.n} requested, no invoice at the new rate yet`
+                                      : `${idleA.n} live, nothing bought through it`) : ''});
+  });
+  const thruOf = c => c.agrs.filter(a => a.vol > 0 && !a.dormant && !a.pending).reduce((s, a) => s + a.vol, 0);
+  const spend = m.peer ? m.spend : cats.reduce((s, c) => s + (spWhole(c.id) ? c.spend : thruOf(c)), 0);
+  const thru  = m.peer ? m.volume : cats.reduce((s, c) => s + thruOf(c), 0);
+  today.sort((a, b) => b.thru - a.thru);
+  rows.sort((a, b) => (b.exact - a.exact) || (b.amt - a.amt));
+  return {m, peer:m.peer, spend, thru, off:Math.max(0, spend - thru), today, rows,
+    saved:today.reduce((s, a) => s + a.saved, 0),
+    nKnown:cats.filter(c => spWhole(c.id) || thruOf(c) > 0).length, nCats:cats.length};
+}
+
+/* ---- what the person has done to a row ---- */
+const spRev = id => areaReview[id] || {};
+const spReq = row => REQS.find(q => q.kind === 'review' && q.catId === row.catId && !!q.rest === !!row.isRest) || null;
+function spStatus(row){
+  if(spRev(row.id).skip) return 'skip';
+  if(spReq(row)) return 'sent';
+  if(spTyped[row.id] != null && spTyped[row.id] !== row.amt) return 'dirty';
+  if(row.on || spRev(row.id).sup) return 'saved';
+  return 'none';
+}
+/* the saving a row shows: read off a document in blue, a median or a typed spend
+   as a band, nothing for an area marked not relevant */
+function spSaveHTML(row){
+  const st = spStatus(row);
+  if(st === 'skip') return SP_NONE;
+  const typed = spTyped[row.id], amt = typed != null ? typed : row.amt;
+  const save = Math.round(amt * row.rate / 100);
+  if(st === 'dirty') return `<span class="fig-est">${tuneMoneyStr(save, true)}</span>`;
+  if(row.on) return mvMoneyHTML(save, true);
+  return figHTML(save, !row.exact);
+}
+/* a sum with two kinds in it prints as both, each in its own ink, never blended */
+const spMixed = (exact, lo, hi, has, plus, cls) => [
+  exact ? `<span class="${cls}">${plus ? '+' : ''}${fmt(exact)}</span>` : '',
+  has ? `<span class="fig-est">${plus ? '+' : ''}${bandRange(lo, hi)}</span>` : ''
+].filter(Boolean).join(' <span class="sp-sep">·</span> ') || SP_NONE;
+function spTotals(d){
+  const t = {doc:0, lo:0, hi:0, est:false, sp:0, spLo:0, spHi:0, spEst:false, n:0};
+  d.rows.forEach(row => {
+    if(spStatus(row) === 'skip') return;
+    t.n++;
+    const typed = spTyped[row.id], amt = typed != null ? typed : row.amt;
+    const save = Math.round(amt * row.rate / 100);
+    const tuned = (typed != null && typed !== row.amt) || row.on;
+    if(!tuned && row.exact){ t.doc += save; t.sp += amt; return; }
+    const mb = tuned ? TUNE_BAND : 0, e = tuned ? (newCustomer ? EST_BAND : 0) : EST_BAND;
+    t.est = true; t.lo += save * (1 - mb) * (1 - e); t.hi += save * (1 + mb) * (1 + e);
+    t.spEst = true; t.spLo += amt * (1 - mb) * (1 - e); t.spHi += amt * (1 + mb) * (1 + e);
+  });
+  return t;
+}
+/* the status cell: a fact, until a changed figure turns it into the one thing to do */
+function spStCell(row){
+  const st = spStatus(row);
+  if(row.kind === 'idle') return `<span class="dr-tag idle">${row.idleLine.includes('requested') ? 'In progress' : 'Not being used'}</span>`;
+  if(st === 'skip') return `<span class="sp-stc"><span class="sp-st">Not relevant</span><button type="button" class="linkbtn" data-sp-act="undo" data-sp-id="${row.id}">Undo</button></span>`;
+  if(st === 'sent') return `<span class="sp-st on">With Peter</span>`;
+  if(st === 'dirty') return `<span class="sp-stc"><button type="button" class="btn btn-secondary btn-sm" data-sp-act="save" data-sp-id="${row.id}">Save</button></span>`;
+  if(st === 'saved') return `<span class="sp-st done">Reviewed</span>`;
+  return `<span class="sp-st">Not reviewed</span>`;
+}
+function spSub(row){
+  if(row.kind === 'idle') return row.idleLine;
+  const st = spStatus(row), v = spRev(row.id);
+  if(st === 'saved' || st === 'sent') return `Your spend ${fmt(row.amt)} kr.${v.sup ? ' · ' + spEsc(v.sup) : ''}`;
+  if(row.isRest) return row.sub;
+  return row.exact ? row.sup : `${row.openN} agreement${row.openN === 1 ? '' : 's'} · ${row.rate}% average saving`;
+}
+/* the spend cell: the input for an area you can review, text for the rest */
+function spSpendCell(row){
+  if(row.kind !== 'open' || row.fixed)
+    return `<span class="sp-num r">${row.exact ? fmt(row.amt) : `<span class="fig-est">${estRange(row.amt)}</span>`}</span>`;
+  const ro = spStatus(row) === 'sent', typed = spTyped[row.id];
+  const val = typed != null ? fmt(typed) : (row.exact || row.on) ? fmt(row.amt) : '';
+  return `<span class="sp-num r"><span class="sp-in${ro ? ' ro' : ''}">
+    <input data-sp-live="${row.id}" value="${val}" placeholder="${row.exact || row.on ? '' : estRange(row.amt)}"${ro ? ' readonly' : ''}
+      inputmode="numeric" aria-label="${spEsc(row.n)}: your spend a year, kr."><span class="u">kr.</span></span></span>`;
+}
+/* the open row: where the figure came from, the supplier, and the actions */
+function spBody(row){
+  const st = spStatus(row), sent = st === 'sent', v = spRev(row.id), q = spReq(row);
+  const sup = v.sup != null ? v.sup : (row.exact && !row.isRest) ? row.sup : '';
+  const can = row.fixed || row.exact || row.on || spTyped[row.id] != null;
+  return `<div class="sp-body">
+    ${row.exact ? `<span class="sp-help">${DOC_I}Spend read from ${spEsc(row.doc)}</span>` : ''}
+    <div class="sp-f"><label for="spSup-${row.art}${row.isRest ? '-rest' : ''}">Current supplier <i>(optional)</i></label>
+      <div class="sp-field${sent ? ' ro' : ''}"><input id="spSup-${row.art}${row.isRest ? '-rest' : ''}" data-sp-sup="${row.id}" value="${spEsc(sup)}"
+        placeholder="Who you buy from"${sent ? ' readonly' : ''}></div></div>
+    <div class="sp-act">${sent
+      ? `<span class="sp-sent">${TICK}${q ? reqWhen(q).replace(/^s/, 'S') : 'Sent'} · Peter replies within two working days</span>
+         <span class="spacer"></span><button type="button" class="linkbtn quiet" data-sp-act="withdraw" data-sp-id="${row.id}">Withdraw</button>`
+      : `<button type="button" class="linkbtn quiet" data-sp-act="skip" data-sp-id="${row.id}">Not relevant</button><span class="spacer"></span>
+         ${row.fixed ? '' : `<button type="button" class="btn btn-secondary btn-sm" data-sp-act="save" data-sp-id="${row.id}"${can ? '' : ' disabled'}>Save</button>`}
+         <button type="button" class="btn btn-primary btn-sm" data-sp-act="send" data-sp-id="${row.id}"${can ? '' : ' disabled'}>Send to review</button>`}
+    </div></div>`;
+}
+const spAreaCell = (row, sub) => `<span class="sp-area"><span class="sp-ic" aria-hidden="true">${catArt(row.art, true)}</span>
+  <span class="sp-name"><b>${row.n}</b><span>${sub}</span></span></span>`;
+function spRow(row){
+  const st = spStatus(row), opens = row.kind === 'open';
+  const cells = `${spAreaCell(row, spSub(row))}
+    ${spSpendCell(row)}
+    <span class="sp-num r c-save" data-sp-save="${row.id}">${spSaveHTML(row)}</span>
+    <span class="c-st" data-sp-st="${row.id}">${spStCell(row)}</span>
+    <span class="sp-x" aria-hidden="true">${opens ? DR_IC.chev : ''}</span>`;
+  return opens
+    ? `<details name="sprest"><summary><div class="sp-tr${st === 'skip' ? ' skip' : ''}">${cells}</div></summary>${spBody(row)}</details>`
+    : `<div class="sp-tr">${cells}</div>`;
+}
+const spHead = (h2, p, lead) => `
+  <div class="ar-head"><div class="ar-head-t"><h2>${h2}</h2>${p ? `<p>${p}</p>` : ''}</div>${lead}</div>`;
+const spLead = (k, v) => `<div class="sp-lead"><span class="hy-k">${k}</span><b>${v}</b></div>`;
+
+function spDrillHTML(){
+  const d = spModel(), m = d.m, b = d.peer, t = spTotals(d);
+  const money = n => b ? `<span class="fig-est">${estRange(n)}</span>` : fmt(n);
+  const src = b ? drCohort()
+    : partialData() ? `Read from ${state.source} · ${d.nKnown} of ${d.nCats} areas`
+    : `Read from ${state.source} · ${fmt(m.invoices)} invoices`;
+  const restP = b ? 'Industry medians. Add your spend and the saving follows.'
+    : d.rows.some(r => !r.exact) ? 'Figures without a document are the industry median. Add yours and the saving follows.'
+    : `Read from ${state.source}.`;
+  return `
+    <div class="dr-page">
+      <div class="sp-top">
+        <div class="rp-ctl">
+          <button type="button" class="dr-back" id="drBack">${DR_IC.back}Back to overview</button>
+          <span class="rp-ctl-sp"></span>
+          <div class="seg rp-per" role="group" aria-label="Period">
+            ${Object.entries(RP_PERIOD).map(([k, v]) => `<button type="button" data-drper="${k}" aria-pressed="${rpPeriod === k}">${v.n}</button>`).join('')}
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" data-drgo="reports" data-drrp="spending">See the full report${DR_IC.go}</button>
+        </div>
+        <header class="hx hy sp-hy${b ? ' est' : ''}${spDrawn ? ' still' : ''}" data-field>
+          <span class="hy-field dots" data-field-layer aria-hidden="true"></span>
+          <div class="hy-t2">
+            <span class="hy-eye">${RP_PERIOD[rpPeriod].n} · ${rpSpan()}</span>
+            <h1 id="drT" tabindex="-1">${b ? 'Where a company like yours spends' : 'Where your money goes'}</h1>
+          </div>
+          <i class="hy-vr" aria-hidden="true"></i>
+          <i class="hy-hr" aria-hidden="true"></i>
+          <div class="hy-figs">
+            ${hyFigHTML(hyFig(b ? 'Companies your size buy' : 'Everything you bought', money(d.spend)))}
+            ${hyFigHTML(hyFig(`Outside your agreements · ${rpPct(d.off, d.spend)}%`, money(d.off)))}
+          </div>
+          <div class="hy-side">
+            <span class="hy-k">Where the money went</span>
+            <div class="sp-bar" aria-hidden="true">
+              <i style="flex:${d.thru} 0 0;--i:0;--k:var(--general-primary)"></i>
+              <i style="flex:${d.off} 0 0;--i:1;--k:rgb(110 110 110/.3)"></i>
+            </div>
+            <ul class="sp-key">
+              <li style="--k:var(--general-primary)"><span>Through an agreement</span><em>${money(d.thru)} kr.</em></li>
+              <li style="--k:rgb(110 110 110/.3)"><span>Outside your agreements</span><em>${money(d.off)} kr.</em></li>
+            </ul>
+            <p class="hy-cap">${src}</p>
+          </div>
+        </header>
+      </div>
+
+      <section class="sec">
+        ${spHead('What you spend and save today', d.today.length ? `Read from ${spSrcShort()}.` : '',
+          spLead('Saved', d.today.length ? `<span class="fig-actual">${fmt(d.saved)}</span><small>kr.</small>` : '<span class="none">Nothing yet</span>'))}
+        ${d.today.length ? `
+        <div class="sp-tb a">
+          <div class="sp-th"><span>Area</span><span class="r">Spend</span><span class="r">Saved</span></div>
+          ${d.today.map(a => `<div class="sp-tr">${spAreaCell(a, a.onName)}<span class="sp-num r">${fmt(a.thru)}</span>
+            <span class="sp-num r"><span class="fig-actual">${fmt(a.saved)}</span></span></div>`).join('')}
+          <div class="sp-tf"><span class="l">Total · <b>${d.today.length} area${d.today.length === 1 ? '' : 's'}</b></span>
+            <span class="r">${fmt(d.thru)}</span><span class="r"><span class="fig-actual">${fmt(d.saved)}</span></span></div>
+        </div>` : `<p class="sp-empty">Nothing runs through an agreement yet.</p>`}
+      </section>
+
+      <section class="sec">
+        ${spHead('Not reviewed areas', restP,
+          `<div class="sp-lead"><span class="hy-k">Could save</span><b data-sp-tot="save">${spMixed(t.doc, t.lo, t.hi, t.est, true, 'fig-doc')}<small>kr.</small></b></div>`)}
+        <div class="sp-tb b">
+          <div class="sp-th"><span>Area</span><span class="r">Spend / year</span><span class="r">Could save / year</span><span class="c-st">Status</span><span></span></div>
+          ${d.rows.map(spRow).join('')}
+          <div class="sp-tf"><span class="l">Total · <b data-sp-tot="n">${t.n} area${t.n === 1 ? '' : 's'}</b></span>
+            <span class="r" data-sp-tot="spend">${spMixed(t.sp, t.spLo, t.spHi, t.spEst, false, '')}</span>
+            <span class="r c-save" data-sp-tot="save">${spMixed(t.doc, t.lo, t.hi, t.est, true, 'fig-doc')}</span>
+            <span class="c-st"></span><span></span></div>
+        </div>
+      </section>
+    </div>`;
+}
+
+/* a keystroke moves the row's saving, its status and the act's totals, without
+   rebuilding anything the person is typing in */
+function spLive(id){
+  const d = spModel(), row = d.rows.find(r => r.id === id);
+  if(!row) return;
+  $$(`#viewDrill [data-sp-save="${id}"]`).forEach(el => el.innerHTML = spSaveHTML(row));
+  $$(`#viewDrill [data-sp-st="${id}"]`).forEach(el => el.innerHTML = spStCell(row));
+  $$(`#viewDrill [data-sp-act="save"][data-sp-id="${id}"],#viewDrill [data-sp-act="send"][data-sp-id="${id}"]`)
+    .forEach(b => b.disabled = false);
+  const t = spTotals(d);
+  $$('#viewDrill [data-sp-tot="save"]').forEach(el => el.innerHTML =
+    spMixed(t.doc, t.lo, t.hi, t.est, true, 'fig-doc') + (el.closest('.sp-lead') ? '<small>kr.</small>' : ''));
+  $$('#viewDrill [data-sp-tot="spend"]').forEach(el => el.innerHTML = spMixed(t.sp, t.spLo, t.spHi, t.spEst, false, ''));
+}
+/* the actions. Save writes the typed figure as a tune and the supplier as the
+   review; Send does the same and files a request to Peter; Not relevant parks
+   the area (the Overview swaps the move for the next one). Every one re-renders
+   the page from the stores, so what you see is what is kept. */
+function spAct(act, id){
+  const d = spModel(), row = d.rows.find(r => r.id === id);
+  if(!row) return;
+  const r = row.row;
+  const supIn = $(`#viewDrill [data-sp-sup="${id}"]`);
+  const sup = supIn ? supIn.value.trim() : (spRev(id).sup || '');
+  const write = () => {
+    const typed = spTyped[id];
+    if(typed != null && !row.fixed){
+      const base = areaBase(r) || 1;
+      if(Math.abs(typed - base) < 1) delete spendTune[r.id]; else spendTune[r.id] = typed / base;
+      tuneWrite(r);
+    }
+    areaReview[id] = {...spRev(id), sup};
+    delete spTyped[id];
+  };
+  if(act === 'save') write();
+  else if(act === 'send'){
+    write();
+    addReq({id:'rv-' + id + '-' + Date.now(), kind:'review', rest:!!row.isRest, catId:row.catId, catName:row.n,
+      agr:null, count:1, spend:row.fixed ? row.amt : areaSpend(r), sup,
+      ref:'RV-' + String(seedOf(row.n + state.company) % 100000).padStart(5, '0')});
+  }
+  else if(act === 'skip'){ areaReview[id] = {...spRev(id), skip:true}; delete spTyped[id]; }
+  else if(act === 'undo'){ const v = {...spRev(id)}; delete v.skip; areaReview[id] = v; }
+  else if(act === 'withdraw'){ const q = spReq(row); if(q) dropReq(q.id); }
+  persist(); renderTunePill(); dashDirty = true;
+  const cv = $('#canvas'), y = cv ? cv.scrollTop : 0;
+  renderDrill();
+  if(cv) cv.scrollTop = y;
+}
+/* wired once, on the document: the page is rebuilt on every action */
+if(!document.body.dataset.spWired){
+  document.body.dataset.spWired = '1';
+  document.addEventListener('input', e => {
+    const inp = e.target.closest('#viewDrill input[data-sp-live]'); if(!inp) return;
+    const id = inp.dataset.spLive, v = spNum(inp.value);
+    if(v == null) delete spTyped[id]; else spTyped[id] = v;
+    spLive(id);
+  });
+  document.addEventListener('change', e => {
+    const inp = e.target.closest('#viewDrill input[data-sp-live]'); if(!inp) return;
+    const v = spNum(inp.value); if(v != null) inp.value = fmt(v);
+  });
+  /* a control inside a row's summary is not a request to open the row */
+  document.addEventListener('click', e => {
+    const inRow = e.target.closest('#viewDrill summary .sp-in, #viewDrill summary .sp-stc');
+    if(inRow) e.preventDefault();
+    const b = e.target.closest('#viewDrill [data-sp-act]'); if(!b) return;
+    e.preventDefault();
+    spAct(b.dataset.spAct, b.dataset.spId);
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Enter' && e.target.closest('#viewDrill summary input')) e.preventDefault();
+  });
+}
+
 function renderDrill(){
+  if(drillType === 'spend'){
+    $('#viewDrill').innerHTML = spDrillHTML();
+    wireDrill();
+    hyFieldWire($('#viewDrill [data-field]'));
+    spDrawn = true;
+    return;
+  }
   const m = rpModel();
   const r = (drillType === 'spend' ? drSpending : drillType === 'usage' ? drUsage : drSavings)(m);
   const rpk = drillType === 'spend' ? 'spending' : drillType === 'usage' ? 'usage' : 'savings';
@@ -18098,6 +18710,7 @@ addEventListener('keydown', e => {
 
 function openDrill(type){
   drillType = DRILL[type] ? type : 'savings';
+  if(drillType === 'spend') spTyped = {};
   /* an overlay on the Overview, so the Overview's figures leave the bar with it */
   ledgerSet(false);
   catTabStandDown();
@@ -19073,7 +19686,7 @@ function persist(){
       seenWelcome, manualVerified: [...manualVerified], forceEstimated, forceVerified,
       newCustomer, ncSize, ncPeers, ncErpConnected, ncGettingStartedHidden, activityTab,
       savedAgr: [...savedAgr], agrCardStyle, catViewStyle, ovCols,
-      spendTune, tuneSkin,
+      spendTune, tuneSkin, areaReview,
       notifPrefs, seenTour, docUploads, docGone: [...docGone]
     }));
   }catch(e){ /* private mode / quota — the prototype just won't remember */ }
@@ -19124,6 +19737,7 @@ function applySaved(d){
   }
   if(d.notifPrefs && Array.isArray(d.notifPrefs.channels)) notifPrefs = d.notifPrefs;
   if(typeof d.seenTour === 'boolean') seenTour = d.seenTour;
+  if(d.areaReview && typeof d.areaReview === 'object') areaReview = d.areaReview;
 }
 
 function startOver(){
