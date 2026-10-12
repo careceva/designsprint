@@ -4967,6 +4967,12 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
    page. Muted at rest: an affordance, not an action to take right now. */
 .nc-ov-card-foot{display:flex;align-items:center;gap:var(--s2);min-width:0}
 .nc-ov-card-foot .nc-ov-card-c{min-width:0}
+/* the spend card's way in: an arrow in a squircle beside the caption, lit with the card */
+.nc-ov-card-go{flex:0 0 auto;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;
+  background:var(--brand-ice);color:var(--general-primary);transition:background var(--t-fast),color var(--t-fast)}
+.nc-ov-card-go svg{width:16px;height:16px}
+.nc-ov-card.is-link:hover .nc-ov-card-go,.nc-ov-card.is-link:focus-visible .nc-ov-card-go{
+  background:var(--general-primary);color:var(--general-primary-foreground)}
 .nc-ov-card>.nc-ov-card-x{position:absolute;top:var(--s4);right:var(--s4);z-index:2;
   display:grid;place-items:center;width:32px;height:32px;
   border-radius:var(--rounded-sm);color:var(--general-muted-foreground);
@@ -11468,16 +11474,22 @@ const cardTuned = c => !!c.was && tuneActive() && Math.abs(c.n - c.was.n) >= 1;
 function dashCardHTML(c){
   const t = c.go ? 'button' : 'div';
   const on = cardTuned(c);
+  /* the spend card goes straight to its page — where your money goes — and the
+     arrow beside the caption is the sign of it; the other cards open a summary
+     first, with the expand mark in the corner. A tuned spend card keeps the
+     reset mark, because that is an action, not a sign. */
+  const toPage = c.go === 'spend';
   return `
     <${t}${c.go ? ` type="button" data-drill="${c.go}" data-card="${c.go}"` : ''}
       class="nc-ov-card${c.go ? ' is-link' : ''}${on ? ' is-tuned' : ''}"${c.go ? ` aria-label="${c.l}: ${
-        String(c.v).replace(/<[^>]*>/g, '')} — open summary"` : ''}>
-      ${c.go ? `<span class="nc-ov-card-x" aria-hidden="true" data-mode="${on ? 'reset' : 'expand'}"${
+        String(c.v).replace(/<[^>]*>/g, '')} — ${toPage ? 'open where your money goes' : 'open summary'}"` : ''}>
+      ${c.go && (on || !toPage) ? `<span class="nc-ov-card-x" aria-hidden="true" data-mode="${on ? 'reset' : 'expand'}"${
         on ? ' title="Back to your invoices"' : ''}>${on ? PK_IC.reset : PK_IC.expand}</span>` : ''}
       <span class="nc-ov-card-l">${c.l}</span>
       <b class="nc-ov-card-v${c.accent ? ' accent' : ''}"><span class="ov-num">${c.v}</span>${c.u ? `<small> ${c.u}</small>` : ''}</b>
       <span class="nc-ov-card-foot">
         <span class="nc-ov-card-c">${c.cap}</span>
+        ${toPage ? `<span class="nc-ov-card-go" aria-hidden="true">${ARROW}</span>` : ''}
       </span>
       ${c.was ? `<span class="ov-was"><em>${c.was.l}</em><b>${fmt(c.was.n)}</b></span>` : ''}
       ${cardSpark(c.spark, c.tone, c.amp)}
@@ -11719,6 +11731,8 @@ function wireDash(root, m){
      up one click further */
   q('[data-drill]').forEach(b => b.addEventListener('click', e => {
     if(b.classList.contains('is-tuned') && e.target.closest('.nc-ov-card-x')){ tuneReset(); return; }
+    /* the spend card is the way to the spend page itself; the others open a summary */
+    if(b.dataset.drill === 'spend'){ openDrill('spend'); return; }
     openPeek(b.dataset.drill);
   }));
   /* 2 or 3 cards, flipped in place: the grid changes class and the captions are
