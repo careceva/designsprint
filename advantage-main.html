@@ -4968,9 +4968,10 @@ body.activity-on.activity-open .canvas{padding-right:var(--s8)}
 .nc-ov-card-foot{display:flex;align-items:center;gap:var(--s2);min-width:0}
 .nc-ov-card-foot .nc-ov-card-c{min-width:0}
 /* the spend card's way in: an arrow in a squircle beside the caption, lit with the card */
-.nc-ov-card-go{flex:0 0 auto;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;
+.nc-ov-card-go{flex:0 0 auto;display:grid;place-items:center;width:24px;height:24px;border-radius:8px;
+  margin-block:-3px;   /* taller than the caption's 18px line, but it must not add to it: the three captions share a baseline */
   background:var(--brand-ice);color:var(--general-primary);transition:background var(--t-fast),color var(--t-fast)}
-.nc-ov-card-go svg{width:16px;height:16px}
+.nc-ov-card-go svg{width:14px;height:14px}
 .nc-ov-card.is-link:hover .nc-ov-card-go,.nc-ov-card.is-link:focus-visible .nc-ov-card-go{
   background:var(--general-primary);color:var(--general-primary-foreground)}
 .nc-ov-card>.nc-ov-card-x{position:absolute;top:var(--s4);right:var(--s4);z-index:2;
