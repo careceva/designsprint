@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage — overview as a payments-style home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap">
+<style>
+/* tokens, copied from advantage-main.html */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;--general-primary:#1b64dc;--general-primary-deep:#12459f;
+  --general-primary-foreground:#fafafa;--general-secondary:#dbe9ff;--general-muted:#f2f2f2;
+  --general-muted-foreground:#6e6e6e;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--surface:#ffffff;--surface-tile:#f5f6f7;--brand-ice:#edf5ff;--brand-midnight:#000a45;
+  --sentiment-positive:#009689;--sentiment-positive-ink:#007c71;--sentiment-positive-ink-on-tint:#00796e;
+  --sentiment-negative:#f54a00;--sentiment-negative-ink-on-tint:#c43b00;
+  --font-sans:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;--text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;--rounded-xl:20px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;--shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;--shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+  --hairline:#ececec;--card-stroke:#e7e7ea;--t-fast:.15s ease;
+  --tint-pos:#d9f2ef;--tint-idle:#ffe9dd;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+body{font-family:var(--font-sans);background:var(--surface);color:var(--general-foreground);font-size:var(--text-base);line-height:1.45;-webkit-font-smoothing:antialiased}
+button,select,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;text-align:inherit}
+a{color:var(--general-primary);text-decoration:none;font-weight:500}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+button:focus-visible,select:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+.fig-pos{color:var(--sentiment-positive-ink)}
+.fig-doc{color:var(--general-primary)}
+.fig-neg{color:var(--sentiment-negative-ink-on-tint)}
+.fig-est{font-weight:inherit;color:var(--general-muted-foreground);text-decoration:underline dotted currentColor;text-decoration-thickness:1.5px;text-underline-offset:.16em;text-decoration-skip-ink:none}
+.sep{color:var(--general-muted-foreground);font-weight:400;margin:0 3px}
+.none{color:var(--general-muted-foreground)}
+
+/* ---------- the shell: a white sidebar and a centred content column ---------- */
+.app{display:flex;min-height:100vh}
+.side{flex:0 0 232px;position:sticky;top:0;height:100vh;overflow:auto;padding:var(--s3) var(--s3) var(--s6);border-right:1px solid var(--hairline);display:flex;flex-direction:column;gap:var(--s5)}
+.acct-w{position:relative}
+.acct{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s2);border-radius:var(--rounded-sm)}
+.acct:hover,.acct[aria-expanded="true"]{background:var(--surface-tile)}
+/* the company menu: both companies, the person who runs each, and where its figures come from */
+.menu{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:10;padding:var(--s2);background:var(--surface);border:1px solid var(--card-stroke);
+  border-radius:var(--rounded-md);box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:2px}
+.menu[hidden]{display:none}
+.menu-h{padding:var(--s1) var(--s2) var(--s2);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.menu button{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s2);border-radius:var(--rounded-sm)}
+.menu button:hover{background:var(--surface-tile)}
+.menu .t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;line-height:1.3}
+.menu .t b{font-size:var(--text-sm);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu .t span{font-size:var(--text-sm);color:var(--general-muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu .tick{width:16px;height:16px;color:var(--general-primary);visibility:hidden;flex:0 0 auto}
+.menu button[aria-checked="true"] .tick{visibility:visible}
+.acct .av{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;background:var(--brand-ice);color:var(--general-primary);font-size:var(--text-xs);font-weight:700}
+.acct .t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.acct .t b{font-size:var(--text-sm);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acct .t span{font-size:var(--text-sm);color:var(--general-muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acct>svg{width:14px;height:14px;color:var(--general-muted-foreground);flex:0 0 auto}
+.nav{list-style:none;display:flex;flex-direction:column;gap:1px}
+.nav li button{display:flex;align-items:center;gap:var(--s3);width:100%;height:34px;padding:0 var(--s2);border-radius:var(--rounded-sm);font-size:var(--text-sm);font-weight:500;color:var(--general-foreground)}
+.nav li button:hover{background:var(--surface-tile)}
+.nav li button[aria-current]{color:var(--general-primary);font-weight:600}
+.nav li button svg{width:16px;height:16px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.nav li button[aria-current] svg{color:var(--general-primary)}
+.nav li button .chev{margin-left:auto;width:14px;height:14px}
+.nav-h{padding:0 var(--s2);font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.nav-g{display:flex;flex-direction:column;gap:var(--s2)}
+.canvas{flex:1 1 auto;min-width:0;display:flex;justify-content:center;padding:var(--s4) var(--s6) var(--s24)}
+.wrap{width:100%;max-width:1000px;display:flex;flex-direction:column;gap:var(--s12)}
+
+/* ---------- the top row: search and the icons ---------- */
+.topbar{display:flex;align-items:center;gap:var(--s4)}
+.search{display:flex;align-items:center;gap:var(--s2);width:300px;height:36px;padding:0 var(--s3);border-radius:var(--rounded-sm);background:var(--surface-tile);color:var(--general-muted-foreground)}
+.search svg{width:16px;height:16px;flex:0 0 auto}
+.search input{flex:1 1 auto;min-width:0;border:0;background:none;outline:none;font-size:var(--text-base);color:var(--general-foreground)}
+.search input::placeholder{color:var(--general-muted-foreground)}
+.topbar .pill{margin-left:auto}
+.icons{display:flex;align-items:center;gap:var(--s1)}
+@media(max-width:900px){.icons{margin-left:auto}}
+.icons button{width:32px;height:32px;display:grid;place-items:center;border-radius:var(--rounded-sm);color:var(--general-muted-foreground)}
+.icons button:hover{background:var(--surface-tile);color:var(--general-foreground)}
+.icons button svg{width:16px;height:16px}
+.icons .plus{background:var(--general-primary);color:#fff;border-radius:50%;width:24px;height:24px;margin-left:var(--s2)}
+.icons .plus:hover{background:var(--general-primary-deep);color:#fff}
+.icons .plus svg{width:14px;height:14px}
+
+/* ---------- sections ---------- */
+.sec-h{display:flex;align-items:center;gap:var(--s4);padding-bottom:var(--s3);border-bottom:1px solid var(--hairline)}
+.sec-h h1,.sec-h h2{font-size:var(--text-3xl);font-weight:700;letter-spacing:-.015em;line-height:1.2}
+.sec-h .sp{flex:1 1 auto}
+.sec-h.plain{border:0;padding:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 var(--s4);border-radius:var(--rounded-sm);
+  border:1px solid var(--card-stroke);background:var(--surface);box-shadow:var(--shadow-xs);font-size:var(--text-sm);font-weight:600;white-space:nowrap}
+.btn:hover{background:var(--surface-tile)}
+.btn svg{width:14px;height:14px}
+.btn[disabled]{color:var(--general-muted-foreground);box-shadow:none;cursor:default}
+.btn[disabled]:hover{background:var(--surface)}
+.sec{display:flex;flex-direction:column;gap:var(--s5)}
+
+/* ---------- this month: figures, one thin line, and the two facts beside it ---------- */
+.td{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:var(--s8)}
+.td-l{display:flex;flex-direction:column;gap:var(--s12)}
+.figs{display:flex;gap:var(--s12)}
+.fig{display:flex;flex-direction:column;gap:2px}
+.dd{display:inline-flex;align-items:center;gap:4px;font-size:var(--text-base);font-weight:500;color:var(--general-foreground);position:relative}
+.dd svg{width:14px;height:14px;color:var(--general-muted-foreground)}
+.fig b{font-size:var(--text-2xl);font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.fig b small{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground);letter-spacing:0}
+.fig small{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.tl-w{display:flex;flex-direction:column;gap:6px}
+svg.tl{display:block;width:100%;height:96px;overflow:visible}
+.xl{display:flex;justify-content:space-between;font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.td-r{display:flex;flex-direction:column}
+.mini{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s2) 0 var(--s6)}
+.mini+.mini{padding-top:var(--s6);border-top:1px solid var(--hairline)}
+.mini-h{display:flex;align-items:baseline;gap:var(--s3)}
+.mini-h b{font-size:var(--text-base);font-weight:600;flex:1 1 auto}
+.mini-h a{font-size:var(--text-sm)}
+.mini-v{font-size:var(--text-2xl);font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.mini-v small{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground);letter-spacing:0;margin-left:3px}
+.mini span.c{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
+/* ---------- your overview: the control row ---------- */
+.ctl-row{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.chip{position:relative;display:inline-flex;align-items:center;height:32px;padding:0 var(--s2) 0 var(--s3);border:1px solid var(--card-stroke);border-radius:var(--rounded-full);
+  background:var(--surface);font-size:var(--text-sm);white-space:nowrap;cursor:pointer}
+.chip:hover{background:var(--surface-tile)}
+.chip .cl{color:var(--general-muted-foreground);font-weight:500;padding-right:var(--s2);margin-right:var(--s2);border-right:1px solid var(--hairline)}
+.chip .cv{color:var(--general-primary);font-weight:600}
+.chip svg{width:14px;height:14px;color:var(--general-primary);margin-left:3px}
+.chip .x{display:grid;place-items:center;width:16px;height:16px;margin:0 2px 0 -4px;color:var(--general-muted-foreground)}
+.chip .x svg{width:14px;height:14px;color:inherit;margin:0}
+.chip select{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer}
+.chip.off .cv{color:var(--general-muted-foreground)}
+.chip.off svg{color:var(--general-muted-foreground)}
+.ctl-row .sp{flex:1 1 auto}
+
+/* ---------- the cards ---------- */
+/* one ice-blue mat holds every overview card: 8px around and 8px between, so the
+   borders merge into a single surface; a deeper-ice hairline edges the mat */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2);padding:var(--s2);background:var(--brand-ice);border-radius:var(--rounded-lg);box-shadow:0 0 0 1px var(--general-secondary)}
+.card{display:flex;flex-direction:column;gap:var(--s4);min-height:320px;padding:var(--s5);border:0;border-radius:var(--rounded-sm);background:var(--surface);box-shadow:var(--shadow-xs);min-width:0}
+/* title, figure and its comparison are one tight group; the plot or the rows sit a step below */
+.card-top{display:flex;flex-direction:column;gap:var(--s1)}
+.card-h{display:flex;align-items:center;gap:6px}
+.card-h h3{font-size:var(--text-base);font-weight:600}
+.card-h .i{width:16px;height:16px;color:var(--general-muted-foreground);display:inline-grid;place-items:center}
+.card-h .i svg{width:15px;height:15px}
+.card-h .sp{flex:1 1 auto}
+.card-h .tag{font-size:var(--text-sm);color:var(--general-muted-foreground);font-weight:500}
+.card .v{font-size:var(--text-2xl);font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.card .v small{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground);letter-spacing:0;margin-left:3px}
+.card .cmp{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.card .plot{flex:1 1 auto;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:120px;position:relative}
+svg.ln{display:block;width:100%;height:110px;overflow:visible}
+.card .foot{display:flex;justify-content:space-between;gap:var(--s3);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.rows{list-style:none;display:flex;flex-direction:column}
+.rows li{display:flex;align-items:center;gap:var(--s3);min-height:44px;padding:var(--s1) 0;border-bottom:1px solid var(--hairline)}
+.rows li:last-child{border-bottom:0}
+.rows .k{width:8px;height:8px;border-radius:50%;background:var(--k);flex:0 0 auto}
+.rows .k.est{background:repeating-linear-gradient(45deg,var(--k) 0 1.5px,transparent 1.5px 3.5px)}
+.rows .t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;line-height:1.3}
+.rows .t b{font-weight:500;font-size:var(--text-base);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rows .t span{font-size:var(--text-sm);color:var(--general-muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rows .a{text-align:right;font-size:var(--text-base);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;flex:0 0 auto}
+.rows .a small{display:block;font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.rows li.sum{color:var(--general-muted-foreground);font-size:var(--text-sm);min-height:36px}
+.rows li.sum .t b{font-size:var(--text-sm)}
+.rows li.sum .a{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.rows.rk li{min-height:56px}
+.lg{position:relative;width:32px;height:32px;border-radius:8px;background:var(--surface-tile);display:grid;place-items:center;flex:0 0 auto;overflow:hidden}
+.lg b{font-size:var(--text-xs);font-weight:700;letter-spacing:.02em;color:var(--general-muted-foreground)}
+.lg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--surface)}
+.ic{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--surface-tile);color:var(--general-muted-foreground);flex:0 0 auto}
+.ic svg{width:16px;height:16px}
+.ic.neg{background:var(--tint-idle);color:var(--sentiment-negative-ink-on-tint)}
+.ic.doc{background:var(--brand-ice);color:var(--general-primary)}
+.sbar{display:flex;gap:2px;height:6px;margin:var(--s1) 0 var(--s2)}
+.sbar i{border-radius:2px;background:var(--k);min-width:3px}
+.sbar i.est{background:repeating-linear-gradient(45deg,var(--k) 0 2px,transparent 2px 5px)}
+.empty{flex:1 1 auto;display:grid;place-items:center;border:1px dashed var(--card-stroke);border-radius:var(--rounded-sm);min-height:180px}
+.empty span{padding:var(--s2) var(--s3);border-radius:var(--rounded-sm);background:var(--surface-tile);font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.ln text,.tl text{font-family:var(--font-sans);font-size:var(--text-xs);fill:var(--general-muted-foreground)}
+.ln .hit,.tl .hit{fill:transparent}
+.ln .cross,.tl .cross{stroke:var(--card-stroke);stroke-width:1}
+.tip{position:absolute;z-index:3;pointer-events:none;padding:var(--s2) var(--s3);background:var(--surface);border:1px solid var(--card-stroke);border-radius:var(--rounded-sm);
+  box-shadow:var(--shadow-md);font-size:var(--text-sm);white-space:nowrap;display:flex;flex-direction:column;gap:2px}
+.tip[hidden]{display:none}
+.tip h4{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.tip div{display:flex;align-items:center;gap:var(--s2)}
+.tip i{width:10px;height:2px;border-radius:1px;background:var(--k);flex:0 0 auto}
+.tip i.prev{background:repeating-linear-gradient(90deg,var(--k) 0 2px,transparent 2px 4px)}
+.tip b{font-weight:600;font-variant-numeric:tabular-nums}
+.tip span{color:var(--general-muted-foreground)}
+
+/* ---------- all your purchasing areas: the spend review, in this page's own idiom ---------- */
+.card.areas{grid-column:1 / -1;min-height:0;padding:0;gap:0}
+.card.areas>.card-h{padding:var(--s4) var(--s5);border-bottom:1px solid var(--hairline);flex-wrap:wrap;row-gap:var(--s2)}
+.key{display:inline-flex;align-items:center;gap:var(--s3);font-size:var(--text-sm);color:var(--general-muted-foreground);white-space:nowrap}
+.key span{display:inline-flex;align-items:center;gap:5px}
+.key svg{width:14px;height:14px}
+.key .ok{color:var(--sentiment-positive-ink)}
+.pill{display:inline-flex;align-items:center;gap:var(--s2);height:32px;padding:0 var(--s3);border:1px solid var(--card-stroke);border-radius:var(--rounded-full);
+  font-size:var(--text-sm);font-weight:500;color:var(--general-foreground);white-space:nowrap}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--general-accent)}
+.pill.done i{background:var(--sentiment-positive)}
+.rv{--cols:minmax(0,1fr) 170px 120px 230px 20px}
+.rv-th{display:grid;grid-template-columns:var(--cols);gap:var(--s4);padding:var(--s3) var(--s5) var(--s2);font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.rv-th .r{text-align:right}
+.rv-tr{display:grid;grid-template-columns:var(--cols);align-items:center;gap:var(--s4);min-height:56px;padding:var(--s2) var(--s5);border-top:1px solid var(--hairline);transition:background var(--t-fast)}
+.rv-tr.stop{background:rgb(245 74 0 / .05)}
+.rv details summary{list-style:none;cursor:pointer}
+.rv details summary::-webkit-details-marker{display:none}
+.rv details summary:hover .rv-tr{background:var(--surface-tile)}
+.rv details[open] summary .rv-tr{background:var(--brand-ice)}
+.rv details summary:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
+.rv-area{display:flex;align-items:center;gap:var(--s3);min-width:0}
+.rv-ic{flex:0 0 auto;width:28px;height:28px;display:grid;place-items:center;color:var(--general-muted-foreground)}
+.rv-ic svg{width:20px;height:20px}
+.rv-name{min-width:0}
+.rv-name b{display:block;font-size:var(--text-base);font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-name span{display:block;font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-num{text-align:right;font-size:var(--text-base);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rv-num .ok{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-left:4px;color:var(--sentiment-positive-ink)}
+.rv-num .fig-est{font-weight:500}
+.rv-st{display:inline-flex;align-items:center;gap:5px;font-size:var(--text-sm);font-weight:500;color:var(--general-foreground);white-space:nowrap}
+.rv-st svg{width:14px;height:14px;flex:0 0 auto}
+.rv-st.muted{color:var(--general-muted-foreground)}
+.rv-st.neg{color:var(--sentiment-negative-ink-on-tint)}
+.rv-st.pos{color:var(--sentiment-positive-ink)}
+.rv-st.doc{color:var(--general-primary)}
+.rv-x{display:grid;place-items:center;width:20px;height:20px;color:var(--general-muted-foreground);transition:transform .18s ease}
+.rv-x svg{width:16px;height:16px}
+.rv details[open] .rv-x{transform:rotate(180deg)}
+/* the editor: one soft tile under the open row */
+.rv-ed{margin:0 var(--s5) var(--s5);padding:var(--s5);border-radius:var(--rounded-sm);background:var(--surface-tile);display:flex;flex-direction:column;gap:var(--s5)}
+.rv-ed .lead{font-size:var(--text-sm);color:var(--general-foreground);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rv-ed .lead svg{width:14px;height:14px;color:var(--general-muted-foreground)}
+.rv-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s5)}
+.rv-col{display:flex;flex-direction:column;gap:var(--s4)}
+.rv-f{display:flex;flex-direction:column;gap:6px}
+.rv-f label{font-size:var(--text-sm);font-weight:600}
+.rv-f label i{font-style:normal;font-weight:400;color:var(--general-muted-foreground)}
+.rv-f .help{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.rv-in{display:flex;align-items:center;gap:6px;height:44px;padding:0 var(--s4);background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-sm);
+  transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.rv-in:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.rv-in input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:var(--text-base);caret-color:var(--general-primary)}
+.rv-in input.num{font-weight:600;font-variant-numeric:tabular-nums}
+.rv-in input::placeholder{color:#8f8f8f;font-weight:400}
+.rv-in input.num::placeholder{color:var(--general-muted-foreground);text-decoration:underline dotted currentColor;text-decoration-thickness:1.5px;text-underline-offset:.16em}
+.rv-in .u{font-size:var(--text-sm);color:var(--general-muted-foreground);white-space:nowrap}
+.rv-in.ro{background:var(--general-muted);border-color:transparent}
+.rv-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:120px;padding:var(--s4);border:1px dashed var(--general-border);border-radius:var(--rounded-sm);
+  background:var(--brand-ice);cursor:pointer;text-align:center;transition:border-color var(--t-fast),background var(--t-fast)}
+.rv-drop:hover,.rv-drop.over{border-color:var(--general-primary);background:#e3eefe}
+.rv-drop svg{width:20px;height:20px;color:var(--general-primary);margin-bottom:var(--s1)}
+.rv-drop b{font-size:var(--text-sm);font-weight:600}
+.rv-drop span{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.rv-drop input{display:none}
+.rv-drop.ro{cursor:default;opacity:.7}
+.rv-docs{display:flex;flex-direction:column;gap:var(--s1);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.rv-docs span{display:inline-flex;align-items:flex-start;gap:6px}
+.rv-docs svg{width:14px;height:14px;flex:0 0 auto;margin-top:2px}
+.rv-docs .file{color:var(--general-foreground);font-weight:500}
+.rv-act{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.rv-act .spacer{flex:1 1 auto}
+.rv-act .note{font-size:var(--text-sm);color:var(--general-muted-foreground);text-align:right;max-width:24ch;line-height:1.3}
+.rv-sent{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-sm);font-weight:500;color:var(--sentiment-positive-ink)}
+.rv-sent svg{width:14px;height:14px}
+.rv-foot{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s5);border-top:1px solid var(--hairline);font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.rv-foot .sp{flex:1 1 auto}
+.linkbtn{color:var(--general-primary);font-weight:600;font-size:var(--text-sm);white-space:nowrap}
+.linkbtn:hover{text-decoration:underline;text-underline-offset:3px}
+.linkbtn.quiet{color:var(--general-muted-foreground)}
+.btn-primary{background:var(--general-primary);border-color:transparent;color:#fff;box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover{background:var(--general-primary-deep)}
+.btn-primary[disabled]{background:var(--general-muted);color:#a3a3a3;box-shadow:none}
+.btn-primary[disabled]:hover{background:var(--general-muted)}
+@media(max-width:900px){.rv{--cols:minmax(0,1fr) 140px 170px 20px}.rv-th .c-sv,.rv-tr .c-sv{display:none}.rv-cols{grid-template-columns:1fr}.pill{display:none}}
+
+@media(max-width:1100px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:900px){.side{display:none}.td{grid-template-columns:1fr}.td-r{flex-direction:row;gap:var(--s8)}.mini+.mini{border-top:0;padding-top:var(--s2)}}
+@media(max-width:640px){.cards{grid-template-columns:1fr}.canvas{padding:var(--s4) var(--s4) var(--s16)}.figs{gap:var(--s6)}.search{width:100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side" aria-label="Main">
+    <div class="acct-w">
+      <button type="button" class="acct" id="acctBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="acctMenu">
+        <span class="av" id="av">NB</span><span class="t"><b id="acctN">Nordvik Byg A/S</b><span id="acctU">Bob Iversen</span></span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="menu" id="acctMenu" role="menu" aria-label="Switch company" hidden></div>
+    </div>
+    <ul class="nav" id="nav1"></ul>
+    <div class="nav-g"><div class="nav-h">Shortcuts</div><ul class="nav" id="nav2"></ul></div>
+    <div class="nav-g"><div class="nav-h">More</div><ul class="nav" id="nav3"></ul></div>
+  </nav>
+  <main class="canvas">
+    <div class="wrap">
+      <div class="topbar">
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" placeholder="Search" aria-label="Search"></label>
+        <span class="pill" id="revPill"></span>
+        <div class="icons">
+          <button type="button" aria-label="Documents"><svg viewBox="0 0 24 24" fill="none"><path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+          <button type="button" aria-label="Help"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.5a2.5 2.5 0 014.9.6c0 1.7-2.4 2-2.4 3.4M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button type="button" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none"><path d="M6 16V11a6 6 0 0112 0v5l1.5 2h-15L6 16z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20a2 2 0 004 0" stroke="currentColor" stroke-width="1.8"/></svg></button>
+          <button type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button type="button" class="plus" aria-label="Add"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+        </div>
+      </div>
+
+      <section class="sec" aria-labelledby="tdT">
+        <div class="sec-h"><h1 id="tdT">This month</h1><span class="sp"></span><button type="button" class="btn" id="tdBtn">Open Reports</button></div>
+        <div class="td">
+          <div class="td-l">
+            <div class="figs" id="figs"></div>
+            <div class="tl-w"><svg class="tl" id="tl" role="img"></svg><div class="xl" id="tlX"></div><div class="tip" id="tlTip" hidden></div></div>
+          </div>
+          <div class="td-r" id="side"></div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="ovT">
+        <div class="sec-h plain"><h2 id="ovT">Your overview</h2></div>
+        <div class="ctl-row">
+          <label class="chip"><span class="cl">Date range</span><span class="cv" id="rangeV"></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="sr">Date range</span><select id="range"></select></label>
+          <label class="chip"><span class="cv" id="granV"></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="sr">Granularity</span><select id="gran"></select></label>
+          <label class="chip" id="cmpChip"><span class="x"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="cl">Compare</span><span class="cv" id="cmpV"></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="sr">Compare</span><select id="cmp"></select></label>
+          <span class="sp"></span>
+          <button type="button" class="btn"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Add</button>
+          <button type="button" class="btn"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 00-3-3L5 17v3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Edit</button>
+        </div>
+        <div class="cards" id="cards"></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+/* =====================================================================================
+   DATA — copied from advantage-main.html so every figure reconciles with the app
+   ===================================================================================== */
+const ROWS_BOB = [
+  {id:'mat', n:'Building materials', sup:18, inv:424, amt:2132300, rate:9, top:'Stark Byggecenter · Bygma · Ahlsell', agr:[
+     {n:'Buildor Erhverv', covers:465000, save:37200}, {n:'Stark Byggecenter', covers:870000, save:78400, req:true},
+     {n:'Bygma Framework', covers:2040000, save:183900}, {n:'Ahlsell Nordic', covers:1281900, save:119400}]},
+  {id:'tool', n:'Tools & workwear', sup:11, inv:178, amt:664800, rate:11, top:'Hilti · Gerdmans · Procurator Workwear', agr:[
+     {n:'Hilti Erhverv', covers:284000, save:31200, req:true}, {n:'Gerdmans Nordic', covers:671400, save:73800}, {n:'Procurator Workwear', covers:471000, save:51900}]},
+  {id:'fuel', n:'Fuel & transport', sup:5, inv:223, amt:530700, rate:8, top:'Q8 · Preem · OK', agr:[
+     {n:'Q8 Fuel Card', covers:423700, save:33900, req:true}, {n:'Preem Business', covers:107000, save:8600}]},
+  {id:'off', n:'Office supplies', sup:5, inv:62, amt:205000, rate:19, top:'Lyreco · Office Depot · Staples', agr:[
+     {n:'Lyreco Erhverv', covers:132000, save:24800, req:true}, {n:'Office Depot', covers:73000, save:14100}]},
+  {id:'rent', n:'Machine & equipment rental', sup:6, inv:112, amt:500000, rate:6, top:'Avis · Leasify Udlejning', agr:[
+     {n:'Leasify Udlejning', covers:62000, save:3700}, {n:'Avis Erhverv', covers:285000, save:17100, req:true}, {n:'Peugeot Professional', covers:153000, save:9200}]},
+  {id:'frg', n:'Freight & delivery', sup:6, inv:122, amt:328800, rate:8, top:'DSV · PostNord · Bring Fragt', agr:[
+     {n:'DSV Road', covers:191000, save:15300}, {n:'PostNord Erhverv', covers:81300, save:6500}, {n:'Bring Fragt', covers:56500, save:4500}]},
+  {id:'tel', n:'Telecom & IT', sup:4, inv:100, amt:290400, rate:5, top:'Hallon Erhverv · NetOnNet', agr:[
+     {n:'Hallon Erhverv', covers:266500, save:13300}, {n:'NetOnNet IT', covers:23900, save:1200}]},
+  {id:'site', n:'Site services & waste', sup:4, inv:63, amt:168000, rate:4, top:'Rentokil Erhverv · Fortum Recycling', agr:[
+     {n:'Fortum Recycling', covers:40000, save:1600}, {n:'Rentokil Erhverv', covers:128000, save:5100}]}
+];
+const ROWS_KARI = [
+  {id:'mat', n:'Building materials', sup:9, inv:1, amt:980000, rate:9, top:'Ahlsell · Bygma · Buildor', agr:[
+     {n:'Ahlsell Nordic', covers:312000, save:28100, req:true}, {n:'Bygma Framework', covers:795000, save:71700},
+     {n:'Buildor Erhverv', covers:420000, save:37800}, {n:'Stark Byggecenter', covers:354000, save:31800}]},
+  {id:'tool', n:'Tools & workwear', sup:6, inv:14, amt:296000, rate:11, top:'Hilti · Gerdmans · Procurator Workwear', agr:[
+     {n:'Hilti Erhverv', covers:118000, save:13000}, {n:'Gerdmans Nordic', covers:288000, save:31800}, {n:'Procurator Workwear', covers:162000, save:17700}]},
+  {id:'fuel', n:'Fuel & transport', sup:3, inv:1, amt:310000, rate:8, top:'Preem · Q8', agr:[
+     {n:'Preem Business', covers:186000, save:14900, req:true}, {n:'Q8 Fuel Card', covers:68000, save:5400}]},
+  {id:'off', n:'Office supplies', sup:3, inv:1, amt:118000, rate:19, top:'Lyreco · Office Depot', agr:[
+     {n:'Lyreco Erhverv', covers:74000, save:14100, req:true}, {n:'Office Depot', covers:31000, save:5900}]},
+  {id:'rent', n:'Machine & equipment rental', sup:4, inv:0, amt:290000, rate:6, top:'Avis · Peugeot', agr:[
+     {n:'Leasify Udlejning', covers:48000, save:2900}, {n:'Avis Erhverv', covers:150000, save:9000}, {n:'Peugeot Professional', covers:62000, save:3700}]},
+  {id:'frg', n:'Freight & delivery', sup:4, inv:0, amt:215000, rate:8, top:'DSV · PostNord', agr:[
+     {n:'DSV Road', covers:120000, save:9600}, {n:'PostNord Erhverv', covers:44000, save:3500}, {n:'Bring Fragt', covers:30000, save:2400}]},
+  {id:'tel', n:'Telecom & IT', sup:3, inv:6, amt:210000, rate:5, top:'Hallon · NetOnNet', agr:[
+     {n:'Hallon Erhverv', covers:158000, save:7900}, {n:'NetOnNet IT', covers:41000, save:2100}]},
+  {id:'site', n:'Site services & waste', sup:3, inv:0, amt:105000, rate:4, top:'Fortum Recycling · Rentokil Erhverv', agr:[
+     {n:'Fortum Recycling', covers:36000, save:1400}, {n:'Rentokil Erhverv', covers:58000, save:2300}]}
+];
+const NEW6_BY = {
+  bob:[{cat:'mat', n:'Granngården Frame', covers:168000, save:13400}, {cat:'tool', n:'Mediq Erhverv', covers:96000, save:8600}, {cat:'fuel', n:'Shell Fleet Nordic', covers:82000, save:6200}],
+  kari:[{cat:'mat', n:'Granngården Frame', covers:61000, save:4900}, {cat:'tool', n:'Mediq Erhverv', covers:38000, save:3400}, {cat:'fuel', n:'Shell Fleet Nordic', covers:42000, save:3400}]
+};
+const KARI_DOCS = {
+  invoices:[{sup:'Ahlsell Nordic', date:'14 Aug 2026', area:'mat'}, {sup:'Lyreco Erhverv', date:'22 Aug 2026', area:'off'}, {sup:'Preem Business', date:'31 Aug 2026', area:'fuel'}],
+  reports:[{name:'Q2 2026 spend export', areas:['tool', 'tel'], lines:20}],
+  verified:new Set(['Ahlsell Nordic', 'Lyreco Erhverv', 'Preem Business', 'Hilti Erhverv', 'Gerdmans Nordic', 'Procurator Workwear', 'Mediq Erhverv', 'Hallon Erhverv', 'NetOnNet IT'])
+};
+const AG_STAGE_BY = {bob:{'Stark Byggecenter':4, 'Q8 Fuel Card':4, 'Hilti Erhverv':4, 'Lyreco Erhverv':4, 'Avis Erhverv':2}, kari:{'Ahlsell Nordic':4, 'Preem Business':4, 'Lyreco Erhverv':4}};
+const DORMANT = new Set(['Hilti Erhverv', 'Lyreco Erhverv']);
+const PRICE_RISE = {agr:'Stark Byggecenter', pct:4, cost:18400, when:'2 days ago'};
+const BONUS_TIERS = [{upTo:1000000, rate:1.0}, {upTo:3000000, rate:1.5}, {upTo:Infinity, rate:2.0}];
+const OFF_SUP = {
+  mat:['XL-BYG', 'Davidsen', 'Beijer Byggmaterial', 'Optimera', 'Carl Ras', 'Johannes Fog', 'Byggmakker', 'Neumann Bygg', 'Silvan Proff', 'Monter', 'Jem & Fix', 'Lavpris Træ', 'Nordic Timber'],
+  tool:['Würth Danmark', 'Snickers Workwear', 'Blåkläder', 'Makita Nordic', 'Toolstation', 'Mascot Workwear', 'Festool Nordic'],
+  fuel:['Circle K Business', 'OK Erhverv', 'Uno-X Erhverv'], off:['Staples Nordic', 'Ditto Erhverv', 'Kontorland', 'Viking Direct'],
+  rent:['Ramirent', 'Cramo', 'Riwal', 'GSV Udlejning'], frg:['GLS Erhverv', 'DHL Freight', 'Schenker', 'Danske Fragtmænd'],
+  tel:['Telenor Erhverv', 'Atea', 'Dustin'], site:['Marius Pedersen', 'Stena Recycling', 'Renosyd']
+};
+const WHO = {bob:{user:'Bob Iversen', company:'Nordvik Byg A/S', source:'Visma.net connected', invoices:1284},
+             kari:{user:'Kari Solheim', company:'Solheim Installasjon AS', source:'4 documents, no ERP', invoices:3}};
+const ASSETS = '../../../assets/';
+/* one outline mark per area — the Suppliers page's set, 1.7 stroke, drawn in the muted ink */
+const AREA_IC = {
+  mat:'<rect x="3" y="5" width="18" height="6" rx="1.4" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="13" width="18" height="6" rx="1.4" stroke="currentColor" stroke-width="1.7"/><path d="M9.5 5v6M14.5 13v6" stroke="currentColor" stroke-width="1.7"/>',
+  tool:'<circle cx="16.6" cy="7.4" r="4.4" stroke="currentColor" stroke-width="1.7"/><circle cx="16.6" cy="7.4" r="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M13.5 10.5L4.8 19.2a2.2 2.2 0 003.1 3.1l8.7-8.7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  fuel:'<rect x="4" y="3" width="9.5" height="18" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M7 7.5h3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.5 9.5H17a2 2 0 012 2v6a1.6 1.6 0 003.2 0v-6.8l-2.4-3.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  off:'<path d="M15.6 8.6v8a4.1 4.1 0 01-8.2 0V7.7a2.6 2.6 0 015.2 0v8.7a1.3 1.3 0 01-2.6 0V9.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  rent:'<rect x="3" y="12" width="9" height="6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 14h3l3-7h2.5M20.5 7v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="19.5" r="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="19.5" r="1.5" stroke="currentColor" stroke-width="1.7"/>',
+  frg:'<rect x="2" y="7" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><path d="M14 10h3.6l3.4 3.4V16h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18.3" r="1.8" stroke="currentColor" stroke-width="1.7"/>',
+  tel:'<rect x="3" y="4" width="18" height="12" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M9 20h6M12 16v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  site:'<path d="M4 7h16M9.5 7V4.8h5V7M6 7l1 13.2h10L18 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.5 11v5.5M13.5 11v5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
+};
+const catArt = id => AREA_IC[id] ? `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${AREA_IC[id]}</svg>` : '';
+const LOGO = {
+  'Stark Byggecenter':'stark.jpeg', 'Bygma Framework':'Bygma@64px.png', 'Ahlsell Nordic':'Ahlsell@64px.png', 'Buildor Erhverv':'Buildor@64px.png',
+  'Granngården Frame':'GRann@64px.png', 'Hilti Erhverv':'hilti.png', 'Gerdmans Nordic':'Ger@64px.png', 'Procurator Workwear':'Pro@64px.png',
+  'Mediq Erhverv':'Mediq@64px.png', 'Q8 Fuel Card':'q8@64px.png', 'Preem Business':'Preem@64px.png', 'Shell Fleet Nordic':'Shell@64px.png',
+  'Lyreco Erhverv':'Lyreco@64px.png', 'Office Depot':'Office@64px.png', 'Avis Erhverv':'Avis@64px.png', 'Leasify Udlejning':'Lea@64px.png',
+  'Peugeot Professional':'Peugeot@64px.png', 'DSV Road':'DSV@64px.png', 'PostNord Erhverv':'Postnord@64px.png', 'Bring Fragt':'Bring@64px.png',
+  'Hallon Erhverv':'hallon@64px.png', 'NetOnNet IT':'Netonnet@64px.png', 'Rentokil Erhverv':'Rento@64px.png', 'Fortum Recycling':'Fortum@64px.png'
+};
+const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const BLUE = '#1b64dc', TEAL = '#009689', GHOST = 'rgb(110 110 110 / .55)';
+
+/* =====================================================================================
+   HELPERS — the same arithmetic the main file uses
+   ===================================================================================== */
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+const fmtCompact = n => { const a = Math.abs(n);
+  if(a >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '').replace('.', ',') + 'M';
+  if(a >= 1e3) return Math.round(n / 1e3) + 'K'; return fmt(n); };
+const EST_BAND = 0.15;
+const estRange = v => `${fmtCompact(Math.round(v * (1 - EST_BAND)))}–${fmtCompact(Math.round(v * (1 + EST_BAND)))}`;
+const pctStr = p => `${String(Math.round(p * 10) / 10).replace('.', ',')}%`;
+function seedOf(str){ let h = 2166136261; for(let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rngOf(str){ let x = seedOf(str) || 1; return () => { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; }
+function monthlyShares(key){ const rnd = rngOf(key); const w = Array.from({length:12}, () => 0.72 + rnd() * 0.56); const s = w.reduce((a, b) => a + b, 0); return w.map(x => x / s); }
+function splitExact(total, weights){ const out = []; let used = 0; const s = weights.reduce((a, b) => a + b, 0) || 1;
+  weights.forEach((w, i) => { const v = i === weights.length - 1 ? total - used : Math.round(total * w / s); out.push(v); used += v; }); return out; }
+function bonusOn(volume){ let prev = 0, total = 0; for(const t of BONUS_TIERS){ if(volume <= prev) break; const to = Math.min(volume, t.upTo); total += Math.round((to - prev) * t.rate / 100); prev = t.upTo; } return total; }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[c]));
+const initials = n => n.split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+const sameSup = (a, b) => a.split(' ')[0].toLowerCase() === b.split(' ')[0].toLowerCase();
+const M = (exact = 0, est = 0) => ({exact, est});
+const mAdd = (a, b) => M(a.exact + b.exact, a.est + b.est);
+const mMid = m => m.exact + m.est;
+function mHTML(m, {plus = false, cls = ''} = {}){
+  const sg = plus ? '+' : '';
+  const ex = m.exact ? `<span class="${cls}">${sg}${fmt(m.exact)}</span>` : '';
+  const es = m.est ? `<span class="fig-est">${sg}${estRange(m.est)}</span>` : '';
+  return ex && es ? `${ex}<span class="sep">·</span>${es}` : ex || es || '<span class="none">—</span>';
+}
+function pctHTML(part, whole){
+  if(!mMid(whole)) return '<span class="none">—</span>';
+  if(!whole.est) return pctStr(part / whole.exact * 100);
+  const lo = part / (whole.exact + whole.est * (1 + EST_BAND)) * 100, hi = part / (whole.exact + whole.est * (1 - EST_BAND)) * 100;
+  return `<span class="fig-est">${Math.round(lo)}–${Math.round(hi)}%</span>`;
+}
+const logoHTML = name => { const f = name && LOGO[name];
+  return `<span class="lg"><b>${esc(initials(name || '?'))}</b>${f ? `<img src="${ASSETS}company-logos/${f}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>`; };
+
+/* =====================================================================================
+   STATE
+   ===================================================================================== */
+const RANGES = {d7:{n:'Last 7 days', days:7, g:'day'}, d28:{n:'Last 4 weeks', days:28, g:'day'}, m3:{n:'Last 3 months', days:91, g:'week'},
+                m6:{n:'Last 6 months', days:182, g:'month'}, ytd:{n:'Year to date', days:null, g:'month'}, m12:{n:'Last 12 months', days:365, g:'month'}};
+const GRANS = {day:'Daily', week:'Weekly', month:'Monthly'};
+const S = {who:'bob', range:'m6', gran:'month', cmp:true};
+try{ const q = new URLSearchParams(location.search); if(WHO[q.get('who')]) S.who = q.get('who'); }catch(e){}
+const NOW = new Date(); NOW.setHours(0, 0, 0, 0);
+const isKari = () => S.who === 'kari';
+const stage = a => (AG_STAGE_BY[S.who] || {})[a.n] || 1;
+const isDormant = a => !!a.req && S.who === 'bob' && DORMANT.has(a.n);
+const isLanding = a => !!a.req && !isDormant(a) && stage(a) >= 4;
+const isPending = a => !!a.req && stage(a) < 4;
+const stateOf = a => isLanding(a) ? 'land' : isPending(a) ? 'pend' : isDormant(a) ? 'idle' : a.isNew ? 'new' : 'open';
+const isEst = a => isKari() ? !KARI_DOCS.verified.has(a.n) : false;
+const areaWhole = id => !isKari() || KARI_DOCS.reports.some(d => d.areas.includes(id));
+const quietDays = a => 95 + (seedOf('quiet:' + a.n) % 180);
+const dayKey = d => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+
+/* =====================================================================================
+   MODEL — a day for each of the trailing 365 days. Each area's year is split into
+   months on the seeded seasonal weights the Reports page uses, each month into its
+   days on weights keyed by day-of-month, so the two partial Octobers at the ends of
+   the window together make exactly one October and the year sums to the roster.
+   Agreement volume and saving are split in proportion to spend, so a day can never
+   put more through an agreement than it spent.
+   ===================================================================================== */
+const DAYS = Array.from({length:365}, (_, i) => new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate() - (364 - i)));
+const DI = Object.fromEntries(DAYS.map((d, i) => [dayKey(d), i]));
+const dim = (y, m) => new Date(y, m + 1, 0).getDate();
+function roster(){
+  const src = isKari() ? ROWS_KARI : ROWS_BOB;
+  const rows = src.map(r => ({...r, agr:r.agr.map(a => ({...a}))}));
+  (NEW6_BY[S.who] || []).forEach(x => { const r = rows.find(row => row.id === x.cat); if(r && !r.agr.some(a => a.n === x.n)) r.agr.push({n:x.n, covers:x.covers, save:x.save, req:false, isNew:true}); });
+  return rows;
+}
+function daySeries(total, key){
+  const m12 = splitExact(total, monthlyShares(key)), out = new Array(365).fill(0);
+  for(let m = 0; m < 12; m++){
+    const n = 31, rnd = rngOf(key + ':dom:' + m), w = Array.from({length:n}, () => 0.7 + rnd() * 0.6), parts = splitExact(m12[m], w);
+    /* give the month's krone to whichever year's copy of that day sits in the window;
+       a day a short month does not have hands its part to the month's last day */
+    let carry = 0;
+    for(let dom = n; dom >= 1; dom--){
+      let v = parts[dom - 1] + carry; carry = 0; let placed = false;
+      for(const y of [NOW.getFullYear() - 1, NOW.getFullYear()]){
+        if(dom > dim(y, m)) continue;
+        const i = DI[`${y}-${m}-${dom}`]; if(i == null) continue;
+        out[i] += v; placed = true; break;
+      }
+      if(!placed) carry = v;
+    }
+    if(carry){ /* a day outside the window entirely: fold it into the nearest day of that month in the window */
+      for(let dom = n; dom >= 1; dom--){ let done = false; for(const y of [NOW.getFullYear() - 1, NOW.getFullYear()]){ const i = DI[`${y}-${m}-${dom}`]; if(i != null){ out[i] += carry; done = true; break; } } if(done) break; }
+    }
+  }
+  return out;
+}
+const propSplit = (total, base) => splitExact(total, base.map(v => Math.max(v, 0)));
+let MODEL = null;
+function build(){
+  const R = roster();
+  const areas = R.map(r => {
+    const spendD = daySeries(r.amt, 'area:' + r.id);
+    const land = r.agr.filter(isLanding), pend = r.agr.filter(isPending), idle = r.agr.filter(isDormant), open = r.agr.filter(a => !a.req);
+    const covA = land.reduce((s, a) => s + a.covers, 0), savA = land.reduce((s, a) => s + a.save, 0);
+    const pendCov = pend.reduce((s, a) => s + a.covers, 0), idleCov = idle.reduce((s, a) => s + a.covers, 0);
+    return {id:r.id, n:r.n, r, land, pend, idle, open, whole:areaWhole(r.id), spendD, thruD:propSplit(covA, spendD), savedD:propSplit(savA, spendD), covA, savA,
+      pendD:propSplit(pendCov, spendD), idleD:propSplit(idleCov, spendD),
+      openM:open.reduce((m, a) => mAdd(m, isEst(a) ? M(0, a.save) : M(a.save, 0)), M())};
+  });
+  const agrs = []; R.forEach(r => r.agr.forEach(a => agrs.push({n:a.n, a, r, st:stateOf(a), est:isEst(a), rate:Math.round(a.save / a.covers * 100), quiet:quietDays(a)})));
+  /* suppliers, as v1 builds them: the landing agreement's supplier with its exact volume, then the roster's names */
+  const sups = [];
+  areas.forEach(A => {
+    const r = A.r, names = [];
+    A.land.forEach(a => names.push({n:a.n, agr:a, land:true}));
+    [...(r.top || '').split('·').map(s => s.trim()).filter(Boolean), ...(OFF_SUP[r.id] || [])].forEach(nm => { if(!names.some(x => sameSup(x.n, nm))) names.push({n:nm}); });
+    names.forEach(x => { if(!x.agr){ const a = r.agr.find(ag => sameSup(ag.n, x.n)); if(a) x.agr = a; } });
+    const take = names.slice(0, r.sup), others = take.filter(x => !x.land), rnd = rngOf('sup:' + r.id);
+    const parts = splitExact(r.amt - A.covA, others.map((x, i) => 1 / (i + 1.3) * (0.8 + rnd() * 0.4)));
+    others.forEach((x, i) => x.spendA = parts[i]); take.forEach(x => { if(x.land) x.spendA = x.agr.covers; });
+    take.forEach(x => sups.push({n:x.n, area:r.n, agr:x.agr, st:x.agr ? stateOf(x.agr) : 'none', exact:x.land || A.whole, spendD:propSplit(x.spendA, A.spendD)}));
+  });
+  const sumD = (xs, k) => { const o = new Array(365).fill(0); xs.forEach(x => x[k].forEach((v, i) => o[i] += v)); return o; };
+  const land = agrs.filter(x => x.st === 'land'), pend = agrs.filter(x => x.st === 'pend'), idle = agrs.filter(x => x.st === 'idle'), openA = agrs.filter(x => !x.a.req);
+  return {R, areas, agrs, sups, land, pend, idle, openA, fresh:openA.filter(x => x.st === 'new'),
+    spendD:sumD(areas, 'spendD'), spendExactD:sumD(areas.filter(A => A.whole), 'spendD'), spendEstD:sumD(areas.filter(A => !A.whole), 'spendD'),
+    thruD:sumD(areas, 'thruD'), savedD:sumD(areas, 'savedD'), pendCovD:sumD(areas, 'pendD'), idleCovD:sumD(areas, 'idleD'),
+    covA:areas.reduce((s, A) => s + A.covA, 0), savA:areas.reduce((s, A) => s + A.savA, 0), openM:areas.reduce((m, A) => mAdd(m, A.openM), M()),
+    bonus:bonusOn(areas.reduce((s, A) => s + A.covA, 0)), invoices:areas.reduce((s, A) => s + A.r.inv, 0), suppliers:areas.reduce((s, A) => s + A.r.sup, 0)};
+}
+
+/* ---- windows and buckets ---- */
+function rangeDays(){ const r = RANGES[S.range]; if(r.days) return r.days; const jan = new Date(NOW.getFullYear(), 0, 1); return Math.round((NOW - jan) / 864e5) + 1; }
+const canCompare = () => rangeDays() * 2 <= 365;
+const winIdx = (back = 0) => { const n = rangeDays(), end = 365 - back * n; return Array.from({length:n}, (_, i) => end - n + i).filter(i => i >= 0); };
+const sumIdx = (d, idx) => idx.reduce((s, i) => s + d[i], 0);
+function buckets(idx){
+  const g = S.gran, out = [];
+  idx.forEach(i => { const d = DAYS[i];
+    const k = g === 'day' ? dayKey(d) : g === 'week' ? Math.floor((i - idx[0]) / 7) : `${d.getFullYear()}-${d.getMonth()}`;
+    let b = out[out.length - 1]; if(!b || b.k !== k){ b = {k, idx:[], d}; out.push(b); } b.idx.push(i); });
+  return out;
+}
+const bLabel = (b, long) => { const d = b.d, dd = `${d.getDate()} ${MONTH_ABBR[d.getMonth()]}`;
+  if(S.gran === 'month') return `${MONTH_ABBR[d.getMonth()]} ${long ? d.getFullYear() : String(d.getFullYear()).slice(2)}`;
+  if(S.gran === 'week'){ const e = DAYS[b.idx[b.idx.length - 1]]; return long ? `${dd} – ${e.getDate()} ${MONTH_ABBR[e.getMonth()]}` : dd; }
+  return long ? `${dd} ${d.getFullYear()}` : dd; };
+
+/* =====================================================================================
+   RENDER
+   ===================================================================================== */
+const $ = s => document.querySelector(s);
+const NAV = [
+  ['Overview', '<path d="M4 11l8-7 8 7v9a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1v-9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>', true],
+  ['Spending', '<path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.8"/>'],
+  ['Savings', '<path d="M5 17l5-5 3 3 6-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 8h4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'],
+  ['Suppliers', '<path d="M4 10v9a1 1 0 001 1h14a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 6.5L4.6 3.6A1 1 0 015.5 3h13a1 1 0 01.9.6L21 6.5c0 1.7-1.3 3-3 3a3 3 0 01-3-3 3 3 0 01-3 3 3 3 0 01-3-3 3 3 0 01-3 3c-1.7 0-3-1.3-3-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>'],
+  ['Agreements', '<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13 3v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>'],
+  ['Areas', '<rect x="3" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8" stroke="currentColor" stroke-width="1.8"/>']
+];
+const CLOCK = '<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.6V12l3.1 1.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
+const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function renderNav(){
+  const item = (n, ic, on, chev) => `<li><button type="button"${on ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${ic}</svg>${n}${chev ? CHEV : ''}</button></li>`;
+  $('#nav1').innerHTML = NAV.map(([n, ic, on]) => item(n, ic, on)).join('');
+  $('#nav2').innerHTML = ['Reports', 'Documents', 'Requests', 'Package', 'Webshop'].map(n => item(n, CLOCK)).join('');
+  $('#nav3').innerHTML = [['Tune', '<path d="M4 8h10M18 8h2M4 16h4M12 16h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="8" r="2" stroke="currentColor" stroke-width="1.8"/><circle cx="10" cy="16" r="2" stroke="currentColor" stroke-width="1.8"/>'],
+    ['Settings', '<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'],
+    ['Help', '<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.5a2.5 2.5 0 014.9.6c0 1.7-2.4 2-2.4 3.4M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>']].map(([n, ic]) => item(n, ic, false, true)).join('');
+  const p = WHO[S.who]; $('#acctN').textContent = p.company; $('#acctU').textContent = `${p.user} · ${p.source}`; $('#av').textContent = initials(p.company);
+  $('#acctMenu').innerHTML = `<div class="menu-h">Switch company</div>` + Object.entries(WHO).map(([k, w]) =>
+    `<button type="button" role="menuitemradio" aria-checked="${k === S.who}" data-who="${k}"><span class="av">${initials(w.company)}</span>
+      <span class="t"><b>${esc(w.company)}</b><span>${esc(w.user)} · ${esc(w.source)}</span></span>
+      <svg class="tick" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`).join('');
+  $('#acctMenu').querySelectorAll('[data-who]').forEach(b => b.addEventListener('click', () => { setWho(b.dataset.who); menuOpen(false); }));
+}
+function menuOpen(on){ $('#acctMenu').hidden = !on; $('#acctBtn').setAttribute('aria-expanded', String(on)); }
+function setWho(k){ if(!WHO[k] || k === S.who) return; S.who = k; Object.keys(spTyped).forEach(x => delete spTyped[x]); RV_OPEN = null;
+  try{ history.replaceState(null, '', k === 'bob' ? location.pathname : `?who=${k}`); }catch(err){} render(); }
+
+/* ---- a thin line: the series, a dotted previous period, a dotted baseline, end label ---- */
+function lineSVG(svg, {pts, prev, color, est, labels, dottedTail = 0, tipEl, host}){
+  const w = Math.max(200, svg.clientWidth || 400), h = parseFloat(getComputedStyle(svg).height) || 110, padT = 8, padB = 6, padR = 52;
+  const all = [...pts, ...(prev || [])], max = Math.max(1, ...all) * 1.08, n = pts.length + dottedTail;
+  const x = i => n > 1 ? (w - padR) * i / (n - 1) : 0, y = v => padT + (h - padT - padB) * (1 - v / max);
+  const path = s => s.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join('');
+  let out = `<line x1="0" x2="${(w - padR).toFixed(1)}" y1="${(h - padB).toFixed(1)}" y2="${(h - padB).toFixed(1)}" stroke="${GHOST}" stroke-width="1" stroke-dasharray="2 4"/>`;
+  if(prev && prev.length) out += `<path d="${path(prev)}" fill="none" stroke="${GHOST}" stroke-width="1.5" stroke-dasharray="3 4" stroke-linejoin="round" stroke-linecap="round"/>`;
+  out += `<path d="${path(pts)}" fill="none" stroke="${color}" stroke-width="1.5"${est ? ' stroke-dasharray="4 3"' : ''} stroke-linejoin="round" stroke-linecap="round"/>`;
+  if(dottedTail){ const lx = x(pts.length - 1), ly = y(pts[pts.length - 1]);
+    out += `<path d="M${lx.toFixed(1)},${ly.toFixed(1)} L${(w - padR).toFixed(1)},${(h - padB).toFixed(1)}" fill="none" stroke="${GHOST}" stroke-width="1" stroke-dasharray="2 4"/>`; }
+  const last = pts[pts.length - 1];
+  out += `<text x="${(w - padR + 8).toFixed(1)}" y="${(y(last) + 4.5).toFixed(1)}">${fmtCompact(last)}</text>`;
+  out += `<line class="cross" id="${svg.id}-cross" x1="0" x2="0" y1="${padT}" y2="${h - padB}" style="display:none"/>`;
+  const slot = n > 1 ? (w - padR) / (n - 1) : w;
+  pts.forEach((v, i) => { out += `<rect class="hit" data-i="${i}" x="${(x(i) - slot / 2).toFixed(1)}" y="0" width="${slot.toFixed(1)}" height="${h}"/>`; });
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.innerHTML = out;
+  if(!tipEl) return;
+  const cross = svg.querySelector('.cross');
+  const show = i => { cross.style.display = ''; cross.setAttribute('x1', x(i).toFixed(1)); cross.setAttribute('x2', x(i).toFixed(1));
+    tipEl.innerHTML = `<h4>${labels[i]}</h4><div><i style="--k:${color}"></i><b>${fmt(pts[i])}</b><span>kr.</span></div>${prev && prev[i] != null ? `<div><i class="prev" style="--k:${GHOST}"></i><b>${fmt(prev[i])}</b><span>previous period</span></div>` : ''}`;
+    tipEl.hidden = false; const hb = host.getBoundingClientRect(), sb = svg.getBoundingClientRect(), tw = tipEl.offsetWidth;
+    let left = sb.left - hb.left + x(i) * (sb.width / w) + 12; if(left + tw > hb.width - 4) left = sb.left - hb.left + x(i) * (sb.width / w) - tw - 12;
+    tipEl.style.left = Math.max(0, left) + 'px'; tipEl.style.top = (sb.top - hb.top) + 'px'; };
+  const hide = () => { cross.style.display = 'none'; tipEl.hidden = true; };
+  svg.querySelectorAll('.hit').forEach(r => { r.addEventListener('pointermove', () => show(+r.dataset.i)); r.addEventListener('pointerleave', hide); });
+}
+
+/* ---- this month ---- */
+function renderToday(){
+  const m = MODEL, y = NOW.getFullYear(), mo = NOW.getMonth(), days = dim(y, mo);
+  const thisIdx = DAYS.map((d, i) => d.getFullYear() === y && d.getMonth() === mo ? i : -1).filter(i => i >= 0);
+  const pm = new Date(y, mo - 1, 1), lastIdx = DAYS.map((d, i) => d.getFullYear() === pm.getFullYear() && d.getMonth() === pm.getMonth() ? i : -1).filter(i => i >= 0);
+  const mix = idx => M(sumIdx(m.spendExactD, idx), sumIdx(m.spendEstD, idx));
+  const dd = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  $('#figs').innerHTML = `
+    <div class="fig"><button type="button" class="dd">Spend this month ${dd}</button><b class="num">${mHTML(mix(thisIdx))} <small>kr.</small></b><small>${NOW.getDate()} ${MONTH_ABBR[mo]}</small></div>
+    <div class="fig"><button type="button" class="dd">Last month ${dd}</button><b class="num">${mHTML(mix(lastIdx))} <small>kr.</small></b><small>${MONTH_ABBR[pm.getMonth()]}, ${lastIdx.length} days</small></div>`;
+  const pts = thisIdx.map(i => m.spendD[i]), labels = thisIdx.map(i => `${DAYS[i].getDate()} ${MONTH_ABBR[mo]}`);
+  $('#tl').setAttribute('aria-label', `Spend this month, day by day`);
+  lineSVG($('#tl'), {pts, color:BLUE, est:m.spendEstD.some(v => v), labels, dottedTail:days - thisIdx.length, tipEl:$('#tlTip'), host:$('.tl-w')});
+  $('#tlX').innerHTML = `<span>1 ${MONTH_ABBR[mo]}</span><span>${days} ${MONTH_ABBR[mo]}</span>`;
+  const jan = DAYS.findIndex(d => d.getFullYear() === y && d.getMonth() === 0 && d.getDate() === 1), ytd = Array.from({length:365 - jan}, (_, i) => jan + i);
+  $('#side').innerHTML = `
+    <div class="mini"><div class="mini-h"><b>Saved this year</b><a href="#">View</a></div><div class="mini-v fig-pos num">${fmt(sumIdx(m.savedD, ytd))}<small>kr.</small></div><span class="c">Off your reports · ${m.land.length} agreement${m.land.length === 1 ? '' : 's'} landing</span></div>
+    <div class="mini"><div class="mini-h"><b>Customer bonus</b><a href="#">View</a></div><div class="mini-v num">${fmt(m.bonus)}<small>kr.</small></div><span class="c">On ${fmt(m.covA)} kr. through agreements · paid in February</span></div>`;
+  $('#tdBtn').textContent = isKari() ? 'Upload a document' : 'Open Reports';
+}
+
+/* ---- the control row ---- */
+function renderControls(){
+  const opt = (o, v) => Object.entries(o).map(([k, x]) => `<option value="${k}"${k === v ? ' selected' : ''}>${typeof x === 'string' ? x : x.n}</option>`).join('');
+  $('#range').innerHTML = opt(RANGES, S.range); $('#rangeV').textContent = RANGES[S.range].n;
+  $('#gran').innerHTML = opt(GRANS, S.gran); $('#granV').textContent = GRANS[S.gran];
+  const can = canCompare();
+  $('#cmp').innerHTML = `<option value="on"${S.cmp && can ? ' selected' : ''}${can ? '' : ' disabled'}>Previous period</option><option value="off"${!(S.cmp && can) ? ' selected' : ''}>None</option>`;
+  $('#cmpV').textContent = S.cmp && can ? 'Previous period' : 'None'; $('#cmpChip').classList.toggle('off', !(S.cmp && can));
+}
+
+/* ---- the cards ---- */
+const INFO = '<span class="i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.4M12 7.7h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>';
+const IC = {
+  rise:'<path d="M6 17L17 6M10.5 6H17v6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  idle:'<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M10 9v6M14 9v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  wait:CLOCK, new:'<path d="M12 3l1.9 4.3 4.6.6-3.4 3.2.9 4.7-4-2.3-4 2.3.9-4.7L5.5 7.9l4.6-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  doc:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'
+};
+const icon = (k, tone = '') => `<span class="ic ${tone}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${IC[k]}</svg></span>`;
+const SUP_ST = {land:'On agreement', pend:'Awaiting report', idle:'Agreement idle', new:'Agreement available', open:'Agreement available', none:'No agreement'};
+const CHARTS = [];
+function renderCards(){
+  const m = MODEL, idx = winIdx(0), pidx = S.cmp && canCompare() ? winIdx(1) : null, rn = RANGES[S.range].n.toLowerCase();
+  const B = buckets(idx), PB = pidx ? buckets(pidx) : null, labels = B.map(b => bLabel(b, true));
+  const series = d => B.map(b => sumIdx(d, b.idx)), pseries = d => PB ? PB.map(b => sumIdx(d, b.idx)) : null;
+  const spendM = M(sumIdx(m.spendExactD, idx), sumIdx(m.spendEstD, idx)), thru = sumIdx(m.thruD, idx), saved = sumIdx(m.savedD, idx);
+  const pendC = sumIdx(m.pendCovD, idx), idleC = sumIdx(m.idleCovD, idx);
+  /* outside = what no held agreement pins, area by area, so the estimated part is exactly
+     the unpinned remainder of the areas whose spend is an estimate */
+  const outM = m.areas.reduce((o, A) => { const v = Math.max(0, sumIdx(A.spendD, idx) - sumIdx(A.thruD, idx) - sumIdx(A.pendD, idx) - sumIdx(A.idleD, idx));
+    return mAdd(o, A.whole ? M(v, 0) : M(0, v)); }, M());
+  const prevTxt = d => pidx ? `${fmt(sumIdx(d, pidx))} kr. previous period` : rn;
+  const cmpM = d => pidx ? fmt(sumIdx(d, pidx)) : null;
+  const seg = (v, tot, k, est) => v > 0 ? `<i class="${est ? 'est' : ''}" style="--k:${k};flex:${(v / tot).toFixed(4)} 1 0"></i>` : '';
+  const tot = mMid(spendM);
+  const openTop = [...m.openA].sort((a, b) => b.a.save - a.a.save).slice(0, 4);
+  const supTop = [...m.sups].map(x => ({...x, spend:sumIdx(x.spendD, idx)})).sort((a, b) => b.spend - a.spend).slice(0, 4);
+  const attn = [];
+  const rise = m.agrs.find(x => x.n === PRICE_RISE.agr && x.a.req);
+  if(rise) attn.push({ic:icon('rise', 'neg'), t:`Price rise at ${rise.n}`, s:`+${PRICE_RISE.pct}% ${PRICE_RISE.when} · live agreement`, v:`<span class="fig-neg">+${fmt(PRICE_RISE.cost)}</span>`, u:'kr. a year'});
+  m.idle.forEach(x => attn.push({ic:icon('idle', 'neg'), t:`${x.n} is live but unused`, s:`No report through it for ${x.quiet} days`, v:fmt(x.a.save), u:'kr. a year held'}));
+  m.pend.forEach(x => attn.push({ic:icon('wait', 'doc'), t:`${x.n} awaits its first report`, s:`Requested · supplier confirmed`, v:`<span class="fig-doc">+${fmt(x.a.save)}</span>`, u:'kr. a year'}));
+  if(m.fresh.length) attn.push({ic:icon('new', 'doc'), t:`${m.fresh.length} new agreements this quarter`, s:m.fresh.map(x => x.n).join(', '), v:mHTML(m.fresh.reduce((t, x) => mAdd(t, isEst(x.a) ? M(0, x.a.save) : M(x.a.save, 0)), M()), {plus:true, cls:'fig-doc'}), u:'kr. a year'});
+  if(isKari()){ const noDoc = m.areas.filter(A => !A.whole && !A.land.length);
+    if(noDoc.length) attn.push({ic:icon('doc'), t:`No document for ${noDoc.length} areas`, s:noDoc.map(A => A.n).join(', '), v:mHTML(noDoc.reduce((t, A) => mAdd(t, A.openM), M()), {plus:true}), u:'kr. a year, estimated'}); }
+
+  const cards = [
+    /* 1 · spend, broken down the way a payments card is: a thin stacked bar and the rows under it */
+    `<article class="card"><div class="card-top"><div class="card-h"><h3>Spend</h3>${INFO}</div>
+      <div class="v num">${mHTML(spendM)}<small>kr.</small></div><div class="cmp">${prevTxt(m.spendD)}</div></div>
+      <div class="sbar" aria-hidden="true">${seg(thru, tot, BLUE)}${seg(pendC, tot, 'rgb(27 100 220 / .5)')}${seg(idleC, tot, 'var(--sentiment-negative)')}${seg(mMid(outM), tot, GHOST, !!outM.est)}</div>
+      <ul class="rows">
+        <li><i class="k" style="--k:${BLUE}"></i><span class="t"><b>Through agreements</b><span>${m.land.length} landing</span></span><span class="a">${fmt(thru)}</span></li>
+        ${pendC ? `<li><i class="k" style="--k:rgb(27 100 220 / .5)"></i><span class="t"><b>Awaiting first report</b><span>${m.pend.length} requested</span></span><span class="a">${fmt(pendC)}</span></li>` : ''}
+        ${idleC ? `<li><i class="k" style="--k:var(--sentiment-negative)"></i><span class="t"><b>Past an idle agreement</b><span>${m.idle.length} live, nothing bought through</span></span><span class="a">${fmt(idleC)}</span></li>` : ''}
+        <li><i class="k${outM.est ? ' est' : ''}" style="--k:${GHOST}"></i><span class="t"><b>Outside agreements</b><span>${m.openA.length} agreements open to you</span></span><span class="a">${mHTML(outM)}</span></li>
+        <li class="sum"><span class="t"><b>${isKari() ? `${m.invoices} report lines from your documents` : `${fmt(m.invoices)} reports · ${m.suppliers} suppliers`}</b></span></li>
+      </ul></article>`,
+    /* 2 · saved: the figure, the previous period, the line */
+    `<article class="card"><div class="card-top"><div class="card-h"><h3>Saved</h3>${INFO}</div>
+      <div class="v num fig-pos">${fmt(saved)}<small>kr.</small></div><div class="cmp">${prevTxt(m.savedD)}</div></div>
+      <div class="plot" id="pl-saved"><svg class="ln" id="ln-saved" role="img" aria-label="Saved, ${rn}"></svg><div class="xl"><span>${bLabel(B[0])}</span><span>${bLabel(B[B.length - 1])}</span></div><div class="tip" id="tip-saved" hidden></div></div>
+      <div class="foot"><span>Off your reports</span><a href="#">More details</a></div></article>`,
+    /* 3 · open to save, ranked like a top-customers list */
+    `<article class="card"><div class="card-top"><div class="card-h"><h3>Open to save</h3>${INFO}<span class="sp"></span><span class="tag">A year</span></div>
+      <div class="v num">${mHTML(m.openM, {plus:true, cls:'fig-doc'})}<small>kr.</small></div><div class="cmp">${m.openA.length} agreements not activated${m.fresh.length ? ` · ${m.fresh.length} new` : ''}</div></div>
+      <ul class="rows rk">${openTop.map(x => `<li>${logoHTML(x.n)}<span class="t"><b>${esc(x.n)}</b><span>${esc(x.r.n)} · ${x.rate}% under ${x.est ? 'list price' : 'what you pay'}</span></span><span class="a">${mHTML(isEst(x.a) ? M(0, x.a.save) : M(x.a.save, 0), {plus:true, cls:'fig-doc'})}</span></li>`).join('')}</ul>
+      <div class="foot"><span></span><a href="#">View all ${m.openA.length}</a></div></article>`,
+    /* 4 · through agreements */
+    `<article class="card"><div class="card-top"><div class="card-h"><h3>Through agreements</h3>${INFO}</div>
+      <div class="v num">${fmt(thru)}<small>kr.</small></div><div class="cmp">${pctHTML(thru, spendM)} of spend${cmpM(m.thruD) ? ` · ${cmpM(m.thruD)} kr. previous period` : ''}</div></div>
+      <div class="plot" id="pl-thru"><svg class="ln" id="ln-thru" role="img" aria-label="Through agreements, ${rn}"></svg><div class="xl"><span>${bLabel(B[0])}</span><span>${bLabel(B[B.length - 1])}</span></div><div class="tip" id="tip-thru" hidden></div></div>
+      <div class="foot"><span>${m.land.length} agreement${m.land.length === 1 ? '' : 's'} landing</span><a href="#">More details</a></div></article>`,
+    /* 5 · top suppliers by spend */
+    `<article class="card"><div class="card-h"><h3>Top suppliers by spend</h3>${INFO}<span class="sp"></span><span class="tag">${RANGES[S.range].n}</span></div>
+      <ul class="rows rk">${supTop.map(x => `<li>${logoHTML(x.agr ? x.agr.n : x.n)}<span class="t"><b>${esc(x.n)}</b><span>${esc(x.area)} · ${SUP_ST[x.st]}</span></span><span class="a">${x.exact ? fmt(x.spend) : `<span class="fig-est">${estRange(x.spend)}</span>`}</span></li>`).join('')}</ul>
+      <div class="foot"><span></span><a href="#">View all ${m.suppliers}</a></div></article>`,
+    /* 6 · needs attention, or the dashed quiet state */
+    `<article class="card"><div class="card-h"><h3>Needs attention</h3>${INFO}${attn.length ? `<span class="sp"></span><span class="tag">${attn.length}</span>` : ''}</div>
+      ${attn.length ? `<ul class="rows rk">${attn.map(it => `<li>${it.ic}<span class="t"><b>${it.t}</b><span>${it.s}</span></span><span class="a">${it.v}<small>${it.u}</small></span></li>`).join('')}</ul>`
+        : `<div class="empty"><span>Nothing needs you</span></div>`}</article>`
+  ];
+  /* the purchasing areas sit between the two rows of cards, full width */
+  $('#cards').innerHTML = [...cards.slice(0, 3), '<article class="card areas" id="areas" aria-labelledby="arT"></article>', ...cards.slice(3)].join('');
+  renderAreas();
+  CHARTS.length = 0;
+  CHARTS.push(() => lineSVG($('#ln-saved'), {pts:series(m.savedD), prev:pseries(m.savedD), color:TEAL, labels, tipEl:$('#tip-saved'), host:$('#pl-saved')}));
+  CHARTS.push(() => lineSVG($('#ln-thru'), {pts:series(m.thruD), prev:pseries(m.thruD), color:BLUE, labels, tipEl:$('#tip-thru'), host:$('#pl-thru')}));
+  CHARTS.forEach(f => f());
+}
+
+/* =====================================================================================
+   ALL YOUR PURCHASING AREAS — the spend review, in this page's idiom. One flat list,
+   reported figures first: an area on an agreement carries its trend, an idle one
+   says when it stopped, a requested one that it is starting, and every other area
+   is Not reviewed until the person gives a figure. A row opens into the editor:
+   your annual spend, your supplier, or the documents that say it for you. A typed
+   figure is your own and prints as a band; Save keeps it, Send files a request to
+   Peter, keeping your own supplier parks the area. Annual figures throughout — the
+   units a spend is typed in — so this card does not follow the period chips.
+   ===================================================================================== */
+const RVKEY = 'finops-v2-review';
+let RV = null;
+function rvStore(){
+  if(!RV){ try{ RV = JSON.parse(localStorage.getItem(RVKEY) || 'null'); }catch(e){ RV = null; } if(!RV || typeof RV !== 'object' || Array.isArray(RV)) RV = {}; }
+  RV[S.who] = RV[S.who] || {review:{}, tune:{}, reqs:[]};
+  return RV[S.who];
+}
+function rvSave(){ try{ localStorage.setItem(RVKEY, JSON.stringify(RV)); }catch(e){ /* private mode */ } }
+const spTyped = {};                 /* {areaId: kr. a year} typed and not yet saved */
+let RV_OPEN = null;                 /* the row that is open, kept across a re-render */
+const TUNE_BAND = .07;
+const bandRange = (lo, hi) => `${fmtCompact(Math.round(lo))}–${fmtCompact(Math.round(hi))}`;
+const tuneStr = save => `+${bandRange(save * (1 - TUNE_BAND), save * (1 + TUNE_BAND))}`;
+const figHTML = (v, est, plus = true) => est ? `<span class="fig-est">${plus ? '+' : ''}${estRange(v)}</span>` : `<span class="fig-doc">${plus ? '+' : ''}${fmt(v)}</span>`;
+const spNum = s => { const d = String(s).replace(/[^\d]/g, ''); return d ? +d : null; };
+const TICK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHEV_D = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHEV_R = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const DASH_O = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3"/></svg>';
+const DOC_I = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.5 12.5l6.2-6.2a3.2 3.2 0 014.5 4.5l-7.4 7.4a5 5 0 01-7.1-7.1L11.6 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const UP_I = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 16V5M7 10l5-5 5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+const SPARK_I = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4l1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6L12 4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z" fill="currentColor"/></svg>';
+const LOCK_I = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V8a4 4 0 018 0v2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const SEND_I = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12l16-7-5 16-3-6.5L4 12z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M12 14.5L20 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+const rvRev = id => rvStore().review[id] || {};
+const rvReq = id => rvStore().reqs.find(q => q.catId === id) || null;
+const rvIdx = (a, b) => Array.from({length:b - a}, (_, i) => a + i);
+
+/* the rows, one per area, reported figures first */
+function rvRows(){
+  const m = MODEL, st = rvStore(), rows = [];
+  const since = MONTH_ABBR[(NOW.getMonth() + 9) % 12];
+  m.areas.forEach(A => {
+    const r = A.r, tuned = st.tune[r.id], rv = rvRev(r.id);
+    const row = {id:r.id, A, r, n:r.n, art:r.id, rate:r.rate, exact:A.whole, openN:A.open.length, sup:(r.top || '').split('·')[0].trim(),
+      doc:isKari() ? `the ${KARI_DOCS.reports[0].name}` : `Visma.net · ${fmt(r.inv)} reports`, docs:rv.docs || []};
+    if(A.land.length){
+      const names = A.land.map(a => a.n).join(' and ');
+      const cur = sumIdx(A.thruD, rvIdx(274, 365)), prev = sumIdx(A.thruD, rvIdx(183, 274)), pct = prev ? Math.round((cur - prev) / prev * 100) : 0;
+      Object.assign(row, {kind:'land', spend:A.whole ? r.amt : A.covA, reported:true, saved:A.savA,
+        sub:A.whole ? `${fmt(A.covA)} through ${names}` : `Through ${names} · the rest is not reported`,
+        st:Math.abs(pct) < 8 ? {t:'Steady', c:''} : pct < 0 ? {t:`Down ${-pct}% since ${since}`, c:'neg'} : {t:`Up ${pct}% since ${since}`, c:'pos'}});
+    } else if(A.idle.length){
+      const a = A.idle[0], d = new Date(NOW); d.setDate(d.getDate() - quietDays(a));
+      Object.assign(row, {kind:'idle', spend:r.amt, reported:true, saved:0, stop:true,
+        sub:`0 through ${a.n} since ${MONTH_ABBR[d.getMonth()]} · was ${fmt(a.covers)}`, st:{t:`Stopped in ${MONTH_ABBR[d.getMonth()]}`, c:'neg'}});
+    } else if(A.pend.length){
+      const a = A.pend[0];
+      Object.assign(row, {kind:'pend', spend:r.amt, reported:true, saved:0, sub:`${a.n} requested · supplier confirmed`, st:{t:'Starting · awaiting first report', c:'doc'}});
+    } else {
+      const amt = tuned != null ? tuned : r.amt;
+      Object.assign(row, {kind:'open', amt, on:tuned != null, spend:amt, reported:A.whole, saved:0});
+      const s = rvStatus(row); row.s = s;
+      row.st = s === 'skip' ? {t:'Own supplier, kept', c:'muted'} : s === 'sent' ? {t:'With Peter for review', c:'doc'} : s === 'dirty' ? {t:'Reviewing', c:'doc'}
+             : s === 'saved' ? {t:'Reviewed', c:'pos', tick:true} : {t:'Not reviewed', c:'muted', chev:true};
+      row.sub = s === 'saved' || s === 'sent' ? `Your figure${rv.sup ? ' · ' + esc(rv.sup) : ''}${row.docs.length ? ` · ${row.docs.length} document${row.docs.length === 1 ? '' : 's'}` : ''}`
+              : s === 'skip' ? `Kept ${rv.sup ? esc(rv.sup) : 'your own supplier'}`
+              : A.whole ? row.sup : `${row.openN} agreement${row.openN === 1 ? '' : 's'} available · ${r.rate}% under list price`;
+    }
+    rows.push(row);
+  });
+  rows.sort((a, b) => ((b.reported || b.on) - (a.reported || a.on)) || (b.spend - a.spend));
+  return rows;
+}
+function rvStatus(row){
+  if(rvRev(row.id).skip) return 'skip';
+  if(rvReq(row.id)) return 'sent';
+  if(spTyped[row.id] != null && spTyped[row.id] !== row.amt) return 'dirty';
+  if(row.on || rvRev(row.id).sup || row.docs.length) return 'saved';
+  return 'none';
+}
+const rvCan = row => row.exact || row.on || spTyped[row.id] != null || row.docs.length > 0;
+/* the saving an open area could still make, live under the input */
+function rvPotHTML(row){
+  const typed = spTyped[row.id], amt = typed != null ? typed : row.amt, save = Math.round(amt * row.rate / 100), s = rvStatus(row);
+  if(s === 'skip') return '';
+  const fig = s === 'dirty' || row.on ? `<span class="fig-est">${tuneStr(save)}</span>` : figHTML(save, !row.exact);
+  return `Could save ${fig} kr. a year on the ${row.openN} agreement${row.openN === 1 ? '' : 's'} available here.`;
+}
+function rvSpendCell(row){
+  if(row.kind !== 'open') return `${fmt(row.spend)}<span class="ok" aria-label="reported">${TICK}</span>`;
+  const typed = spTyped[row.id];
+  if(typed != null) return fmt(typed);
+  if(row.exact) return `${fmt(row.amt)}<span class="ok" aria-label="reported">${TICK}</span>`;
+  if(row.on) return fmt(row.amt);
+  return `<span class="fig-est">${estRange(row.amt)}</span>`;
+}
+const rvStCell = row => `<span class="rv-st ${row.st.c}">${row.st.tick ? TICK : ''}${row.st.t}${row.st.chev ? CHEV_R : ''}</span>`;
+const rvAreaCell = row => `<span class="rv-area"><span class="rv-ic" aria-hidden="true">${catArt(row.art)}</span><span class="rv-name"><b>${esc(row.n)}</b><span>${row.sub}</span></span></span>`;
+function rvEditor(row){
+  const rv = rvRev(row.id), s = row.s, sent = s === 'sent', typed = spTyped[row.id], can = rvCan(row);
+  const sup = rv.sup != null ? rv.sup : row.exact ? row.sup : '';
+  const val = typed != null ? fmt(typed) : (row.on || row.exact) ? fmt(row.amt) : '';
+  const lead = row.exact ? `${DOC_I}<span>Spend read from ${esc(row.doc)}.</span>`
+    : `<span>Companies like yours typically spend <span class="fig-est">${estRange(row.r.amt)}</span> kr. a year here.</span>`;
+  return `<div class="rv-ed">
+    <p class="lead">${lead}</p>
+    <div class="rv-cols">
+      <div class="rv-col">
+        <div class="rv-f"><label for="rvSp-${row.id}">Your annual spend</label>
+          <div class="rv-in${sent ? ' ro' : ''}"><input class="num" id="rvSp-${row.id}" data-rv-live="${row.id}" value="${val}" placeholder="${row.exact || row.on ? '' : estRange(row.amt)}"${sent ? ' readonly' : ''} inputmode="numeric"><span class="u">kr. / year</span></div>
+          <span class="help">Excluding VAT, last 12 months. A rough figure is fine.</span>
+          <span class="help" data-rv-pot="${row.id}">${rvPotHTML(row)}</span></div>
+        <div class="rv-f"><label for="rvSup-${row.id}">Current supplier <i>(optional)</i></label>
+          <div class="rv-in${sent ? ' ro' : ''}"><input id="rvSup-${row.id}" data-rv-sup="${row.id}" value="${esc(sup)}" placeholder="Who do you buy from?"${sent ? ' readonly' : ''}></div></div>
+      </div>
+      <div class="rv-col rv-f"><label>Or let your documents do it</label>
+        <label class="rv-drop${sent ? ' ro' : ''}" data-rv-drop="${row.id}">${UP_I}<b>Drop reports or contracts</b><span>PDF, Excel or CSV</span>
+          <input type="file" multiple accept=".pdf,.xls,.xlsx,.csv" data-rv-file="${row.id}"${sent ? ' disabled' : ''}></label>
+        <div class="rv-docs">${row.docs.map(d => `<span>${DOC_I}<span class="file">${esc(d)}</span></span>`).join('')}
+          <span>${SPARK_I}Reports fill in spend. Contracts add renewal dates.</span>
+          <span>${LOCK_I}Used only for your map. Never shared with suppliers.</span></div>
+      </div>
+    </div>
+    <div class="rv-act">${sent
+      ? `<span class="rv-sent">${TICK}Sent · Peter compares and replies here within two working days</span><span class="spacer"></span><button type="button" class="linkbtn quiet" data-rv-act="withdraw" data-rv-id="${row.id}">Withdraw</button>`
+      : `<button type="button" class="linkbtn quiet" data-rv-act="${s === 'skip' ? 'undo' : 'skip'}" data-rv-id="${row.id}">${s === 'skip' ? 'Review it after all' : 'We keep our own supplier'}</button><span class="spacer"></span>
+         <span class="note">Peter compares and replies here within two working days</span>
+         <button type="button" class="btn" data-rv-act="save" data-rv-id="${row.id}"${can ? '' : ' disabled'}>Save</button>
+         <button type="button" class="btn btn-primary" data-rv-act="send" data-rv-id="${row.id}"${can ? '' : ' disabled'}>${SEND_I}Send for review</button>`}
+    </div></div>`;
+}
+function rvRow(row){
+  const cells = `${rvAreaCell(row)}<span class="rv-num" data-rv-sp="${row.id}">${rvSpendCell(row)}</span>
+    <span class="rv-num c-sv">${row.saved ? `<span class="fig-pos">${fmt(row.saved)}</span>` : '<span class="none">—</span>'}</span>
+    <span data-rv-st="${row.id}">${rvStCell(row)}</span><span class="rv-x" aria-hidden="true">${row.kind === 'open' ? CHEV_D : ''}</span>`;
+  return row.kind === 'open'
+    ? `<details name="rvrow" data-rv-row="${row.id}"${RV_OPEN === row.id ? ' open' : ''}><summary><div class="rv-tr">${cells}</div></summary>${rvEditor(row)}</details>`
+    : `<div class="rv-tr${row.stop ? ' stop' : ''}">${cells}</div>`;
+}
+function renderAreas(){
+  const rows = rvRows(), todo = rows.filter(r => r.kind === 'open' && (r.s === 'none' || r.s === 'dirty')), done = rows.length - todo.length;
+  const anyEst = rows.some(r => !r.reported && !r.on);
+  $('#areas').innerHTML = `
+    <div class="card-h"><h3 id="arT">All your purchasing areas</h3>${INFO}<span class="sp"></span>
+      <span class="key"><span><svg class="ok" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Reported</span>${anyEst ? `<span>${DASH_O}Estimated</span>` : ''}</span>
+      <span class="tag">Sorted by spend</span></div>
+    <div class="rv">
+      <div class="rv-th"><span>Area</span><span class="r">Spend / year</span><span class="r c-sv">Saved</span><span>Status</span><span></span></div>
+      ${rows.map(rvRow).join('')}
+    </div>
+    <div class="rv-foot"><span>${todo.length ? `${todo.length} area${todo.length === 1 ? '' : 's'} still to review. Each takes about a minute.` : 'Every area is reviewed.'}</span><span class="sp"></span>
+      ${todo.length ? `<button type="button" class="btn btn-primary" data-rv-next>Review next area</button>` : ''}</div>`;
+  const pill = $('#revPill'); if(pill){ pill.className = 'pill' + (todo.length ? '' : ' done'); pill.innerHTML = `<i></i>${done} of ${rows.length} areas reviewed`; }
+}
+/* a keystroke moves the row's figure, its status and the saving under the input,
+   without rebuilding anything the person is typing in */
+function rvLive(id){
+  const row = rvRows().find(r => r.id === id); if(!row) return;
+  document.querySelectorAll(`#areas [data-rv-sp="${id}"]`).forEach(el => el.innerHTML = rvSpendCell(row));
+  document.querySelectorAll(`#areas [data-rv-st="${id}"]`).forEach(el => el.innerHTML = rvStCell(row));
+  document.querySelectorAll(`#areas [data-rv-pot="${id}"]`).forEach(el => el.innerHTML = rvPotHTML(row));
+  document.querySelectorAll(`#areas [data-rv-act="save"][data-rv-id="${id}"],#areas [data-rv-act="send"][data-rv-id="${id}"]`).forEach(b => b.disabled = !rvCan(row));
+}
+function rvAct(act, id){
+  const row = rvRows().find(r => r.id === id); if(!row) return;
+  const st = rvStore(), supIn = $(`#areas [data-rv-sup="${id}"]`), sup = supIn ? supIn.value.trim() : (rvRev(id).sup || '');
+  const write = () => {
+    const typed = spTyped[id];
+    if(typed != null){ if(Math.abs(typed - row.r.amt) < 1) delete st.tune[id]; else st.tune[id] = typed; }
+    st.review[id] = {...rvRev(id), sup}; delete spTyped[id];
+  };
+  if(act === 'save') write();
+  else if(act === 'send'){ write();
+    st.reqs.push({id:'rv-' + id + '-' + Date.now(), kind:'review', catId:id, catName:row.n, sup, docs:rvRev(id).docs || [],
+      spend:st.tune[id] != null ? st.tune[id] : row.r.amt, ref:'RV-' + String(seedOf(row.n + WHO[S.who].company) % 100000).padStart(5, '0'), when:Date.now()}); }
+  else if(act === 'skip'){ st.review[id] = {...rvRev(id), sup, skip:true}; delete spTyped[id]; }
+  else if(act === 'undo'){ const v = {...rvRev(id)}; delete v.skip; st.review[id] = v; }
+  else if(act === 'withdraw'){ st.reqs = st.reqs.filter(q => q.catId !== id); }
+  else if(act === 'files'){ return; }
+  rvSave();
+  RV_OPEN = act === 'skip' ? null : id;
+  const y = window.scrollY; renderAreas(); window.scrollTo(0, y);
+}
+function rvAddFiles(id, files){
+  const names = Array.from(files || []).map(f => f.name).filter(Boolean); if(!names.length) return;
+  const st = rvStore(), v = rvRev(id); st.review[id] = {...v, docs:[...(v.docs || []), ...names]}; rvSave();
+  RV_OPEN = id; const y = window.scrollY; renderAreas(); window.scrollTo(0, y);
+}
+(() => {
+  /* wired on the grid, which is stable: the areas card is rebuilt with the cards */
+  const el = $('#cards');
+  el.addEventListener('input', e => { const inp = e.target.closest('input[data-rv-live]'); if(!inp) return;
+    const id = inp.dataset.rvLive, v = spNum(inp.value); if(v == null) delete spTyped[id]; else spTyped[id] = v; rvLive(id); });
+  el.addEventListener('change', e => {
+    const f = e.target.closest('input[data-rv-file]'); if(f){ rvAddFiles(f.dataset.rvFile, f.files); return; }
+    const inp = e.target.closest('input[data-rv-live]'); if(!inp) return; const v = spNum(inp.value); if(v != null) inp.value = fmt(v); });
+  el.addEventListener('click', e => {
+    if(e.target.closest('[data-rv-next]')){
+      const row = rvRows().find(r => r.kind === 'open' && (r.s === 'none' || r.s === 'dirty')); if(!row) return;
+      RV_OPEN = row.id; renderAreas();
+      const det = $(`#areas details[data-rv-row="${row.id}"]`); if(!det) return;
+      det.scrollIntoView({block:'center', behavior:'smooth'});
+      const inp = det.querySelector('input[data-rv-live]'); if(inp) inp.focus({preventScroll:true});
+      return;
+    }
+    const b = e.target.closest('[data-rv-act]'); if(!b) return; e.preventDefault(); rvAct(b.dataset.rvAct, b.dataset.rvId);
+  });
+  el.addEventListener('dragover', e => { const z = e.target.closest('.rv-drop'); if(!z || z.classList.contains('ro')) return; e.preventDefault(); z.classList.add('over'); });
+  el.addEventListener('dragleave', e => { const z = e.target.closest('.rv-drop'); if(z) z.classList.remove('over'); });
+  el.addEventListener('drop', e => { const z = e.target.closest('.rv-drop'); if(!z || z.classList.contains('ro')) return; e.preventDefault(); z.classList.remove('over'); rvAddFiles(z.dataset.rvDrop, e.dataTransfer.files); });
+  el.addEventListener('toggle', e => { const d = e.target.closest('details[data-rv-row]'); if(!d) return;
+    if(d.open) RV_OPEN = d.dataset.rvRow; else if(RV_OPEN === d.dataset.rvRow) RV_OPEN = null; }, true);
+})();
+
+function render(){ MODEL = build(); renderNav(); renderToday(); renderControls(); renderCards(); }
+$('#range').addEventListener('change', e => { S.range = e.target.value; S.gran = RANGES[S.range].g; renderControls(); renderCards(); });
+$('#gran').addEventListener('change', e => { S.gran = e.target.value; renderControls(); renderCards(); });
+$('#cmp').addEventListener('change', e => { S.cmp = e.target.value === 'on'; renderControls(); renderCards(); });
+$('#acctBtn').addEventListener('click', () => menuOpen($('#acctMenu').hidden));
+document.addEventListener('click', e => { if(!e.target.closest('.acct-w')) menuOpen(false); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && !$('#acctMenu').hidden){ menuOpen(false); $('#acctBtn').focus(); } });
+let rT; new ResizeObserver(() => { clearTimeout(rT); rT = setTimeout(() => { if(MODEL){ renderToday(); CHARTS.forEach(f => f()); } }, 80); }).observe($('.wrap'));
+render();
+</script>
+</body>
+</html>
