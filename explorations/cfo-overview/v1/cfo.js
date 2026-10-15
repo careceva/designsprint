@@ -32,15 +32,23 @@ const VERSIONS = [
   {k:10, n:'One line',            t:'One line under the hero; the table opens on demand. The Overview keeps its length.',
          layout:['hero', 'bar', 'bento:links', 'agrs']},
   {k:11, n:'Ledger in the hero',  t:'V4’s two-band table inside the hero’s tray, agreements as links. Since your last visit and your documents beneath.',
-         layout:['hero', 'bento:since-docs', 'agrs'], tray:'grouped', agLinks:true},
+         layout:['hero', 'bento:since-docs', 'agrs'], tray:'grouped', agLinks:true, agDetails:true},
+  {k:12, n:'Stripe bento grid',   t:'V11’s ledger as its own section under the hero. Since your last visit and your documents as a grid of tiles.',
+         layout:['hero', 'grouped-plain', 'stripe', 'agrs'], agLinks:true},
+  {k:13, n:'One bento grid',      t:'V12 with the ledger in the grid too: its first tile, full width, with its own head. No section heads.',
+         layout:['hero', 'stripe:ledger', 'agrs'], agLinks:true},
 ];
 const V = VERSIONS.find(v => v.k === (window.CFO_V || 1)) || VERSIONS[0];
 
 /* ---------- Kari's areas, as the spend page reads them ---------- */
 const AREAS = [
-  {id:'mat',  n:'Building materials',          on:{sup:'Ahlsell Nordic',  agrs:['Ahlsell Nordic'], thru:312000, saved:28100}, rate:9,  openN:4, trend:{t:'Up 12% since Jul', c:'pos'}},
-  {id:'fuel', n:'Fuel & transport',            on:{sup:'Preem Business',  agrs:['Preem Business'], thru:186000, saved:14900}, rate:8,  openN:2, trend:{t:'Steady', c:''}},
-  {id:'off',  n:'Office supplies',             on:{sup:'Lyreco Erhverv',  agrs:['Lyreco Erhverv'], thru:74000,  saved:14100}, rate:19, openN:1, trend:{t:'Steady', c:''}},
+  /* an area through several agreements: the rows under it sum to the area (312.000 / 28.100); one is active but nothing has gone through it yet */
+  {id:'mat',  n:'Building materials',          on:{sup:'Ahlsell Nordic',  agrs:[
+      {n:'Ahlsell Nordic', logo:'Ahlsell', thru:198000, saved:17800},
+      {n:'Bygma',          logo:'Bygma',   thru:114000, saved:10300},
+      {n:'Buildor',        logo:'Buildor', thru:0,      saved:0}], thru:312000, saved:28100}, rate:9,  openN:4, trend:{t:'Up 12% since Jul', c:'pos'}},
+  {id:'fuel', n:'Fuel & transport',            on:{sup:'Preem Business',  agrs:[{n:'Preem Business', logo:'Preem',  thru:186000, saved:14900}], thru:186000, saved:14900}, rate:8,  openN:2, trend:{t:'Steady', c:''}},
+  {id:'off',  n:'Office supplies',             on:{sup:'Lyreco Erhverv',  agrs:[{n:'Lyreco Erhverv', logo:'Lyreco', thru:74000,  saved:14100}], thru:74000,  saved:14100}, rate:19, openN:1, trend:{t:'Steady', c:''}},
   {id:'tool', n:'Tools & workwear',            amt:296000, exact:true,  rate:11, openN:4, sup:'Hilti'},
   {id:'tel',  n:'Telecom & IT',                amt:210000, exact:true,  rate:5,  openN:2, sup:'Hallon'},
   {id:'rent', n:'Machine & equipment rental',  amt:290000, exact:false, rate:6,  openN:3, sup:'Avis'},
@@ -113,13 +121,17 @@ function statusOf(a, amt, r){
 }
 /* the agreement an active area runs through: one is a link, several fold under a drop-down */
 function agSubHTML(list){
-  if(list.length === 1) return `<button type="button" class="linkbtn ag-link" data-agr="${esc(list[0])}">${esc(list[0])}</button>`;
+  if(list.length === 1) return `<button type="button" class="linkbtn ag-link" data-agr="${esc(list[0].n)}">${esc(list[0].n)}</button>`;
   return `<details class="ag-dd"><summary>${list.length} agreements${CHEV}</summary><ul>${
-    list.map(n => `<li><button type="button" class="linkbtn ag-link" data-agr="${esc(n)}">${esc(n)}</button></li>`).join('')}</ul></details>`;
+    list.map(g => `<li><button type="button" class="linkbtn ag-link" data-agr="${esc(g.n)}">${esc(g.n)}</button></li>`).join('')}</ul></details>`;
 }
 function rows(){
   return AREAS.map(a => {
-    if(a.on) return {...a, kind:'on', spend:a.on.thru, saved:a.on.saved, sub:V.agLinks ? agSubHTML(a.on.agrs) : a.on.sup, st:'on'};
+    if(a.on){
+      const det = !!V.agDetails && a.on.agrs.length > 1, idle = a.on.agrs.filter(g => !g.thru).length;
+      const sub = det ? `${a.on.agrs.length} agreements${idle ? ` · ${idle} not used yet` : ''}` : V.agLinks ? agSubHTML(a.on.agrs) : a.on.sup;
+      return {...a, kind:'on', spend:a.on.thru, saved:a.on.saved, sub, st:'on', det};
+    }
     const r = rev(a.id), typed = TYPED[a.id];
     const base = r.tuned != null ? r.tuned : a.amt;
     const st = statusOf(a, base, r);
@@ -205,12 +217,26 @@ function bodyHTML(r, o = {}){
       <div class="sp-field${sent ? ' ro' : ''}"><input id="spSup-${r.id}" data-sup="${r.id}" value="${esc(r.sup)}" placeholder="Who you buy from"${sent ? ' readonly' : ''}></div></div>`;
   const acts = `<div class="sp-act">${sent
     ? `<span class="sp-sent">${TICK}Sent · Peter replies within two working days</span><span class="spacer"></span><button type="button" class="linkbtn quiet" data-act="withdraw" data-id="${r.id}">Withdraw</button>`
-    : `<button type="button" class="linkbtn quiet" data-act="${r.st === 'skip' ? 'undo' : 'skip'}" data-id="${r.id}">${r.st === 'skip' ? 'Review it after all' : 'Not relevant'}</button><span class="spacer"></span>
+    : `<button type="button" class="linkbtn quiet" data-act="${r.st === 'skip' ? 'undo' : 'skip'}" data-id="${r.id}">${r.st === 'skip' ? 'Review it after all' : 'Not relevant'}</button>${ownAddHTML(r.id)}<span class="spacer"></span>
        <button type="button" class="btn btn-secondary btn-sm" data-act="save" data-id="${r.id}"${r.can ? '' : ' disabled'}>Save</button>
        <button type="button" class="btn btn-primary btn-sm" data-act="send" data-id="${r.id}"${r.can ? '' : ' disabled'}>Send to review</button>`}</div>`;
   const lead = r.exact ? `<span class="sp-help">${DOC_I}Spend read from ${DOC_NAME}</span>` : '';
   return `<div class="${o.cls || 'sp-body'}">${lead}
     <div class="sp-cols"><div class="sp-col">${o.input ? spendInput(r, true) : ''}${sup}</div><div class="sp-col">${docs}</div></div>${acts}</div>`;
+}
+/* the way to add an agreement she already has in this area: a link with a mark, nothing more */
+const PLUS = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+const ownAddHTML = id => `<button type="button" class="linkbtn own-add" data-own="${id}">${PLUS}Add your own agreement</button>`;
+/* V11: the agreements an active area runs through, on the parent's own columns so the money lines up under the area's;
+   one that is active with nothing through it yet says so, and carries the way to start */
+function agrsBodyHTML(r){
+  const rows = r.on.agrs.map(g => `<div class="lgx-tr${g.thru ? '' : ' idle'}">
+    <span class="lgx-a"><span class="lgx-logo" aria-hidden="true"><img src="../../../assets/company-logos/${g.logo}@64px.png" alt="" loading="lazy"></span><b>${esc(g.n)}</b></span>
+    <span class="sp-num r">${g.thru ? fmt(g.thru) : NONE}</span>
+    <span class="sp-num r">${g.thru ? `<span class="fig-actual">${fmt(g.saved)}</span>` : NONE}</span>
+    <span class="lgx-st">${g.thru ? `<span class="sp-st act">Active</span>`
+      : `<span class="sp-st wait">Not used yet</span><button type="button" class="btn btn-primary btn-sm" data-start="${esc(g.n)}">Start using</button>`}</span></div>`).join('');
+  return `<div class="sp-body lgx">${rows}<div class="lgx-add">${ownAddHTML(r.id)}</div></div>`;
 }
 /* V8: the row in the tray only says where its figure came from */
 const provHTML = r => `<div class="sp-body prov"><span class="sp-help">${r.exact ? `${DOC_I}Spend read from ${DOC_NAME}` : `Industry median for companies like yours · ${r.openN} agreements at ${r.rate}% average saving`}</span>
@@ -219,7 +245,7 @@ const provHTML = r => `<div class="sp-body prov"><span class="sp-help">${r.exact
 /* ---------- a row, in each form ---------- */
 function rowHTML(r, f){
   const x = `<span class="sp-x" aria-hidden="true">${CHEV}</span>`;
-  const open = r.kind === 'open';
+  const open = r.kind === 'open', canOpen = open || !!r.det;
   let cells, body = '';
   if(f.form === 'acts-a'){
     cells = `${areaCell(r)}<span class="sp-num r">${fmt(r.spend)}</span><span class="sp-num r">${savedHTML(r)}</span>`;
@@ -229,22 +255,23 @@ function rowHTML(r, f){
     body = bodyHTML(r);
   } else if(f.form === 'one' || f.form === 'grouped'){
     cells = `${areaCell(r)}<span class="sp-num r">${open ? spendInput(r) : spendText(r)}</span><span class="sp-num r">${savedHTML(r)}</span>
-      <span class="sp-num r c-save" data-save="${r.id}">${saveHTML(r)}</span><span class="c-st" data-st="${r.id}">${stHTML(r, f.trend)}</span>${open ? x : '<span></span>'}`;
+      <span class="sp-num r c-save" data-save="${r.id}">${saveHTML(r)}</span><span class="c-st" data-st="${r.id}">${stHTML(r, f.trend)}</span>${canOpen ? x : '<span></span>'}`;
     if(open) body = bodyHTML(r);
   } else if(f.form === 'facts'){
     cells = `${areaCell(r)}<span class="sp-num r">${open ? spendInput(r) : spendText(r)}</span><span class="sp-num r">${savedHTML(r)}</span>
-      <span class="c-st" data-st="${r.id}">${stHTML(r)}</span>${open ? x : '<span></span>'}`;
+      <span class="c-st" data-st="${r.id}">${stHTML(r)}</span>${canOpen ? x : '<span></span>'}`;
     if(open) body = bodyHTML(r);
   } else if(f.form === 'tray'){
     cells = `${areaCell(r)}<span class="sp-num r">${spendText(r)}</span><span class="sp-num r">${savedHTML(r)}</span>
-      <span class="c-st" data-st="${r.id}">${stHTML(r)}</span>${open ? x : '<span></span>'}`;
+      <span class="c-st" data-st="${r.id}">${stHTML(r)}</span>${canOpen ? x : '<span></span>'}`;
     if(open) body = provHTML(r);
   } else if(f.form === 'compact'){
     const sub = open ? `${stHTML(r)}` : r.sub;
     const money = open ? `<span data-save="${r.id}">${saveHTML(r)}</span>` : savedHTML(r);
-    cells = `${areaCell(r, sub)}<span class="sp-num r">${spendText(r)}</span><span class="sp-num r c-save">${money}</span>${open ? x : '<span></span>'}`;
+    cells = `${areaCell(r, sub)}<span class="sp-num r">${spendText(r)}</span><span class="sp-num r c-save">${money}</span>${canOpen ? x : '<span></span>'}`;
     if(open) body = bodyHTML(r, {input:true});
   }
+  if(!body && r.det) body = agrsBodyHTML(r);
   const cls = `sp-tr${r.kind === 'on' ? ' is-on' : ''}${r.st === 'skip' ? ' skip' : ''}`;
   return body
     ? `<details name="ledger" data-row="${r.id}"${OPEN === r.id ? ' open' : ''}><summary><div class="${cls}">${cells}</div></summary>${body}</details>`
@@ -267,7 +294,7 @@ function footHTML(all, shownN, o = {}){
     : todo ? `${todo} area${todo === 1 ? '' : 's'} still to review.` : 'Every area is reviewed.';
   const more = n > LIMIT ? `<button type="button" class="linkbtn" data-all>${partial ? `All ${n} areas` : 'Fewer areas'}</button>` : '';
   return `<div class="sp-foot"><span>${txt}</span>${more}<span class="sp"></span>
-    ${todo && !o.noNext ? `<button type="button" class="btn btn-primary btn-sm" data-next>Review next area</button>` : ''}</div>`;
+    ${todo && !o.noNext && !V.agDetails ? `<button type="button" class="btn btn-primary btn-sm" data-next>Review next area</button>` : ''}</div>`;
 }
 function totalRow(rs, form){
   const t = totals(rs), n = rs.length;
@@ -436,23 +463,41 @@ const KARI_DOCS2 = [
   {n:'Lyreco Erhverv invoice', m:'Office supplies · 22 Aug 2026', st:'done'},
   {n:'Ahlsell Nordic invoice', m:'Building materials · 14 Aug 2026', st:'done'},
 ];
-const DZ_ART = `<svg class="dz-art" viewBox="0 0 132 84" fill="none" aria-hidden="true">
-  <g class="ink" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M14 46h104l-7 31H21z"/>
-    <path d="M14 46l9-11h27l6 6h44l5-6"/>
-    <rect x="47" y="6.5" width="40" height="50" rx="6" fill="var(--surface)"/>
-    <path d="M56 19h22M56 28h14M56 37h18" />
-    <path d="M56 46h11" stroke-dasharray="2.5 4"/>
-  </g>
-  <g class="go" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M108 6v22"/><path d="M101 21l7 8 7-8"/>
+const DOCS_MAX = 3;
+const DZ_ART = `<svg class="dz-art" viewBox="0 0 160 120" fill="none" aria-hidden="true">
+  <defs>
+    <filter id="dz-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+    <g id="dz-c1"><circle cx="26" cy="58" r="10"/><circle cx="44" cy="48" r="16"/><circle cx="64" cy="56" r="12"/><rect x="26" y="58" width="38" height="10"/></g>
+    <g id="dz-c2"><circle cx="19" cy="93" r="7"/><circle cx="30" cy="88" r="10"/><circle cx="42" cy="93" r="7"/><rect x="19" y="93" width="23" height="7"/></g>
+    <g id="dz-c3"><circle cx="110" cy="38" r="6"/><circle cx="120" cy="33" r="9"/><circle cx="130" cy="38" r="6"/><rect x="110" y="38" width="20" height="6"/></g>
+  </defs>
+  <g transform="translate(3 0)">
+    <use href="#dz-c3" fill="#f6f7f9"/><use href="#dz-c3" y="1.5" fill="#e9ecf0"/>
+    <use href="#dz-c1" fill="#f6f7f9"/><use href="#dz-c1" y="1.5" fill="#e9ecf0"/>
+    <rect x="47" y="18" width="60" height="86" rx="6" fill="#0f2a55" opacity=".12" filter="url(#dz-blur)"/>
+    <path d="M48 12H94L110 28V96a4 4 0 0 1-4 4H48a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4Z" fill="var(--surface)" stroke="#c9ced6"/>
+    <path d="M94 12v12a4 4 0 0 0 4 4h12Z" fill="#e3e7ec" stroke="#c9ced6" stroke-linejoin="round"/>
+    <g stroke-linecap="round">
+      <path d="M56 38h26" stroke="#cfd5dc" stroke-width="4"/>
+      <path d="M56 50h40M56 60h32M56 70h22" stroke="#dfe3e8" stroke-width="3"/>
+    </g>
+    <use href="#dz-c2" fill="#f6f7f9"/><use href="#dz-c2" y="1.5" fill="#e9ecf0"/>
+    <circle cx="108" cy="91.5" r="12.5" fill="var(--general-primary)" opacity=".28" filter="url(#dz-blur)"/>
+    <circle cx="108" cy="88" r="13" fill="var(--general-primary)" stroke="var(--surface)" stroke-width="2"/>
+    <path d="M108 94V82.5M102.5 88l5.5-5.5 5.5 5.5" stroke="var(--general-primary-foreground)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   </g></svg>`;
 const docStat = st => st === 'done' ? `<span class="dc-st done">${TICK}Reviewed</span>` : `<span class="dc-st">In review</span>`;
+const docLI = d => `<li>${DOC_I}<span class="dc-t"><span class="dc-n">${esc(d.n)}</span><span class="dc-m">${esc(d.m)}</span></span>${docStat(d.st)}</li>`;
+const X_I = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 function docsHTML2(rs){
   const added = [...store().docs.map(d => ({n:d.n, m:d.m, st:'review'})), ...rs.flatMap(r => (r.docs || []).map(d => ({n:d, m:r.n, st:'review'})))];
   const all = [...added, ...KARI_DOCS2], done = all.filter(d => d.st === 'done').length, rev = all.length - done;
-  return `<div class="tune-h1"><h2>Your documents</h2></div><p class="nc-sub nc-mini-sub">${done} reviewed${rev ? ` · ${rev} in review` : ''}.</p>
-    <ul class="dc-list">${all.map(d => `<li>${DOC_I}<span class="dc-t"><span class="dc-n">${esc(d.n)}</span><span class="dc-m">${esc(d.m)}</span></span>${docStat(d.st)}</li>`).join('')}</ul>
+  const sub = `<p class="nc-sub nc-mini-sub">${done} reviewed${rev ? ` · ${rev} in review` : ''}.</p>`;
+  const more = all.length > DOCS_MAX ? `<p class="dc-more"><button type="button" class="linkbtn" data-docs-all>Show all ${all.length}</button></p>
+    <dialog class="dlg" id="docsDlg"><div class="dlg-h"><div><h2>Your documents</h2>${sub}</div><button type="button" class="dlg-x" data-dlg-close aria-label="Close">${X_I}</button></div>
+      <div class="dlg-b"><ul class="dc-list">${all.map(docLI).join('')}</ul></div></dialog>` : '';
+  return `<div class="tune-h1"><h2>Your documents</h2></div>${sub}
+    <ul class="dc-list">${all.slice(0, DOCS_MAX).map(docLI).join('')}</ul>${more}
     <label class="dz" data-drop="*">${DZ_ART}<span class="dz-t"><b>Drop reports or contracts</b><span>PDF, Excel or CSV</span></span>
       <input type="file" multiple accept=".pdf,.xls,.xlsx,.csv" data-file="*"></label>`;
 }
@@ -475,6 +520,36 @@ function bentoSection(rs, kind){
     return `<section class="nc-sec nc-sec-follow"><div class="nc-bento-row wide-left">${left}${pkg}</div></section>`;
   }
   return `<section class="nc-sec nc-sec-follow"><div class="nc-bento-row">${pkg}${right}</div></section>`;
+}
+/* V12: what V11's two cards said, as a grid of tiles — each a title, the figure, the way in */
+const NEW_AGRS = [
+  {n:'Granngården Frame',  a:'Building materials', logo:'GRann'},
+  {n:'Mediq Erhverv',      a:'Tools & workwear',   logo:'Mediq'},
+  {n:'Shell Fleet Nordic', a:'Fuel & transport',   logo:'Shell'},
+];
+const tile = o => `<article class="st-tile${o.cls ? ' ' + o.cls : ''}"${o.attr || ''}>
+  <div class="st-top"><div class="st-h"><h3>${o.h}</h3><span class="sp"></span>${o.tag ? `<span class="st-tag">${o.tag}</span>` : ''}</div>
+    ${o.v ? `<p class="st-v">${o.v}</p>` : ''}${o.cmp ? `<p class="st-cmp">${o.cmp}</p>` : ''}</div>
+  ${o.body || ''}
+  ${o.foot != null || o.act ? `<div class="st-foot"><span>${o.foot || ''}</span>${o.act ? `<button type="button" class="linkbtn" data-sv="${o.go || ''}">${o.act}</button>` : ''}</div>` : ''}</article>`;
+/* V13: the ledger leads the grid as a full-width tile — the table is already the tile, with its own head; the section head goes */
+function stripeSection(rs, o = {}){
+  const added = [...store().docs.map(d => ({n:d.n, m:d.m, st:'review'})), ...rs.flatMap(r => (r.docs || []).map(d => ({n:d, m:r.n, st:'review'})))];
+  const all = [...added, ...KARI_DOCS2], done = all.filter(d => d.st === 'done').length, rev = all.length - done;
+  const art = id => `<div class="st-body"><span class="st-art" aria-hidden="true">${catArt(id)}</span></div>`;
+  const ledger = o.ledger ? `<div class="st-areas" id="ledger">${tableHTML([...rs].sort(bySpend), {form:'grouped', foot:true, head:'All your purchasing areas', headSub:SRC})}</div>` : '';
+  return `<section class="nc-sec ${o.ledger ? 'nc-sec-follow' : 'st-sec'}">${o.ledger ? '' : secHead('Since your last visit', 'Last visit 30 Sep.')}<div class="st-grid">${ledger}
+    ${tile({h:'Expiring', tag:'1 Jan 2027', v:'Lyreco Erhverv', cmp:'Office supplies · 14.100 kr. saved this year', body:art('off'), act:'Renew'})}
+    ${tile({h:'Ready to review', tag:'12 Oct', v:'296.000<small>kr.</small>', cmp:'Tools & workwear · read from your Q2 export', body:art('tool'), act:'Review', go:'row:tool'})}
+    ${tile({h:'New agreements', tag:'11 Oct', v:'3', cmp:'Negotiated, tagged New below',
+      body:`<ul class="st-rows">${NEW_AGRS.map(g => `<li><span class="st-logo"><img src="../../../assets/company-logos/${g.logo}@64px.png" alt="" loading="lazy"></span><span class="t"><b>${esc(g.n)}</b><span>${esc(g.a)}</span></span></li>`).join('')}</ul>`,
+      act:'See agreements', go:'agrs'})}
+    ${tile({h:'Your documents', tag:`${all.length}`, cls:'span2', attr:' data-docs',
+      body:`<ul class="dc-list">${all.map(d => `<li>${DOC_I}<span class="dc-t"><span class="dc-n">${esc(d.n)}</span><span class="dc-m">${esc(d.m)}</span></span>${docStat(d.st)}</li>`).join('')}</ul>`,
+      foot:`${done} reviewed${rev ? ` · ${rev} in review` : ''}`})}
+    <article class="st-tile drop"><label class="dz" data-drop="*">${DZ_ART}<span class="dz-t"><b>Drop reports or contracts</b><span>PDF, Excel or CSV</span></span>
+      <input type="file" multiple accept=".pdf,.xls,.xlsx,.csv" data-file="*"></label></article>
+  </div></section>`;
 }
 /* V8 and V11: the ledger as the hero's fourth element, a grid item spanning the cards' row */
 const trayHTML = (rs, form) => `<div class="ov-ledger">${form === 'grouped'
@@ -502,8 +577,11 @@ function pageHTML(){
     if(b === 'one-sort') return ledgerSection(rs, {form:'one', sort:true, trend:true});
     if(b === 'facts') return ledgerSection(rs, {form:'facts'});
     if(b === 'grouped') return ledgerSection(rs, {form:'grouped', key:true});
+    if(b === 'grouped-plain') return ledgerSection(rs, {form:'grouped'});
     if(b === 'bar') return barSection(rs);
     if(b.startsWith('bento:')) return bentoSection(rs, b.slice(6));
+    if(b === 'stripe') return stripeSection(rs);
+    if(b === 'stripe:ledger') return stripeSection(rs, {ledger:true});
     if(b === 'agrs') return PARTS.agrs;
     return '';
   }).join('');
@@ -581,6 +659,9 @@ document.addEventListener('change', e => {
 document.addEventListener('keydown', e => { if(e.key === 'Enter' && e.target.closest('summary input')) e.preventDefault(); });
 document.addEventListener('click', e => {
   if(e.target.closest('summary .sp-in, summary .sp-stc')) e.preventDefault();
+  if(e.target.closest('[data-docs-all]')){ document.getElementById('docsDlg')?.showModal(); return; }
+  const dx = e.target.closest('[data-dlg-close]'); if(dx){ dx.closest('dialog').close(); return; }
+  if(e.target.matches('dialog.dlg[open]')){ e.target.close(); return; }
   const a = e.target.closest('[data-act]'); if(a){ e.preventDefault(); act(a.dataset.act, a.dataset.id); return; }
   const g = e.target.closest('[data-go]'); if(g){ goRow(g.dataset.go); return; }
   if(e.target.closest('[data-next]')){ const r = todoOf(rows()).sort(bySpend)[0]; if(r) goRow(r.id); return; }

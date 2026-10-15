@@ -8,6 +8,7 @@ Static HTML prototypes for Advantage. There is no build step: open any page in a
 
 ```
 advantage-main.html        the live prototype
+advantage-main-v4.html     the second version: the purchasing-areas ledger in the Overview's hero, since-your-last-visit and documents cards, for all three accounts
 PRODUCT.md                 product context (the impeccable tooling reads it from the root)
 assets/                    images, logos and icons shared by every page
 
