@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CFO overview · v1 — thirteen directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fafafa; --surface:#fff; --ink:#0f0f0f; --muted:#5f6068;
+    --hairline:#e7e7ea; --primary:#0071e3; --hover:#f0f7ff;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#0b0d12; --surface:#12151c; --ink:#f2f4f8; --muted:#9aa0ab;
+      --hairline:#262a33; --primary:#6fa2ff; --hover:#172033; color-scheme:dark}
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);
+    font:16px/1.5 "DM Sans",system-ui,-apple-system,sans-serif;
+    -webkit-text-size-adjust:100%;padding:64px 16px 96px}
+  main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+  header{display:flex;flex-direction:column;gap:8px}
+  h1{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  header p{color:var(--muted)}
+  a{color:var(--primary);text-decoration:none}
+  ol{list-style:none;padding:0;background:var(--surface);
+    border:1px solid var(--hairline);border-radius:16px;overflow:hidden}
+  li+li{border-top:1px solid var(--hairline)}
+  li a{display:flex;align-items:center;gap:16px;padding:16px 20px;color:inherit;
+    -webkit-tap-highlight-color:transparent}
+  @media (hover:hover) and (pointer:fine){li a:hover{background:var(--hover)}}
+  li a:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;border-radius:16px}
+  .n{flex:0 0 auto;width:36px;font-size:14px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+  .t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .t b{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .t span{font-size:14px;color:var(--muted)}
+  .go{flex:0 0 auto;color:var(--primary);font-size:14px;font-weight:600;white-space:nowrap}
+  .note{font-size:14px;color:var(--muted);line-height:1.55}
+  .note b{color:var(--ink);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>CFO overview · v1</h1>
+    <p>The Overview with the purchasing-areas ledger on it, thirteen ways. Kari Solheim’s account: four documents, three areas through an agreement, five to review. Each ledger shows its four biggest areas; the rest opens in place (in main, it would be the spend page). Rows expand, take a figure, a supplier or a document, and go to Peter.</p>
+  </header>
+  <ol>
+    <li><a href="v01.html"><span class="n">V1</span><span class="t"><b>Two acts</b><span>The spend page’s two tables, under the hero. The moves keep the way in, not the money.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v02.html"><span class="n">V2</span><span class="t"><b>One ledger</b><span>All eight areas in one table, biggest first. The moves card becomes the roll-up.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v03.html"><span class="n">V3</span><span class="t"><b>Facts and moves</b><span>The table keeps the facts, the moves keep the money. Nothing twice.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v04.html"><span class="n">V4</span><span class="t"><b>Agreements first</b><span>What is on and what to do first, then one table in two bands.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v05.html"><span class="n">V5</span><span class="t"><b>Ledger in the bento</b><span>A compact ledger beside the active agreements. No third card.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v06.html"><span class="n">V6</span><span class="t"><b>Ledger and documents</b><span>One table; the moves card becomes your documents, where the gaps get closed.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v07.html"><span class="n">V7</span><span class="t"><b>Review queue</b><span>The moves card becomes the list of areas to review; the table follows.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v08.html"><span class="n">V8</span><span class="t"><b>Inside the hero</b><span>The ledger lives in the hero’s tray as facts; one area at a time is reviewed in a card.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v09.html"><span class="n">V9</span><span class="t"><b>Sorted by status</b><span>One table with a sort. Live rows carry their trend.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v10.html"><span class="n">V10</span><span class="t"><b>One line</b><span>One line under the hero; the table opens on demand. The Overview keeps its length.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v11.html"><span class="n">V11</span><span class="t"><b>Ledger in the hero</b><span>V4’s two-band table inside the hero’s tray, agreements as links. Since your last visit and your documents beneath, then the agreements.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v12.html"><span class="n">V12</span><span class="t"><b>Stripe bento grid</b><span>V11’s ledger as its own section under the hero. Since your last visit and your documents as a grid of tiles, then the agreements.</span></span><span class="go">Open →</span></a></li>
+    <li><a href="v13.html"><span class="n">V13</span><span class="t"><b>One bento grid</b><span>V12 with the ledger in the grid too: its first tile, full width, with its own head. No section heads, then the agreements.</span></span><span class="go">Open →</span></a></li>
+  </ol>
+  <p class="note"><b>Shared across versions:</b> the hero, the active-agreements card and the agreements row are lifted from the main prototype as Kari sees them. Reviews, typed figures and dropped documents are kept in the browser and show on every version. The hero’s spend reads 1.078.000 kr., what her documents show, so it equals the ledger’s total.</p>
+</main>
+</body>
+</html>

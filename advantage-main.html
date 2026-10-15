@@ -750,6 +750,11 @@ body.ledger-on{--appbar-h:80px}
 .appbar .brand:active{opacity:.7}
 .appbar .brand img{height:28px;width:auto;display:block}
 .appbar .spacer{flex:1}
+/* at rest the search starts on the page's content edge, under the greeting, not
+   on the bar's centre: the left spacer is a measured width (searchAlign()) and
+   the right one still takes the rest. It may shrink, so a crowded bar slides the
+   search left rather than squeezing it. */
+.appbar.search-aligned > .brand + .spacer{flex:0 1 var(--search-left,0px)}
 /* ---- the scrolled bar ----
    Two bars in one element. At rest: brand, search, status. Scrolled past the
    Overview's figures: the page's sections and its two live figures. The rest state
@@ -1795,6 +1800,7 @@ body:has(#activityRail.open:not([hidden])){--qa-right:calc(var(--act-strip) + va
   .appbar .brand img{height:24px}
   .search{width:auto;flex:1}
   .appbar .mid{flex:1}
+  .appbar.search-aligned > .brand + .spacer{flex:1}
   .search kbd{display:none}
   .erp .et{display:none}
   .banner{flex-wrap:wrap;justify-content:center;padding:var(--s2) 44px;text-align:center}
@@ -7084,6 +7090,74 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
   .pk-x{top:var(--s4);right:var(--s4)}
 }
 
+
+/* ---------------- own agreements ----------------
+   The company's own supplier agreements beside the negotiated ones. The cards
+   are the catalogue's; what is new is a neutral status (no money lives here, so
+   no green), the use facts, the editor and its two small dialogs. */
+a.btn{text-decoration:none}
+/* an own agreement is a white card like any other; the status pill and the
+   customer number in the foot are what say it is yours */
+.aga.own{background:var(--surface)}
+.ac.own{background-color:var(--surface)}
+.aga.own-add .agc-logo{--b:27 100 220;color:var(--general-primary)}
+.aga.own-add .aga-n{color:var(--general-primary)}
+.aga-st.own{background:var(--general-muted);color:var(--general-foreground)}
+.aga-st.rec{background:var(--general-muted);color:var(--general-muted-foreground)}
+.ac-pill.own{background:var(--general-muted);color:var(--general-foreground)}
+.ac-pill.rec{background:var(--general-muted);color:var(--general-muted-foreground)}
+.inuse.own{color:var(--general-muted-foreground)}
+.sup-rate.own b{font-size:var(--text-lg);font-weight:700;letter-spacing:-.2px;line-height:1.3;
+  color:var(--general-foreground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.own-unset{font-weight:500;color:var(--general-muted-foreground)}
+.own-lead{font-size:var(--text-lg);line-height:1.5;max-width:60ch;text-wrap:pretty}
+.own-foot{margin-top:var(--s2)}
+.own-del{color:var(--general-destructive)}
+.btn-secondary.own-del:hover:not([disabled]){background:#fef2f2;border-color:#fecaca}
+.btn-danger{background:var(--general-destructive);border-color:var(--general-destructive);color:#fff}
+.btn-danger:hover:not([disabled]){background:#b91c1c}
+.own-dlgw{width:min(480px,calc(100vw - 32px))}
+.own-dlg{font-size:var(--text-base);line-height:1.55;color:var(--general-foreground)}
+.agm-kv dd a{color:var(--general-primary);text-decoration:none}
+.agm-kv dd a:hover{text-decoration:underline}
+.own-copy{margin-left:var(--s2);font-size:var(--text-xs);font-weight:600}
+.own-people{list-style:none;display:flex;flex-wrap:wrap;gap:var(--s2);margin:0;padding:0}
+.own-people li{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s1) var(--s3) var(--s1) var(--s1);
+  border-radius:var(--rounded-full);background:var(--general-muted);font-size:var(--text-sm);font-weight:600}
+.own-people li em{font-style:normal;font-weight:500;color:var(--general-muted-foreground)}
+.own-av{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:var(--rounded-full);
+  background:var(--general-secondary);color:var(--general-primary);font-size:var(--text-xs);font-weight:700}
+.own-people .own-av{width:24px;height:24px;font-size:11px}
+.cat-mast-act .own-half{flex:1 1 calc(50% - var(--s1))}
+.own-fav svg{width:16px;height:16px}
+.own-fav.on{color:var(--general-destructive)}
+.own-fav.on svg path{fill:var(--general-destructive);stroke:var(--general-destructive)}
+.ac-off-row:has(.ac-off-add){grid-template-columns:auto minmax(0,1fr) auto auto}
+.ac-off-add{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
+.own-notin{margin-top:var(--s4)}
+/* the editor */
+.own-form{display:flex;flex-direction:column;gap:var(--s8);max-width:68ch}
+.own-form .fld{margin-top:0}
+.own-lbl{display:block;font-size:var(--text-sm);font-weight:650;margin-bottom:var(--s2)}
+.own-lbl em{font-style:normal;font-weight:500;color:var(--general-muted-foreground)}
+.own-in{display:block;width:100%;height:48px;padding:0 var(--s4);border:1px solid var(--sidebar-border);
+  border-radius:var(--rounded-md);background:var(--general-input);font-size:var(--text-base);
+  color:var(--general-foreground);transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.own-in::placeholder{color:#a3a3a3}
+.own-in:hover{border-color:var(--general-border)}
+.own-in:focus{outline:none;border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.own-in[aria-invalid="true"]{border-color:var(--general-destructive)}
+textarea.own-in{height:auto;min-height:112px;padding:var(--s3) var(--s4);resize:vertical;line-height:1.5}
+.own-err{margin-top:var(--s2);font-size:var(--text-xs);font-weight:600;color:var(--general-destructive)}
+.own-sub{margin-top:var(--s3);font-size:var(--text-sm);line-height:1.5;color:var(--general-muted-foreground)}
+.own-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}
+@container catmain (max-width:560px){.own-2{grid-template-columns:1fr}}
+.own-rcp{margin-top:var(--s3)}
+.own-rcp .rcp-id{min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left}
+.own-rcp .rcp-id b{font-size:var(--text-sm);font-weight:600}
+.own-rcp .rcp-id span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.rcp-row[disabled]{cursor:default;opacity:.72}
+.own-docs{margin-bottom:var(--s3)}
 </style>
 </head>
 <body ontouchstart="">
@@ -7126,7 +7200,7 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
               <span class="login-persona-av">KS</span>
               <span class="login-persona-txt">
                 <b>Kari Solheim</b>
-                <span>Solheim Installasjon AS · CFO, no ERP — 3 invoices and a spend report</span>
+                <span>Solheim Installasjon AS · CFO and site manager, no ERP — 3 invoices and a spend report</span>
               </span>
               <svg class="login-persona-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
@@ -7263,7 +7337,7 @@ body.bar-page-on .bp-in{visibility:visible;opacity:1;transition:opacity var(--t-
         </button>
         <button class="up-i up-persona" id="personaKari">
           <span class="up-persona-av">KS</span>
-          <span class="up-persona-txt"><b>Kari Solheim</b><span>CFO, no ERP · 3 invoices and a spend report</span></span>
+          <span class="up-persona-txt"><b>Kari Solheim</b><span>CFO and site manager, no ERP · 3 invoices and a spend report</span></span>
         </button>
         <button class="up-i up-persona" id="personaFanny">
           <span class="up-persona-av">FK</span>
@@ -7913,6 +7987,7 @@ function agreementsChanged(){
    Advantage mark in the app bar lands on Overview through exactly the same path —
    a second copy of this would be one `hidden` flag away from drifting. */
 function goNav(id){
+  if(ownLeaveGuard(() => goNav(id))) return;
   navAt = id; persist(); renderNav();
   oppAt = null; $('#viewOpp').hidden = true;
   const dc = $('#viewDataCenter'); if(dc) dc.hidden = true;
@@ -9397,6 +9472,11 @@ function pkgAll(){
     out.push({n:x.n, cat:x.cat, catN:r ? r.n : PKG_GROUPS[x.cat], pct:x.pct,
       on:false, pending:false, again:false, isNew:false, b:pkgInk(x.n, x.b)});
   });
+  /* the company's own usable agreements: listed, never priced */
+  ownUsable().forEach(o => {
+    out.push({n:o.sup, k:'own:' + o.id, own:o, cat:o.cat, catN:ownCatName(o.cat), pct:0,
+      on:false, pending:false, again:false, isNew:false, b:ownInk(o)});
+  });
   return out;
 }
 /* a synthetic "when": the day the last invoice on a live agreement landed */
@@ -9409,7 +9489,7 @@ function pkgRows(tab){
     || ((q.a ? q.a.save : 0) - (p.a ? p.a.save : 0))
     || (q.pct - p.pct));
   if(tab === 'again') return all.filter(x => x.again).sort((p, q) => q.a.covers - p.a.covers);
-  if(tab === 'fav')   return all.filter(x => savedAgr.has(x.n)).sort((p, q) => p.n.localeCompare(q.n));
+  if(tab === 'fav')   return all.filter(x => savedAgr.has(x.k || x.n)).sort((p, q) => p.n.localeCompare(q.n));
   /* switched on first (live before requested), then the biggest open money,
      then the unpriced rest by their rate */
   return all.sort((p, q) =>
@@ -9418,26 +9498,30 @@ function pkgRows(tab){
     || (q.pct - p.pct));
 }
 function pkgRowHTML(x, {tab, heart} = {}){
-  const state = x.on
+  const hk = x.k || x.n;   /* the heart's key: an own agreement is keyed by id, not name */
+  const state = x.own
+    ? '<span class="pkg-state on"><i aria-hidden="true"></i><em>Yours</em></span>'
+    : x.on
     ? `<span class="pkg-state${x.pending ? ' pending' : ' on'}"><i aria-hidden="true"></i><em>${
         x.pending ? 'Requested' : 'Active'}</em></span>`
     : '';
   const sub = tab === 'again' ? `<span class="pkg-s">Last bought ${pkgLastDays(x.n)} days ago</span>` : '';
-  const label = `${x.n}, ${x.catN}: ${x.pct}% off${x.on ? (x.pending ? ', requested' : ', active') : ''}`;
+  const label = x.own ? `${x.n}, ${x.catN}: your own agreement`
+    : `${x.n}, ${x.catN}: ${x.pct}% off${x.on ? (x.pending ? ', requested' : ', active') : ''}`;
   return `
     <li class="pkg-item" style="--b:${x.b}">
-      <button type="button" class="pkg-row" data-pkg="${apEsc(x.n)}" aria-label="${apEsc(label)}">
+      <button type="button" class="pkg-row" data-pkg="${apEsc(hk)}" aria-label="${apEsc(label)}">
         ${pkgLogoHTML(x.n)}
         <span class="pkg-t">
           <span class="pkg-n"><span>${x.n}</span>${x.isNew ? '<span class="cnew">New</span>' : ''}</span>
           ${sub}
         </span>
         ${state}
-        <span class="pkg-pct">−${x.pct}%</span>
+        ${x.own ? '' : `<span class="pkg-pct">−${x.pct}%</span>`}
         <svg class="pkg-go" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      ${heart ? `<button type="button" class="pkg-heart${savedAgr.has(x.n) ? ' on' : ''}" data-heart="${apEsc(x.n)}"
-        aria-pressed="${savedAgr.has(x.n)}" aria-label="Save ${apEsc(x.n)}">
+      ${heart ? `<button type="button" class="pkg-heart${savedAgr.has(hk) ? ' on' : ''}" data-heart="${apEsc(hk)}"
+        aria-pressed="${savedAgr.has(hk)}" aria-label="Save ${apEsc(x.n)}">
         <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.7-7.5-9.7A4.3 4.3 0 0 1 12 8.2a4.3 4.3 0 0 1 7.5 2.6c0 5-7.5 9.7-7.5 9.7z"/></svg>
       </button>` : ''}
     </li>`;
@@ -9654,14 +9738,15 @@ function pkgCardLedgerHTML(rows){
   return line ? `<div class="pkg-ledger">${line}</div>` : '';
 }
 function pkgCardHTML(){
-  const all = pkgAll(), rows = pkgRows('on');
+  const all = pkgAll().filter(x => !x.own), rows = pkgRows('on'), owns = ownUsable();
   const on = rows.length, waiting = rows.filter(x => x.pending).length;
   const none = !on;
   /* a count, not a figure: what each one is worth is on its own row now */
-  const sub = none
+  const sub = (none
     ? `${all.length} negotiated for ${newCustomer ? 'companies like yours' : 'your account'}. None switched on yet.`
     : `${on} of ${all.length} switched on.${
-        waiting ? ` ${waiting} ${waiting === 1 ? 'is' : 'are'} waiting for a first invoice.` : ''}`;
+        waiting ? ` ${waiting} ${waiting === 1 ? 'is' : 'are'} waiting for a first invoice.` : ''}`)
+    + (owns.length ? ` ${owns.length} of your own.` : '');
   /* the card no longer links out to the package once something is switched on;
      the first-look state keeps the link since it is the only way in from here */
   const seeAll = `<button type="button" class="linkbtn" data-pkg-all="1">See all ${all.length} in the package</button>`;
@@ -9673,15 +9758,18 @@ function pkgCardHTML(){
         /* the illustrated first-look state is for an account that has never
            activated anything — anyone else gets the plain line back */
         ? (newCustomer ? pkgNoneHTML() : pkgEmptyHTML('on'))
-        : `<ol class="pkg-list">${rows.map(x => pkgCardRowHTML(x, PKG_SHOP_CTA)).join('')}</ol>${
+          + (owns.length ? `<ol class="pkg-list">${owns.map(ownPkgRowHTML).join('')}</ol>` : '')
+        : `<ol class="pkg-list">${rows.map(x => pkgCardRowHTML(x, PKG_SHOP_CTA)).join('')}${
+            owns.map(ownPkgRowHTML).join('')}</ol>${
             pkgCardLedgerHTML(rows)}`}
       ${none ? `<div class="cv-foot">${seeAll}</div>` : ''}
     </div>`;
 }
 /* where a row goes: its priced agreement page, else its area, else the catalogue */
 function pkgOpen(n){
-  const x = pkgAll().find(q => q.n === n);
+  const x = pkgAll().find(q => (q.k || q.n) === n);
   if(!x) return;
+  if(x.own){ openOwn(x.own.id); return; }
   if(x.r) openCatTab(x.cat, x.i);
   else if(ROWS.some(r => r.id === x.cat)) openCatTab(x.cat);
   else goNav('suppliers');
@@ -9699,6 +9787,10 @@ function pkgRefresh(){
 }
 function wirePkgEl(el){
   el.addEventListener('click', e => {
+    /* an own agreement's row: the link opens itself, the rest opens the page */
+    if(e.target.closest('a.pkg-cta')){ e.stopPropagation(); return; }
+    const ownEl = e.target.closest('[data-own]');
+    if(ownEl){ e.stopPropagation(); openOwn(ownEl.dataset.own); return; }
     /* the CTA sits inside the row and is not the row: it is read first, and the
        row's own click never fires behind it */
     const shop = e.target.closest('[data-shop]');
@@ -9737,7 +9829,7 @@ function pkgOvBodyHTML(){
      enough to read as one list */
   if(pkgOvTab !== 'all') return `<ol class="pkg-list flat">${
     rows.map(x => pkgRowHTML(x, {tab:pkgOvTab, heart:true})).join('')}</ol>`;
-  const order = [...ROWS.map(r => r.id), ...Object.keys(PKG_GROUPS)];
+  const order = [...ROWS.map(r => r.id), ...Object.keys(PKG_GROUPS), 'oth'];
   const groups = new Map();
   rows.forEach(x => { if(!groups.has(x.cat)) groups.set(x.cat, []); groups.get(x.cat).push(x); });
   return [...groups.entries()].sort((p, r) => order.indexOf(p[0]) - order.indexOf(r[0])).map(([cat, xs]) => `
@@ -9753,7 +9845,7 @@ function openPackage(tab){
   const pk = $('#pk');
   pk.dataset.tone = 'rise';
   pk.dataset.kind = 'pkg';
-  const all = pkgAll();
+  const all = pkgAll().filter(x => !x.own);
   const on = all.filter(x => x.on).length, again = all.filter(x => x.again).length;
   $('#pkBody').innerHTML = `
     <div class="pkg-ov">
@@ -9997,7 +10089,8 @@ function refreshRequestViews(){
   renderApReqs();
   const ct = $('#viewCatTab');
   if(ct && !ct.hidden && catTabAt){
-    if(catTabAt.agrIdx === null) renderCatTab(catTabAt.r);
+    if(catTabAt.own) ownRefreshPage();
+    else if(catTabAt.agrIdx === null) renderCatTab(catTabAt.r);
     else renderCatTabAgreement(catTabAt.r, catTabAt.agrIdx);
   }
 }
@@ -10025,6 +10118,683 @@ function reviewState(r){
   return {spend, sup:v.sup || '', skip:!!v.skip, req:q,
           status:q ? 'sent' : (spend != null || v.sup) ? 'saved' : 'none'};
 }
+
+/* ---------------- own agreements ----------------
+   The company's own supplier agreements, made outside Advantage and kept here
+   beside the negotiated ones. They never enter ROWS: nothing here carries a
+   saving, so nothing here may feed a figure (the PKG_EXTRA rule). The only money
+   one can show is what the company spends with that supplier, and only when the
+   invoices are connected. Stored in localStorage, like the requests, because an
+   agreement page can open in its own tab. The person logged in runs the
+   account, so they add, edit and delete; the roster is the colleagues an
+   agreement can be shared with, and who sees it as a user. The feature is
+   switched on for Kari only (ownOn): Bob and Fanny see nothing of it. */
+const OKEY = 'advantage-own-v1';
+const OWN_GROUPS = {trv:'Travel & hotels', ins:'Insurance & finance', ctr:'Canteen & catering', oth:'Other'};
+const ownCatName = id => { const r = ROWS.find(x => x.id === id); return r ? r.n : OWN_GROUPS[id] || 'Other'; };
+const ownCats = () => [...live().map(r => ({id:r.id, n:r.n})),
+  ...Object.entries(OWN_GROUPS).map(([id, n]) => ({id, n}))];
+
+/* the people at each company; me is who is logged in, and runs the account */
+const TEAM = {
+  bob:  [{id:'bob',   n:'Bob Iversen',       t:'Owner',                role:'admin',  me:true},
+         {id:'mette', n:'Mette Hansen',      t:'Bookkeeper',           role:'member'},
+         {id:'lars',  n:'Lars Dahl',         t:'Site manager',         role:'member'},
+         {id:'sofie', n:'Sofie Berg',        t:'Purchasing',           role:'member'}],
+  kari: [{id:'kari',  n:'Kari Solheim',      t:'CFO and site manager', role:'admin',  me:true},
+         {id:'jonas', n:'Jonas Solheim',     t:'Owner',                role:'member'},
+         {id:'erik',  n:'Erik Moen',         t:'Project lead',         role:'member'},
+         {id:'nina',  n:'Nina Haug',         t:'Bookkeeper',           role:'member'}],
+  fanny:[{id:'fanny', n:'Fanny Kristensen',  t:'Owner',                role:'admin',  me:true},
+         {id:'jakob', n:'Jakob Nielsen',     t:'Electrician',          role:'member'},
+         {id:'maria', n:'Maria Holm',        t:'Bookkeeper',           role:'member'}]
+};
+const ownOn = () => personaKey === 'kari';
+const team = () => TEAM[personaKey] || TEAM.bob;
+const me = () => team().find(p => p.me) || team()[0];
+const isAdmin = () => ownOn() && me().role === 'admin';
+const teamName = id => (team().find(p => p.id === id) || {}).n || 'Someone';
+
+/* what Kari's company starts with. No spend figure on any of them: nothing of
+   hers is connected, and a figure needs an invoice behind it. */
+const OWN_SEED = {
+  bob:[],
+  kari:[
+    {id:'ok1', sup:'Würth Norge', cat:'tool', mode:'use', link:'https://eshop.wuerth.no', custNo:'SI-2231',
+     contact:{name:'Anders Vik', phone:'+47 46 40 10 00', email:'anders.vik@wuerth.no'},
+     desc:'Fixings and cable accessories. Order on the webshop with the customer number; delivery to site next day.',
+     docs:[{id:'ok1d1', name:'Würth kundeavtale 2026.pdf', date:'15 Jan 2026', size:388000}],
+     vis:'all', by:'kari', added:'15 Jan 2026'},
+    {id:'ok2', sup:'Berg-Hansen', cat:'trv', mode:'use', link:'https://www.berg-hansen.no', custNo:'BH-SOLH',
+     contact:{name:'Trine Lie', phone:'+47 22 00 80 50', email:'trine.lie@berg-hansen.no'},
+     desc:'Travel and hotels for courses and the Trondheim jobs. Book with the company code.',
+     docs:[], vis:'all', by:'kari', added:'2 Mar 2026'},
+    {id:'ok3', sup:'If Skadeforsikring', cat:'ins', mode:'docs', link:'', custNo:'',
+     contact:{name:'', phone:'', email:''}, desc:'Liability, vehicles and tools. Renews 1 September.',
+     docs:[{id:'ok3d1', name:'If forsikringsbevis 2026.pdf', date:'1 Sep 2026', size:1960000}],
+     vis:['nina'], by:'kari', added:'1 Sep 2026'}
+  ],
+  fanny:[]
+};
+let OWN_BY = null;
+function readOwn(){
+  try{ const v = JSON.parse(localStorage.getItem(OKEY) || 'null');
+    return v && typeof v === 'object' && !Array.isArray(v) ? v : null; }
+  catch(e){ return null; }
+}
+function ownStore(){ if(!OWN_BY) OWN_BY = readOwn() || JSON.parse(JSON.stringify(OWN_SEED)); return OWN_BY; }
+function saveOwn(){ try{ localStorage.setItem(OKEY, JSON.stringify(ownStore())); }catch(e){ /* private mode */ } }
+const ownAll = () => { if(!ownOn()) return []; const st = ownStore(); return (st[personaKey] = st[personaKey] || []); };
+const ownById = id => ownAll().find(o => o.id === id);
+/* an admin sees everything; a member sees the usable ones shared with them */
+const ownCanSee = o => isAdmin() || (o.mode === 'use' &&
+  (o.vis === 'all' || (Array.isArray(o.vis) && o.vis.includes(me().id))));
+const ownList = () => ownAll().filter(ownCanSee).sort((p, q) => p.sup.localeCompare(q.sup, 'da'));
+const ownUsable = () => ownList().filter(o => o.mode === 'use');
+const ownFav = o => savedAgr.has('own:' + o.id);
+const ownInk = o => pkgInk((o.sup || '').trim() || 'New');
+const ownLogoHTML = o => pkgLogoHTML((o.sup || '').trim() || 'New');
+const ownAttr = v => apEsc(v == null ? '' : String(v)).replace(/"/g, '&quot;');
+const ownSize = b => b < 1e6 ? `${Math.max(1, Math.round(b / 1e3))} KB` : `${(b / 1e6).toFixed(1).replace('.', ',')} MB`;
+const ownHost = url => { try{ return new URL(url).host.replace(/^www\./, ''); }catch(e){ return url; } };
+/* spend with the supplier: only when the invoices are connected. Authored on the
+   seeds; for one added by hand it is on the invoices only if the area already
+   lists that supplier as off agreement. Never a saving, never green. */
+const ownConnected = () => !newCustomer && !partialData();
+function ownSpend(o){
+  if(!ownConnected()) return null;
+  if(typeof o.spend === 'number') return o.spend;
+  const r = ROWS.find(x => x.id === o.cat);
+  const off = (OFF_SUP[o.cat] || []).some(n => n.toLowerCase() === (o.sup || '').trim().toLowerCase());
+  if(!r || !off) return null;
+  return roundSig(r.amt * (0.03 + (seedOf('ownspend:' + o.sup) % 8) / 100), 3);
+}
+
+/* the files themselves live only in this session: a browser store cannot hold
+   the bytes across a reload, so a document uploaded earlier downloads as a
+   one-page placeholder that names it */
+const OWN_FILES = new Map();
+function ownPdfBlob(name){
+  const clean = t => t.replace(/[^\x20-\x7e]/g, '?').replace(/[\\()]/g, c => '\\' + c);
+  const content = `BT /F1 16 Tf 56 760 Td 22 TL (Advantage prototype) Tj T* (${clean(name)}) Tj T* /F1 10 Tf (Placeholder for a document uploaded before this session.) Tj ET`;
+  const objs = [
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+    `<< /Length ${content.length} >>\nstream\n${content}\nendstream`
+  ];
+  let out = '%PDF-1.4\n'; const offs = [];
+  objs.forEach((o, i) => { offs.push(out.length); out += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+  const xref = out.length;
+  out += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n`
+    + offs.map(n => String(n).padStart(10, '0') + ' 00000 n \n').join('')
+    + `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return new Blob([out], {type:'application/pdf'});
+}
+function ownDownload(d){
+  const f = OWN_FILES.get(d.id);
+  const blob = f || ownPdfBlob(d.name);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = f ? f.name : d.name.replace(/\.[a-z0-9]+$/i, '') + '.pdf';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+/* ---- the page ---- */
+let ownDocsOpen = true;
+let ownEditing = null;   /* {id|null, draft, orig, files, some, err} while the editor is open */
+const ownDirty = () => !!ownEditing && JSON.stringify(ownEditing.draft) !== ownEditing.orig;
+
+function ownShellOpen(o, r){
+  if(!catTabFrom) catTabFrom = catTabOrigin();
+  $('.page').hidden = false;
+  oppAt = null;
+  ['#viewDash', '#viewSup', '#viewOpp', '#viewDataCenter', '#viewAgreements', '#viewReports',
+   '#viewAreas', '#viewNewCustomer', '#viewSavings', '#viewDrill'].forEach(sel => {
+    const el = $(sel); if(el) el.hidden = true;
+  });
+  $('#viewCatTab').hidden = false;
+  document.body.classList.add('cat-tab-mode');
+  catTabAt = {r, agrIdx:null, own:o};
+}
+function openOwn(id){
+  if(ownLeaveGuard(() => openOwn(id))) return;
+  const o = ownById(id);
+  if(!o || !ownCanSee(o)) return;
+  ownShellOpen(o, ROWS.find(x => x.id === o.cat) || null);
+  document.title = `${o.sup} · Advantage`;
+  renderOwnPage(o);
+  updateActivityRail();
+  $('#canvas').scrollTop = 0;
+}
+/* the page is drawn again when the store changes under it (another tab) */
+function ownRefreshPage(){
+  if(ownEditing || !catTabAt || !catTabAt.own) return;
+  const o = ownById(catTabAt.own.id);
+  if(o && ownCanSee(o)) renderOwnPage(o); else closeCatTab();
+}
+const ownRow = (title, body) => `
+  <details class="agm-row"><summary><h3>${title}</h3>${AGM_ARROW}</summary>
+    <div class="agm-body">${body}</div></details>`;
+const ownKv = pairs => `<dl class="agm-kv">${pairs.map(([k, v]) =>
+  `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
+const HEART_I = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20.5s-7.5-4.7-7.5-9.7A4.3 4.3 0 0 1 12 8.2a4.3 4.3 0 0 1 7.5 2.6c0 5-7.5 9.7-7.5 9.7z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>';
+
+function ownVisHTML(o){
+  if(o.mode !== 'use') return '<p>Admins only.</p>';
+  if(o.vis === 'all') return `<p>Everyone at ${apEsc(state.company)}.</p>`;
+  const ids = new Set([...team().filter(p => p.role === 'admin').map(p => p.id), ...o.vis]);
+  return `<ul class="own-people">${team().filter(p => ids.has(p.id)).map(p => `
+    <li><span class="own-av" aria-hidden="true">${initials(p.n)}</span>${apEsc(p.n)}${
+      p.role === 'admin' ? ' <em>admin</em>' : ''}</li>`).join('')}</ul>`;
+}
+function ownDocsRowHTML(o, admin){
+  const docs = o.docs || [];
+  return `
+    <details class="agm-row agdoc-row"${ownDocsOpen ? ' open' : ''}>
+      <summary><h3>Documents</h3>${docs.length ? `<span class="agdoc-n">${docs.length}</span>` : ''}${AGM_ARROW}</summary>
+      <div class="agm-body">
+        ${docs.length ? `<ul class="agdoc-list">${docs.map(x => `
+          <li class="agdoc"><span class="agdoc-ic">${DOC_I}</span>
+            <span class="agdoc-t"><b>${apEsc(x.name)}</b><span>${x.date}${x.size ? ` · ${ownSize(x.size)}` : ''}</span></span>
+            <button type="button" class="btn btn-ghost btn-sm" data-owndl="${x.id}"
+              aria-label="Download ${ownAttr(x.name)}">Download</button>
+            ${admin ? `<button type="button" class="btn btn-ghost btn-sm" data-owndel="${x.id}"
+              aria-label="Delete ${ownAttr(x.name)}">Delete</button>` : ''}</li>`).join('')}</ul>`
+          : '<p>None yet.</p>'}
+        ${admin ? `<div><button type="button" class="btn btn-secondary btn-sm" id="ownDocUp">Upload</button>
+          <input type="file" id="ownDocFile" accept=".pdf,.csv,.xlsx,.docx,.png,.jpg" multiple hidden></div>` : ''}
+      </div>
+    </details>`;
+}
+function renderOwnPage(o){
+  const r = ROWS.find(x => x.id === o.cat) || null;
+  catTabAt = {r, agrIdx:null, own:o};
+  const admin = isAdmin(), use = o.mode === 'use', c = o.contact || {};
+  const spend = ownSpend(o);
+  const unset = '<span class="own-unset">Not set</span>';
+  const fav = ownFav(o);
+  const acts = `
+    <span class="inuse own">${use ? 'Your own agreement' : 'Records only'} · added by ${apEsc(teamName(o.by))}, ${o.added}</span>
+    ${use && o.link ? `<a class="btn btn-primary btn-block" href="${ownAttr(o.link)}" target="_blank" rel="noopener">Open webshop</a>` : ''}
+    ${admin ? '<button type="button" class="btn btn-secondary own-half" id="ownEdit">Edit</button>' : ''}
+    <button type="button" class="btn btn-secondary ${admin ? 'own-half' : 'btn-block'} own-fav${fav ? ' on' : ''}"
+      id="ownFav" aria-pressed="${fav}">${HEART_I}<span>${fav ? 'Saved' : 'Save'}</span></button>`;
+  const facts = [
+    {k:'Customer number', v:o.custNo ? apEsc(o.custNo) : unset},
+    {k:'Contact', v:c.name ? apEsc(c.name) : unset}
+  ];
+  const prov = spend === null ? null : {src:`a year, read from ${state.source}`,
+    tip:`What ${state.company} paid ${o.sup} over the last twelve months, across the invoices we read.`};
+  const useRows = [
+    o.link ? ['Link', `<a href="${ownAttr(o.link)}" target="_blank" rel="noopener">${apEsc(ownHost(o.link))}</a>`] : null,
+    o.custNo ? ['Customer number', `${apEsc(o.custNo)} <button type="button" class="linkbtn own-copy" data-copy="${ownAttr(o.custNo)}">Copy</button>`] : null,
+    c.name ? ['Contact', apEsc(c.name)] : null,
+    c.phone ? ['Phone', `<a href="tel:${ownAttr(c.phone.replace(/\s+/g, ''))}">${apEsc(c.phone)}</a>`] : null,
+    c.email ? ['Email', `<a href="mailto:${ownAttr(c.email)}">${apEsc(c.email)}</a>`] : null
+  ].filter(Boolean);
+  const details = [
+    ['Category', ownCatName(o.cat)],
+    ['In the portal', use ? 'Colleagues can use it' : 'Records only, for admins'],
+    ['Added by', `${apEsc(teamName(o.by))} · ${o.added}`],
+    o.edited ? ['Last edited', o.edited] : null
+  ].filter(Boolean);
+  catTabShell(
+    catTabHeroHTML(o.cat, '', apEsc(o.sup), 0, '', '', acts, false, 'Spending', prov, false, facts,
+      {logo:ownLogoHTML(o), ink:ownInk(o), labelAbove:true, noFig:spend === null,
+       fig:spend === null ? '' : fmt(spend)}),
+    `
+    ${o.desc ? `<p class="own-lead">${apEsc(o.desc)}</p>` : ''}
+    <section class="agm" aria-label="More about ${ownAttr(o.sup)}">
+      ${ownDocsRowHTML(o, admin)}
+      ${ownRow('How to use it', useRows.length ? ownKv(useRows) : '<p>Nothing added yet.</p>')}
+      ${ownRow('Who can see it', ownVisHTML(o))}
+      ${ownRow('Details', ownKv(details))}
+    </section>
+    ${admin ? '<p class="own-foot"><button type="button" class="linkbtn own-del" id="ownDelete">Delete this agreement</button></p>' : ''}`
+  );
+  wireOwnPage(o);
+}
+function wireOwnPage(o){
+  const admin = isAdmin();
+  const redraw = focusSel => {
+    const top = $('#canvas').scrollTop;
+    renderOwnPage(ownById(o.id) || o);
+    $('#canvas').scrollTop = top;
+    if(focusSel) setTimeout(() => { const b = $(focusSel); if(b) b.focus({preventScroll:true}); }, 80);
+  };
+  const row = $('#viewCatTab .agdoc-row');
+  if(row) row.addEventListener('toggle', () => { ownDocsOpen = row.open; });
+  const edit = $('#ownEdit'); if(edit) edit.addEventListener('click', () => openOwnEdit(o.id));
+  const del = $('#ownDelete'); if(del) del.addEventListener('click', () => ownAskDelete(o));
+  const fav = $('#ownFav');
+  if(fav) fav.addEventListener('click', () => {
+    const k = 'own:' + o.id;
+    savedAgr.has(k) ? savedAgr.delete(k) : savedAgr.add(k);
+    persist();
+    fav.classList.toggle('on', savedAgr.has(k));
+    fav.setAttribute('aria-pressed', String(savedAgr.has(k)));
+    fav.querySelector('span').textContent = savedAgr.has(k) ? 'Saved' : 'Save';
+  });
+  $$('#viewCatTab [data-copy]').forEach(b => b.addEventListener('click', () => {
+    const done = () => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy'; }, 1400); };
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(b.dataset.copy).then(done, done);
+    else done();
+  }));
+  $$('#viewCatTab [data-owndl]').forEach(b => b.addEventListener('click', () => {
+    const d = (o.docs || []).find(x => x.id === b.dataset.owndl); if(d) ownDownload(d);
+  }));
+  if(!admin) return;
+  $$('#viewCatTab [data-owndel]').forEach(b => b.addEventListener('click', () => {
+    o.docs = (o.docs || []).filter(x => x.id !== b.dataset.owndel);
+    OWN_FILES.delete(b.dataset.owndel);
+    o.edited = agFmtDate(agToday());
+    saveOwn(); ownDocsOpen = true; redraw('#ownDocUp');
+  }));
+  const up = $('#ownDocUp'), file = $('#ownDocFile');
+  if(up && file){
+    up.addEventListener('click', () => file.click());
+    file.addEventListener('change', () => {
+      if(!file.files.length) return;
+      const files = [...file.files];
+      up.disabled = true; up.textContent = 'Uploading…';
+      setTimeout(() => {
+        files.forEach((f, i) => {
+          const id = 'd' + Date.now().toString(36) + i;
+          (o.docs = o.docs || []).unshift({id, name:f.name, date:agFmtDate(agToday()), size:f.size});
+          OWN_FILES.set(id, f);
+        });
+        o.edited = agFmtDate(agToday());
+        saveOwn(); ownDocsOpen = true; redraw('#ownDocUp');
+      }, RM ? 200 : 900);
+    });
+  }
+}
+
+/* ---- the cards, wherever agreements are listed ---- */
+function ownCardHTML(o, attr = 'data-ownopen'){
+  const use = o.mode === 'use';
+  const st = use ? 'Your agreement' : 'Records only';
+  const foot = o.custNo
+    ? `<b>${apEsc(o.custNo)}</b><em>customer number</em>`
+    : `<b>${apEsc(teamName(o.by))}</b><em>added it, ${o.added}</em>`;
+  return `
+    <li class="aga sup-card own" ${attr}="${o.id}" tabindex="0" role="button" style="--b:${ownInk(o)}"
+      aria-label="Open ${ownAttr(o.sup)}, your own agreement — ${ownCatName(o.cat)}, ${st.toLowerCase()}">
+      <span class="sup-id">
+        ${agrLogoTile(o.sup)}
+        <span class="sup-title">
+          <b class="aga-n">${apEsc(o.sup)}</b>
+          <span class="aga-cat">${ownCatName(o.cat)}</span>
+        </span>
+        <span class="aga-st ${use ? 'own' : 'rec'}">${st}</span>
+      </span>
+      <span class="sup-foot">
+        <span class="sup-rate own">${foot}</span>
+        <span class="sup-go" aria-hidden="true">${ARROW}</span>
+      </span>
+    </li>`;
+}
+/* the category page's list row */
+function ownAcRowHTML(o){
+  const use = o.mode === 'use', c = o.contact || {}, n = (o.docs || []).length;
+  const feats = [
+    c.name ? `Contact ${apEsc(c.name)}` : '',
+    o.link ? apEsc(ownHost(o.link)) : '',
+    n ? `${n} document${n === 1 ? '' : 's'}` : ''
+  ].filter(Boolean);
+  return `
+    <li class="ac own" style="--b:${ownInk(o)}">
+      <div class="ac-h">
+        ${agrLogoChip(o.sup)}
+        <span class="ac-id">
+          <b>${apEsc(o.sup)}</b>
+          <span class="ac-badges"><span class="ac-pill ${use ? 'own' : 'rec'}">${use ? 'Your agreement' : 'Records only'}</span></span>
+        </span>
+        ${o.custNo ? `<span class="ac-key"><b>${apEsc(o.custNo)}</b> customer number</span>` : ''}
+      </div>
+      ${feats.length ? `<ul class="ac-feats">${feats.map(f => `<li>${TICK}<span>${f}</span></li>`).join('')}</ul>` : ''}
+      <div class="ac-f">
+        <button type="button" class="linkbtn ac-more" data-ownopen="${o.id}"
+          aria-label="Open ${ownAttr(o.sup)}">Open${ARROW}</button>
+        <span class="spacer"></span>
+      </div>
+    </li>`;
+}
+/* the way in, where the cards are */
+const PLUS_I = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+function ownAddCardHTML(){
+  return `
+    <li class="aga sup-card own-add" data-ownnew="1" tabindex="0" role="button" aria-label="Add your own agreement">
+      <span class="sup-id">
+        <span class="agc-logo tint" aria-hidden="true">${PLUS_I}</span>
+        <span class="sup-title">
+          <b class="aga-n">Add your own agreement</b>
+          <span class="aga-cat">Link, customer number, contact, documents</span>
+        </span>
+      </span>
+      <span class="sup-foot">
+        <span></span>
+        <span class="sup-go" aria-hidden="true">${ARROW}</span>
+      </span>
+    </li>`;
+}
+/* the Overview card's row: no money, the link as the action */
+function ownPkgRowHTML(o){
+  return `
+    <li class="pkg-item own" style="--b:${ownInk(o)}">
+      <div class="pkg-row pkg-crow" data-own="${o.id}">
+        ${pkgLogoHTML(o.sup)}
+        <span class="pkg-t">
+          <span class="pkg-n">
+            <button type="button" class="pkg-open" data-own="${o.id}"
+              aria-label="${ownAttr(`${o.sup}, ${ownCatName(o.cat)}: your own agreement`)}">${apEsc(o.sup)}</button>
+            <span class="pkg-cat" aria-hidden="true">${ownCatName(o.cat)}</span>
+          </span>
+          <span class="pkg-s">Your own agreement${o.custNo ? ` · ${apEsc(o.custNo)}` : ''}</span>
+        </span>
+        ${o.link ? `<a class="btn btn-secondary btn-sm pkg-cta" href="${ownAttr(o.link)}" target="_blank" rel="noopener"
+          aria-label="${ownAttr(`Webshop, ${o.sup}`)}">Webshop</a>` : ''}
+      </div>
+    </li>`;
+}
+
+/* ---- the editor: a page in the same shell, with a leave guard ---- */
+function ownBlank(pre){
+  return {id:null, sup:(pre && pre.sup) || '', cat:(pre && pre.cat) || 'oth', mode:'use', link:'', custNo:'',
+    contact:{name:'', phone:'', email:''}, desc:'', docs:[], vis:'all', by:me().id, added:agFmtDate(agToday())};
+}
+function openOwnEdit(id, pre){
+  if(ownLeaveGuard(() => openOwnEdit(id, pre))) return;
+  if(!isAdmin()) return;
+  const orig = id ? ownById(id) : null;
+  const draft = orig ? JSON.parse(JSON.stringify(orig)) : ownBlank(pre);
+  draft.contact = draft.contact || {name:'', phone:'', email:''};
+  draft.docs = draft.docs || [];
+  ownEditing = {id:orig ? orig.id : null, draft, orig:JSON.stringify(draft), files:new Map(),
+    some:Array.isArray(draft.vis) ? draft.vis.slice() : [], err:null};
+  ownShellOpen(draft, ROWS.find(x => x.id === draft.cat) || null);
+  document.title = `${orig ? `Edit ${orig.sup}` : 'Add your own agreement'} · Advantage`;
+  renderOwnEdit();
+  $('#canvas').scrollTop = 0;
+}
+function renderOwnEdit(){
+  const E = ownEditing; if(!E) return;
+  const d = E.draft;
+  catTabAt = {r:ROWS.find(x => x.id === d.cat) || null, agrIdx:null, own:d};
+  const acts = `
+    <span class="inuse own" id="ownDirtyL"${ownDirty() ? '' : ' hidden'}>Unsaved changes</span>
+    <button type="button" class="btn btn-primary btn-block" id="ownSave">${E.id ? 'Save' : 'Add agreement'}</button>
+    <button type="button" class="btn btn-secondary btn-block" id="ownCancel">Cancel</button>`;
+  const facts = [{k:'Category', v:ownCatName(d.cat)}, {k:'In the portal', v:d.mode === 'use' ? 'Usable' : 'Records only'}];
+  catTabShell(
+    catTabHeroHTML(d.cat, '', apEsc(d.sup.trim()) || 'New agreement', 0, '', '', acts, false, '', null, false, facts,
+      {logo:ownLogoHTML(d), ink:ownInk(d), noFig:true}),
+    ownFormHTML(d, E));
+  wireOwnEdit();
+}
+function ownFormHTML(d, E){
+  const c = d.contact, some = Array.isArray(d.vis);
+  const inp = (id, type, val, ph, extra = '') =>
+    `<input class="own-in" id="${id}" type="${type}" value="${ownAttr(val)}"${ph ? ` placeholder="${ph}"` : ''} autocomplete="off" spellcheck="false"${extra}>`;
+  const lbl = (id, t, opt) => `<label class="own-lbl" for="${id}">${t}${opt ? ' <em>optional</em>' : ''}</label>`;
+  const n = d.docs.length;
+  return `
+  <form class="own-form" id="ownForm" novalidate>
+    <div class="fld">
+      ${lbl('ownSup', 'Supplier')}
+      ${inp('ownSup', 'text', d.sup, 'e.g. XL-BYG', E.err ? ' aria-invalid="true" aria-describedby="ownErr"' : '')}
+      ${E.err ? `<p class="own-err" id="ownErr">${E.err}</p>` : ''}
+    </div>
+    <div class="fld">
+      <div class="fld-h"><p class="pc-q" id="ownCatL">Category</p></div>
+      <div class="pill-row" role="group" aria-labelledby="ownCatL">
+        ${ownCats().map(k => `<button type="button" class="pill-opt" data-owncat="${k.id}" aria-pressed="${d.cat === k.id}">${k.n}</button>`).join('')}
+      </div>
+    </div>
+    <div class="fld">
+      <div class="fld-h"><p class="pc-q" id="ownModeL">In the portal</p></div>
+      <div class="pill-row" role="group" aria-labelledby="ownModeL">
+        <button type="button" class="pill-opt" data-ownmode="use" aria-pressed="${d.mode === 'use'}">Colleagues can use it</button>
+        <button type="button" class="pill-opt" data-ownmode="docs" aria-pressed="${d.mode === 'docs'}">Records only</button>
+      </div>
+      <p class="own-sub">${d.mode === 'use'
+        ? 'Listed beside the Advantage agreements, with the link and the customer number.'
+        : 'Kept for admins, with its documents. Not listed as an agreement to use.'}</p>
+    </div>
+    <div class="fld">${lbl('ownLink', 'Link', true)}${inp('ownLink', 'url', d.link, 'https://', ' inputmode="url"')}</div>
+    <div class="fld own-2">
+      <div>${lbl('ownNo', 'Customer number or code', true)}${inp('ownNo', 'text', d.custNo, '')}</div>
+      <div>${lbl('ownCn', 'Contact person', true)}${inp('ownCn', 'text', c.name, '')}</div>
+    </div>
+    <div class="fld own-2">
+      <div>${lbl('ownCp', 'Phone', true)}${inp('ownCp', 'tel', c.phone, '')}</div>
+      <div>${lbl('ownCe', 'Email', true)}${inp('ownCe', 'email', c.email, '')}</div>
+    </div>
+    <div class="fld">
+      ${lbl('ownDesc', 'Description', true)}
+      <textarea class="own-in" id="ownDesc" placeholder="What it covers and how to order on it.">${apEsc(d.desc || '')}</textarea>
+    </div>
+    <div class="fld">
+      <div class="fld-h"><p class="pc-q">Documents</p><span class="spacer"></span>
+        ${n ? `<span class="fld-hint">${n} file${n === 1 ? '' : 's'}</span>` : ''}</div>
+      ${n ? `<ul class="agdoc-list own-docs">${d.docs.map(x => `
+        <li class="agdoc"><span class="agdoc-ic">${DOC_I}</span>
+          <span class="agdoc-t"><b>${apEsc(x.name)}</b><span>${x.date}${x.size ? ` · ${ownSize(x.size)}` : ''}</span></span>
+          <button type="button" class="btn btn-ghost btn-sm" data-owndocrm="${x.id}" aria-label="Remove ${ownAttr(x.name)}">Remove</button></li>`).join('')}</ul>` : ''}
+      <div><button type="button" class="btn btn-secondary btn-sm" id="ownEdUp">Upload</button>
+        <input type="file" id="ownEdFile" accept=".pdf,.csv,.xlsx,.docx,.png,.jpg" multiple hidden></div>
+    </div>
+    <div class="fld">
+      <div class="fld-h"><p class="pc-q" id="ownVisL">Who can see it</p></div>
+      ${d.mode === 'use' ? `
+      <div class="pill-row" role="group" aria-labelledby="ownVisL">
+        <button type="button" class="pill-opt" data-ownvis="all" aria-pressed="${!some}">Everyone at ${apEsc(state.company)}</button>
+        <button type="button" class="pill-opt" data-ownvis="some" aria-pressed="${some}">Only some people</button>
+      </div>
+      ${some ? `<ul class="rcp own-rcp">${team().map(p => {
+        const adm = p.role === 'admin', on = adm || d.vis.includes(p.id);
+        return `
+        <li><button type="button" class="rcp-row" data-ownp="${p.id}" aria-pressed="${on}"${adm ? ' disabled' : ''}>
+          <span class="rcp-box">${CHECK_SM}</span>
+          <span class="own-av" aria-hidden="true">${initials(p.n)}</span>
+          <span class="rcp-id"><b>${apEsc(p.n)}</b><span>${p.t}${adm ? ' · admin, always' : ''}</span></span>
+        </button></li>`; }).join('')}</ul>` : ''}`
+      : '<p class="own-sub">Admins only. Records are not shown to colleagues.</p>'}
+    </div>
+  </form>`;
+}
+function wireOwnEdit(){
+  const E = ownEditing; if(!E) return;
+  const d = E.draft;
+  const form = $('#ownForm'); if(!form) return;
+  form.addEventListener('submit', e => { e.preventDefault(); ownSave(); });
+  const paint = () => ownEditPaintHero();
+  const bind = (sel, set) => {
+    const el = $(sel); if(!el) return;
+    el.addEventListener('input', () => {
+      set(el.value);
+      if(E.err && sel === '#ownSup' && el.value.trim()){
+        E.err = null; el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby');
+        const p = $('#ownErr'); if(p) p.remove();
+      }
+      paint();
+    });
+  };
+  bind('#ownSup',  v => { d.sup = v; });
+  bind('#ownLink', v => { d.link = v.trim(); });
+  bind('#ownNo',   v => { d.custNo = v.trim(); });
+  bind('#ownCn',   v => { d.contact.name = v.trim(); });
+  bind('#ownCp',   v => { d.contact.phone = v.trim(); });
+  bind('#ownCe',   v => { d.contact.email = v.trim(); });
+  bind('#ownDesc', v => { d.desc = v; });
+  $$('#ownForm [data-owncat]').forEach(b => b.addEventListener('click', () => {
+    d.cat = b.dataset.owncat;
+    $$('#ownForm [data-owncat]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.owncat === d.cat)));
+    paint();
+  }));
+  $$('#ownForm [data-ownmode]').forEach(b => b.addEventListener('click', () => {
+    d.mode = b.dataset.ownmode; ownEditRepaint(`[data-ownmode="${d.mode}"]`);
+  }));
+  $$('#ownForm [data-ownvis]').forEach(b => b.addEventListener('click', () => {
+    if(b.dataset.ownvis === 'all'){ if(Array.isArray(d.vis)) E.some = d.vis.slice(); d.vis = 'all'; }
+    else d.vis = (E.some || []).slice();
+    ownEditRepaint(`[data-ownvis="${b.dataset.ownvis}"]`);
+  }));
+  $$('#ownForm [data-ownp]').forEach(b => b.addEventListener('click', () => {
+    if(!Array.isArray(d.vis)) return;
+    const id = b.dataset.ownp;
+    d.vis = d.vis.includes(id) ? d.vis.filter(x => x !== id) : [...d.vis, id];
+    E.some = d.vis.slice();
+    b.setAttribute('aria-pressed', String(d.vis.includes(id)));
+    paint();
+  }));
+  $$('#ownForm [data-owndocrm]').forEach(b => b.addEventListener('click', () => {
+    d.docs = d.docs.filter(x => x.id !== b.dataset.owndocrm);
+    E.files.delete(b.dataset.owndocrm);
+    ownEditRepaint('#ownEdUp');
+  }));
+  const up = $('#ownEdUp'), file = $('#ownEdFile');
+  if(up && file){
+    up.addEventListener('click', () => file.click());
+    file.addEventListener('change', () => {
+      [...file.files].forEach((f, i) => {
+        const id = 'd' + Date.now().toString(36) + i;
+        d.docs.push({id, name:f.name, date:agFmtDate(agToday()), size:f.size});
+        E.files.set(id, f);
+      });
+      ownEditRepaint('#ownEdUp');
+    });
+  }
+  const save = $('#ownSave'); if(save) save.addEventListener('click', () => ownSave());
+  const cancel = $('#ownCancel'); if(cancel) cancel.addEventListener('click', ownCancel);
+}
+/* the hero follows the form without being rebuilt, so the field keeps its caret */
+function ownEditPaintHero(){
+  const E = ownEditing; if(!E) return;
+  const d = E.draft, name = d.sup.trim() || 'New agreement';
+  const h1 = $('#viewCatTab .cat-tab-title'); if(h1) h1.textContent = name;
+  const lg = $('#viewCatTab .cat-mast-name .pkg-logo.init'); if(lg) lg.textContent = initialsOf(d.sup.trim() || 'New');
+  const dd = $$('#viewCatTab .cat-mast-facts dd');
+  if(dd[0]) dd[0].textContent = ownCatName(d.cat);
+  if(dd[1]) dd[1].textContent = d.mode === 'use' ? 'Usable' : 'Records only';
+  const dl = $('#ownDirtyL'); if(dl) dl.hidden = !ownDirty();
+  const crumb = $('#viewCatTab .cat-crumb.is-here'); if(crumb) crumb.textContent = name;
+}
+/* the form alone is rebuilt on a structural change (mode, visibility, documents) */
+function ownEditRepaint(focusSel){
+  const E = ownEditing; if(!E) return;
+  const main = $('#viewCatTab .cat-tab-main'); if(!main) return;
+  const top = $('#canvas').scrollTop;
+  main.innerHTML = ownFormHTML(E.draft, E);
+  wireOwnEdit(); ownEditPaintHero();
+  $('#canvas').scrollTop = top;
+  if(focusSel){ const el = $('#ownForm ' + focusSel) || $(focusSel); if(el) el.focus({preventScroll:true}); }
+}
+function ownSave(thenGo){
+  const E = ownEditing; if(!E) return false;
+  const d = E.draft;
+  d.sup = d.sup.trim();
+  if(!d.sup){ E.err = 'Give the supplier a name.'; ownEditRepaint('#ownSup'); return false; }
+  if(d.link && !/^https?:\/\//i.test(d.link)) d.link = 'https://' + d.link;
+  const list = ownAll(), now = agFmtDate(agToday());
+  if(E.id){
+    const i = list.findIndex(o => o.id === E.id);
+    d.edited = now;
+    if(i >= 0) list[i] = d; else list.unshift(d);
+  }else{
+    d.id = 'o' + Date.now().toString(36);
+    d.by = me().id; d.added = now;
+    list.unshift(d);
+  }
+  E.files.forEach((f, id) => OWN_FILES.set(id, f));
+  saveOwn();
+  ownEditing = null;
+  ownChanged();
+  showToastCard(TICK, E.id ? `${d.sup} saved` : `${d.sup} added`, d.mode === 'use'
+    ? 'It sits beside the Advantage agreements for everyone who can see it.'
+    : 'Kept with your records, for admins.', 'brand');
+  (thenGo || (() => openOwn(d.id)))();
+  return true;
+}
+function ownCancel(){
+  const id = ownEditing && ownEditing.id;
+  const go = () => { ownEditing = null; id ? openOwn(id) : closeCatTab(); };
+  if(ownLeaveGuard(go)) return;
+  go();
+}
+/* every way off the editor passes through here: nothing to lose, carry on;
+   something to lose, ask first and run the navigation from the answer */
+function ownLeaveGuard(go){
+  if(!ownEditing) return false;
+  if(!ownDirty()){ ownEditing = null; return false; }
+  ownAskLeave(go);
+  return true;
+}
+function ownAskLeave(go){
+  flowDom('ol', 'Unsaved changes', 'Leave without saving?');
+  $('#ol').classList.add('own-dlgw');
+  const d = ownEditing.draft, canSave = !!d.sup.trim();
+  $('#olStep').textContent = '';
+  $('#olBody').innerHTML = `<p class="own-dlg">Your changes to <b>${apEsc(d.sup.trim() || 'this agreement')}</b> are not saved.</p>`;
+  $('#olFoot').innerHTML = `
+    <span class="spacer"></span>
+    <button type="button" class="btn btn-secondary" id="olKeep">Keep editing</button>
+    <button type="button" class="btn btn-secondary own-del" id="olDiscard">Discard changes</button>
+    ${canSave ? '<button type="button" class="btn btn-primary" id="olSave">Save and leave</button>' : ''}`;
+  $('#olKeep').addEventListener('click', () => flowClose('ol'));
+  $('#olDiscard').addEventListener('click', () => { flowClose('ol'); ownEditing = null; go(); });
+  const sv = $('#olSave');
+  if(sv) sv.addEventListener('click', () => { flowClose('ol'); ownSave(go); });
+  flowOpen('ol');
+}
+function ownAskDelete(o){
+  flowDom('od', 'Delete', `Delete ${o.sup}?`);
+  $('#od').classList.add('own-dlgw');
+  const n = (o.docs || []).length;
+  $('#odStep').textContent = '';
+  $('#odBody').innerHTML = `<p class="own-dlg">It disappears for everyone at ${apEsc(state.company)}${
+    n ? `, with its ${n} document${n === 1 ? '' : 's'}` : ''}.</p>`;
+  $('#odFoot').innerHTML = `
+    <span class="spacer"></span>
+    <button type="button" class="btn btn-secondary" id="odCancel">Cancel</button>
+    <button type="button" class="btn btn-primary btn-danger" id="odGo">Delete</button>`;
+  $('#odCancel').addEventListener('click', () => flowClose('od'));
+  $('#odGo').addEventListener('click', () => { flowClose('od'); ownDelete(o.id); });
+  flowOpen('od');
+}
+function ownDelete(id){
+  const o = ownById(id); if(!o) return;
+  ownStore()[personaKey] = ownAll().filter(x => x.id !== id);
+  (o.docs || []).forEach(d => OWN_FILES.delete(d.id));
+  savedAgr.delete('own:' + id); persist();
+  saveOwn();
+  ownEditing = null;
+  ownChanged();
+  closeCatTab();
+  showToastCard(TICK, `${o.sup} deleted`, 'It no longer shows anywhere in the portal.', 'brand');
+}
+/* every surface that lists agreements follows the store */
+function ownChanged(){
+  agreementsChanged();
+  const ag = $('#viewAgreements'); if(ag && !ag.hidden) renderAgreements();
+  const sp = $('#viewSup'); if(sp && !sp.hidden) renderSup();
+  if($$('.pkg').length) pkgRefresh();
+}
+/* another tab added, changed or removed one */
+addEventListener('storage', e => {
+  if(e.key !== OKEY) return;
+  OWN_BY = readOwn();
+  ownChanged();
+  ownRefreshPage();
+});
+/* the browser's own guard for a reload or a closed tab */
+addEventListener('beforeunload', e => {
+  if(!ownDirty()) return;
+  e.preventDefault(); e.returnValue = '';
+});
 
 function railData(){
   if(newCustomer) return {
@@ -10236,7 +11006,7 @@ function renderActivityPanel(d){
   $$('#activityBody .act-req').forEach(b => b.addEventListener('click', () => {
     const q = REQS.find(x => x.id === b.dataset.req);
     if(!q) return;
-    if(!(catTabAt && catTabAt.r.id === q.catId)) openCatTab(q.catId);
+    if(!(catTabAt && catTabAt.r && catTabAt.r.id === q.catId)) openCatTab(q.catId);
     openReqStatus(q.id);
   }));
 }
@@ -11245,7 +12015,7 @@ function ledgerSet(on){
   bar.classList.toggle('ledger-on', on);
   document.body.classList.toggle('ledger-on', on);
   ld.setAttribute('aria-hidden', String(!on));
-  if(on) ledgerAlign();
+  if(on) ledgerAlign(); else searchAlign();
 }
 /* the scrolled bar lines up with the page beneath it: tiles on the content's left
    edge, token on its right. The content's edges are read off the cards section
@@ -11267,7 +12037,23 @@ function ledgerAlign(){
     pill.style.setProperty('--bs-right', `${Math.round(right - c.right)}px`);
   }
 }
-addEventListener('resize', () => ledgerAlign());
+/* the resting search lines up with the page too: its left edge on the content's
+   left edge, measured off .page like barPageAlign(), so a collapsed nav rail, an
+   open activity rail or a narrower window all keep it true. The spacer between
+   the brand and the field is what moves; when the edge is left of where the
+   brand ends the spacer closes and the field sits as far left as it can. */
+function searchAlign(){
+  const bar = $('.appbar'), pg = $('.page');
+  const sp = bar && bar.querySelector(':scope > .brand + .spacer');
+  if(!bar || !sp || !pg || pg.hidden || bar.classList.contains('ledger-on')) return;
+  const r = sp.getBoundingClientRect(), p = pg.getBoundingClientRect();
+  if(!r.height || !p.width) return;
+  const edge = p.left + parseFloat(getComputedStyle(pg).paddingLeft);
+  const gap = parseFloat(getComputedStyle(bar).columnGap) || 16;
+  bar.style.setProperty('--search-left', `${Math.max(0, Math.round(edge - r.left - gap))}px`);
+  bar.classList.add('search-aligned');
+}
+addEventListener('resize', () => { ledgerAlign(); searchAlign(); });
 function ledgerPaint(m){
   const ld = $('#barScrolled'); if(!ld) return;
   const sav = m.cards.find(c => c.go === 'savings'), sp = m.cards.find(c => c.go === 'spend');
@@ -12292,6 +13078,12 @@ function buildSupplierShelves(){
     {id:'own', eye:'In use for your company', title:() => state.company,
      note:'The agreements your account is already on — verified, in progress or not being used.',
      cards:on.map((x, k) => supCardOf(x.r, x.a, k))},
+    /* the company's own, then the card that adds one */
+    {id:'yours', eye:'Added by your company', title:() => 'Your own agreements',
+     note:'',
+     cards:[...ownList().map((o, k) => ({n:o.sup, cat:ownCatName(o.cat), own:o, pct:0,
+       ic:SUP_ROW_ICON[o.cat] || 'bricks', tone:SUP_TONES[k % SUP_TONES.length]})),
+       ...(isAdmin() ? [{n:'Add your own agreement', cat:'', add:true, pct:0, ic:'bricks', tone:SUP_TONES[0]}] : [])]},
     {id:'new', eye:'New this quarter', title:() => 'Recently negotiated',
      note:'Agreements the group negotiated in the last three months, not yet activated by you.',
      cards:fresh.map((x, k) => supCardOf(x.r, x.a, k + 1))},
@@ -12372,6 +13164,9 @@ let SUP_SHELVES = supShelvesMap();
    persona and every figure below depends on them. */
 const supMetaCache = new Map();
 function supMeta(c){
+  /* an own agreement joins no roster and states no money; nor does the add card */
+  if(c.own || c.add) return {c, name:c.n, cat:c.cat, pct:0, row:null, hit:null, shelves:new Set(['yours']), own:c.own || null, add:!!c.add,
+    onAgr:false, ready:false, known:false, isNew:false, isPop:false, isMine:false, est:false, save:0, covers:0, spend:0};
   if(supMetaCache.has(c.n)) return supMetaCache.get(c.n);
   const hit   = supAgrMatch(c.n);
   const row   = hit ? hit.r : supRow(SUP_CAT_ROW[c.cat]);
@@ -12519,6 +13314,8 @@ function supWhyHTML(m){
 }
 
 function supCardHTML(c){
+  if(c.add) return ownAddCardHTML();
+  if(c.own) return ownCardHTML(c.own, 'data-own');
   const m = supMeta(c);
   const brandName = m.hit ? m.hit.a.n : m.name;
   const dest = m.hit ? `data-cat="${m.row.id}" data-idx="${m.hit.i}"`
@@ -12647,10 +13444,14 @@ function barPageWatch(el, t){
   io.observe(el);
   return io;
 }
-/* the row moves with the canvas: a rail opening or closing, a window resizing */
+/* the row and the resting search move with the canvas: a rail opening or
+   closing, a window resizing — and with the page's own column, which a view can
+   widen without the canvas changing */
 if('ResizeObserver' in window){
-  const cv = $('#canvas');
-  if(cv) new ResizeObserver(() => barPageAlign()).observe(cv);
+  const ro = new ResizeObserver(() => { barPageAlign(); searchAlign(); });
+  const cv = $('#canvas'), pg = $('.page');
+  if(cv) ro.observe(cv);
+  if(pg) ro.observe(pg);
 }
 
 /* ---- the menus on the row ----
@@ -12775,6 +13576,7 @@ const SUP_CATS = () => [...new Set(SUPPLIERS.flatMap(sh => sh.cards.map(c => c.c
    says. Six pills wrapped onto a second row to offer two duplicates. */
 const SUP_STATUS = [
   {id:'all', l:'All suppliers'},
+  {id:'own', l:'Your own agreements'},
   {id:'on',  l:'Active for you'},
   {id:'off', l:'Not on agreement yet'}
 ];
@@ -12789,12 +13591,15 @@ const SUP_SORTS = [
 function supPool(){
   const seen = new Set();
   return SUPPLIERS.flatMap(sh => sh.cards).filter(c => {
-    if(seen.has(c.n)) return false;
-    seen.add(c.n); return true;
+    const k = c.own ? 'own:' + c.own.id : c.add ? 'own:add' : c.n;
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
   });
 }
 
 function supStatusOk(m){
+  if(m.add) return false;
+  if(m.own) return supStatus === 'all' || supStatus === 'own';
   switch(supStatus){
     case 'on':    return m.onAgr;
     case 'off':   return !m.onAgr;
@@ -12834,7 +13639,7 @@ function supResetAll(){
 function renderSupBar(count){
   const bar = $('#supBar');
   if(!supFiltering()){
-    const n = supPool().length;
+    const n = supPool().filter(c => !c.add).length;
     bar.innerHTML = `<span><b>${n} agreements</b> in the catalogue, in ${
       SUPPLIERS.length} lists — the same ${n} the Agreements page counts</span>`;
     return;
@@ -12861,7 +13666,7 @@ const BP_SUP = {
   search:{placeholder:'Search supplier or category', read:() => supQuery,
     write(q){ supQuery = q; renderSupBody(); }},
   html(){
-    return bpPop('bpStB', 'All suppliers', 'Filter by status', SUP_STATUS.map(st => `
+    return bpPop('bpStB', 'All suppliers', 'Filter by status', SUP_STATUS.filter(st => st.id !== 'own' || ownOn()).map(st => `
         <button type="button" data-supstatus="${st.id}" aria-pressed="${supStatus === st.id}"><span>${st.l}</span>${SUP_TICK}</button>`).join(''))
       + bpPop('bpCatB', 'All categories', 'Filter by category', `
         <button type="button" data-supcat="all" aria-pressed="${supCat === 'all'}"><span>All categories</span>${SUP_TICK}</button>`
@@ -12975,7 +13780,7 @@ function renderSup(){
     </div>
     <div class="sup-tools">
         <div class="sup-tools-row" role="group" aria-label="Filter by status">
-          ${SUP_STATUS.map(st => `
+          ${SUP_STATUS.filter(st => st.id !== 'own' || ownOn()).map(st => `
             <button type="button" class="agc-pill" data-supstatus="${st.id}"
               aria-pressed="${supStatus === st.id}">${st.l}</button>`).join('')}
         </div>
@@ -13039,6 +13844,8 @@ function renderSup(){
   /* the card is one hit area: it carries no buttons of its own except the save
      toggle, which stops the event itself in wireAgrFav */
   const supGo = li => {
+    if(li.dataset.ownnew){ openOwnEdit(null); return; }
+    if(li.dataset.own){ openOwn(li.dataset.own); return; }
     if(li.dataset.dc === '1'){ openDataCenter(); return; }
     openCatTab(li.dataset.cat, li.dataset.idx ? +li.dataset.idx : undefined);
   };
@@ -13380,6 +14187,7 @@ function closeOpportunity(){
 const DASH_CIRCLE = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 3"/></svg>';
 
 function openDataCenter(){
+  if(ownLeaveGuard(openDataCenter)) return;
   catTabStandDown();
   const ag = $('#viewAgreements'); if(ag) ag.hidden = true;
   /* the data centre lives inside .page, which setView() hides outright on the
@@ -13798,6 +14606,7 @@ function catTabOrigin(){
 function openCatTab(catId, agrIdx){
   const r = ROWS.find(x => x.id === catId);
   if(!r) return;
+  if(ownLeaveGuard(() => openCatTab(catId, agrIdx))) return;
   /* the FIRST open wins: following an agreement from inside a category page must
      not overwrite the origin with the category page itself */
   if(!catTabFrom) catTabFrom = catTabOrigin();
@@ -13836,6 +14645,7 @@ function catTabStandDown(){
 /* the back button: return to the page this one was opened from, at the scroll
    position it was left at */
 function closeCatTab(){
+  if(ownLeaveGuard(closeCatTab)) return;
   const from = catTabFrom;
   catTabStandDown();
   if(from && from.kind !== 'nav'){
@@ -13860,13 +14670,14 @@ function closeCatTab(){
    Built in the shell because catTabAt is set before either renderer calls it. */
 function catCrumbsHTML(){
   if(!catTabAt) return '';
-  const {r, agrIdx} = catTabAt;
-  const here = agrIdx === null ? r.n : (r.agr[agrIdx] || {}).n || r.n;
+  const {r, agrIdx, own} = catTabAt;
+  const here = own ? ((own.sup || '').trim() || 'New agreement')
+    : agrIdx === null ? r.n : (r.agr[agrIdx] || {}).n || r.n;
   const sep = '<span class="cat-crumb-s" aria-hidden="true">/</span>';
   const trail = [];
   if(catTabFrom) trail.push(`<button type="button" class="cat-crumb" id="catTabExit">${catBackLabel()}</button>`);
   /* the category step only exists when there is one above us to go to */
-  if(agrIdx !== null) trail.push(`<button type="button" class="cat-crumb" id="catTabUp">${r.n}</button>`);
+  if(agrIdx !== null || (own && r)) trail.push(`<button type="button" class="cat-crumb" id="catTabUp">${r.n}</button>`);
   trail.push(`<span class="cat-crumb is-here" aria-current="page">${here}</span>`);
   return `<nav class="cat-crumbs" aria-label="Breadcrumb">${trail.join(sep)}</nav>`;
 }
@@ -13890,7 +14701,11 @@ function catTabShell(heroHTML, mainHTML){
   const exit = $('#catTabExit');
   if(exit) exit.addEventListener('click', closeCatTab);
   const up = $('#catTabUp');
-  if(up && catTabAt) up.addEventListener('click', () => renderCatTab(catTabAt.r));
+  if(up && catTabAt) up.addEventListener('click', () => {
+    const r = catTabAt.r;
+    if(ownLeaveGuard(() => renderCatTab(r))) return;
+    renderCatTab(r);
+  });
   /* not while a dialog is open: sending a request re-renders this page behind the
      sheet, and moving focus to the page title would pull the user out of it */
   const h1 = $('.cat-tab-title');
@@ -13962,7 +14777,7 @@ function figSource(r, a){
    `more.infoTitle` moves the info mark from the caption to beside the title. */
 function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML, estimated, figLabel, prov, actual, facts, more = {}){
   const eyebrow = tag ? `<span class="cat-mast-eyebrow">${tag}</span>` : '';
-  const fig = actual ? actualHTML(save) : figHTML(save, estimated);
+  const fig = more.fig !== undefined ? more.fig : actual ? actualHTML(save) : figHTML(save, estimated);
   const src = prov ? (prov.doc
     ? `<button type="button" class="doc-chip named" data-docgo="1" aria-label="Source: ${apEsc(prov.doc.name)} — open your data">${DOC_I}<span>${prov.doc.name}</span></button>`
     : `<span class="cat-mast-src">${prov.src}</span>`) : '';
@@ -13976,13 +14791,13 @@ function catTabHeroHTML(catId, tag, title, save, sub, desc, extraHTML, estimated
       <div class="cat-mast-title"><h1 class="cat-tab-title">${title}</h1>${info}</div></div>`
       : `<h1 class="cat-tab-title">${title}</h1>`}
     ${facts ? '' : `<p class="cat-mast-sub">${sub}</p>`}
-    <div class="cat-mast-fig">
+    ${more.noFig ? '' : `<div class="cat-mast-fig">
       ${more.labelAbove ? `<div class="cat-mast-figv"><span class="cat-mast-lbl">${figLabel}</span>
       <b>${fig} kr.</b></div>
       ${src || info ? `<span class="cat-mast-cap">${src}${info}</span>` : ''}` : `
       <b>${fig} kr.</b>
       <span class="cat-mast-cap">${figLabel || 'potential saving a year'}${src ? `<i class="cat-mast-dot" aria-hidden="true"></i>${src}` : ''}${more.infoTitle ? '' : info}</span>`}
-    </div>
+    </div>`}
     ${facts ? `
     <dl class="cat-mast-facts${facts.some(f => f.op) ? ' cat-mast-eq' : ''}">
       ${facts.map(f => `<div><dt>${f.k}</dt><dd>${f.op
@@ -14145,11 +14960,16 @@ const supKnown = r => !newCustomer && areaExact(r);
 /* the list opens on four names and the rest are one tap away */
 let catOffAll = false;
 const OFF_SHOW = 4;
-function offSupHTML(r){
-  const n = Math.max(0, r.sup - r.agr.length);
+function offSupHTML(r, owns = []){
+  const supN = Math.max(r.sup, r.agr.length + owns.length);
+  const n = Math.max(0, supN - r.agr.length - owns.length);
   if(!n) return '';
-  const names = (OFF_SUP[r.id] || []).slice(0, n);
+  const ownNames = new Set(owns.map(o => o.sup.trim().toLowerCase()));
+  const names = (OFF_SUP[r.id] || []).filter(x => !ownNames.has(x.toLowerCase())).slice(0, n);
   const pill = '<span class="ac-pill none">No agreement</span>';
+  /* the admin's way in: the supplier is already named, so is the area */
+  const add = x => isAdmin()
+    ? `<button type="button" class="linkbtn ac-off-add" data-ownadd="${ownAttr(x)}">Add agreement</button>` : '';
   if(!supKnown(r) || names.length < n) return `
     <li class="ac-off"><ul><li class="ac-off-row">
       <span class="agr-chip ac-off-ic">${featIcon('group')}</span>
@@ -14158,7 +14978,7 @@ function offSupHTML(r){
   const shown = cut ? names.slice(0, OFF_SHOW) : names;
   return `
     <li class="ac-off"><ul>${shown.map(x => `<li class="ac-off-row">
-      ${agrLogoChip(x)}<b>${x}</b>${pill}</li>`).join('')}</ul>
+      ${agrLogoChip(x)}<b>${x}</b>${pill}${add(x)}</li>`).join('')}</ul>
       ${names.length > OFF_SHOW + 1 ? `<button type="button" class="linkbtn ac-off-all" data-offall="1">
         ${catOffAll ? 'Show fewer' : `Show all ${names.length}`}</button>` : ''}</li>`;
 }
@@ -15054,6 +15874,7 @@ function renderCatTab(r){
   /* one row per agreement, read like a list row: logo, name and status, the
      discount as the trailing value, then the Ask mark. "Read more" opens the
      agreement and stretches over the row, so the hover ground is honest. */
+  const owns = ownList().filter(o => o.cat === r.id);
   const cards = r.agr.map((a,i) => {
     const rate = Math.round(a.save / a.covers * 100);
     const mine = reqForAgr(r.id, a.n);
@@ -15086,11 +15907,11 @@ function renderCatTab(r){
                Price request</button>` : ''}
       </div>
     </li>`;
-  }).join('');
+  }).join('') + owns.map(ownAcRowHTML).join('');
 
   const inUse = r.agr.filter(a => a.req).length;
   const catEstimated = r.agr.some(a => !a.req && isEstimated(a));
-  const supN = Math.max(r.sup, r.agr.length);
+  const supN = Math.max(r.sup, r.agr.length + owns.length);
   catTabShell(
     /* the hero no longer carries the agreement list: it was a white-on-white list
        inside a 380px column, which is precisely why the agreements disappeared.
@@ -15120,11 +15941,11 @@ function renderCatTab(r){
       <div class="cat-agrs-head">
         <div>
           <h3>${supN} suppliers in ${r.n.toLowerCase()}</h3>
-          <p>${inUse ? `${inUse} already in use. ` : ''}Open one to see how it compares with what you
+          <p>${inUse ? `${inUse} already in use. ` : ''}${owns.length ? `${owns.length} of your own. ` : ''}Open one to see how it compares with what you
             pay today — or push back on a supplier's price without leaving them.</p>
         </div>
       </div>
-      <ul class="cat-agr-cards">${cards}${offSupHTML(r)}</ul>
+      <ul class="cat-agr-cards">${cards}${offSupHTML(r, owns)}</ul>
     </section>
     ${catOtherHTML(r)}`
   );
@@ -15145,6 +15966,10 @@ function renderCatTab(r){
   if(offAll) offAll.addEventListener('click', () => { catOffAll = !catOffAll; renderCatTab(r); });
   $$('#viewCatTab [data-agr]').forEach(b => b.addEventListener('click',
     () => renderCatTabAgreement(r, +b.dataset.agr)));
+  $$('#viewCatTab [data-ownopen]').forEach(b => b.addEventListener('click',
+    () => openOwn(b.dataset.ownopen)));
+  $$('#viewCatTab [data-ownadd]').forEach(b => b.addEventListener('click',
+    () => openOwnEdit(null, {sup:b.dataset.ownadd, cat:r.id})));
 }
 
 /* five plausible line items per category — enough to make the basket concrete
@@ -15949,7 +16774,9 @@ let agcStatus = 'all', agcQuery = '', agcLetter = 'all';
    handlers live outside the render's closure */
 let AGA_ALL = [], agaLastCount = 0;
 
-function agaCardHTML({r, a, i}){
+function agaCardHTML(x){
+  if(x.own) return ownCardHTML(x.own);
+  const {r, a, i} = x;
   const rate = Math.round(a.save / a.covers * 100);
   const mine = !!a.req, idle = mine && agDormant(a), pend = mine && agPending(a);
   const est = isEstimated(a);
@@ -15995,14 +16822,24 @@ function agaCardHTML({r, a, i}){
 /* the letters that actually have something behind them — an A–Z where half the
    keys return nothing is a dead end dressed up as a control */
 function agaLetters(all){
-  return [...new Set(all.map(x => x.a.n.trim()[0].toUpperCase()))].sort();
+  return [...new Set(all.map(x => (x.own ? x.own.sup : x.a.n).trim()[0].toUpperCase()))].sort();
 }
 function agaMatches(all){
   const q = agcQuery.trim().toLowerCase();
-  return all.filter(({r, a}) =>
-    (agcStatus === 'all' || (agcStatus === 'new' ? (a.isNew && !a.req) : agcStatus === 'use' ? a.req : !a.req)) &&
-    (agcLetter === 'all' || a.n.trim()[0].toUpperCase() === agcLetter) &&
-    (!q || a.n.toLowerCase().includes(q) || r.n.toLowerCase().includes(q)));
+  return all.filter(x => {
+    if(x.own){
+      const o = x.own;
+      const hay = `${o.sup} ${ownCatName(o.cat)} ${o.custNo || ''}`.toLowerCase();
+      return (agcStatus === 'all' || agcStatus === 'own' || (agcStatus === 'use' && o.mode === 'use')) &&
+        (agcLetter === 'all' || o.sup.trim()[0].toUpperCase() === agcLetter) &&
+        (!q || hay.includes(q));
+    }
+    const {r, a} = x;
+    return (agcStatus === 'all' || (agcStatus === 'new' ? (a.isNew && !a.req)
+        : agcStatus === 'use' ? a.req : agcStatus === 'own' ? false : !a.req)) &&
+      (agcLetter === 'all' || a.n.trim()[0].toUpperCase() === agcLetter) &&
+      (!q || a.n.toLowerCase().includes(q) || r.n.toLowerCase().includes(q));
+  });
 }
 const agcFiltering = () =>
   !!agcQuery.trim() || agcStatus !== 'all' || agcLetter !== 'all';
@@ -16020,6 +16857,7 @@ function agcOn(){
 
 const AGC_STATUS = [
   {id:'all',   l:'All agreements'},
+  {id:'own',   l:'Your own'},
   {id:'new',   l:'New this quarter'},
   {id:'use',   l:'In use'},
   {id:'avail', l:'Available'}
@@ -16036,7 +16874,7 @@ const AGC_STATUS = [
 function agaControlsHTML(all){
   return `
     <div class="sup-tools-row" role="group" aria-label="Filter by status">
-      ${AGC_STATUS.map(st => `
+      ${AGC_STATUS.filter(st => st.id !== 'own' || ownOn()).map(st => `
         <button type="button" class="agc-pill" data-agcst="${st.id}"
           aria-pressed="${agcStatus === st.id}">${st.l}</button>`).join('')}
     </div>
@@ -16070,7 +16908,7 @@ function renderAgcBar(all, count){
   if(!bar) return;
   if(!agcFiltering()){
     bar.innerHTML = `<span><b>${all.length} agreements</b>, across ${
-      new Set(all.map(x => x.r.id)).size} areas</span>`;
+      new Set(all.map(x => x.own ? x.own.cat : x.r.id)).size} areas</span>`;
     return;
   }
   const toks = [];
@@ -16093,7 +16931,7 @@ const BP_AGS = {
   search:{placeholder:'Search supplier or area', read:() => agcQuery,
     write(q){ agcQuery = q; renderAgaBody(AGA_ALL); }},
   html(){
-    return bpPop('bpAgStB', 'All agreements', 'Filter by status', AGC_STATUS.map(st => `
+    return bpPop('bpAgStB', 'All agreements', 'Filter by status', AGC_STATUS.filter(st => st.id !== 'own' || ownOn()).map(st => `
         <button type="button" data-agcst="${st.id}" aria-pressed="${agcStatus === st.id}"><span>${st.l}</span>${SUP_TICK}</button>`).join(''))
       + bpPop('bpAzB', 'Any first letter', 'Filter by first letter', `
         <button type="button" data-agcaz="all" aria-pressed="${agcLetter === 'all'}"><span>Any first letter</span>${SUP_TICK}</button>`
@@ -16137,17 +16975,24 @@ function renderAgaBody(all){
      money inside each — and the rest in the roster's order. A label over each
      run only when both are there: one run labelled is a heading over nothing. */
   const rank = x => agDormant(x.a) ? 0 : agPending(x.a) ? 1 : 2;
-  const held = hits.filter(x => x.a.req).sort((p, q) => rank(p) - rank(q) || q.a.save - p.a.save);
-  const open = hits.filter(x => !x.a.req);
-  const grid = xs => `<ul class="supd-grid">${xs.map(agaCardHTML).join('')}</ul>`;
-  const grp  = (l, xs) => `<h3 class="aga-grp">${l} <em>${xs.length}</em></h3>`;
+  const held = hits.filter(x => !x.own && x.a.req).sort((p, q) => rank(p) - rank(q) || q.a.save - p.a.save);
+  const open = hits.filter(x => !x.own && !x.a.req);
+  const owns = hits.filter(x => x.own);
+  const grid = items => `<ul class="supd-grid">${items.join('')}</ul>`;
+  const grp  = (l, count) => `<h3 class="aga-grp">${l} <em>${count}</em></h3>`;
   /* the ones you hold sit on the same ice tray as the overview's savings cards —
      the 8px inset is what says "yours" — and the open ones stay on the page plane */
-  const tray = xs => `<div class="aga-tray">${grid(xs)}</div>`;
-  el.innerHTML = hits.length
-    ? (held.length && open.length
-        ? grp('In use', held) + tray(held) + grp('Available', open) + grid(open)
-        : held.length ? tray(held) : grid(open))
+  const tray = items => `<div class="aga-tray">${grid(items)}</div>`;
+  /* your own are ice-coloured cards on the page plane, and the way to add one is
+     a card at the end of their run — shown whenever the list is not filtered */
+  const add = isAdmin() && !agcFiltering() ? [ownAddCardHTML()] : [];
+  const runs = [
+    ['In use', held.map(agaCardHTML), held.length, tray],
+    ['Your own', [...owns.map(agaCardHTML), ...add], owns.length, grid],
+    ['Available', open.map(agaCardHTML), open.length, grid]
+  ].filter(z => z[1].length);
+  el.innerHTML = runs.length
+    ? (runs.length === 1 ? runs[0][3](runs[0][1]) : runs.map(([l, items, count, wrap]) => grp(l, count) + wrap(items)).join(''))
     : `
       <div class="sup-empty">
         <span class="sup-empty-ic" aria-hidden="true">${SUP_GLASS}</span>
@@ -16157,11 +17002,15 @@ function renderAgaBody(all){
             : `Nothing in the catalogue is all of <b>${agcOn().join('</b>, <b>')}</b> at once.`}
           Take one filter off, or clear them and browse all ${all.length}.</p>
         <button class="btn btn-secondary" id="agcReset">Clear search &amp; filters</button>
+        ${isAdmin() && agcQuery.trim() ? `<p class="own-sub own-notin">Not in the catalogue?
+          <button type="button" class="linkbtn" id="agcAddOwn">Add it as your own agreement</button></p>` : ''}
       </div>`;
   const reset = $('#agcReset');
   if(reset) reset.addEventListener('click', () => {
     agcResetAll(all); const f = $('#agcQ') || $('#appSearch'); if(f) f.focus();
   });
+  const addQ = $('#agcAddOwn');
+  if(addQ) addQ.addEventListener('click', () => openOwnEdit(null, {sup:agcQuery.trim()}));
   /* the card is one hit area, keyboard included — the same contract the supplier
      grid uses, since it is the same card */
   $$('#agaBody [data-agopen]').forEach(li => {
@@ -16169,6 +17018,13 @@ function renderAgaBody(all){
       const [id, i] = li.dataset.agopen.split(':');
       openCatTab(id, +i);
     };
+    li.addEventListener('click', go);
+    li.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
+    });
+  });
+  $$('#agaBody [data-ownopen], #agaBody [data-ownnew]').forEach(li => {
+    const go = () => li.dataset.ownnew ? openOwnEdit(null) : openOwn(li.dataset.ownopen);
     li.addEventListener('click', go);
     li.addEventListener('keydown', e => {
       if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
@@ -16221,6 +17077,9 @@ function wireAgaControls(all){
 function renderAgreements(){
   agcStatus = 'all'; agcQuery = ''; agcLetter = 'all';
   const all  = ROWS.filter(r => !r.hidden).flatMap(r => r.agr.map((a, i) => ({r, a, i})));
+  /* the company's own agreements join the list, never the figures */
+  const owns = ownList().map(o => ({own:o}));
+  const allX = [...all, ...owns];
   const mine = all.filter(x => x.a.req);
   const open = all.filter(x => !x.a.req);
   /* the ones still moving: requested, not yet verified — furthest from done
@@ -16253,7 +17112,8 @@ function renderAgreements(){
     <header class="hx hy agp-hy" data-field>
       <span class="hy-field chev" data-field-layer aria-hidden="true"></span>
       <div class="hy-t2">
-        <span class="hy-eye">${mine.length ? `You hold ${mine.length} of ${all.length}` : `${all.length} agreements, open to you`}</span>
+        <span class="hy-eye">${mine.length ? `You hold ${mine.length} of ${all.length}` : `${all.length} agreements, open to you`}${
+          owns.length ? ` · ${owns.length} of your own` : ''}</span>
         <h1 id="agT" tabindex="-1">${mine.length ? 'Your agreements' : 'Nothing activated yet'}</h1>
       </div>
       <i class="hy-vr" aria-hidden="true"></i>
@@ -16307,20 +17167,21 @@ function renderAgreements(){
       <section class="agp-sec" id="agpAll" aria-labelledby="agpAllH">
         <div class="ar-head">
           <div class="ar-head-t">
-            <h2 id="agpAllH">All ${all.length} agreements</h2>
+            <h2 id="agpAllH">All ${allX.length} agreements</h2>
             <p>Every supplier agreement open to ${state.company} — the ${mine.length
-                ? `${mine.length} you hold first, then the rest` : 'whole catalogue'}.
+                ? `${mine.length} you hold first, then the rest` : 'whole catalogue'}.${
+                owns.length ? ` ${owns.length === 1 ? 'One is' : `${owns.length} are`} your own.` : ''}
               Filter by status or first letter, or search by supplier or area.</p>
           </div>
         </div>
-        <div class="agp-tools" id="agaControls">${agaControlsHTML(all)}</div>
+        <div class="agp-tools" id="agaControls">${agaControlsHTML(allX)}</div>
         <div id="agaBody"></div>
       </section>
     </div>`;
 
   /* ---- wiring ---- */
-  AGA_ALL = all;
-  renderAgaBody(all); wireAgaControls(all);
+  AGA_ALL = allX;
+  renderAgaBody(allX); wireAgaControls(allX);
   /* the bar's row and the bar's field follow this block, as on Suppliers */
   if(agaStickIO) agaStickIO.disconnect();
   agaStickIO = barPageWatch($('#agaControls'), BP_AGS);
@@ -19793,7 +20654,9 @@ function applySaved(d){
 }
 
 function startOver(){
+  if(ownLeaveGuard(startOver)) return;
   try{ sessionStorage.removeItem(SKEY); }catch(e){}
+  try{ localStorage.removeItem(OKEY); }catch(e){}
   location.href = location.pathname;
 }
 $('#userBtn').addEventListener('click', e => {
@@ -19829,6 +20692,13 @@ function searchFind(q){
         rank: a.n.toLowerCase().startsWith(s) ? 0 : a.n.toLowerCase().includes(s) ? 1 : 3,
         go:() => openCatTab(r.id, i)});
   }));
+  ownList().forEach(o => {
+    const hay = `${o.sup} ${ownCatName(o.cat)} ${o.custNo || ''} ${(o.contact || {}).name || ''}`.toLowerCase();
+    if(hay.includes(s))
+      hits.push({k:'Your agreement', t:o.sup, s:`${ownCatName(o.cat)} · ${o.mode === 'use' ? 'Your own agreement' : 'Records only'}${
+          o.custNo ? ` · ${o.custNo}` : ''}`,
+        rank: o.sup.toLowerCase().startsWith(s) ? 0 : 1, go:() => openOwn(o.id)});
+  });
   live().forEach(r => {
     if(r.n.toLowerCase().includes(s))
       hits.push({k:'Area', t:r.n, s:`${fmt(r.amt)} kr. a year · ${r.agr.length} agreements · +${fmt(potOf(r))} kr. still open`,
@@ -19872,6 +20742,7 @@ function searchRender(){
 }
 function searchOpen(i){
   const h = searchHits[i]; if(!h) return;
+  if(ownLeaveGuard(() => searchOpen(i))) return;
   const inp = $('#appSearch'); inp.value = ''; searchAt = 0; searchRender(); inp.blur();
   h.go();
 }

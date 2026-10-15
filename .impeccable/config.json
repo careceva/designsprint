@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "monotonous-spacing",
+        "value": "*",
+        "files": [
+          "explorations/finops-overview/v1/finops-overview-v1.html"
+        ],
+        "createdAt": "2026-10-13T08:21:54.601Z",
+        "reason": "Claude: v1 is a deliberately uniform dense dashboard grid (12px panel gap, 16px padding, hairline rows); band rhythm already stepped to 16px; superseded by v2-stripe-home after the user asked for the Stripe-like layout"
+      }
+    ]
+  }
+}

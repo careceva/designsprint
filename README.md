@@ -8,6 +8,7 @@ Static HTML prototypes for Advantage. There is no build step: open any page in a
 
 ```
 advantage-main.html        the live prototype
+advantage-main-v4.html     the second version: the purchasing-areas ledger in the Overview's hero, since-your-last-visit and documents cards, for all three accounts
 PRODUCT.md                 product context (the impeccable tooling reads it from the root)
 assets/                    images, logos and icons shared by every page
 
@@ -22,6 +23,8 @@ explorations/              one feature studied off the main file, in versions
   areas-heroes/v1/           hero treatments for the Areas page
   calc-charts/v1/            the Tune calculator as a chart, five approaches
   content-feedback/v1/       copy and content feedback on the agreement and category pages
+  finops-overview/v1/        the Overview as a high-density cost dashboard
+  finops-overview/v2-stripe-home/  the same, calmed into a payments-style home
   own-agreement/v1/          the company's own supplier agreements beside the negotiated ones
   sales-analysis/v1/         the sales-analysis table integration
   tune-states/v1/            Tune calculator states a–d
