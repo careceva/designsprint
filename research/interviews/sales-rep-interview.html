@@ -1,0 +1,288 @@
+<title>Sales rep interview — Advantage Nordic sprint</title>
+<style>
+  :root {
+    --ground: #F2F5F1;
+    --surface: #FBFCFA;
+    --ink: #15211B;
+    --muted: #5B6A61;
+    --faint: #8B9890;
+    --rule: #D3DCD4;
+    --rule-strong: #B4C0B6;
+    --accent: #B8412B;
+    --accent-soft: #F3E2DD;
+    --signal: #2E6B4E;
+    --signal-soft: #DFEDE4;
+    --warn: #8A6008;
+    --warn-soft: #F6EBD2;
+
+    --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #101613; --surface: #171F1A; --ink: #E6EBE5; --muted: #9DAAA1;
+      --faint: #718077; --rule: #2A342D; --rule-strong: #3C4941;
+      --accent: #E8836A; --accent-soft: #35211C; --signal: #6FBE93;
+      --signal-soft: #16301F; --warn: #D8AE5C; --warn-soft: #2E2515;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #101613; --surface: #171F1A; --ink: #E6EBE5; --muted: #9DAAA1;
+    --faint: #718077; --rule: #2A342D; --rule-strong: #3C4941;
+    --accent: #E8836A; --accent-soft: #35211C; --signal: #6FBE93;
+    --signal-soft: #16301F; --warn: #D8AE5C; --warn-soft: #2E2515;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground); color: var(--ink); font-family: var(--body);
+    font-size: 16px; line-height: 1.55; margin: 0; padding: 0 1.5rem 5rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 46rem; margin: 0 auto; display: flex; flex-direction: column; gap: 2.75rem; }
+  p, li { max-width: 40em; }
+  p { margin: 0; }
+  strong { font-weight: 650; }
+
+  header {
+    padding: 3.5rem 0 1.75rem; display: flex; flex-direction: column; gap: 1rem;
+    border-bottom: 2px solid var(--ink);
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--accent); margin: 0;
+  }
+  h1 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem); line-height: 1.05;
+    letter-spacing: -0.02em; text-wrap: balance; margin: 0;
+  }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 0.3rem 1.5rem;
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--faint);
+  }
+
+  .challenge {
+    background: var(--surface); border-left: 3px solid var(--accent);
+    padding: 1.1rem 1.3rem; display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  .challenge .lab {
+    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.11em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .challenge p { font-family: var(--display); font-size: 1.08rem; line-height: 1.4; }
+
+  .block {
+    display: flex; flex-direction: column; gap: 0.7rem;
+    padding-top: 1.5rem; border-top: 1px solid var(--rule);
+  }
+  .block:first-of-type { border-top: none; padding-top: 0; }
+  .bhead { display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap; }
+  .bnum {
+    font-family: var(--mono); font-size: 0.72rem; color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .bhead h2 {
+    font-family: var(--body); font-weight: 650; font-size: 1.05rem;
+    margin: 0; letter-spacing: -0.005em;
+  }
+  .clock {
+    font-family: var(--mono); font-size: 0.68rem; color: var(--faint);
+    margin-left: auto; letter-spacing: 0.06em; white-space: nowrap;
+  }
+  .why { color: var(--muted); font-size: 0.9rem; }
+
+  ul.qs { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  ul.qs li { font-family: var(--display); font-size: 1.05rem; line-height: 1.42; max-width: 38em; }
+  ul.qs li::marker { color: var(--faint); }
+  ul.qs li .note {
+    display: block; font-family: var(--body); font-size: 0.84rem;
+    color: var(--muted); margin-top: 0.2rem;
+  }
+  li.key { position: relative; }
+  li.key > :first-child, li.key { font-weight: inherit; }
+  li.key::marker { color: var(--accent); }
+  .keytag {
+    display: inline-block; font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+    border: 1px solid currentColor; border-radius: 2px; padding: 0 0.3rem;
+    margin-left: 0.4rem; vertical-align: 2px;
+  }
+
+  .say {
+    font-family: var(--display); font-size: 1.05rem; line-height: 1.45;
+    background: var(--surface); border-left: 3px solid var(--rule-strong);
+    padding: 0.9rem 1.2rem; max-width: none;
+  }
+
+  .callout {
+    border: 1px solid var(--rule-strong); background: var(--surface);
+    padding: 1.3rem 1.4rem; display: flex; flex-direction: column; gap: 0.7rem;
+  }
+  .callout.pick { background: var(--signal-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--signal); }
+  .callout.pick .clab { color: var(--signal); }
+  .callout.risk { background: var(--warn-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--warn); }
+  .callout.risk .clab { color: var(--warn); }
+  .clab {
+    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.11em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .callout ul { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .capture { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0.9rem 1.5rem; }
+  .fld { display: flex; flex-direction: column; gap: 0.3rem; }
+  .fld .lab {
+    font-family: var(--mono); font-size: 0.61rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  .fld .line { border-bottom: 1px solid var(--rule-strong); height: 1.3rem; }
+  .fld .box { border: 1px solid var(--rule-strong); height: 3.8rem; }
+  .fld.wide { grid-column: 1 / -1; }
+
+  footer {
+    border-top: 1px solid var(--rule-strong); padding-top: 1.2rem;
+    color: var(--faint); font-size: 0.8rem; font-family: var(--mono); letter-spacing: 0.03em;
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  @media (max-width: 34rem) {
+    body { padding: 0 1rem 3rem; }
+    .wrap { gap: 2rem; }
+    .clock { margin-left: 0; width: 100%; }
+  }
+
+  @media print {
+    :root {
+      --ground: #fff; --surface: #fff; --ink: #000; --muted: #333; --faint: #666;
+      --rule: #ccc; --rule-strong: #888; --accent: #000; --accent-soft: #eee;
+      --signal: #000; --signal-soft: #f3f3f3; --warn: #000; --warn-soft: #f3f3f3;
+    }
+    body { padding: 0; font-size: 10.5pt; }
+    .wrap { gap: 1.1rem; max-width: none; }
+    header { padding-top: 0; }
+    .block, .callout { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Advantage Nordic · Design Sprint · Day 1</p>
+  <h1>Sales rep interview</h1>
+  <p class="meta"><span>20 minutes</span><span>5 blocks</span><span>Record with consent</span><span>They are witnesses, not subjects</span></p>
+</header>
+
+<div class="challenge">
+  <p class="lab">The challenge we're testing</p>
+  <p>How might we use AI to proactively help <strong>procurement administrators identify new opportunities</strong> while continuously showing realized value and what to do next, <strong>increasing total spend across more agreements</strong>?</p>
+</div>
+
+<div class="callout">
+  <p class="clab">Before the call — five minutes of prep</p>
+  <p>Pull their patch from the CRM: market, segment, tenure, account count. Never spend live minutes on facts you can look up — at twenty minutes that's a sixth of the interview.</p>
+  <p>And send one line the day before: <em>"Before we talk, think of two customers you know well — one who's thriving on this and one who isn't. I'll mostly be asking about them."</em> They arrive with examples instead of generalities, which is the whole game at this length.</p>
+</div>
+
+<div class="block">
+  <div class="bhead"><p class="bnum">00</p><h2>Frame</h2><p class="clock">2 min</p></div>
+  <p class="say">"I want to borrow what you know about the customers — you talk to more of them in a week than I do in a quarter. Nothing here turns into a feature request, so there's no need to lobby for anything. I'll keep asking you to name specific customers; that's just how I keep it concrete. Alright if I record?"</p>
+</div>
+
+<div class="block">
+  <div class="bhead"><p class="bnum">01</p><h2>Does this person exist?</h2><p class="clock">3 min</p></div>
+  <p class="why">The challenge names a "procurement administrator". Find out whether that's a real role in the customer base, or a title we invented — and at what company size it starts to exist.</p>
+  <ul class="qs">
+    <li>"In the companies you sell to, who actually handles the buying? What's their real job title?"</li>
+    <li>"Is that the same person who signed the contract?"<span class="note">If it isn't, everything downstream depends on a handoff nobody currently owns.</span></li>
+    <li>"How big does a company have to be before someone's genuinely responsible for procurement?"<span class="note">This answers a scoping question hiding inside the challenge: are we designing for the median customer or only the biggest ones?</span></li>
+    <li>"Who did you last speak to about an agreement — what was their job?"</li>
+  </ul>
+</div>
+
+<div class="block">
+  <div class="bhead"><p class="bnum">02</p><h2>New opportunities</h2><p class="clock">6 min · core</p></div>
+  <p class="why">A human has been doing the proposed feature by hand for years. Find out how well it works.</p>
+  <ul class="qs">
+    <li class="key">"Have you ever pointed out an agreement a customer wasn't using? What happened?"<span class="keytag">protect this</span><span class="note">The most valuable question in the set. Reps have been manually running exactly what we want to automate, and their hit rate is the best available forecast of the system's hit rate. If it usually lands, the bet is sound and we're designing for scale. If people nod and do nothing, then identifying the opportunity was never the problem — and that changes what gets prototyped on Thursday.</span></li>
+    <li>"Who, most recently? How did they respond?"<span class="note">Ask this after every generalisation, all the way through. It costs three seconds and it's what turns a sales opinion into evidence.</span></li>
+    <li>"When a customer starts using an agreement they weren't using before — what usually caused that?"</li>
+    <li>"When someone ignores a suggestion like that, what's the reason?"</li>
+    <li>"What makes a customer say 'we've already got someone for that'?"</li>
+    <li>"What's the last agreement a customer added entirely on their own, without you?"<span class="note">Tests whether self-serve discovery happens at all today. If reps struggle to name one, that's a finding about the current product, not a gap in their memory.</span></li>
+  </ul>
+</div>
+
+<div class="block">
+  <div class="bhead"><p class="bnum">03</p><h2>Realized value</h2><p class="clock">5 min · core</p></div>
+  <p class="why">The "continuously showing realized value" half of the challenge assumes the number is wanted, believed, and acted on. Three separate assumptions.</p>
+  <ul class="qs">
+    <li>"Who asks you for savings numbers, and when?"<span class="note">If nobody asks, there's no forcing function and the reporting case is weaker than it looks.</span></li>
+    <li>"What happens at renewal — what do you actually show them?"</li>
+    <li>"Has a customer ever disputed the savings figure? What happened?"<span class="note">Tests whether the number is believed. A number nobody trusts can't drive anything, no matter how well it's presented.</span></li>
+    <li>"When a customer sees what they've saved, what do they do next?"</li>
+    <li class="key">"Have you ever seen a customer change how they buy because of a number?"<span class="keytag">the core bet</span><span class="note">The whole "show value → they act" chain rests on this. If nobody can name an instance, a better dashboard won't create one.</span></li>
+  </ul>
+</div>
+
+<div class="block">
+  <div class="bhead"><p class="bnum">04</p><h2>Challenge and data</h2><p class="clock">3 min</p></div>
+  <p class="why">Push on what they've told you, and check the foundation the whole challenge stands on.</p>
+  <ul class="qs">
+    <li>"Is the spend data good enough to tell someone 'you spent this much on that category'? Where does it break?"<span class="note">Every part of the challenge — spotting opportunities, showing realized value, recommending next actions — is downstream of this. If the data can't carry it, Friday tests fiction.</span></li>
+    <li>"If we shipped something that spotted opportunities and emailed them out — which of your customers would act on it, and who'd ignore it?"</li>
+    <li>"What would you have to stop telling customers if we built this?"</li>
+    <li>"Is that something customers ask for, or something that'd make your job easier? Both are fine — I just need to know which."<span class="note">Asked without any judgement, people answer it straight, and it separates the two kinds of request instantly.</span></li>
+  </ul>
+</div>
+
+<div class="block">
+  <div class="bhead"><p class="bnum">05</p><h2>Close and recruit</h2><p class="clock">2 min</p></div>
+  <ul class="qs">
+    <li>"What do you think we in product don't understand about these customers?"<span class="note">Ask it straight. They've usually been waiting years for someone to ask, and it's often the best thirty seconds of the call.</span></li>
+    <li>"Two names — one customer thriving on this, one who isn't. Can I speak to them?"<span class="note">Say plainly you're not there to sell or rescue the account, and accept a no gracefully. Burning one rep's trust costs you the whole channel.</span></li>
+  </ul>
+</div>
+
+<div class="callout pick">
+  <p class="clab">Five rules for challenging without a fight</p>
+  <ul>
+    <li>Challenge by making it <strong>concrete</strong>, never by evaluating it.</li>
+    <li>Put the doubt <strong>on yourself</strong> — "I might be misunderstanding this…"</li>
+    <li>Ask for the <strong>failure mode</strong>, not the flaw: "what would make this not work?"</li>
+    <li><strong>Never say "but".</strong> Use "and", or just ask the next question.</li>
+    <li><strong>Make them the critic:</strong> "you know this far better than I do — if we built it and it went wrong, how would it go wrong?"</li>
+  </ul>
+</div>
+
+<div class="callout risk">
+  <p class="clab">What to watch for</p>
+  <p><strong>Feature answers.</strong> They'll come. Take each one layer down rather than writing it as a requirement: "what would that let a customer do that they can't today?" then "when did that last cost someone something?"</p>
+  <p><strong>The signer/user conflation.</strong> Reps describe the person they meet, who is usually the one who signs — not the one who buys. Ask which every time.</p>
+  <p><strong>Price as an objection.</strong> At this price point it's rarely the real one. Underneath "too expensive" is usually "I don't believe the savings" or "I don't think we'd actually change how we buy." Push for which.</p>
+</div>
+
+<div class="block">
+  <div class="bhead"><p class="bnum">—</p><h2>Fill this in within 30 minutes</h2><p class="clock">before the next one</p></div>
+  <div class="capture">
+    <div class="fld"><p class="lab">Date / rep / market</p><div class="line"></div></div>
+    <div class="fld"><p class="lab">Segment and tenure</p><div class="line"></div></div>
+    <div class="fld wide"><p class="lab">Who the buyer actually is, in their words — and at what company size the role appears</p><div class="box"></div></div>
+    <div class="fld wide"><p class="lab">The suggestion story — did pointing out an unused agreement work? What happened?</p><div class="box"></div></div>
+    <div class="fld wide"><p class="lab">Any instance of a number changing behaviour — or the absence of one</p><div class="box"></div></div>
+    <div class="fld wide"><p class="lab">Where the data breaks</p><div class="box"></div></div>
+    <div class="fld wide"><p class="lab">Three verbatim quotes</p><div class="box"></div></div>
+    <div class="fld wide"><p class="lab">Customer names offered — and permission given?</p><div class="line"></div></div>
+    <div class="fld wide"><p class="lab">If I had ten seconds, the sharpest thing I heard was…</p><div class="line"></div></div>
+  </div>
+</div>
+
+<footer>
+  Sales rep interview v1 · Advantage Nordic sprint · 20 minutes
+</footer>
+
+</div>

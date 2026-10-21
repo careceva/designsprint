@@ -1,0 +1,1255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FAFAFA">
+<title>Advantage — AI procurement dashboard prototype</title>
+<style>
+/* ==========================================================================
+   Advantage Design System tokens
+   Source: NordicDesignSystem/DesginSystem/advantage/build/css/variables.css
+   Rules: semantic --general-* only in components; --brand-* never direct;
+          greens/chart hues for data viz only; two-layer shadows; 4px spacing.
+   ========================================================================== */
+:root {
+  /* semantic */
+  --general-background: #FAFAFA;
+  --general-foreground: #1C1C1C;
+  --general-primary: #2170ED;
+  --general-primary-foreground: #FFFFFF;
+  --general-secondary: #CDE6F5;
+  --general-secondary-foreground: #000A45;
+  --general-muted: #F2F2F2;
+  --general-muted-foreground: #4F4F4F;
+  --general-accent: #FF9B3D;
+  --general-accent-foreground: #000A45;
+  --general-destructive: #E11D48;
+  --general-border: #BDD7FF;
+  --general-input: #BDD7FF;
+  --focus-ring: #2170ED;
+
+  /* brand primitives — brand moments only */
+  --brand-midnight-blue: #000A45;
+  --brand-ice-blue: #EDF5FF;
+  --brand-light-cornflower: #BDD7FF;
+  --brand-cornflower: #73ABFF;
+
+  --surface: #FFFFFF;
+
+  /* data viz — validated: CVD ΔE 14.7 protan / 36.0 tritan, contrast ≥3:1 */
+  --chart-realized: #009689;
+  --chart-potential: #f54a00;
+  --chart-peer: #8A8A8A;
+  --sentiment-positive: #009689;
+
+  /* type */
+  --font-sans: "Rethink Sans", "Rethink Sans Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "DM Sans", "DM Sans Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 18px;
+  --text-xl: 20px; --text-2xl: 24px; --text-3xl: 30px; --text-4xl: 36px; --text-5xl: 48px;
+
+  /* radius */
+  --rounded-xs: 4px; --rounded-sm: 8px; --rounded-md: 12px; --rounded-lg: 16px;
+  --rounded-xl: 20px; --rounded-2xl: 25px; --rounded-3xl: 40px; --rounded-full: 9999px;
+
+  /* shadows — always two-layer */
+  --shadow-xs: 0 1px 2px 0 #0000000d;
+  --shadow-sm: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+  --shadow-md: 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a;
+  --shadow-lg: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+  --shadow-xl: 0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a;
+}
+
+* { box-sizing: border-box; }
+
+html { color-scheme: light; }
+
+body {
+  margin: 0;
+  background: var(--general-background);
+  color: var(--general-foreground);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+h1 { font-size: var(--text-4xl); letter-spacing: -1.5px; line-height: 1.1; }
+h2 { font-size: var(--text-2xl); letter-spacing: -1px; line-height: 1.2; }
+h3 { font-size: var(--text-lg); letter-spacing: 0; }
+h4 { font-size: var(--text-sm); letter-spacing: 0; }
+p { margin: 0; }
+
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.num  { font-variant-numeric: tabular-nums; }
+.muted { color: var(--general-muted-foreground); }
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--rounded-xs);
+}
+
+.skip {
+  position: absolute; left: -9999px; top: 8px;
+  background: var(--general-primary); color: var(--general-primary-foreground);
+  padding: 8px 16px; border-radius: var(--rounded-full); z-index: 100;
+}
+.skip:focus { left: 16px; }
+
+.sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ---------- buttons ---------- */
+button { font-family: var(--font-body); font-size: var(--text-sm); cursor: pointer; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; padding: 0 24px;
+  border-radius: var(--rounded-full);          /* pill — preferred primary shape */
+  border: 1px solid transparent;
+  font-weight: 500;
+  transition: background-color .15s ease, opacity .15s ease, transform .1s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+.btn-primary { background: var(--general-primary); color: var(--general-primary-foreground); }
+.btn-primary:hover:not([disabled]) { background: #1A5DC7; }
+
+.btn-secondary {
+  background: var(--surface); color: var(--general-foreground);
+  border-color: var(--general-border); box-shadow: var(--shadow-xs);
+}
+.btn-secondary:hover { background: var(--brand-ice-blue); }
+
+.btn-ghost { background: transparent; color: var(--general-primary); padding: 0 12px; }
+.btn-ghost:hover { background: var(--brand-ice-blue); }
+
+.btn-sm { height: 32px; padding: 0 16px; font-size: var(--text-xs); }
+
+/* standard shape: height × 0.27 */
+.btn-standard { border-radius: var(--rounded-md); }
+
+.icon-btn {
+  width: 32px; height: 32px; display: grid; place-items: center;
+  border-radius: var(--rounded-sm); border: 0; background: transparent;
+  color: var(--general-muted-foreground);
+}
+.icon-btn:hover { background: var(--general-muted); color: var(--general-foreground); }
+
+/* ---------- layout ---------- */
+.screen { display: none; }
+.screen.active { display: block; }
+
+.center-wrap {
+  min-height: 100vh; display: grid; place-items: center; padding: 40px 24px;
+}
+.center-card {
+  width: 100%; max-width: 720px;
+  background: var(--surface);
+  border: 1px solid var(--general-border);
+  border-radius: var(--rounded-2xl);
+  box-shadow: var(--shadow-lg);
+  padding: 40px;
+}
+
+.brandmark {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-sans); font-weight: 600; font-size: var(--text-lg);
+  letter-spacing: -0.5px;
+}
+.brandmark .dot {
+  width: 24px; height: 24px; border-radius: var(--rounded-sm);
+  background: var(--general-primary); display: grid; place-items: center;
+  color: #fff; font-size: 13px;
+}
+
+.stepper { display: flex; gap: 8px; align-items: center; margin-bottom: 32px; }
+.step-pip {
+  height: 4px; flex: 1; border-radius: var(--rounded-full);
+  background: var(--general-muted);
+}
+.step-pip.done { background: var(--general-primary); }
+.step-pip.now  { background: var(--brand-cornflower); }
+
+/* ---------- ERP picker ---------- */
+.erp-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+  gap: 12px; margin: 24px 0;
+}
+.erp {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px; text-align: left; width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--general-border);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-xs);
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.erp:hover { border-color: var(--brand-cornflower); background: var(--brand-ice-blue); }
+.erp[aria-checked="true"] {
+  border-color: var(--general-primary);
+  background: var(--brand-ice-blue);
+  box-shadow: var(--shadow-sm);
+}
+.erp .logo {
+  width: 40px; height: 40px; border-radius: var(--rounded-md);
+  display: grid; place-items: center; flex: 0 0 auto;
+  color: #fff; font-family: var(--font-sans); font-weight: 600; font-size: var(--text-lg);
+}
+.erp .meta { min-width: 0; flex: 1; }
+.erp .name { font-weight: 600; font-size: var(--text-sm); }
+.erp .sub  { font-size: var(--text-xs); color: var(--general-muted-foreground); }
+.erp .radio {
+  width: 20px; height: 20px; border-radius: var(--rounded-full);
+  border: 2px solid var(--general-input); flex: 0 0 auto; display: grid; place-items: center;
+}
+.erp[aria-checked="true"] .radio { border-color: var(--general-primary); }
+.erp[aria-checked="true"] .radio::after {
+  content: ""; width: 10px; height: 10px; border-radius: var(--rounded-full);
+  background: var(--general-primary);
+}
+.erp.upload { border-style: dashed; grid-column: 1 / -1; }
+.erp.upload .logo { background: var(--general-muted); color: var(--general-foreground); }
+
+/* ---------- scanning ---------- */
+.scan-list { display: flex; flex-direction: column; gap: 4px; margin: 24px 0; }
+.scan-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: var(--rounded-md);
+  font-size: var(--text-sm);
+  color: var(--general-muted-foreground);
+  opacity: .45;
+  transition: opacity .3s ease, background-color .3s ease;
+}
+.scan-row.active { opacity: 1; background: var(--brand-ice-blue); color: var(--general-foreground); }
+.scan-row.done   { opacity: 1; color: var(--general-foreground); }
+.scan-row .tick {
+  width: 20px; height: 20px; flex: 0 0 auto; display: grid; place-items: center;
+  border-radius: var(--rounded-full); border: 2px solid var(--general-input);
+  font-size: 11px; color: transparent;
+}
+.scan-row.done .tick {
+  background: var(--sentiment-positive); border-color: var(--sentiment-positive); color: #fff;
+}
+.scan-row .count { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-xs); }
+
+.progress {
+  height: 8px; border-radius: var(--rounded-full);
+  background: var(--general-muted); overflow: hidden;
+}
+.progress > i {
+  display: block; height: 100%; width: 0%;
+  background: var(--general-primary); border-radius: var(--rounded-full);
+  transform-origin: left center;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ---------- app shell ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 24px;
+  background: color-mix(in srgb, var(--general-background) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--general-border);
+}
+.topbar .spacer { flex: 1; }
+.company {
+  display: flex; align-items: center; gap: 8px;
+  font-size: var(--text-sm); color: var(--general-muted-foreground);
+}
+.company b { color: var(--general-foreground); font-weight: 600; }
+
+.bell { position: relative; }
+.bell .badge {
+  position: absolute; top: -2px; right: -2px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  border-radius: var(--rounded-full);
+  background: var(--general-destructive); color: #fff;
+  font-size: 10px; font-family: var(--font-mono); display: grid; place-items: center;
+}
+
+main { max-width: 1240px; margin: 0 auto; padding: 24px 24px 96px; }
+
+.page-head { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.page-head .spacer { flex: 1; }
+
+/* ---------- action banner ---------- */
+.action-banner {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 16px 20px; margin-bottom: 24px;
+  border-radius: var(--rounded-xl);
+  background: var(--brand-ice-blue);
+  border: 1px solid var(--general-border);
+  box-shadow: var(--shadow-xs);
+}
+.action-banner .flag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: var(--rounded-full);
+  background: var(--general-accent); color: var(--general-accent-foreground);
+  font-size: var(--text-xs); font-weight: 600;
+}
+.action-banner p { font-size: var(--text-sm); }
+.action-banner .spacer { flex: 1; }
+
+/* ---------- cards ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--general-border);
+  border-radius: var(--rounded-2xl);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+}
+.card-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+.card-head .spacer { flex: 1; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(212px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.tile {
+  background: var(--surface); border: 1px solid var(--general-border);
+  border-radius: var(--rounded-2xl); box-shadow: var(--shadow-sm);
+  padding: 20px; display: flex; flex-direction: column; gap: 4px;
+}
+.tile .label {
+  font-size: var(--text-xs); color: var(--general-muted-foreground);
+  text-transform: uppercase; letter-spacing: 1.5px;
+}
+.tile .value {
+  font-family: var(--font-sans); font-weight: 600; font-size: var(--text-3xl);
+  letter-spacing: -1px; font-variant-numeric: tabular-nums; line-height: 1.1;
+}
+.tile .foot { font-size: var(--text-xs); color: var(--general-muted-foreground); display: flex; align-items: center; gap: 6px; }
+.tile.is-potential .value { color: var(--chart-potential); }
+.tile.is-realized  .value { color: var(--chart-realized); }
+.delta { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.delta.up { color: var(--sentiment-positive); }
+
+.cols { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; align-items: start; }
+@media (max-width: 980px) { .cols { grid-template-columns: 1fr; } }
+
+/* ---------- chart ---------- */
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: var(--text-xs); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; color: var(--general-muted-foreground); }
+.legend i { width: 12px; height: 3px; border-radius: 2px; display: inline-block; }
+.chart-wrap { position: relative; }
+svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.tooltip {
+  position: absolute; pointer-events: none; opacity: 0;
+  transform: translate(-50%, -100%);
+  background: var(--brand-midnight-blue); color: #fff;
+  border-radius: var(--rounded-md); padding: 8px 12px;
+  font-size: var(--text-xs); white-space: nowrap;
+  box-shadow: var(--shadow-lg); transition: opacity .12s ease; z-index: 5;
+}
+.tooltip .r { display: flex; align-items: center; gap: 6px; justify-content: space-between; }
+.tooltip .r b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; margin-left: 12px; }
+.tooltip i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+table.data { width: 100%; border-collapse: collapse; font-size: var(--text-xs); margin-top: 16px; }
+table.data th, table.data td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--general-muted); }
+table.data th:first-child, table.data td:first-child { text-align: left; }
+table.data td { font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+table.data th { font-weight: 600; color: var(--general-muted-foreground); }
+
+/* ---------- opportunity rows ---------- */
+.opp {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 16px; border-radius: var(--rounded-lg);
+  border: 1px solid var(--general-border); background: var(--surface);
+  margin-bottom: 8px;
+}
+.opp:hover { background: var(--brand-ice-blue); }
+.opp .sup { min-width: 0; flex: 1 1 220px; }
+.opp .sup .n { font-weight: 600; font-size: var(--text-sm); }
+.opp .sup .c { font-size: var(--text-xs); color: var(--general-muted-foreground); }
+.opp .fig { text-align: right; }
+.opp .fig .k { font-size: 11px; color: var(--general-muted-foreground); text-transform: uppercase; letter-spacing: 1.5px; }
+.opp .fig .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: var(--text-sm); font-weight: 600; }
+.opp .fig .v.pot { color: var(--chart-potential); }
+.opp[data-state="sent"] { background: var(--general-muted); }
+.opp[data-state="active"] { border-color: var(--sentiment-positive); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 10px; border-radius: var(--rounded-full);
+  font-size: 11px; font-weight: 600; letter-spacing: .3px;
+  border: 1px solid transparent;
+}
+.chip-new { background: var(--general-secondary); color: var(--general-secondary-foreground); }
+.chip-sent { background: var(--general-muted); color: var(--general-muted-foreground); }
+.chip-active { background: #D5FCCC; color: #10402F; }
+.chip-warn { background: #FFEFDD; color: #7A3E00; }
+
+/* ---------- agreements ---------- */
+.agr { padding: 12px 0; border-bottom: 1px solid var(--general-muted); }
+.agr:last-child { border-bottom: 0; }
+.agr .top { display: flex; align-items: baseline; gap: 8px; font-size: var(--text-sm); }
+.agr .top .spacer { flex: 1; }
+.agr .top .pct { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; }
+.bar { height: 6px; border-radius: var(--rounded-full); background: var(--general-muted); margin-top: 8px; overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: var(--rounded-full); background: var(--sentiment-positive); transition: width .5s cubic-bezier(.4,0,.2,1); }
+.bar.low > i { background: var(--chart-potential); }
+
+/* ---------- feed ---------- */
+.feed { display: flex; flex-direction: column; gap: 12px; }
+.feed-item {
+  display: flex; gap: 12px; padding: 12px;
+  border-radius: var(--rounded-lg); background: var(--general-muted);
+  font-size: var(--text-sm);
+}
+.feed-item .dot {
+  width: 8px; height: 8px; border-radius: var(--rounded-full);
+  background: var(--general-primary); margin-top: 7px; flex: 0 0 auto;
+}
+.feed-item.human { background: var(--brand-ice-blue); }
+.feed-item.human .dot { background: var(--general-accent); }
+.feed-item time { display: block; font-size: 11px; color: var(--general-muted-foreground); font-family: var(--font-mono); }
+
+/* ---------- modal ---------- */
+.backdrop {
+  position: fixed; inset: 0; background: #000A4566; z-index: 50;
+  display: grid; place-items: center; padding: 24px;
+  opacity: 0; pointer-events: none; transition: opacity .18s ease;
+}
+.backdrop.open { opacity: 1; pointer-events: auto; }
+.modal {
+  width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto;
+  background: var(--surface); border-radius: var(--rounded-2xl);
+  box-shadow: var(--shadow-xl); padding: 32px;
+  transform: scale(.98); transition: transform .18s ease;
+}
+.backdrop.open .modal { transform: scale(1); }
+.modal textarea {
+  width: 100%; min-height: 200px; resize: vertical;
+  font-family: var(--font-body); font-size: var(--text-sm); line-height: 1.6;
+  color: var(--general-foreground);
+  padding: 16px; border-radius: var(--rounded-lg);
+  border: 1px solid var(--general-input); background: var(--general-background);
+}
+.ai-note {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: var(--text-xs); color: var(--general-muted-foreground);
+  background: var(--brand-ice-blue); border-radius: var(--rounded-md);
+  padding: 10px 12px; margin-bottom: 16px;
+}
+.modal-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; align-items: center; }
+.modal-actions .spacer { flex: 1; }
+
+/* ---------- toast ---------- */
+.toasts {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 60; display: flex; flex-direction: column; gap: 8px; align-items: center;
+}
+.toast {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--brand-midnight-blue); color: #fff;
+  padding: 12px 20px; border-radius: var(--rounded-full);
+  font-size: var(--text-sm); box-shadow: var(--shadow-xl);
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.toast.in { opacity: 1; transform: translateY(0); }
+.toast .ok { color: #A4E396; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ============================ 1 · CONNECT ============================ -->
+<section class="screen active" id="screen-connect" aria-labelledby="connect-h">
+  <div class="center-wrap">
+    <div class="center-card">
+      <div class="stepper" aria-hidden="true">
+        <span class="step-pip now"></span><span class="step-pip"></span><span class="step-pip"></span>
+      </div>
+      <p class="mono" style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:8px">Step 1 of 3 · Connect your data</p>
+      <h1 id="connect-h">Let's see what you're already spending</h1>
+      <p class="muted" style="margin-top:12px;max-width:52ch">
+        Connect your accounting system and we'll read the last 12 months of supplier invoices.
+        You'll get an estimate of what you could save before you commit to anything.
+      </p>
+
+      <div class="erp-grid" role="radiogroup" aria-labelledby="connect-h" id="erpGrid">
+        <button class="erp" role="radio" aria-checked="true" data-erp="Dinero" data-inv="1284">
+          <span class="logo" style="background:#4353FF" aria-hidden="true">D</span>
+          <span class="meta"><span class="name">Dinero</span><span class="sub">Accounting · Visma</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+        <button class="erp" role="radio" aria-checked="false" data-erp="e-conomic" data-inv="1640">
+          <span class="logo" style="background:#0F7B4F" aria-hidden="true">e</span>
+          <span class="meta"><span class="name">e-conomic</span><span class="sub">Accounting · Visma</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+        <button class="erp" role="radio" aria-checked="false" data-erp="Visma.net" data-inv="2310">
+          <span class="logo" style="background:#C4361E" aria-hidden="true">V</span>
+          <span class="meta"><span class="name">Visma.net</span><span class="sub">ERP · Visma</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+        <button class="erp" role="radio" aria-checked="false" data-erp="Fortnox" data-inv="1420">
+          <span class="logo" style="background:#1B7A3E" aria-hidden="true">F</span>
+          <span class="meta"><span class="name">Fortnox</span><span class="sub">Accounting · SE</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+        <button class="erp" role="radio" aria-checked="false" data-erp="Tripletex" data-inv="1105">
+          <span class="logo" style="background:#2F8FBF" aria-hidden="true">T</span>
+          <span class="meta"><span class="name">Tripletex</span><span class="sub">Accounting · NO</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+        <button class="erp" role="radio" aria-checked="false" data-erp="Bank account" data-inv="890">
+          <span class="logo" style="background:#5B4BD6" aria-hidden="true">B</span>
+          <span class="meta"><span class="name">Bank account</span><span class="sub">PSD2 / Open Banking</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+        <button class="erp upload" role="radio" aria-checked="false" data-erp="Uploaded invoices" data-inv="412">
+          <span class="logo" aria-hidden="true">↑</span>
+          <span class="meta"><span class="name">Upload invoices instead</span><span class="sub">CSV / XML / PDF — we'll read them with AI</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <p class="muted" style="font-size:var(--text-xs);flex:1;min-width:220px">
+          Read-only access. We never post anything back to your books, and you can disconnect at any time.
+        </p>
+        <button class="btn btn-primary" id="btnConnect">Connect &amp; scan →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 2 · SCANNING ============================ -->
+<section class="screen" id="screen-scan" aria-labelledby="scan-h">
+  <div class="center-wrap">
+    <div class="center-card">
+      <div class="stepper" aria-hidden="true">
+        <span class="step-pip done"></span><span class="step-pip now"></span><span class="step-pip"></span>
+      </div>
+      <p class="mono" style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:8px">Step 2 of 3 · Reading your data</p>
+      <h1 id="scan-h">Scanning <span id="scanSource">Dinero</span>…</h1>
+      <p class="muted" style="margin-top:12px">This usually takes under a minute. You can leave the page — we'll email you when it's done.</p>
+
+      <div class="scan-list" id="scanList" role="status" aria-live="polite">
+        <div class="scan-row" data-step="0"><span class="tick" aria-hidden="true">✓</span> Connecting to <span class="src">Dinero</span><span class="count"></span></div>
+        <div class="scan-row" data-step="1"><span class="tick" aria-hidden="true">✓</span> Reading supplier invoices<span class="count"></span></div>
+        <div class="scan-row" data-step="2"><span class="tick" aria-hidden="true">✓</span> Categorising spend with AI<span class="count"></span></div>
+        <div class="scan-row" data-step="3"><span class="tick" aria-hidden="true">✓</span> Matching suppliers to Advantage agreements<span class="count"></span></div>
+        <div class="scan-row" data-step="4"><span class="tick" aria-hidden="true">✓</span> Benchmarking against similar companies<span class="count"></span></div>
+      </div>
+
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="scanBar"><i></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 3 · PROFILE READY ============================ -->
+<section class="screen" id="screen-ready" aria-labelledby="ready-h">
+  <div class="center-wrap">
+    <div class="center-card">
+      <div class="stepper" aria-hidden="true">
+        <span class="step-pip done"></span><span class="step-pip done"></span><span class="step-pip now"></span>
+      </div>
+      <p class="mono" style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:8px">Step 3 of 3 · Your profile</p>
+      <h1 id="ready-h">Here's what we found at Nordvik Byg</h1>
+      <p class="muted" style="margin-top:12px">
+        Based on <b class="num" id="readyInv">1 284</b> invoices from the last 12 months, across
+        <b class="num" id="readySup">47</b> suppliers.
+      </p>
+
+      <div class="tiles" style="margin-top:24px">
+        <div class="tile">
+          <span class="label">Annual spend read</span>
+          <span class="value num" id="readySpend">0</span>
+          <span class="foot">12 months to today</span>
+        </div>
+        <div class="tile is-realized">
+          <span class="label">Already saving</span>
+          <span class="value num" id="readyRealized">0</span>
+          <span class="foot">On <span class="num">4</span> active agreements</span>
+        </div>
+        <div class="tile is-potential">
+          <span class="label">Not captured yet</span>
+          <span class="value num" id="readyPotential">0</span>
+          <span class="foot">Across <span class="num">5</span> suppliers you already use</span>
+        </div>
+      </div>
+
+      <div class="ai-note" style="margin-top:8px">
+        <span aria-hidden="true">✦</span>
+        <span>Estimates are based on your actual invoice lines and the agreement rates available to a company of your size and sector. Figures firm up as we see more months of data.</span>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-secondary btn-standard" id="btnBackToConnect">Use different data</button>
+        <button class="btn btn-primary" id="btnEnter">See what to do next →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 4 · DASHBOARD ============================ -->
+<section class="screen" id="screen-app" aria-labelledby="dash-h">
+  <header class="topbar">
+    <span class="brandmark"><span class="dot" aria-hidden="true">A</span> Advantage</span>
+    <span class="company">· <b>Nordvik Byg A/S</b> <span class="mono" style="font-size:12px">CVR 38 42 11 07</span></span>
+    <span class="spacer"></span>
+    <span class="mono" style="font-size:12px;color:var(--general-muted-foreground)" id="syncLabel">Synced with Dinero · just now</span>
+    <button class="icon-btn bell" id="btnBell" aria-label="Notifications">
+      <span aria-hidden="true">🔔</span><span class="badge num" id="notifCount">3</span>
+    </button>
+  </header>
+
+  <main id="main">
+    <!-- action required -->
+    <div class="action-banner" id="actionBanner">
+      <span class="flag">⚑ Action required</span>
+      <p><b id="banTitle">4 suppliers you already buy from have an agreement you're not using.</b>
+         <span class="muted" id="banSub">Worth an estimated <b class="num" id="banValue">161 100 kr.</b> a year. Two are ready to activate in one click.</span></p>
+      <span class="spacer"></span>
+      <button class="btn btn-primary btn-sm" id="btnBannerJump">Review opportunities</button>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1 id="dash-h" style="font-size:var(--text-3xl)">Savings overview</h1>
+        <p class="muted" style="font-size:var(--text-sm)">Last 12 months · updated automatically from <span id="srcLabel">Dinero</span></p>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary btn-standard btn-sm" id="btnTable" aria-expanded="false">Show data as table</button>
+    </div>
+
+    <!-- stat tiles -->
+    <div class="tiles">
+      <div class="tile">
+        <span class="label">Total spend</span>
+        <span class="value num" id="tSpend">4 820 000</span>
+        <span class="foot">kr. · 12 months</span>
+      </div>
+      <div class="tile is-realized">
+        <span class="label">Realized savings</span>
+        <span class="value num" id="tRealized">128 400</span>
+        <span class="foot"><span class="delta up">▲ <span class="num" id="tRealizedDelta">0</span></span> since you connected</span>
+      </div>
+      <div class="tile is-potential">
+        <span class="label">Still on the table</span>
+        <span class="value num" id="tPotential">214 600</span>
+        <span class="foot">kr. · across <span class="num" id="tOppCount">5</span> suppliers</span>
+      </div>
+      <div class="tile">
+        <span class="label">Agreements in use</span>
+        <span class="value num" id="tAgreements">4 / 12</span>
+        <span class="foot">Active vs. available to you</span>
+      </div>
+    </div>
+
+    <div class="cols">
+      <!-- LEFT -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- chart -->
+        <section class="card" aria-labelledby="chart-h">
+          <div class="card-head">
+            <h2 id="chart-h" style="font-size:var(--text-lg)">Savings realized vs. left on the table</h2>
+            <span class="spacer"></span>
+            <label style="display:inline-flex;align-items:center;gap:8px;font-size:var(--text-xs);color:var(--general-muted-foreground);cursor:pointer">
+              <input type="checkbox" id="peerToggle" checked style="accent-color:var(--general-primary);width:16px;height:16px">
+              Compare with similar companies
+            </label>
+          </div>
+          <div class="legend" style="margin-bottom:12px" id="legend">
+            <span><i style="background:var(--chart-realized)"></i> Realized savings</span>
+            <span><i style="background:var(--chart-potential)"></i> Not captured</span>
+            <span id="legendPeer"><i style="background:var(--chart-peer)"></i> Peer average · 30–50 staff, construction</span>
+          </div>
+          <div class="chart-wrap" id="chartWrap">
+            <svg class="chart" id="chart" viewBox="0 0 720 280" role="img" aria-labelledby="chart-h chart-desc">
+              <desc id="chart-desc">Monthly line chart comparing realized savings against savings not yet captured, with a peer average reference line.</desc>
+            </svg>
+            <div class="tooltip" id="tip" role="status" aria-live="off"></div>
+          </div>
+          <div id="tableView" hidden>
+            <table class="data">
+              <caption class="sr">Monthly savings data</caption>
+              <thead><tr><th scope="col">Month</th><th scope="col">Realized</th><th scope="col">Not captured</th><th scope="col">Peer avg.</th></tr></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- opportunities -->
+        <section class="card" aria-labelledby="opp-h" id="oppCard">
+          <div class="card-head">
+            <h2 id="opp-h" style="font-size:var(--text-lg)">Opportunities we found in your invoices</h2>
+            <span class="spacer"></span>
+            <span class="muted mono" style="font-size:var(--text-xs)" id="oppMeta">5 suppliers · 214 600 kr.</span>
+          </div>
+          <p class="muted" style="font-size:var(--text-sm);margin-bottom:16px">
+            You already buy from these suppliers. An Advantage agreement exists for each one — it just isn't being used.
+          </p>
+          <div id="oppList"></div>
+        </section>
+      </div>
+
+      <!-- RIGHT -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <section class="card" aria-labelledby="agr-h">
+          <div class="card-head"><h2 id="agr-h" style="font-size:var(--text-lg)">Agreement usage</h2></div>
+          <p class="muted" style="font-size:var(--text-xs);margin-bottom:8px">Share of eligible spend actually going through each agreement.</p>
+          <div id="agrList"></div>
+        </section>
+
+        <section class="card" aria-labelledby="feed-h">
+          <div class="card-head">
+            <h2 id="feed-h" style="font-size:var(--text-lg)">Activity</h2>
+            <span class="spacer"></span>
+            <span class="chip chip-new" id="feedCount">3 new</span>
+          </div>
+          <div class="feed" id="feed"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+</section>
+
+<!-- ============================ MODAL ============================ -->
+<div class="backdrop" id="backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-h" hidden>
+  <div class="modal">
+    <p class="mono" style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--general-primary);margin-bottom:8px">Draft prepared for you</p>
+    <h2 id="modal-h">Activate your rate with <span id="modalSupplier">Stark Byggecenter</span></h2>
+    <p class="muted" style="font-size:var(--text-sm);margin:12px 0 20px">
+      We've written this from your own spend data. Edit anything you like before it goes.
+    </p>
+
+    <div class="ai-note">
+      <span aria-hidden="true">✦</span>
+      <span id="modalBasis">Based on <b class="num">684 000 kr.</b> spent with this supplier over 12 months across <b class="num">96</b> invoices.</span>
+    </div>
+
+    <label for="draft" class="sr">Message to supplier</label>
+    <textarea id="draft" spellcheck="false"></textarea>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" id="btnHuman">Ask an advisor to handle this instead</button>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary btn-standard" id="btnSkip">Skip this one</button>
+      <button class="btn btn-primary" id="btnSend">Send &amp; activate</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ---------------- formatting ---------------- */
+  const nf = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 0 });
+  const kr = n => nf.format(Math.round(n)) + ' kr.';
+  const $  = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  /* ---------------- state ---------------- */
+  const state = {
+    source: 'Dinero',
+    invoices: 1284,
+    suppliers: 47,
+    spend: 4820000,
+    realized: 128400,
+    realizedGain: 0,
+    agreementsActive: 4,
+    agreementsAvailable: 12,
+    opportunities: [
+      { id:'stark',  name:'Stark Byggecenter', cat:'Building materials', spend:684000, inv:96, pot:61500, rate:'9%',  state:'new' },
+      { id:'ahlsell',name:'Ahlsell',           cat:'Tools & workwear',   spend:412000, inv:74, pot:45300, rate:'11%', state:'new' },
+      { id:'circlek',name:'Circle K Business', cat:'Fuel & transport',   spend:298000, inv:212,pot:23800, rate:'8%',  state:'new' },
+      { id:'lyreco', name:'Lyreco',            cat:'Office supplies',    spend:96000,  inv:41, pot:18200, rate:'19%', state:'new' },
+      { id:'dhl',    name:'DHL Erhverv',       cat:'Freight',            spend:154000, inv:158,pot:12300, rate:'8%',  state:'new' }
+    ],
+    agreements: [
+      { name:'Telenor Erhverv', cat:'Telecom',        used:92 },
+      { name:'Q8 Fuel Card',    cat:'Fuel',           used:71 },
+      { name:'Contorland',      cat:'Office',         used:38 },
+      { name:'Jysk Erhverv',    cat:'Site furnishing',used:12 }
+    ],
+    feed: [
+      { t:'2 days ago', txt:'<b>New supplier match.</b> Ahlsell was added to your category — you spent 412 000 kr. there last year.', human:false },
+      { t:'5 days ago', txt:'<b>Savings not being used.</b> Jysk Erhverv agreement is running at 12% of eligible spend.', human:false },
+      { t:'1 week ago', txt:'<b>Rate improved.</b> Your Telenor Erhverv rate went up by 2 points at the Nordic renegotiation.', human:false }
+    ],
+    peerVisible: true,
+    activeOpp: null
+  };
+
+  /* 12 months of data — realized climbing, potential stubbornly flat */
+  const MONTHS = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const SERIES = {
+    realized:  [3200, 4100, 5200, 6800, 7900, 8600, 9400, 10800, 11900, 12600, 13400, 14500],
+    potential: [21400, 20900, 20100, 19800, 19200, 18900, 18400, 18200, 17900, 17600, 17800, 17400],
+    peer:      [9800, 10200, 11100, 11800, 12400, 13100, 13600, 14200, 14800, 15100, 15500, 15900]
+  };
+
+  /* ---------------- screens ---------------- */
+  const show = id => {
+    $$('.screen').forEach(s => s.classList.remove('active'));
+    $('#' + id).classList.add('active');
+    window.scrollTo(0, 0);
+  };
+
+  /* ---------------- 1 · ERP picker ---------------- */
+  $('#erpGrid').addEventListener('click', e => {
+    const btn = e.target.closest('.erp');
+    if (!btn) return;
+    $$('#erpGrid .erp').forEach(b => b.setAttribute('aria-checked', 'false'));
+    btn.setAttribute('aria-checked', 'true');
+    state.source = btn.dataset.erp;
+    state.invoices = +btn.dataset.inv;
+  });
+
+  $('#erpGrid').addEventListener('keydown', e => {
+    if (!['ArrowRight','ArrowDown','ArrowLeft','ArrowUp'].includes(e.key)) return;
+    e.preventDefault();
+    const items = $$('#erpGrid .erp');
+    const i = items.indexOf(document.activeElement);
+    const next = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? (i + 1) % items.length
+                                                                  : (i - 1 + items.length) % items.length;
+    items[next].focus(); items[next].click();
+  });
+
+  $('#btnConnect').addEventListener('click', runScan);
+  $('#btnBackToConnect').addEventListener('click', () => show('screen-connect'));
+
+  /* ---------------- 2 · scan ---------------- */
+  function runScan() {
+    show('screen-scan');
+    $('#scanSource').textContent = state.source;
+    $$('#scanList .src').forEach(el => el.textContent = state.source);
+
+    const rows = $$('#scanList .scan-row');
+    rows.forEach(r => { r.classList.remove('active','done'); r.querySelector('.count').textContent = ''; });
+    const bar = $('#scanBar');
+    bar.querySelector('i').style.width = '0%';
+
+    const counts = ['', nf.format(state.invoices) + ' invoices', nf.format(state.suppliers) + ' suppliers',
+                    '12 agreements', '318 companies'];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const step = reduce ? 120 : 850;
+
+    rows.forEach((row, i) => {
+      setTimeout(() => {
+        rows.forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const pct = Math.round(((i + 1) / rows.length) * 100);
+        bar.querySelector('i').style.width = pct + '%';
+        bar.setAttribute('aria-valuenow', pct);
+        setTimeout(() => {
+          row.classList.remove('active'); row.classList.add('done');
+          row.querySelector('.count').textContent = counts[i];
+        }, step * 0.72);
+      }, step * i);
+    });
+
+    setTimeout(revealProfile, step * rows.length + 400);
+  }
+
+  /* ---------------- 3 · profile ---------------- */
+  function countUp(el, target, suffix) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { el.textContent = nf.format(target) + (suffix || ''); return; }
+    const dur = 900, t0 = performance.now();
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = nf.format(Math.round(target * eased)) + (suffix || '');
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  function revealProfile() {
+    show('screen-ready');
+    $('#readyInv').textContent = nf.format(state.invoices);
+    $('#readySup').textContent = nf.format(state.suppliers);
+    countUp($('#readySpend'), state.spend);
+    countUp($('#readyRealized'), state.realized);
+    countUp($('#readyPotential'), totalPotential());
+  }
+
+  $('#btnEnter').addEventListener('click', () => {
+    show('screen-app');
+    $('#srcLabel').textContent = state.source;
+    $('#syncLabel').textContent = 'Synced with ' + state.source + ' · just now';
+    renderAll();
+  });
+
+  /* ---------------- helpers ---------------- */
+  const openOpps = () => state.opportunities.filter(o => o.state === 'new');
+  const totalPotential = () => openOpps().reduce((s, o) => s + o.pot, 0);
+
+  /* ---------------- render ---------------- */
+  function renderTiles() {
+    $('#tSpend').textContent = nf.format(state.spend);
+    $('#tRealized').textContent = nf.format(state.realized);
+    $('#tRealizedDelta').textContent = nf.format(state.realizedGain);
+    $('#tPotential').textContent = nf.format(totalPotential());
+    $('#tOppCount').textContent = openOpps().length;
+    $('#tAgreements').textContent = state.agreementsActive + ' / ' + state.agreementsAvailable;
+  }
+
+  function renderBanner() {
+    const open = openOpps();
+    const ban = $('#actionBanner');
+    if (!open.length) {
+      $('#banTitle').textContent = 'Everything we found is now in progress.';
+      $('#banSub').innerHTML = 'We’ll keep watching your invoices and tell you when something new turns up.';
+      $('#btnBannerJump').hidden = true;
+      ban.querySelector('.flag').textContent = '✓ All caught up';
+      ban.querySelector('.flag').style.background = '#D5FCCC';
+      return;
+    }
+    $('#banTitle').textContent = open.length + ' suppliers you already buy from have an agreement you’re not using.';
+    $('#banSub').innerHTML = 'Worth an estimated <b class="num">' + kr(totalPotential()) + '</b> a year. Two are ready to activate in one click.';
+  }
+
+  function renderOpps() {
+    const list = $('#oppList');
+    list.innerHTML = '';
+    state.opportunities.forEach(o => {
+      const row = document.createElement('div');
+      row.className = 'opp';
+      row.dataset.state = o.state;
+
+      const chip = o.state === 'new'    ? '<span class="chip chip-new">Not activated</span>'
+                 : o.state === 'sent'   ? '<span class="chip chip-sent">✓ Request sent</span>'
+                 : o.state === 'human'  ? '<span class="chip chip-warn">Advisor handling</span>'
+                 :                        '<span class="chip chip-active">✓ Active</span>';
+
+      row.innerHTML = `
+        <span class="sup">
+          <span class="n">${o.name} ${chip}</span>
+          <span class="c">${o.cat} · <span class="num">${nf.format(o.inv)}</span> invoices</span>
+        </span>
+        <span class="fig"><span class="k">Your spend</span><span class="v num">${nf.format(o.spend)}</span></span>
+        <span class="fig"><span class="k">Could save</span><span class="v num pot">${nf.format(o.pot)}</span></span>
+        <span class="fig"><span class="k">Rate</span><span class="v num">${o.rate}</span></span>
+      `;
+
+      const act = document.createElement('button');
+      act.className = 'btn btn-primary btn-sm';
+      if (o.state === 'new') {
+        act.textContent = 'Draft message';
+        act.addEventListener('click', () => openModal(o.id));
+      } else {
+        act.className = 'btn btn-secondary btn-standard btn-sm';
+        act.textContent = 'View thread';
+        act.addEventListener('click', () => toast('Conversation with ' + o.name + ' opened'));
+      }
+      row.appendChild(act);
+      list.appendChild(row);
+    });
+    $('#oppMeta').textContent = openOpps().length + ' open · ' + kr(totalPotential());
+  }
+
+  function renderAgreements() {
+    const el = $('#agrList');
+    el.innerHTML = '';
+    state.agreements.forEach(a => {
+      const d = document.createElement('div');
+      d.className = 'agr';
+      const low = a.used < 50;
+      d.innerHTML = `
+        <div class="top">
+          <b>${a.name}</b>
+          <span class="muted" style="font-size:var(--text-xs)">${a.cat}</span>
+          <span class="spacer"></span>
+          <span class="pct">${a.used}%</span>
+          ${low ? '<span class="chip chip-warn">Underused</span>' : ''}
+        </div>
+        <div class="bar ${low ? 'low' : ''}"><i style="width:${a.used}%"></i></div>
+      `;
+      el.appendChild(d);
+    });
+  }
+
+  function renderFeed() {
+    const el = $('#feed');
+    el.innerHTML = '';
+    state.feed.forEach(f => {
+      const d = document.createElement('div');
+      d.className = 'feed-item' + (f.human ? ' human' : '');
+      d.innerHTML = `<span class="dot" aria-hidden="true"></span><span><span>${f.txt}</span><time>${f.t}</time></span>`;
+      el.appendChild(d);
+    });
+    $('#feedCount').textContent = state.feed.length + ' items';
+    $('#notifCount').textContent = state.feed.filter(f => !f.human).length;
+  }
+
+  function renderAll() {
+    renderTiles(); renderBanner(); renderOpps(); renderAgreements(); renderFeed();
+    drawChart(); renderTable();
+  }
+
+  /* ---------------- chart ---------------- */
+  const PAD = { l: 52, r: 56, t: 16, b: 32 };
+  const W = 720, H = 280;
+
+  function scaleY(v, max) { return PAD.t + (1 - v / max) * (H - PAD.t - PAD.b); }
+  function scaleX(i)      { return PAD.l + (i / (MONTHS.length - 1)) * (W - PAD.l - PAD.r); }
+
+  function path(arr, max) {
+    return arr.map((v, i) => (i ? 'L' : 'M') + scaleX(i).toFixed(1) + ' ' + scaleY(v, max).toFixed(1)).join(' ');
+  }
+
+  function drawChart() {
+    const svg = $('#chart');
+    const max = 24000;
+    const ns = 'http://www.w3.org/2000/svg';
+    svg.innerHTML = '<desc id="chart-desc">Monthly line chart comparing realized savings against savings not yet captured, with a peer average reference line.</desc>';
+
+    const add = (tag, attrs, txt) => {
+      const el = document.createElementNS(ns, tag);
+      for (const k in attrs) el.setAttribute(k, attrs[k]);
+      if (txt != null) el.textContent = txt;
+      svg.appendChild(el);
+      return el;
+    };
+
+    /* recessive gridlines */
+    for (let g = 0; g <= 4; g++) {
+      const v = (max / 4) * g;
+      const y = scaleY(v, max);
+      add('line', { x1: PAD.l, x2: W - PAD.r, y1: y, y2: y, stroke: '#E6E6E6', 'stroke-width': 1 });
+      add('text', { x: PAD.l - 10, y: y + 4, 'text-anchor': 'end', fill: '#8A8A8A',
+                    'font-size': 11, 'font-family': 'var(--font-mono)' }, nf.format(v));
+    }
+
+    /* x labels */
+    MONTHS.forEach((m, i) => {
+      add('text', { x: scaleX(i), y: H - PAD.b + 20, 'text-anchor': 'middle', fill: '#8A8A8A',
+                    'font-size': 11, 'font-family': 'var(--font-body)' }, m);
+    });
+
+    /* peer reference — dashed, neutral, not a categorical slot */
+    if (state.peerVisible) {
+      add('path', { d: path(SERIES.peer, max), fill: 'none', stroke: 'var(--chart-peer)',
+                    'stroke-width': 2, 'stroke-dasharray': '5 5', 'stroke-linecap': 'round' });
+      add('text', { x: W - PAD.r + 8, y: scaleY(SERIES.peer.at(-1), max) + 4, fill: '#6B6B6B',
+                    'font-size': 11, 'font-family': 'var(--font-body)' }, 'Peers');
+    }
+
+    /* potential — area + line */
+    add('path', { d: path(SERIES.potential, max) + ` L ${scaleX(11)} ${scaleY(0,max)} L ${scaleX(0)} ${scaleY(0,max)} Z`,
+                  fill: 'var(--chart-potential)', opacity: .07, stroke: 'none' });
+    add('path', { d: path(SERIES.potential, max), fill: 'none', stroke: 'var(--chart-potential)',
+                  'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+
+    /* realized — area + line */
+    add('path', { d: path(SERIES.realized, max) + ` L ${scaleX(11)} ${scaleY(0,max)} L ${scaleX(0)} ${scaleY(0,max)} Z`,
+                  fill: 'var(--chart-realized)', opacity: .09, stroke: 'none' });
+    add('path', { d: path(SERIES.realized, max), fill: 'none', stroke: 'var(--chart-realized)',
+                  'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+
+    /* direct labels at line ends — identity never color-alone */
+    add('text', { x: W - PAD.r + 8, y: scaleY(SERIES.potential.at(-1), max) + 4, fill: 'var(--chart-potential)',
+                  'font-size': 11, 'font-weight': 600, 'font-family': 'var(--font-body)' }, 'Not captured');
+    add('text', { x: W - PAD.r + 8, y: scaleY(SERIES.realized.at(-1), max) + 4, fill: 'var(--chart-realized)',
+                  'font-size': 11, 'font-weight': 600, 'font-family': 'var(--font-body)' }, 'Realized');
+
+    /* endpoint markers with 2px surface ring */
+    [['realized','var(--chart-realized)'],['potential','var(--chart-potential)']].forEach(([k, c]) => {
+      add('circle', { cx: scaleX(11), cy: scaleY(SERIES[k].at(-1), max), r: 5,
+                      fill: c, stroke: '#fff', 'stroke-width': 2 });
+    });
+
+    /* crosshair + hover targets */
+    const cross = add('line', { x1: 0, x2: 0, y1: PAD.t, y2: H - PAD.b, stroke: '#B0B0B0',
+                                'stroke-width': 1, 'stroke-dasharray': '3 3', opacity: 0 });
+    const dots = ['realized','potential'].map(k =>
+      add('circle', { cx: 0, cy: 0, r: 5, fill: k === 'realized' ? 'var(--chart-realized)' : 'var(--chart-potential)',
+                      stroke: '#fff', 'stroke-width': 2, opacity: 0 }));
+
+    const tip = $('#tip'), wrap = $('#chartWrap');
+
+    MONTHS.forEach((m, i) => {
+      const band = add('rect', {
+        x: scaleX(i) - (W - PAD.l - PAD.r) / (MONTHS.length * 2),
+        y: PAD.t, width: (W - PAD.l - PAD.r) / MONTHS.length, height: H - PAD.t - PAD.b,
+        fill: 'transparent', style: 'cursor:crosshair'
+      });
+      const enter = () => {
+        cross.setAttribute('x1', scaleX(i)); cross.setAttribute('x2', scaleX(i));
+        cross.setAttribute('opacity', 1);
+        dots[0].setAttribute('cx', scaleX(i)); dots[0].setAttribute('cy', scaleY(SERIES.realized[i], max)); dots[0].setAttribute('opacity', 1);
+        dots[1].setAttribute('cx', scaleX(i)); dots[1].setAttribute('cy', scaleY(SERIES.potential[i], max)); dots[1].setAttribute('opacity', 1);
+
+        const rect = wrap.getBoundingClientRect();
+        tip.style.left = (scaleX(i) / W * rect.width) + 'px';
+        tip.style.top  = (scaleY(Math.max(SERIES.realized[i], SERIES.potential[i]), max) / H * rect.height - 12) + 'px';
+        tip.innerHTML =
+          '<div style="font-weight:600;margin-bottom:4px">' + m + '</div>' +
+          '<div class="r"><span><i style="background:var(--chart-realized)"></i> Realized</span><b>' + nf.format(SERIES.realized[i]) + '</b></div>' +
+          '<div class="r"><span><i style="background:var(--chart-potential)"></i> Not captured</span><b>' + nf.format(SERIES.potential[i]) + '</b></div>' +
+          (state.peerVisible ? '<div class="r"><span><i style="background:var(--chart-peer)"></i> Peer avg.</span><b>' + nf.format(SERIES.peer[i]) + '</b></div>' : '');
+        tip.style.opacity = 1;
+      };
+      const leave = () => {
+        cross.setAttribute('opacity', 0);
+        dots.forEach(d => d.setAttribute('opacity', 0));
+        tip.style.opacity = 0;
+      };
+      band.addEventListener('mouseenter', enter);
+      band.addEventListener('mouseleave', leave);
+    });
+  }
+
+  function renderTable() {
+    const tb = $('#tableBody');
+    tb.innerHTML = '';
+    MONTHS.forEach((m, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${m}</td><td>${nf.format(SERIES.realized[i])}</td>
+                      <td>${nf.format(SERIES.potential[i])}</td><td>${nf.format(SERIES.peer[i])}</td>`;
+      tb.appendChild(tr);
+    });
+  }
+
+  $('#peerToggle').addEventListener('change', e => {
+    state.peerVisible = e.target.checked;
+    $('#legendPeer').style.display = state.peerVisible ? '' : 'none';
+    drawChart();
+  });
+
+  $('#btnTable').addEventListener('click', e => {
+    const v = $('#tableView');
+    const open = v.hasAttribute('hidden');
+    v.toggleAttribute('hidden', !open);
+    e.target.setAttribute('aria-expanded', String(open));
+    e.target.textContent = open ? 'Hide table' : 'Show data as table';
+  });
+
+  $('#btnBannerJump').addEventListener('click', () => {
+    $('#oppCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  /* ---------------- modal ---------------- */
+  let lastFocus = null;
+
+  function draftFor(o) {
+    return `Hi,
+
+We're Nordvik Byg A/S (CVR 38 42 11 07) and we've been buying from you regularly — around ${kr(o.spend)} over the last twelve months, across ${nf.format(o.inv)} invoices, mostly in ${o.cat.toLowerCase()}.
+
+We're part of the Advantage Nordic purchasing group, which has a framework agreement with you. We'd like our account moved onto those terms — roughly ${o.rate} against the list prices we're paying today.
+
+Could you confirm our account number is linked to the Advantage agreement, and let us know from which date the new prices apply?
+
+Kind regards,
+Mette Hansen
+Operations, Nordvik Byg A/S`;
+  }
+
+  function openModal(id) {
+    const o = state.opportunities.find(x => x.id === id);
+    state.activeOpp = id;
+    lastFocus = document.activeElement;
+    $('#modalSupplier').textContent = o.name;
+    $('#modalBasis').innerHTML = 'Based on <b class="num">' + kr(o.spend) + '</b> spent with this supplier over 12 months across <b class="num">' + nf.format(o.inv) + '</b> invoices.';
+    $('#draft').value = draftFor(o);
+    const bd = $('#backdrop');
+    bd.hidden = false;
+    requestAnimationFrame(() => bd.classList.add('open'));
+    setTimeout(() => $('#draft').focus(), 60);
+  }
+
+  function closeModal() {
+    const bd = $('#backdrop');
+    bd.classList.remove('open');
+    setTimeout(() => { bd.hidden = true; }, 200);
+    if (lastFocus) lastFocus.focus();
+  }
+
+  $('#backdrop').addEventListener('click', e => { if (e.target === $('#backdrop')) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && $('#backdrop').classList.contains('open')) closeModal();
+  });
+  $('#draft').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); $('#btnSend').click(); }
+  });
+
+  $('#btnSend').addEventListener('click', () => {
+    const o = state.opportunities.find(x => x.id === state.activeOpp);
+    o.state = 'sent';
+    state.realized += Math.round(o.pot * 0.35);
+    state.realizedGain += Math.round(o.pot * 0.35);
+    state.agreementsActive += 1;
+    state.feed.unshift({ t: 'just now',
+      txt: `<b>Request sent to ${o.name}.</b> We’ll chase them in 5 days if nothing comes back, and confirm the rate once it’s live.`,
+      human: false });
+    closeModal(); renderAll();
+    toast('Sent to ' + o.name + ' · ' + kr(o.pot) + ' in progress');
+  });
+
+  $('#btnSkip').addEventListener('click', () => {
+    const o = state.opportunities.find(x => x.id === state.activeOpp);
+    o.state = 'skipped';
+    state.feed.unshift({ t:'just now', txt:`<b>${o.name} skipped.</b> We won’t suggest it again unless your spend there changes.`, human:false });
+    closeModal(); renderAll();
+    toast(o.name + ' skipped');
+  });
+
+  $('#btnHuman').addEventListener('click', () => {
+    const o = state.opportunities.find(x => x.id === state.activeOpp);
+    o.state = 'human';
+    state.feed.unshift({ t:'just now',
+      txt:`<b>Passed to your advisor.</b> Lars Bech is taking over ${o.name} — this one’s worth ${kr(o.pot)}, so a person will handle it. He’ll call you Thursday.`,
+      human:true });
+    closeModal(); renderAll();
+    toast('Lars Bech will handle ' + o.name);
+  });
+
+  /* ---------------- notifications ---------------- */
+  $('#btnBell').addEventListener('click', () => {
+    state.feed.unshift({ t:'just now',
+      txt:'<b>New supplier match.</b> Solar A/S was added in electrical supplies — you spent 74 000 kr. there last quarter with no agreement.',
+      human:false });
+    state.opportunities.push({ id:'solar', name:'Solar A/S', cat:'Electrical supplies',
+      spend:74000, inv:29, pot:9600, rate:'13%', state:'new' });
+    renderAll();
+    toast('1 new opportunity found in your latest invoices');
+  });
+
+  /* ---------------- toast ---------------- */
+  function toast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = '<span class="ok" aria-hidden="true">✓</span><span>' + msg + '</span>';
+    $('#toasts').appendChild(t);
+    requestAnimationFrame(() => t.classList.add('in'));
+    setTimeout(() => {
+      t.classList.remove('in');
+      setTimeout(() => t.remove(), 250);
+    }, 3600);
+  }
+
+  window.addEventListener('resize', () => { if ($('#screen-app').classList.contains('active')) drawChart(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — The Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&family=DM+Sans:wght@400..700&display=swap">
+<style>
+/* =====================================================================
+   Advantage v3-1 — THE MARKETPLACE
+   A dashboard reports; a catalogue sells. Savings as merchandise.
+   Semantic tokens only — no raw hex in components.
+   ===================================================================== */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;--general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;--general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;--general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;--general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--sidebar-foreground:#1c1c1c;
+  --sentiment-positive:#009689;--sentiment-negative:#f54a00;
+  --surface:#ffffff;--brand-midnight:#000a45;--brand-ice:#edf5ff;--brand-cornflower:#73abff;
+  --font-sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;
+  --hairline:#ececec;
+  --t-fast:.15s ease;--t:.28s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{font-family:var(--font-body);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:700;text-wrap:balance}
+h1{font-size:var(--text-4xl);letter-spacing:-1.2px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:600;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+    box-shadow var(--t-fast),transform .1s ease;background:none}
+.btn:active{transform:translateY(1px)}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);box-shadow:var(--shadow-xs)}
+.btn-primary:hover{filter:brightness(.94)}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover{background:var(--brand-ice);border-color:var(--general-border)}
+.btn-dark{background:var(--brand-midnight);color:var(--general-primary-foreground)}
+.btn-dark:hover{filter:brightness(1.35)}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3);height:36px}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.btn.added{background:var(--surface);color:var(--sentiment-positive);border-color:currentColor}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);
+  font-weight:600;font-size:inherit;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- app frame ---------- */
+.app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:var(--s6);
+  background:var(--surface);border-right:1px solid var(--sidebar-border);padding:var(--s6) var(--s4)}
+.logo{display:flex;align-items:center;gap:var(--s2);font-family:var(--font-sans);font-weight:800;
+  letter-spacing:-.5px;font-size:var(--text-lg);padding:0 var(--s2);color:var(--sidebar-foreground)}
+.logo svg{width:22px;height:22px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:var(--s3);min-height:44px;padding:0 var(--s3);
+  border-radius:var(--rounded-md);color:var(--sidebar-foreground);text-decoration:none;
+  font-size:var(--text-sm);font-weight:500;transition:background-color var(--t-fast)}
+.nav a:hover{background:var(--general-muted)}
+.nav a[aria-current="page"]{background:var(--brand-ice);color:var(--general-primary);font-weight:700}
+.nav a svg{width:18px;height:18px;flex:0 0 auto;opacity:.8}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:var(--s3)}
+.assist-launch{display:flex;align-items:center;gap:var(--s3);min-height:56px;padding:var(--s2) var(--s3);
+  border:1px solid var(--general-border);border-radius:var(--rounded-lg);background:var(--brand-ice);
+  cursor:pointer;text-align:left;transition:box-shadow var(--t-fast)}
+.assist-launch:hover{box-shadow:var(--shadow-sm)}
+.assist-launch .spark{width:34px;height:34px;border-radius:var(--rounded-full);flex:0 0 auto;
+  background:var(--brand-midnight);color:var(--general-primary-foreground);display:grid;place-items:center}
+.assist-launch .spark svg{width:16px;height:16px}
+.assist-launch b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);letter-spacing:-.2px}
+.assist-launch span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.side-note{font-size:var(--text-xs);color:var(--general-muted-foreground);padding:0 var(--s2)}
+
+/* ---------- topbar ---------- */
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:var(--s4);
+  background:color-mix(in srgb,var(--general-background) 88%,transparent);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--hairline);padding:var(--s3) var(--s8);min-height:64px}
+.crumb{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.crumb b{color:var(--general-foreground);font-family:var(--font-sans);letter-spacing:-.2px}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:var(--s3)}
+.acct{position:relative}
+.acct-btn{display:flex;align-items:center;gap:var(--s3);min-height:44px;padding:var(--s1) var(--s3) var(--s1) var(--s1);
+  border:1px solid var(--hairline);border-radius:var(--rounded-full);background:var(--surface);cursor:pointer;
+  box-shadow:var(--shadow-xs)}
+.acct-btn:hover{border-color:var(--general-border)}
+.avatar{width:34px;height:34px;border-radius:var(--rounded-full);background:var(--brand-midnight);
+  color:var(--general-primary-foreground);display:grid;place-items:center;font-family:var(--font-sans);
+  font-weight:700;font-size:var(--text-xs)}
+.acct-btn .who{text-align:left;line-height:1.15}
+.acct-btn .who b{display:block;font-size:var(--text-sm);font-family:var(--font-sans);letter-spacing:-.2px}
+.acct-btn .who span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.acct-menu{position:absolute;right:0;top:calc(100% + 8px);width:300px;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);box-shadow:var(--shadow-lg);
+  padding:var(--s2);display:none;z-index:40}
+.acct-menu.open{display:block}
+.acct-menu .mlab{font-size:var(--text-xs);color:var(--general-muted-foreground);padding:var(--s2) var(--s3)}
+.persona-opt{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:56px;padding:var(--s2) var(--s3);
+  border:none;background:none;border-radius:var(--rounded-md);cursor:pointer;text-align:left}
+.persona-opt:hover{background:var(--general-muted)}
+.persona-opt[aria-checked="true"]{background:var(--brand-ice)}
+.persona-opt .pv{margin-left:auto;color:var(--sentiment-positive)}
+.persona-opt b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);letter-spacing:-.2px}
+.persona-opt span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+
+/* ---------- page scaffold ---------- */
+.page{padding:var(--s8);max-width:1280px;width:100%;margin:0 auto}
+.page-head{margin-bottom:var(--s6)}
+.page-head .eyebrow{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:var(--s1)}
+.page-head p.lead{color:var(--general-muted-foreground);max-width:62ch;margin-top:var(--s2)}
+
+/* ---------- KPI strip ---------- */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s3);margin-bottom:var(--s8)}
+.kpi{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg);
+  padding:var(--s4);box-shadow:var(--shadow-xs);min-width:0}
+.kpi .kl{font-size:var(--text-xs);color:var(--general-muted-foreground);display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.kpi .kv{font-family:var(--font-sans);font-weight:800;font-size:var(--text-2xl);letter-spacing:-.7px;
+  margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .ks{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:2px}
+.kpi.pos .kv{color:var(--sentiment-positive)}
+.kpi.est{border-style:dashed;border-color:var(--general-border);background:var(--brand-ice)}
+.kpi.locked .kv{color:var(--general-muted-foreground)}
+.est-chip{display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:var(--rounded-full);
+  border:1px dashed var(--general-primary);color:var(--general-primary);font-size:11px;font-weight:700;
+  background:var(--surface);white-space:nowrap}
+.ver-chip{display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:var(--rounded-full);
+  background:color-mix(in srgb,var(--sentiment-positive) 12%,var(--surface));color:var(--sentiment-positive);
+  font-size:11px;font-weight:700;white-space:nowrap}
+
+/* ---------- price tags ---------- */
+.ptag{display:inline-flex;align-items:center;gap:7px;background:var(--brand-midnight);
+  color:var(--general-primary-foreground);font-family:var(--font-sans);font-weight:700;
+  font-size:var(--text-sm);letter-spacing:-.2px;padding:7px 14px 7px 16px;position:relative;
+  clip-path:polygon(11px 0,100% 0,100% 100%,11px 100%,0 50%);border-radius:0 var(--rounded-sm) var(--rounded-sm) 0;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.ptag::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--general-background);flex:0 0 auto}
+.ptag small{font-weight:500;opacity:.75;font-size:11px}
+.ptag.est{background:var(--surface);color:var(--brand-midnight);clip-path:none;border:1.5px dashed var(--brand-midnight);
+  border-radius:var(--rounded-sm);padding:6px 12px}
+.ptag.est::before{background:var(--brand-midnight);opacity:.5}
+.rate-price{font-family:var(--font-sans);font-weight:800;font-size:var(--text-3xl);letter-spacing:-1px;
+  color:var(--brand-midnight);font-variant-numeric:tabular-nums;line-height:1}
+.rate-price small{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);letter-spacing:0}
+.rate-price.est-rate{color:var(--general-primary)}
+.rate-price .est-mark{font-size:var(--text-sm);font-weight:600;vertical-align:super;color:var(--general-primary)}
+
+/* ---------- shelves ---------- */
+.shelf{margin-bottom:var(--s8)}
+.shelf-head{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s3)}
+.shelf-head h2{font-size:var(--text-xl)}
+.shelf-head .sub{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.shelf-nav{margin-left:auto;display:flex;gap:var(--s2)}
+.shelf-nav button{width:44px;height:44px;border-radius:var(--rounded-full);border:1px solid var(--hairline);
+  background:var(--surface);cursor:pointer;display:grid;place-items:center;box-shadow:var(--shadow-xs);
+  transition:border-color var(--t-fast),background-color var(--t-fast)}
+.shelf-nav button:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.shelf-nav svg{width:16px;height:16px}
+.shelf-row{display:flex;gap:var(--s4);overflow-x:auto;scroll-snap-type:x mandatory;
+  padding:var(--s1) var(--s1) var(--s4);margin:0 calc(-1 * var(--s1));scroll-behavior:smooth;
+  scrollbar-width:thin;scrollbar-color:var(--general-border) transparent}
+.shelf-row::-webkit-scrollbar{height:8px}
+.shelf-row::-webkit-scrollbar-thumb{background:var(--general-border);border-radius:var(--rounded-full)}
+.shelf-note{flex:0 0 260px;align-self:stretch;display:flex;align-items:center;justify-content:center;
+  border:1.5px dashed var(--hairline);border-radius:var(--rounded-xl);color:var(--general-muted-foreground);
+  font-size:var(--text-sm);padding:var(--s6);text-align:center;scroll-snap-align:start}
+
+/* ---------- opportunity card (shop item) ---------- */
+.op-card{flex:0 0 330px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-xl);box-shadow:var(--shadow-xs);display:flex;flex-direction:column;
+  overflow:hidden;transition:box-shadow var(--t),transform var(--t)}
+.op-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.op-band{height:64px;position:relative;display:flex;align-items:center;padding:0 var(--s4)}
+.op-band svg.art{position:absolute;inset:0;width:100%;height:100%}
+.op-badge{position:relative;z-index:1;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  background:var(--surface);border:1px solid var(--hairline);padding:3px 10px;border-radius:var(--rounded-full);
+  box-shadow:var(--shadow-xs)}
+.op-badge.warn{color:var(--sentiment-negative);border-color:color-mix(in srgb,var(--sentiment-negative) 35%,var(--surface))}
+.op-badge.star{color:var(--general-primary);border-color:var(--general-border)}
+.op-body{padding:var(--s4);display:flex;flex-direction:column;gap:var(--s3);flex:1}
+.op-who{display:flex;align-items:center;gap:var(--s3)}
+.sup-chip{width:40px;height:40px;border-radius:var(--rounded-md);background:var(--brand-ice);
+  color:var(--general-primary);display:grid;place-items:center;font-family:var(--font-sans);
+  font-weight:800;font-size:var(--text-sm);flex:0 0 auto;border:1px solid var(--general-border)}
+.sup-chip.sm{width:28px;height:28px;font-size:11px;border-radius:var(--rounded-sm)}
+.op-who .nm{min-width:0}
+.op-who .nm b{display:block;font-family:var(--font-sans);letter-spacing:-.3px;font-size:var(--text-base)}
+.op-who .nm span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.op-who .rate{margin-left:auto;font-family:var(--font-sans);font-weight:800;font-size:var(--text-xl);
+  letter-spacing:-.5px;color:var(--brand-midnight);font-variant-numeric:tabular-nums}
+.op-who .rate.est-rate{color:var(--general-primary)}
+.op-pitch{font-size:var(--text-sm);color:var(--general-muted-foreground);flex:1}
+.op-peer{font-size:var(--text-xs);color:var(--general-primary);background:var(--brand-ice);
+  border-radius:var(--rounded-sm);padding:var(--s2) var(--s3)}
+.op-foot{display:flex;align-items:center;gap:var(--s2) var(--s3);justify-content:space-between;margin-top:auto;flex-wrap:wrap}
+.op-foot .btns{display:flex;gap:var(--s2)}
+
+/* ---------- category shop-window grid ---------- */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+.cat-card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);overflow:hidden;text-align:left;cursor:pointer;padding:0;
+  display:flex;flex-direction:column;transition:box-shadow var(--t),transform var(--t)}
+.cat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.cat-art{height:96px;position:relative}
+.cat-art svg{position:absolute;inset:0;width:100%;height:100%}
+.cat-mono{position:absolute;left:var(--s4);bottom:calc(-1 * var(--s4));width:48px;height:48px;
+  border-radius:var(--rounded-md);background:var(--brand-midnight);color:var(--general-primary-foreground);
+  display:grid;place-items:center;font-family:var(--font-sans);font-weight:800;font-size:var(--text-lg);
+  box-shadow:var(--shadow-sm)}
+.cat-state{position:absolute;right:var(--s3);top:var(--s3);font-size:11px;font-weight:700;padding:3px 10px;
+  border-radius:var(--rounded-full);background:var(--surface);border:1px solid var(--hairline);box-shadow:var(--shadow-xs)}
+.cat-state.warn{color:var(--sentiment-negative)}
+.cat-state.star{color:var(--general-primary)}
+.cat-state.ok{color:var(--sentiment-positive)}
+.cat-body{padding:var(--s6) var(--s4) var(--s4);display:flex;flex-direction:column;gap:var(--s3);flex:1}
+.cat-top{display:flex;align-items:flex-start;gap:var(--s3)}
+.cat-top h3{font-size:var(--text-lg);letter-spacing:-.4px}
+.cat-top .spend{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.cat-top .rate-price{margin-left:auto;text-align:right}
+.coverage{display:flex;flex-direction:column;gap:4px}
+.coverage .cl{display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.coverage .cl b{color:var(--general-foreground);font-variant-numeric:tabular-nums}
+.meter{height:8px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.meter i{display:block;height:100%;border-radius:var(--rounded-full);background:var(--sentiment-positive)}
+.meter.low i{background:var(--general-accent)}
+.meter.est i{background:repeating-linear-gradient(45deg,var(--brand-cornflower) 0 6px,var(--general-secondary) 6px 12px)}
+.cat-sups{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;margin-top:auto}
+.cat-sups .sup-pill{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);font-weight:600;
+  background:var(--general-muted);border-radius:var(--rounded-full);padding:3px 10px 3px 4px}
+.sup-dot{width:20px;height:20px;border-radius:var(--rounded-full);background:var(--brand-ice);color:var(--general-primary);
+  display:grid;place-items:center;font-size:9px;font-weight:800;font-family:var(--font-sans);border:1px solid var(--general-border)}
+.cat-card.est{border-style:dashed;border-color:var(--general-border)}
+
+/* ---------- agreements (subscription cards) ---------- */
+.filters{display:flex;gap:var(--s2);margin-bottom:var(--s6);flex-wrap:wrap}
+.fchip{min-height:44px;padding:0 var(--s4);border-radius:var(--rounded-full);border:1px solid var(--hairline);
+  background:var(--surface);cursor:pointer;font-size:var(--text-sm);font-weight:600;display:inline-flex;
+  align-items:center;gap:var(--s2);transition:background-color var(--t-fast),border-color var(--t-fast)}
+.fchip:hover{border-color:var(--general-border)}
+.fchip[aria-pressed="true"]{background:var(--brand-midnight);color:var(--general-primary-foreground);border-color:var(--brand-midnight)}
+.fchip .n{font-size:11px;background:var(--general-muted);color:var(--general-muted-foreground);
+  border-radius:var(--rounded-full);padding:1px 8px;font-variant-numeric:tabular-nums}
+.fchip[aria-pressed="true"] .n{background:color-mix(in srgb,var(--general-primary-foreground) 22%,transparent);color:var(--general-primary-foreground)}
+.agr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+.agr-card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);padding:var(--s4);display:flex;flex-direction:column;gap:var(--s3);position:relative}
+.agr-card.owned{border-left:4px solid var(--sentiment-positive)}
+.agr-card.offer{border-style:dashed;border-color:var(--general-border);background:linear-gradient(180deg,var(--brand-ice),var(--surface) 55%)}
+.agr-card.exp{border-left:4px solid var(--sentiment-negative)}
+.agr-head{display:flex;align-items:center;gap:var(--s3)}
+.agr-head .nm b{display:block;font-family:var(--font-sans);letter-spacing:-.3px}
+.agr-head .nm span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.status-pill{margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:var(--rounded-full);white-space:nowrap}
+.status-pill.on{background:color-mix(in srgb,var(--sentiment-positive) 12%,var(--surface));color:var(--sentiment-positive)}
+.status-pill.off{background:var(--general-secondary);color:var(--general-primary)}
+.status-pill.warn{background:color-mix(in srgb,var(--sentiment-negative) 12%,var(--surface));color:var(--sentiment-negative)}
+.agr-terms{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.agr-meta{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+.mini-tag{font-size:11px;font-weight:700;border-radius:var(--rounded-full);padding:2px 9px;
+  background:var(--general-muted);color:var(--general-muted-foreground)}
+.mini-tag.bonus{background:color-mix(in srgb,var(--general-accent) 22%,var(--surface));color:var(--general-accent-foreground)}
+.agr-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+
+/* ---------- savings / receipts ---------- */
+.sav-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:var(--s6);align-items:start}
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);padding:var(--s6)}
+.receipt{font-variant-numeric:tabular-nums}
+.receipt-head{display:flex;align-items:baseline;gap:var(--s3);border-bottom:2px dashed var(--hairline);
+  padding-bottom:var(--s4);margin-bottom:var(--s2)}
+.receipt-head .tot{margin-left:auto;font-family:var(--font-sans);font-weight:800;font-size:var(--text-3xl);
+  letter-spacing:-1px;color:var(--sentiment-positive)}
+.month-row{border-bottom:1px dashed var(--hairline)}
+.month-btn{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:52px;background:none;border:none;
+  cursor:pointer;padding:var(--s2) var(--s1);text-align:left}
+.month-btn:hover{background:var(--brand-ice)}
+.month-btn .mn{font-family:var(--font-sans);font-weight:700;width:88px}
+.month-btn .msub{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.month-btn .amt{margin-left:auto;font-weight:700;color:var(--sentiment-positive)}
+.month-btn .chev{width:16px;height:16px;transition:transform var(--t-fast);color:var(--general-muted-foreground)}
+.month-row.open .chev{transform:rotate(90deg)}
+.month-lines{display:none;padding:0 var(--s2) var(--s3) calc(88px + var(--s4))}
+.month-row.open .month-lines{display:block}
+.month-lines li{display:flex;justify-content:space-between;font-size:var(--text-sm);
+  color:var(--general-muted-foreground);padding:3px 0;list-style:none}
+.month-lines li b{color:var(--general-foreground);font-weight:600}
+.spark-bars{display:flex;align-items:flex-end;gap:6px;height:72px;margin:var(--s4) 0}
+.spark-bars .sb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.spark-bars .sb i{display:block;width:100%;border-radius:4px 4px 0 0;background:var(--sentiment-positive);min-height:3px}
+.spark-bars .sb span{font-size:10px;color:var(--general-muted-foreground)}
+.bonus-card{background:var(--brand-midnight);color:var(--general-primary-foreground);border:none}
+.bonus-card h3{color:inherit}
+.bonus-card .bv{font-family:var(--font-sans);font-weight:800;font-size:var(--text-4xl);letter-spacing:-1.2px;margin:var(--s2) 0}
+.bonus-card .brow{display:flex;justify-content:space-between;font-size:var(--text-sm);padding:var(--s2) 0;
+  border-top:1px solid color-mix(in srgb,var(--general-primary-foreground) 18%,transparent)}
+.bonus-card .muted2{opacity:.65;font-size:var(--text-xs)}
+.bonus-meter{height:8px;border-radius:var(--rounded-full);background:color-mix(in srgb,var(--general-primary-foreground) 18%,transparent);
+  overflow:hidden;margin:var(--s3) 0 var(--s2)}
+.bonus-meter i{display:block;height:100%;background:var(--general-accent);border-radius:var(--rounded-full)}
+.locked-card{border:1.5px dashed var(--general-border);border-radius:var(--rounded-xl);
+  background:var(--brand-ice);padding:var(--s12) var(--s8);text-align:center}
+.locked-card .lock{width:56px;height:56px;margin:0 auto var(--s4);border-radius:var(--rounded-full);
+  background:var(--surface);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+.locked-card .lock svg{width:24px;height:24px;color:var(--general-primary)}
+.locked-card p{color:var(--general-muted-foreground);max-width:46ch;margin:var(--s2) auto var(--s6)}
+
+/* ---------- spending ---------- */
+.spend-legend{display:flex;gap:var(--s6);font-size:var(--text-sm);color:var(--general-muted-foreground);
+  margin-bottom:var(--s4);flex-wrap:wrap}
+.spend-legend .sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
+.sw.on{background:var(--sentiment-positive)}
+.sw.off{background:repeating-linear-gradient(45deg,var(--general-muted) 0 5px,var(--sidebar-border) 5px 10px)}
+.sw.est{background:repeating-linear-gradient(45deg,var(--brand-cornflower) 0 5px,var(--general-secondary) 5px 10px)}
+.spend-row{display:grid;grid-template-columns:200px 1fr 130px;gap:var(--s4);align-items:center;
+  padding:var(--s3) 0;border-bottom:1px dashed var(--hairline)}
+.spend-row .sn{font-weight:600;font-size:var(--text-sm);font-family:var(--font-sans);letter-spacing:-.2px}
+.spend-row .sn span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);font-family:var(--font-body);font-weight:400}
+.spend-bar{height:22px;border-radius:var(--rounded-sm);background:var(--general-muted);overflow:hidden;display:flex}
+.spend-bar .on{background:var(--sentiment-positive);height:100%}
+.spend-bar .off{background:repeating-linear-gradient(45deg,transparent 0 5px,var(--sidebar-border) 5px 10px);height:100%}
+.spend-bar .on.est{background:repeating-linear-gradient(45deg,var(--brand-cornflower) 0 5px,var(--general-secondary) 5px 10px)}
+.spend-row .sv{text-align:right;font-size:var(--text-sm);font-variant-numeric:tabular-nums}
+.spend-row .sv b{display:block}
+.spend-row .sv span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.callout{display:flex;gap:var(--s4);align-items:center;border:1px solid var(--general-border);
+  background:var(--brand-ice);border-radius:var(--rounded-lg);padding:var(--s4) var(--s6);margin-bottom:var(--s6)}
+.callout .big{font-family:var(--font-sans);font-weight:800;font-size:var(--text-2xl);letter-spacing:-.7px;white-space:nowrap}
+.callout p{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.callout .btn{margin-left:auto}
+
+/* ---------- drawer (category detail) ---------- */
+.scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--brand-midnight) 40%,transparent);
+  opacity:0;pointer-events:none;transition:opacity var(--t);z-index:60}
+.scrim.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:94vw;background:var(--surface);
+  box-shadow:var(--shadow-lg);z-index:70;transform:translateX(105%);transition:transform var(--t);
+  display:flex;flex-direction:column;border-radius:var(--rounded-xl) 0 0 var(--rounded-xl)}
+.drawer.open{transform:none}
+.drawer-art{height:120px;position:relative;border-radius:var(--rounded-xl) 0 0 0;overflow:hidden;flex:0 0 auto}
+.drawer-art svg{position:absolute;inset:0;width:100%;height:100%}
+.drawer-close{position:absolute;top:var(--s3);right:var(--s3);width:44px;height:44px;border-radius:var(--rounded-full);
+  border:1px solid var(--hairline);background:var(--surface);cursor:pointer;display:grid;place-items:center;box-shadow:var(--shadow-sm);z-index:2}
+.drawer-body{padding:var(--s6);overflow-y:auto;flex:1}
+.drawer-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s3);margin:var(--s4) 0 var(--s6)}
+.dk{background:var(--general-background);border:1px solid var(--hairline);border-radius:var(--rounded-md);padding:var(--s3)}
+.dk .l{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.dk .v{font-family:var(--font-sans);font-weight:700;font-size:var(--text-lg);letter-spacing:-.4px;font-variant-numeric:tabular-nums}
+.dk .v.pos{color:var(--sentiment-positive)}
+.drawer-agr{border:1px solid var(--hairline);border-radius:var(--rounded-lg);padding:var(--s4);
+  display:flex;flex-direction:column;gap:var(--s3);margin-bottom:var(--s3)}
+.drawer-agr.offer{border-style:dashed;border-color:var(--general-border);background:var(--brand-ice)}
+
+/* ---------- savings plan tray ---------- */
+.tray{position:fixed;right:var(--s6);bottom:var(--s6);width:340px;z-index:80;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);box-shadow:var(--shadow-lg);
+  transform:translateY(16px);opacity:0;pointer-events:none;transition:transform var(--t),opacity var(--t)}
+.tray.show{transform:none;opacity:1;pointer-events:auto}
+.tray-head{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s3) var(--s4);
+  background:var(--brand-midnight);color:var(--general-primary-foreground);border:none;cursor:pointer;
+  border-radius:var(--rounded-lg) var(--rounded-lg) 0 0;min-height:56px;text-align:left}
+.tray.collapsed .tray-head{border-radius:var(--rounded-lg)}
+.tray-head .ticon{position:relative;width:34px;height:34px;border-radius:var(--rounded-full);
+  background:color-mix(in srgb,var(--general-primary-foreground) 14%,transparent);display:grid;place-items:center;flex:0 0 auto}
+.tray-head .ticon svg{width:16px;height:16px}
+.tray-count{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:var(--rounded-full);
+  background:var(--general-accent);color:var(--general-accent-foreground);font-size:11px;font-weight:800;
+  display:grid;place-items:center;padding:0 4px;font-variant-numeric:tabular-nums}
+.tray-head b{font-family:var(--font-sans);letter-spacing:-.2px;font-size:var(--text-sm);display:block}
+.tray-head .tt{font-size:var(--text-xs);opacity:.75}
+.tray-head .tot{margin-left:auto;font-family:var(--font-sans);font-weight:800;font-size:var(--text-lg);
+  letter-spacing:-.4px;font-variant-numeric:tabular-nums}
+.tray-body{padding:var(--s3) var(--s4) var(--s4)}
+.tray.collapsed .tray-body{display:none}
+.tray-item{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) 0;border-bottom:1px dashed var(--hairline);font-size:var(--text-sm)}
+.tray-item .ti-n{min-width:0}
+.tray-item .ti-n b{display:block;font-family:var(--font-sans);letter-spacing:-.2px;font-size:var(--text-sm)}
+.tray-item .ti-n span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.tray-item .ti-v{margin-left:auto;font-weight:700;color:var(--sentiment-positive);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tray-item .ti-v.est{color:var(--general-primary)}
+.tray-rm{width:28px;height:28px;border-radius:var(--rounded-full);border:none;background:var(--general-muted);
+  cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
+.tray-rm:hover{background:var(--general-secondary)}
+.tray-rm svg{width:12px;height:12px}
+.tray-foot{margin-top:var(--s3);display:flex;flex-direction:column;gap:var(--s2)}
+.tray-foot .tf-note{font-size:var(--text-xs);color:var(--general-muted-foreground);text-align:center}
+@keyframes trayPulse{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.tray.pulse .tray-head .ticon{animation:trayPulse .4s ease}
+
+/* ---------- assistant panel ---------- */
+.assist-panel{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:94vw;background:var(--surface);
+  z-index:90;box-shadow:var(--shadow-lg);transform:translateX(105%);transition:transform var(--t);
+  display:flex;flex-direction:column;border-radius:var(--rounded-xl) 0 0 var(--rounded-xl)}
+.assist-panel.open{transform:none}
+.ap-head{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s6);border-bottom:1px solid var(--hairline)}
+.ap-head h3{margin-right:auto}
+.ap-log{flex:1;overflow-y:auto;padding:var(--s4) var(--s6);display:flex;flex-direction:column;gap:var(--s3)}
+.msg{max-width:88%;padding:var(--s3) var(--s4);border-radius:var(--rounded-lg);font-size:var(--text-sm)}
+.msg.q{align-self:flex-end;background:var(--brand-midnight);color:var(--general-primary-foreground);border-bottom-right-radius:var(--rounded-xs)}
+.msg.a{align-self:flex-start;background:var(--general-muted);border-bottom-left-radius:var(--rounded-xs)}
+.msg.a b{color:var(--sentiment-positive)}
+.ap-chips{padding:0 var(--s6) var(--s3);display:flex;flex-wrap:wrap;gap:var(--s2)}
+.pchip{border:1px solid var(--general-border);background:var(--brand-ice);color:var(--general-primary);
+  border-radius:var(--rounded-full);padding:var(--s2) var(--s3);font-size:var(--text-xs);font-weight:600;cursor:pointer;min-height:36px}
+.pchip:hover{background:var(--general-secondary)}
+.ap-input{display:flex;gap:var(--s2);padding:var(--s3) var(--s6) var(--s6)}
+.ap-input input{flex:1;height:44px;border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  padding:0 var(--s4);background:var(--general-input);font-size:var(--text-sm)}
+.ap-input input:focus-visible{outline:2px solid var(--general-primary);outline-offset:1px}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:var(--s6)}
+.modal.open{display:grid}
+.modal-card{background:var(--surface);border-radius:var(--rounded-xl);box-shadow:var(--shadow-lg);
+  width:520px;max-width:100%;padding:var(--s8);position:relative;z-index:2}
+.modal .scrim2{position:absolute;inset:0;background:color-mix(in srgb,var(--brand-midnight) 45%,transparent)}
+.connect-opt{display:flex;align-items:center;gap:var(--s4);width:100%;border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);background:var(--surface);padding:var(--s4);cursor:pointer;text-align:left;
+  margin-top:var(--s3);min-height:64px;transition:border-color var(--t-fast),background-color var(--t-fast)}
+.connect-opt:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.connect-opt b{display:block;font-family:var(--font-sans);letter-spacing:-.2px}
+.connect-opt span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.connect-opt .co-i{width:40px;height:40px;border-radius:var(--rounded-md);background:var(--brand-ice);
+  color:var(--general-primary);display:grid;place-items:center;flex:0 0 auto;border:1px solid var(--general-border)}
+
+/* ---------- peer banner (Fanny) ---------- */
+.peer-banner{display:flex;align-items:center;gap:var(--s4);border:1.5px dashed var(--general-border);
+  background:var(--brand-ice);border-radius:var(--rounded-lg);padding:var(--s4) var(--s6);margin-bottom:var(--s6)}
+.peer-banner p{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.peer-banner p b{color:var(--general-foreground)}
+.peer-banner .btn{margin-left:auto;flex:0 0 auto}
+
+/* table fallback / misc */
+.tick{color:var(--sentiment-positive)}
+@media (max-width:1080px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;flex-direction:row;align-items:center}
+  .side-foot{margin-top:0;margin-left:auto}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .cat-grid,.agr-grid{grid-template-columns:repeat(2,1fr)}
+  .sav-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ================= sidebar ================= -->
+  <aside class="side">
+    <div class="logo" aria-label="Advantage">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="6" fill="var(--brand-midnight)"/>
+        <path d="M7.5 15.5 12 7l4.5 8.5" stroke="var(--brand-cornflower)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9.4 12.6h5.2" stroke="var(--general-primary-foreground)" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      Advantage
+    </div>
+    <nav class="nav" aria-label="Main">
+      <a href="#overview" data-nav="overview" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5M5.5 9v10.5h13V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Overview</a>
+      <a href="#categories" data-nav="categories">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>
+        Categories</a>
+      <a href="#agreements" data-nav="agreements">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3.5h7.5L19 8v12.5H7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 12.5h6M10 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Agreements</a>
+      <a href="#savings" data-nav="savings">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M8 7.5c0-1.7 1.8-2.5 4-2.5s4 .8 4 2.5-1.8 2.3-4 2.8-4 1.1-4 2.8 1.8 2.5 4 2.5 4-.8 4-2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Savings</a>
+      <a href="#spending" data-nav="spending">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19.5V4.5M4 19.5h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M7.5 15.5v-4M11.5 15.5V8.5M15.5 15.5v-6M19 15.5V6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Spending</a>
+    </nav>
+    <div class="side-foot">
+      <button class="assist-launch" id="assistBtn" aria-haspopup="dialog" aria-expanded="false">
+        <span class="spark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" fill="currentColor"/><circle cx="18.5" cy="17.5" r="2" fill="var(--general-accent)"/></svg>
+        </span>
+        <span><b>Saving assistant</b><span>Ask where to start</span></span>
+      </button>
+      <p class="side-note" id="sideNote">Nordvik Byg A/S · member since 2023</p>
+    </div>
+  </aside>
+
+  <!-- ================= main ================= -->
+  <div class="main">
+    <header class="topbar">
+      <span class="crumb" id="crumb"><b>Overview</b> · your savings storefront</span>
+      <div class="top-actions">
+        <div class="acct">
+          <button class="acct-btn" id="acctBtn" aria-haspopup="menu" aria-expanded="false">
+            <span class="avatar" id="acctAv">BI</span>
+            <span class="who"><b id="acctName">Bob Iversen</b><span id="acctCo">Nordvik Byg A/S</span></span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="acct-menu" id="acctMenu" role="menu" aria-label="Switch account">
+            <p class="mlab">Signed-in company</p>
+            <button class="persona-opt" role="menuitemradio" aria-checked="true" data-persona="bob">
+              <span class="avatar" aria-hidden="true">BI</span>
+              <span><b>Bob Iversen</b><span>Nordvik Byg A/S · data connected</span></span>
+              <span class="pv" aria-hidden="true">✓</span>
+            </button>
+            <button class="persona-opt" role="menuitemradio" aria-checked="false" data-persona="fanny">
+              <span class="avatar" style="background:var(--general-primary)" aria-hidden="true">FK</span>
+              <span><b>Fanny Kristensen</b><span>Kristensen Elektro ApS · new customer</span></span>
+              <span class="pv" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="views">
+      <!-- ======== OVERVIEW (static Bob render — first paint works without JS) ======== -->
+      <section class="page" id="page-overview" aria-labelledby="ovTitle">
+        <div class="page-head">
+          <p class="eyebrow" id="ovEyebrow">This week at Nordvik Byg</p>
+          <h1 id="ovTitle">Savings, ready off the shelf</h1>
+          <p class="lead" id="ovLead">Every card below is a negotiated price you are not using yet. Add the ones you want to your plan — we handle the paperwork with the supplier.</p>
+        </div>
+        <div id="ovBanner"></div>
+        <div class="kpis" id="ovKpis" role="list" aria-label="Key figures">
+          <div class="kpi" role="listitem"><p class="kl">Annual purchasing spend <span class="ver-chip">verified</span></p><p class="kv num">kr 14.2M</p><p class="ks">from 3,412 invoices</p></div>
+          <div class="kpi" role="listitem"><p class="kl">Through agreements</p><p class="kv num">62%</p><p class="ks">kr 8.8M of spend</p></div>
+          <div class="kpi pos" role="listitem"><p class="kl">Realized savings YTD</p><p class="kv num">kr 1.24M</p><p class="ks">against list prices</p></div>
+          <div class="kpi" role="listitem"><p class="kl">Potential on the shelf</p><p class="kv num" style="color:var(--general-primary)">kr 840K</p><p class="ks">across 7 opportunities</p></div>
+          <div class="kpi" role="listitem"><p class="kl">Customer bonus</p><p class="kv num">kr 45K</p><p class="ks">32K paid · 13K pending</p></div>
+        </div>
+        <div id="ovShelves"><!-- shelves rendered by JS; static fallback below --></div>
+        <noscript><p class="muted">Enable JavaScript to browse this week&rsquo;s savings shelves.</p></noscript>
+      </section>
+
+      <section class="page" id="page-categories" hidden aria-labelledby="catTitle"></section>
+      <section class="page" id="page-agreements" hidden aria-labelledby="agrTitle"></section>
+      <section class="page" id="page-savings" hidden aria-labelledby="savTitle"></section>
+      <section class="page" id="page-spending" hidden aria-labelledby="spTitle"></section>
+    </main>
+  </div>
+</div>
+
+<!-- ================= category drawer ================= -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+  <div class="drawer-art" id="drawerArt"></div>
+  <button class="drawer-close" id="drawerClose" aria-label="Close category details">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<!-- ================= savings plan tray ================= -->
+<aside class="tray collapsed" id="tray" aria-label="Savings plan">
+  <button class="tray-head" id="trayHead" aria-expanded="false">
+    <span class="ticon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9.5V6a3 3 0 0 1 6 0v3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="tray-count" id="trayCount">0</span>
+    </span>
+    <span><b>Savings plan</b><span class="tt" id="trayHint">items you added</span></span>
+    <span class="tot num" id="trayTotal">kr 0</span>
+  </button>
+  <div class="tray-body">
+    <div id="trayItems"></div>
+    <div class="tray-foot">
+      <button class="btn btn-primary" id="trayCta">Request activation</button>
+      <p class="tf-note" id="trayNote">One request — we contact each supplier for you.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- ================= assistant panel ================= -->
+<aside class="assist-panel" id="assistPanel" role="dialog" aria-modal="false" aria-labelledby="apTitle" hidden>
+  <div class="ap-head">
+    <span class="spark" style="width:34px;height:34px;border-radius:9999px;background:var(--brand-midnight);color:var(--general-primary-foreground);display:grid;place-items:center" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" fill="currentColor"/></svg>
+    </span>
+    <h3 id="apTitle">Saving assistant</h3>
+    <button class="btn btn-secondary btn-sm" id="assistClose" aria-label="Close assistant">Close</button>
+  </div>
+  <div class="ap-log" id="apLog" aria-live="polite"></div>
+  <div class="ap-chips" id="apChips"></div>
+  <form class="ap-input" id="apForm">
+    <input type="text" id="apInput" placeholder="Ask the saving assistant…" aria-label="Ask the saving assistant">
+    <button class="btn btn-primary" type="submit" style="padding:0 var(--s4)">Send</button>
+  </form>
+</aside>
+
+<!-- ================= connect-data modal (Fanny) ================= -->
+<div class="modal" id="connectModal" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+  <div class="scrim2" data-close-modal></div>
+  <div class="modal-card" id="connectCard">
+    <h2 id="cmTitle">Connect your spend data</h2>
+    <p class="muted" style="margin-top:var(--s2);font-size:var(--text-sm)">Your invoices already know where the money is going. Connect once and estimates become verified figures — usually within an hour.</p>
+    <div id="cmBody">
+      <button class="connect-opt" data-connect="e-conomic">
+        <span class="co-i" aria-hidden="true"><b style="font-family:var(--font-sans)">e</b></span>
+        <span><b>e-conomic</b><span>Read-only access to purchase invoices</span></span>
+      </button>
+      <button class="connect-opt" data-connect="Visma.net">
+        <span class="co-i" aria-hidden="true"><b style="font-family:var(--font-sans)">V</b></span>
+        <span><b>Visma.net ERP</b><span>Direct integration, no export needed</span></span>
+      </button>
+      <button class="connect-opt" data-connect="upload">
+        <span class="co-i" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span><b>Upload a spend report</b><span>CSV or Excel export from any system</span></span>
+      </button>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:var(--s6)">
+      <button class="btn btn-secondary" data-close-modal>Not now</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   Data — per shared spec. Amounts in kr thousands.
+   ===================================================================== */
+const fmtK = v => {
+  if (v == null) return "—";
+  if (v >= 1000) {
+    let m = (v / 1000).toFixed(2).replace(/0$/, "").replace(/\.0$/, "");
+    return "kr " + m + "M";
+  }
+  return "kr " + v + "K";
+};
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+const CATS_B = [
+  {id:"bld",  n:"Building materials", spend:4600, on:71,  real:380, pot:120, sup:["Stark","Bygma"], state:"active",   rate:"−9%",  rn:9},
+  {id:"tool", n:"Tools & fasteners",  spend:1900, on:64,  real:210, pot:90,  sup:["Hilti","Ahlsell"], state:"active", rate:"−14%", rn:14},
+  {id:"fuel", n:"Fuel & fleet",       spend:1600, on:78,  real:185, pot:40,  sup:["Q8"], state:"active",              rate:"45 øre/l", rn:9},
+  {id:"elec", n:"Electrical supplies",spend:1400, on:44,  real:95,  pot:160, sup:["Ahlsell"], state:"underused",      rate:"−11%", rn:11},
+  {id:"off",  n:"Office supplies",    spend:620,  on:22,  real:30,  pot:118, sup:["Lyreco"], state:"top",             rate:"−19%", rn:19},
+  {id:"waste",n:"Waste & recycling",  spend:540,  on:0,   real:0,   pot:86,  sup:["Norsk Gjenvinning"], state:"new",  rate:"−12%", rn:12},
+  {id:"tel",  n:"Telecom & IT",       spend:480,  on:58,  real:41,  pot:22,  sup:["Telia"], state:"expiring",         rate:"−15%", rn:15},
+  {id:"ins",  n:"Insurance",          spend:460,  on:100, real:66,  pot:0,   sup:["If"], state:"covered",             rate:"fixed", rn:0},
+  {id:"hot",  n:"Hotels & travel",    spend:390,  on:31,  real:12,  pot:47,  sup:["Scandic"], state:"rec",            rate:"−12%", rn:12},
+  {id:"work", n:"Workwear & safety",  spend:350,  on:49,  real:28,  pot:39,  sup:["Wenaas"], state:"active",          rate:"−10%", rn:10}
+];
+const STATE_LABEL = {
+  active:{t:"Active", c:"ok"}, underused:{t:"Under-used", c:"warn"}, top:{t:"Top opportunity", c:"warn"},
+  new:{t:"New match", c:"star"}, expiring:{t:"Expires in 60 days", c:"warn"}, covered:{t:"Fully covered", c:"ok"},
+  rec:{t:"Recommended", c:"star"}, est:{t:"Estimated", c:"star"}
+};
+const AGR_B = [
+  {sup:"Stark", cat:"Building materials", catId:"bld", terms:"Average 9% below list price", rate:"−9%", status:"active", bonus:"1% bonus"},
+  {sup:"Bygma", cat:"Building materials", catId:"bld", terms:"Average 8% below list price", rate:"−8%", status:"active"},
+  {sup:"Hilti", cat:"Tools & fasteners", catId:"tool", terms:"Fleet program — 14% below list", rate:"−14%", status:"active"},
+  {sup:"Ahlsell", cat:"Electrical + tools", catId:"elec", terms:"11% below list price", rate:"−11%", status:"active", note:"Under-used — 56% of electrical spend still bought elsewhere"},
+  {sup:"Q8", cat:"Fuel & fleet", catId:"fuel", terms:"45 øre/l off pump price", rate:"45 øre/l", status:"active", bonus:"1% bonus"},
+  {sup:"Lyreco", cat:"Office supplies", catId:"off", terms:"19% below list price", rate:"−19%", status:"recommended", save:118},
+  {sup:"Norsk Gjenvinning", cat:"Waste & recycling", catId:"waste", terms:"12% below standard tariffs", rate:"−12%", status:"new", save:86},
+  {sup:"Telia", cat:"Telecom & IT", catId:"tel", terms:"15% below list price", rate:"−15%", status:"expiring", note:"Expires in 60 days — renew to keep terms"},
+  {sup:"If", cat:"Insurance", catId:"ins", terms:"Fixed fleet terms, all vehicles", rate:"fixed", status:"active"},
+  {sup:"Scandic", cat:"Hotels & travel", catId:"hot", terms:"12% corporate rate, 270 hotels", rate:"−12%", status:"recommended", save:47},
+  {sup:"Wenaas", cat:"Workwear & safety", catId:"work", terms:"10% below list price", rate:"−10%", status:"active"},
+  {sup:"Ramirent", cat:"Machine rental", catId:null, terms:"13% below list price", rate:"−13%", status:"new", note:"No spend in this category yet"}
+];
+/* opportunity merchandise (Bob) */
+const OPP_B = [
+  {id:"lyreco", sup:"Lyreco", cat:"Office supplies", catId:"off", save:118, rate:"−19%", badge:"Easy first win", badgeC:"star",
+   pitch:"Same paper, toner and coffee — 19% below what you pay today. One supplier switch, no new habits.", shelves:["feat","easy"]},
+  {id:"ahlsell", sup:"Ahlsell", cat:"Electrical supplies", catId:"elec", save:160, rate:"−11%", badge:"Biggest gap", badgeC:"warn",
+   pitch:"You already own this agreement. 56% of electrical spend still goes to full-price suppliers.", shelves:["feat"], cta:"Route spend"},
+  {id:"ngj", sup:"Norsk Gjenvinning", cat:"Waste & recycling", catId:"waste", save:86, rate:"−12%", badge:"New match", badgeC:"star",
+   pitch:"Group terms on containers and pickup. Sign once — they schedule the rest around your sites.", shelves:["feat","easy"]},
+  {id:"scandic", sup:"Scandic", cat:"Hotels & travel", catId:"hot", save:47, rate:"−12%", badge:"Recommended", badgeC:"star",
+   pitch:"Corporate rate at 270 hotels. Book with your company code — that is the whole change.", shelves:["feat","easy"]},
+  {id:"ramirent", sup:"Ramirent", cat:"Machine rental", catId:null, save:null, rate:"−13%", badge:"New match", badgeC:"star",
+   pitch:"Machines and lifts at group rate — a category you rent at full price today.", shelves:["feat"], cta:"Request offer"},
+  {id:"telia", sup:"Telia", cat:"Telecom & IT", catId:"tel", save:22, rate:"−15%", badge:"Expires in 60 days", badgeC:"warn",
+   pitch:"Renew now and the 15% terms carry over. Let it lapse and every line returns to list price.", shelves:["exp"], cta:"Renew terms"}
+];
+const MONTHS_B = [
+  ["Jan",1180,148],["Feb",1090,139],["Mar",1260,162],["Apr",1150,147],
+  ["May",1310,168],["Jun",1240,159],["Jul",980,128],["Aug",1120,189]
+];
+/* month receipt lines: share of month total (last = remainder) */
+const RECEIPT_MIX = [["Building materials",.31],["Tools & fasteners",.17],["Fuel & fleet",.15],["Electrical supplies",.08]];
+
+/* ---- Fanny (all estimated, peer-based: 148 similar companies) ---- */
+const CATS_F = [
+  {id:"felec", n:"Electrical supplies", spend:2900, sup:["Solar","Ahlsell"], rate:"−11–14%", rn:12, pot:305, peers:131},
+  {id:"ftool", n:"Tools",               spend:840,  sup:["Hilti"],  rate:"−12%", rn:12, pot:95,  peers:118},
+  {id:"ffuel", n:"Fuel & fleet",        spend:720,  sup:["Q8"],     rate:"−9%",  rn:9,  pot:62,  peers:104},
+  {id:"foff",  n:"Office supplies",     spend:310,  sup:["Lyreco"], rate:"−19%", rn:19, pot:59,  peers:112, badge:"Easy first win"},
+  {id:"ftel",  n:"Telecom",             spend:280,  sup:["Telia"],  rate:"−15%", rn:15, pot:40,  peers:96},
+  {id:"fins",  n:"Insurance",           spend:240,  sup:["If"],     rate:"fixed",rn:0,  pot:9,   peers:88},
+  {id:"fwork", n:"Workwear",            spend:210,  sup:["Wenaas"], rate:"−10%", rn:10, pot:20,  peers:79},
+  {id:"fhot",  n:"Hotels",              spend:180,  sup:["Scandic"],rate:"−12%", rn:12, pot:20,  peers:64}
+];
+const OPP_F = [
+  {id:"f-lyreco", sup:"Lyreco", cat:"Office supplies", catId:"foff", save:59, rate:"−19%", est:true, badge:"Easy first win", badgeC:"star",
+   pitch:"The widest gap against list price, and the easiest switch to make first.", peers:"112 of 148 peers buy office supplies through Lyreco", shelves:["easy","feat"]},
+  {id:"f-solar", sup:"Solar", cat:"Electrical supplies", catId:"felec", save:170, rate:"−12%", est:true, badge:"Your biggest category", badgeC:"warn",
+   pitch:"Electrical wholesale is your largest estimated spend — and where peers save the most.", peers:"131 of 148 peers use a group electrical agreement", shelves:["feat"]},
+  {id:"f-ahlsell", sup:"Ahlsell", cat:"Electrical supplies", catId:"felec", save:135, rate:"−11%", est:true, badge:"Popular with peers", badgeC:"star",
+   pitch:"Second electrical line — most peers split volume across two wholesalers.", peers:"97 of 148 peers hold both electrical agreements", shelves:["feat"]},
+  {id:"f-hilti", sup:"Hilti", cat:"Tools", catId:"ftool", save:95, rate:"−12%", est:true, badge:"Popular with peers", badgeC:"star",
+   pitch:"Fleet program: tools on subscription, repairs and theft covered in the rate.", peers:"118 of 148 peers run Hilti fleet", shelves:["feat","easy"]},
+  {id:"f-q8", sup:"Q8", cat:"Fuel & fleet", catId:"ffuel", save:62, rate:"−9%", est:true, badge:"Recommended", badgeC:"star",
+   pitch:"45 øre/l off pump price on every fuel card, no volume commitment.", peers:"104 of 148 peers fuel on the Q8 agreement", shelves:["easy"]},
+  {id:"f-telia", sup:"Telia", cat:"Telecom", catId:"ftel", save:40, rate:"−15%", est:true, badge:"Recommended", badgeC:"star",
+   pitch:"Lines and hardware on one bill, 15% below list.", peers:"96 of 148 peers moved telecom to the group deal", shelves:["easy"]}
+];
+
+const PERSONAS = {
+  bob:{ id:"bob", name:"Bob Iversen", initials:"BI", co:"Nordvik Byg A/S", verified:true,
+    note:"Nordvik Byg A/S · member since 2023" },
+  fanny:{ id:"fanny", name:"Fanny Kristensen", initials:"FK", co:"Kristensen Elektro ApS", verified:false,
+    note:"Kristensen Elektro ApS · 148 peers in your group" }
+};
+
+/* =====================================================================
+   State
+   ===================================================================== */
+let persona = "bob";
+let currentPage = "overview";
+let plan = [];            /* {id,sup,cat,save,est} — in-memory only */
+let agrFilter = "all";
+
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+/* =====================================================================
+   Shared bits
+   ===================================================================== */
+function initialsOf(name){
+  const w = name.split(/\s+/);
+  return (w.length > 1 ? w[0][0] + w[1][0] : name.slice(0,2)).toUpperCase();
+}
+function supChip(name, sm){
+  return `<span class="sup-chip${sm ? " sm" : ""}" aria-hidden="true">${initialsOf(name)}</span>`;
+}
+/* imagery-free art: SVG pattern bands, varied per index */
+function artSvg(i, h){
+  const kinds = [
+    `<pattern id="p${i}" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="18" height="18" fill="var(--brand-ice)"/><line x1="0" y1="0" x2="0" y2="18" stroke="var(--brand-cornflower)" stroke-width="5" opacity=".38"/></pattern>`,
+    `<pattern id="p${i}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="var(--brand-ice)"/><circle cx="10" cy="10" r="3.2" fill="var(--brand-cornflower)" opacity=".4"/></pattern>`,
+    `<pattern id="p${i}" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="var(--brand-ice)"/><path d="M0 12h24M12 0v24" stroke="var(--brand-cornflower)" stroke-width="1.6" opacity=".4"/></pattern>`,
+    `<pattern id="p${i}" width="26" height="14" patternUnits="userSpaceOnUse"><rect width="26" height="14" fill="var(--brand-ice)"/><path d="M0 10c5-7 8-7 13 0s8 7 13 0" fill="none" stroke="var(--brand-cornflower)" stroke-width="1.8" opacity=".45"/></pattern>`,
+    `<pattern id="p${i}" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="var(--brand-ice)"/><path d="M11 4l7 14H4z" fill="none" stroke="var(--brand-cornflower)" stroke-width="1.6" opacity=".42"/></pattern>`
+  ];
+  return `<svg class="art" aria-hidden="true" preserveAspectRatio="none"><defs>${kinds[i % kinds.length]}</defs><rect width="100%" height="100%" fill="url(#p${i})"/></svg>`;
+}
+let artSeq = 0;
+
+function ptag(save, est, suffix){
+  if (save == null) return `<span class="ptag ${est ? "est" : ""}">price on request</span>`;
+  return `<span class="ptag ${est ? "est" : ""}">${est ? "est. " : "save "}${fmtK(save)}<small>/${suffix || "yr"}</small></span>`;
+}
+function inPlan(sup){ return plan.some(p => p.sup === sup); }
+
+/* =====================================================================
+   Opportunity card
+   ===================================================================== */
+function opCard(o){
+  const added = inPlan(o.sup);
+  const est = !!o.est;
+  const cta = o.cta || "Activate";
+  return `
+  <article class="op-card" aria-label="${esc(o.sup)} — ${esc(o.cat)}">
+    <div class="op-band">${artSvg(artSeq++)}
+      <span class="op-badge ${o.badgeC || ""}">${esc(o.badge)}</span>
+    </div>
+    <div class="op-body">
+      <div class="op-who">
+        ${supChip(o.sup)}
+        <span class="nm"><b>${esc(o.sup)}</b><span>${esc(o.cat)}</span></span>
+        <span class="rate num ${est ? "est-rate" : ""}">${est ? "est. " : ""}${o.rate}</span>
+      </div>
+      <p class="op-pitch">${o.pitch}</p>
+      ${o.peers ? `<p class="op-peer">${esc(o.peers)}</p>` : ""}
+      <div class="op-foot">
+        ${ptag(o.save, est)}
+        <div class="btns">
+          ${o.catId ? `<button class="btn btn-ghost btn-sm" data-cat-open="${o.catId}">Details</button>` : ""}
+          <button class="btn ${added ? "btn-secondary added" : "btn-primary"} btn-sm" data-activate="${o.id}" aria-pressed="${added}">
+            ${added ? "✓ In plan" : cta}
+          </button>
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+function shelf(id, title, sub, cardsHtml, trailingNote){
+  return `
+  <section class="shelf" aria-label="${esc(title)}">
+    <div class="shelf-head">
+      <h2>${esc(title)}</h2><span class="sub">${esc(sub)}</span>
+      <div class="shelf-nav">
+        <button data-shelf-prev="${id}" aria-label="Scroll ${esc(title)} left"><svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button data-shelf-next="${id}" aria-label="Scroll ${esc(title)} right"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+    <div class="shelf-row" id="shelf-${id}" tabindex="0" role="group" aria-label="${esc(title)} — scrollable shelf">
+      ${cardsHtml}${trailingNote ? `<div class="shelf-note">${trailingNote}</div>` : ""}
+    </div>
+  </section>`;
+}
+
+/* =====================================================================
+   Page renderers
+   ===================================================================== */
+function renderOverview(){
+  const el = $("#page-overview");
+  const bob = persona === "bob";
+  $("#ovEyebrow").textContent = bob ? "This week at Nordvik Byg" : "Welcome, Kristensen Elektro";
+  $("#ovTitle").textContent = bob ? "Savings, ready off the shelf" : "See what companies like yours pay";
+  $("#ovLead").textContent = bob
+    ? "Every card below is a negotiated price you are not using yet. Add the ones you want to your plan — we handle the paperwork with the supplier."
+    : "Prices below are estimates from 148 electrical contractors your size. Connect your spend data and the tags turn into your real numbers.";
+
+  $("#ovBanner").innerHTML = bob ? "" : `
+    <div class="peer-banner">
+      <p><b>Estimated storefront.</b> Built from your industry and company size — verified once your invoices are connected.</p>
+      <button class="btn btn-primary" data-open-connect>Connect spend data</button>
+    </div>`;
+
+  const K = $("#ovKpis");
+  if (bob){
+    K.innerHTML = `
+      <div class="kpi" role="listitem"><p class="kl">Annual purchasing spend <span class="ver-chip">verified</span></p><p class="kv num">kr 14.2M</p><p class="ks">from 3,412 invoices</p></div>
+      <div class="kpi" role="listitem"><p class="kl">Through agreements</p><p class="kv num">62%</p><p class="ks">kr 8.8M of spend</p></div>
+      <div class="kpi pos" role="listitem"><p class="kl">Realized savings YTD</p><p class="kv num">kr 1.24M</p><p class="ks">against list prices</p></div>
+      <div class="kpi" role="listitem"><p class="kl">Potential on the shelf</p><p class="kv num" style="color:var(--general-primary)">kr 840K</p><p class="ks">across 7 opportunities</p></div>
+      <div class="kpi" role="listitem"><p class="kl">Customer bonus</p><p class="kv num">kr 45K</p><p class="ks">32K paid · 13K pending</p></div>`;
+  } else {
+    K.innerHTML = `
+      <div class="kpi est" role="listitem"><p class="kl">Est. annual spend <span class="est-chip">est.</span></p><p class="kv num">kr 6.8M</p><p class="ks">peer-based estimate</p></div>
+      <div class="kpi" role="listitem"><p class="kl">Through agreements</p><p class="kv num">0%</p><p class="ks">nothing activated yet</p></div>
+      <div class="kpi locked" role="listitem"><p class="kl">Realized savings</p><p class="kv num">kr 0</p><p class="ks">connect data to track</p></div>
+      <div class="kpi est" role="listitem"><p class="kl">Est. potential <span class="est-chip">est.</span></p><p class="kv num" style="color:var(--general-primary)">kr 610K</p><p class="ks">what peers save per year</p></div>
+      <div class="kpi locked" role="listitem"><p class="kl">Customer bonus</p><p class="kv num">kr 0</p><p class="ks">accrues on activated deals</p></div>`;
+  }
+
+  const OPP = bob ? OPP_B : OPP_F;
+  const pick = key => OPP.filter(o => o.shelves.includes(key)).map(opCard).join("");
+  let html = "";
+  if (bob){
+    html += shelf("feat", "Featured this week", "picked from your own invoices", pick("feat"));
+    html += shelf("easy", "Easy first wins", "small switches, quick paperwork", pick("easy"));
+    html += shelf("exp", "Expiring soon", "act before the price goes back up", pick("exp"),
+      "That&rsquo;s everything expiring in the next 90 days. <br><b>Telia</b> is the one to handle now.");
+  } else {
+    html += shelf("feat", "Popular with companies like yours", "148 electrical contractors, your size", pick("feat"));
+    html += shelf("easy", "Easy first wins", "smallest switches, fastest payback", pick("easy"),
+      "Connect your data and this shelf re-sorts<br>to <b>your</b> biggest gaps.");
+  }
+  $("#ovShelves").innerHTML = html;
+}
+
+function catCard(c, i, est){
+  const st = est ? STATE_LABEL.est : STATE_LABEL[c.state];
+  const meterCls = est ? "est" : (c.on < 40 ? "low" : "");
+  const cover = est ? 0 : c.on;
+  return `
+  <button class="cat-card ${est ? "est" : ""}" data-cat-open="${c.id}" aria-label="${esc(c.n)} — open details">
+    <span class="cat-art">${artSvg(artSeq++)}
+      <span class="cat-mono" aria-hidden="true">${c.n[0]}</span>
+      <span class="cat-state ${st.c}">${st.t}</span>
+    </span>
+    <span class="cat-body">
+      <span class="cat-top">
+        <span><h3>${esc(c.n)}</h3><span class="spend num">${fmtK(c.spend)}/yr ${est ? "est. spend" : "spend"}</span></span>
+        <span class="rate-price num ${est ? "est-rate" : ""}">${est ? `<span class="est-mark">est.</span>` : ""}${c.rate}<br><small>agreement price</small></span>
+      </span>
+      <span class="coverage">
+        <span class="cl"><span>Bought on agreement</span><b class="num">${cover}%</b></span>
+        <span class="meter ${meterCls}"><i style="width:${Math.max(cover, est ? 100 : 2)}%"></i></span>
+      </span>
+      <span class="cat-sups">
+        ${c.sup.map(s => `<span class="sup-pill"><span class="sup-dot">${initialsOf(s)}</span>${esc(s)}</span>`).join("")}
+        ${c.pot ? `<span class="mini-tag" style="margin-left:auto;color:var(--general-primary);background:var(--brand-ice)">${est ? "est. " : "+"}${fmtK(c.pot)} left</span>` : ""}
+      </span>
+    </span>
+  </button>`;
+}
+
+function renderCategories(){
+  const el = $("#page-categories");
+  const bob = persona === "bob";
+  const cats = bob ? CATS_B : CATS_F;
+  el.innerHTML = `
+    <div class="page-head">
+      <p class="eyebrow">Shop by category</p>
+      <h1 id="catTitle">The shop window</h1>
+      <p class="lead">${bob
+        ? "Ten categories, each with a negotiated price. The meter shows how much of your spend actually gets that price."
+        : "Eight categories, priced from your peer group. Everything is an estimate until your data is connected."}</p>
+    </div>
+    ${bob ? "" : `<div class="peer-banner"><p><b>Peer-priced.</b> Rates below are what 148 companies like yours actually get.</p><button class="btn btn-primary" data-open-connect>Connect spend data</button></div>`}
+    <div class="cat-grid">${cats.map((c, i) => catCard(c, i, !bob)).join("")}</div>`;
+}
+
+function agrCard(a, est){
+  const st = a.status;
+  const owned = st === "active";
+  const offer = st === "recommended" || st === "new";
+  const exp = st === "expiring";
+  const cls = est ? "offer" : (owned ? "owned" : exp ? "exp" : "offer");
+  const pillCls = owned && !est ? "on" : exp ? "warn" : "off";
+  const pillTxt = est ? "Offer · est." : owned ? "Active" : exp ? "Expires in 60 days" : st === "new" ? "New match" : "Recommended";
+  const added = inPlan(a.sup);
+  let foot;
+  if (!est && owned){
+    foot = `<span class="mini-tag" style="background:color-mix(in srgb,var(--sentiment-positive) 10%,var(--surface));color:var(--sentiment-positive)">Owned since 2023</span>
+            <button class="btn btn-ghost btn-sm" ${a.catId ? `data-cat-open="${a.catId}"` : "disabled"}>View category</button>`;
+  } else if (!est && exp){
+    foot = `${ptag(22, false)}
+            <button class="btn ${added ? "btn-secondary added" : "btn-dark"} btn-sm" data-activate-agr="${esc(a.sup)}" aria-pressed="${added}">${added ? "✓ In plan" : "Renew terms"}</button>`;
+  } else {
+    foot = `${ptag(a.save != null ? a.save : null, est)}
+            <button class="btn ${added ? "btn-secondary added" : "btn-primary"} btn-sm" data-activate-agr="${esc(a.sup)}" aria-pressed="${added}">${added ? "✓ In plan" : "Activate"}</button>`;
+  }
+  return `
+  <article class="agr-card ${cls}" data-status="${est ? "recommended" : st}" aria-label="${esc(a.sup)} agreement">
+    <div class="agr-head">
+      ${supChip(a.sup)}
+      <span class="nm"><b>${esc(a.sup)}</b><span>${esc(a.cat)}</span></span>
+      <span class="status-pill ${pillCls}">${pillTxt}</span>
+    </div>
+    <p class="agr-terms">${esc(a.terms)}${a.note ? ` · <span style="color:var(--sentiment-negative)">${esc(a.note)}</span>` : ""}</p>
+    <div class="agr-meta">
+      <span class="mini-tag num">${a.rate}</span>
+      ${a.bonus ? `<span class="mini-tag bonus">+ ${a.bonus}</span>` : ""}
+      ${est && a.peers ? `<span class="mini-tag">${a.peers}</span>` : ""}
+    </div>
+    <div class="agr-foot">${foot}</div>
+  </article>`;
+}
+
+function renderAgreements(){
+  const el = $("#page-agreements");
+  const bob = persona === "bob";
+  let list;
+  if (bob){
+    list = AGR_B;
+  } else {
+    list = OPP_F.map(o => ({sup:o.sup, cat:o.cat, catId:o.catId, terms:o.pitch, rate:o.rate,
+      status:"recommended", save:o.save, peers:o.peers.split(" ").slice(0,4).join(" ")}));
+  }
+  const counts = {
+    all: list.length,
+    active: list.filter(a => bob && a.status === "active").length,
+    recommended: list.filter(a => !bob || a.status === "recommended" || a.status === "new").length,
+    expiring: list.filter(a => bob && a.status === "expiring").length
+  };
+  const match = a => {
+    if (agrFilter === "all") return true;
+    if (agrFilter === "active") return bob && a.status === "active";
+    if (agrFilter === "recommended") return !bob || a.status === "recommended" || a.status === "new";
+    if (agrFilter === "expiring") return bob && a.status === "expiring";
+    return true;
+  };
+  const shown = list.filter(match);
+  el.innerHTML = `
+    <div class="page-head">
+      <p class="eyebrow">Your agreements</p>
+      <h1 id="agrTitle">${bob ? "Owned deals & open offers" : "Offers on the table"}</h1>
+      <p class="lead">${bob
+        ? "Teal cards are yours — the price is already on your invoices. Dashed cards are offers waiting for a signature."
+        : "Nothing is activated yet. Every card is a group agreement your peers already use — activate the ones that fit."}</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filter agreements">
+      ${["all","active","recommended","expiring"].map(f => `
+        <button class="fchip" data-filter="${f}" aria-pressed="${agrFilter === f}">
+          ${f[0].toUpperCase() + f.slice(1)} <span class="n num">${counts[f]}</span>
+        </button>`).join("")}
+    </div>
+    <div class="agr-grid">
+      ${shown.length ? shown.map(a => agrCard(a, !bob)).join("")
+        : `<p class="muted" style="grid-column:1/-1;padding:var(--s8);text-align:center">Nothing here${!bob && (agrFilter === "active" || agrFilter === "expiring") ? " yet — activate an offer and it moves to this shelf" : ""}.</p>`}
+    </div>`;
+}
+
+function renderSavings(){
+  const el = $("#page-savings");
+  if (persona === "fanny"){
+    el.innerHTML = `
+      <div class="page-head">
+        <p class="eyebrow">Receipts</p>
+        <h1 id="savTitle">Your receipts</h1>
+        <p class="lead">Every krone saved shows up here, month by month, once your purchases run through agreements.</p>
+      </div>
+      <div class="locked-card">
+        <span class="lock" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </span>
+        <h2>Connect data to see your receipts</h2>
+        <p>Companies like yours save <b>kr 610K a year</b> on average. Connect your spend data and this page fills with your own numbers — verified, month by month.</p>
+        <button class="btn btn-primary" data-open-connect>Connect spend data</button>
+        <p class="muted" style="font-size:var(--text-xs);margin-top:var(--s4)">Read-only access · takes about an hour · you approve every agreement yourself</p>
+      </div>`;
+    return;
+  }
+  const rows = [...MONTHS_B].reverse().map(([m, spend, saved], idx) => {
+    const lines = RECEIPT_MIX.map(([n, sh]) => [n, Math.round(saved * sh)]);
+    const rest = saved - lines.reduce((s, l) => s + l[1], 0);
+    return `
+    <div class="month-row${idx === 0 ? " open" : ""}">
+      <button class="month-btn" aria-expanded="${idx === 0}">
+        <span class="mn">${m} 2026</span>
+        <span class="msub num">agreement spend ${fmtK(Math.round(spend * .62))}</span>
+        <span class="amt num">+${fmtK(saved)}</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <ul class="month-lines">
+        ${lines.map(([n, v]) => `<li><span>${n}</span><b class="num">+${fmtK(v)}</b></li>`).join("")}
+        <li><span>Other categories &amp; rebates</span><b class="num">+${fmtK(rest)}</b></li>
+      </ul>
+    </div>`;
+  }).join("");
+  const maxSaved = Math.max(...MONTHS_B.map(m => m[2]));
+  el.innerHTML = `
+    <div class="page-head">
+      <p class="eyebrow">Receipts</p>
+      <h1 id="savTitle">Your receipts</h1>
+      <p class="lead">What the agreements actually put back on the bottom line — a purchase history where every line is money kept.</p>
+    </div>
+    <div class="sav-grid">
+      <div class="card receipt" aria-label="Savings ledger by month">
+        <div class="receipt-head">
+          <div><h2>Realized savings</h2><p class="muted" style="font-size:var(--text-sm)">Jan–Aug 2026 · verified against list prices</p></div>
+          <span class="tot num">kr 1.24M</span>
+        </div>
+        <div class="spark-bars" role="img" aria-label="Monthly savings, January to August">
+          ${MONTHS_B.map(([m,, s]) => `<div class="sb"><i style="height:${Math.round(s / maxSaved * 56)}px"></i><span>${m}</span></div>`).join("")}
+        </div>
+        ${rows}
+        <p class="muted" style="font-size:var(--text-xs);margin-top:var(--s4)">Savings = agreement price vs. each supplier&rsquo;s list price on the same items, from your invoices.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--s6)">
+        <div class="card bonus-card" aria-label="Customer bonus">
+          <h3>Customer bonus</h3>
+          <p class="muted2">Cashback on Stark and Q8 purchases (1%)</p>
+          <p class="bv num">kr 45K</p>
+          <div class="bonus-meter" role="img" aria-label="32 of 45 thousand paid out"><i style="width:71%"></i></div>
+          <div class="brow"><span>Paid out</span><b class="num">kr 32K</b></div>
+          <div class="brow"><span>Pending — Q3 settlement</span><b class="num">kr 13K</b></div>
+          <div class="brow"><span>Next payout</span><b>Oct 15, 2026</b></div>
+        </div>
+        <div class="card" aria-label="Savings by category, year to date">
+          <h3 style="margin-bottom:var(--s3)">By category, YTD</h3>
+          ${CATS_B.filter(c => c.real > 0).sort((a, b) => b.real - a.real).map(c => `
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--hairline);font-size:var(--text-sm)">
+              <span>${c.n}</span><b class="num" style="color:var(--sentiment-positive)">+${fmtK(c.real)}</b>
+            </div>`).join("")}
+          <p class="muted" style="font-size:var(--text-xs);margin-top:var(--s3)">Waste &amp; recycling: kr 0 — the new match isn&rsquo;t signed yet. That&rsquo;s kr 86K still on the shelf.</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderSpending(){
+  const el = $("#page-spending");
+  const bob = persona === "bob";
+  const cats = bob ? CATS_B : CATS_F;
+  const maxSpend = Math.max(...cats.map(c => c.spend));
+  const rows = cats.map(c => {
+    const w = Math.round(c.spend / maxSpend * 100);
+    const on = bob ? c.on : 0;
+    const onK = Math.round(c.spend * on / 100);
+    const offK = c.spend - onK;
+    return `
+    <div class="spend-row">
+      <div class="sn">${c.n}<span class="num">${fmtK(c.spend)}/yr${bob ? "" : " est."}</span></div>
+      <div class="spend-bar" role="img" aria-label="${c.n}: ${on}% on agreement" style="width:${w}%">
+        ${bob ? `<span class="on" style="width:${on}%"></span><span class="off" style="width:${100 - on}%"></span>`
+              : `<span class="on est" style="width:100%"></span>`}
+      </div>
+      <div class="sv">${bob
+        ? `<b class="num" style="color:var(--sentiment-negative)">${fmtK(offK)}</b><span>at full price</span>`
+        : `<b class="num" style="color:var(--general-primary)">est. ${fmtK(c.pot)}</b><span>peer saving/yr</span>`}</div>
+    </div>`;
+  }).join("");
+  const maxM = Math.max(...MONTHS_B.map(m => m[1]));
+  el.innerHTML = `
+    <div class="page-head">
+      <p class="eyebrow">Where the money goes</p>
+      <h1 id="spTitle">Spending</h1>
+      <p class="lead">${bob
+        ? "Teal is spend that got the negotiated price. The striped rest was bought at full price — the thing this storefront fixes."
+        : "An estimated map of kr 6.8M in yearly purchasing, modelled from 148 peers. All of it is full-price shopping until an agreement is active."}</p>
+    </div>
+    ${bob ? `
+    <div class="callout">
+      <span class="big num" style="color:var(--sentiment-negative)">kr 5.4M</span>
+      <p><b>bought at full price so far this year.</b><br>38% of your spend never touches an agreement — most of the gap sits in electrical and office supplies.</p>
+      <button class="btn btn-dark" data-go="categories">Shop the categories</button>
+    </div>` : `
+    <div class="callout" style="border-style:dashed">
+      <span class="big num" style="color:var(--general-primary)">kr 6.8M</span>
+      <p><b>estimated yearly spend — all of it at full price today.</b><br>Peers route 55–70% of this through agreements within the first year.</p>
+      <button class="btn btn-primary" data-open-connect>Connect spend data</button>
+    </div>`}
+    <div class="card">
+      <div class="spend-legend">
+        ${bob ? `<span><i class="sw on"></i>On agreement — kr 8.8M (62%)</span>
+                 <span><i class="sw off"></i>Full price — kr 5.4M (38%)</span>`
+              : `<span><i class="sw est"></i>Estimated spend (peer-modelled)</span>
+                 <span class="est-chip">est. figures</span>`}
+      </div>
+      ${rows}
+    </div>
+    ${bob ? `
+    <div class="card" style="margin-top:var(--s6)">
+      <h3 style="margin-bottom:var(--s2)">Monthly purchasing</h3>
+      <p class="muted" style="font-size:var(--text-sm);margin-bottom:var(--s4)">Total spend per month; teal part went through agreements.</p>
+      <div class="spark-bars" style="height:110px" role="img" aria-label="Monthly spend January to August, around kr 1.2 million per month">
+        ${MONTHS_B.map(([m, s]) => {
+          const h = Math.round(s / maxM * 92);
+          const onH = Math.round(h * .62);
+          return `<div class="sb"><i style="height:${h - onH}px;background:var(--general-muted);border-radius:4px 4px 0 0"></i><i style="height:${onH}px;border-radius:0"></i><span>${m}</span></div>`;
+        }).join("")}
+      </div>
+    </div>` : ""}`;
+}
+
+/* =====================================================================
+   Category drawer
+   ===================================================================== */
+function openDrawer(catId){
+  const bob = persona === "bob";
+  const cats = bob ? CATS_B : CATS_F;
+  const c = cats.find(x => x.id === catId);
+  if (!c) return;
+  const agrs = bob
+    ? AGR_B.filter(a => a.catId === catId || (catId === "tool" && a.sup === "Hilti"))
+    : OPP_F.filter(o => o.catId === catId).map(o => ({sup:o.sup, cat:o.cat, terms:o.pitch, rate:o.rate, status:"recommended", save:o.save, peers:o.peers}));
+  const st = bob ? STATE_LABEL[c.state] : STATE_LABEL.est;
+  $("#drawerArt").innerHTML = artSvg(artSeq++) + `<span class="cat-mono" style="left:var(--s6);bottom:var(--s4)">${c.n[0]}</span>`;
+  $("#drawerBody").innerHTML = `
+    <p class="eyebrow" style="font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--general-muted-foreground)">Category</p>
+    <h2 id="drawerTitle" tabindex="-1">${esc(c.n)} <span class="mini-tag" style="vertical-align:3px;color:var(--general-primary);background:var(--brand-ice)">${st.t}</span></h2>
+    <div class="drawer-kpis">
+      <div class="dk"><p class="l">${bob ? "Annual spend" : "Est. annual spend"}</p><p class="v num">${fmtK(c.spend)}</p></div>
+      <div class="dk"><p class="l">On agreement</p><p class="v num">${bob ? c.on + "%" : "0%"}</p></div>
+      <div class="dk"><p class="l">${bob ? "Realized YTD" : "Realized"}</p><p class="v num ${bob && c.real ? "pos" : ""}">${bob ? "+" + fmtK(c.real) : "kr 0"}</p></div>
+      <div class="dk"><p class="l">${bob ? "Still on the shelf" : "Est. peer saving"}</p><p class="v num" style="color:var(--general-primary)">${bob ? "+" : "est. "}${fmtK(c.pot)}</p></div>
+    </div>
+    <h3 style="margin-bottom:var(--s3)">${bob ? "Agreements in this category" : "Offers for this category"}</h3>
+    ${agrs.map(a => {
+      const owned = bob && a.status === "active";
+      const added = inPlan(a.sup);
+      return `
+      <div class="drawer-agr ${owned ? "" : "offer"}">
+        <div class="agr-head">
+          ${supChip(a.sup)}
+          <span class="nm"><b>${esc(a.sup)}</b><span class="num">${a.rate}${a.bonus ? " · " + a.bonus : ""}</span></span>
+          <span class="status-pill ${owned ? "on" : a.status === "expiring" ? "warn" : "off"}">${owned ? "Active" : a.status === "expiring" ? "Expiring" : bob ? (a.status === "new" ? "New match" : "Recommended") : "Offer · est."}</span>
+        </div>
+        <p class="agr-terms">${esc(a.terms)}</p>
+        ${!owned ? `<div class="agr-foot">${ptag(a.save != null ? a.save : (a.status === "expiring" ? 22 : null), !bob)}
+          <button class="btn ${added ? "btn-secondary added" : "btn-primary"} btn-sm" data-activate-agr="${esc(a.sup)}" aria-pressed="${added}">${added ? "✓ In plan" : a.status === "expiring" ? "Renew terms" : "Activate"}</button></div>`
+        : `<div class="agr-foot"><span class="mini-tag" style="background:color-mix(in srgb,var(--sentiment-positive) 10%,var(--surface));color:var(--sentiment-positive)">On your invoices since 2023</span></div>`}
+      </div>`;
+    }).join("")}
+    ${bob && c.state === "underused" ? `<p class="op-peer" style="margin-top:var(--s3)">${fmtK(Math.round(c.spend * (100 - c.on) / 100))} of this category is bought outside the agreement. Routing it to Ahlsell is worth about +kr 160K/yr — no new contract needed.</p>` : ""}
+    ${!bob ? `<div style="margin-top:var(--s6);text-align:center"><button class="btn btn-secondary" data-open-connect>Connect data to verify these estimates</button></div>` : ""}`;
+  $("#drawer").hidden = false;
+  requestAnimationFrame(() => {
+    $("#drawer").classList.add("open");
+    $("#scrim").classList.add("show");
+    $("#drawerTitle").focus();
+  });
+}
+function closeDrawer(){
+  $("#drawer").classList.remove("open");
+  $("#scrim").classList.remove("show");
+  setTimeout(() => { $("#drawer").hidden = true; }, 300);
+}
+
+/* =====================================================================
+   Savings plan tray
+   ===================================================================== */
+function findOpp(id){
+  return OPP_B.find(o => o.id === id) || OPP_F.find(o => o.id === id);
+}
+function addToPlan(item){
+  if (inPlan(item.sup)) return;
+  plan.push(item);
+  renderTray(true);
+  refreshActivateButtons();
+}
+function removeFromPlan(sup){
+  plan = plan.filter(p => p.sup !== sup);
+  renderTray();
+  refreshActivateButtons();
+}
+function renderTray(pulse){
+  const tray = $("#tray");
+  const total = plan.reduce((s, p) => s + (p.save || 0), 0);
+  const pending = plan.filter(p => p.save == null).length;
+  $("#trayCount").textContent = plan.length;
+  $("#trayTotal").textContent = total >= 1000 ? fmtK(total) : "kr " + total + "K";
+  $("#trayHint").textContent = plan.length === 1 ? "1 saving added" : plan.length + " savings added";
+  $("#trayItems").innerHTML = plan.map(p => `
+    <div class="tray-item">
+      ${supChip(p.sup, true)}
+      <span class="ti-n"><b>${esc(p.sup)}</b><span>${esc(p.cat)}</span></span>
+      <span class="ti-v ${p.est ? "est" : ""}">${p.save == null ? "on request" : (p.est ? "est. " : "+") + fmtK(p.save) + "/yr"}</span>
+      <button class="tray-rm" data-tray-rm="${esc(p.sup)}" aria-label="Remove ${esc(p.sup)} from plan">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>`).join("");
+  $("#trayNote").textContent = persona === "fanny"
+    ? "Estimates — connect your data and we file the real requests."
+    : pending ? "One request per supplier. Ramirent will quote first." : "One request — we contact each supplier for you.";
+  $("#trayCta").textContent = persona === "fanny" ? "Connect data & activate" : "Request activation";
+  if (plan.length){
+    tray.classList.add("show");
+    if (pulse){
+      tray.classList.remove("pulse"); void tray.offsetWidth; tray.classList.add("pulse");
+    }
+  } else {
+    tray.classList.remove("show");
+  }
+}
+function refreshActivateButtons(){
+  $$("[data-activate]").forEach(b => {
+    const o = findOpp(b.dataset.activate);
+    const added = o ? inPlan(o.sup) : false;
+    b.className = "btn " + (added ? "btn-secondary added" : "btn-primary") + " btn-sm";
+    b.setAttribute("aria-pressed", added);
+    b.textContent = added ? "✓ In plan" : (o && o.cta) || "Activate";
+  });
+  $$("[data-activate-agr]").forEach(b => {
+    const sup = b.dataset.activateAgr;
+    const added = inPlan(sup);
+    const isRenew = /Renew/.test(b.textContent) || (AGR_B.find(a => a.sup === sup) || {}).status === "expiring";
+    b.className = "btn " + (added ? "btn-secondary added" : (isRenew && persona === "bob" ? "btn-dark" : "btn-primary")) + " btn-sm";
+    b.setAttribute("aria-pressed", added);
+    b.textContent = added ? "✓ In plan" : isRenew && persona === "bob" ? "Renew terms" : "Activate";
+  });
+}
+
+/* =====================================================================
+   Assistant
+   ===================================================================== */
+const QA = {
+  bob: [
+    {q:"Where should I start?", a:"Office supplies. You buy <b>kr 620K</b> a year at close to list price — the Lyreco agreement is 19% below. Same products, same delivery, about <b>+kr 118K/yr</b> kept. Press Activate on the Lyreco card and it goes to your plan."},
+    {q:"What happens when Telia expires?", a:"In 60 days every line returns to list price — roughly <b>kr 41K</b> of yearly savings at stake. Renewing keeps the 15% terms unchanged. I can prepare the renewal request; you only approve it."},
+    {q:"How is my bonus paid out?", a:"Bonus accrues at 1% on Stark and Q8 purchases. <b>kr 32K</b> has been paid to your account; <b>kr 13K</b> is pending the Q3 settlement on Oct 15. It lands as a bank transfer, not store credit."}
+  ],
+  fanny: [
+    {q:"How good are these estimates?", a:"They are built from <b>148 electrical contractors</b> your size — real invoice data, anonymised. For office supplies the peer spread is narrow, so est. −19% is solid. Connecting your data replaces every estimate with your own invoices."},
+    {q:"What should I activate first?", a:"Lyreco. Smallest switch, widest gap: peers save <b>est. kr 59K/yr</b> on office supplies at −19%. It is a good way to see the model work before the big one — electrical wholesale at <b>est. kr 305K/yr</b>."},
+    {q:"What does connecting my data involve?", a:"Read-only access to purchase invoices from e-conomic or Visma.net, or a CSV upload. It takes about an hour to process. Nothing is shared with suppliers, and you approve every agreement yourself."}
+  ]
+};
+let askedIdx = [];
+function assistantSeed(){
+  const set = QA[persona];
+  askedIdx = [0];
+  $("#apLog").innerHTML = `
+    <div class="msg a">Hi ${persona === "bob" ? "Bob" : "Fanny"} — I watch your ${persona === "bob" ? "invoices and agreements" : "peer group and offers"} so you don&rsquo;t have to. Ask me anything, or try one of these.</div>
+    <div class="msg q">${set[0].q}</div>
+    <div class="msg a">${set[0].a}</div>`;
+  renderChips();
+}
+function renderChips(){
+  const set = QA[persona];
+  $("#apChips").innerHTML = set.map((x, i) => askedIdx.includes(i) ? "" : `<button class="pchip" data-ask="${i}">${x.q}</button>`).join("");
+}
+function ask(i){
+  const set = QA[persona];
+  askedIdx.push(i);
+  const log = $("#apLog");
+  log.insertAdjacentHTML("beforeend", `<div class="msg q">${set[i].q}</div><div class="msg a">${set[i].a}</div>`);
+  log.scrollTop = log.scrollHeight;
+  renderChips();
+}
+function openAssistant(){
+  $("#assistPanel").hidden = false;
+  requestAnimationFrame(() => $("#assistPanel").classList.add("open"));
+  $("#assistBtn").setAttribute("aria-expanded", "true");
+  $("#apInput").focus();
+}
+function closeAssistant(){
+  $("#assistPanel").classList.remove("open");
+  $("#assistBtn").setAttribute("aria-expanded", "false");
+  setTimeout(() => { $("#assistPanel").hidden = true; }, 300);
+}
+
+/* =====================================================================
+   Navigation & persona
+   ===================================================================== */
+const PAGE_META = {
+  overview:{t:"Overview", s:"your savings storefront"},
+  categories:{t:"Categories", s:"shop by category"},
+  agreements:{t:"Agreements", s:"owned deals & offers"},
+  savings:{t:"Savings", s:"your receipts"},
+  spending:{t:"Spending", s:"where the money goes"}
+};
+const RENDER = {overview:renderOverview, categories:renderCategories, agreements:renderAgreements, savings:renderSavings, spending:renderSpending};
+
+function go(page, push){
+  if (!PAGE_META[page]) page = "overview";
+  currentPage = page;
+  $$(".page").forEach(p => { p.hidden = p.id !== "page-" + page; });
+  $$(".nav a").forEach(a => {
+    if (a.dataset.nav === page) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+  const m = PAGE_META[page];
+  $("#crumb").innerHTML = `<b>${m.t}</b> · ${m.s}`;
+  document.title = "Advantage — " + m.t;
+  RENDER[page]();
+  if (push !== false && location.hash !== "#" + page){
+    try { history.pushState(null, "", "#" + page); } catch(e){}
+  }
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+function setPersona(p){
+  persona = p;
+  plan = [];
+  agrFilter = "all";
+  const P = PERSONAS[p];
+  $("#acctAv").textContent = P.initials;
+  $("#acctAv").style.background = p === "bob" ? "var(--brand-midnight)" : "var(--general-primary)";
+  $("#acctName").textContent = P.name;
+  $("#acctCo").textContent = P.co;
+  $("#sideNote").textContent = P.note;
+  $$(".persona-opt").forEach(b => {
+    const on = b.dataset.persona === p;
+    b.setAttribute("aria-checked", on);
+    b.querySelector(".pv").textContent = on ? "✓" : "";
+  });
+  assistantSeed();
+  renderTray();
+  go(currentPage, false);
+}
+
+/* =====================================================================
+   Events (delegated)
+   ===================================================================== */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-nav],[data-go],[data-activate],[data-activate-agr],[data-cat-open],[data-tray-rm],[data-filter],[data-shelf-prev],[data-shelf-next],[data-open-connect],[data-close-modal],[data-connect],[data-ask],.month-btn,.persona-opt");
+  if (!t) return;
+
+  if (t.dataset.nav){ e.preventDefault(); go(t.dataset.nav); return; }
+  if (t.dataset.go){ go(t.dataset.go); return; }
+
+  if (t.dataset.activate){
+    const o = findOpp(t.dataset.activate);
+    if (o) addToPlan({id:o.id, sup:o.sup, cat:o.cat, save:o.save, est:!!o.est});
+    return;
+  }
+  if (t.dataset.activateAgr){
+    const sup = t.dataset.activateAgr;
+    if (inPlan(sup)){ removeFromPlan(sup); return; }
+    const a = AGR_B.find(x => x.sup === sup);
+    const fo = OPP_F.find(x => x.sup === sup);
+    const est = persona === "fanny";
+    const save = est ? (fo ? fo.save : null) : a ? (a.status === "expiring" ? 22 : a.save != null ? a.save : null) : null;
+    const cat = a ? a.cat : fo ? fo.cat : "";
+    addToPlan({id:sup, sup, cat, save, est});
+    return;
+  }
+  if (t.dataset.catOpen){ openDrawer(t.dataset.catOpen); return; }
+  if (t.dataset.trayRm){ removeFromPlan(t.dataset.trayRm); return; }
+  if (t.dataset.filter){ agrFilter = t.dataset.filter; renderAgreements(); return; }
+  if (t.dataset.shelfPrev != null && t.dataset.shelfPrev !== undefined && t.hasAttribute("data-shelf-prev")){
+    const row = $("#shelf-" + t.dataset.shelfPrev); if (row) row.scrollBy({left:-700, behavior:"smooth"}); return;
+  }
+  if (t.hasAttribute("data-shelf-next")){
+    const row = $("#shelf-" + t.dataset.shelfNext); if (row) row.scrollBy({left:700, behavior:"smooth"}); return;
+  }
+  if (t.hasAttribute("data-open-connect")){ $("#connectModal").classList.add("open"); return; }
+  if (t.hasAttribute("data-close-modal")){ closeConnect(); return; }
+  if (t.dataset.connect){
+    $("#cmBody").innerHTML = `
+      <div style="text-align:center;padding:var(--s8) 0 var(--s4)">
+        <span class="lock" style="width:56px;height:56px;margin:0 auto var(--s4);border-radius:9999px;background:var(--brand-ice);display:grid;place-items:center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="var(--sentiment-positive)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <h3>Request noted — this is a prototype</h3>
+        <p class="muted" style="font-size:var(--text-sm);margin-top:var(--s2)">In the real product, ${esc(t.dataset.connect === "upload" ? "your report upload" : t.dataset.connect)} would connect here and your estimates would turn into verified figures within the hour.</p>
+      </div>`;
+    return;
+  }
+  if (t.dataset.ask){ ask(+t.dataset.ask); return; }
+  if (t.classList.contains("month-btn")){
+    const row = t.closest(".month-row");
+    row.classList.toggle("open");
+    t.setAttribute("aria-expanded", row.classList.contains("open"));
+    return;
+  }
+  if (t.classList.contains("persona-opt")){
+    setPersona(t.dataset.persona);
+    $("#acctMenu").classList.remove("open");
+    $("#acctBtn").setAttribute("aria-expanded", "false");
+    return;
+  }
+});
+
+function closeConnect(){
+  $("#connectModal").classList.remove("open");
+  /* restore options for next open */
+  setTimeout(() => {
+    $("#cmBody").innerHTML = `
+      <button class="connect-opt" data-connect="e-conomic"><span class="co-i" aria-hidden="true"><b style="font-family:var(--font-sans)">e</b></span><span><b>e-conomic</b><span>Read-only access to purchase invoices</span></span></button>
+      <button class="connect-opt" data-connect="Visma.net"><span class="co-i" aria-hidden="true"><b style="font-family:var(--font-sans)">V</b></span><span><b>Visma.net ERP</b><span>Direct integration, no export needed</span></span></button>
+      <button class="connect-opt" data-connect="upload"><span class="co-i" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><b>Upload a spend report</b><span>CSV or Excel export from any system</span></span></button>`;
+  }, 250);
+}
+
+/* account menu */
+$("#acctBtn").addEventListener("click", e => {
+  e.stopPropagation();
+  const menu = $("#acctMenu");
+  const open = !menu.classList.contains("open");
+  menu.classList.toggle("open", open);
+  $("#acctBtn").setAttribute("aria-expanded", open);
+});
+document.addEventListener("click", e => {
+  if (!e.target.closest(".acct")){ $("#acctMenu").classList.remove("open"); $("#acctBtn").setAttribute("aria-expanded", "false"); }
+});
+
+/* tray */
+$("#trayHead").addEventListener("click", () => {
+  const tray = $("#tray");
+  const collapsed = tray.classList.toggle("collapsed");
+  $("#trayHead").setAttribute("aria-expanded", !collapsed);
+});
+$("#trayCta").addEventListener("click", () => {
+  if (persona === "fanny"){ $("#connectModal").classList.add("open"); return; }
+  const total = plan.reduce((s, p) => s + (p.save || 0), 0);
+  $("#trayItems").innerHTML = `
+    <p style="padding:var(--s4) 0;font-size:var(--text-sm)"><span class="tick">✓</span> <b>Request sent for ${plan.length} agreement${plan.length === 1 ? "" : "s"}</b> — worth about <b class="num">${fmtK(total)}/yr</b>. We contact each supplier with your volumes and CVR; you approve final terms by e-mail. Nothing changes until you do.</p>`;
+  plan = [];
+  $("#trayCount").textContent = "0";
+  $("#trayTotal").textContent = "kr 0";
+  $("#trayHint").textContent = "request sent";
+  refreshActivateButtons();
+  setTimeout(() => { $("#tray").classList.remove("show"); renderTray(); }, 5200);
+});
+
+/* assistant */
+$("#assistBtn").addEventListener("click", openAssistant);
+$("#assistClose").addEventListener("click", closeAssistant);
+$("#apForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const v = $("#apInput").value.trim();
+  if (!v) return;
+  $("#apInput").value = "";
+  const log = $("#apLog");
+  log.insertAdjacentHTML("beforeend", `<div class="msg q">${esc(v)}</div>
+    <div class="msg a">${persona === "bob"
+      ? "Good question. The short answer: your biggest lever right now is the <b>kr 840K</b> still on the shelf — start with Lyreco (kr 118K, easiest) and routing electrical spend to Ahlsell (kr 160K, no new contract)."
+      : "Until your data is connected I can only answer from the peer group — companies like yours save <b>est. kr 610K/yr</b>, and most start with the Lyreco office deal. Connect your data and I can be specific."}</div>`);
+  log.scrollTop = log.scrollHeight;
+});
+
+/* drawer + esc handling */
+$("#drawerClose").addEventListener("click", closeDrawer);
+$("#scrim").addEventListener("click", closeDrawer);
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape"){
+    if ($("#connectModal").classList.contains("open")) closeConnect();
+    else if ($("#drawer").classList.contains("open")) closeDrawer();
+    else if ($("#assistPanel").classList.contains("open")) closeAssistant();
+    else { $("#acctMenu").classList.remove("open"); $("#acctBtn").setAttribute("aria-expanded", "false"); }
+  }
+});
+
+/* hash routing (back/forward) */
+window.addEventListener("popstate", () => {
+  go((location.hash || "#overview").slice(1), false);
+});
+
+/* boot */
+assistantSeed();
+go((location.hash || "#overview").slice(1), false);
+</script>
+</body>
+</html>

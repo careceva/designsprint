@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage — overview as a cost dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap">
+<style>
+/* tokens, copied from advantage-main.html */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;--general-primary:#1b64dc;--general-primary-deep:#12459f;
+  --general-primary-foreground:#fafafa;--general-secondary:#dbe9ff;--general-muted:#f2f2f2;
+  --general-muted-foreground:#6e6e6e;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--surface:#ffffff;--surface-tile:#f5f6f7;--surface-tile-pressed:#eef0f2;--brand-ice:#edf5ff;--brand-midnight:#000a45;
+  --sentiment-positive:#009689;--sentiment-positive-ink:#007c71;--sentiment-positive-ink-on-tint:#00796e;
+  --sentiment-negative:#f54a00;--sentiment-negative-ink-on-tint:#c43b00;
+  --font-sans:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;--text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;--rounded-xl:20px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;--shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;--shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+  --hairline:#ececec;--card-stroke:#e7e7ea;--t-fast:.15s ease;
+  /* the two tints the main file already uses for a landed saving and an idle agreement */
+  --tint-pos:#d9f2ef;--tint-idle:#ffe9dd;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+body{font-family:var(--font-sans);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-sm);line-height:1.45;-webkit-font-smoothing:antialiased;min-height:100vh}
+button,select{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;text-align:inherit}
+button:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+/* three kinds of money, as the main file draws them: landed money is green, an exact
+   potential read from a document is blue, an estimate is a muted dotted range */
+.fig-pos{color:var(--sentiment-positive-ink)}
+.fig-doc{color:var(--general-primary)}
+.fig-neg{color:var(--sentiment-negative-ink-on-tint)}
+.fig-est{font-weight:inherit;color:var(--general-muted-foreground);text-decoration:underline dotted currentColor;
+  text-decoration-thickness:1.5px;text-underline-offset:.16em;text-decoration-skip-ink:none}
+.sep{color:var(--general-muted-foreground);font-weight:400;margin:0 2px}
+.none{color:var(--general-muted-foreground)}
+
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:center;gap:var(--s6);height:56px;padding:0 var(--s6);background:var(--surface);border-bottom:1px solid var(--hairline)}
+.mark{display:flex;align-items:center}
+.mark img{height:22px;display:block}
+.tabs{display:flex;gap:2px}
+.tabs button{height:32px;padding:0 var(--s3);border-radius:var(--rounded-sm);font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground);white-space:nowrap}
+.tabs button:hover{color:var(--general-foreground)}
+.tabs button[aria-current]{color:var(--general-foreground);background:var(--general-muted);font-weight:600}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:var(--s3)}
+.pill{display:inline-flex;align-items:center;gap:var(--s2);height:30px;padding:0 var(--s3);border:1px solid var(--hairline);
+  border-radius:var(--rounded-full);font-size:var(--text-xs);color:var(--general-muted-foreground);white-space:nowrap}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--sentiment-positive)}
+.pill.docs i{background:var(--general-primary)}
+.pill b{color:var(--general-foreground);font-weight:600}
+.who{position:relative}
+.who select{appearance:none;-webkit-appearance:none;height:32px;padding:0 var(--s8) 0 var(--s3);border:1px solid var(--card-stroke);border-radius:var(--rounded-sm);
+  background:var(--surface);font-weight:600;font-size:var(--text-sm);cursor:pointer}
+.who svg{position:absolute;right:10px;top:9px;width:14px;height:14px;pointer-events:none;color:var(--general-muted-foreground)}
+
+/* ---------- the filter row: one row, above everything it scopes ---------- */
+.bar{display:flex;align-items:center;gap:var(--s3) var(--s5);padding:var(--s3) var(--s6);flex-wrap:wrap}
+.ctl{display:flex;align-items:center;gap:var(--s2)}
+.ctl>span{font-size:var(--text-xs);color:var(--general-muted-foreground);font-weight:500}
+.seg{display:inline-flex;padding:2px;border-radius:var(--rounded-sm);box-shadow:inset 0 0 0 1px var(--card-stroke);background:var(--surface)}
+.seg button{height:26px;padding:0 var(--s3);border-radius:6px;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);white-space:nowrap;
+  transition:background var(--t-fast),color var(--t-fast)}
+.seg button:hover{color:var(--general-foreground)}
+.seg button[aria-pressed="true"]{background:var(--general-muted);color:var(--general-foreground)}
+.bar-sp{flex:1 1 auto}
+.key{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s4);font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.key span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.key i{width:8px;height:8px;border-radius:50%;background:var(--k)}
+.key i.dash{background:none;border:1.5px dashed var(--general-muted-foreground)}
+.asof{font-size:var(--text-xs);color:var(--general-muted-foreground);white-space:nowrap}
+
+/* ---------- the board: three bands 16px apart, panels inside a band 12px apart ---------- */
+.board{display:flex;flex-direction:column;gap:var(--s4);padding:0 var(--s6) var(--s12)}
+.panel{position:relative;background:var(--surface);border:1px solid var(--card-stroke);border-radius:var(--rounded-md);min-width:0}
+.ph{display:flex;align-items:center;gap:var(--s3);min-height:44px;padding:0 var(--s4);border-bottom:1px solid var(--hairline)}
+.ph h2{font-size:var(--text-sm);font-weight:600;white-space:nowrap}
+.ph .cnt{font-size:var(--text-xs);color:var(--general-muted-foreground);font-weight:500;white-space:nowrap}
+.ph .sp{flex:1 1 auto}
+.pf{display:flex;align-items:center;gap:var(--s3);min-height:40px;padding:var(--s2) var(--s4);border-top:1px solid var(--hairline);
+  font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.pf .sp{flex:1 1 auto}
+.linkbtn{color:var(--general-primary);font-weight:600;font-size:var(--text-xs);white-space:nowrap}
+.linkbtn:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- KPI strip: one surface, hairlines between tiles ---------- */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.kpi{position:relative;display:flex;flex-direction:column;gap:2px;padding:var(--s4);min-width:0}
+.kpi+.kpi{border-left:1px solid var(--hairline)}
+.kpi .l{font-size:var(--text-xs);color:var(--general-muted-foreground);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:64px}
+.kpi .v{font-size:var(--text-2xl);font-weight:600;letter-spacing:-.02em;line-height:1.2;white-space:nowrap;margin-top:var(--s1)}
+.kpi .v small{font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground);letter-spacing:0;margin-left:3px}
+.kpi .v .fig-est{font-size:var(--text-xl)}
+.kpi .c{font-size:var(--text-xs);color:var(--general-muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .spk{position:absolute;right:var(--s4);top:var(--s4);width:56px;height:22px}
+.spk rect{fill:var(--k)}
+
+/* ---------- the two-column body ---------- */
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 352px;gap:var(--s3);align-items:start}
+.col{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
+
+/* ---------- the chart ---------- */
+.chart-body{position:relative;padding:var(--s4) var(--s4) var(--s2)}
+svg.ch{display:block;width:100%;height:268px;overflow:visible}
+.ch text{font-family:var(--font-sans);font-size:var(--text-xs);fill:var(--general-muted-foreground)}
+.ch .grid-l{stroke:var(--hairline);stroke-width:1;shape-rendering:crispEdges}
+.ch .hit{fill:transparent}
+.ch .hit:hover,.ch .hit:focus{fill:rgb(27 100 220 / .05);outline:none}
+.ch .col-g rect,.ch .col-g path{transition:opacity var(--t-fast)}
+.ch .col-g.dim rect,.ch .col-g.dim path{opacity:.55}
+.legend{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);padding:var(--s2) var(--s4) var(--s4);list-style:none}
+.legend li{display:flex;align-items:center;gap:var(--s2);font-size:var(--text-xs);min-height:24px}
+.legend i{width:10px;height:10px;border-radius:2px;background:var(--k);flex:0 0 auto}
+.legend i.est{background:repeating-linear-gradient(45deg,var(--k) 0 1.5px,transparent 1.5px 4px)}
+.legend b{font-weight:600}
+.legend span{color:var(--general-muted-foreground)}
+.tip{position:absolute;z-index:3;pointer-events:none;min-width:200px;padding:var(--s2) var(--s3) var(--s3);background:var(--surface);
+  border:1px solid var(--card-stroke);border-radius:var(--rounded-sm);box-shadow:var(--shadow-md);font-size:var(--text-xs)}
+.tip[hidden]{display:none}
+.tip h4{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);margin-bottom:var(--s1)}
+.tip ul{list-style:none;display:flex;flex-direction:column;gap:2px}
+.tip li{display:flex;align-items:center;gap:var(--s2)}
+.tip li i{width:10px;height:2px;border-radius:1px;background:var(--k);flex:0 0 auto}
+.tip li i.est{background:repeating-linear-gradient(90deg,var(--k) 0 2px,transparent 2px 4px)}
+.tip li b{font-weight:600;min-width:64px;font-variant-numeric:tabular-nums}
+.tip li span{color:var(--general-muted-foreground);flex:1 1 auto;white-space:nowrap}
+.tip .tot{display:flex;justify-content:space-between;gap:var(--s3);margin-top:var(--s2);padding-top:var(--s2);border-top:1px solid var(--hairline);font-weight:600}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:var(--text-xs)}
+th{height:34px;padding:0 var(--s3);text-align:left;font-weight:600;color:var(--general-muted-foreground);border-bottom:1px solid var(--hairline);white-space:nowrap}
+th.r{text-align:right}
+th button{display:inline-flex;align-items:center;gap:3px;height:34px;color:inherit;font-weight:inherit;white-space:nowrap}
+th button:hover{color:var(--general-foreground)}
+th button svg{width:12px;height:12px;opacity:0}
+th[aria-sort] button{color:var(--general-foreground)}
+th[aria-sort] button svg{opacity:1}
+th[aria-sort="ascending"] button svg{transform:rotate(180deg)}
+td{height:36px;padding:0 var(--s3);border-bottom:1px solid var(--hairline);white-space:nowrap;vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-tile)}
+tbody tr.focus td{background:var(--brand-ice)}
+td.r{text-align:right;font-variant-numeric:tabular-nums}
+td.sub{color:var(--general-muted-foreground)}
+tfoot td{border-top:1px solid var(--card-stroke);border-bottom:0;font-weight:600;height:38px;background:var(--surface)}
+tfoot td.note{font-weight:500;color:var(--general-muted-foreground)}
+.ent{display:flex;align-items:center;gap:var(--s2);min-width:0;max-width:300px}
+.ent img.art{width:20px;height:20px;object-fit:contain;flex:0 0 auto;user-select:none}
+.ent .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.ent .sb{color:var(--general-muted-foreground);overflow:hidden;text-overflow:ellipsis}
+.ent .nm+.sb::before{content:"·";margin:0 6px 0 0;color:var(--general-muted-foreground)}
+.lg{position:relative;width:24px;height:24px;border-radius:6px;background:var(--surface-tile);display:grid;place-items:center;flex:0 0 auto;overflow:hidden}
+.lg b{font-size:var(--text-xs);font-weight:700;letter-spacing:0;color:var(--general-muted-foreground)}
+.lg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--surface)}
+.cb{display:inline-block;width:64px;height:6px;border-radius:3px;background:var(--general-secondary);vertical-align:middle;margin-right:var(--s2);overflow:hidden}
+.cb i{display:block;height:100%;border-radius:3px;background:var(--general-primary)}
+.cb.pos{background:var(--tint-pos)}.cb.pos i{background:var(--sentiment-positive)}
+.cb.est{background:repeating-linear-gradient(45deg,var(--general-secondary) 0 1.5px,transparent 1.5px 4px)}
+.chip{display:inline-flex;align-items:center;height:22px;padding:0 var(--s2);border-radius:var(--rounded-xs);font-size:var(--text-xs);font-weight:600;
+  background:var(--general-muted);color:var(--general-muted-foreground);white-space:nowrap}
+.chip.land{background:var(--tint-pos);color:var(--sentiment-positive-ink-on-tint)}
+.chip.pend{background:var(--general-secondary);color:var(--general-primary-deep)}
+.chip.idle{background:var(--tint-idle);color:var(--sentiment-negative-ink-on-tint)}
+.chip.new,.chip.avail{background:var(--brand-ice);color:var(--general-primary)}
+.rs{display:inline-block;width:52px;height:18px;vertical-align:middle}
+.rs rect{fill:var(--k)}
+.pct{color:var(--general-muted-foreground);margin-left:var(--s1)}
+
+/* ---------- the side lists ---------- */
+.list{list-style:none}
+.list li{display:flex;align-items:center;gap:var(--s3);min-height:52px;padding:var(--s2) var(--s4);border-bottom:1px solid var(--hairline)}
+.list li:last-child{border-bottom:0}
+.list li.act{cursor:pointer;transition:background var(--t-fast)}
+.list li.act:hover{background:var(--surface-tile)}
+.list .t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.list .t b{font-weight:600;font-size:var(--text-xs);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .t span{font-size:var(--text-xs);color:var(--general-muted-foreground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list .v{text-align:right;font-size:var(--text-xs);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;flex:0 0 auto}
+.list .v small{display:block;font-weight:500;color:var(--general-muted-foreground)}
+.ic{width:28px;height:28px;border-radius:var(--rounded-sm);display:grid;place-items:center;background:var(--surface-tile);color:var(--general-muted-foreground);flex:0 0 auto}
+.ic svg{width:16px;height:16px}
+.ic.neg{background:var(--tint-idle);color:var(--sentiment-negative-ink-on-tint)}
+.ic.doc{background:var(--brand-ice);color:var(--general-primary)}
+.ic.pos{background:var(--tint-pos);color:var(--sentiment-positive-ink-on-tint)}
+.rk{width:20px;text-align:right;font-size:var(--text-xs);color:var(--general-muted-foreground);font-variant-numeric:tabular-nums;flex:0 0 auto}
+
+/* ---------- agreement health ---------- */
+.hrow{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline)}
+.hrow:last-child{border-bottom:0}
+.hl{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s3);font-size:var(--text-xs)}
+.hl b{font-weight:600}
+.hl span{color:var(--general-muted-foreground)}
+.hl .big{font-size:var(--text-base);font-weight:600;font-variant-numeric:tabular-nums}
+.sbar{display:flex;gap:2px;height:8px}
+.sbar i{border-radius:2px;background:var(--k);min-width:3px}
+.sbar i.est{background:repeating-linear-gradient(45deg,var(--k) 0 2px,transparent 2px 5px)}
+.hk{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s3);font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.hk span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.hk i{width:8px;height:8px;border-radius:2px;background:var(--k)}
+.hk b{color:var(--general-foreground);font-weight:600;font-variant-numeric:tabular-nums}
+.rates{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.rate{display:flex;flex-direction:column;gap:1px}
+.rate b{font-size:var(--text-lg);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.rate span{font-size:var(--text-xs);color:var(--general-muted-foreground);text-wrap:pretty}
+
+@media(max-width:1180px){.grid{grid-template-columns:1fr}}
+@media(max-width:1100px){
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .kpi:nth-child(4){border-left:0}
+  .kpi:nth-child(n+4){border-top:1px solid var(--hairline)}
+  .tabs{display:none}
+}
+@media(max-width:720px){
+  .top,.bar,.board{padding-left:var(--s4);padding-right:var(--s4)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi:nth-child(4){border-left:1px solid var(--hairline)}
+  .kpi:nth-child(3),.kpi:nth-child(5){border-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--hairline)}
+  .pill{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<h1 class="sr">Advantage overview</h1>
+<header class="top">
+  <a class="mark" href="../../../advantage-main.html" aria-label="Advantage"><img src="../../../assets/advantage-logo.svg" alt=""></a>
+  <nav class="tabs" aria-label="Main">
+    <button type="button" aria-current="page">Overview</button>
+    <button type="button">Suppliers</button>
+    <button type="button">Reports</button>
+    <button type="button">Areas</button>
+    <button type="button">Agreements</button>
+  </nav>
+  <div class="top-r">
+    <span class="pill" id="src"></span>
+    <label class="who"><span class="sr">Company</span>
+      <select id="who">
+        <option value="bob">Nordvik Byg A/S</option>
+        <option value="kari">Solheim Installasjon AS</option>
+      </select>
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </label>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="ctl"><span>Period</span>
+    <div class="seg" role="group" aria-label="Period" data-set="period">
+      <button type="button" data-v="y">Last 12 months</button>
+      <button type="button" data-v="ytd">Year to date</button>
+      <button type="button" data-v="q">Last 3 months</button>
+    </div>
+  </div>
+  <div class="ctl"><span>Group by</span>
+    <div class="seg" role="group" aria-label="Group by" data-set="group">
+      <button type="button" data-v="area">Area</button>
+      <button type="button" data-v="agr">Agreement</button>
+      <button type="button" data-v="sup">Supplier</button>
+    </div>
+  </div>
+  <span class="bar-sp"></span>
+  <div class="key" id="key" aria-label="How to read the figures"></div>
+  <span class="asof" id="asof"></span>
+</div>
+
+<main class="board">
+  <section class="panel kpis" id="kpis" aria-label="Headline figures"></section>
+  <div class="grid">
+    <div class="col">
+      <section class="panel" id="chartP" aria-labelledby="chT">
+        <div class="ph"><h2 id="chT"></h2><span class="cnt" id="chC"></span><span class="sp"></span>
+          <div class="seg" role="group" aria-label="Measure" data-set="measure">
+            <button type="button" data-v="spend">Spend</button>
+            <button type="button" data-v="thru">Through agreements</button>
+            <button type="button" data-v="saved">Saved</button>
+          </div>
+        </div>
+        <div class="chart-body" id="chB"><svg class="ch" id="ch" role="img"></svg><div class="tip" id="tip" hidden></div></div>
+        <ul class="legend" id="legend"></ul>
+      </section>
+      <section class="panel" id="tableP" aria-labelledby="tbT">
+        <div class="ph"><h2 id="tbT"></h2><span class="cnt" id="tbC"></span><span class="sp"></span><span class="cnt" id="tbU"></span></div>
+        <div class="tw" id="tb"></div>
+        <div class="pf" id="tbF" hidden></div>
+      </section>
+    </div>
+    <aside class="col" aria-label="Attention, health and open savings">
+      <section class="panel" aria-labelledby="atT">
+        <div class="ph"><h2 id="atT">Needs attention</h2><span class="cnt" id="atC"></span></div>
+        <ul class="list" id="attn"></ul>
+      </section>
+      <section class="panel" aria-labelledby="heT">
+        <div class="ph"><h2 id="heT">Agreement health</h2></div>
+        <div id="health"></div>
+      </section>
+      <section class="panel" aria-labelledby="opT">
+        <div class="ph"><h2 id="opT">Open savings, ranked</h2><span class="cnt" id="opC"></span></div>
+        <ul class="list" id="open"></ul>
+        <div class="pf" id="opF"></div>
+      </section>
+    </aside>
+  </div>
+  <section class="panel" aria-labelledby="ldT">
+    <div class="ph"><h2 id="ldT">Latest invoice lines</h2><span class="cnt" id="ldC"></span></div>
+    <div class="tw" id="ledger"></div>
+    <div class="pf" id="ldF"></div>
+  </section>
+</main>
+
+<script>
+/* =====================================================================================
+   DATA — copied from advantage-main.html so every figure here reconciles with the
+   Overview, Areas, Agreements and Reports pages. Nothing is authored for this screen
+   except the layout.
+   ===================================================================================== */
+const ROWS_BOB = [
+  {id:'mat', n:'Building materials', sup:18, inv:424, amt:2132300, rate:9, top:'Stark Byggecenter · Bygma · Ahlsell', agr:[
+     {n:'Buildor Erhverv', covers:465000, save:37200}, {n:'Stark Byggecenter', covers:870000, save:78400, req:true},
+     {n:'Bygma Framework', covers:2040000, save:183900}, {n:'Ahlsell Nordic', covers:1281900, save:119400}]},
+  {id:'tool', n:'Tools & workwear', sup:11, inv:178, amt:664800, rate:11, top:'Hilti · Gerdmans · Procurator Workwear', agr:[
+     {n:'Hilti Erhverv', covers:284000, save:31200, req:true}, {n:'Gerdmans Nordic', covers:671400, save:73800},
+     {n:'Procurator Workwear', covers:471000, save:51900}]},
+  {id:'fuel', n:'Fuel & transport', sup:5, inv:223, amt:530700, rate:8, top:'Q8 · Preem · OK', agr:[
+     {n:'Q8 Fuel Card', covers:423700, save:33900, req:true}, {n:'Preem Business', covers:107000, save:8600}]},
+  {id:'off', n:'Office supplies', sup:5, inv:62, amt:205000, rate:19, top:'Lyreco · Office Depot · Staples', agr:[
+     {n:'Lyreco Erhverv', covers:132000, save:24800, req:true}, {n:'Office Depot', covers:73000, save:14100}]},
+  {id:'rent', n:'Machine & equipment rental', sup:6, inv:112, amt:500000, rate:6, top:'Avis · Leasify Udlejning', agr:[
+     {n:'Leasify Udlejning', covers:62000, save:3700}, {n:'Avis Erhverv', covers:285000, save:17100, req:true},
+     {n:'Peugeot Professional', covers:153000, save:9200}]},
+  {id:'frg', n:'Freight & delivery', sup:6, inv:122, amt:328800, rate:8, top:'DSV · PostNord · Bring Fragt', agr:[
+     {n:'DSV Road', covers:191000, save:15300}, {n:'PostNord Erhverv', covers:81300, save:6500}, {n:'Bring Fragt', covers:56500, save:4500}]},
+  {id:'tel', n:'Telecom & IT', sup:4, inv:100, amt:290400, rate:5, top:'Hallon Erhverv · NetOnNet', agr:[
+     {n:'Hallon Erhverv', covers:266500, save:13300}, {n:'NetOnNet IT', covers:23900, save:1200}]},
+  {id:'site', n:'Site services & waste', sup:4, inv:63, amt:168000, rate:4, top:'Rentokil Erhverv · Fortum Recycling', agr:[
+     {n:'Fortum Recycling', covers:40000, save:1600}, {n:'Rentokil Erhverv', covers:128000, save:5100}]}
+];
+const ROWS_KARI = [
+  {id:'mat', n:'Building materials', sup:9, inv:1, amt:980000, rate:9, top:'Ahlsell · Bygma · Buildor', agr:[
+     {n:'Ahlsell Nordic', covers:312000, save:28100, req:true}, {n:'Bygma Framework', covers:795000, save:71700},
+     {n:'Buildor Erhverv', covers:420000, save:37800}, {n:'Stark Byggecenter', covers:354000, save:31800}]},
+  {id:'tool', n:'Tools & workwear', sup:6, inv:14, amt:296000, rate:11, top:'Hilti · Gerdmans · Procurator Workwear', agr:[
+     {n:'Hilti Erhverv', covers:118000, save:13000}, {n:'Gerdmans Nordic', covers:288000, save:31800}, {n:'Procurator Workwear', covers:162000, save:17700}]},
+  {id:'fuel', n:'Fuel & transport', sup:3, inv:1, amt:310000, rate:8, top:'Preem · Q8', agr:[
+     {n:'Preem Business', covers:186000, save:14900, req:true}, {n:'Q8 Fuel Card', covers:68000, save:5400}]},
+  {id:'off', n:'Office supplies', sup:3, inv:1, amt:118000, rate:19, top:'Lyreco · Office Depot', agr:[
+     {n:'Lyreco Erhverv', covers:74000, save:14100, req:true}, {n:'Office Depot', covers:31000, save:5900}]},
+  {id:'rent', n:'Machine & equipment rental', sup:4, inv:0, amt:290000, rate:6, top:'Avis · Peugeot', agr:[
+     {n:'Leasify Udlejning', covers:48000, save:2900}, {n:'Avis Erhverv', covers:150000, save:9000}, {n:'Peugeot Professional', covers:62000, save:3700}]},
+  {id:'frg', n:'Freight & delivery', sup:4, inv:0, amt:215000, rate:8, top:'DSV · PostNord', agr:[
+     {n:'DSV Road', covers:120000, save:9600}, {n:'PostNord Erhverv', covers:44000, save:3500}, {n:'Bring Fragt', covers:30000, save:2400}]},
+  {id:'tel', n:'Telecom & IT', sup:3, inv:6, amt:210000, rate:5, top:'Hallon · NetOnNet', agr:[
+     {n:'Hallon Erhverv', covers:158000, save:7900}, {n:'NetOnNet IT', covers:41000, save:2100}]},
+  {id:'site', n:'Site services & waste', sup:3, inv:0, amt:105000, rate:4, top:'Fortum Recycling · Rentokil Erhverv', agr:[
+     {n:'Fortum Recycling', covers:36000, save:1400}, {n:'Rentokil Erhverv', covers:58000, save:2300}]}
+];
+/* the three agreements negotiated since onboarding (fwd6 is on in the main file) */
+const NEW6_BY = {
+  bob:[{cat:'mat', n:'Granngården Frame', covers:168000, save:13400}, {cat:'tool', n:'Mediq Erhverv', covers:96000, save:8600}, {cat:'fuel', n:'Shell Fleet Nordic', covers:82000, save:6200}],
+  kari:[{cat:'mat', n:'Granngården Frame', covers:61000, save:4900}, {cat:'tool', n:'Mediq Erhverv', covers:38000, save:3400}, {cat:'fuel', n:'Shell Fleet Nordic', covers:42000, save:3400}]
+};
+const KARI_DOCS = {
+  invoices:[{sup:'Ahlsell Nordic', date:'2026-08-14', area:'mat'}, {sup:'Lyreco Erhverv', date:'2026-08-22', area:'off'}, {sup:'Preem Business', date:'2026-08-31', area:'fuel'}],
+  reports:[{name:'Q2 2026 spend export', areas:['tool', 'tel'], lines:20}],
+  verified:new Set(['Ahlsell Nordic', 'Lyreco Erhverv', 'Preem Business', 'Hilti Erhverv', 'Gerdmans Nordic', 'Procurator Workwear', 'Mediq Erhverv', 'Hallon Erhverv', 'NetOnNet IT'])
+};
+const AG_STAGE_BY = {bob:{'Stark Byggecenter':4, 'Q8 Fuel Card':4, 'Hilti Erhverv':4, 'Lyreco Erhverv':4, 'Avis Erhverv':2},
+                     kari:{'Ahlsell Nordic':4, 'Preem Business':4, 'Lyreco Erhverv':4}};
+const DORMANT = new Set(['Hilti Erhverv', 'Lyreco Erhverv']);
+const PRICE_RISE = {agr:'Stark Byggecenter', pct:4, cost:18400, when:'2 days ago'};
+const BONUS_TIERS = [{upTo:1000000, rate:1.0}, {upTo:3000000, rate:1.5}, {upTo:Infinity, rate:2.0}];
+const OFF_SUP = {
+  mat:['XL-BYG', 'Davidsen', 'Beijer Byggmaterial', 'Optimera', 'Carl Ras', 'Johannes Fog', 'Byggmakker', 'Neumann Bygg', 'Silvan Proff', 'Monter', 'Jem & Fix', 'Lavpris Træ', 'Nordic Timber'],
+  tool:['Würth Danmark', 'Snickers Workwear', 'Blåkläder', 'Makita Nordic', 'Toolstation', 'Mascot Workwear', 'Festool Nordic'],
+  fuel:['Circle K Business', 'OK Erhverv', 'Uno-X Erhverv'],
+  off:['Staples Nordic', 'Ditto Erhverv', 'Kontorland', 'Viking Direct'],
+  rent:['Ramirent', 'Cramo', 'Riwal', 'GSV Udlejning'],
+  frg:['GLS Erhverv', 'DHL Freight', 'Schenker', 'Danske Fragtmænd'],
+  tel:['Telenor Erhverv', 'Atea', 'Dustin'],
+  site:['Marius Pedersen', 'Stena Recycling', 'Renosyd']
+};
+const BASKET = {
+  mat:['Structural timber 45×95', 'Plasterboard 13 mm', 'Insulation batts 95 mm', 'Concrete screws 5×60', 'OSB board 12 mm'],
+  tool:['Cordless drill kits', 'Safety boots S3', 'Work trousers', 'Diamond blades 230 mm', 'Hearing protection'],
+  fuel:['Diesel, bulk delivery', 'Diesel, fuel card', 'AdBlue 10 L', 'Petrol 95', 'Vehicle wash'],
+  off:['A4 paper, boxes', 'Toner cartridges', 'Notebooks and pads', 'Desk chairs', 'Coffee and kitchen'],
+  rent:['Mini excavator, daily', 'Scissor lift, weekly', 'Plate compactor, daily', 'Site fencing, monthly', 'Generator, daily'],
+  frg:['Pallets, domestic', 'Parcels under 20 kg', 'Express delivery', 'Pallets, Nordic', 'Fuel surcharge'],
+  tel:['Mobile subscriptions', 'Data SIMs', 'Laptops, mid-range', 'Docking stations', 'Cloud backup'],
+  site:['Container, 8 m³', 'Waste sorting, per tonne', 'Site toilet, monthly', 'Site clean, per visit', 'Hazardous disposal']
+};
+const WHO = {
+  bob:{user:'Bob Iversen', company:'Nordvik Byg A/S', source:'Visma.net', invoices:1284},
+  kari:{user:'Kari Solheim', company:'Solheim Installasjon AS', source:'4 documents', invoices:3}
+};
+const ASSETS = '../../../assets/';
+const CAT_ART = {mat:'building-materials', tool:'tools-workwear', fuel:'fuel-transport', off:'office-supplies', rent:'machine-equipment', frg:'freight-delivery', tel:'telecom-it', site:'site-services'};
+const catArt = id => CAT_ART[id] ? `<img class="art" src="${ASSETS}advantage-3d-icons-two-colour/svg-small/advantage-icon-${CAT_ART[id]}-ultramarine-small.svg" alt="" draggable="false">` : '';
+const LOGO = {
+  'Stark Byggecenter':'stark.jpeg', 'Bygma Framework':'Bygma@64px.png', 'Ahlsell Nordic':'Ahlsell@64px.png', 'Buildor Erhverv':'Buildor@64px.png',
+  'Granngården Frame':'GRann@64px.png', 'Hilti Erhverv':'hilti.png', 'Gerdmans Nordic':'Ger@64px.png', 'Procurator Workwear':'Pro@64px.png',
+  'Mediq Erhverv':'Mediq@64px.png', 'Q8 Fuel Card':'q8@64px.png', 'Preem Business':'Preem@64px.png', 'Shell Fleet Nordic':'Shell@64px.png',
+  'Lyreco Erhverv':'Lyreco@64px.png', 'Office Depot':'Office@64px.png', 'Avis Erhverv':'Avis@64px.png', 'Leasify Udlejning':'Lea@64px.png',
+  'Peugeot Professional':'Peugeot@64px.png', 'DSV Road':'DSV@64px.png', 'PostNord Erhverv':'Postnord@64px.png', 'Bring Fragt':'Bring@64px.png',
+  'Hallon Erhverv':'hallon@64px.png', 'NetOnNet IT':'Netonnet@64px.png', 'Rentokil Erhverv':'Rento@64px.png', 'Fortum Recycling':'Fortum@64px.png'
+};
+const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const PER = {y:{n:'Last 12 months', l:'last 12 months'}, ytd:{n:'Year to date', l:'year to date'}, q:{n:'Last 3 months', l:'last 3 months'}};
+/* the dashboard's inks: the measure picks the hue, the rank picks the tint, the rest
+   fold into one ghost — the same steps the Reports page uses */
+const HUE = {spend:'27 100 220', thru:'27 100 220', saved:'0 150 137'};
+const TINT = [1, .68, .42, .22];
+const REST = {b:'110 110 110', a:.24};
+const ink = (b, a) => `rgb(${b} / ${a})`;
+
+/* =====================================================================================
+   HELPERS — the same arithmetic the main file uses
+   ===================================================================================== */
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+const fmtCompact = n => { const a = Math.abs(n);
+  if(a >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '').replace('.', ',') + 'M';
+  if(a >= 1e3) return Math.round(n / 1e3) + 'K'; return fmt(n); };
+const EST_BAND = 0.15;
+const estRange = v => `${fmtCompact(Math.round(v * (1 - EST_BAND)))}–${fmtCompact(Math.round(v * (1 + EST_BAND)))}`;
+const pctStr = p => `${String(Math.round(p * 10) / 10).replace('.', ',')}%`;
+function seedOf(str){ let h = 2166136261; for(let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rngOf(str){ let x = seedOf(str) || 1; return () => { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; }
+function monthlyShares(key){ const rnd = rngOf(key); const w = Array.from({length:12}, () => 0.72 + rnd() * 0.56); const s = w.reduce((a, b) => a + b, 0); return w.map(x => x / s); }
+function splitExact(total, weights){ const out = []; let used = 0; const s = weights.reduce((a, b) => a + b, 0) || 1;
+  weights.forEach((w, i) => { const v = i === weights.length - 1 ? total - used : Math.round(total * w / s); out.push(v); used += v; }); return out; }
+function rdCeil(v){ if(v <= 0) return 1; const pow = Math.pow(10, Math.floor(Math.log10(v))); const step = v / pow >= 5 ? pow : v / pow >= 2 ? pow / 2 : pow / 5; return Math.ceil(v / step) * step; }
+function bonusOn(volume){ let prev = 0, total = 0; for(const t of BONUS_TIERS){ if(volume <= prev) break; const to = Math.min(volume, t.upTo); total += Math.round((to - prev) * t.rate / 100); prev = t.upTo; } return total; }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[c]));
+const initials = n => n.split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+const firstWord = n => n.split(' ')[0].toLowerCase();
+const sameSup = (a, b) => firstWord(a) === firstWord(b);
+/* money in two kinds. A sum with both prints as both, each in its own ink, never blended */
+const M = (exact = 0, est = 0) => ({exact, est});
+const mAdd = (a, b) => M(a.exact + b.exact, a.est + b.est);
+const mMid = m => m.exact + m.est;
+function mHTML(m, {plus = false, cls = ''} = {}){
+  const sg = plus ? '+' : '';
+  const ex = m.exact ? `<span class="${cls}">${sg}${fmt(m.exact)}</span>` : '';
+  const es = m.est ? `<span class="fig-est">${sg}${estRange(m.est)}</span>` : '';
+  return ex && es ? `${ex}<span class="sep">·</span>${es}` : ex || es || '<span class="none">—</span>';
+}
+/* a share whose denominator is partly estimated is itself an estimate */
+function pctHTML(part, whole){
+  if(!mMid(whole)) return '<span class="none">—</span>';
+  if(!whole.est) return pctStr(part / whole.exact * 100);
+  const lo = part / (whole.exact + whole.est * (1 + EST_BAND)) * 100, hi = part / (whole.exact + whole.est * (1 - EST_BAND)) * 100;
+  return `<span class="fig-est">${Math.round(lo)}–${Math.round(hi)}%</span>`;
+}
+
+/* =====================================================================================
+   STATE
+   ===================================================================================== */
+const S = {who:'bob', period:'y', group:'area', measure:'spend', sort:{k:'spend', dir:-1}, all:false, ledgerN:10, focus:null};
+try{ const q = new URLSearchParams(location.search); if(WHO[q.get('who')]) S.who = q.get('who'); }catch(e){}
+const NOW = new Date();
+const isKari = () => S.who === 'kari';
+function win(){ const y = NOW.getFullYear(), mo = NOW.getMonth(); const n = S.period === 'ytd' ? mo + 1 : S.period === 'q' ? 3 : 12;
+  return Array.from({length:n}, (_, i) => { const d = new Date(y, mo - (n - 1 - i), 1); return {y:d.getFullYear(), m:d.getMonth(), d}; }); }
+function year12(){ const y = NOW.getFullYear(), mo = NOW.getMonth(); return Array.from({length:12}, (_, i) => { const d = new Date(y, mo - 11 + i, 1); return {y:d.getFullYear(), m:d.getMonth(), d}; }); }
+const yearFrac = () => { const start = new Date(NOW.getFullYear(), 0, 1); return (NOW - start) / (365 * 864e5); };
+
+/* agreement states — the one vocabulary every page reads */
+const stage = a => (AG_STAGE_BY[S.who] || {})[a.n] || 1;
+const isDormant = a => !!a.req && S.who === 'bob' && DORMANT.has(a.n);
+const isLanding = a => !!a.req && !isDormant(a) && stage(a) >= 4;
+const isPending = a => !!a.req && stage(a) < 4;
+const stateOf = a => isLanding(a) ? 'land' : isPending(a) ? 'pend' : isDormant(a) ? 'idle' : a.isNew ? 'new' : 'open';
+const STATE_N = {land:'Landing', pend:'Awaiting invoice', idle:'Idle', new:'New', open:'Open'};
+/* exact means a document we hold names this agreement; Bob's ERP names them all */
+const isEst = a => isKari() ? !KARI_DOCS.verified.has(a.n) : false;
+/* an area's whole spend is exact only where a ledger shows every line of it */
+const areaWhole = id => !isKari() || KARI_DOCS.reports.some(d => d.areas.includes(id));
+const quietDays = a => 95 + (seedOf('quiet:' + a.n) % 180);
+const renewMonth = a => MONTH_ABBR[seedOf('renew:' + a.n) % 12];
+
+/* =====================================================================================
+   MODEL
+   ===================================================================================== */
+function roster(){
+  const src = isKari() ? ROWS_KARI : ROWS_BOB;
+  const rows = src.map(r => ({...r, agr:r.agr.map(a => ({...a}))}));
+  (NEW6_BY[S.who] || []).forEach(x => { const r = rows.find(row => row.id === x.cat); if(r && !r.agr.some(a => a.n === x.n)) r.agr.push({n:x.n, covers:x.covers, save:x.save, req:false, isNew:true}); });
+  return rows;
+}
+let MODEL = null;
+function build(){
+  const R = roster(), W = win();
+  const sumW = s => W.reduce((t, x) => t + s[x.m], 0);
+  const winFrac = sh => W.reduce((t, x) => t + sh[x.m], 0);
+  const openM = a => isEst(a) ? M(0, a.save) : M(a.save, 0);
+
+  /* ---- areas: one seasonal key per area; everything inside it is proportional, so a
+     month's agreement volume can never exceed the month's spend ---- */
+  const areas = R.map(r => {
+    const sh = monthlyShares('area:' + r.id);
+    const spend12 = splitExact(r.amt, sh), prop = spend12.map(v => v / r.amt);
+    const land = r.agr.filter(isLanding), pend = r.agr.filter(isPending), idle = r.agr.filter(isDormant), open = r.agr.filter(a => !a.req);
+    const covA = land.reduce((s, a) => s + a.covers, 0), savA = land.reduce((s, a) => s + a.save, 0);
+    const thru12 = splitExact(covA, prop), saved12 = splitExact(savA, prop);
+    const whole = areaWhole(r.id), spend = sumW(spend12);
+    return {kind:'area', id:r.id, n:r.n, art:r.id, r, sh, prop, land, pend, idle, open, whole, spend12, thru12, saved12, covA, savA,
+      spendM:whole ? M(spend, 0) : M(0, spend), spend, thru:sumW(thru12), saved:sumW(saved12),
+      openM:open.reduce((m, a) => mAdd(m, openM(a)), M()), rate:r.rate, inv:Math.round(r.inv * winFrac(sh)), sups:r.sup, nAgr:r.agr.length};
+  });
+  const byArea = Object.fromEntries(areas.map(A => [A.id, A]));
+
+  /* ---- agreements ---- */
+  const agrs = [];
+  R.forEach(r => r.agr.forEach(a => {
+    const A = byArea[r.id], st = stateOf(a), est = isEst(a);
+    const cov12 = splitExact(a.covers, A.prop), sav12 = splitExact(a.save, A.prop);
+    const live = st === 'land';
+    agrs.push({kind:'agr', id:'agr:' + a.n, n:a.n, sub:r.n, art:r.id, logo:a.n, a, r, st, est,
+      coversM:est ? M(0, a.covers) : M(a.covers, 0), spend12:live ? cov12 : null, saved12:live ? sav12 : null,
+      spend:live ? sumW(cov12) : 0, thru:live ? sumW(cov12) : 0, saved:live ? sumW(sav12) : 0,
+      openM:a.req ? M() : openM(a), heldM:a.req ? M(a.save, 0) : M(),
+      rate:Math.round(a.save / a.covers * 100), renew:renewMonth(a), quiet:quietDays(a)});
+  }));
+
+  /* ---- suppliers: the names the roster gives us (the area's top suppliers, then the
+     ones it lists off agreement), the landing agreement's supplier first with its
+     exact volume, the rest of the area's spend split across the others. Where the
+     roster counts more suppliers than it names, one row carries the remainder, so
+     the list still sums to the count ---- */
+  const sups = [];
+  areas.forEach(A => {
+    const r = A.r, names = [];
+    A.land.forEach(a => names.push({n:a.n, agr:a, land:true}));
+    [...(r.top || '').split('·').map(s => s.trim()).filter(Boolean), ...(OFF_SUP[r.id] || [])]
+      .forEach(nm => { if(!names.some(x => sameSup(x.n, nm))) names.push({n:nm}); });
+    names.forEach(x => { if(!x.agr){ const a = r.agr.find(ag => sameSup(ag.n, x.n)); if(a) x.agr = a; } });
+    const take = names.slice(0, r.sup), smaller = r.sup - take.length;
+    if(smaller > 0) take.push({n:`${smaller} smaller supplier${smaller === 1 ? '' : 's'}`, k:smaller});
+    const rest = r.amt - A.covA, others = take.filter(x => !x.land), rnd = rngOf('sup:' + r.id);
+    const w = others.map((x, i) => (x.k ? 0.5 : 1 / (i + 1.3)) * (0.8 + rnd() * 0.4));
+    const parts = splitExact(rest, w);
+    others.forEach((x, i) => x.spendA = parts[i]);
+    take.forEach(x => {
+      if(x.land) x.spendA = x.agr.covers;
+      const s12 = splitExact(x.spendA, A.prop), spend = sumW(s12), st = x.agr ? stateOf(x.agr) : 'none';
+      const exact = x.land || A.whole;
+      sups.push({kind:'sup', id:'sup:' + r.id + ':' + x.n, n:x.n, sub:r.n, art:r.id, logo:x.agr ? x.agr.n : null, k:x.k || 1, group:!!x.k, agr:x.agr, st, r,
+        spend12:s12, spend, spendM:exact ? M(spend, 0) : M(0, spend),
+        thru:x.land ? spend : 0, saved:x.land ? sumW(splitExact(x.agr.save, A.prop)) : 0,
+        openM:x.agr && !x.agr.req ? openM(x.agr) : M(), rate:x.agr ? Math.round(x.agr.save / x.agr.covers * 100) : null});
+    });
+  });
+
+  /* ---- the headline figures ---- */
+  const spendM = areas.reduce((m, A) => mAdd(m, A.spendM), M());
+  const thru = areas.reduce((s, A) => s + A.thru, 0), saved = areas.reduce((s, A) => s + A.saved, 0);
+  const openM_ = areas.reduce((m, A) => mAdd(m, A.openM), M());
+  const covA = areas.reduce((s, A) => s + A.covA, 0), savA = areas.reduce((s, A) => s + A.savA, 0);
+  const land = agrs.filter(x => x.st === 'land'), pend = agrs.filter(x => x.st === 'pend'), idle = agrs.filter(x => x.st === 'idle');
+  const openA = agrs.filter(x => !x.a.req), fresh = openA.filter(x => x.st === 'new');
+  const outsideM = M(areas.filter(A => A.whole).reduce((s, A) => s + A.spend - A.thru, 0), areas.filter(A => !A.whole).reduce((s, A) => s + A.spend - A.thru, 0));
+  const sum12 = (xs, k) => Array.from({length:12}, (_, m) => xs.reduce((s, x) => s + (x[k] ? x[k][m] : 0), 0));
+  return {R, W, areas, agrs, sups, spendM, thru, saved, openM:openM_, covA, savA, land, pend, idle, openA, fresh, outsideM,
+    bonus:bonusOn(covA), invoices:areas.reduce((s, A) => s + A.inv, 0), suppliers:areas.reduce((s, A) => s + A.sups, 0),
+    spend12:sum12(areas, 'spend12'), thru12:sum12(areas, 'thru12'), saved12:sum12(areas, 'saved12'),
+    heldM:M(savA + pend.reduce((s, x) => s + x.a.save, 0) + idle.reduce((s, x) => s + x.a.save, 0), 0)};
+}
+
+/* =====================================================================================
+   RENDER
+   ===================================================================================== */
+const $ = s => document.querySelector(s);
+const persona = () => WHO[S.who];
+
+/* a 12-month sparkline: the months the period covers in the accent, the rest ghosted */
+function spark(s12, hue, w = 56, h = 22){
+  const Y = year12(), inW = new Set(MODEL.W.map(x => x.m)), max = Math.max(1, ...Y.map(x => s12[x.m]));
+  const bw = Math.max(2, Math.floor((w - 11 * 1.5) / 12)), gap = (w - bw * 12) / 11;
+  return `<svg class="spk" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">${Y.map((x, i) => {
+    const bh = Math.max(1.5, s12[x.m] / max * h), on = inW.has(x.m);
+    return `<rect x="${(i * (bw + gap)).toFixed(1)}" y="${(h - bh).toFixed(1)}" width="${bw}" height="${bh.toFixed(1)}" rx="1" style="--k:${on ? ink(hue, .85) : ink(REST.b, REST.a)}"/>`;
+  }).join('')}</svg>`;
+}
+const rowSpark = (s12, hue) => s12 ? spark(s12, hue, 52, 18).replace('class="spk"', 'class="rs"') : '<span class="none">—</span>';
+const logoHTML = name => { const f = name && LOGO[name];
+  return `<span class="lg"><b>${esc(initials(name || '?'))}</b>${f ? `<img src="${ASSETS}company-logos/${f}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>`; };
+
+function renderChrome(){
+  const p = persona(), m = MODEL;
+  $('#who').value = S.who;
+  $('#src').className = 'pill' + (isKari() ? ' docs' : '');
+  $('#src').innerHTML = isKari()
+    ? `<i></i><b>${KARI_DOCS.invoices.length} supplier reports · ${KARI_DOCS.reports.length} spend export</b> · latest 31 Aug`
+    : `<i></i><b>${esc(p.source)}</b> · ${fmt(p.invoices)} invoices · synced today`;
+  $('#asof').textContent = `As of ${NOW.getDate()} ${MONTH_ABBR[NOW.getMonth()]} ${NOW.getFullYear()}`;
+  document.querySelectorAll('.seg[data-set]').forEach(seg => seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(S[seg.dataset.set] === b.dataset.v))));
+  /* the key: only the kinds this page actually prints */
+  const items = [];
+  if(m.saved) items.push(`<span><i style="--k:var(--sentiment-positive)"></i>Saved, off your invoices</span>`);
+  if(m.openM.exact) items.push(`<span><i style="--k:var(--general-primary)"></i>From your ${isKari() ? 'documents' : 'invoices'}</span>`);
+  if(m.openM.est || m.spendM.est) items.push(`<span><i class="dash"></i>Estimated</span>`);
+  $('#key').innerHTML = items.length > 1 ? items.join('') : '';
+}
+
+function renderKpis(){
+  const m = MODEL, per = PER[S.period].l, n = m.land.length + m.pend.length + m.idle.length, total = m.agrs.length;
+  const parts = [m.land.length && `${m.land.length} landing`, m.pend.length && `${m.pend.length} awaiting invoice`, m.idle.length && `${m.idle.length} idle`].filter(Boolean);
+  const tiles = [
+    {l:`Spend · ${per}`, v:mHTML(m.spendM), u:'kr.', c:`${m.areas.length} areas · ${m.suppliers} suppliers · ${fmt(m.invoices)} invoice${isKari() ? ' lines' : 's'}`, s:m.spend12, hue:HUE.spend},
+    {l:`Through agreements · ${per}`, v:fmt(m.thru), u:'kr.', c:`${pctHTML(m.thru, m.spendM)} of spend · ${m.land.length} agreement${m.land.length === 1 ? '' : 's'} landing`, s:m.thru12, hue:HUE.thru},
+    {l:`Saved · ${per}`, v:`<span class="fig-pos">${fmt(m.saved)}</span>`, u:'kr.', c:`Off your invoices · ${fmt(Math.round(m.savA * yearFrac()))} kr. so far this year`, s:m.saved12, hue:HUE.saved},
+    {l:'Open to save · a year', v:mHTML(m.openM, {plus:true, cls:'fig-doc'}), u:'kr.', c:`${m.openA.length} agreements not activated${m.fresh.length ? ` · ${m.fresh.length} new` : ''}`},
+    {l:'Customer bonus · a year', v:fmt(m.bonus), u:'kr.', c:`On ${fmt(m.covA)} kr. through agreements · paid in February`},
+    {l:'Agreements in use', v:`${n}<small>of ${total}</small>`, c:parts.join(' · ') || 'None activated yet'}
+  ];
+  $('#kpis').innerHTML = tiles.map(t => `<div class="kpi">
+    <span class="l">${t.l}</span>
+    <span class="v">${t.v}${t.u ? `<small>${t.u}</small>` : ''}</span>
+    <span class="c">${t.c}</span>
+    ${t.s ? spark(t.s, t.hue) : ''}</div>`).join('');
+}
+
+/* ---- the chart: stacked columns of the measure, grouped as the filter row says ---- */
+const GROUP_N = {area:'area', agr:'agreement', sup:'supplier'};
+function seriesFor(){
+  const m = MODEL, k = S.measure, key12 = k === 'spend' ? 'spend12' : k === 'thru' ? 'spend12' : 'saved12';
+  let rows;
+  if(S.group === 'area') rows = m.areas.map(A => ({id:A.id, n:A.n, s12:k === 'spend' ? A.spend12 : k === 'thru' ? A.thru12 : A.saved12, est:k === 'spend' && !A.whole}));
+  else if(S.group === 'agr') rows = m.agrs.filter(x => x.st === 'land').map(x => ({id:x.id, n:x.n, s12:x[key12], est:false}));
+  else rows = m.sups.map(x => ({id:x.id, n:x.n, s12:k === 'spend' ? x.spend12 : k === 'thru' ? (x.thru ? x.spend12 : null) : (x.saved ? splitExact(x.agr.save, byAreaProp(x.r.id)) : null), est:k === 'spend' && !(x.thru || areaWhole(x.r.id))}));
+  rows = rows.filter(r => r.s12 && r.s12.some(v => v > 0));
+  /* rank on the whole year, so the period never repaints a series */
+  rows.forEach(r => r.total12 = r.s12.reduce((a, b) => a + b, 0));
+  rows.sort((a, b) => b.total12 - a.total12);
+  const hue = HUE[k], own = rows.slice(0, TINT.length).map((r, i) => ({...r, ink:{b:hue, a:TINT[i]}}));
+  const rest = rows.slice(TINT.length);
+  if(rest.length){
+    const s = Array.from({length:12}, (_, i) => rest.reduce((t, r) => t + r.s12[i], 0));
+    own.push({id:'other', n:rest.length === 1 ? rest[0].n : `Other ${GROUP_N[S.group]}s`, s12:s, ink:REST, est:rest.some(r => r.est) && rest.every(r => r.est), total12:s.reduce((a, b) => a + b, 0), count:rest.length});
+  }
+  /* grouped by agreement, spend that ran outside every agreement is its own series —
+     available agreements overlap, so only a held agreement pins an exact amount */
+  if(S.group === 'agr' && k === 'spend'){
+    const s = Array.from({length:12}, (_, i) => m.spend12[i] - m.thru12[i]);
+    own.push({id:'outside', n:'Outside agreements', s12:s, ink:REST, est:!!m.outsideM.est, total12:s.reduce((a, b) => a + b, 0)});
+  }
+  return own;
+}
+function byAreaProp(id){ const A = MODEL.areas.find(x => x.id === id); return A ? A.prop : Array(12).fill(1 / 12); }
+let CH = {series:[], cols:[]};
+function renderChart(){
+  const m = MODEL, W = m.W, k = S.measure;
+  const title = {spend:'Spend', thru:'Through agreements', saved:'Saved'}[k] + ' by ' + GROUP_N[S.group] + ', month by month';
+  $('#chT').textContent = title;
+  const series = seriesFor();
+  const cols = W.map(x => series.map(s => s.s12[x.m]));
+  const totals = cols.map(c => c.reduce((a, b) => a + b, 0));
+  const totW = totals.reduce((a, b) => a + b, 0);
+  $('#chC').textContent = `${fmt(totW)} kr.`;
+  CH = {series, cols, totals};
+  const svg = $('#ch'), box = $('#chB');
+  const width = Math.max(320, box.clientWidth - 32), height = 268, padL = 44, padR = 8, padT = 10, padB = 24;
+  const pw = width - padL - padR, ph = height - padT - padB, ceil = rdCeil(Math.max(...totals, 1));
+  const slot = pw / W.length, bw = Math.min(24, Math.round(slot * .56)), GAP = 2;
+  const y = v => padT + ph - v / ceil * ph;
+  let out = '<defs>' + series.map((s, i) => s.est ? `<pattern id="h${i}" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><rect width="5" height="5" fill="${ink(s.ink.b, Math.min(.12, s.ink.a * .3))}"/><rect width="1.6" height="5" fill="${ink(s.ink.b, s.ink.a)}"/></pattern>` : '').join('') + '</defs>';
+  /* gridlines: solid hairlines, one step off the surface */
+  for(let g = 0; g <= 4; g++){ const v = ceil * g / 4, yy = y(v);
+    out += `<line class="grid-l" x1="${padL}" x2="${width - padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}"/>`;
+    out += `<text x="${padL - 8}" y="${(yy + 3.5).toFixed(1)}" text-anchor="end">${g ? fmtCompact(v) : '0'}</text>`; }
+  W.forEach((x, i) => {
+    const cx = padL + slot * i + slot / 2, x0 = cx - bw / 2;
+    let acc = 0; const segs = [];
+    series.forEach((s, j) => { const v = s.s12[x.m]; if(v > 0) segs.push({j, v, s}); });
+    const total = totals[i];
+    out += `<g class="col-g" data-i="${i}">`;
+    segs.forEach((sg, idx) => {
+      const top = y(acc + sg.v), bot = y(acc), last = idx === segs.length - 1;
+      let hpx = bot - top - (last ? 0 : GAP); if(hpx < 1) hpx = Math.max(.75, hpx);
+      const fill = sg.s.est ? `url(#h${sg.j})` : ink(sg.s.ink.b, sg.s.ink.a);
+      if(last && hpx >= 4){ const r = 4, yt = top, yb = top + hpx;
+        out += `<path d="M${x0},${yb.toFixed(1)} L${x0},${(yt + r).toFixed(1)} Q${x0},${yt.toFixed(1)} ${x0 + r},${yt.toFixed(1)} L${(x0 + bw - r).toFixed(1)},${yt.toFixed(1)} Q${(x0 + bw).toFixed(1)},${yt.toFixed(1)} ${(x0 + bw).toFixed(1)},${(yt + r).toFixed(1)} L${(x0 + bw).toFixed(1)},${yb.toFixed(1)} Z" fill="${fill}"/>`; }
+      else out += `<rect x="${x0}" y="${top.toFixed(1)}" width="${bw}" height="${hpx.toFixed(1)}" fill="${fill}"/>`;
+      acc += sg.v;
+    });
+    out += `</g>`;
+    const lbl = (x.m === 0 || W.length <= 3 || i === 0) ? `${MONTH_ABBR[x.m]} ${String(x.y).slice(2)}` : MONTH_ABBR[x.m];
+    out += `<text x="${cx.toFixed(1)}" y="${height - 6}" text-anchor="middle">${lbl}</text>`;
+    out += `<rect class="hit" data-i="${i}" tabindex="0" role="img" aria-label="${lbl}: ${fmt(total)} kr." x="${(padL + slot * i).toFixed(1)}" y="${padT}" width="${slot.toFixed(1)}" height="${ph}" rx="4"/>`;
+  });
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('aria-label', title);
+  svg.innerHTML = out;
+  $('#legend').innerHTML = series.map(s => { const v = W.reduce((t, x) => t + s.s12[x.m], 0);
+    return `<li><i class="${s.est ? 'est' : ''}" style="--k:${ink(s.ink.b, s.ink.a)}"></i><b>${esc(s.n)}</b><span class="num">${s.est ? `<span class="fig-est">${estRange(v)}</span>` : fmt(v)} · ${totW ? Math.round(v / totW * 100) : 0}%</span></li>`; }).join('');
+  wireChart();
+}
+function wireChart(){
+  const svg = $('#ch'), tip = $('#tip'), box = $('#chB');
+  const show = (i, px) => {
+    const W = MODEL.W, x = W[i], rows = CH.series.map((s, j) => ({s, v: s.s12[x.m]})).filter(r => r.v > 0);
+    tip.innerHTML = `<h4>${MONTH_ABBR[x.m]} ${x.y}</h4><ul>${rows.map(r => `<li><i class="${r.s.est ? 'est' : ''}" style="--k:${ink(r.s.ink.b, r.s.ink.a)}"></i><b>${r.s.est ? `<span class="fig-est">${estRange(r.v)}</span>` : fmt(r.v)}</b><span>${esc(r.s.n)}</span></li>`).join('')}</ul>
+      <div class="tot"><span>Total</span><span class="num">${fmt(CH.totals[i])} kr.</span></div>`;
+    tip.hidden = false;
+    const bw = box.clientWidth, tw = tip.offsetWidth; let left = px + 14; if(left + tw > bw - 8) left = px - tw - 14;
+    tip.style.left = Math.max(8, left) + 'px'; tip.style.top = '16px';
+    svg.querySelectorAll('.col-g').forEach(g => g.classList.toggle('dim', +g.dataset.i !== i));
+  };
+  const hide = () => { tip.hidden = true; svg.querySelectorAll('.col-g').forEach(g => g.classList.remove('dim')); };
+  svg.querySelectorAll('.hit').forEach(h => {
+    h.addEventListener('pointermove', e => { const r = box.getBoundingClientRect(); show(+h.dataset.i, e.clientX - r.left); });
+    h.addEventListener('pointerleave', hide);
+    h.addEventListener('focus', () => { const r = h.getBoundingClientRect(), b = box.getBoundingClientRect(); show(+h.dataset.i, r.left - b.left + r.width / 2); });
+    h.addEventListener('blur', hide);
+  });
+}
+
+/* ---- the breakdown table ---- */
+const SORT_IC = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const sortVal = {
+  n:r => r.n, spend:r => r.kind === 'agr' ? mMid(r.coversM) : mMid(r.spendM), thru:r => r.thru, saved:r => r.saved, open:r => mMid(r.openM),
+  rate:r => r.rate || 0, inv:r => r.inv || 0, sups:r => r.sups || 0, st:r => ['land', 'pend', 'idle', 'new', 'open', 'none'].indexOf(r.st), renew:r => MONTH_ABBR.indexOf(r.renew)
+};
+const th = (k, label, right) => `<th scope="col"${S.sort.k === k ? ` aria-sort="${S.sort.dir < 0 ? 'descending' : 'ascending'}"` : ''} class="${right ? 'r' : ''}"><button type="button" data-sort="${k}">${label}${SORT_IC}</button></th>`;
+const chip = (st, text) => `<span class="chip ${st === 'open' ? 'avail' : st}">${text}</span>`;
+const SUP_ST = {land:'On agreement', pend:'Awaiting invoice', idle:'Agreement idle', new:'Agreement available', open:'Agreement available', none:'No agreement'};
+function bar(part, whole, cls = ''){ const p = whole ? Math.min(100, part / whole * 100) : 0; return `<span class="cb ${cls}"><i style="width:${p.toFixed(1)}%"></i></span>`; }
+function renderTable(){
+  const m = MODEL, per = PER[S.period].l, g = S.group;
+  let rows = g === 'area' ? m.areas : g === 'agr' ? m.agrs : m.sups;
+  const key = sortVal[S.sort.k] || sortVal.spend;
+  rows = [...rows].sort((a, b) => { const x = key(a), y = key(b); return (typeof x === 'string' ? x.localeCompare(y, 'da') : x - y) * S.sort.dir; });
+  const CAP = 12, cut = !S.all && rows.length > CAP, shown = cut ? rows.slice(0, CAP) : rows;
+  const H = {area:['By area', `${m.areas.length} areas`], agr:['By agreement', `${m.agrs.length} agreements`], sup:['By supplier', `${m.suppliers} suppliers`]}[g];
+  $('#tbT').textContent = H[0]; $('#tbC').textContent = H[1];
+  $('#tbU').textContent = `Spend, through and saved: ${per} · open: a year`;
+  let head, body, foot;
+  if(g === 'area'){
+    head = `${th('n', 'Area')}${th('spend', 'Spend', 1)}${th('thru', 'Through agreements', 1)}${th('saved', 'Saved', 1)}${th('open', 'Open to save', 1)}${th('rate', 'Rate', 1)}${th('sups', 'Suppliers', 1)}${th('inv', isKari() ? 'Lines' : 'Invoices', 1)}<th scope="col" class="r">12 months</th>`;
+    body = shown.map(A => `<tr>
+      <td><span class="ent">${catArt(A.id)}<span class="nm">${esc(A.n)}</span><span class="sb">${A.nAgr} agreements</span></span></td>
+      <td class="r">${mHTML(A.spendM)}</td>
+      <td class="r">${bar(A.thru, mMid(A.spendM), A.whole ? '' : 'est')}${fmt(A.thru)}<span class="pct">${A.thru ? pctHTML(A.thru, A.spendM) : ''}</span></td>
+      <td class="r">${A.saved ? `<span class="fig-pos">${fmt(A.saved)}</span>` : '<span class="none">—</span>'}</td>
+      <td class="r">${mHTML(A.openM, {plus:true, cls:'fig-doc'})}</td>
+      <td class="r sub">${A.rate}%</td>
+      <td class="r">${A.sups}</td>
+      <td class="r">${fmt(A.inv)}</td>
+      <td class="r">${rowSpark(A.spend12, HUE.spend)}</td></tr>`).join('');
+    foot = `<tr><td>${m.areas.length} areas</td><td class="r">${mHTML(m.spendM)}</td><td class="r">${fmt(m.thru)}<span class="pct">${pctHTML(m.thru, m.spendM)}</span></td>
+      <td class="r"><span class="fig-pos">${fmt(m.saved)}</span></td><td class="r">${mHTML(m.openM, {plus:true, cls:'fig-doc'})}</td><td></td><td class="r">${m.suppliers}</td><td class="r">${fmt(m.invoices)}</td><td></td></tr>`;
+  } else if(g === 'agr'){
+    head = `${th('n', 'Agreement')}${th('st', 'Status')}${th('spend', 'Covers · a year', 1)}${th('thru', 'Through it', 1)}${th('saved', 'Saved', 1)}${th('open', 'Open to save', 1)}${th('rate', 'Rate', 1)}${th('renew', 'Terms renew', 1)}<th scope="col" class="r">12 months</th>`;
+    body = shown.map(x => `<tr data-agr="${esc(x.n)}"${S.focus === x.n ? ' class="focus"' : ''}>
+      <td><span class="ent">${logoHTML(x.n)}<span class="nm">${esc(x.n)}</span><span class="sb">${esc(x.sub)}</span></span></td>
+      <td>${chip(x.st, STATE_N[x.st])}${x.st === 'idle' ? `<span class="pct">${x.quiet} days quiet</span>` : ''}</td>
+      <td class="r">${mHTML(x.coversM)}</td>
+      <td class="r">${x.thru ? fmt(x.thru) : '<span class="none">—</span>'}</td>
+      <td class="r">${x.saved ? `<span class="fig-pos">${fmt(x.saved)}</span>` : x.st === 'idle' || x.st === 'pend' ? `<span class="none">${fmt(x.a.save)} held</span>` : '<span class="none">—</span>'}</td>
+      <td class="r">${mHTML(x.openM, {plus:true, cls:'fig-doc'})}</td>
+      <td class="r sub">${x.rate}%</td>
+      <td class="r sub">${x.renew}</td>
+      <td class="r">${rowSpark(x.spend12, HUE.thru)}</td></tr>`).join('');
+    foot = `<tr><td>${m.agrs.length} agreements</td><td class="note">${m.land.length} landing · ${m.pend.length} awaiting · ${m.idle.length} idle · ${m.openA.length} open</td>
+      <td class="r note">overlap, no total</td><td class="r">${fmt(m.thru)}</td><td class="r"><span class="fig-pos">${fmt(m.saved)}</span></td><td class="r">${mHTML(m.openM, {plus:true, cls:'fig-doc'})}</td><td></td><td></td><td></td></tr>`;
+  } else {
+    head = `${th('n', 'Supplier')}${th('st', 'Status')}${th('spend', 'Spend', 1)}${th('thru', 'Through agreement', 1)}${th('saved', 'Saved', 1)}${th('open', 'Open to save', 1)}${th('rate', 'Rate', 1)}<th scope="col" class="r">12 months</th>`;
+    const openListed = m.sups.reduce((t, x) => mAdd(t, x.openM), M());
+    body = shown.map(x => `<tr${x.agr && S.focus === x.agr.n ? ' class="focus"' : ''}>
+      <td><span class="ent">${x.group ? catArt(x.r.id) : logoHTML(x.logo || x.n)}<span class="nm">${esc(x.n)}</span><span class="sb">${esc(x.sub)}</span></span></td>
+      <td>${x.group ? '' : chip(x.st, SUP_ST[x.st])}</td>
+      <td class="r">${mHTML(x.spendM)}</td>
+      <td class="r">${x.thru ? fmt(x.thru) : '<span class="none">—</span>'}</td>
+      <td class="r">${x.saved ? `<span class="fig-pos">${fmt(x.saved)}</span>` : '<span class="none">—</span>'}</td>
+      <td class="r">${mHTML(x.openM, {plus:true, cls:'fig-doc'})}</td>
+      <td class="r sub">${x.rate != null ? x.rate + '%' : ''}</td>
+      <td class="r">${rowSpark(x.spend12, HUE.spend)}</td></tr>`).join('');
+    foot = `<tr><td>${m.suppliers} suppliers</td><td class="note">${m.sups.filter(x => x.st === 'land').length} on agreement · ${m.sups.filter(x => x.st === 'none').length} without</td>
+      <td class="r">${mHTML(m.spendM)}</td><td class="r">${fmt(m.thru)}</td><td class="r"><span class="fig-pos">${fmt(m.saved)}</span></td>
+      <td class="r">${mHTML(openListed, {plus:true, cls:'fig-doc'})}<span class="pct">of ${mHTML(m.openM, {plus:true})}</span></td><td></td><td></td></tr>`;
+  }
+  $('#tb').innerHTML = `<table><caption class="sr">${H[0]}, ${per}</caption><thead><tr>${head}</tr></thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
+  /* a supplier row can stand for several suppliers, so the footer counts what the
+     rows represent, and lands on the same number the header and the KPI print */
+  const repr = xs => xs.reduce((s, x) => s + (x.k || 1), 0), unit = GROUP_N[g] + 's';
+  const f = $('#tbF');
+  f.hidden = !(rows.length > CAP);
+  f.innerHTML = rows.length > CAP ? `<span>Showing ${repr(shown)} of ${repr(rows)} ${unit}</span><span class="sp"></span><button type="button" class="linkbtn" id="tbAll">${S.all ? 'Show fewer' : `Show all ${repr(rows)}`}</button>` : '';
+  $('#tb').querySelectorAll('[data-sort]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.sort; S.sort = S.sort.k === k ? {k, dir:-S.sort.dir} : {k, dir:k === 'n' || k === 'st' || k === 'renew' ? 1 : -1}; renderTable(); }));
+  const all = $('#tbAll'); if(all) all.addEventListener('click', () => { S.all = !S.all; renderTable(); });
+  if(S.focus){ const tr = $('#tb').querySelector('tr.focus'); if(tr) tr.scrollIntoView({block:'center', behavior:'smooth'}); }
+}
+
+/* ---- needs attention ---- */
+const IC = {
+  rise:'<path d="M6 17L17 6M10.5 6H17v6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  idle:'<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M10 9v6M14 9v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  wait:'<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.6V12l3.1 1.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  new:'<path d="M12 3l1.9 4.3 4.6.6-3.4 3.2.9 4.7-4-2.3-4 2.3.9-4.7L5.5 7.9l4.6-.6L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  doc:'<path d="M13 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V9l-6-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3v6h6M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'
+};
+const icon = (k, tone) => `<span class="ic ${tone}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${IC[k]}</svg></span>`;
+function renderAttention(){
+  const m = MODEL, items = [];
+  const rise = m.agrs.find(x => x.n === PRICE_RISE.agr && x.a.req);
+  if(rise) items.push({ic:icon('rise', 'neg'), t:`Price rise at ${rise.n}`, s:`+${PRICE_RISE.pct}% ${PRICE_RISE.when} · on a live agreement`, v:`<span class="fig-neg">+${fmt(PRICE_RISE.cost)}</span>`, u:'kr. a year', agr:rise.n});
+  m.idle.forEach(x => items.push({ic:icon('idle', 'neg'), t:`${x.n} is live but unused`, s:`No invoice through it for ${x.quiet} days · ${esc(x.sub)}`, v:fmt(x.a.save), u:'kr. a year held', agr:x.n}));
+  m.pend.forEach(x => items.push({ic:icon('wait', 'doc'), t:`${x.n} awaits its first invoice`, s:`Requested · supplier confirmed · ${esc(x.sub)}`, v:`<span class="fig-doc">+${fmt(x.a.save)}</span>`, u:'kr. a year', agr:x.n}));
+  if(m.fresh.length) items.push({ic:icon('new', 'doc'), t:`${m.fresh.length} agreements negotiated this quarter`, s:m.fresh.map(x => x.n).join(', '),
+    v:mHTML(m.fresh.reduce((t, x) => mAdd(t, x.openM), M()), {plus:true, cls:'fig-doc'}), u:'kr. a year', agr:m.fresh[0].n});
+  if(isKari()){
+    const noDoc = m.areas.filter(A => !A.whole && !A.land.length);
+    if(noDoc.length) items.push({ic:icon('doc', ''), t:`No document for ${noDoc.length} areas`, s:noDoc.map(A => A.n).join(', '),
+      v:mHTML(noDoc.reduce((t, A) => mAdd(t, A.openM), M()), {plus:true}), u:'kr. a year, estimated'});
+  }
+  $('#atC').textContent = items.length ? `${items.length}` : '';
+  $('#attn').innerHTML = items.length ? items.map(it => `<li${it.agr ? ` class="act" data-agr="${esc(it.agr)}" tabindex="0" role="button"` : ''}>${it.ic}
+    <span class="t"><b>${it.t}</b><span>${it.s}</span></span>
+    <span class="v">${it.v}<small>${it.u}</small></span></li>`).join('')
+    : `<li><span class="t"><span>Nothing needs you right now.</span></span></li>`;
+  $('#attn').querySelectorAll('[data-agr]').forEach(li => { const go = () => focusAgreement(li.dataset.agr);
+    li.addEventListener('click', go); li.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } }); });
+}
+function focusAgreement(name){ S.group = 'agr'; S.all = true; S.focus = name; S.sort = {k:'spend', dir:-1}; renderChrome(); renderChart(); renderTable(); }
+
+/* ---- agreement health: coverage, what the held agreements are doing, two rates ---- */
+function renderHealth(){
+  const m = MODEL, spend = mMid(m.spendM), outside = mMid(m.outsideM);
+  const held = m.savA + m.pend.reduce((s, x) => s + x.a.save, 0) + m.idle.reduce((s, x) => s + x.a.save, 0);
+  const pendS = m.pend.reduce((s, x) => s + x.a.save, 0), idleS = m.idle.reduce((s, x) => s + x.a.save, 0), n = m.land.length + m.pend.length + m.idle.length;
+  const seg = (v, tot, k, est) => v > 0 ? `<i class="${est ? 'est' : ''}" style="--k:${k};flex:${(v / tot).toFixed(4)} 1 0"></i>` : '';
+  const effRate = m.thru ? pctStr(m.saved / m.thru * 100) : '—';
+  const openRate = outside ? (m.openM.est || m.outsideM.est ? `<span class="fig-est">${pctStr(mMid(m.openM) / outside * 100)}</span>` : pctStr(m.openM.exact / outside * 100)) : '—';
+  $('#health').innerHTML = `
+    <div class="hrow">
+      <div class="hl"><b>Coverage</b><span class="big">${pctHTML(m.thru, m.spendM)}</span></div>
+      <div class="sbar" role="img" aria-label="Through agreements ${fmt(m.thru)} of ${fmt(spend)} kr.">${seg(m.thru, spend, ink(HUE.thru, 1))}${seg(outside, spend, ink(REST.b, REST.a), !!m.outsideM.est)}</div>
+      <div class="hk"><span><i style="--k:${ink(HUE.thru, 1)}"></i>Through agreements <b>${fmt(m.thru)}</b></span><span><i style="--k:${ink(REST.b, REST.a)}"></i>Outside <b>${mHTML(m.outsideM)}</b></span></div>
+    </div>
+    <div class="hrow">
+      <div class="hl"><b>What the ${n} held agreement${n === 1 ? '' : 's'} ${n === 1 ? 'does' : 'do'}</b><span class="big">${fmt(held)} <span class="pct">kr./yr</span></span></div>
+      <div class="sbar" role="img" aria-label="${fmt(m.savA)} landing, ${fmt(pendS)} awaiting invoice, ${fmt(idleS)} idle">${seg(m.savA, held, ink(HUE.saved, 1))}${seg(pendS, held, ink(HUE.thru, .55))}${seg(idleS, held, 'var(--sentiment-negative)')}</div>
+      <div class="hk"><span><i style="--k:${ink(HUE.saved, 1)}"></i>${m.land.length} landing <b>${fmt(m.savA)}</b></span>${pendS ? `<span><i style="--k:${ink(HUE.thru, .55)}"></i>${m.pend.length} awaiting invoice <b>${fmt(pendS)}</b></span>` : ''}${idleS ? `<span><i style="--k:var(--sentiment-negative)"></i>${m.idle.length} idle <b>${fmt(idleS)}</b></span>` : ''}</div>
+    </div>
+    <div class="hrow rates">
+      <div class="rate"><b class="fig-pos">${effRate}</b><span>Saved on what ran through agreements</span></div>
+      <div class="rate"><b>${openRate}</b><span>Open on what still runs outside them</span></div>
+    </div>`;
+}
+
+/* ---- open savings, ranked ---- */
+function renderOpen(){
+  const m = MODEL, rows = [...m.openA].sort((a, b) => mMid(b.openM) - mMid(a.openM)), top = rows.slice(0, 8);
+  $('#opC').textContent = `${rows.length} agreements`;
+  $('#open').innerHTML = top.map((x, i) => `<li class="act" data-agr="${esc(x.n)}" tabindex="0" role="button">
+    <span class="rk">${i + 1}</span>${logoHTML(x.n)}
+    <span class="t"><b>${esc(x.n)}${x.st === 'new' ? ` ${chip('new', 'New')}` : ''}</b><span>${esc(x.sub)} · ${x.rate}% under ${x.est ? 'list price' : 'what you pay'}</span></span>
+    <span class="v">${mHTML(x.openM, {plus:true, cls:'fig-doc'})}<small>kr. a year</small></span></li>`).join('');
+  $('#opF').innerHTML = `<span>${rows.length} open · ${mHTML(m.openM, {plus:true, cls:'fig-doc'})} kr. a year in all</span><span class="sp"></span><button type="button" class="linkbtn" id="opAll">All agreements</button>`;
+  $('#opAll').addEventListener('click', () => { S.group = 'agr'; S.all = true; S.focus = null; S.sort = {k:'open', dir:-1}; renderChrome(); renderChart(); renderTable(); });
+  $('#open').querySelectorAll('[data-agr]').forEach(li => { const go = () => focusAgreement(li.dataset.agr);
+    li.addEventListener('click', go); li.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } }); });
+}
+
+/* ---- the ledger: a sample of lines, newest first. No total row, so it claims no sum ---- */
+let LINES = [];
+function buildLedger(){
+  const m = MODEL, W = m.W, start = W[0].d.getTime(), span = Math.max(1, NOW - start), out = [];
+  m.areas.forEach(A => {
+    const r = A.r, n = isKari() ? r.inv : Math.min(r.inv, 6); if(!n) return;
+    const rnd = rngOf('led:' + r.id + ':' + S.who), items = BASKET[r.id], share = A.covA / r.amt;
+    const off = [...(r.top || '').split('·').map(s => s.trim()), ...(OFF_SUP[r.id] || [])].filter(s => s && !A.land.some(a => sameSup(a.n, s)));
+    const exportArea = isKari() && KARI_DOCS.reports[0].areas.includes(r.id);
+    for(let i = 0; i < n; i++){
+      const thru = A.land.length && (rnd() < share || (isKari() && r.inv === 1));
+      const a = thru ? A.land[Math.floor(rnd() * A.land.length)] : null;
+      const amt = Math.round((r.amt / Math.max(r.inv, 1)) * (0.5 + rnd() * 1.4) / 10) * 10;
+      let d = new Date(start + rnd() * span);
+      if(isKari()){ const inv = a && KARI_DOCS.invoices.find(x => x.sup === a.n); if(inv) d = new Date(inv.date);
+        else if(exportArea) d = new Date(2026, 3 + Math.floor(rnd() * 3), 1 + Math.floor(rnd() * 27)); }
+      out.push({d, inv:'F-' + (100000 + Math.floor(rnd() * 900000)), sup:a ? a.n : off[Math.floor(rnd() * off.length)] || 'Other suppliers',
+        item:items[Math.floor(rnd() * items.length)], area:r.n, art:r.id, amt, agr:a ? a.n : null, save:a ? Math.round(amt * a.save / a.covers) : 0});
+    }
+  });
+  const inWin = new Set(W.map(x => `${x.y}-${x.m}`));
+  LINES = out.filter(l => inWin.has(`${l.d.getFullYear()}-${l.d.getMonth()}`)).sort((a, b) => b.d - a.d);
+}
+function renderLedger(){
+  const m = MODEL, shown = LINES.slice(0, S.ledgerN), per = PER[S.period].l;
+  $('#ldC').textContent = isKari() ? `${LINES.length} lines from your documents, ${per}` : `${fmt(m.invoices)} invoices, ${per}`;
+  const dt = d => `${d.getDate()} ${MONTH_ABBR[d.getMonth()]}${d.getFullYear() !== NOW.getFullYear() ? ' ' + String(d.getFullYear()).slice(2) : ''}`;
+  $('#ledger').innerHTML = `<table><caption class="sr">Latest invoice lines</caption><thead><tr>
+      <th scope="col">Date</th><th scope="col">Invoice</th><th scope="col">Supplier</th><th scope="col">Line</th><th scope="col">Area</th><th scope="col">Agreement</th><th scope="col" class="r">Amount</th><th scope="col" class="r">Saving</th></tr></thead>
+    <tbody>${shown.map(l => `<tr>
+      <td class="sub num">${dt(l.d)}</td><td class="sub num">${l.inv}</td>
+      <td><span class="ent">${logoHTML(l.agr || l.sup)}<span class="nm">${esc(l.sup)}</span></span></td>
+      <td>${esc(l.item)}</td>
+      <td><span class="ent">${catArt(l.art)}<span class="sb" style="color:inherit">${esc(l.area)}</span></span></td>
+      <td>${l.agr ? chip('land', esc(l.agr)) : '<span class="none">Outside agreements</span>'}</td>
+      <td class="r">${fmt(l.amt)}</td>
+      <td class="r">${l.save ? `<span class="fig-pos">${fmt(l.save)}</span>` : '<span class="none">—</span>'}</td></tr>`).join('') || `<tr><td colspan="8" class="sub">No lines in this period.</td></tr>`}</tbody></table>`;
+  const more = LINES.length > S.ledgerN;
+  $('#ldF').innerHTML = `<span>${isKari() ? `Showing ${shown.length} of ${LINES.length} · ${KARI_DOCS.invoices.length} supplier reports and the ${KARI_DOCS.reports[0].name}` : `Showing ${shown.length} of ${fmt(m.invoices)} · the rest in Reports`}</span><span class="sp"></span>${more ? `<button type="button" class="linkbtn" id="ldMore">Show 10 more</button>` : ''}`;
+  const b = $('#ldMore'); if(b) b.addEventListener('click', () => { S.ledgerN += 10; renderLedger(); });
+}
+
+function render(){
+  MODEL = build();
+  renderChrome(); renderKpis(); renderChart(); renderTable(); renderAttention(); renderHealth(); renderOpen(); buildLedger(); renderLedger();
+}
+document.querySelectorAll('.seg[data-set]').forEach(seg => seg.addEventListener('click', e => {
+  const b = e.target.closest('button[data-v]'); if(!b) return;
+  const k = seg.dataset.set; if(S[k] === b.dataset.v) return;
+  S[k] = b.dataset.v; if(k === 'group'){ S.all = false; S.focus = null; S.sort = {k:'spend', dir:-1}; }
+  if(k === 'period'){ S.ledgerN = 10; render(); } else { renderChrome(); renderChart(); renderTable(); }
+}));
+$('#who').addEventListener('change', e => { S.who = e.target.value; S.all = false; S.focus = null; S.ledgerN = 10; S.sort = {k:'spend', dir:-1};
+  try{ history.replaceState(null, '', S.who === 'bob' ? location.pathname : `?who=${S.who}`); }catch(err){} render(); });
+let rT; new ResizeObserver(() => { clearTimeout(rT); rT = setTimeout(() => { if(MODEL) renderChart(); }, 80); }).observe($('#chB'));
+render();
+</script>
+</body>
+</html>

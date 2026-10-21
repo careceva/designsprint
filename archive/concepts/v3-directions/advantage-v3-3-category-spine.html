@@ -1,0 +1,1644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — The Category Spine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&family=DM+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Advantage v3.3 — THE CATEGORY SPINE
+   Categories are the product's spine; agreements make sense
+   inside their category. Agreements page = thin registry that
+   always deep-links back into category context.
+   Semantic tokens only — no raw hex in components.
+   ============================================================ */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;--general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;--general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;--general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;--general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--sidebar-foreground:#1c1c1c;
+  --sentiment-positive:#009689;--sentiment-negative:#f54a00;
+  --surface:#ffffff;--brand-midnight:#000a45;--brand-ice:#edf5ff;--brand-cornflower:#73abff;
+  --font-sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;
+  --hairline:#ececec;
+  --t-fast:.15s ease;--t:.28s cubic-bezier(.2,.7,.3,1);
+  /* chart palette — validated (CVD-safe, ≥3:1 on white) with dataviz six-checks */
+  --chart-1:#1b64dc;--chart-2:#b3590a;--chart-3:#00917d;
+  --chart-4:#6f52c9;--chart-5:#c22a70;--chart-6:#77791f;
+  --est-ink:#4a5568;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{font-family:var(--font-body);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:700;text-wrap:balance}
+h1{font-size:var(--text-3xl);letter-spacing:-1.2px;line-height:1.12}
+h2{font-size:var(--text-xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-base);letter-spacing:-.3px}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.spacer{flex:1}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+.skip{position:absolute;left:-999px;top:var(--s2);z-index:99;background:var(--surface);
+  padding:var(--s2) var(--s4);border-radius:var(--rounded-full);box-shadow:var(--shadow-md)}
+.skip:focus{left:var(--s2)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast),transform .1s ease}
+.btn:active{transform:translateY(1px)}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);box-shadow:var(--shadow-xs)}
+.btn-primary:hover{background:var(--brand-midnight)}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover{background:var(--brand-ice);border-color:var(--general-border)}
+.btn-ghost{background:transparent;color:var(--general-primary)}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.linkbtn{background:none;border:none;padding:var(--s1) 0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--general-border)}
+.linkbtn:hover{text-decoration-color:var(--general-primary)}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 var(--s3);
+  border-radius:var(--rounded-full);font-size:var(--text-xs);font-weight:600;white-space:nowrap;border:1px solid transparent}
+.chip svg{width:13px;height:13px}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-ice{background:var(--brand-ice);color:var(--general-primary);border-color:var(--general-border)}
+.chip-good{background:var(--sentiment-positive);color:var(--general-primary-foreground)}
+.chip-goodsoft{background:color-mix(in srgb,var(--sentiment-positive) 12%,var(--surface));color:var(--sentiment-positive);border-color:color-mix(in srgb,var(--sentiment-positive) 35%,var(--surface))}
+.chip-warn{background:color-mix(in srgb,var(--general-accent) 22%,var(--surface));color:var(--general-accent-foreground);border-color:color-mix(in srgb,var(--general-accent) 55%,var(--surface))}
+.chip-neg{background:color-mix(in srgb,var(--sentiment-negative) 10%,var(--surface));color:var(--sentiment-negative);border-color:color-mix(in srgb,var(--sentiment-negative) 32%,var(--surface))}
+.chip-est{background:var(--surface);color:var(--est-ink);border:1px dashed var(--general-muted-foreground)}
+.chip-star{background:var(--brand-midnight);color:var(--general-primary-foreground)}
+
+/* ---------- topbar ---------- */
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:var(--s4);
+  height:64px;padding:0 var(--s6);background:var(--surface);border-bottom:1px solid var(--sidebar-border)}
+.logo{display:inline-flex;align-items:center;gap:var(--s2);font-family:var(--font-sans);
+  font-weight:800;font-size:var(--text-lg);letter-spacing:-.5px;color:var(--general-foreground)}
+.logo .mark{width:26px;height:26px;border-radius:var(--rounded-sm);background:var(--brand-midnight);
+  display:inline-flex;align-items:center;justify-content:center;color:var(--brand-cornflower)}
+.logo .mark svg{width:15px;height:15px}
+.logo small{font-weight:600;color:var(--general-muted-foreground);font-size:var(--text-xs);letter-spacing:0;margin-left:2px}
+.top-status{display:inline-flex;align-items:center}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;
+  border:none;background:transparent;border-radius:var(--rounded-full);cursor:pointer;color:var(--sidebar-foreground);position:relative}
+.iconbtn:hover{background:var(--general-muted)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;
+  background:var(--general-accent);border:2px solid var(--surface)}
+.acct{position:relative}
+.acct-btn{display:inline-flex;align-items:center;gap:var(--s2);height:44px;padding:0 var(--s3) 0 var(--s1);
+  border:1px solid transparent;background:transparent;border-radius:var(--rounded-full);cursor:pointer}
+.acct-btn:hover{background:var(--general-muted)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-midnight);color:var(--general-primary-foreground);
+  display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-sans);font-weight:700;font-size:var(--text-xs)}
+.acct-name{text-align:left;line-height:1.15}
+.acct-name b{display:block;font-size:var(--text-sm);font-weight:600}
+.acct-name span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.acct-menu{position:absolute;right:0;top:calc(100% + 6px);min-width:300px;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);box-shadow:var(--shadow-lg);padding:var(--s2);display:none}
+.acct-menu.open{display:block}
+.acct-menu .lbl{font-size:var(--text-xs);font-weight:700;color:var(--general-muted-foreground);
+  text-transform:uppercase;letter-spacing:.06em;padding:var(--s2) var(--s3)}
+.persona{display:flex;align-items:center;gap:var(--s3);width:100%;padding:var(--s2) var(--s3);min-height:56px;
+  border:none;background:transparent;border-radius:var(--rounded-md);cursor:pointer;text-align:left}
+.persona:hover{background:var(--brand-ice)}
+.persona[aria-checked="true"]{background:var(--brand-ice);outline:1px solid var(--general-border)}
+.persona .pn b{display:block;font-size:var(--text-sm);font-weight:600}
+.persona .pn span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.persona .tick{margin-left:auto;color:var(--general-primary);opacity:0}
+.persona[aria-checked="true"] .tick{opacity:1}
+.persona .tick svg{width:16px;height:16px}
+
+/* ---------- rail nav ---------- */
+.appbody{display:flex;align-items:stretch;min-height:calc(100vh - 64px)}
+.rail{width:216px;flex:0 0 auto;padding:var(--s4) var(--s3);border-right:1px solid var(--sidebar-border);
+  background:var(--surface);display:flex;flex-direction:column;gap:var(--s1);position:sticky;top:64px;height:calc(100vh - 64px)}
+.navitem{display:flex;align-items:center;gap:var(--s3);min-height:44px;padding:0 var(--s3);width:100%;
+  border:none;background:transparent;border-radius:var(--rounded-md);cursor:pointer;color:var(--sidebar-foreground);
+  font-size:var(--text-sm);font-weight:500;text-align:left}
+.navitem svg{width:18px;height:18px;flex:0 0 auto;color:var(--general-muted-foreground)}
+.navitem:hover{background:var(--general-muted)}
+.navitem[aria-current="page"]{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
+.navitem[aria-current="page"] svg{color:var(--general-primary)}
+.navitem .count{margin-left:auto;font-size:var(--text-xs);font-weight:700;color:var(--general-muted-foreground);
+  background:var(--general-muted);border-radius:var(--rounded-full);padding:1px 8px}
+.navitem[aria-current="page"] .count{background:var(--general-secondary);color:var(--general-primary)}
+.rail .assistant-cta{margin-top:auto;border:1px solid var(--general-border);background:var(--brand-ice);
+  border-radius:var(--rounded-lg);padding:var(--s3);text-align:left;cursor:pointer;display:block;width:100%}
+.rail .assistant-cta:hover{background:var(--general-secondary)}
+.rail .assistant-cta b{display:flex;align-items:center;gap:var(--s2);font-family:var(--font-sans);font-size:var(--text-sm)}
+.rail .assistant-cta b svg{width:16px;height:16px;color:var(--general-primary)}
+.rail .assistant-cta span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:2px}
+
+/* ---------- canvas / page ---------- */
+.canvas{flex:1;min-width:0}
+.page{max-width:1240px;margin:0 auto;padding:var(--s8) var(--s6) var(--s16)}
+.pagehead{margin-bottom:var(--s6)}
+.pagehead .eyebrow{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-primary);margin-bottom:var(--s1)}
+.pagehead p{color:var(--general-muted-foreground);max-width:64ch;margin-top:var(--s1);font-size:var(--text-sm)}
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);box-shadow:var(--shadow-xs)}
+
+/* ---------- overview grid ---------- */
+.ov-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(300px,1fr);gap:var(--s6);align-items:start}
+.boardcard{padding:var(--s4) var(--s4) var(--s2)}
+.board-head{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s2) var(--s4)}
+.board-head h2{font-size:var(--text-lg)}
+.board-legend{display:flex;gap:var(--s3);flex-wrap:wrap;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.board-legend i{display:inline-flex;align-items:center;gap:4px;font-style:normal}
+.board-legend svg{width:12px;height:12px}
+
+/* ---------- the category board (the hero) ---------- */
+.catrow{border-top:1px solid var(--hairline)}
+.catrow:first-of-type{border-top:none}
+.catrow-head{display:grid;width:100%;align-items:center;gap:var(--s3);
+  grid-template-columns:26px minmax(140px,1.5fr) minmax(90px,1fr) 74px 52px 92px 20px;
+  min-height:56px;padding:var(--s2) var(--s2);border:none;background:transparent;cursor:pointer;
+  border-radius:var(--rounded-md);text-align:left;transition:background-color var(--t-fast)}
+.catrow-head:hover{background:var(--brand-ice)}
+.catrow[data-open] > .catrow-head{background:var(--brand-ice)}
+.catrow-head .glyph{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:var(--rounded-sm)}
+.catrow-head .glyph svg{width:15px;height:15px}
+.g-active{color:var(--general-muted-foreground);background:var(--general-muted)}
+.g-warn{color:var(--general-accent-foreground);background:color-mix(in srgb,var(--general-accent) 30%,var(--surface))}
+.g-star{color:var(--general-primary-foreground);background:var(--brand-midnight)}
+.g-neg{color:var(--sentiment-negative);background:color-mix(in srgb,var(--sentiment-negative) 12%,var(--surface))}
+.g-good{color:var(--general-primary-foreground);background:var(--sentiment-positive)}
+.g-rec{color:var(--general-primary);background:var(--general-secondary)}
+.g-est{color:var(--est-ink);background:var(--surface);border:1px dashed var(--general-muted-foreground)}
+.catrow-head .nm{min-width:0}
+.catrow-head .nm b{display:block;font-family:var(--font-sans);font-weight:600;font-size:var(--text-sm);
+  letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.catrow-head .nm span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spendbar{display:block;height:8px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden;position:relative}
+.spendbar i{position:absolute;inset:0 auto 0 0;border-radius:var(--rounded-full);background:var(--brand-cornflower);min-width:3px}
+.spendbar b{position:absolute;inset:0 auto 0 0;border-radius:var(--rounded-full);background:var(--general-primary);min-width:2px}
+.spendbar.est{background:repeating-linear-gradient(45deg,var(--general-muted) 0 5px,var(--surface) 5px 9px);border:1px dashed var(--general-muted-foreground)}
+.spendbar.est i,.spendbar.est b{background:transparent}
+.catrow-head .kr{font-size:var(--text-sm);font-weight:600;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.catrow-head .cov{font-size:var(--text-xs);color:var(--general-muted-foreground);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.catrow-head .pot{justify-self:end}
+.potchip{display:inline-flex;align-items:center;height:24px;padding:0 var(--s2);border-radius:var(--rounded-full);
+  font-size:var(--text-xs);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;
+  background:color-mix(in srgb,var(--general-accent) 20%,var(--surface));color:var(--general-accent-foreground);
+  border:1px solid color-mix(in srgb,var(--general-accent) 45%,var(--surface))}
+.potchip.zero{background:var(--general-muted);color:var(--general-muted-foreground);border-color:transparent;font-weight:600}
+.potchip.est{background:var(--surface);border:1px dashed var(--general-muted-foreground);color:var(--est-ink)}
+.catrow-head .chev{color:var(--general-muted-foreground);transition:transform var(--t)}
+.catrow-head .chev svg{width:16px;height:16px;display:block}
+.catrow[data-open] .chev{transform:rotate(180deg)}
+
+/* expanding panel — grid-rows 0fr→1fr so height animates to content size */
+.catrow-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--t)}
+.catrow[data-open] > .catrow-panel{grid-template-rows:1fr}
+.catrow-inner{overflow:hidden;min-height:0}
+.panelpad{padding:var(--s2) var(--s2) var(--s6)}
+.panelbox{border:1px solid var(--general-border);background:var(--brand-ice);
+  border-radius:var(--rounded-lg);padding:var(--s4)}
+.panelbox.est{border-style:dashed;border-color:var(--general-muted-foreground);background:var(--surface)}
+.peerlead{font-size:var(--text-sm);color:var(--est-ink);margin-bottom:var(--s3)}
+.peerlead b{color:var(--general-foreground)}
+.p-note{font-size:var(--text-sm);color:var(--general-foreground);max-width:70ch}
+.p-stats{display:flex;gap:var(--s6);flex-wrap:wrap;margin:var(--s3) 0}
+.p-stat b{display:block;font-family:var(--font-sans);font-size:var(--text-lg);letter-spacing:-.4px;font-variant-numeric:tabular-nums}
+.p-stat span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.p-agrs{display:flex;gap:var(--s2);flex-wrap:wrap;margin:var(--s3) 0}
+.p-actions{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s3)}
+.agrpill{display:inline-flex;align-items:center;gap:var(--s2);height:34px;padding:0 var(--s3) 0 var(--s1);
+  border-radius:var(--rounded-full);background:var(--surface);border:1px solid var(--hairline);
+  font-size:var(--text-xs);font-weight:600;box-shadow:var(--shadow-xs)}
+.agrpill .ic{width:24px;height:24px;border-radius:var(--rounded-xs)}
+.agrpill span{color:var(--general-muted-foreground);font-weight:500}
+
+/* rich panel (categories page) */
+.rich{display:grid;grid-template-columns:minmax(220px,1fr) minmax(300px,1.4fr) minmax(240px,1fr);gap:var(--s4)}
+.rich .col h4{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:var(--s3)}
+.sparkbox{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-md);padding:var(--s3)}
+.sparkbox .cap{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:var(--s2)}
+.agrcard{display:flex;align-items:flex-start;gap:var(--s3);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-md);padding:var(--s3);box-shadow:var(--shadow-xs)}
+.agrcard + .agrcard{margin-top:var(--s2)}
+.agrcard .bd{min-width:0;flex:1}
+.agrcard .bd b{font-family:var(--font-sans);font-size:var(--text-sm);letter-spacing:-.2px}
+.agrcard .bd .terms{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.agrcard .tail{display:flex;flex-direction:column;align-items:flex-end;gap:var(--s1)}
+.agrcard.flash{animation:flash 1.6s ease 2}
+.agrcard.est-card{border-style:dashed;border-color:var(--general-muted-foreground)}
+@keyframes flash{0%,100%{box-shadow:var(--shadow-xs)}35%{box-shadow:0 0 0 3px var(--general-border),var(--shadow-md)}}
+.ic{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto;
+  border-radius:var(--rounded-sm);background:var(--brand-ice);color:var(--general-primary);
+  font-family:var(--font-sans);font-weight:700;font-size:11px;border:1px solid var(--general-border)}
+.mathbox{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-md);padding:var(--s3)}
+.mathbox .row{display:flex;justify-content:space-between;gap:var(--s3);font-size:var(--text-sm);padding:var(--s1) 0}
+.mathbox .row span{color:var(--general-muted-foreground)}
+.mathbox .row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.mathbox .row.total{border-top:1px solid var(--hairline);margin-top:var(--s1);padding-top:var(--s2)}
+.mathbox .row.total b{color:var(--general-primary);font-family:var(--font-sans);font-size:var(--text-base)}
+.mathbox.est{border-style:dashed;border-color:var(--general-muted-foreground)}
+.mathbox.est .row.total b{color:var(--est-ink)}
+
+/* ---------- right rail (overview) ---------- */
+.side{display:flex;flex-direction:column;gap:var(--s4)}
+.kpis{padding:var(--s4)}
+.kpis h2{font-size:var(--text-base);margin-bottom:var(--s2);display:flex;align-items:center;gap:var(--s2)}
+.kpi{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  padding:var(--s3) var(--s1);border-top:1px solid var(--hairline)}
+.kpi:first-of-type{border-top:none}
+.kpi .lb{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.kpi .lb small{display:block;font-size:var(--text-xs)}
+.kpi .vl{font-family:var(--font-sans);font-weight:700;font-size:var(--text-xl);letter-spacing:-.5px;
+  font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.kpi .vl.pos{color:var(--sentiment-positive)}
+.kpi .vl.acc{color:var(--general-foreground)}
+.kpi .vl .estmark{display:inline-block;font-size:10px;font-weight:700;color:var(--est-ink);vertical-align:super;
+  border:1px dashed var(--general-muted-foreground);border-radius:var(--rounded-xs);padding:0 3px;margin-left:4px}
+.kpi .vl.locked{color:var(--general-muted-foreground);display:inline-flex;align-items:center;gap:6px}
+.kpi .vl.locked svg{width:14px;height:14px}
+.notes{padding:var(--s4)}
+.notes h2{font-size:var(--text-base);margin-bottom:var(--s3)}
+.note{display:flex;gap:var(--s3);padding:var(--s3) var(--s1);border-top:1px solid var(--hairline);cursor:pointer;
+  background:none;border-left:none;border-right:none;border-bottom:none;width:100%;text-align:left;border-radius:var(--rounded-sm)}
+.note:first-of-type{border-top:none}
+.note:hover{background:var(--brand-ice)}
+.note .glyph{flex:0 0 auto;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--rounded-sm)}
+.note .glyph svg{width:14px;height:14px}
+.note .bd b{display:block;font-size:var(--text-sm);font-weight:600}
+.note .bd span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.assist-card{padding:var(--s4);background:var(--brand-midnight);color:var(--general-primary-foreground);
+  border:none;border-radius:var(--rounded-xl)}
+.assist-card p{font-size:var(--text-sm);color:var(--brand-cornflower);margin:var(--s1) 0 var(--s3)}
+.assist-card h2{font-size:var(--text-base);display:flex;gap:var(--s2);align-items:center}
+.assist-card h2 svg{width:18px;height:18px;color:var(--brand-cornflower)}
+.assist-card .btn{background:var(--surface);color:var(--general-foreground);border:none}
+.assist-card .btn:hover{background:var(--brand-ice)}
+.connectbar{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) var(--s6);margin-bottom:var(--s6);
+  background:var(--surface);border:1px dashed var(--general-muted-foreground);border-radius:var(--rounded-xl)}
+.connectbar .bd{flex:1;min-width:0}
+.connectbar .bd b{font-family:var(--font-sans);letter-spacing:-.3px}
+.connectbar .bd span{display:block;font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.connectbar .glyph{width:40px;height:40px;flex:0 0 auto;border-radius:var(--rounded-md);background:var(--brand-ice);
+  color:var(--general-primary);display:inline-flex;align-items:center;justify-content:center}
+.connectbar .glyph svg{width:20px;height:20px}
+
+/* ---------- filters ---------- */
+.filters{display:flex;gap:var(--s2);flex-wrap:wrap;margin:var(--s4) 0}
+.fchip{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 var(--s4);cursor:pointer;
+  border-radius:var(--rounded-full);border:1px solid var(--sidebar-border);background:var(--surface);
+  font-size:var(--text-sm);font-weight:500}
+.fchip:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.fchip[aria-pressed="true"]{background:var(--brand-midnight);color:var(--general-primary-foreground);border-color:var(--brand-midnight)}
+.fchip .n{font-size:var(--text-xs);font-weight:700;opacity:.72}
+
+/* ---------- agreements registry ---------- */
+.attn{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--s4);margin-bottom:var(--s6)}
+.attn-card{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s4);border-radius:var(--rounded-lg);
+  background:var(--surface);border:1px solid var(--hairline);box-shadow:var(--shadow-xs)}
+.attn-card .glyph{width:34px;height:34px;flex:0 0 auto;border-radius:var(--rounded-md);display:inline-flex;align-items:center;justify-content:center}
+.attn-card .glyph svg{width:17px;height:17px}
+.attn-card .bd{flex:1;min-width:0}
+.attn-card .bd b{font-family:var(--font-sans);letter-spacing:-.2px;font-size:var(--text-sm)}
+.attn-card .bd p{font-size:var(--text-xs);color:var(--general-muted-foreground);margin:2px 0 var(--s2)}
+.regtable-wrap{overflow-x:auto;border-radius:var(--rounded-xl)}
+table.reg{width:100%;border-collapse:collapse;font-size:var(--text-sm);background:var(--surface)}
+table.reg caption{text-align:left;padding:var(--s4) var(--s4) var(--s2);font-family:var(--font-sans);font-weight:700;letter-spacing:-.3px}
+table.reg th{font-size:var(--text-xs);font-weight:700;color:var(--general-muted-foreground);text-transform:uppercase;
+  letter-spacing:.05em;text-align:left;padding:var(--s2) var(--s3);border-bottom:1px solid var(--hairline);white-space:nowrap}
+table.reg th button{display:inline-flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;
+  font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;padding:var(--s1);margin:calc(-1 * var(--s1));border-radius:var(--rounded-xs)}
+table.reg th button:hover{color:var(--general-foreground)}
+table.reg th svg{width:12px;height:12px;opacity:.55}
+table.reg th[aria-sort]:not([aria-sort="none"]) button{color:var(--general-primary)}
+table.reg td{padding:var(--s3);border-bottom:1px solid var(--hairline);vertical-align:middle}
+table.reg tr:hover td{background:var(--brand-ice)}
+table.reg tr:last-child td{border-bottom:none}
+table.reg .sup{display:flex;align-items:center;gap:var(--s3);font-weight:600;font-family:var(--font-sans);letter-spacing:-.2px;white-space:nowrap}
+table.reg .catlink{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);font-size:var(--text-sm);
+  text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--general-border);white-space:nowrap}
+table.reg .catlink:hover{text-decoration-color:var(--general-primary)}
+table.reg .terms{color:var(--general-muted-foreground);font-size:var(--text-xs);max-width:22ch}
+table.reg td.numcell{font-variant-numeric:tabular-nums;white-space:nowrap}
+.viewincat{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 var(--s3);cursor:pointer;
+  border-radius:var(--rounded-full);border:1px solid var(--sidebar-border);background:var(--surface);
+  font-size:var(--text-xs);font-weight:600;white-space:nowrap}
+.viewincat:hover{background:var(--brand-ice);border-color:var(--general-border);color:var(--general-primary)}
+.viewincat svg{width:13px;height:13px}
+
+/* ---------- charts ---------- */
+.chartcard{padding:var(--s6)}
+.chartcard h2{margin-bottom:var(--s1)}
+.chartcard .sub{font-size:var(--text-sm);color:var(--general-muted-foreground);margin-bottom:var(--s4)}
+.legend{display:flex;gap:var(--s4);flex-wrap:wrap;font-size:var(--text-xs);color:var(--general-muted-foreground);margin:var(--s3) 0 0}
+.legend i{display:inline-flex;align-items:center;gap:6px;font-style:normal}
+.legend .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.chartsvg{width:100%;height:auto;display:block}
+.axis{font-size:11px;fill:var(--general-muted-foreground);font-family:var(--font-body)}
+.gridline{stroke:var(--hairline);stroke-width:1}
+.bar-hit{fill:transparent;cursor:pointer}
+.tip{position:fixed;z-index:90;pointer-events:none;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-md);box-shadow:var(--shadow-lg);padding:var(--s2) var(--s3);font-size:var(--text-xs);
+  min-width:150px;display:none}
+.tip b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);letter-spacing:-.2px;margin-bottom:2px}
+.tip .tr{display:flex;justify-content:space-between;gap:var(--s3);padding:1px 0}
+.tip .tr span{display:inline-flex;align-items:center;gap:6px;color:var(--general-muted-foreground)}
+.tip .tr .sw{width:8px;height:8px;border-radius:2px;display:inline-block}
+.tip .tr b{display:inline;font-family:var(--font-body);font-size:var(--text-xs);font-variant-numeric:tabular-nums;margin:0}
+.datatable{width:100%;border-collapse:collapse;font-size:var(--text-sm);margin-top:var(--s4)}
+.datatable th,.datatable td{text-align:right;padding:var(--s2) var(--s3);border-bottom:1px solid var(--hairline);font-variant-numeric:tabular-nums}
+.datatable th:first-child,.datatable td:first-child{text-align:left}
+.datatable th{font-size:var(--text-xs);color:var(--general-muted-foreground);text-transform:uppercase;letter-spacing:.05em}
+
+/* savings + spending layout */
+.two-col{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:var(--s6);align-items:start}
+.tot-list{padding:var(--s4)}
+.tot-list h2{font-size:var(--text-base);padding:0 var(--s1) var(--s2)}
+.trow{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s1);border-top:1px solid var(--hairline);font-size:var(--text-sm)}
+.trow:first-of-type{border-top:none}
+.trow .sw{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.trow .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .vl{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.trow.softrow{color:var(--general-muted-foreground)}
+.bonusbox{padding:var(--s4);border-radius:var(--rounded-xl);background:var(--brand-midnight);color:var(--general-primary-foreground)}
+.bonusbox h2{font-size:var(--text-base);display:flex;align-items:center;gap:var(--s2)}
+.bonusbox h2 svg{width:16px;height:16px;color:var(--brand-cornflower)}
+.bonusbox .big{font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:800;letter-spacing:-1px;margin:var(--s2) 0;font-variant-numeric:tabular-nums}
+.bonusbox .split{display:flex;gap:var(--s6);font-size:var(--text-xs);color:var(--brand-cornflower)}
+.bonusbox .split b{display:block;font-size:var(--text-sm);color:var(--general-primary-foreground);font-variant-numeric:tabular-nums}
+.bonusbox .src{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid color-mix(in srgb,var(--brand-cornflower) 30%,transparent);font-size:var(--text-xs);color:var(--brand-cornflower)}
+
+.sp-row{display:grid;grid-template-columns:26px minmax(150px,1.3fr) minmax(160px,2fr) 100px 110px 130px;gap:var(--s3);
+  align-items:center;padding:var(--s3) var(--s2);border-top:1px solid var(--hairline)}
+.sp-row:first-of-type{border-top:none}
+.sp-row .nm b{display:block;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;letter-spacing:-.2px}
+.sp-row .nm span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.splitbar{height:14px;border-radius:var(--rounded-xs);background:var(--general-muted);overflow:hidden;display:flex;gap:2px}
+.splitbar .on{background:var(--general-primary);border-radius:var(--rounded-xs) 0 0 var(--rounded-xs)}
+.splitbar .off{background:repeating-linear-gradient(45deg,var(--brand-cornflower) 0 4px,var(--surface) 4px 8px)}
+.splitbar.est{border:1px dashed var(--general-muted-foreground);background:var(--surface)}
+.sp-row .kr{font-weight:600;font-variant-numeric:tabular-nums;text-align:right;font-size:var(--text-sm);white-space:nowrap}
+.sp-row .offkr{font-size:var(--text-xs);color:var(--general-muted-foreground);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sp-row .act{justify-self:end}
+.sp-flag{margin-top:2px}
+.emptylock{display:flex;flex-direction:column;align-items:center;gap:var(--s3);text-align:center;padding:var(--s12) var(--s6)}
+.emptylock .glyph{width:52px;height:52px;border-radius:var(--rounded-full);background:var(--general-muted);
+  display:inline-flex;align-items:center;justify-content:center;color:var(--general-muted-foreground)}
+.emptylock .glyph svg{width:24px;height:24px}
+.emptylock h2{letter-spacing:-.5px}
+.emptylock p{color:var(--general-muted-foreground);max-width:46ch;font-size:var(--text-sm)}
+
+/* ---------- assistant panel ---------- */
+.ap-scrim{position:fixed;inset:0;background:transparent;z-index:59;display:none}
+.ap-scrim.open{display:block}
+.ap{position:fixed;top:0;right:0;bottom:0;width:min(420px,92vw);z-index:60;background:var(--surface);
+  border-left:1px solid var(--sidebar-border);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;
+  transform:translateX(102%);transition:transform var(--t);visibility:hidden}
+.ap.open{transform:none;visibility:visible}
+.ap-h{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s4) var(--s3);border-bottom:1px solid var(--hairline)}
+.ap-h .eyebrow{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.ap-h h2{font-size:var(--text-lg)}
+.ap-b{flex:1;overflow-y:auto;padding:var(--s4);display:flex;flex-direction:column;gap:var(--s3)}
+.bub{max-width:88%;padding:var(--s3) var(--s4);border-radius:var(--rounded-lg);font-size:var(--text-sm)}
+.bub.q{align-self:flex-end;background:var(--brand-midnight);color:var(--general-primary-foreground);border-bottom-right-radius:var(--rounded-xs)}
+.bub.a{align-self:flex-start;background:var(--general-muted);border-bottom-left-radius:var(--rounded-xs)}
+.bub.a .linkbtn{display:inline-block;margin-top:var(--s2)}
+.ap-chips{display:flex;flex-direction:column;gap:var(--s2);padding:0 var(--s4) var(--s3)}
+.ap-chips .lbl{font-size:var(--text-xs);font-weight:700;color:var(--general-muted-foreground);text-transform:uppercase;letter-spacing:.06em}
+.pchip{display:block;width:100%;text-align:left;padding:var(--s2) var(--s3);min-height:40px;border-radius:var(--rounded-md);
+  border:1px solid var(--sidebar-border);background:var(--surface);cursor:pointer;font-size:var(--text-sm)}
+.pchip:hover{background:var(--brand-ice);border-color:var(--general-border)}
+.ap-f{display:flex;gap:var(--s2);padding:var(--s3) var(--s4) var(--s4);border-top:1px solid var(--hairline)}
+.ap-f input{flex:1;height:44px;border-radius:var(--rounded-full);border:1px solid var(--sidebar-border);
+  background:var(--general-input);padding:0 var(--s4);font-size:var(--text-sm)}
+.ap-f input:focus{outline:2px solid var(--general-primary);outline-offset:1px}
+.apsend{width:44px;height:44px;border-radius:var(--rounded-full);border:none;background:var(--general-primary);
+  color:var(--general-primary-foreground);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.apsend svg{width:18px;height:18px}
+.apsend:hover{background:var(--brand-midnight)}
+
+/* ---------- modal ---------- */
+.scrim{position:fixed;inset:0;background:#0f0f0f66;z-index:70;display:none}
+.scrim.open{display:block}
+.modal{position:fixed;z-index:71;top:50%;left:50%;transform:translate(-50%,-50%);width:min(560px,92vw);
+  background:var(--surface);border-radius:var(--rounded-2xl);box-shadow:var(--shadow-lg);padding:var(--s8);display:none}
+.modal.open{display:block}
+.modal h2{letter-spacing:-.6px;margin-bottom:var(--s2)}
+.modal > p{color:var(--general-muted-foreground);font-size:var(--text-sm);margin-bottom:var(--s4)}
+.srcopt{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);margin-top:var(--s2);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-lg);background:var(--surface);cursor:pointer;text-align:left}
+.srcopt:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.srcopt .ic{width:40px;height:40px}
+.srcopt .bd b{display:block;font-family:var(--font-sans);font-size:var(--text-sm)}
+.srcopt .bd span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.modal .foot{display:flex;justify-content:space-between;align-items:center;margin-top:var(--s6);gap:var(--s3)}
+.modal .trust{font-size:var(--text-xs);color:var(--general-muted-foreground);display:flex;align-items:center;gap:6px}
+.modal .trust svg{width:14px;height:14px;color:var(--sentiment-positive)}
+.dwx{width:44px;height:44px;border-radius:var(--rounded-full);border:none;background:transparent;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--general-muted-foreground);position:absolute;top:var(--s3);right:var(--s3)}
+.dwx:hover{background:var(--general-muted)}
+.dwx svg{width:18px;height:18px}
+
+/* ---------- responsive ---------- */
+@media (max-width:1140px){
+  .ov-grid,.two-col{grid-template-columns:1fr}
+  .rich{grid-template-columns:1fr}
+  .rail{width:64px}
+  .rail .navitem span.tx,.rail .navitem .count,.rail .assistant-cta{display:none}
+  .navitem{justify-content:center;padding:0}
+}
+@media (max-width:820px){
+  .catrow-head{grid-template-columns:26px minmax(120px,1.5fr) 74px 92px 20px}
+  .catrow-head .bar,.catrow-head .cov{display:none}
+  .sp-row{grid-template-columns:26px 1.4fr 1fr 100px}
+  .sp-row .offkr,.sp-row .act{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="app">
+
+  <header class="topbar">
+    <span class="logo"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 13l5 5L20 6" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Advantage <small>by Visma</small></span>
+    <span class="spacer"></span>
+    <span class="top-status" id="topStatus"><span class="chip chip-goodsoft"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Data connected · Visma.net</span></span>
+    <button class="iconbtn" id="assistTop" aria-label="Open saving assistant">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l1.7 4.6L18.5 9l-4.8 1.4L12 15l-1.7-4.6L5.5 9l4.8-1.4L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z" fill="currentColor"/></svg>
+    </button>
+    <button class="iconbtn" id="bellBtn" aria-label="Notifications, 3 unread">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5A6 6 0 0 1 18 9.5c0 5 2 6 2 6H4s2-1 2-6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2.2 2.2 0 0 0 4 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span class="dot" aria-hidden="true"></span>
+    </button>
+    <div class="acct">
+      <button class="acct-btn" id="acctBtn" aria-haspopup="menu" aria-expanded="false">
+        <span class="avatar" id="acctAvatar">BI</span>
+        <span class="acct-name"><b id="acctName">Bob Iversen</b><span id="acctCo">Nordvik Byg A/S</span></span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="acct-menu" id="acctMenu" role="menu" aria-label="Account">
+        <div class="lbl">Signed in as</div>
+        <button class="persona" role="menuitemradio" aria-checked="true" data-persona="bob">
+          <span class="avatar">BI</span>
+          <span class="pn"><b>Bob Iversen</b><span>Nordvik Byg A/S · construction, NO</span></span>
+          <span class="tick"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <button class="persona" role="menuitemradio" aria-checked="false" data-persona="fanny">
+          <span class="avatar" style="background:var(--general-primary)">FK</span>
+          <span class="pn"><b>Fanny Kristensen</b><span>Kristensen Elektro ApS · electrical, DK</span></span>
+          <span class="tick"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="appbody">
+    <nav class="rail" aria-label="Main">
+      <button class="navitem" data-page="overview" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.7"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.7"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.7"/><rect x="13" y="13" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
+        <span class="tx">Overview</span>
+      </button>
+      <button class="navitem" data-page="categories">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="tx">Categories</span><span class="count" id="navCatCount">10</span>
+      </button>
+      <button class="navitem" data-page="agreements">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3.5h7.5L19 8v12.5H7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14.5 3.5V8H19M9.5 12h6M9.5 15.5h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="tx">Agreements</span><span class="count" id="navAgrCount">12</span>
+      </button>
+      <button class="navitem" data-page="savings">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V10M9.3 19V5M14.6 19v-8M20 19V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="tx">Savings</span>
+      </button>
+      <button class="navitem" data-page="spending">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 12V3.5M12 12l6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="tx">Spending</span>
+      </button>
+      <button class="assistant-cta" id="assistRail">
+        <b><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l1.7 4.6L18.5 9l-4.8 1.4L12 15l-1.7-4.6L5.5 9l4.8-1.4L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Saving assistant</b>
+        <span>Ask about any category</span>
+      </button>
+    </nav>
+
+    <main class="canvas" id="main">
+
+      <!-- OVERVIEW — rendered for Bob in the initial markup so the page is never blank.
+           JS re-renders this section on load and on persona switch. -->
+      <section class="view" id="view-overview" aria-labelledby="ovH">
+        <div class="page">
+          <header class="pagehead">
+            <h1 id="ovH" tabindex="-1">Good morning, Bob</h1>
+            <p>Ten categories, one board. kr 840K is still on the table — the flagged rows show exactly where. Open a row to act without leaving this page.</p>
+          </header>
+          <div class="ov-grid">
+            <div class="card boardcard">
+              <div class="board-head">
+                <h2>Your category board</h2>
+                <span class="spacer"></span>
+                <span class="chip chip-soft num">10 categories · 62% on agreement</span>
+              </div>
+              <div id="ovBoard">
+                <!-- static fallback rows (Bob) -->
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-active"></span><span class="nm"><b>Building materials</b><span>Stark · Bygma</span></span><span class="bar"><span class="spendbar"><i style="width:100%"></i><b style="width:71%"></b></span></span><span class="kr num">kr 4.6M</span><span class="cov num">71%</span><span class="pot"><span class="potchip num">+kr 120K</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-active"></span><span class="nm"><b>Tools &amp; fasteners</b><span>Hilti · Ahlsell</span></span><span class="bar"><span class="spendbar"><i style="width:41%"></i><b style="width:26%"></b></span></span><span class="kr num">kr 1.9M</span><span class="cov num">64%</span><span class="pot"><span class="potchip num">+kr 90K</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-active"></span><span class="nm"><b>Fuel &amp; fleet</b><span>Q8</span></span><span class="bar"><span class="spendbar"><i style="width:35%"></i><b style="width:27%"></b></span></span><span class="kr num">kr 1.6M</span><span class="cov num">78%</span><span class="pot"><span class="potchip num">+kr 40K</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-warn"></span><span class="nm"><b>Electrical supplies</b><span>Ahlsell</span></span><span class="bar"><span class="spendbar"><i style="width:30%"></i><b style="width:13%"></b></span></span><span class="kr num">kr 1.4M</span><span class="cov num">44%</span><span class="pot"><span class="potchip num">+kr 160K</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-warn"></span><span class="nm"><b>Office supplies</b><span>Lyreco</span></span><span class="bar"><span class="spendbar"><i style="width:13%"></i><b style="width:3%"></b></span></span><span class="kr num">kr 620K</span><span class="cov num">22%</span><span class="pot"><span class="potchip num">+kr 118K</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-star"></span><span class="nm"><b>Waste &amp; recycling</b><span>Norsk Gjenvinning</span></span><span class="bar"><span class="spendbar"><i style="width:12%"></i></span></span><span class="kr num">kr 540K</span><span class="cov num">0%</span><span class="pot"><span class="potchip num">+kr 86K</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-neg"></span><span class="nm"><b>Telecom &amp; IT</b><span>Telia</span></span><span class="bar"><span class="spendbar"><i style="width:10%"></i><b style="width:6%"></b></span></span><span class="kr num">kr 480K</span><span class="cov num">58%</span><span class="pot"><span class="potchip num">+kr 22K</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-good"></span><span class="nm"><b>Insurance</b><span>If</span></span><span class="bar"><span class="spendbar"><i style="width:10%"></i><b style="width:10%"></b></span></span><span class="kr num">kr 460K</span><span class="cov num">100%</span><span class="pot"><span class="potchip zero num">covered</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-rec"></span><span class="nm"><b>Hotels &amp; travel</b><span>Scandic</span></span><span class="bar"><span class="spendbar"><i style="width:8%"></i><b style="width:3%"></b></span></span><span class="kr num">kr 390K</span><span class="cov num">31%</span><span class="pot"><span class="potchip num">+kr 47K</span></span><span class="chev"></span></button></div>
+                <div class="catrow"><button class="catrow-head" aria-expanded="false"><span class="glyph g-active"></span><span class="nm"><b>Workwear &amp; safety</b><span>Wenaas</span></span><span class="bar"><span class="spendbar"><i style="width:8%"></i><b style="width:4%"></b></span></span><span class="kr num">kr 350K</span><span class="cov num">49%</span><span class="pot"><span class="potchip num">+kr 39K</span></span><span class="chev"></span></button></div>
+              </div>
+            </div>
+            <aside class="side" aria-label="Situation summary">
+              <div class="card kpis" id="ovKpis">
+                <h2>Your situation <span class="spacer"></span><span class="chip chip-soft">Year to date</span></h2>
+                <div class="kpi"><span class="lb">Annual purchasing spend</span><span class="vl num">kr 14.2M</span></div>
+                <div class="kpi"><span class="lb">Through agreements<small>kr 8.8M of spend</small></span><span class="vl num">62%</span></div>
+                <div class="kpi"><span class="lb">Realized savings YTD</span><span class="vl pos num">kr 1.24M</span></div>
+                <div class="kpi"><span class="lb">Potential additional</span><span class="vl acc num">kr 840K</span></div>
+                <div class="kpi"><span class="lb">Customer bonus<small>paid 32K · pending 13K</small></span><span class="vl num">kr 45K</span></div>
+              </div>
+              <div class="card notes" id="ovNotes">
+                <h2>Needs your attention</h2>
+                <button class="note"><span class="glyph g-neg"></span><span class="bd"><b>Telia agreement expires in 60 days</b><span>Renew or compare before 20 Oct</span></span></button>
+                <button class="note"><span class="glyph g-star"></span><span class="bd"><b>New match: Norsk Gjenvinning</b><span>12% under your current waste rates</span></span></button>
+                <button class="note"><span class="glyph g-warn"></span><span class="bd"><b>Office supplies: 19% rate gap</b><span>Lyreco terms beat what you pay today</span></span></button>
+              </div>
+              <div class="assist-card" id="ovAssist">
+                <h2>Saving assistant</h2>
+                <p>Ask it anything about a category — it answers with your numbers.</p>
+                <button class="btn btn-sm">Ask about a category</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-categories" aria-labelledby="catH" hidden></section>
+      <section class="view" id="view-agreements" aria-labelledby="agrH" hidden></section>
+      <section class="view" id="view-savings" aria-labelledby="savH" hidden></section>
+      <section class="view" id="view-spending" aria-labelledby="spH" hidden></section>
+
+    </main>
+  </div>
+</div>
+
+<!-- saving assistant -->
+<div class="ap-scrim" id="apScrim"></div>
+<aside class="ap" id="ap" role="dialog" aria-modal="false" aria-labelledby="apT" aria-hidden="true">
+  <header class="ap-h">
+    <div>
+      <div class="eyebrow">Made to make procurement easier</div>
+      <h2 id="apT">Saving assistant</h2>
+    </div>
+    <span class="spacer"></span>
+    <button class="iconbtn" id="apX" aria-label="Close assistant">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+  <div class="ap-b" id="apThread" aria-live="polite"></div>
+  <div class="ap-chips" id="apChips"></div>
+  <footer class="ap-f">
+    <input id="apInput" type="text" placeholder="Ask the saving assistant…" aria-label="Ask the saving assistant">
+    <button class="apsend" id="apSend" aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 20.5L21 12 3 3.5l3.4 8.5L3 20.5z" fill="currentColor"/></svg>
+    </button>
+  </footer>
+</aside>
+
+<!-- connect data modal (stub) -->
+<div class="scrim" id="cnScrim"></div>
+<div class="modal" id="cnModal" role="dialog" aria-modal="true" aria-labelledby="cnT" aria-hidden="true">
+  <button class="dwx" id="cnX" aria-label="Close"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <h2 id="cnT" tabindex="-1">Connect your spend data</h2>
+  <p>Your invoices already know where the money is going. Connect once, and every estimate on this board becomes your exact number — usually within an hour.</p>
+  <button class="srcopt"><span class="ic">V</span><span class="bd"><b>Connect Visma e-conomic</b><span>Read-only ERP connection · recommended</span></span></button>
+  <button class="srcopt"><span class="ic">VN</span><span class="bd"><b>Connect Visma.net</b><span>Read-only ERP connection</span></span></button>
+  <button class="srcopt"><span class="ic">↑</span><span class="bd"><b>Upload a spend report</b><span>CSV or Excel export from any system</span></span></button>
+  <div class="foot">
+    <span class="trust"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Read-only. We never touch payments.</span>
+    <button class="btn btn-secondary btn-sm" id="cnLater">Maybe later</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="status" aria-hidden="true"></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   THE CATEGORY SPINE — one catalogue, not two.
+   Categories are the spine; the Agreements page is a thin registry
+   whose every row deep-links back into category context.
+   ===================================================================== */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* money in K (thousand kr) → "kr 4.6M" / "kr 620K" */
+const kr = n => n >= 1000 ? 'kr ' + (n/1000).toFixed(1).replace(/\.0$/,'') + 'M' : 'kr ' + Math.round(n) + 'K';
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+const SPEND_M = [1180,1090,1260,1150,1310,1240,980,1120];       // kr K
+const SAV_M   = [66,57,82,64,89,77,49,66];                      // ≈8–11% of agreement spend
+
+/* ---------------- category + agreement data ---------------- */
+const STATES = {
+  active:     {glyph:'g-active', icon:'check',  label:'Active'},
+  underused:  {glyph:'g-warn',   icon:'warn',   label:'Under-used'},
+  opportunity:{glyph:'g-warn',   icon:'warn',   label:'Top opportunity'},
+  newmatch:   {glyph:'g-star',   icon:'star',   label:'New match'},
+  expiring:   {glyph:'g-neg',    icon:'clock',  label:'Expires 60 d'},
+  covered:    {glyph:'g-good',   icon:'check',  label:'Fully covered'},
+  recommended:{glyph:'g-rec',    icon:'star',   label:'Recommended'},
+  est:        {glyph:'g-est',    icon:'dash',   label:'Estimated'}
+};
+
+const BOB_CATS = [
+  {id:'bm',      name:'Building materials', spend:4600, on:71,  realized:380, pot:120, sup:['Stark','Bygma'], state:'active',
+   note:'71% already runs through Stark and Bygma. The remaining 29% — kr 1.33M — is mostly one-off merchant buys; moving half of it onto agreement terms is worth about kr 120K a year.',
+   action:{label:'See off-agreement buys', kind:'ghost'}},
+  {id:'tools',   name:'Tools & fasteners',  spend:1900, on:64,  realized:210, pot:90,  sup:['Hilti','Ahlsell'], state:'active',
+   note:'The Hilti fleet program covers the big tickets. Fastener spot-buys outside Ahlsell leave kr 90K a year on the counter.',
+   action:{label:'See off-agreement buys', kind:'ghost'}},
+  {id:'fuel',    name:'Fuel & fleet',       spend:1600, on:78,  realized:185, pot:40,  sup:['Q8'], state:'active',
+   note:'78% of fuel goes on Q8 cards at 45 øre/l off pump. The rest is drivers filling off-route — kr 40K a year.',
+   action:{label:'Order more fuel cards', kind:'ghost'}},
+  {id:'elec',    name:'Electrical supplies',spend:1400, on:44,  realized:95,  pot:160, sup:['Ahlsell'], state:'underused',
+   note:'Your Ahlsell terms are active, but only 44% of electrical spend uses them. Routing the rest through Ahlsell is worth kr 160K a year — no new agreement needed.',
+   action:{label:'Route spend to Ahlsell', kind:'primary'}},
+  {id:'office',  name:'Office supplies',    spend:620,  on:22,  realized:30,  pot:118, sup:['Lyreco'], state:'opportunity',
+   note:'kr 620K a year in office spend, only 22% on agreement. Lyreco’s negotiated prices are 19% under what you pay today — kr 118K a year, the single biggest rate gap on your board.',
+   action:{label:'Activate Lyreco agreement', kind:'primary'}},
+  {id:'waste',   name:'Waste & recycling',  spend:540,  on:0,   realized:0,   pot:86,  sup:['Norsk Gjenvinning'], state:'newmatch',
+   note:'No agreement connected yet. Norsk Gjenvinning matches your volumes and pickup areas at 12% under your current rates — kr 86K a year.',
+   action:{label:'Review new match', kind:'primary'}},
+  {id:'telecom', name:'Telecom & IT',       spend:480,  on:58,  realized:41,  pot:22,  sup:['Telia'], state:'expiring',
+   note:'The Telia agreement expires 20 Oct. Renewing on current terms keeps kr 41K a year in savings; we’ve flagged two alternatives if you want to compare first.',
+   action:{label:'Review renewal', kind:'primary'}},
+  {id:'ins',     name:'Insurance',          spend:460,  on:100, realized:66,  pot:0,   sup:['If'], state:'covered',
+   note:'Fully covered on If’s fixed fleet terms. Nothing to do here — kr 66K a year already realized.',
+   action:null},
+  {id:'hotels',  name:'Hotels & travel',    spend:390,  on:31,  realized:12,  pot:47,  sup:['Scandic'], state:'recommended',
+   note:'Only 31% of stays use corporate rates. Scandic’s 12% rate covers the routes your teams already travel — kr 47K a year.',
+   action:{label:'Activate Scandic rate', kind:'primary'}},
+  {id:'workwear',name:'Workwear & safety',  spend:350,  on:49,  realized:28,  pot:39,  sup:['Wenaas'], state:'active',
+   note:'Wenaas covers about half. Standing orders on sizes you reorder anyway close most of the remaining kr 39K.',
+   action:{label:'Set up standing order', kind:'ghost'}}
+];
+
+const FANNY_CATS = [
+  {id:'elec',    name:'Electrical supplies', spend:2900, on:0, realized:0, pot:330, sup:['Solar','Ahlsell'], state:'est', gap:'est. 11–14%',
+   note:'148 electrical contractors like you buy around kr 2.9M a year in electrical supplies. On Solar or Ahlsell terms they save 11–14% — est. kr 330K a year for a company your size.'},
+  {id:'tools',   name:'Tools & fasteners',   spend:840,  on:0, realized:0, pot:95,  sup:['Hilti'], state:'est', gap:'est. 12%',
+   note:'Companies like yours on the Hilti fleet program save around 12% — est. kr 95K a year.'},
+  {id:'fuel',    name:'Fuel & fleet',        spend:720,  on:0, realized:0, pot:62,  sup:['Q8'], state:'est', gap:'est. 9%',
+   note:'Q8’s 45 øre/l card is worth about 9% for fleets your size — est. kr 62K a year.'},
+  {id:'office',  name:'Office supplies',     spend:310,  on:0, realized:0, pot:58,  sup:['Lyreco'], state:'est', gap:'est. 19%', firstwin:true,
+   note:'The easy first win: Lyreco’s negotiated prices run 19% under typical list prices. Est. kr 58K a year, and it activates in one step.'},
+  {id:'telecom', name:'Telecom & IT',        spend:280,  on:0, realized:0, pot:40,  sup:['Telia'], state:'est', gap:'est. 15%',
+   note:'Peers save around 15% on Telia business subscriptions — est. kr 40K a year.'},
+  {id:'ins',     name:'Insurance',           spend:240,  on:0, realized:0, pot:10,  sup:['If'], state:'est', gap:'est. 4%',
+   note:'Est. kr 10K a year on fleet insurance once your vehicle list is connected.'},
+  {id:'workwear',name:'Workwear & safety',   spend:210,  on:0, realized:0, pot:8,   sup:['Wenaas'], state:'est', gap:'est. 4%',
+   note:'Est. kr 8K a year with Wenaas standing orders on the sizes you reorder anyway.'},
+  {id:'hotels',  name:'Hotels & travel',     spend:180,  on:0, realized:0, pot:7,   sup:['Scandic'], state:'est', gap:'est. 4%',
+   note:'Est. kr 7K a year on corporate rates at the hotels companies like yours already use.'}
+];
+
+/* agreements registry — every row points back into its category */
+const BOB_AGRS = [
+  {sup:'Stark',            cat:'bm',      terms:'avg 9% below list',      status:'active',      bonus:'1%',  expiry:'31 Mar 2027', days:587},
+  {sup:'Bygma',            cat:'bm',      terms:'8% below list',          status:'active',      bonus:'—',   expiry:'30 Jun 2027', days:678},
+  {sup:'Hilti',            cat:'tools',   terms:'fleet program · 14%',    status:'active',      bonus:'—',   expiry:'31 Dec 2026', days:497},
+  {sup:'Ahlsell',          cat:'elec',    terms:'11% below list · electrical + tools', status:'underused', bonus:'—', expiry:'31 Dec 2026', days:497},
+  {sup:'Q8',               cat:'fuel',    terms:'45 øre/l off pump',      status:'active',      bonus:'1%',  expiry:'28 Feb 2027', days:556},
+  {sup:'Lyreco',           cat:'office',  terms:'19% below list',         status:'recommended', bonus:'—',   expiry:'—', days:9999},
+  {sup:'Norsk Gjenvinning',cat:'waste',   terms:'12% below current rates',status:'newmatch',    bonus:'—',   expiry:'—', days:9999},
+  {sup:'Telia',            cat:'telecom', terms:'15% on business subs',   status:'expiring',    bonus:'—',   expiry:'20 Oct 2026', days:60},
+  {sup:'If',               cat:'ins',     terms:'fixed fleet terms',      status:'active',      bonus:'—',   expiry:'31 Dec 2026', days:497},
+  {sup:'Scandic',          cat:'hotels',  terms:'12% corporate rate',     status:'recommended', bonus:'—',   expiry:'—', days:9999},
+  {sup:'Wenaas',           cat:'workwear',terms:'10% below list',         status:'active',      bonus:'—',   expiry:'31 May 2027', days:648},
+  {sup:'Ramirent',         cat:null,      terms:'13% on machine rental',  status:'newmatch',    bonus:'—',   expiry:'—', days:9999, noCat:'Machine rental — no spend category yet'}
+];
+
+const FANNY_AGRS = [
+  {sup:'Solar',   cat:'elec',    terms:'est. 13% below list',   status:'newmatch',    bonus:'—', expiry:'—', days:9999},
+  {sup:'Ahlsell', cat:'elec',    terms:'est. 11% below list',   status:'recommended', bonus:'—', expiry:'—', days:9999},
+  {sup:'Hilti',   cat:'tools',   terms:'fleet program · est. 12%', status:'recommended', bonus:'—', expiry:'—', days:9999},
+  {sup:'Q8',      cat:'fuel',    terms:'45 øre/l off pump · est. 9%', status:'recommended', bonus:'—', expiry:'—', days:9999},
+  {sup:'Lyreco',  cat:'office',  terms:'est. 19% below list',   status:'newmatch',    bonus:'—', expiry:'—', days:9999, firstwin:true},
+  {sup:'Telia',   cat:'telecom', terms:'est. 15% on subs',      status:'recommended', bonus:'—', expiry:'—', days:9999},
+  {sup:'Wenaas',  cat:'workwear',terms:'est. 10% below list',   status:'recommended', bonus:'—', expiry:'—', days:9999},
+  {sup:'Scandic', cat:'hotels',  terms:'est. 12% corporate rate', status:'recommended', bonus:'—', expiry:'—', days:9999}
+];
+
+const PERSONAS = {
+  bob:  {name:'Bob Iversen', co:'Nordvik Byg A/S', ini:'BI', cats:BOB_CATS, agrs:BOB_AGRS, est:false,
+         greeting:'Good morning, Bob',
+         sub:'Ten categories, one board. kr 840K is still on the table — the flagged rows show exactly where. Open a row to act without leaving this page.'},
+  fanny:{name:'Fanny Kristensen', co:'Kristensen Elektro ApS', ini:'FK', cats:FANNY_CATS, agrs:FANNY_AGRS, est:true,
+         greeting:'Welcome, Fanny',
+         sub:'This board is built from 148 electrical contractors like yours — every figure is an estimate until you connect your own spend data. The order of the rows already tells you where to start.'}
+};
+
+let P = 'bob';
+const cur = () => PERSONAS[P];
+const catById = id => cur().cats.find(c => c.id === id);
+let currentPage = 'overview';
+let catFilter = 'all';
+let agrFilter = 'all';
+let agrSort = {key:null, dir:1};
+let pendingOpen = null;   // {catId, agr} — deep-link target for Categories
+let routing = false;
+
+/* ---------------- icons ---------------- */
+function icon(name){
+  const paths = {
+    check:'<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
+    warn:'<path d="M12 4L2.8 20h18.4L12 4z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M12 10.2v4.2M12 17.3h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',
+    star:'<path d="M12 3.5l2.5 5.2 5.7.7-4.2 4 1.1 5.6L12 16.3 6.9 19l1.1-5.6-4.2-4 5.7-.7L12 3.5z" fill="currentColor"/>',
+    clock:'<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.9"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
+    dash:'<path d="M5 12h3M10.5 12h3M16 12h3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+    arrow:'<path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    lock:'<rect x="5.5" y="10.5" width="13" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" stroke="currentColor" stroke-width="1.8"/>',
+    plug:'<path d="M9 3.5V8M15 3.5V8M7 8h10v3a5 5 0 0 1-10 0V8zM12 16v4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    spark:'<path d="M12 3l1.7 4.6L18.5 9l-4.8 1.4L12 15l-1.7-4.6L5.5 9l4.8-1.4L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+    coin:'<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v9M9.5 9.8c0-1 1.1-1.8 2.5-1.8s2.5.8 2.5 1.8-1.1 1.6-2.5 1.9-2.5.9-2.5 1.9 1.1 1.8 2.5 1.8 2.5-.8 2.5-1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+    sort:'<path d="M8 9l4-4 4 4M8 15l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' + (paths[name]||'') + '</svg>';
+}
+const iniOf = s => s.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+const chev = '<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+
+/* status chips for the registry */
+function statusChip(st, est){
+  const map = {
+    active:      ['chip-goodsoft', icon('check') + 'Active'],
+    underused:   ['chip-warn', icon('warn') + 'Under-used'],
+    recommended: ['chip-ice',  icon('star') + 'Recommended'],
+    newmatch:    ['chip-star', icon('star') + 'New match'],
+    expiring:    ['chip-neg',  icon('clock') + 'Expires 60 d']
+  };
+  const m = map[st] || map.active;
+  return '<span class="chip ' + m[0] + '">' + m[1] + '</span>' + (est ? ' <span class="chip chip-est">est.</span>' : '');
+}
+
+/* ---------------- deterministic monthly series per category ---------------- */
+function catSeries(cat, idx){
+  const total = cur().cats.reduce((a,c)=>a+c.spend,0);
+  const share = cat.spend / total;
+  return SPEND_M.map((m,i)=> m * share * (1 + 0.13*Math.sin(i*2.1 + idx*1.7)));
+}
+
+/* sparkline: single series → no legend needed; title in caption */
+function sparkSVG(vals, est){
+  const w=220, h=56, pad=6;
+  const mx = Math.max(...vals), mn = Math.min(...vals);
+  const x = i => pad + i*(w-2*pad)/(vals.length-1);
+  const y = v => h-pad - (v-mn)/((mx-mn)||1)*(h-2*pad);
+  const pts = vals.map((v,i)=>x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ');
+  const area = 'M'+x(0)+','+(h-pad)+' L'+pts.replace(/ /g,' L')+' L'+x(vals.length-1)+','+(h-pad)+' Z';
+  const lastX = x(vals.length-1), lastY = y(vals[vals.length-1]);
+  return '<svg class="chartsvg" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Monthly spend trend, January to August">' +
+    (est?'':'<path d="'+area+'" fill="var(--brand-ice)"/>') +
+    '<polyline points="'+pts+'" fill="none" stroke="'+(est?'var(--general-muted-foreground)':'var(--chart-1)')+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'+(est?' stroke-dasharray="5 4"':'')+'/>' +
+    '<circle cx="'+lastX+'" cy="'+lastY+'" r="3.5" fill="'+(est?'var(--general-muted-foreground)':'var(--chart-1)')+'"/></svg>';
+}
+
+/* =====================================================================
+   THE BOARD — one renderer, two densities (overview | full)
+   ===================================================================== */
+function rowHeadHTML(cat, mode){
+  const est = cur().est;
+  const st = STATES[cat.state];
+  const maxSpend = Math.max(...cur().cats.map(c=>c.spend));
+  const wSpend = Math.max(4, Math.round(cat.spend/maxSpend*100));
+  const wOn = Math.round(wSpend * cat.on/100);
+  const glyph = '<span class="glyph '+st.glyph+'" title="'+st.label+'">'+icon(st.icon)+'</span>';
+  const bar = est
+    ? '<span class="spendbar est" aria-hidden="true"></span>'
+    : '<span class="spendbar" aria-hidden="true"><i style="width:'+wSpend+'%"></i><b style="width:'+wOn+'%"></b></span>';
+  const pot = cat.pot===0
+    ? '<span class="potchip zero num">covered</span>'
+    : '<span class="potchip num'+(est?' est':'')+'">+'+kr(cat.pot)+(est?' est.':'')+'</span>';
+  return '<button class="catrow-head" id="rh-'+mode+'-'+cat.id+'" aria-expanded="false" aria-controls="pn-'+mode+'-'+cat.id+'">' +
+    glyph +
+    '<span class="nm"><b>'+esc(cat.name)+'</b><span>'+cat.sup.join(' · ')+(cat.firstwin?' · easy first win':'')+'</span></span>' +
+    '<span class="bar">'+bar+'</span>' +
+    '<span class="kr num">'+kr(cat.spend)+(est?'<span class="sr"> estimated</span>':'')+'</span>' +
+    '<span class="cov num">'+cat.on+'%</span>' +
+    '<span class="pot">'+pot+'</span>' + chev + '</button>';
+}
+
+function agrCardHTML(a, est){
+  const act = {
+    active:'<span class="chip chip-goodsoft">'+icon('check')+'Active</span>',
+    underused:'<span class="chip chip-warn">'+icon('warn')+'Under-used</span>',
+    recommended:'<button class="btn btn-primary btn-sm" data-activate="'+esc(a.sup)+'">Activate</button>',
+    newmatch:'<button class="btn btn-primary btn-sm" data-activate="'+esc(a.sup)+'">Review match</button>',
+    expiring:'<button class="btn btn-secondary btn-sm" data-activate="'+esc(a.sup)+'">Review renewal</button>'
+  }[a.status] || '';
+  const meta = [];
+  if(a.bonus !== '—') meta.push(a.bonus + ' bonus');
+  if(a.days < 120) meta.push('expires ' + a.expiry);
+  return '<div class="agrcard'+(est?' est-card':'')+'" data-agr="'+esc(a.sup)+'">' +
+    '<span class="ic" aria-hidden="true">'+iniOf(a.sup)+'</span>' +
+    '<span class="bd"><b>'+esc(a.sup)+'</b>'+(est?' <span class="chip chip-est">est.</span>':'')+
+    '<div class="terms">'+esc(a.terms)+(meta.length?' · '+meta.join(' · '):'')+'</div></span>' +
+    '<span class="tail">'+act+'</span></div>';
+}
+
+function mathBoxHTML(cat){
+  const est = cur().est;
+  const off = Math.round(cat.spend*(100-cat.on)/100);
+  if(est){
+    return '<div class="mathbox est"><div class="row"><span>Peer spend, your size</span><b class="num">'+kr(cat.spend)+' est.</b></div>' +
+      '<div class="row"><span>Through agreements today</span><b class="num">0%</b></div>' +
+      '<div class="row"><span>Typical peer saving</span><b class="num">'+esc(cat.gap)+'</b></div>' +
+      '<div class="row total"><span>Estimated yearly saving</span><b class="num">'+kr(cat.pot)+' est.</b></div></div>';
+  }
+  return '<div class="mathbox"><div class="row"><span>Category spend / yr</span><b class="num">'+kr(cat.spend)+'</b></div>' +
+    '<div class="row"><span>On agreement today</span><b class="num">'+cat.on+'% · '+kr(Math.round(cat.spend*cat.on/100))+'</b></div>' +
+    '<div class="row"><span>Off agreement</span><b class="num">'+kr(off)+'</b></div>' +
+    '<div class="row"><span>Realized YTD</span><b class="num">'+kr(cat.realized)+'</b></div>' +
+    '<div class="row total"><span>Still on the table</span><b class="num">'+(cat.pot===0?'kr 0 — covered':'+'+kr(cat.pot)+' / yr')+'</b></div></div>';
+}
+
+function panelHTML(cat, mode, idx){
+  const est = cur().est;
+  const agrs = cur().agrs.filter(a => a.cat === cat.id);
+  const stLabel = STATES[cat.state].label;
+
+  if(mode === 'ov'){
+    const pills = agrs.map(a =>
+      '<span class="agrpill"><span class="ic" aria-hidden="true">'+iniOf(a.sup)+'</span>'+esc(a.sup)+
+      '<span>'+esc(a.terms.split('·')[0].trim())+'</span></span>').join('');
+    const lead = est ? '<p class="peerlead">Companies like yours — <b>148 electrical contractors</b> — save <b>'+kr(cat.pot)+' est.</b> a year here.</p>' : '';
+    const stats = est
+      ? '<div class="p-stats"><div class="p-stat"><b class="num">'+kr(cat.spend)+' <span class="chip chip-est">est.</span></b><span>peer-based spend</span></div>' +
+        '<div class="p-stat"><b class="num">0%</b><span>on agreement</span></div>' +
+        '<div class="p-stat"><b class="num">'+kr(cat.pot)+'</b><span>est. potential / yr</span></div></div>'
+      : '<div class="p-stats"><div class="p-stat"><b class="num">'+cat.on+'%</b><span>on agreement</span></div>' +
+        '<div class="p-stat"><b class="num">'+kr(cat.realized)+'</b><span>realized YTD</span></div>' +
+        '<div class="p-stat"><b class="num">'+(cat.pot===0?'kr 0':'+'+kr(cat.pot))+'</b><span>'+(cat.pot===0?'fully covered':'potential / yr')+'</span></div></div>';
+    const primary = est
+      ? '<button class="btn btn-primary btn-sm" data-connect>Connect data to verify</button>'
+      : (cat.action && cat.action.kind==='primary' ? '<button class="btn btn-primary btn-sm" data-act="'+cat.id+'">'+esc(cat.action.label)+'</button>' : '');
+    return '<div class="panelpad"><div class="panelbox'+(est?' est':'')+'">' + lead +
+      '<p class="p-note">'+cat.note+'</p>' + stats +
+      (pills ? '<div class="p-agrs">'+pills+'</div>' : '') +
+      '<div class="p-actions">' + primary +
+      '<button class="btn btn-secondary btn-sm" data-goto="'+cat.id+'">Open full category '+icon('arrow')+'</button>' +
+      '<button class="btn btn-ghost btn-sm" data-ask="'+esc(cat.name)+'">Ask assistant</button>' +
+      '</div></div></div>';
+  }
+
+  /* rich panel — categories page */
+  const cards = agrs.length
+    ? agrs.map(a => agrCardHTML(a, est)).join('')
+    : '<p class="muted" style="font-size:var(--text-sm)">No agreement in this category yet.</p>';
+  const lead = est
+    ? '<p class="peerlead">Peer estimate — <b>148 electrical contractors</b> of your size. Connect your spend data and this panel becomes your own numbers.</p>'
+    : '';
+  const primary = est
+    ? '<button class="btn btn-primary btn-sm" data-connect>Connect data to verify</button>'
+    : (cat.action ? '<button class="btn '+(cat.action.kind==='primary'?'btn-primary':'btn-secondary')+' btn-sm" data-act="'+cat.id+'">'+esc(cat.action.label)+'</button>' : '');
+  return '<div class="panelpad"><div class="panelbox'+(est?' est':'')+'">' + lead +
+    '<p class="p-note" style="margin-bottom:var(--s4)">'+cat.note+'</p>' +
+    '<div class="rich">' +
+      '<div class="col"><h4>Spend trend</h4><div class="sparkbox">'+sparkSVG(catSeries(cat, idx), est)+
+        '<div class="cap num">Jan–Aug'+(est?' · peer estimate':' · from your invoices')+'</div></div>' +
+        '<div style="margin-top:var(--s3)" class="p-stats"><div class="p-stat"><b class="num">'+kr(cat.spend)+(est?' est.':'')+'</b><span>spend / yr</span></div>' +
+        '<div class="p-stat"><b class="num">'+cat.on+'%</b><span>on agreement</span></div></div></div>' +
+      '<div class="col"><h4>Agreements in this category</h4>'+cards+'</div>' +
+      '<div class="col"><h4>The math</h4>'+mathBoxHTML(cat)+
+        '<div class="p-actions">'+primary+
+        '<button class="btn btn-ghost btn-sm" data-ask="'+esc(cat.name)+'">Ask assistant</button></div>' +
+        '<p class="muted" style="font-size:var(--text-xs);margin-top:var(--s2)">Status: '+stLabel+'</p></div>' +
+    '</div></div></div>';
+}
+
+function boardHTML(cats, mode){
+  return cats.map((c) => {
+    const idx = cur().cats.indexOf(c);
+    return '<div class="catrow" data-cat="'+c.id+'">' + rowHeadHTML(c, mode) +
+      '<div class="catrow-panel" id="pn-'+mode+'-'+c.id+'" role="region" aria-labelledby="rh-'+mode+'-'+c.id+'">' +
+      '<div class="catrow-inner">' + panelHTML(c, mode, idx) + '</div></div></div>';
+  }).join('');
+}
+
+function wireBoard(el){
+  el.addEventListener('click', e => {
+    const head = e.target.closest('.catrow-head');
+    if(head){
+      const row = head.closest('.catrow');
+      const open = row.hasAttribute('data-open');
+      if(open){ row.removeAttribute('data-open'); head.setAttribute('aria-expanded','false'); }
+      else{ row.setAttribute('data-open',''); head.setAttribute('aria-expanded','true'); }
+      return;
+    }
+    const goto = e.target.closest('[data-goto]');
+    if(goto){ openCategory(goto.getAttribute('data-goto')); return; }
+    const ask = e.target.closest('[data-ask]');
+    if(ask){ openAssistant('Tell me more about ' + ask.getAttribute('data-ask')); return; }
+    const cn = e.target.closest('[data-connect]');
+    if(cn){ openConnect(); return; }
+    const act = e.target.closest('[data-act],[data-activate]');
+    if(act){ openAssistant(actQuestion(act)); return; }
+  });
+}
+function actQuestion(btn){
+  const label = btn.textContent.trim();
+  return label + ' — what happens next?';
+}
+
+/* expand a row within a board, optionally flash an agreement card */
+function expandRow(boardEl, catId, agrSup){
+  const row = boardEl.querySelector('.catrow[data-cat="'+catId+'"]');
+  if(!row) return;
+  row.setAttribute('data-open','');
+  const head = row.querySelector('.catrow-head');
+  head.setAttribute('aria-expanded','true');
+  requestAnimationFrame(() => {
+    row.scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'center'});
+    if(agrSup){
+      const card = row.querySelector('.agrcard[data-agr="'+CSS.escape(agrSup)+'"]');
+      if(card){ card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'), 3400); }
+    }
+  });
+}
+
+/* =====================================================================
+   PAGES
+   ===================================================================== */
+function kpiHTML(){
+  if(!cur().est){
+    return '<h2>Your situation <span class="spacer"></span><span class="chip chip-soft">Year to date</span></h2>' +
+      '<div class="kpi"><span class="lb">Annual purchasing spend</span><span class="vl num">kr 14.2M</span></div>' +
+      '<div class="kpi"><span class="lb">Through agreements<small>kr 8.8M of spend</small></span><span class="vl num">62%</span></div>' +
+      '<div class="kpi"><span class="lb">Realized savings YTD</span><span class="vl pos num">kr 1.24M</span></div>' +
+      '<div class="kpi"><span class="lb">Potential additional</span><span class="vl acc num">kr 840K</span></div>' +
+      '<div class="kpi"><span class="lb">Customer bonus<small>paid 32K · pending 13K</small></span><span class="vl num">kr 45K</span></div>';
+  }
+  return '<h2>Your situation <span class="spacer"></span><span class="chip chip-est">peer estimate</span></h2>' +
+    '<div class="kpi"><span class="lb">Est. annual spend<small>based on 148 peers</small></span><span class="vl num">kr 6.8M<span class="estmark">est.</span></span></div>' +
+    '<div class="kpi"><span class="lb">Through agreements</span><span class="vl num">0%</span></div>' +
+    '<div class="kpi"><span class="lb">Realized savings</span><span class="vl locked num">'+icon('lock')+'kr 0</span></div>' +
+    '<div class="kpi"><span class="lb">Est. potential</span><span class="vl acc num">kr 610K<span class="estmark">est.</span></span></div>' +
+    '<div class="kpi"><span class="lb">Customer bonus</span><span class="vl locked num">'+icon('lock')+'kr 0</span></div>';
+}
+
+function notesHTML(){
+  const bob = [
+    {g:'g-neg', i:'clock', b:'Telia agreement expires in 60 days', s:'Renew or compare before 20 Oct', cat:'telecom'},
+    {g:'g-star', i:'star', b:'New match: Norsk Gjenvinning', s:'12% under your current waste rates', cat:'waste'},
+    {g:'g-warn', i:'warn', b:'Office supplies: 19% rate gap', s:'Lyreco terms beat what you pay today', cat:'office'}
+  ];
+  const fanny = [
+    {g:'g-est', i:'plug', b:'Connect your spend data', s:'Estimates become your exact numbers', connect:true},
+    {g:'g-star', i:'star', b:'Easy first win: Lyreco', s:'est. kr 58K/yr · activates in one step', cat:'office'},
+    {g:'g-rec', i:'star', b:'Companies like yours save kr 610K/yr', s:'Average across 148 electrical contractors', cat:'elec'}
+  ];
+  const list = cur().est ? fanny : bob;
+  return '<h2>Needs your attention</h2>' + list.map(n =>
+    '<button class="note" '+(n.connect?'data-connect':'data-goto="'+n.cat+'"')+'>' +
+    '<span class="glyph '+n.g+'">'+icon(n.i)+'</span>' +
+    '<span class="bd"><b>'+n.b+'</b><span>'+n.s+'</span></span></button>').join('');
+}
+
+function renderOverview(){
+  const v = $('#view-overview');
+  const est = cur().est;
+  const totalOn = est ? '0% on agreement — all estimates' : '10 categories · 62% on agreement';
+  const connect = est
+    ? '<div class="connectbar"><span class="glyph">'+icon('plug')+'</span><span class="bd"><b>Your invoices already know where the money is going.</b>' +
+      '<span>Connect e-conomic or upload a spend report — every dashed figure on this page becomes your own, usually within an hour.</span></span>' +
+      '<button class="btn btn-primary" data-connect>Connect spend data</button></div>'
+    : '';
+  v.innerHTML = '<div class="page">' +
+    '<header class="pagehead"><h1 id="ovH" tabindex="-1">'+cur().greeting+'</h1><p>'+cur().sub+'</p></header>' + connect +
+    '<div class="ov-grid">' +
+      '<div class="card boardcard"><div class="board-head"><h2>Your category board</h2><span class="spacer"></span>' +
+      '<span class="chip '+(est?'chip-est':'chip-soft')+' num">'+(est? '8 categories · '+totalOn : totalOn)+'</span></div>' +
+      '<div id="ovBoard">'+boardHTML(cur().cats,'ov')+'</div></div>' +
+      '<aside class="side" aria-label="Situation summary">' +
+        '<div class="card kpis">'+kpiHTML()+'</div>' +
+        '<div class="card notes">'+notesHTML()+'</div>' +
+        '<div class="assist-card"><h2>'+icon('spark')+'Saving assistant</h2>' +
+        '<p>'+(est?'Ask what companies like yours actually save — it answers with peer data.':'Ask it anything about a category — it answers with your numbers.')+'</p>' +
+        '<button class="btn btn-sm" data-ask-open>Ask about a category</button></div>' +
+      '</aside></div></div>';
+  wireBoard(v.querySelector('#ovBoard'));
+  v.querySelector('.notes').addEventListener('click', e => {
+    const g = e.target.closest('[data-goto]'); if(g){ openCategory(g.getAttribute('data-goto')); return; }
+    if(e.target.closest('[data-connect]')) openConnect();
+  });
+  const cb = v.querySelector('.connectbar [data-connect]');
+  if(cb) cb.addEventListener('click', openConnect);
+  v.querySelector('[data-ask-open]').addEventListener('click', () => openAssistant());
+}
+
+/* ---------------- categories ---------------- */
+const CAT_FILTERS = [
+  {id:'all', label:'All'},
+  {id:'opp', label:'Opportunities'},
+  {id:'covered', label:'Fully covered'},
+  {id:'nc', label:'Not connected'}
+];
+function catMatches(c, f){
+  if(f==='all') return true;
+  if(f==='opp') return cur().est ? true : ['underused','opportunity','newmatch','expiring','recommended'].includes(c.state);
+  if(f==='covered') return c.state==='covered';
+  if(f==='nc') return c.on===0;
+  return true;
+}
+function renderCategories(){
+  const v = $('#view-categories');
+  const est = cur().est;
+  const cats = cur().cats.filter(c => catMatches(c, catFilter));
+  const chips = CAT_FILTERS.map(f => {
+    const n = cur().cats.filter(c => catMatches(c, f.id)).length;
+    return '<button class="fchip" aria-pressed="'+(catFilter===f.id)+'" data-filter="'+f.id+'">'+f.label+' <span class="n num">'+n+'</span></button>';
+  }).join('');
+  v.innerHTML = '<div class="page">' +
+    '<header class="pagehead"><div class="eyebrow">The spine</div><h1 id="catH" tabindex="-1">Categories</h1>' +
+    '<p>'+(est
+      ? 'Estimated from 148 electrical contractors like Kristensen Elektro. Open a row — each panel shows what companies like yours save, and the agreement that gets you there.'
+      : 'Everything lives here. Open a row and the whole category unfolds — spend trend, its agreements, and the math behind the potential. No second catalogue to maintain.')+'</p></header>' +
+    '<div class="filters" role="group" aria-label="Filter categories">'+chips+'</div>' +
+    '<div class="card boardcard"><div id="catBoard">'+boardHTML(cats,'cat')+'</div>' +
+    (cats.length===0?'<p class="muted" style="padding:var(--s6)">No categories match this filter'+(est&&catFilter==='covered'?' — nothing is covered yet. Connect your data and start with the easy first win.':'')+'.</p>':'') +
+    '</div></div>';
+  wireBoard(v.querySelector('#catBoard'));
+  v.querySelector('.filters').addEventListener('click', e => {
+    const b = e.target.closest('[data-filter]'); if(!b) return;
+    catFilter = b.getAttribute('data-filter');
+    renderCategories();
+  });
+  if(pendingOpen){
+    const t = pendingOpen; pendingOpen = null;
+    expandRow(v.querySelector('#catBoard'), t.catId, t.agr);
+  }
+}
+
+/* ---------------- agreements (the registry) ---------------- */
+const AGR_FILTERS_BOB = [
+  {id:'all',label:'All'},{id:'active',label:'Active'},{id:'recommended',label:'Recommended'},
+  {id:'newmatch',label:'New match'},{id:'expiring',label:'Expiring'}
+];
+const AGR_FILTERS_FANNY = [
+  {id:'all',label:'All matches'},{id:'newmatch',label:'New match'},{id:'recommended',label:'Recommended'}
+];
+function agrMatches(a, f){
+  if(f==='all') return true;
+  if(f==='active') return a.status==='active' || a.status==='underused';
+  return a.status===f;
+}
+function renderAgreements(){
+  const v = $('#view-agreements');
+  const est = cur().est;
+  let list = cur().agrs.filter(a => agrMatches(a, agrFilter));
+  if(agrSort.key){
+    const k = agrSort.key, d = agrSort.dir;
+    const catName = a => a.cat ? catById(a.cat).name : 'zzz';
+    list = list.slice().sort((a,b) => {
+      let va, vb;
+      if(k==='sup'){ va=a.sup; vb=b.sup; }
+      else if(k==='cat'){ va=catName(a); vb=catName(b); }
+      else if(k==='status'){ va=a.status; vb=b.status; }
+      else if(k==='expiry'){ va=a.days; vb=b.days; }
+      else { va=a.bonus; vb=b.bonus; }
+      return (va<vb?-1:va>vb?1:0)*d;
+    });
+  }
+  const filters = (est?AGR_FILTERS_FANNY:AGR_FILTERS_BOB).map(f => {
+    const n = cur().agrs.filter(a => agrMatches(a,f.id)).length;
+    return '<button class="fchip" aria-pressed="'+(agrFilter===f.id)+'" data-afilter="'+f.id+'">'+f.label+' <span class="n num">'+n+'</span></button>';
+  }).join('');
+
+  const attn = est
+    ? '<div class="attn">' +
+      '<div class="attn-card"><span class="glyph g-star">'+icon('star')+'</span><span class="bd"><b>8 agreements match companies like yours</b>' +
+      '<p>Picked from what 148 electrical contractors of your size actually use. All terms are estimates until your data is connected.</p>' +
+      '<button class="btn btn-primary btn-sm" data-connect>Connect data to verify terms</button></span></div>' +
+      '<div class="attn-card"><span class="glyph g-rec">'+icon('star')+'</span><span class="bd"><b>Easy first win: Lyreco</b>' +
+      '<p>est. 19% under typical list prices on office supplies — est. kr 58K a year, activated in one step.</p>' +
+      '<button class="btn btn-secondary btn-sm" data-view="office" data-sup="Lyreco">View in category '+icon('arrow')+'</button></span></div></div>'
+    : '<div class="attn">' +
+      '<div class="attn-card"><span class="glyph g-neg">'+icon('clock')+'</span><span class="bd"><b>Expiring: Telia in 60 days</b>' +
+      '<p>15% on business subscriptions ends 20 Oct. Renew, or compare the two alternatives we flagged.</p>' +
+      '<button class="btn btn-secondary btn-sm" data-view="telecom" data-sup="Telia">View in category '+icon('arrow')+'</button></span></div>' +
+      '<div class="attn-card"><span class="glyph g-star">'+icon('star')+'</span><span class="bd"><b>2 new matches</b>' +
+      '<p>Norsk Gjenvinning (waste, 12% under your rates) and Ramirent (machine rental, 13%).</p>' +
+      '<button class="btn btn-secondary btn-sm" data-view="waste" data-sup="Norsk Gjenvinning">View in category '+icon('arrow')+'</button></span></div></div>';
+
+  const th = (key,label) => {
+    const sorted = agrSort.key===key;
+    return '<th scope="col" aria-sort="'+(sorted?(agrSort.dir===1?'ascending':'descending'):'none')+'">' +
+      '<button data-sort="'+key+'">'+label+' '+icon('sort')+'</button></th>';
+  };
+  const rows = list.map(a => {
+    const cat = a.cat ? catById(a.cat) : null;
+    const catCell = cat
+      ? '<button class="catlink" data-view="'+a.cat+'">'+esc(cat.name)+'</button>'
+      : '<span class="muted" style="font-size:var(--text-xs)">'+esc(a.noCat||'—')+'</span>';
+    const action = cat
+      ? '<button class="viewincat" data-view="'+a.cat+'" data-sup="'+esc(a.sup)+'">View in category '+icon('arrow')+'</button>'
+      : '<button class="viewincat" data-ask="'+esc(a.sup)+'">Ask assistant '+icon('spark')+'</button>';
+    return '<tr><td><span class="sup"><span class="ic" aria-hidden="true">'+iniOf(a.sup)+'</span>'+esc(a.sup)+(a.firstwin?' <span class="chip chip-ice">first win</span>':'')+'</span></td>' +
+      '<td>'+catCell+'</td><td class="terms">'+esc(a.terms)+'</td>' +
+      '<td>'+statusChip(a.status, est)+'</td>' +
+      '<td class="numcell">'+a.bonus+'</td><td class="numcell">'+a.expiry+'</td>' +
+      '<td>'+action+'</td></tr>';
+  }).join('');
+
+  v.innerHTML = '<div class="page">' +
+    '<header class="pagehead"><div class="eyebrow">The registry</div><h1 id="agrH" tabindex="-1">Agreements</h1>' +
+    '<p>'+(est
+      ? 'Only what fits Kristensen Elektro — recommended and newly matched agreements from your peer group. The work happens inside each category; this list just keeps the paperwork honest.'
+      : 'One catalogue, not two. Terms, status and expiry at a glance — but every agreement lives inside its category, and that’s where you act on it.')+'</p></header>' +
+    attn +
+    '<div class="filters" role="group" aria-label="Filter agreements">'+filters+'</div>' +
+    '<div class="card regtable-wrap"><table class="reg"><caption class="sr">Agreements registry</caption>' +
+    '<thead><tr>'+th('sup','Supplier')+th('cat','Category')+'<th scope="col">Terms</th>'+th('status','Status')+th('bonus','Bonus')+th('expiry','Expiry')+'<th scope="col"><span class="sr">Action</span></th></tr></thead>' +
+    '<tbody>'+rows+'</tbody></table></div></div>';
+
+  v.addEventListener('click', agrClick);
+  function agrClick(e){
+    const s = e.target.closest('[data-sort]');
+    if(s){ const k = s.getAttribute('data-sort');
+      if(agrSort.key===k) agrSort.dir *= -1; else agrSort = {key:k, dir:1};
+      renderAgreements(); return; }
+    const vc = e.target.closest('[data-view]');
+    if(vc){ openCategory(vc.getAttribute('data-view'), vc.getAttribute('data-sup')||null); return; }
+    const ask = e.target.closest('[data-ask]');
+    if(ask){ openAssistant('What is the Ramirent machine-rental match, and where would it show up?'); return; }
+    const af = e.target.closest('[data-afilter]');
+    if(af){ agrFilter = af.getAttribute('data-afilter'); renderAgreements(); return; }
+    if(e.target.closest('[data-connect]')) openConnect();
+  }
+}
+
+/* ---------------- savings ---------------- */
+const SAV_SERIES = [
+  {id:'bm', name:'Building materials', share:.345},
+  {id:'tools', name:'Tools & fasteners', share:.19},
+  {id:'fuel', name:'Fuel & fleet', share:.168},
+  {id:'elec', name:'Electrical supplies', share:.086},
+  {id:'ins', name:'Insurance', share:.06},
+  {id:'other', name:'Other categories', share:.151}
+];
+const CHART_COLORS = ['var(--chart-1)','var(--chart-2)','var(--chart-3)','var(--chart-4)','var(--chart-5)','var(--chart-6)'];
+
+function savingsChartSVG(){
+  const w=680, h=260, padL=44, padB=26, padT=10, padR=8;
+  const plotW = w-padL-padR, plotH = h-padT-padB;
+  const maxV = 100; // kr K — max month ~89
+  const bw = Math.min(44, plotW/SAV_M.length - 18);
+  let out = '';
+  // gridlines
+  [0,25,50,75,100].forEach(g => {
+    const y = padT + plotH - g/maxV*plotH;
+    out += '<line class="gridline" x1="'+padL+'" y1="'+y+'" x2="'+(w-padR)+'" y2="'+y+'"/>' +
+      '<text class="axis" x="'+(padL-8)+'" y="'+(y+4)+'" text-anchor="end">'+g+'</text>';
+  });
+  SAV_M.forEach((total,mi) => {
+    const cx = padL + (mi+0.5)*plotW/SAV_M.length;
+    let yCursor = padT + plotH;
+    let segs = '';
+    SAV_SERIES.forEach((s,si) => {
+      const v = total*s.share;
+      const hh = Math.max(2, v/maxV*plotH - 2);       // 2px surface gap between stacked segments
+      yCursor -= (v/maxV*plotH);
+      const y = yCursor;
+      const isTop = si === SAV_SERIES.length-1;
+      if(isTop){
+        segs += '<path d="M'+(cx-bw/2)+' '+(y+hh)+' V'+(y+4)+' Q'+(cx-bw/2)+' '+y+' '+(cx-bw/2+4)+' '+y+' H'+(cx+bw/2-4)+' Q'+(cx+bw/2)+' '+y+' '+(cx+bw/2)+' '+(y+4)+' V'+(y+hh)+' Z" fill="'+CHART_COLORS[si]+'"/>';
+      }else{
+        segs += '<rect x="'+(cx-bw/2)+'" y="'+y+'" width="'+bw+'" height="'+hh+'" fill="'+CHART_COLORS[si]+'"/>';
+      }
+    });
+    const tip = MONTHS[mi] + '|' + SAV_SERIES.map((s,si)=>s.name+';'+CHART_COLORS[si]+';kr '+Math.round(total*s.share)+'K').join('|') + '|Total;;kr '+total+'K';
+    out += '<g>'+segs+'<rect class="bar-hit" data-tip="'+esc(tip)+'" x="'+(cx-plotW/SAV_M.length/2)+'" y="'+padT+'" width="'+(plotW/SAV_M.length)+'" height="'+plotH+'"/></g>';
+    out += '<text class="axis" x="'+cx+'" y="'+(h-6)+'" text-anchor="middle">'+MONTHS[mi]+'</text>';
+  });
+  return '<svg class="chartsvg" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Realized savings per month by category, in thousand kroner, January through August">'+out+'</svg>';
+}
+
+function savingsTableHTML(){
+  let rows = SAV_SERIES.map((s,si) =>
+    '<tr><td>'+s.name+'</td>' + SAV_M.map(t=>'<td>'+Math.round(t*s.share)+'</td>').join('') +
+    '<td><b>'+Math.round(SAV_M.reduce((a,b)=>a+b,0)*s.share)+'</b></td></tr>').join('');
+  rows += '<tr><td><b>Total</b></td>'+SAV_M.map(t=>'<td><b>'+t+'</b></td>').join('')+'<td><b>'+SAV_M.reduce((a,b)=>a+b,0)+'</b></td></tr>';
+  return '<table class="datatable"><caption class="sr">Realized savings per month by category, kr K</caption>' +
+    '<thead><tr><th>Category</th>'+MONTHS.map(m=>'<th>'+m+'</th>').join('')+'<th>YTD</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+
+function renderSavings(){
+  const v = $('#view-savings');
+  if(cur().est){
+    const bars = cur().cats.map(c => {
+      const wp = Math.round(c.pot/330*100);
+      return '<div class="trow"><span class="sw" style="background:transparent;border:1.5px dashed var(--general-muted-foreground)"></span>' +
+        '<span class="nm">'+esc(c.name)+'</span>' +
+        '<span style="flex:2;min-width:80px"><span class="spendbar est" style="display:block"><i style="width:'+wp+'%"></i></span></span>' +
+        '<span class="vl num" style="color:var(--est-ink)">'+kr(c.pot)+' est.</span></div>';
+    }).join('');
+    v.innerHTML = '<div class="page">' +
+      '<header class="pagehead"><div class="eyebrow">The spine, part 3</div><h1 id="savH" tabindex="-1">Savings</h1>' +
+      '<p>Nothing realized yet — and that’s the honest number. Below is what 148 companies like yours actually save, category by category.</p></header>' +
+      '<div class="two-col"><div class="card"><div class="emptylock">' +
+        '<span class="glyph">'+icon('lock')+'</span><h2>kr 0 realized — for now</h2>' +
+        '<p>Savings appear here the month your first agreement goes live. Connect your spend data and we’ll show exactly which invoices they came from.</p>' +
+        '<button class="btn btn-primary" data-connect>Connect spend data</button></div></div>' +
+      '<div><div class="card tot-list"><h2>Est. potential by category <span class="chip chip-est">est.</span></h2>'+bars+
+      '<div class="trow" style="border-top:2px solid var(--hairline)"><span class="sw" style="background:transparent"></span><span class="nm"><b>Total, companies like yours</b></span><span class="vl num">kr 610K / yr</span></div></div>' +
+      '<div class="bonusbox" style="margin-top:var(--s4)"><h2>'+icon('coin')+'Customer bonus</h2><div class="big num">kr 0</div>' +
+      '<div class="split"><span>Bonus starts accruing<b>with your first active agreement</b></span></div>' +
+      '<div class="src">Suppliers like Stark and Q8 pay 1% of your purchases back as bonus.</div></div></div></div></div>';
+    v.querySelector('[data-connect]').addEventListener('click', openConnect);
+    return;
+  }
+  const legend = SAV_SERIES.map((s,si)=>'<i><span class="sw" style="background:'+CHART_COLORS[si]+'"></span>'+s.name+'</i>').join('');
+  const tots = SAV_SERIES.map((s,si) => {
+    const cat = catById(s.id);
+    const val = cat ? cat.realized : 1047 - BOB_CATS.filter(c=>SAV_SERIES.some(x=>x.id===c.id)).reduce((a,c)=>a+c.realized,0);
+    return '<div class="trow"><span class="sw" style="background:'+CHART_COLORS[si]+'"></span><span class="nm">'+s.name+'</span><span class="vl num">'+kr(val)+'</span></div>';
+  }).join('');
+  v.innerHTML = '<div class="page">' +
+    '<header class="pagehead"><div class="eyebrow">The spine, part 3</div><h1 id="savH" tabindex="-1">Savings</h1>' +
+    '<p>kr 1.24M realized this year — earned category by category. The stacks below show the monthly run-rate from agreement purchases.</p></header>' +
+    '<div class="two-col">' +
+      '<div class="card chartcard"><h2>Realized per month, by category</h2>' +
+      '<p class="sub num">Jan–Aug, axis in kr K · monthly run-rate kr 49–89K · hover a month for the split</p>' +
+      savingsChartSVG() + '<div class="legend">'+legend+'</div>' +
+      '<button class="linkbtn" data-toggle-table aria-expanded="false">View as table</button>' +
+      '<div id="savTable" hidden>'+savingsTableHTML()+'</div>' +
+      '<p class="muted num" style="font-size:var(--text-xs);margin-top:var(--s3)">The stacks show the price-saving run-rate on agreement purchases — kr 550K YTD. The remaining kr 690K of the kr 1.24M total came as renegotiated back-payments and one-off rebates, counted in the totals on the right.</p></div>' +
+      '<div><div class="card tot-list"><h2>Realized YTD by category</h2>'+tots+
+        '<div class="trow softrow"><span class="sw" style="background:var(--general-muted)"></span><span class="nm">One-off rebates &amp; adjustments</span><span class="vl num">kr 193K</span></div>' +
+        '<div class="trow" style="border-top:2px solid var(--hairline)"><span class="sw" style="background:transparent"></span><span class="nm"><b>Total realized YTD</b></span><span class="vl num" style="color:var(--sentiment-positive)">kr 1.24M</span></div></div>' +
+      '<div class="bonusbox" style="margin-top:var(--s4)"><h2>'+icon('coin')+'Customer bonus</h2><div class="big num">kr 45K</div>' +
+      '<div class="split"><span>Paid out<b class="num">kr 32K</b></span><span>Pending<b class="num">kr 13K</b></span></div>' +
+      '<div class="src num">1% from Stark (kr 28K) · 1% from Q8 (kr 17K) — paid quarterly on top of the price savings.</div></div></div>' +
+    '</div></div>';
+  v.querySelector('[data-toggle-table]').addEventListener('click', e => {
+    const t = v.querySelector('#savTable');
+    const open = t.hidden; t.hidden = !open;
+    e.target.setAttribute('aria-expanded', String(open));
+    e.target.textContent = open ? 'Hide table' : 'View as table';
+  });
+  wireTips(v);
+}
+
+/* ---------------- spending ---------------- */
+function spendMiniSVG(){
+  const w=680,h=170,padL=44,padB=24,padT=8,padR=8;
+  const plotW=w-padL-padR, plotH=h-padT-padB, maxV=1400;
+  let out='';
+  [0,700,1400].forEach(g=>{
+    const y=padT+plotH-g/maxV*plotH;
+    out+='<line class="gridline" x1="'+padL+'" y1="'+y+'" x2="'+(w-padR)+'" y2="'+y+'"/>'+
+      '<text class="axis" x="'+(padL-8)+'" y="'+(y+4)+'" text-anchor="end">'+(g>=1000?(g/1000)+'M':g)+'</text>';
+  });
+  SPEND_M.forEach((mv,mi)=>{
+    const cx=padL+(mi+0.5)*plotW/SPEND_M.length;
+    const bw=Math.min(40,plotW/SPEND_M.length-16);
+    const hh=mv/maxV*plotH, y=padT+plotH-hh;
+    const on = Math.round(mv*0.62);
+    out+='<path d="M'+(cx-bw/2)+' '+(y+hh)+' V'+(y+4)+' Q'+(cx-bw/2)+' '+y+' '+(cx-bw/2+4)+' '+y+' H'+(cx+bw/2-4)+' Q'+(cx+bw/2)+' '+y+' '+(cx+bw/2)+' '+(y+4)+' V'+(y+hh)+' Z" fill="var(--chart-1)"/>';
+    out+='<g><rect class="bar-hit" data-tip="'+esc(MONTHS[mi]+'|Total spend;;kr '+(mv>=1000?(mv/1000).toFixed(2)+'M':mv+'K')+'|On agreement;;kr '+(on>=1000?(on/1000).toFixed(2)+'M':on+'K'))+'" x="'+(cx-plotW/SPEND_M.length/2)+'" y="'+padT+'" width="'+(plotW/SPEND_M.length)+'" height="'+plotH+'"/></g>';
+    out+='<text class="axis" x="'+cx+'" y="'+(h-6)+'" text-anchor="middle">'+MONTHS[mi]+'</text>';
+  });
+  return '<svg class="chartsvg" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Total spend per month, January through August">'+out+'</svg>';
+}
+function renderSpending(){
+  const v = $('#view-spending');
+  const est = cur().est;
+  const maxSpend = Math.max(...cur().cats.map(c=>c.spend));
+  const flags = {bm:null, office:'19% rate gap', elec:'agreement under-used', waste:'no agreement connected'};
+  const rows = cur().cats.map(c => {
+    const st = STATES[c.state];
+    const off = Math.round(c.spend*(100-c.on)/100);
+    const wTotal = Math.max(6, Math.round(c.spend/maxSpend*100));
+    const flag = !est && flags[c.id] ? '<span class="chip chip-warn sp-flag">'+icon('warn')+esc(flags[c.id])+'</span>' : '';
+    const bar = est
+      ? '<span class="splitbar est" style="width:'+wTotal+'%"></span>'
+      : '<span class="splitbar" style="width:'+wTotal+'%"><span class="on" style="width:'+c.on+'%"></span><span class="off" style="width:'+(100-c.on)+'%"></span></span>';
+    return '<div class="sp-row">' +
+      '<span class="glyph '+st.glyph+'" title="'+st.label+'">'+icon(st.icon)+'</span>' +
+      '<span class="nm"><b>'+esc(c.name)+'</b><span>'+c.sup.join(' · ')+'</span>'+flag+'</span>' +
+      '<span>'+bar+'</span>' +
+      '<span class="kr num">'+kr(c.spend)+(est?' <span class="chip chip-est">est.</span>':'')+'</span>' +
+      '<span class="offkr num">'+(est?'not connected':'off agr: '+kr(off))+'</span>' +
+      '<span class="act"><button class="viewincat" data-view="'+c.id+'">Open category '+icon('arrow')+'</button></span></div>';
+  }).join('');
+  const offLeaders = est ? '' :
+    '<div class="attn"><div class="attn-card"><span class="glyph g-warn">'+icon('warn')+'</span><span class="bd">' +
+    '<b>kr 5.4M runs outside agreements</b><p>Biggest off-agreement buckets: Building materials kr 1.33M · Electrical kr 784K · Tools kr 684K. The flagged rows below are where the money leaks fastest.</p></span></div>' +
+    '<div class="attn-card"><span class="glyph g-star">'+icon('star')+'</span><span class="bd"><b>Waste &amp; recycling is fully off-agreement</b>' +
+    '<p>kr 540K a year with no terms at all — and a new match waiting at 12% under your rates.</p>' +
+    '<button class="btn btn-secondary btn-sm" data-view="waste">Open category '+icon('arrow')+'</button></span></div></div>';
+  v.innerHTML = '<div class="page">' +
+    '<header class="pagehead"><div class="eyebrow">Where the money goes</div><h1 id="spH" tabindex="-1">Spending</h1>' +
+    '<p>'+(est
+      ? 'Estimated from your peer group — 148 electrical contractors of a similar size. Connect your data and this page shows your own invoices, split by agreement coverage.'
+      : 'kr 14.2M a year, split by category and coverage. Solid is on agreement; hatched is off. Every row opens its category — the spine again.')+'</p></header>' +
+    (est
+      ? '<div class="connectbar"><span class="glyph">'+icon('plug')+'</span><span class="bd"><b>These bars are peer estimates.</b><span>Your invoices already know where the money is going — connect once to see your real split.</span></span><button class="btn btn-primary" data-connect>Connect spend data</button></div>'
+      : '<div class="card chartcard" style="margin-bottom:var(--s6)"><h2>Total spend per month</h2><p class="sub num">Jan–Aug · kr 9.33M so far · 62% through agreements</p>'+spendMiniSVG()+'</div>') +
+    offLeaders +
+    '<div class="card boardcard"><div class="board-head"><h2>Spend by category</h2><span class="spacer"></span>' +
+    '<div class="board-legend">'+(est?'<i><span class="chip chip-est">est.</span> peer estimate</i>':'<i><span class="sw" style="width:10px;height:10px;border-radius:3px;background:var(--general-primary);display:inline-block"></span> on agreement</i><i><span class="sw" style="width:10px;height:10px;border-radius:3px;background:repeating-linear-gradient(45deg,var(--brand-cornflower) 0 3px,var(--surface) 3px 6px);display:inline-block"></span> off agreement</i>')+'</div></div>' +
+    rows + '</div></div>';
+  v.addEventListener('click', e => {
+    const b = e.target.closest('[data-view]'); if(b){ openCategory(b.getAttribute('data-view')); return; }
+    if(e.target.closest('[data-connect]')) openConnect();
+  });
+  wireTips(v);
+}
+
+/* ---------------- chart tooltips ---------------- */
+const tip = $('#tip');
+function wireTips(scope){
+  scope.querySelectorAll('.bar-hit').forEach(hit => {
+    hit.addEventListener('mousemove', e => {
+      const raw = hit.getAttribute('data-tip'); if(!raw) return;
+      const parts = raw.split('|');
+      let html = '<b>'+esc(parts[0])+'</b>';
+      parts.slice(1).forEach(p => {
+        const [nm,color,val] = p.split(';');
+        html += '<div class="tr"><span>'+(color?'<span class="sw" style="background:'+color+'"></span>':'')+esc(nm)+'</span><b>'+esc(val)+'</b></div>';
+      });
+      tip.innerHTML = html;
+      tip.style.display = 'block';
+      const tw = tip.offsetWidth, thh = tip.offsetHeight;
+      let x = e.clientX + 14, y = e.clientY - thh - 10;
+      if(x + tw > innerWidth - 8) x = e.clientX - tw - 14;
+      if(y < 8) y = e.clientY + 16;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    });
+    hit.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  });
+}
+
+/* =====================================================================
+   NAVIGATION — hash routes so back/forward always work
+   #overview · #categories · #categories/office · #categories/office~Lyreco
+   ===================================================================== */
+const RENDER = {overview:renderOverview, categories:renderCategories, agreements:renderAgreements, savings:renderSavings, spending:renderSpending};
+
+function showPage(page, push){
+  currentPage = page;
+  $$('.view').forEach(v => { v.hidden = v.id !== 'view-'+page; });
+  $$('.navitem[data-page]').forEach(n => {
+    if(n.getAttribute('data-page')===page) n.setAttribute('aria-current','page');
+    else n.removeAttribute('aria-current');
+  });
+  RENDER[page]();
+  if(push && !routing){
+    const target = '#'+page + (page==='categories' && pendingOpen ? '/'+pendingOpen.catId + (pendingOpen.agr?'~'+encodeURIComponent(pendingOpen.agr):'') : '');
+    if(location.hash !== target) location.hash = target;
+  }
+  if(!pendingOpen) scrollTo({top:0, behavior:'auto'});
+  const h = $('#view-'+page+' h1');
+  if(h) h.focus({preventScroll:true});
+}
+
+function openCategory(catId, agr){
+  pendingOpen = {catId, agr: agr||null};
+  if(!catById(catId)) { pendingOpen = null; return; }
+  if(catFilter!=='all' && !catMatches(catById(catId), catFilter)) catFilter = 'all';
+  const target = '#categories/'+catId+(agr?'~'+encodeURIComponent(agr):'');
+  if(location.hash === target){ showPage('categories', false); }
+  else location.hash = target;   // hashchange → route() → showPage
+}
+
+function route(){
+  routing = true;
+  const hash = location.hash.replace(/^#/,'');
+  const [pagePart, deep] = hash.split('/');
+  const page = RENDER[pagePart] ? pagePart : 'overview';
+  if(page==='categories' && deep){
+    const [catId, agr] = deep.split('~');
+    if(catById(catId)) pendingOpen = {catId, agr: agr?decodeURIComponent(agr):null};
+  }
+  showPage(page, false);
+  routing = false;
+}
+addEventListener('hashchange', route);
+
+$$('.navitem[data-page]').forEach(btn => btn.addEventListener('click', () => {
+  const page = btn.getAttribute('data-page');
+  pendingOpen = null;
+  if(location.hash === '#'+page) showPage(page, false);
+  else location.hash = '#'+page;
+}));
+
+/* =====================================================================
+   PERSONA SWITCH
+   ===================================================================== */
+function setPersona(p){
+  if(P===p) return;
+  P = p; catFilter='all'; agrFilter='all'; agrSort={key:null,dir:1}; pendingOpen=null;
+  const c = cur();
+  $('#acctAvatar').textContent = c.ini;
+  $('#acctName').textContent = c.name;
+  $('#acctCo').textContent = c.co;
+  $$('.persona').forEach(el => el.setAttribute('aria-checked', String(el.getAttribute('data-persona')===p)));
+  $('#topStatus').innerHTML = c.est
+    ? '<span class="chip chip-est">'+icon('dash')+'Estimated · peer data from 148 companies</span>'
+    : '<span class="chip chip-goodsoft">'+icon('check')+'Data connected · Visma.net</span>';
+  $('#navCatCount').textContent = c.cats.length;
+  $('#navAgrCount').textContent = c.agrs.length;
+  seedAssistant();
+  showPage(currentPage, false);
+}
+$('#acctBtn').addEventListener('click', () => {
+  const m = $('#acctMenu'); const open = m.classList.toggle('open');
+  $('#acctBtn').setAttribute('aria-expanded', String(open));
+});
+$$('.persona').forEach(el => el.addEventListener('click', () => {
+  setPersona(el.getAttribute('data-persona'));
+  $('#acctMenu').classList.remove('open');
+  $('#acctBtn').setAttribute('aria-expanded','false');
+}));
+document.addEventListener('click', e => {
+  if(!e.target.closest('.acct')) { $('#acctMenu').classList.remove('open'); $('#acctBtn').setAttribute('aria-expanded','false'); }
+});
+
+/* =====================================================================
+   SAVING ASSISTANT — canned Q&A
+   ===================================================================== */
+const QA = {
+  bob: [
+    {q:'Where is my biggest saving right now?',
+     a:'Office supplies. You spend kr 620K a year there and only 22% runs through an agreement. Lyreco’s negotiated prices are 19% under what you pay today — kr 118K a year. It activates in one step.',
+     link:{label:'Open Office supplies', cat:'office', agr:'Lyreco'}},
+    {q:'What happens when the Telia agreement expires?',
+     a:'It ends 20 Oct — 60 days out. If nothing changes you fall back to list prices and lose about kr 41K a year. You can renew on current terms in two clicks, or compare the two alternatives I’ve flagged in the category.',
+     link:{label:'Open Telecom & IT', cat:'telecom', agr:'Telia'}},
+    {q:'How is the kr 840K potential calculated?',
+     a:'Category by category: your off-agreement spend times the rate gap to the best available agreement. The two biggest pieces are Electrical supplies (kr 160K — your Ahlsell terms are active but under-used) and Office supplies (kr 118K — Lyreco). No projections, just this year’s invoices re-priced.'}
+  ],
+  fanny: [
+    {q:'What would companies like mine save?',
+     a:'Your peer group — 148 electrical contractors of a similar size — realizes kr 610K a year on average. More than half of it sits in electrical supplies alone (est. kr 330K on Solar or Ahlsell terms).',
+     link:{label:'Open Electrical supplies', cat:'elec'}},
+    {q:'Which agreement should I start with?',
+     a:'Lyreco. It’s the easy first win: est. 19% under typical list prices on office supplies, worth about kr 58K a year, and it activates in one step — no negotiation, no volume commitment.',
+     link:{label:'Open Office supplies', cat:'office', agr:'Lyreco'}},
+    {q:'What does connecting my ERP involve?',
+     a:'A read-only connection to e-conomic or Visma.net — usually under an hour before your dashed estimates become your real numbers. We never touch payments, and you can disconnect any time.'}
+  ]
+};
+let askedSet = new Set();
+function bubble(kind, html){
+  const d = document.createElement('div');
+  d.className = 'bub ' + kind;
+  d.innerHTML = html;
+  $('#apThread').appendChild(d);
+  $('#apThread').scrollTop = $('#apThread').scrollHeight;
+  return d;
+}
+function seedAssistant(){
+  $('#apThread').innerHTML = '';
+  askedSet = new Set();
+  bubble('a', cur().est
+    ? 'Hi Fanny. I answer with data from 148 companies like yours until your own is connected. Try one of these:'
+    : 'Hi Bob. I answer with your own numbers — every figure comes from your invoices. Try one of these:');
+  renderChips();
+}
+function renderChips(){
+  const box = $('#apChips');
+  const remaining = QA[P].filter((x,i)=>!askedSet.has(i));
+  box.innerHTML = remaining.length
+    ? '<div class="lbl">Suggested</div>' + QA[P].map((x,i)=> askedSet.has(i)?'':'<button class="pchip" data-qa="'+i+'">'+esc(x.q)+'</button>').join('')
+    : '';
+}
+$('#apChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-qa]'); if(!b) return;
+  askQA(+b.getAttribute('data-qa'));
+});
+function askQA(i){
+  const item = QA[P][i];
+  askedSet.add(i);
+  bubble('q', esc(item.q));
+  const linkHtml = item.link
+    ? '<br><button class="linkbtn" data-cat="'+item.link.cat+'"'+(item.link.agr?' data-agr="'+esc(item.link.agr)+'"':'')+'>'+esc(item.link.label)+' →</button>'
+    : '';
+  setTimeout(()=> { bubble('a', esc(item.a) + linkHtml); renderChips(); }, RM?0:260);
+}
+$('#apThread').addEventListener('click', e => {
+  const l = e.target.closest('[data-cat]'); if(!l) return;
+  closeAssistant();
+  openCategory(l.getAttribute('data-cat'), l.getAttribute('data-agr'));
+});
+function sendFree(){
+  const inp = $('#apInput');
+  const t = inp.value.trim(); if(!t) return;
+  inp.value = '';
+  bubble('q', esc(t));
+  setTimeout(()=> bubble('a', cur().est
+    ? 'Good question — with your spend data connected I could answer that precisely. For now: your peer group averages kr 610K a year in savings, and Lyreco is the fastest first step.'
+    : 'I’ve noted that. The short answer: check the category board — every number there is live from your invoices. Want me to open the category it concerns?'), RM?0:300);
+}
+$('#apSend').addEventListener('click', sendFree);
+$('#apInput').addEventListener('keydown', e => { if(e.key==='Enter') sendFree(); });
+
+let apReturnFocus = null;
+function openAssistant(prefill){
+  apReturnFocus = document.activeElement;
+  $('#ap').classList.add('open');
+  $('#ap').setAttribute('aria-hidden','false');
+  $('#apScrim').classList.add('open');
+  if(prefill){ $('#apInput').value = prefill; }
+  setTimeout(()=> $('#apInput').focus(), RM?0:300);
+}
+function closeAssistant(){
+  $('#ap').classList.remove('open');
+  $('#ap').setAttribute('aria-hidden','true');
+  $('#apScrim').classList.remove('open');
+  if(apReturnFocus && apReturnFocus.isConnected) apReturnFocus.focus();
+}
+$('#apX').addEventListener('click', closeAssistant);
+$('#apScrim').addEventListener('click', closeAssistant);
+$('#assistTop').addEventListener('click', () => openAssistant());
+$('#assistRail').addEventListener('click', () => openAssistant());
+$('#bellBtn').addEventListener('click', () => {
+  if(currentPage!=='overview') { pendingOpen=null; location.hash = '#overview'; }
+});
+
+/* =====================================================================
+   CONNECT-DATA MODAL (stub)
+   ===================================================================== */
+let cnReturnFocus = null;
+function openConnect(){
+  cnReturnFocus = document.activeElement;
+  $('#cnScrim').classList.add('open');
+  $('#cnModal').classList.add('open');
+  $('#cnModal').setAttribute('aria-hidden','false');
+  $('#cnT').focus();
+}
+function closeConnect(){
+  $('#cnScrim').classList.remove('open');
+  $('#cnModal').classList.remove('open');
+  $('#cnModal').setAttribute('aria-hidden','true');
+  if(cnReturnFocus && cnReturnFocus.isConnected) cnReturnFocus.focus();
+}
+$('#cnX').addEventListener('click', closeConnect);
+$('#cnLater').addEventListener('click', closeConnect);
+$('#cnScrim').addEventListener('click', closeConnect);
+$$('#cnModal .srcopt').forEach(b => b.addEventListener('click', () => {
+  closeConnect();
+  openAssistant();
+  bubble('a', 'In the full product this starts the read-only connection flow. For this prototype, imagine your dashed numbers turning solid about an hour from now.');
+}));
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  if($('#cnModal').classList.contains('open')) closeConnect();
+  else if($('#ap').classList.contains('open')) closeAssistant();
+  else if($('#acctMenu').classList.contains('open')){ $('#acctMenu').classList.remove('open'); $('#acctBtn').setAttribute('aria-expanded','false'); }
+});
+
+/* ---------------- boot ---------------- */
+seedAssistant();
+if(location.hash && location.hash !== '#overview') route();
+else renderOverview();
+</script>
+</body>
+</html>

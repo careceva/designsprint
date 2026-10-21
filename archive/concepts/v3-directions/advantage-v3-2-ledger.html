@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — The Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&family=DM+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Advantage v3 · Concept 2 — THE LEDGER
+   One continuous money statement. Spending is the debit side, Savings the
+   credit side; each page mirrors the other so the causal link never hides.
+   Semantic tokens only — no raw hex in components (tints declared here).
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;--general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;--general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;--general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;--general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--sidebar-foreground:#1c1c1c;
+  --sentiment-positive:#009689;--sentiment-negative:#f54a00;
+  --surface:#ffffff;--brand-midnight:#000a45;--brand-ice:#edf5ff;--brand-cornflower:#73abff;
+  --font-sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;
+  --hairline:#ececec;
+  --t-fast:.15s ease;--t:.28s cubic-bezier(.2,.7,.3,1);
+  /* ledger tints — credit (teal) / debit (orange), derived from sentiment tokens */
+  --credit-tint:#e2f4f1;--credit-ink:#00776c;--credit-line:#009689;
+  --debit-tint:#fdeee6;--debit-ink:#c23c00;--debit-line:#f54a00;
+  --est-ink:#5a6b8c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{font-family:var(--font-body);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-4xl);letter-spacing:-1.2px;line-height:1.1}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px;line-height:1.18}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+::selection{background:var(--general-secondary)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast)}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover{background:#1553bb}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover{background:var(--brand-ice);border-color:var(--general-border)}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s3)}
+.btn-ghost:hover{background:var(--brand-ice)}
+.linkbtn{background:none;border:none;padding:var(--s2) 0;cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-sm);font-weight:500;border-radius:var(--rounded-xs);min-height:44px}
+.linkbtn:hover{text-decoration:underline}
+.linkbtn.inline{min-height:0;padding:0;font-size:inherit}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--rounded-full);
+  font-size:12px;font-weight:600;letter-spacing:.01em;line-height:1.5;white-space:nowrap}
+.chip-good{background:var(--credit-tint);color:var(--credit-ink)}
+.chip-warn{background:#fff2e0;color:#a35c00}
+.chip-bad{background:var(--debit-tint);color:var(--debit-ink)}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-rec{background:var(--general-primary);color:var(--general-primary-foreground)}
+.chip-new{background:var(--brand-ice);color:var(--general-primary)}
+.chip-est{background:transparent;border:1px dashed var(--general-muted-foreground);color:var(--general-muted-foreground)}
+
+/* supplier initials chip */
+.slogo{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:var(--rounded-sm);
+  background:var(--brand-ice);color:var(--general-primary);font-family:var(--font-sans);
+  font-size:12px;font-weight:700;letter-spacing:.02em;flex:0 0 auto}
+
+/* ---------- shell ---------- */
+.shell{display:flex;min-height:100vh}
+.rail{position:sticky;top:0;align-self:flex-start;height:100vh;width:232px;flex:0 0 auto;
+  display:flex;flex-direction:column;background:var(--surface);
+  border-right:1px solid var(--sidebar-border);padding:var(--s6) var(--s3) var(--s4);z-index:30}
+.rail-logo{display:flex;align-items:center;gap:10px;padding:var(--s1) var(--s3) var(--s6);
+  font-family:var(--font-sans);font-weight:800;letter-spacing:-.5px;font-size:19px;color:var(--general-foreground)}
+.rail-logo svg{width:26px;height:26px;flex:0 0 auto}
+.rail nav{display:flex;flex-direction:column;gap:2px}
+.rail-item{display:flex;align-items:center;gap:var(--s3);min-height:44px;padding:0 var(--s3);
+  border:none;background:none;border-radius:var(--rounded-md);cursor:pointer;text-align:left;
+  font-size:var(--text-sm);font-weight:500;color:var(--sidebar-foreground);text-decoration:none;
+  transition:background-color var(--t-fast),color var(--t-fast)}
+.rail-item svg{width:18px;height:18px;flex:0 0 auto;color:var(--general-muted-foreground);transition:color var(--t-fast)}
+.rail-item:hover{background:var(--general-muted)}
+.rail-item[aria-current="page"]{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
+.rail-item[aria-current="page"] svg{color:var(--general-primary)}
+.rail-sec{margin:var(--s6) var(--s3) var(--s2);font-size:11px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.rail .spacer{flex:1}
+.rail-assist{display:flex;align-items:center;gap:var(--s3);min-height:52px;padding:var(--s2) var(--s3);
+  border:1px solid var(--general-border);background:var(--brand-ice);border-radius:var(--rounded-lg);
+  cursor:pointer;text-align:left;transition:box-shadow var(--t-fast),transform var(--t-fast)}
+.rail-assist:hover{box-shadow:var(--shadow-sm)}
+.rail-assist .ai{display:grid;place-items:center;width:32px;height:32px;border-radius:var(--rounded-full);
+  background:var(--general-primary);color:var(--general-primary-foreground);flex:0 0 auto}
+.rail-assist .ai svg{width:16px;height:16px}
+.rail-assist b{display:block;font-size:var(--text-sm);font-weight:600;line-height:1.25}
+.rail-assist span{display:block;font-size:12px;color:var(--general-muted-foreground);line-height:1.3}
+
+.main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:20;height:64px;display:flex;align-items:center;gap:var(--s4);
+  padding:0 var(--s8);background:#fafafad9;backdrop-filter:blur(14px) saturate(160%);
+  border-bottom:1px solid var(--hairline)}
+.crumb{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.crumb b{color:var(--general-foreground);font-weight:600}
+.topbar .spacer{flex:1}
+.period{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 var(--s4);
+  border:1px solid var(--hairline);border-radius:var(--rounded-full);background:var(--surface);
+  font-size:var(--text-xs);color:var(--general-muted-foreground);box-shadow:var(--shadow-xs)}
+.period b{color:var(--general-foreground);font-weight:600}
+
+/* persona menu */
+.who-wrap{position:relative}
+.who{display:flex;align-items:center;gap:var(--s3);min-height:44px;padding:var(--s1) var(--s2);
+  border:none;background:none;border-radius:var(--rounded-full);cursor:pointer}
+.who:hover{background:var(--general-muted)}
+.who .av{width:32px;height:32px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--brand-midnight);color:var(--surface);font-family:var(--font-sans);
+  font-size:12px;font-weight:700;letter-spacing:.02em}
+.who .who-txt{text-align:left}
+.who .who-txt b{display:block;font-size:var(--text-xs);font-weight:600;line-height:1.3}
+.who .who-txt span{display:block;font-size:11px;color:var(--general-muted-foreground);line-height:1.3}
+.who > svg{width:14px;height:14px;color:var(--general-muted-foreground)}
+.who-menu{position:absolute;right:0;top:calc(100% + 6px);width:280px;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);box-shadow:var(--shadow-lg);
+  padding:var(--s2);display:none;z-index:40}
+.who-menu.on{display:block}
+.who-menu .wm-cap{padding:var(--s2) var(--s3);font-size:11px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--general-muted-foreground)}
+.wm-item{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:56px;padding:var(--s2) var(--s3);
+  border:none;background:none;border-radius:var(--rounded-md);cursor:pointer;text-align:left}
+.wm-item:hover{background:var(--brand-ice)}
+.wm-item .av{width:36px;height:36px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--brand-ice);color:var(--general-primary);font-family:var(--font-sans);font-size:13px;font-weight:700}
+.wm-item b{display:block;font-size:var(--text-sm);font-weight:600}
+.wm-item span{display:block;font-size:12px;color:var(--general-muted-foreground)}
+.wm-item .check{margin-left:auto;width:16px;height:16px;color:var(--general-primary);opacity:0}
+.wm-item[aria-checked="true"] .check{opacity:1}
+
+/* ---------- canvas / pages ---------- */
+.canvas{flex:1;width:100%;max-width:1180px;margin:0 auto;padding:var(--s8) var(--s8) var(--s16)}
+.page{display:none}
+.page.on{display:block;animation:rise var(--t) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s4);
+  flex-wrap:wrap;margin-bottom:var(--s6)}
+.page-head .lead{font-size:var(--text-base);color:var(--general-muted-foreground);max-width:62ch;margin-top:var(--s2)}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--s2)}
+.eyebrow i{width:7px;height:7px;border-radius:var(--rounded-full);background:currentColor;flex:0 0 auto}
+.eyebrow.credit{color:var(--credit-ink)}
+.eyebrow.debit{color:var(--debit-ink)}
+.eyebrow.neutral{color:var(--general-primary)}
+
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs)}
+.card.pad6{padding:var(--s6)}
+.card.pad8{padding:var(--s8)}
+
+/* ---------- the flow statement (overview hero) ---------- */
+.flow-card{padding:var(--s8) var(--s8) var(--s6);overflow:hidden}
+.flow-card .fc-top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s4);
+  flex-wrap:wrap;margin-bottom:var(--s6)}
+.flow-card h2{font-size:var(--text-xl)}
+.flow-note{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.flow-svg{display:block;width:100%;height:auto}
+.flow-svg text{font-family:var(--font-body)}
+.flow-svg .fl-cap{font-family:var(--font-sans);font-size:11.5px;font-weight:700;letter-spacing:.09em}
+.flow-svg .fl-big{font-family:var(--font-mono);font-size:24px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.flow-svg .fl-mid{font-family:var(--font-mono);font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+.flow-svg .fl-sub{font-size:12px}
+.flow-svg .fl-go{font-size:12px;font-weight:600}
+.flowlink{cursor:pointer;outline:none}
+.flowlink .hit{fill:transparent}
+.flowlink:hover .fl-face,.flowlink:focus-visible .fl-face{filter:brightness(.97)}
+.flowlink:focus-visible .fl-face{stroke:var(--general-primary);stroke-width:2;stroke-dasharray:none}
+.flowlink:hover .fl-go{text-decoration:underline}
+.flow-legend{display:flex;gap:var(--s6);flex-wrap:wrap;margin-top:var(--s4);padding-top:var(--s4);
+  border-top:1px solid var(--hairline);font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.flow-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* catalogue strip (top unclaimed categories) */
+.strip-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s4);
+  margin:var(--s8) 0 var(--s4)}
+.strip-head h2{font-size:var(--text-xl)}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+@media(max-width:940px){.strip{grid-template-columns:1fr}}
+.strip-card{display:flex;flex-direction:column;gap:var(--s3);padding:var(--s6);text-align:left;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);cursor:pointer;transition:transform var(--t),box-shadow var(--t),border-color var(--t)}
+.strip-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--general-border)}
+.strip-card .sc-top{display:flex;align-items:center;gap:var(--s3)}
+.strip-card h3{font-size:var(--text-base);letter-spacing:-.2px}
+.strip-card .sc-val{font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:var(--text-2xl);font-weight:600;letter-spacing:-.5px;color:var(--debit-ink)}
+.strip-card .sc-val small{font-family:var(--font-body);font-size:12px;font-weight:500;
+  color:var(--general-muted-foreground);letter-spacing:0}
+.strip-card p{font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.55}
+.strip-card .sc-go{margin-top:auto;display:flex;align-items:center;gap:6px;font-size:var(--text-xs);
+  font-weight:600;color:var(--general-primary)}
+.strip-card .sc-go svg{width:14px;height:14px}
+.strip-card.est{border-style:dashed;border-color:#c9c9c9}
+
+/* balance line under flow */
+.bal-line{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;
+  margin-top:var(--s6);padding:var(--s4) var(--s6);border-radius:var(--rounded-lg);
+  background:var(--brand-midnight);color:#dce6fb;font-size:var(--text-sm)}
+.bal-line .bl-v{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:var(--text-lg);
+  font-weight:600;color:var(--surface)}
+.bal-line .bl-v.pos{color:#7fe0d6}
+
+/* ---------- KPI row (mirrored page headers) ---------- */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4);margin-bottom:var(--s6)}
+@media(max-width:900px){.kpis{grid-template-columns:1fr}}
+.kpi{padding:var(--s4) var(--s6);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);box-shadow:var(--shadow-xs);border-top:3px solid var(--hairline)}
+.kpi.credit{border-top-color:var(--credit-line)}
+.kpi.debit{border-top-color:var(--debit-line)}
+.kpi.neutral{border-top-color:var(--brand-cornflower)}
+.kpi.est{border-style:dashed;border-top-style:solid}
+.kpi .k-cap{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.kpi .k-val{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:var(--text-3xl);
+  font-weight:600;letter-spacing:-.8px;margin:2px 0}
+.kpi .k-val small{font-family:var(--font-body);font-size:var(--text-xs);font-weight:500;
+  color:var(--general-muted-foreground);letter-spacing:0}
+.kpi .k-sub{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.kpi .k-sub b{color:var(--general-foreground);font-weight:600}
+
+/* ---------- charts ---------- */
+.chart-card{padding:var(--s6);margin-bottom:var(--s6)}
+.chart-card .cc-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s4);
+  flex-wrap:wrap;margin-bottom:var(--s4)}
+.chart-card h2{font-size:var(--text-lg)}
+.legend{display:flex;gap:var(--s4);flex-wrap:wrap;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.chart{display:block;width:100%;height:auto}
+.chart text{font-family:var(--font-body);font-size:11px;fill:var(--general-muted-foreground)}
+.chart .gline{stroke:var(--hairline);stroke-width:1}
+.chart .bval{font-family:var(--font-mono);font-size:10.5px;font-variant-numeric:tabular-nums}
+
+/* ---------- ledger tables ---------- */
+.table-card{overflow:hidden;margin-bottom:var(--s6)}
+.table-card .tc-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  flex-wrap:wrap;padding:var(--s6) var(--s6) var(--s4)}
+.table-card h2{font-size:var(--text-lg)}
+.table-card .tc-sub{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:2px}
+.tbl-wrap{overflow-x:auto}
+table.ledger{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+.ledger th{font-family:var(--font-sans);font-size:11.5px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--general-muted-foreground);text-align:left;
+  padding:var(--s2) var(--s4);border-bottom:1px solid var(--general-foreground);white-space:nowrap}
+.ledger th.r,.ledger td.r{text-align:right}
+.ledger th:first-child,.ledger td:first-child{padding-left:var(--s6)}
+.ledger th:last-child,.ledger td:last-child{padding-right:var(--s6)}
+.ledger td{padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline);vertical-align:middle}
+.ledger tbody tr.rowlink{cursor:pointer}
+.ledger tbody tr.rowlink:hover{background:var(--brand-ice)}
+.ledger .cell-main{display:flex;align-items:center;gap:var(--s3)}
+.ledger .cell-main b{font-weight:600}
+.ledger .cell-main .sub{display:block;font-size:12px;color:var(--general-muted-foreground)}
+.ledger td.mono,.ledger .mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.ledger .credit-v{color:var(--credit-ink);font-weight:600}
+.ledger .debit-v{color:var(--debit-ink);font-weight:600}
+.ledger .dim{color:var(--general-muted-foreground)}
+.ledger tfoot td{border-bottom:none;border-top:1.5px solid var(--general-foreground);
+  font-weight:600;padding-top:var(--s3);padding-bottom:var(--s4);background:var(--general-background)}
+.ledger tr.note-row td{font-size:var(--text-xs);color:var(--general-muted-foreground);
+  background:var(--general-background);border-bottom:1px solid var(--hairline)}
+th.sortable{padding:0}
+th.sortable button{display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 var(--s4);
+  border:none;background:none;cursor:pointer;font:inherit;color:inherit;letter-spacing:inherit;
+  text-transform:inherit;width:100%;justify-content:flex-start}
+th.sortable.r button{justify-content:flex-end}
+th.sortable button:hover{color:var(--general-foreground)}
+th.sortable button .arr{font-size:10px;opacity:.35}
+th.sortable button[data-active="true"]{color:var(--general-primary)}
+th.sortable button[data-active="true"] .arr{opacity:1}
+/* coverage micro-bar */
+.covbar{display:inline-flex;align-items:center;gap:8px}
+.covbar .track{position:relative;width:64px;height:6px;border-radius:var(--rounded-full);
+  background:var(--general-muted);overflow:hidden;flex:0 0 auto}
+.covbar .track i{position:absolute;inset:0 auto 0 0;border-radius:inherit;background:var(--credit-line)}
+.covbar .track i.low{background:var(--general-accent)}
+.covbar .track i.zero{background:transparent}
+/* expandable provenance rows */
+.exp-btn{display:inline-grid;place-items:center;width:44px;height:44px;margin:-10px 0;border:none;
+  background:none;cursor:pointer;border-radius:var(--rounded-full);color:var(--general-muted-foreground)}
+.exp-btn:hover{background:var(--general-muted);color:var(--general-foreground)}
+.exp-btn svg{width:14px;height:14px;transition:transform var(--t-fast)}
+tr.expanded .exp-btn svg{transform:rotate(90deg)}
+tr.prov td{background:var(--general-background);padding:0 var(--s6) var(--s4)}
+.prov-box{margin-top:var(--s3);border-left:2px solid var(--credit-line);padding:var(--s2) 0 var(--s2) var(--s4)}
+.prov-box .pv-cap{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:var(--s2)}
+.prov-line{display:flex;align-items:center;gap:var(--s3);padding:6px 0;font-size:var(--text-xs);
+  border-bottom:1px dashed var(--hairline)}
+.prov-line:last-child{border-bottom:none}
+.prov-line .pl-sup{display:flex;align-items:center;gap:8px;min-width:180px;font-weight:600;color:var(--general-foreground)}
+.prov-line .pl-sup .slogo{width:24px;height:24px;font-size:10px}
+.prov-line .pl-terms{flex:1;color:var(--general-muted-foreground)}
+.prov-line .pl-math{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--general-muted-foreground)}
+.prov-line .pl-val{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600;
+  color:var(--credit-ink);min-width:76px;text-align:right}
+.prov-foot{margin-top:var(--s2);font-size:11.5px;color:var(--general-muted-foreground)}
+.prov-foot .linkbtn{min-height:0;padding:0;font-size:11.5px}
+
+/* estimated table look (Fanny) */
+.est-table td{color:var(--est-ink)}
+.locked{display:inline-flex;align-items:center;gap:6px;color:var(--general-muted-foreground);font-size:var(--text-xs)}
+.locked svg{width:13px;height:13px}
+
+/* connect banner (Fanny) */
+.connect-banner{display:flex;align-items:center;gap:var(--s6);flex-wrap:wrap;padding:var(--s6);
+  margin-bottom:var(--s6);border:1.5px dashed var(--general-border);border-radius:var(--rounded-xl);
+  background:var(--brand-ice)}
+.connect-banner .cb-ic{display:grid;place-items:center;width:44px;height:44px;flex:0 0 auto;
+  border-radius:var(--rounded-md);background:var(--surface);color:var(--general-primary);box-shadow:var(--shadow-xs)}
+.connect-banner .cb-ic svg{width:20px;height:20px}
+.connect-banner .cb-txt{flex:1 1 320px;min-width:0}
+.connect-banner b{font-family:var(--font-sans);font-size:var(--text-base);letter-spacing:-.2px}
+.connect-banner p{font-size:var(--text-sm);color:var(--general-muted-foreground);margin-top:2px}
+
+/* ---------- categories page ---------- */
+.sortrow{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4)}
+.sortrow label{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
+.sortrow select{height:44px;padding:0 var(--s4);border:1px solid var(--sidebar-border);
+  border-radius:var(--rounded-full);background:var(--surface);font-size:var(--text-sm);cursor:pointer;
+  box-shadow:var(--shadow-xs)}
+.sortrow .hint{font-size:var(--text-xs);color:var(--general-muted-foreground);font-style:italic}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--s4)}
+.acct{display:flex;flex-direction:column;padding:var(--s6);background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-xl);box-shadow:var(--shadow-xs);
+  transition:box-shadow var(--t),border-color var(--t)}
+.acct:hover{box-shadow:var(--shadow-md);border-color:var(--general-border)}
+.acct.est{border-style:dashed;border-color:#c9c9c9}
+.acct .a-top{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);margin-bottom:var(--s3)}
+.acct h3{font-size:var(--text-base);letter-spacing:-.2px}
+.acct .a-no{font-family:var(--font-mono);font-size:11px;color:var(--general-muted-foreground)}
+.acct .a-yield{display:flex;align-items:baseline;gap:8px;margin-bottom:var(--s3)}
+.acct .a-yield b{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:var(--text-3xl);
+  font-weight:600;letter-spacing:-.8px;color:var(--credit-ink)}
+.acct .a-yield b.zero{color:var(--general-muted-foreground)}
+.acct .a-yield span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.acct dl{display:flex;flex-direction:column;margin-top:var(--s2)}
+.acct dl .drow{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  padding:7px 0;border-top:1px solid var(--hairline);font-size:var(--text-xs)}
+.acct dt{color:var(--general-muted-foreground)}
+.acct dd{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600}
+.acct dd.credit-v{color:var(--credit-ink)}
+.acct dd.debit-v{color:var(--debit-ink)}
+.acct .a-sups{display:flex;align-items:center;gap:6px;margin-top:var(--s3);font-size:11.5px;
+  color:var(--general-muted-foreground);flex-wrap:wrap}
+.acct .a-sups .slogo{width:22px;height:22px;font-size:9.5px;border-radius:6px}
+.acct .a-cta{margin-top:var(--s3)}
+
+/* ---------- assistant panel ---------- */
+.scrim{position:fixed;inset:0;background:#0f0f0f4d;z-index:60;opacity:0;pointer-events:none;
+  transition:opacity var(--t)}
+.scrim.on{opacity:1;pointer-events:auto}
+.assist{position:fixed;top:0;right:0;bottom:0;width:min(420px,94vw);z-index:70;background:var(--surface);
+  border-left:1px solid var(--hairline);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;
+  transform:translateX(102%);transition:transform var(--t)}
+.assist.on{transform:none}
+.assist-head{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.assist-head .ai{display:grid;place-items:center;width:34px;height:34px;border-radius:var(--rounded-full);
+  background:var(--general-primary);color:var(--general-primary-foreground)}
+.assist-head .ai svg{width:16px;height:16px}
+.assist-head h2{font-size:var(--text-base);letter-spacing:-.2px}
+.assist-head p{font-size:11.5px;color:var(--general-muted-foreground)}
+.assist-head .x{margin-left:auto;display:grid;place-items:center;width:44px;height:44px;border:none;
+  background:none;cursor:pointer;border-radius:var(--rounded-full);color:var(--general-muted-foreground)}
+.assist-head .x:hover{background:var(--general-muted);color:var(--general-foreground)}
+.assist-head .x svg{width:16px;height:16px}
+.assist-body{flex:1;overflow-y:auto;padding:var(--s6);display:flex;flex-direction:column;gap:var(--s4)}
+.msg{max-width:88%;padding:var(--s3) var(--s4);border-radius:var(--rounded-lg);font-size:var(--text-sm);line-height:1.55}
+.msg.q{align-self:flex-end;background:var(--general-primary);color:var(--general-primary-foreground);
+  border-bottom-right-radius:var(--rounded-xs)}
+.msg.a{align-self:flex-start;background:var(--general-muted);border-bottom-left-radius:var(--rounded-xs)}
+.msg.a b{font-weight:600}
+.msg.a .mono{font-size:13px}
+.assist-foot{padding:var(--s4) var(--s6) var(--s6);border-top:1px solid var(--hairline)}
+.assist-sugs{display:flex;flex-wrap:wrap;gap:var(--s2);margin-bottom:var(--s3)}
+.sug{padding:8px 14px;min-height:36px;border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);
+  background:var(--surface);font-size:12.5px;cursor:pointer;transition:var(--t-fast)}
+.sug:hover{background:var(--brand-ice);border-color:var(--general-border)}
+.assist-note{font-size:11px;color:var(--general-muted-foreground);text-align:center}
+
+/* ---------- modal (connect data stub) ---------- */
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:var(--s6)}
+.modal.on{display:grid}
+.modal .m-card{position:relative;width:520px;max-width:100%;max-height:90vh;overflow-y:auto;
+  background:var(--surface);border-radius:var(--rounded-2xl);box-shadow:var(--shadow-lg);padding:var(--s8)}
+.modal h2{margin-bottom:var(--s2)}
+.modal .m-lead{font-size:var(--text-sm);color:var(--general-muted-foreground);margin-bottom:var(--s6)}
+.m-opt{display:flex;align-items:center;gap:var(--s4);width:100%;padding:var(--s4);margin-bottom:var(--s3);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);cursor:pointer;
+  text-align:left;transition:var(--t-fast)}
+.m-opt:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.m-opt .mo-ic{display:grid;place-items:center;width:40px;height:40px;flex:0 0 auto;
+  border-radius:var(--rounded-md);background:var(--brand-ice);color:var(--general-primary)}
+.m-opt .mo-ic svg{width:18px;height:18px}
+.m-opt b{display:block;font-size:var(--text-sm);font-weight:600}
+.m-opt span{display:block;font-size:12px;color:var(--general-muted-foreground)}
+.m-x{position:absolute;top:var(--s4);right:var(--s4);display:grid;place-items:center;width:44px;height:44px;
+  border:none;background:none;cursor:pointer;border-radius:var(--rounded-full);color:var(--general-muted-foreground)}
+.m-x:hover{background:var(--general-muted)}
+.m-x svg{width:16px;height:16px}
+.m-foot{margin-top:var(--s4);font-size:11.5px;color:var(--general-muted-foreground);text-align:center}
+
+/* est watermark chip */
+.est-chip{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border:1px dashed var(--general-muted-foreground);
+  border-radius:var(--rounded-full);font-size:11px;font-weight:600;color:var(--general-muted-foreground)}
+
+@media(max-width:1060px){
+  .rail{width:76px}
+  .rail-logo span,.rail-item span,.rail-assist div,.rail-sec{display:none}
+  .rail-item{justify-content:center}
+  .rail-assist{justify-content:center;padding:var(--s2)}
+}
+@media(max-width:760px){
+  .canvas{padding:var(--s6) var(--s4) var(--s12)}
+  .topbar{padding:0 var(--s4)}
+  .period{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ======================= left rail ======================= -->
+  <aside class="rail">
+    <div class="rail-logo" aria-label="Advantage">
+      <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="24" height="24" rx="7" fill="var(--brand-midnight)"/>
+        <path d="M7 16.5 11 8l4.4 8.5" stroke="var(--brand-cornflower)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M13.5 13.2h5.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span>Advantage</span>
+    </div>
+    <nav aria-label="Main navigation" id="mainNav">
+      <a class="rail-item" href="#/overview" data-nav="overview" aria-current="page">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2.5 3h13M2.5 7.2h8M2.5 11.4h13M2.5 15.6h6"/></svg>
+        <span>Overview</span></a>
+      <a class="rail-item" href="#/categories" data-nav="categories">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="6" height="6" rx="1.5"/><rect x="10" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="10" width="6" height="6" rx="1.5"/><rect x="10" y="10" width="6" height="6" rx="1.5"/></svg>
+        <span>Categories</span></a>
+      <a class="rail-item" href="#/agreements" data-nav="agreements">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2.5h8a1.5 1.5 0 0 1 1.5 1.5v10a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 14V4A1.5 1.5 0 0 1 5 2.5Z"/><path d="M6.5 6h5M6.5 9h5M6.5 12h3"/></svg>
+        <span>Agreements</span></a>
+      <div class="rail-sec" aria-hidden="true">The ledger</div>
+      <a class="rail-item" href="#/savings" data-nav="savings">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12.5 7 8l3 3 5.5-6"/><path d="M11 5h4.5V9.5"/></svg>
+        <span>Savings</span></a>
+      <a class="rail-item" href="#/spending" data-nav="spending">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5 7 10l3-3 5.5 6"/><path d="M11 13h4.5V8.5"/></svg>
+        <span>Spending</span></a>
+    </nav>
+    <div class="spacer"></div>
+    <button class="rail-assist" id="assistBtn" aria-haspopup="dialog" aria-expanded="false">
+      <span class="ai" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M12.5 3.5l-1.4 1.4M4.9 11.1l-1.4 1.4"/><circle cx="8" cy="8" r="2.6"/></svg></span>
+      <div><b>Saving assistant</b><span>Ask the ledger anything</span></div>
+    </button>
+  </aside>
+
+  <!-- ======================= main ======================= -->
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb" id="crumb">Advantage / <b>Overview</b></div>
+      <div class="spacer"></div>
+      <div class="period num" aria-label="Reporting period"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="1.5" y="2.5" width="11" height="10" rx="2"/><path d="M1.5 5.5h11M4.5 1.5v2M9.5 1.5v2"/></svg>
+        <span>Period</span> <b>Jan – Aug 2026</b></div>
+      <div class="who-wrap">
+        <button class="who" id="whoBtn" aria-haspopup="menu" aria-expanded="false">
+          <span class="av" id="whoAv">BI</span>
+          <span class="who-txt"><b id="whoName">Bob Iversen</b><span id="whoCo">Nordvik Byg A/S</span></span>
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m3.5 5.5 3.5 3.5 3.5-3.5"/></svg>
+        </button>
+        <div class="who-menu" id="whoMenu" role="menu" aria-label="Switch account">
+          <div class="wm-cap">Switch account</div>
+          <button class="wm-item" role="menuitemradio" aria-checked="true" data-persona="bob">
+            <span class="av">BI</span>
+            <span><b>Bob Iversen</b><span>Nordvik Byg A/S · data connected</span></span>
+            <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.5 3.2 3.2L13 5"/></svg>
+          </button>
+          <button class="wm-item" role="menuitemradio" aria-checked="false" data-persona="fanny">
+            <span class="av">FK</span>
+            <span><b>Fanny Kristensen</b><span>Kristensen Elektro ApS · estimates only</span></span>
+            <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.5 3.2 3.2L13 5"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="canvas">
+      <!-- ============ OVERVIEW (Bob rendered statically — works without JS) ============ -->
+      <section class="page on" id="page-overview" aria-labelledby="ov-h">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow neutral"><i></i>Money statement · Jan – Aug 2026</div>
+            <h1 id="ov-h">One statement. Every krone accounted for.</h1>
+            <p class="lead">Spend flows in at the top; savings and unclaimed potential come out at the bottom. Click any band to open its page.</p>
+          </div>
+        </div>
+        <div id="ov-body">
+          <div class="card flow-card">
+            <div class="fc-top">
+              <h2>Purchasing flow — Nordvik Byg A/S</h2>
+              <span class="flow-note">All figures verified from connected invoice data</span>
+            </div>
+            <svg class="flow-svg" viewBox="0 0 1000 452" role="group" aria-label="Money flow: total purchasing spend kr 14.2M splits into kr 8.8M on agreements and kr 5.4M off agreements; agreements produced kr 1.24M realized savings and kr 45K bonus; off-agreement spend holds kr 840K unclaimed potential.">
+              <defs>
+                <linearGradient id="gOn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000a45" stop-opacity=".10"/><stop offset="1" stop-color="#009689" stop-opacity=".16"/></linearGradient>
+                <linearGradient id="gOff" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000a45" stop-opacity=".10"/><stop offset="1" stop-color="#f54a00" stop-opacity=".13"/></linearGradient>
+                <linearGradient id="gSav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#009689" stop-opacity=".16"/><stop offset="1" stop-color="#009689" stop-opacity=".07"/></linearGradient>
+                <linearGradient id="gPot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f54a00" stop-opacity=".13"/><stop offset="1" stop-color="#f54a00" stop-opacity=".06"/></linearGradient>
+              </defs>
+              <!-- tier 1: total spend -->
+              <g class="flowlink" data-go="spending" tabindex="0" role="link" aria-label="Total purchasing spend kr 14.2M — open Spending">
+                <rect class="fl-face" x="40" y="30" width="920" height="58" rx="10" fill="var(--brand-midnight)"/>
+                <text class="fl-cap" x="64" y="55" fill="#b8c6ee">TOTAL PURCHASING SPEND</text>
+                <text class="fl-sub" x="64" y="74" fill="#8fa2d9">8 months · 2,431 invoices · verified</text>
+                <text class="fl-big" x="806" y="67" text-anchor="end" fill="#ffffff">kr 14.2M</text>
+                <text class="fl-go" x="936" y="63" text-anchor="end" fill="#b8c6ee">Spending ↗</text>
+              </g>
+              <!-- bands tier1 → tier2 -->
+              <path d="M40 88 L610 88 L610 176 L40 176 Z" fill="url(#gOn)"/>
+              <path d="M634 176 C634 141 610 123 610 88 L960 88 L960 176 Z" fill="url(#gOff)"/>
+              <!-- tier 2: on / off agreements -->
+              <g class="flowlink" data-go="agreements" tabindex="0" role="link" aria-label="On agreements kr 8.8M, 62 percent — open Agreements">
+                <rect class="fl-face" x="40" y="176" width="570" height="54" rx="10" fill="var(--credit-tint)" stroke="var(--credit-line)" stroke-opacity=".45"/>
+                <text class="fl-cap" x="64" y="200" fill="var(--credit-ink)">ON AGREEMENTS · 62%</text>
+                <text class="fl-sub" x="64" y="218" fill="var(--credit-ink)" opacity=".75">12 active agreements</text>
+                <text class="fl-mid" x="450" y="210" text-anchor="end" fill="var(--credit-ink)">kr 8.8M</text>
+                <text class="fl-go" x="586" y="206" text-anchor="end" fill="var(--credit-ink)">Agreements ↗</text>
+              </g>
+              <g class="flowlink" data-go="categories" tabindex="0" role="link" aria-label="Off agreements kr 5.4M, 38 percent — open Categories">
+                <rect class="fl-face" x="634" y="176" width="326" height="54" rx="10" fill="var(--debit-tint)" stroke="var(--debit-line)" stroke-opacity=".4"/>
+                <text class="fl-cap" x="656" y="200" fill="var(--debit-ink)">OFF AGREEMENTS · 38%</text>
+                <text class="fl-sub" x="656" y="218" fill="var(--debit-ink)" opacity=".75">paying list price</text>
+                <text class="fl-mid" x="936" y="212" text-anchor="end" fill="var(--debit-ink)">kr 5.4M</text>
+              </g>
+              <!-- bands tier2 → tier3 -->
+              <path d="M40 230 L470 230 C470 268 300 288 300 324 L40 324 Z" fill="url(#gSav)"/>
+              <path d="M496 230 L610 230 C610 268 512 288 512 324 L332 324 C332 288 496 268 496 230 Z" fill="url(#gSav)" opacity=".7"/>
+              <path d="M634 230 L960 230 L960 324 L634 324 Z" fill="url(#gPot)"/>
+              <!-- tier 3: outcomes -->
+              <g class="flowlink" data-go="savings" tabindex="0" role="link" aria-label="Realized savings kr 1.24M — open Savings">
+                <rect class="fl-face" x="40" y="324" width="262" height="96" rx="12" fill="var(--surface)" stroke="var(--hairline)"/>
+                <rect x="40" y="324" width="262" height="4" rx="2" fill="var(--credit-line)"/>
+                <text class="fl-cap" x="62" y="352" fill="var(--general-muted-foreground)">REALIZED SAVINGS</text>
+                <text class="fl-big" x="62" y="384" fill="var(--credit-ink)">kr 1.24M</text>
+                <text class="fl-go" x="62" y="406" fill="var(--general-primary)">Savings page ↗</text>
+              </g>
+              <g class="flowlink" data-go="savings" tabindex="0" role="link" aria-label="Customer bonus kr 45K — open Savings">
+                <rect class="fl-face" x="332" y="324" width="180" height="96" rx="12" fill="var(--surface)" stroke="var(--hairline)"/>
+                <rect x="332" y="324" width="180" height="4" rx="2" fill="var(--credit-line)" opacity=".55"/>
+                <text class="fl-cap" x="352" y="352" fill="var(--general-muted-foreground)">CUSTOMER BONUS</text>
+                <text class="fl-mid" x="352" y="382" fill="var(--credit-ink)">kr 45K</text>
+                <text class="fl-sub" x="352" y="406" fill="var(--general-muted-foreground)">32K paid · 13K pending</text>
+              </g>
+              <g class="flowlink" data-go="categories" tabindex="0" role="link" aria-label="Unclaimed potential kr 840K — open Categories">
+                <rect class="fl-face" x="634" y="324" width="326" height="96" rx="12" fill="var(--surface)" stroke="var(--debit-line)" stroke-opacity=".5" stroke-dasharray="5 4"/>
+                <text class="fl-cap" x="656" y="352" fill="var(--general-muted-foreground)">UNCLAIMED POTENTIAL</text>
+                <text class="fl-big" x="656" y="384" fill="var(--debit-ink)">kr 840K</text>
+                <text class="fl-go" x="656" y="406" fill="var(--general-primary)">Categories page ↗</text>
+              </g>
+            </svg>
+            <div class="flow-legend">
+              <span><i style="background:var(--credit-tint);border:1px solid var(--credit-line)"></i>Credit side — purchases that earn back</span>
+              <span><i style="background:var(--debit-tint);border:1px solid var(--debit-line)"></i>Debit side — spend without a return</span>
+              <span><i style="background:none;border:1px dashed var(--general-muted-foreground)"></i>Dashed = potential, not yet realized</span>
+            </div>
+          </div>
+
+          <div class="bal-line num" role="note">
+            <span>Net position, Jan – Aug: savings + bonus earned back <b class="bl-v pos">kr 1.29M</b></span>
+            <span>Still on the table if off-agreement spend moves over: <b class="bl-v">kr 840K</b></span>
+          </div>
+
+          <div class="strip-head">
+            <h2>Largest unclaimed accounts</h2>
+            <button class="linkbtn" data-go="categories">All 10 categories →</button>
+          </div>
+          <div class="strip">
+            <button class="strip-card" data-go="categories">
+              <span class="sc-top"><span class="slogo">AH</span><h3>Electrical supplies</h3><span class="chip chip-warn">under-used</span></span>
+              <span class="sc-val num">kr 160K<small> /yr potential</small></span>
+              <p>Only 44% of kr 1.4M runs through your Ahlsell agreement. The other 56% pays list price for identical items.</p>
+              <span class="sc-go">Open account <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+            </button>
+            <button class="strip-card" data-go="categories">
+              <span class="sc-top"><span class="slogo">LY</span><h3>Office supplies</h3><span class="chip chip-bad">19% rate gap</span></span>
+              <span class="sc-val num">kr 118K<small> /yr potential</small></span>
+              <p>Top opportunity. The Lyreco agreement is ready to activate — 19% below what you paid on your last 14 orders.</p>
+              <span class="sc-go">Open account <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+            </button>
+            <button class="strip-card" data-go="categories">
+              <span class="sc-top"><span class="slogo">HI</span><h3>Tools &amp; fasteners</h3><span class="chip chip-soft">64% covered</span></span>
+              <span class="sc-val num">kr 90K<small> /yr potential</small></span>
+              <p>Hilti's fleet program covers the big tools; the fastener long tail still buys ad hoc. Route it through Ahlsell.</p>
+              <span class="sc-go">Open account <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- other pages render via JS -->
+      <section class="page" id="page-categories" aria-label="Categories"></section>
+      <section class="page" id="page-agreements" aria-label="Agreements"></section>
+      <section class="page" id="page-savings" aria-label="Savings"></section>
+      <section class="page" id="page-spending" aria-label="Spending"></section>
+    </main>
+  </div>
+</div>
+
+<!-- assistant -->
+<div class="scrim" id="scrim"></div>
+<aside class="assist" id="assist" role="dialog" aria-modal="true" aria-label="Saving assistant" aria-hidden="true">
+  <div class="assist-head">
+    <span class="ai" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M12.5 3.5l-1.4 1.4M4.9 11.1l-1.4 1.4"/><circle cx="8" cy="8" r="2.6"/></svg></span>
+    <div><h2>Saving assistant</h2><p id="assistSub">Reading your ledger · Nordvik Byg A/S</p></div>
+    <button class="x" id="assistClose" aria-label="Close assistant"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg></button>
+  </div>
+  <div class="assist-body" id="assistBody" aria-live="polite"></div>
+  <div class="assist-foot">
+    <div class="assist-sugs" id="assistSugs"></div>
+    <p class="assist-note">Answers are drawn from your connected data and agreement terms.</p>
+  </div>
+</aside>
+
+<!-- connect data modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-h">
+  <div class="scrim on" style="position:absolute;inset:0" data-close-modal></div>
+  <div class="m-card">
+    <button class="m-x" data-close-modal aria-label="Close dialog"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg></button>
+    <h2 id="modal-h">Turn estimates into a real statement</h2>
+    <p class="m-lead">Your invoices already know where the money is going. Connect them and the dashed figures become verified — usually in under ten minutes.</p>
+    <button class="m-opt"><span class="mo-ic"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="14" height="11" rx="2"/><path d="M2 7h14M6 11h2"/></svg></span>
+      <span><b>Connect your ERP</b><span>e-conomic, Visma or Business Central — read-only, live sync</span></span></button>
+    <button class="m-opt"><span class="mo-ic"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12V3M5.5 6.5 9 3l3.5 3.5"/><path d="M3 12v2.5A1.5 1.5 0 0 0 4.5 16h9a1.5 1.5 0 0 0 1.5-1.5V12"/></svg></span>
+      <span><b>Upload a spend report</b><span>CSV or Excel export from your accounting system</span></span></button>
+    <p class="m-foot">Prototype — connections are stubbed in this demo.</p>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* =========================================================================
+   Data — figures per shared spec, stored in kr thousands (K)
+   ========================================================================= */
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+
+const BOB={
+  id:'bob',name:'Bob Iversen',init:'BI',co:'Nordvik Byg A/S',verified:true,
+  kpi:{spend:14200,onPct:62,on:8800,realized:1240,potential:840,bonus:45,bonusPaid:32,bonusPend:13},
+  monthly:{
+    total:[1180,1090,1260,1150,1310,1240,980,1120],
+    on:   [ 708, 687, 769, 736, 812, 781, 568, 728],
+    saved:[  64,  69,  65,  70,  81,  70,  63,  73]
+  },
+  cats:[
+    {id:'c1',no:'4010',name:'Building materials',spend:4600,cov:71,real:380,pot:120,sups:['Stark','Bygma'],state:'active',
+      prov:[{sup:'Stark',terms:'avg 9% below list',aspend:2720,val:245},{sup:'Bygma',terms:'8% below list',aspend:1690,val:135}]},
+    {id:'c2',no:'4020',name:'Tools & fasteners',spend:1900,cov:64,real:210,pot:90,sups:['Hilti','Ahlsell'],state:'active',
+      prov:[{sup:'Hilti',terms:'fleet program, 14%',aspend:900,val:126},{sup:'Ahlsell',terms:'11% below list',aspend:760,val:84}]},
+    {id:'c3',no:'4030',name:'Fuel & fleet',spend:1600,cov:78,real:185,pot:40,sups:['Q8'],state:'active',
+      prov:[{sup:'Q8',terms:'45 øre/l off pump + card rebate',aspend:1250,val:185}]},
+    {id:'c4',no:'4040',name:'Electrical supplies',spend:1400,cov:44,real:95,pot:160,sups:['Ahlsell'],state:'under',
+      prov:[{sup:'Ahlsell',terms:'11% below list',aspend:865,val:95}]},
+    {id:'c5',no:'4050',name:'Office supplies',spend:620,cov:22,real:30,pot:118,sups:['Lyreco'],state:'opp',
+      prov:[{sup:'Local supplier deal',terms:'legacy discount, no agreement',aspend:136,val:30}]},
+    {id:'c6',no:'4060',name:'Waste & recycling',spend:540,cov:0,real:0,pot:86,sups:['Norsk Gjenvinning'],state:'newmatch',prov:[]},
+    {id:'c7',no:'4070',name:'Telecom & IT',spend:480,cov:58,real:41,pot:22,sups:['Telia'],state:'expiring',
+      prov:[{sup:'Telia',terms:'15% corporate plan',aspend:278,val:41}]},
+    {id:'c8',no:'4080',name:'Insurance',spend:460,cov:100,real:66,pot:0,sups:['If'],state:'covered',
+      prov:[{sup:'If',terms:'fixed fleet terms',aspend:460,val:66}]},
+    {id:'c9',no:'4090',name:'Hotels & travel',spend:390,cov:31,real:12,pot:47,sups:['Scandic'],state:'rec',
+      prov:[{sup:'Scandic',terms:'12% corporate rate (ad hoc use)',aspend:121,val:12}]},
+    {id:'c10',no:'4100',name:'Workwear & safety',spend:350,cov:49,real:28,pot:39,sups:['Wenaas'],state:'active',
+      prov:[{sup:'Wenaas',terms:'10% below list',aspend:172,val:28}]}
+  ],
+  tail:{spend:1860,label:'Long tail — 86 suppliers below kr 50K'},
+  reconSavings:{label:'Company-level volume rebates & annual bonuses',val:193},
+  reconPot:{label:'Uncontracted long-tail spend',val:118},
+  agreements:[
+    {sup:'Stark',cat:'Building materials',terms:'Avg 9% below list price',status:'active',bonus:'1% volume bonus',real:245,yield:9.0},
+    {sup:'Bygma',cat:'Building materials',terms:'8% below list price',status:'active',bonus:'—',real:135,yield:8.0},
+    {sup:'Hilti',cat:'Tools & fasteners',terms:'Fleet program, 14% effective',status:'active',bonus:'—',real:126,yield:14.0},
+    {sup:'Ahlsell',cat:'Electrical + tools',terms:'11% below list price',status:'under',bonus:'—',real:179,yield:11.0},
+    {sup:'Q8',cat:'Fuel & fleet',terms:'45 øre/l off pump price',status:'active',bonus:'1% volume bonus',real:185,yield:9.2},
+    {sup:'Lyreco',cat:'Office supplies',terms:'19% below current unit prices',status:'rec',bonus:'—',real:null,yield:19.0},
+    {sup:'Norsk Gjenvinning',cat:'Waste & recycling',terms:'12% below current rates',status:'newmatch',bonus:'—',real:null,yield:12.0},
+    {sup:'Telia',cat:'Telecom & IT',terms:'15% corporate plan',status:'expiring',bonus:'—',real:41,yield:15.0},
+    {sup:'If',cat:'Insurance',terms:'Fixed fleet terms',status:'active',bonus:'—',real:66,yield:14.3},
+    {sup:'Scandic',cat:'Hotels & travel',terms:'12% corporate rate',status:'rec',bonus:'—',real:12,yield:12.0},
+    {sup:'Wenaas',cat:'Workwear & safety',terms:'10% below list price',status:'active',bonus:'—',real:28,yield:10.0},
+    {sup:'Ramirent',cat:'Machine rental',terms:'13% below list price',status:'newmatch',bonus:'—',real:null,yield:13.0,note:'No spend category yet'}
+  ]
+};
+
+const FANNY={
+  id:'fanny',name:'Fanny Kristensen',init:'FK',co:'Kristensen Elektro ApS',verified:false,peers:148,
+  kpi:{spend:6800,onPct:0,on:0,realized:0,potential:610,bonus:0},
+  monthly:{est:[540,520,590,560,610,580,470,545]},
+  cats:[
+    {id:'f1',no:'4010',name:'Electrical supplies',spend:2900,pot:345,rate:'11–14%',sups:['Solar','Ahlsell']},
+    {id:'f2',no:'4020',name:'Tools',spend:840,pot:100,rate:'12%',sups:['Hilti']},
+    {id:'f3',no:'4030',name:'Fuel & fleet',spend:720,pot:65,rate:'9%',sups:['Q8']},
+    {id:'f4',no:'4040',name:'Office supplies',spend:310,pot:59,rate:'19%',sups:['Lyreco'],note:'easy first win'},
+    {id:'f5',no:'4050',name:'Telecom',spend:280,pot:41,rate:'15%',sups:['Telia']},
+    {id:'f6',no:'4060',name:'Insurance',spend:240,pot:null,rate:null,sups:['If']},
+    {id:'f7',no:'4070',name:'Workwear',spend:210,pot:null,rate:null,sups:['Wenaas']},
+    {id:'f8',no:'4080',name:'Hotels',spend:180,pot:null,rate:null,sups:['Scandic']}
+  ],
+  tail:{spend:1120,label:'Estimated long tail'},
+  agreements:[
+    {sup:'Solar',cat:'Electrical supplies',terms:'Est. 11–14% below list',status:'avail',yield:'11–14%'},
+    {sup:'Ahlsell',cat:'Electrical supplies',terms:'Est. 11% below list',status:'avail',yield:'11%'},
+    {sup:'Hilti',cat:'Tools',terms:'Fleet program, est. 12%',status:'avail',yield:'12%'},
+    {sup:'Q8',cat:'Fuel & fleet',terms:'Est. 45 øre/l off pump',status:'avail',yield:'9%'},
+    {sup:'Lyreco',cat:'Office supplies',terms:'Est. 19% below current prices',status:'avail',yield:'19%',note:'Easy first win'},
+    {sup:'Telia',cat:'Telecom',terms:'Est. 15% corporate plan',status:'avail',yield:'15%'}
+  ]
+};
+
+/* =========================================================================
+   Helpers
+   ========================================================================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function fmt(k){ // k in thousands
+  if(k==null)return '—';
+  if(k===0)return 'kr 0';
+  if(k>=1000){const m=k/1000;return 'kr '+(Math.round(m*100)/100).toFixed(m>=10?1:2).replace(/\.?0+$/,'')+'M';}
+  return 'kr '+Math.round(k)+'K';
+}
+function fmtPct(v){return (Math.round(v*10)/10).toFixed(1)+'%';}
+function initials(name){const p=name.split(/\s+/);return (p[0][0]+(p[1]?p[1][0]:name[1]||'')).toUpperCase();}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function slogo(name){return `<span class="slogo" aria-hidden="true">${initials(name)}</span>`;}
+const STATE_CHIP={
+  active:'<span class="chip chip-good">active</span>',
+  under:'<span class="chip chip-warn">under-used ⚠</span>',
+  opp:'<span class="chip chip-bad">top opportunity</span>',
+  newmatch:'<span class="chip chip-new">new match ★</span>',
+  expiring:'<span class="chip chip-warn">expires in 60 days</span>',
+  covered:'<span class="chip chip-good">fully covered ✓</span>',
+  rec:'<span class="chip chip-rec">recommended</span>',
+  avail:'<span class="chip chip-est">available · est.</span>'
+};
+const arrow='<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg>';
+const chev='<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 3 4 4-4 4"/></svg>';
+const lockIc='<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2.5" y="6" width="9" height="6" rx="1.5"/><path d="M4.5 6V4.5a2.5 2.5 0 0 1 5 0V6"/></svg>';
+
+/* =========================================================================
+   State + routing
+   ========================================================================= */
+let persona='bob';
+let catSort={key:'yield',dir:-1};       // categories page
+let spendSort={key:'spend',dir:-1};     // spending table
+let saveSort={key:'real',dir:-1};       // savings table
+const openProv=new Set();               // expanded provenance rows
+
+const PAGES=['overview','categories','agreements','savings','spending'];
+function currentPage(){
+  const h=(location.hash||'').replace(/^#\/?/,'');
+  return PAGES.includes(h)?h:'overview';
+}
+function go(page){
+  if(page==='connect'){openModal();return;}
+  if(currentPage()===page){render();return;}
+  location.hash='/'+page;
+}
+window.addEventListener('hashchange',render);
+
+/* =========================================================================
+   Overview
+   ========================================================================= */
+function flowBob(){
+  return `
+  <div class="card flow-card">
+    <div class="fc-top">
+      <h2>Purchasing flow — Nordvik Byg A/S</h2>
+      <span class="flow-note">All figures verified from connected invoice data</span>
+    </div>
+    <svg class="flow-svg" viewBox="0 0 1000 452" role="group" aria-label="Money flow: total purchasing spend kr 14.2M splits into kr 8.8M on agreements and kr 5.4M off agreements; agreements produced kr 1.24M realized savings and kr 45K bonus; off-agreement spend holds kr 840K unclaimed potential.">
+      <defs>
+        <linearGradient id="gOn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000a45" stop-opacity=".10"/><stop offset="1" stop-color="#009689" stop-opacity=".16"/></linearGradient>
+        <linearGradient id="gOff" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000a45" stop-opacity=".10"/><stop offset="1" stop-color="#f54a00" stop-opacity=".13"/></linearGradient>
+        <linearGradient id="gSav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#009689" stop-opacity=".16"/><stop offset="1" stop-color="#009689" stop-opacity=".07"/></linearGradient>
+        <linearGradient id="gPot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f54a00" stop-opacity=".13"/><stop offset="1" stop-color="#f54a00" stop-opacity=".06"/></linearGradient>
+      </defs>
+      <g class="flowlink" data-go="spending" tabindex="0" role="link" aria-label="Total purchasing spend kr 14.2M — open Spending">
+        <rect class="fl-face" x="40" y="30" width="920" height="58" rx="10" fill="var(--brand-midnight)"/>
+        <text class="fl-cap" x="64" y="55" fill="#b8c6ee">TOTAL PURCHASING SPEND</text>
+        <text class="fl-sub" x="64" y="74" fill="#8fa2d9">8 months · 2,431 invoices · verified</text>
+        <text class="fl-big" x="806" y="67" text-anchor="end" fill="#ffffff">kr 14.2M</text>
+        <text class="fl-go" x="936" y="63" text-anchor="end" fill="#b8c6ee">Spending ↗</text>
+      </g>
+      <path d="M40 88 L610 88 L610 176 L40 176 Z" fill="url(#gOn)"/>
+      <path d="M634 176 C634 141 610 123 610 88 L960 88 L960 176 Z" fill="url(#gOff)"/>
+      <g class="flowlink" data-go="agreements" tabindex="0" role="link" aria-label="On agreements kr 8.8M, 62 percent — open Agreements">
+        <rect class="fl-face" x="40" y="176" width="570" height="54" rx="10" fill="var(--credit-tint)" stroke="var(--credit-line)" stroke-opacity=".45"/>
+        <text class="fl-cap" x="64" y="200" fill="var(--credit-ink)">ON AGREEMENTS · 62%</text>
+        <text class="fl-sub" x="64" y="218" fill="var(--credit-ink)" opacity=".75">12 active agreements</text>
+        <text class="fl-mid" x="450" y="210" text-anchor="end" fill="var(--credit-ink)">kr 8.8M</text>
+        <text class="fl-go" x="586" y="206" text-anchor="end" fill="var(--credit-ink)">Agreements ↗</text>
+      </g>
+      <g class="flowlink" data-go="categories" tabindex="0" role="link" aria-label="Off agreements kr 5.4M, 38 percent — open Categories">
+        <rect class="fl-face" x="634" y="176" width="326" height="54" rx="10" fill="var(--debit-tint)" stroke="var(--debit-line)" stroke-opacity=".4"/>
+        <text class="fl-cap" x="656" y="200" fill="var(--debit-ink)">OFF AGREEMENTS · 38%</text>
+        <text class="fl-sub" x="656" y="218" fill="var(--debit-ink)" opacity=".75">paying list price</text>
+        <text class="fl-mid" x="936" y="212" text-anchor="end" fill="var(--debit-ink)">kr 5.4M</text>
+      </g>
+      <path d="M40 230 L470 230 C470 268 300 288 300 324 L40 324 Z" fill="url(#gSav)"/>
+      <path d="M496 230 L610 230 C610 268 512 288 512 324 L332 324 C332 288 496 268 496 230 Z" fill="url(#gSav)" opacity=".7"/>
+      <path d="M634 230 L960 230 L960 324 L634 324 Z" fill="url(#gPot)"/>
+      <g class="flowlink" data-go="savings" tabindex="0" role="link" aria-label="Realized savings kr 1.24M — open Savings">
+        <rect class="fl-face" x="40" y="324" width="262" height="96" rx="12" fill="var(--surface)" stroke="var(--hairline)"/>
+        <rect x="40" y="324" width="262" height="4" rx="2" fill="var(--credit-line)"/>
+        <text class="fl-cap" x="62" y="352" fill="var(--general-muted-foreground)">REALIZED SAVINGS</text>
+        <text class="fl-big" x="62" y="384" fill="var(--credit-ink)">kr 1.24M</text>
+        <text class="fl-go" x="62" y="406" fill="var(--general-primary)">Savings page ↗</text>
+      </g>
+      <g class="flowlink" data-go="savings" tabindex="0" role="link" aria-label="Customer bonus kr 45K — open Savings">
+        <rect class="fl-face" x="332" y="324" width="180" height="96" rx="12" fill="var(--surface)" stroke="var(--hairline)"/>
+        <rect x="332" y="324" width="180" height="4" rx="2" fill="var(--credit-line)" opacity=".55"/>
+        <text class="fl-cap" x="352" y="352" fill="var(--general-muted-foreground)">CUSTOMER BONUS</text>
+        <text class="fl-mid" x="352" y="382" fill="var(--credit-ink)">kr 45K</text>
+        <text class="fl-sub" x="352" y="406" fill="var(--general-muted-foreground)">32K paid · 13K pending</text>
+      </g>
+      <g class="flowlink" data-go="categories" tabindex="0" role="link" aria-label="Unclaimed potential kr 840K — open Categories">
+        <rect class="fl-face" x="634" y="324" width="326" height="96" rx="12" fill="var(--surface)" stroke="var(--debit-line)" stroke-opacity=".5" stroke-dasharray="5 4"/>
+        <text class="fl-cap" x="656" y="352" fill="var(--general-muted-foreground)">UNCLAIMED POTENTIAL</text>
+        <text class="fl-big" x="656" y="384" fill="var(--debit-ink)">kr 840K</text>
+        <text class="fl-go" x="656" y="406" fill="var(--general-primary)">Categories page ↗</text>
+      </g>
+    </svg>
+    <div class="flow-legend">
+      <span><i style="background:var(--credit-tint);border:1px solid var(--credit-line)"></i>Credit side — purchases that earn back</span>
+      <span><i style="background:var(--debit-tint);border:1px solid var(--debit-line)"></i>Debit side — spend without a return</span>
+      <span><i style="background:none;border:1px dashed var(--general-muted-foreground)"></i>Dashed = potential, not yet realized</span>
+    </div>
+  </div>
+
+  <div class="bal-line num" role="note">
+    <span>Net position, Jan – Aug: savings + bonus earned back <b class="bl-v pos">kr 1.29M</b></span>
+    <span>Still on the table if off-agreement spend moves over: <b class="bl-v">kr 840K</b></span>
+  </div>
+
+  <div class="strip-head">
+    <h2>Largest unclaimed accounts</h2>
+    <button class="linkbtn" data-go="categories">All 10 categories →</button>
+  </div>
+  <div class="strip">
+    <button class="strip-card" data-go="categories">
+      <span class="sc-top"><span class="slogo">AH</span><h3>Electrical supplies</h3><span class="chip chip-warn">under-used</span></span>
+      <span class="sc-val num">kr 160K<small> /yr potential</small></span>
+      <p>Only 44% of kr 1.4M runs through your Ahlsell agreement. The other 56% pays list price for identical items.</p>
+      <span class="sc-go">Open account ${arrow}</span>
+    </button>
+    <button class="strip-card" data-go="categories">
+      <span class="sc-top"><span class="slogo">LY</span><h3>Office supplies</h3><span class="chip chip-bad">19% rate gap</span></span>
+      <span class="sc-val num">kr 118K<small> /yr potential</small></span>
+      <p>Top opportunity. The Lyreco agreement is ready to activate — 19% below what you paid on your last 14 orders.</p>
+      <span class="sc-go">Open account ${arrow}</span>
+    </button>
+    <button class="strip-card" data-go="categories">
+      <span class="sc-top"><span class="slogo">HI</span><h3>Tools &amp; fasteners</h3><span class="chip chip-soft">64% covered</span></span>
+      <span class="sc-val num">kr 90K<small> /yr potential</small></span>
+      <p>Hilti's fleet program covers the big tools; the fastener long tail still buys ad hoc. Route it through Ahlsell.</p>
+      <span class="sc-go">Open account ${arrow}</span>
+    </button>
+  </div>`;
+}
+
+function flowFanny(){
+  return `
+  <div class="connect-banner">
+    <span class="cb-ic" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13V3M6 6.5 10 3l4 3.5"/><path d="M3 13v2.5A1.5 1.5 0 0 0 4.5 17h11a1.5 1.5 0 0 0 1.5-1.5V13"/></svg></span>
+    <div class="cb-txt"><b>This is a pro-forma statement.</b>
+      <p>Everything below is modeled from 148 electrical contractors like you. Your invoices already know where the money is going — connect them and the dashes become real figures.</p></div>
+    <button class="btn btn-primary" data-go="connect">Connect spend data</button>
+  </div>
+
+  <div class="card flow-card">
+    <div class="fc-top">
+      <h2>What your statement would look like</h2>
+      <span class="est-chip">est. — peer-modeled</span>
+    </div>
+    <svg class="flow-svg" viewBox="0 0 1000 452" role="group" aria-label="Estimated money flow: estimated spend kr 6.8M currently runs 100 percent off agreements; estimated potential kr 610K per year; realized savings locked until data is connected.">
+      <defs>
+        <linearGradient id="gOffF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000a45" stop-opacity=".08"/><stop offset="1" stop-color="#f54a00" stop-opacity=".10"/></linearGradient>
+        <linearGradient id="gPotF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f54a00" stop-opacity=".10"/><stop offset="1" stop-color="#f54a00" stop-opacity=".05"/></linearGradient>
+        <linearGradient id="gLockF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#707070" stop-opacity=".10"/><stop offset="1" stop-color="#707070" stop-opacity=".04"/></linearGradient>
+      </defs>
+      <g class="flowlink" data-go="spending" tabindex="0" role="link" aria-label="Estimated purchasing spend kr 6.8M — open Spending">
+        <rect class="fl-face" x="40" y="30" width="920" height="58" rx="10" fill="var(--brand-ice)" stroke="var(--brand-midnight)" stroke-opacity=".4" stroke-dasharray="6 4"/>
+        <text class="fl-cap" x="64" y="55" fill="var(--brand-midnight)">ESTIMATED PURCHASING SPEND · EST.</text>
+        <text class="fl-sub" x="64" y="74" fill="var(--general-muted-foreground)">modeled on 148 companies like yours</text>
+        <text class="fl-big" x="806" y="67" text-anchor="end" fill="var(--brand-midnight)">kr 6.8M</text>
+        <text class="fl-go" x="936" y="63" text-anchor="end" fill="var(--general-primary)">Spending ↗</text>
+      </g>
+      <path d="M40 88 L960 88 L960 176 L40 176 Z" fill="url(#gOffF)"/>
+      <g class="flowlink" data-go="agreements" tabindex="0" role="link" aria-label="Off agreements 100 percent — open Agreements">
+        <rect class="fl-face" x="40" y="176" width="920" height="54" rx="10" fill="var(--debit-tint)" stroke="var(--debit-line)" stroke-opacity=".35" stroke-dasharray="6 4"/>
+        <text class="fl-cap" x="64" y="200" fill="var(--debit-ink)">OFF AGREEMENTS · 100%</text>
+        <text class="fl-sub" x="64" y="218" fill="var(--debit-ink)" opacity=".75">nothing routed through agreements yet — peers like you route 57%</text>
+        <text class="fl-mid" x="936" y="212" text-anchor="end" fill="var(--debit-ink)">kr 6.8M est.</text>
+      </g>
+      <path d="M40 230 L470 230 C470 268 470 288 470 324 L40 324 Z" fill="url(#gPotF)"/>
+      <path d="M530 230 L960 230 L960 324 L530 324 Z" fill="url(#gLockF)"/>
+      <g class="flowlink" data-go="categories" tabindex="0" role="link" aria-label="Estimated potential kr 610K per year — open Categories">
+        <rect class="fl-face" x="40" y="324" width="430" height="96" rx="12" fill="var(--surface)" stroke="var(--debit-line)" stroke-opacity=".5" stroke-dasharray="5 4"/>
+        <text class="fl-cap" x="62" y="352" fill="var(--general-muted-foreground)">ESTIMATED POTENTIAL · EST.</text>
+        <text class="fl-big" x="62" y="384" fill="var(--debit-ink)">kr 610K /yr</text>
+        <text class="fl-go" x="62" y="406" fill="var(--general-primary)">Categories page ↗</text>
+      </g>
+      <g class="flowlink" data-go="connect" tabindex="0" role="link" aria-label="Realized savings locked — connect data to unlock">
+        <rect class="fl-face" x="530" y="324" width="430" height="96" rx="12" fill="var(--general-muted)" stroke="var(--hairline)"/>
+        <text class="fl-cap" x="552" y="352" fill="var(--general-muted-foreground)">REALIZED SAVINGS · LOCKED</text>
+        <text class="fl-big" x="552" y="384" fill="var(--general-muted-foreground)">kr —</text>
+        <text class="fl-go" x="552" y="406" fill="var(--general-primary)">Connect data to unlock ↗</text>
+      </g>
+    </svg>
+    <div class="flow-legend">
+      <span><i style="background:none;border:1px dashed var(--general-muted-foreground)"></i>Dashed = estimated from your peer group</span>
+      <span><i style="background:var(--general-muted);border:1px solid var(--hairline)"></i>Grey = locked until spend data is connected</span>
+    </div>
+  </div>
+
+  <div class="bal-line num" role="note">
+    <span>Companies like yours (148 peers) realize on average <b class="bl-v pos">kr 480–740K /yr</b></span>
+    <span>Your estimated share: <b class="bl-v">kr 610K est.</b></span>
+  </div>
+
+  <div class="strip-head">
+    <h2>Where peers like you start</h2>
+    <button class="linkbtn" data-go="categories">All estimated categories →</button>
+  </div>
+  <div class="strip">
+    <button class="strip-card est" data-go="categories">
+      <span class="sc-top"><span class="slogo">SO</span><h3>Electrical supplies</h3><span class="est-chip">est.</span></span>
+      <span class="sc-val num">kr 345K<small> /yr est.</small></span>
+      <p>Your biggest account by far — peers route it through Solar or Ahlsell at 11–14% below list.</p>
+      <span class="sc-go">Open account ${arrow}</span>
+    </button>
+    <button class="strip-card est" data-go="categories">
+      <span class="sc-top"><span class="slogo">LY</span><h3>Office supplies</h3><span class="chip chip-new">easy first win</span></span>
+      <span class="sc-val num">kr 59K<small> /yr est.</small></span>
+      <p>The simplest place to start: one Lyreco agreement, est. 19% below what small contractors typically pay.</p>
+      <span class="sc-go">Open account ${arrow}</span>
+    </button>
+    <button class="strip-card est" data-go="categories">
+      <span class="sc-top"><span class="slogo">HI</span><h3>Tools</h3><span class="est-chip">est.</span></span>
+      <span class="sc-val num">kr 100K<small> /yr est.</small></span>
+      <p>Hilti's fleet program saves peers around 12% — and turns tool purchases into a predictable monthly cost.</p>
+      <span class="sc-go">Open account ${arrow}</span>
+    </button>
+  </div>`;
+}
+
+function renderOverview(){
+  const head=$('#page-overview .page-head div');
+  if(persona==='bob'){
+    head.innerHTML=`<div class="eyebrow neutral"><i></i>Money statement · Jan – Aug 2026</div>
+      <h1 id="ov-h">One statement. Every krone accounted for.</h1>
+      <p class="lead">Spend flows in at the top; savings and unclaimed potential come out at the bottom. Click any band to open its page.</p>`;
+    $('#ov-body').innerHTML=flowBob();
+  }else{
+    head.innerHTML=`<div class="eyebrow neutral"><i></i>Pro-forma statement · modeled on 148 peers</div>
+      <h1 id="ov-h">Your statement, before the first krone is tracked.</h1>
+      <p class="lead">This is what the ledger would look like for a company like yours. Connect your spend data and it fills in with real figures.</p>`;
+    $('#ov-body').innerHTML=flowFanny();
+  }
+}
+
+/* =========================================================================
+   Charts (inline SVG)
+   ========================================================================= */
+function stackChart(opts){
+  // opts: {series:[{vals,fill,stroke,dash}], labels, max, h, fmtTick, note}
+  const W=920,H=248,padL=52,padR=10,padT=14,padB=30;
+  const plotW=W-padL-padR,plotH=H-padT-padB;
+  const n=opts.labels.length,slot=plotW/n,bw=Math.min(56,slot*.56);
+  const y=v=>padT+plotH*(1-v/opts.max);
+  let s='';
+  const ticks=opts.ticks;
+  ticks.forEach(t=>{
+    s+=`<line class="gline" x1="${padL}" y1="${y(t)}" x2="${W-padR}" y2="${y(t)}"/>`;
+    s+=`<text x="${padL-8}" y="${y(t)+4}" text-anchor="end">${t>=1000?(t/1000)+'M':t+'K'}</text>`;
+  });
+  for(let i=0;i<n;i++){
+    const x=padL+slot*i+(slot-bw)/2;
+    let acc=0;
+    opts.series.forEach(sr=>{
+      const v=sr.vals[i];if(!v)return;
+      const y1=y(acc+v),hh=y(acc)-y(acc+v);
+      s+=`<rect x="${x}" y="${y1}" width="${bw}" height="${Math.max(hh,1.5)}" rx="3" fill="${sr.fill}"${sr.stroke?` stroke="${sr.stroke}" stroke-opacity=".55"${sr.dash?' stroke-dasharray="4 3"':''}`:''}><title>${opts.labels[i]}: ${fmt(v)}${sr.name?' '+sr.name:''}</title></rect>`;
+      acc+=v;
+    });
+    if(opts.showTotals){
+      s+=`<text class="bval" x="${x+bw/2}" y="${y(acc)-6}" text-anchor="middle" fill="var(--general-muted-foreground)">${Math.round(acc)}</text>`;
+    }
+    s+=`<text x="${padL+slot*i+slot/2}" y="${H-8}" text-anchor="middle">${opts.labels[i]}</text>`;
+  }
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.aria}">${s}</svg>`;
+}
+
+/* =========================================================================
+   Sortable ledger tables — Spending & Savings mirror each other
+   ========================================================================= */
+function sortBtn(label,key,st,pageKind,alignR){
+  const active=st.key===key;
+  const arr=active?(st.dir===-1?'▼':'▲'):'▼';
+  return `<th class="sortable${alignR?' r':''}" scope="col"><button data-sort="${key}" data-kind="${pageKind}" data-active="${active}" aria-label="Sort by ${label}">${label} <span class="arr">${arr}</span></button></th>`;
+}
+function sortedCats(st){
+  const arr=[...BOB.cats];
+  arr.sort((a,b)=>{
+    let va,vb;
+    if(st.key==='yield'){va=a.spend?a.real/a.spend:0;vb=b.spend?b.real/b.spend:0;}
+    else{va=a[st.key]??0;vb=b[st.key]??0;}
+    return (va-vb)*(-st.dir)*-1;
+  });
+  return arr;
+}
+
+/* ---------------- Spending page ---------------- */
+function renderSpending(){
+  const el=$('#page-spending');
+  if(persona==='fanny'){el.innerHTML=spendingFanny();return;}
+  const m=BOB.monthly;
+  const off=m.total.map((t,i)=>t-m.on[i]);
+  const chart=stackChart({
+    series:[{vals:m.on,fill:'var(--credit-tint)',stroke:'var(--credit-line)',name:'on agreements'},
+            {vals:off,fill:'var(--debit-tint)',stroke:'var(--debit-line)',name:'off agreements'}],
+    labels:MONTHS,max:1400,ticks:[0,350,700,1050,1400],showTotals:true,
+    aria:'Monthly purchasing spend January to August, split between on-agreement and off-agreement.'
+  });
+  const cats=sortedCats(spendSort);
+  const rows=cats.map(c=>{
+    const covClass=c.cov===0?'zero':(c.cov<40?'low':'');
+    return `<tr>
+      <td><span class="cell-main">${slogo(c.sups[0])}<span><b>${esc(c.name)}</b><span class="sub">${c.sups.join(', ')}</span></span></span></td>
+      <td class="r mono debit-v">${fmt(c.spend)}</td>
+      <td><span class="covbar num"><span class="track"><i class="${covClass}" style="width:${c.cov}%"></i></span><span class="mono dim" style="font-size:12px">${c.cov}%</span></span></td>
+      <td class="r mono ${c.real?'credit-v':'dim'}">${c.real?'+ '+fmt(c.real):'kr 0'}</td>
+      <td class="r mono dim">${fmtPct(c.spend?100*c.real/c.spend:0)}</td>
+    </tr>`;
+  }).join('');
+  el.innerHTML=`
+  <div class="page-head">
+    <div>
+      <div class="eyebrow debit"><i></i>Debit side · what goes out</div>
+      <h1>Spending</h1>
+      <p class="lead">Every krone of spend has a return column. The mirror of this page is <button class="linkbtn inline" data-go="savings">Savings</button> — same rows, opposite emphasis.</p>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi debit"><div class="k-cap">Total spend · Jan – Aug</div><div class="k-val num">kr 14.2M</div><div class="k-sub">2,431 invoices across 96 suppliers</div></div>
+    <div class="kpi credit"><div class="k-cap">Through agreements</div><div class="k-val num">kr 8.8M <small>62%</small></div><div class="k-sub">this spend produced <b>kr 1.24M</b> in savings</div></div>
+    <div class="kpi neutral"><div class="k-cap">Outside agreements</div><div class="k-val num">kr 5.4M <small>38%</small></div><div class="k-sub">holding <b>kr 840K</b> of unclaimed potential</div></div>
+  </div>
+  <div class="card chart-card">
+    <div class="cc-head"><h2>Monthly spend, split by route</h2>
+      <div class="legend"><span><i style="background:var(--credit-tint);border:1px solid var(--credit-line)"></i>On agreements</span><span><i style="background:var(--debit-tint);border:1px solid var(--debit-line)"></i>Off agreements</span></div>
+    </div>
+    ${chart}
+  </div>
+  <div class="card table-card">
+    <div class="tc-head"><div><h2>Spend by category</h2><p class="tc-sub">The savings shadow shows what each account earned back. Click a column to sort.</p></div>
+      <button class="linkbtn" data-go="savings">See the credit side →</button></div>
+    <div class="tbl-wrap"><table class="ledger num">
+      <thead><tr>
+        <th scope="col">Account</th>
+        ${sortBtn('Spend','spend',spendSort,'spend',true)}
+        ${sortBtn('On agreement','cov',spendSort,'spend',false)}
+        ${sortBtn('Savings shadow','real',spendSort,'spend',true)}
+        ${sortBtn('Yield','yield',spendSort,'spend',true)}
+      </tr></thead>
+      <tbody>${rows}
+        <tr class="note-row"><td>${esc(BOB.tail.label)}</td><td class="r mono">${fmt(BOB.tail.spend)}</td><td>—</td><td class="r mono">—</td><td class="r mono">—</td></tr>
+      </tbody>
+      <tfoot><tr><td>Total</td><td class="r mono debit-v">kr 14.2M</td><td class="mono dim">62%</td><td class="r mono credit-v">+ kr 1.05M</td><td class="r mono dim">7.4%</td></tr></tfoot>
+    </table></div>
+  </div>
+  <p class="muted" style="font-size:12px">Savings shadow shows invoice-level price savings per category; YTD realized (kr 1.24M) additionally includes kr 193K of company-level volume rebates.</p>`;
+}
+
+function spendingFanny(){
+  const chart=stackChart({
+    series:[{vals:FANNY.monthly.est,fill:'var(--brand-ice)',stroke:'var(--brand-cornflower)',dash:true,name:'estimated'}],
+    labels:MONTHS,max:700,ticks:[0,175,350,525,700],showTotals:false,
+    aria:'Estimated monthly spend January to August based on your peer group.'
+  });
+  const rows=FANNY.cats.map(c=>`<tr>
+      <td><span class="cell-main">${slogo(c.sups[0])}<span><b>${esc(c.name)}</b><span class="sub">${c.sups.join(', ')}${c.note?' · '+c.note:''}</span></span></span></td>
+      <td class="r mono">${fmt(c.spend)} <span class="dim" style="font-size:11px">est.</span></td>
+      <td><span class="covbar num"><span class="track"><i class="zero"></i></span><span class="mono dim" style="font-size:12px">0%</span></span></td>
+      <td class="r"><span class="locked">${lockIc} locked</span></td>
+      <td class="r mono dim">—</td>
+    </tr>`).join('');
+  return `
+  <div class="page-head">
+    <div>
+      <div class="eyebrow debit"><i></i>Debit side · estimated</div>
+      <h1>Spending — pro forma</h1>
+      <p class="lead">Modeled from 148 electrical contractors of your size. The return column stays locked until your own invoices are connected.</p>
+    </div>
+  </div>
+  <div class="connect-banner">
+    <span class="cb-ic" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="12" rx="2"/><path d="M2 8h16M6 12.5h3"/></svg></span>
+    <div class="cb-txt"><b>See your real debit side.</b><p>Connect e-conomic or upload a spend report — the estimates below are replaced line by line.</p></div>
+    <button class="btn btn-primary" data-go="connect">Connect spend data</button>
+  </div>
+  <div class="kpis">
+    <div class="kpi debit est"><div class="k-cap">Estimated annual spend</div><div class="k-val num">kr 6.8M <small>est.</small></div><div class="k-sub">peer-based estimate, 148 companies</div></div>
+    <div class="kpi neutral est"><div class="k-cap">Through agreements</div><div class="k-val num">0%</div><div class="k-sub">peers like you route <b>57%</b> through agreements</div></div>
+    <div class="kpi est"><div class="k-cap">Return column</div><div class="k-val num muted">kr —</div><div class="k-sub"><span class="locked">${lockIc} unlocks with connected data</span></div></div>
+  </div>
+  <div class="card chart-card" style="border-style:dashed">
+    <div class="cc-head"><h2>Estimated monthly spend</h2><span class="est-chip">est. — peer profile</span></div>
+    ${chart}
+  </div>
+  <div class="card table-card" style="border-style:dashed">
+    <div class="tc-head"><div><h2>Estimated spend by category</h2><p class="tc-sub">What the ledger of a company like yours usually looks like.</p></div>
+      <button class="linkbtn" data-go="savings">See the credit side →</button></div>
+    <div class="tbl-wrap"><table class="ledger est-table num">
+      <thead><tr><th scope="col">Account</th><th class="r" scope="col">Est. spend</th><th scope="col">On agreement</th><th class="r" scope="col">Savings shadow</th><th class="r" scope="col">Yield</th></tr></thead>
+      <tbody>${rows}
+        <tr class="note-row"><td>${esc(FANNY.tail.label)}</td><td class="r mono">${fmt(FANNY.tail.spend)} est.</td><td>—</td><td class="r">—</td><td class="r">—</td></tr>
+      </tbody>
+      <tfoot><tr><td>Total (est.)</td><td class="r mono">kr 6.8M</td><td class="mono dim">0%</td><td class="r"><span class="locked">${lockIc} locked</span></td><td class="r mono dim">—</td></tr></tfoot>
+    </table></div>
+  </div>`;
+}
+
+/* ---------------- Savings page (mirror of Spending) ---------------- */
+function renderSavings(){
+  const el=$('#page-savings');
+  if(persona==='fanny'){el.innerHTML=savingsFanny();return;}
+  const m=BOB.monthly;
+  const chart=stackChart({
+    series:[{vals:m.saved,fill:'var(--credit-tint)',stroke:'var(--credit-line)',name:'realized'}],
+    labels:MONTHS,max:90,ticks:[0,30,60,90],showTotals:true,
+    aria:'Monthly realized savings January to August.'
+  });
+  const cats=sortedCats(saveSort).filter(c=>true);
+  const rows=cats.map(c=>{
+    const open=openProv.has(c.id);
+    const provRows=c.prov.length?c.prov.map(p=>`
+      <div class="prov-line">
+        <span class="pl-sup">${slogo(p.sup)}${esc(p.sup)}</span>
+        <span class="pl-terms">${esc(p.terms)}</span>
+        <span class="pl-math">${fmt(p.aspend)} routed →</span>
+        <span class="pl-val">+ ${fmt(p.val)}</span>
+      </div>`).join('')
+      :`<div class="prov-line"><span class="pl-terms">No agreement in this category yet — Norsk Gjenvinning is a new match worth est. kr 86K/yr.</span></div>`;
+    return `<tr class="rowlink${open?' expanded':''}" data-prov="${c.id}" aria-expanded="${open}">
+      <td><span class="cell-main"><button class="exp-btn" aria-label="${open?'Hide':'Show'} provenance for ${esc(c.name)}" aria-expanded="${open}">${chev}</button><span><b>${esc(c.name)}</b><span class="sub">${c.prov.length||'no'} source agreement${c.prov.length===1?'':'s'}</span></span></span></td>
+      <td class="r mono ${c.real?'credit-v':'dim'}">${c.real?'+ '+fmt(c.real):'kr 0'}</td>
+      <td class="r mono dim">${fmt(c.spend)}</td>
+      <td><span class="covbar num"><span class="track"><i class="${c.cov===0?'zero':(c.cov<40?'low':'')}" style="width:${c.cov}%"></i></span><span class="mono dim" style="font-size:12px">${c.cov}%</span></span></td>
+      <td class="r mono dim">${fmtPct(c.spend?100*c.real/c.spend:0)}</td>
+    </tr>
+    ${open?`<tr class="prov"><td colspan="5"><div class="prov-box">
+      <div class="pv-cap">Provenance — where this saving came from</div>${provRows}
+      <p class="prov-foot">Each line traces to the agreement and the spend that produced it. <button class="linkbtn" data-go="agreements">Open agreement registry →</button></p>
+    </div></td></tr>`:''}`;
+  }).join('');
+  el.innerHTML=`
+  <div class="page-head">
+    <div>
+      <div class="eyebrow credit"><i></i>Credit side · what comes back</div>
+      <h1>Savings</h1>
+      <p class="lead">Money saved only means something against money spent. Same rows as <button class="linkbtn inline" data-go="spending">Spending</button>, emphasis inverted — every saving traces back to its source.</p>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi credit"><div class="k-cap">Realized savings · YTD</div><div class="k-val num" style="color:var(--credit-ink)">kr 1.24M</div><div class="k-sub">verified against invoice prices, 8 months</div></div>
+    <div class="kpi credit"><div class="k-cap">Customer bonus accrued</div><div class="k-val num" style="color:var(--credit-ink)">kr 45K</div><div class="k-sub"><b>kr 32K</b> paid out · <b>kr 13K</b> pending (Q3 settlement)</div></div>
+    <div class="kpi debit"><div class="k-cap">Left unclaimed</div><div class="k-val num" style="color:var(--debit-ink)">kr 840K</div><div class="k-sub">sits in off-agreement spend — <button class="linkbtn" data-go="categories" style="min-height:0;padding:0">see where</button></div></div>
+  </div>
+  <div class="card chart-card">
+    <div class="cc-head"><h2>Realized savings per month</h2>
+      <div class="legend"><span><i style="background:var(--credit-tint);border:1px solid var(--credit-line)"></i>Invoice-level price savings (kr K)</span></div>
+    </div>
+    ${chart}
+    <p class="muted" style="font-size:12px;margin-top:var(--s3)">≈ 8–11% of agreement spend each month. YTD realized additionally includes kr 193K of company-level volume rebates settled annually.</p>
+  </div>
+  <div class="card table-card">
+    <div class="tc-head"><div><h2>Savings by category</h2><p class="tc-sub">Click a row to trace the saving back to its agreement and spend.</p></div>
+      <button class="linkbtn" data-go="spending">See the debit side →</button></div>
+    <div class="tbl-wrap"><table class="ledger num">
+      <thead><tr>
+        <th scope="col">Account</th>
+        ${sortBtn('Realized','real',saveSort,'save',true)}
+        ${sortBtn('From spend','spend',saveSort,'save',true)}
+        ${sortBtn('On agreement','cov',saveSort,'save',false)}
+        ${sortBtn('Yield','yield',saveSort,'save',true)}
+      </tr></thead>
+      <tbody>${rows}
+        <tr class="note-row"><td>${esc(BOB.reconSavings.label)}</td><td class="r mono credit-v">+ ${fmt(BOB.reconSavings.val)}</td><td class="r mono">—</td><td>—</td><td class="r">—</td></tr>
+      </tbody>
+      <tfoot><tr><td>Total realized</td><td class="r mono credit-v">+ kr 1.24M</td><td class="r mono dim">kr 14.2M</td><td class="mono dim">62%</td><td class="r mono dim">8.7%</td></tr></tfoot>
+    </table></div>
+  </div>`;
+}
+
+function savingsFanny(){
+  const rows=FANNY.cats.filter(c=>c.pot).map(c=>`<tr>
+      <td><span class="cell-main">${slogo(c.sups[0])}<span><b>${esc(c.name)}</b><span class="sub">${c.sups.join(', ')} — est. ${c.rate} below current prices</span></span></span></td>
+      <td class="r"><span class="locked">${lockIc} kr 0</span></td>
+      <td class="r mono">${fmt(c.spend)} <span class="dim" style="font-size:11px">est.</span></td>
+      <td class="r mono" style="color:var(--debit-ink)">${fmt(c.pot)} /yr</td>
+    </tr>`).join('');
+  return `
+  <div class="page-head">
+    <div>
+      <div class="eyebrow credit"><i></i>Credit side · not started yet</div>
+      <h1>Savings — pro forma</h1>
+      <p class="lead">Nothing realized yet — that's expected, no data is connected. Below is the credit side peers like you typically build within a year.</p>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi est"><div class="k-cap">Realized savings</div><div class="k-val num muted">kr 0</div><div class="k-sub"><span class="locked">${lockIc} unlocks with connected data</span></div></div>
+    <div class="kpi est"><div class="k-cap">Customer bonus</div><div class="k-val num muted">kr 0</div><div class="k-sub">accrues automatically on bonus-eligible agreements</div></div>
+    <div class="kpi debit est"><div class="k-cap">Estimated potential</div><div class="k-val num" style="color:var(--debit-ink)">kr 610K <small>/yr est.</small></div><div class="k-sub">peer average: companies like yours save <b>kr 480–740K</b></div></div>
+  </div>
+  <div class="connect-banner">
+    <span class="cb-ic" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15 8 9.5l3 3L17 5.5"/><path d="M12.5 5.5H17V10"/></svg></span>
+    <div class="cb-txt"><b>Your credit side is empty because nothing is measured yet.</b><p>Connect your spend data and every saving will appear here with full provenance — the agreement, the invoice, the krone.</p></div>
+    <button class="btn btn-primary" data-go="connect">Connect spend data</button>
+  </div>
+  <div class="card table-card" style="border-style:dashed">
+    <div class="tc-head"><div><h2>Estimated savings by category</h2><p class="tc-sub">Where the kr 610K would come from, based on your peer group.</p></div>
+      <button class="linkbtn" data-go="spending">See the debit side →</button></div>
+    <div class="tbl-wrap"><table class="ledger est-table num">
+      <thead><tr><th scope="col">Account</th><th class="r" scope="col">Realized</th><th class="r" scope="col">From est. spend</th><th class="r" scope="col">Est. potential</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td>Total (est.)</td><td class="r"><span class="locked">${lockIc} kr 0</span></td><td class="r mono dim">kr 5.05M</td><td class="r mono" style="color:var(--debit-ink)">kr 610K /yr</td></tr></tfoot>
+    </table></div>
+  </div>`;
+}
+
+/* ---------------- Categories page ---------------- */
+function renderCategories(){
+  const el=$('#page-categories');
+  if(persona==='fanny'){el.innerHTML=categoriesFanny();return;}
+  const key=catSort.key;
+  const cats=[...BOB.cats].sort((a,b)=>{
+    const y=c=>c.spend?c.real/c.spend:0;
+    if(key==='yield')return y(b)-y(a);
+    return (b[key]??0)-(a[key]??0);
+  });
+  const cards=cats.map(c=>{
+    const yv=c.spend?100*c.real/c.spend:0;
+    return `<article class="acct">
+      <div class="a-top"><div><h3>${esc(c.name)}</h3><span class="a-no num">Acct ${c.no}</span></div>${STATE_CHIP[c.state]||''}</div>
+      <div class="a-yield"><b class="num ${yv?'':'zero'}">${fmtPct(yv)}</b><span>yield — savings ÷ spend</span></div>
+      <dl>
+        <div class="drow"><dt>Spend · Jan – Aug</dt><dd class="debit-v num">${fmt(c.spend)}</dd></div>
+        <div class="drow"><dt>Coverage</dt><dd class="num"><span class="covbar"><span class="track"><i class="${c.cov===0?'zero':(c.cov<40?'low':'')}" style="width:${c.cov}%"></i></span>${c.cov}%</span></dd></div>
+        <div class="drow"><dt>Realized savings</dt><dd class="credit-v num">${c.real?'+ '+fmt(c.real):'kr 0'}</dd></div>
+        <div class="drow"><dt>Unclaimed potential</dt><dd class="${c.pot?'debit-v':'dim'} num">${c.pot?fmt(c.pot)+' /yr':'—'}</dd></div>
+      </dl>
+      <div class="a-sups">${c.sups.map(s=>slogo(s)).join('')}<span>${c.sups.join(' · ')}</span></div>
+      <div class="a-cta"><button class="linkbtn" data-go="agreements">View agreements ${'→'}</button></div>
+    </article>`;
+  }).join('');
+  el.innerHTML=`
+  <div class="page-head">
+    <div>
+      <div class="eyebrow neutral"><i></i>The catalogue · 10 ledger accounts</div>
+      <h1>Categories</h1>
+      <p class="lead">Each category is an account with a spend, a coverage, a yield and a potential. Sorted by <b>yield</b> — the biggest budget is rarely the best return.</p>
+    </div>
+  </div>
+  <div class="sortrow">
+    <label for="catSortSel">Sort accounts by</label>
+    <select id="catSortSel" aria-label="Sort categories">
+      <option value="yield"${key==='yield'?' selected':''}>Yield (savings ÷ spend)</option>
+      <option value="spend"${key==='spend'?' selected':''}>Spend</option>
+      <option value="pot"${key==='pot'?' selected':''}>Unclaimed potential</option>
+      <option value="cov"${key==='cov'?' selected':''}>Coverage</option>
+    </select>
+    <span class="hint">${key==='yield'?'Insurance yields 14.3% on kr 460K — while kr 4.6M of building materials yields 8.3%.':key==='spend'?'Sorting by spend hides the best returns — try yield.':''}</span>
+  </div>
+  <div class="cat-grid">${cards}</div>`;
+}
+
+function categoriesFanny(){
+  const cards=FANNY.cats.map(c=>`<article class="acct est">
+      <div class="a-top"><div><h3>${esc(c.name)}</h3><span class="a-no num">Acct ${c.no} · est.</span></div>${c.note?'<span class="chip chip-new">easy first win</span>':'<span class="est-chip">est.</span>'}</div>
+      <div class="a-yield"><b class="num" style="color:var(--est-ink)">${c.rate??'—'}</b><span>est. yield if routed via agreement</span></div>
+      <dl>
+        <div class="drow"><dt>Est. spend /yr</dt><dd class="num" style="color:var(--est-ink)">${fmt(c.spend)}</dd></div>
+        <div class="drow"><dt>Coverage today</dt><dd class="num dim">0%</dd></div>
+        <div class="drow"><dt>Realized savings</dt><dd><span class="locked">${lockIc} locked</span></dd></div>
+        <div class="drow"><dt>Est. potential</dt><dd class="num ${c.pot?'debit-v':'dim'}">${c.pot?fmt(c.pot)+' /yr':'not modeled'}</dd></div>
+      </dl>
+      <div class="a-sups">${c.sups.map(s=>slogo(s)).join('')}<span>${c.sups.join(' · ')}</span></div>
+      <div class="a-cta"><button class="linkbtn" data-go="agreements">See matching agreements →</button></div>
+    </article>`).join('');
+  return `
+  <div class="page-head">
+    <div>
+      <div class="eyebrow neutral"><i></i>The catalogue · estimated accounts</div>
+      <h1>Categories — pro forma</h1>
+      <p class="lead">Modeled from 148 electrical contractors like you. Estimated yields show what each account could return once routed through an agreement.</p>
+    </div>
+  </div>
+  <div class="connect-banner">
+    <span class="cb-ic" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="2.5" width="6" height="6" rx="1.5"/><rect x="11.5" y="2.5" width="6" height="6" rx="1.5"/><rect x="2.5" y="11.5" width="6" height="6" rx="1.5"/><rect x="11.5" y="11.5" width="6" height="6" rx="1.5"/></svg></span>
+    <div class="cb-txt"><b>These accounts are placeholders.</b><p>Connect spend data and each one fills with your real spend, coverage and yield.</p></div>
+    <button class="btn btn-primary" data-go="connect">Connect spend data</button>
+  </div>
+  <div class="cat-grid">${cards}</div>`;
+}
+
+/* ---------------- Agreements page ---------------- */
+function renderAgreements(){
+  const el=$('#page-agreements');
+  const p=persona==='bob'?BOB:FANNY;
+  const rows=p.agreements.map(a=>{
+    const proj=a.real==null;
+    return `<tr>
+      <td><span class="cell-main">${slogo(a.sup)}<span><b>${esc(a.sup)}</b>${a.note?`<span class="sub">${esc(a.note)}</span>`:''}</span></span></td>
+      <td class="dim">${esc(a.cat)}</td>
+      <td style="font-size:13px">${esc(a.terms)}</td>
+      <td>${STATE_CHIP[a.status]||''}</td>
+      ${persona==='bob'?`<td class="r mono ${a.real?'credit-v':'dim'}">${a.real!=null?'+ '+fmt(a.real):'—'}</td>`:''}
+      <td class="r mono ${proj?'dim':''}">${typeof a.yield==='number'?fmtPct(a.yield):a.yield}${proj?' <span style="font-size:10.5px">proj.</span>':''}</td>
+    </tr>`;
+  }).join('');
+  const bobExtra=persona==='bob'?`
+  <div class="kpis">
+    <div class="kpi credit"><div class="k-cap">Active agreements</div><div class="k-val num">9</div><div class="k-sub">covering <b>kr 8.8M</b> of spend (62%)</div></div>
+    <div class="kpi neutral"><div class="k-cap">Recommended / new matches</div><div class="k-val num">4</div><div class="k-sub">worth <b>≈ kr 275K/yr</b> projected — Lyreco first</div></div>
+    <div class="kpi debit"><div class="k-cap">Needs attention</div><div class="k-val num">2</div><div class="k-sub"><b>Telia expires in 60 days</b> · Ahlsell under-used</div></div>
+  </div>`:`
+  <div class="connect-banner">
+    <span class="cb-ic" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3h9A1.5 1.5 0 0 1 16 4.5v11A1.5 1.5 0 0 1 14.5 17h-9A1.5 1.5 0 0 1 4 15.5v-11A1.5 1.5 0 0 1 5.5 3Z"/><path d="M7 7h6M7 10h6M7 13h3.5"/></svg></span>
+    <div class="cb-txt"><b>Six agreements are ready for a company like yours.</b><p>All figures are peer estimates. Connect spend data to see exactly what each one would have saved you last quarter.</p></div>
+    <button class="btn btn-primary" data-go="connect">Connect spend data</button>
+  </div>`;
+  el.innerHTML=`
+  <div class="page-head">
+    <div>
+      <div class="eyebrow neutral"><i></i>The instruments · ${persona==='bob'?'12 registered':'6 available'}</div>
+      <h1>Agreements${persona==='fanny'?' — available to you':''}</h1>
+      <p class="lead">${persona==='bob'
+        ?'Every agreement is an instrument with terms and a yield. Recommended and new matches show projected yield until first purchase.'
+        :'The registry a company like yours typically starts with. Projected yields are peer estimates.'}</p>
+    </div>
+  </div>
+  ${bobExtra}
+  <div class="card table-card"${persona==='fanny'?' style="border-style:dashed"':''}>
+    <div class="tc-head"><div><h2>Agreement registry</h2><p class="tc-sub">${persona==='bob'?'Yield = savings as a share of purchases routed through the agreement.':'Estimated terms from the Advantage catalogue for your peer group.'}</p></div>
+      <button class="linkbtn" data-go="categories">Back to the catalogue →</button></div>
+    <div class="tbl-wrap"><table class="ledger num${persona==='fanny'?' est-table':''}">
+      <thead><tr><th scope="col">Supplier</th><th scope="col">Category</th><th scope="col">Terms</th><th scope="col">Status</th>${persona==='bob'?'<th class="r" scope="col">Realized YTD</th>':''}<th class="r" scope="col">Yield</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </div>
+  ${persona==='bob'?`<p class="muted" style="font-size:12px">Bonus-eligible: Stark and Q8 accrue a 1% volume bonus — kr 45K accumulated this year (kr 32K paid, kr 13K pending).</p>`:''}`;
+}
+
+/* =========================================================================
+   Render / navigation
+   ========================================================================= */
+const RENDER={overview:renderOverview,categories:renderCategories,agreements:renderAgreements,
+  savings:renderSavings,spending:renderSpending};
+const TITLES={overview:'Overview',categories:'Categories',agreements:'Agreements',savings:'Savings',spending:'Spending'};
+
+function render(){
+  const page=currentPage();
+  PAGES.forEach(p=>{
+    const el=$('#page-'+p);
+    el.classList.toggle('on',p===page);
+  });
+  $$('#mainNav .rail-item').forEach(a=>{
+    if(a.dataset.nav===page)a.setAttribute('aria-current','page');
+    else a.removeAttribute('aria-current');
+  });
+  $('#crumb').innerHTML=`Advantage / <b>${TITLES[page]}</b>${persona==='fanny'?' <span class="est-chip" style="margin-left:8px">pro forma</span>':''}`;
+  RENDER[page]();
+  window.scrollTo({top:0,behavior:'auto'});
+}
+
+/* delegated clicks: data-go, sorting, provenance rows */
+document.addEventListener('click',e=>{
+  const goEl=e.target.closest('[data-go]');
+  if(goEl){go(goEl.dataset.go);return;}
+  const sortEl=e.target.closest('button[data-sort]');
+  if(sortEl){
+    const key=sortEl.dataset.sort,kind=sortEl.dataset.kind;
+    const st=kind==='spend'?spendSort:saveSort;
+    if(st.key===key)st.dir*=-1;else{st.key=key;st.dir=-1;}
+    (kind==='spend'?renderSpending:renderSavings)();
+    return;
+  }
+  const provRow=e.target.closest('tr[data-prov]');
+  if(provRow){
+    const id=provRow.dataset.prov;
+    if(openProv.has(id))openProv.delete(id);else openProv.add(id);
+    renderSavings();
+    return;
+  }
+});
+/* keyboard for SVG flow links + provenance rows */
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'&&e.key!==' ')return;
+  const t=e.target;
+  if(t.matches&&t.matches('.flowlink')){e.preventDefault();go(t.dataset.go);}
+});
+
+/* categories sort select (delegated change) */
+document.addEventListener('change',e=>{
+  if(e.target.id==='catSortSel'){catSort.key=e.target.value;renderCategories();}
+});
+
+/* =========================================================================
+   Persona switch
+   ========================================================================= */
+const whoBtn=$('#whoBtn'),whoMenu=$('#whoMenu');
+whoBtn.addEventListener('click',()=>{
+  const on=whoMenu.classList.toggle('on');
+  whoBtn.setAttribute('aria-expanded',on);
+});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.who-wrap')&&whoMenu.classList.contains('on')){
+    whoMenu.classList.remove('on');whoBtn.setAttribute('aria-expanded','false');
+  }
+},true);
+$$('#whoMenu .wm-item').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    setPersona(btn.dataset.persona);
+    whoMenu.classList.remove('on');whoBtn.setAttribute('aria-expanded','false');
+  });
+});
+function setPersona(id){
+  if(persona===id)return;
+  persona=id;
+  const p=id==='bob'?BOB:FANNY;
+  $('#whoAv').textContent=p.init;
+  $('#whoName').textContent=p.name;
+  $('#whoCo').textContent=p.co;
+  $$('#whoMenu .wm-item').forEach(b=>b.setAttribute('aria-checked',b.dataset.persona===id));
+  $('#assistSub').textContent=(id==='bob'?'Reading your ledger · ':'Working from peer estimates · ')+p.co;
+  openProv.clear();
+  seedAssistant();
+  render();
+}
+
+/* =========================================================================
+   Assistant
+   ========================================================================= */
+const QA={
+  bob:[
+    {q:'Where am I leaving money on the table?',
+     a:'Two accounts carry most of it. <b>Office supplies</b>: the Lyreco agreement would price 19% under your last 14 orders — <span class="mono">kr 118K/yr</span>. <b>Electrical supplies</b>: only 44% runs through Ahlsell; routing the rest is worth <span class="mono">kr 160K/yr</span>. Together that is kr 278K of the kr 840K unclaimed.'},
+    {q:'What happens when the Telia agreement expires?',
+     a:'Telia expires in <b>60 days</b>. If nothing is done, telecom spend (kr 480K/yr) falls back to list price — you would lose about <span class="mono">kr 41K/yr</span> in realized savings. A renewal at current terms is pre-negotiated; it needs one approval from you.'},
+    {q:'How is my bonus calculated?',
+     a:'Stark and Q8 pay a <b>1% volume bonus</b> on everything you route through them. This year that is <span class="mono">kr 45K</span> — kr 32K already paid out, kr 13K pending Q3 settlement. The bonus sits on the credit side of your statement, next to realized savings.'}
+  ],
+  fanny:[
+    {q:'How is kr 610K estimated without my data?',
+     a:'We match your profile — electrical contracting, DK, your size — against <b>148 peer companies</b> whose spend we can see. Their category mix and agreement rates produce your pro-forma statement. It is an estimate; connecting your data replaces it with real figures.'},
+    {q:'What should I do first?',
+     a:'The <b>easiest first win is office supplies</b>: one Lyreco agreement, est. 19% below typical small-contractor prices, worth about <span class="mono">kr 59K/yr</span>. The biggest is electrical supplies via Solar or Ahlsell — est. <span class="mono">kr 345K/yr</span>. Both start with connecting your spend data.'},
+    {q:'Is my data safe if I connect?',
+     a:'The connection is <b>read-only</b> — we read invoice lines, we never write to your ERP. Data is used only to compute your own statement and anonymised peer averages. You can disconnect at any time and the figures return to estimates.'}
+  ]
+};
+const assist=$('#assist'),scrim=$('#scrim'),assistBody=$('#assistBody'),assistSugs=$('#assistSugs');
+let asked=new Set();
+function seedAssistant(){
+  asked=new Set();
+  const hello=persona==='bob'
+    ?'Hi Bob — I read your ledger as it stands: kr 1.24M realized, kr 840K still unclaimed. Ask me anything, or pick a question below.'
+    :'Hi Fanny — I\'m working from your peer group for now. Ask me how the estimates work, or where companies like yours start.';
+  assistBody.innerHTML=`<div class="msg a">${hello}</div>`;
+  renderSugs();
+}
+function renderSugs(){
+  assistSugs.innerHTML=QA[persona].map((x,i)=>asked.has(i)?'':`<button class="sug" data-qa="${i}">${x.q}</button>`).join('');
+}
+document.addEventListener('click',e=>{
+  const sug=e.target.closest('button[data-qa]');
+  if(!sug)return;
+  const i=+sug.dataset.qa,x=QA[persona][i];
+  asked.add(i);
+  assistBody.insertAdjacentHTML('beforeend',`<div class="msg q">${x.q}</div><div class="msg a">${x.a}</div>`);
+  assistBody.scrollTop=assistBody.scrollHeight;
+  renderSugs();
+});
+function openAssist(){assist.classList.add('on');assist.setAttribute('aria-hidden','false');
+  scrim.classList.add('on');$('#assistBtn').setAttribute('aria-expanded','true');$('#assistClose').focus();}
+function closeAssist(){assist.classList.remove('on');assist.setAttribute('aria-hidden','true');
+  scrim.classList.remove('on');$('#assistBtn').setAttribute('aria-expanded','false');$('#assistBtn').focus();}
+$('#assistBtn').addEventListener('click',openAssist);
+$('#assistClose').addEventListener('click',closeAssist);
+scrim.addEventListener('click',closeAssist);
+
+/* =========================================================================
+   Modal
+   ========================================================================= */
+const modal=$('#modal');
+function openModal(){modal.classList.add('on');$('.m-card .m-opt',modal).focus();}
+function closeModal(){modal.classList.remove('on');}
+modal.addEventListener('click',e=>{if(e.target.closest('[data-close-modal]'))closeModal();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(modal.classList.contains('on'))closeModal();
+    else if(assist.classList.contains('on'))closeAssist();
+    else if(whoMenu.classList.contains('on')){whoMenu.classList.remove('on');whoBtn.setAttribute('aria-expanded','false');}
+  }
+});
+
+/* init */
+seedAssistant();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fafafa">
+<title>Advantage — The CFO View</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&family=DM+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Advantage v3-5 — "The CFO View"
+   Spend is the language; savings is a layer painted on top.
+   Tokens per shared spec — semantic only, no raw hex below :root.
+   ============================================================ */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;--general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;--general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;--general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;--general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--sidebar-foreground:#1c1c1c;
+  --sentiment-positive:#009689;--sentiment-negative:#f54a00;
+  --surface:#ffffff;--brand-midnight:#000a45;--brand-ice:#edf5ff;--brand-cornflower:#73abff;
+  --font-sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;
+  --hairline:#ececec;
+  --t-fast:.15s ease;--t:.28s cubic-bezier(.2,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-body);font-size:var(--text-base);line-height:1.55;
+  color:var(--general-foreground);background:var(--general-background);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:700;line-height:1.15}
+h1{font-size:var(--text-4xl);letter-spacing:-1.2px}
+h2{font-size:var(--text-2xl);letter-spacing:-.7px}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+b,strong{font-weight:700}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--general-primary)}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+::selection{background:var(--general-secondary)}
+.num,.tnum,td,th{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  min-height:44px;padding:0 var(--s6);border-radius:var(--rounded-full);
+  font-family:var(--font-sans);font-weight:600;font-size:var(--text-sm);
+  border:1px solid transparent;transition:transform var(--t-fast),box-shadow var(--t-fast),background var(--t-fast);
+  text-decoration:none;
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);box-shadow:var(--shadow-sm)}
+.btn-primary:hover{box-shadow:var(--shadow-md)}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);color:var(--sidebar-foreground);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover{border-color:var(--general-border)}
+.btn-ghost{color:var(--general-primary)}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-sm{min-height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.linklike{color:var(--general-primary);font-weight:600;font-size:var(--text-sm);text-decoration:none;border-radius:var(--rounded-xs);padding:var(--s2) 0;display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.linklike:hover{text-decoration:underline}
+.linklike svg{width:14px;height:14px}
+
+/* ---------- app frame ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;height:60px;background:var(--surface);
+  border-bottom:1px solid var(--sidebar-border);display:flex;align-items:center;
+  gap:var(--s4);padding:0 var(--s6);
+}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-sans);font-weight:800;letter-spacing:-.5px;font-size:var(--text-lg);color:var(--general-foreground)}
+.logo .mark{width:26px;height:26px;border-radius:var(--rounded-sm);background:var(--brand-midnight);display:grid;place-items:center;flex:none}
+.logo .mark svg{width:15px;height:15px}
+.top-context{margin-left:var(--s4);display:flex;align-items:center;gap:var(--s2);color:var(--general-muted-foreground);font-size:var(--text-xs)}
+.top-context .dot{width:6px;height:6px;border-radius:var(--rounded-full);background:var(--sentiment-positive)}
+.top-context.est .dot{background:var(--general-accent)}
+.spacer{flex:1}
+.userbtn{
+  display:flex;align-items:center;gap:10px;min-height:44px;padding:5px 12px 5px 6px;
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);background:var(--surface);
+}
+.userbtn:hover{border-color:var(--general-border)}
+.avatar{width:32px;height:32px;border-radius:var(--rounded-full);background:var(--brand-midnight);color:var(--general-primary-foreground);display:grid;place-items:center;font-family:var(--font-sans);font-weight:700;font-size:12px;flex:none}
+.userbtn .utxt{text-align:left;line-height:1.15}
+.userbtn .utxt b{display:block;font-size:var(--text-xs);font-family:var(--font-sans)}
+.userbtn .utxt span{font-size:11px;color:var(--general-muted-foreground)}
+.userbtn svg{width:14px;height:14px;color:var(--general-muted-foreground)}
+.upop{
+  position:absolute;right:var(--s6);top:64px;width:290px;background:var(--surface);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-lg);box-shadow:var(--shadow-lg);
+  padding:var(--s2);display:none;z-index:60;
+}
+.upop.open{display:block}
+.upop .up-sep{font-size:11px;letter-spacing:1.1px;text-transform:uppercase;color:var(--general-muted-foreground);padding:var(--s3) var(--s3) var(--s1)}
+.up-persona{
+  display:flex;align-items:center;gap:var(--s3);width:100%;min-height:56px;padding:var(--s2) var(--s3);
+  border-radius:var(--rounded-md);text-align:left;
+}
+.up-persona:hover{background:var(--general-muted)}
+.up-persona[aria-current="true"]{background:var(--brand-ice)}
+.up-persona .pav{width:36px;height:36px;border-radius:var(--rounded-full);display:grid;place-items:center;font-family:var(--font-sans);font-weight:700;font-size:12px;flex:none;background:var(--general-secondary);color:var(--general-secondary-foreground)}
+.up-persona b{display:block;font-size:var(--text-sm);font-family:var(--font-sans)}
+.up-persona span{font-size:var(--text-xs);color:var(--general-muted-foreground);display:block}
+.up-note{font-size:11px;color:var(--general-muted-foreground);padding:var(--s2) var(--s3) var(--s2);border-top:1px solid var(--hairline);margin-top:var(--s2)}
+
+.appbody{display:flex;min-height:calc(100vh - 60px)}
+.rail{
+  width:216px;flex:none;background:var(--surface);border-right:1px solid var(--sidebar-border);
+  padding:var(--s4) var(--s3);display:flex;flex-direction:column;gap:var(--s4);
+  position:sticky;top:60px;height:calc(100vh - 60px);
+}
+.agent-btn{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:56px;
+  border-radius:var(--rounded-lg);border:1px solid var(--general-border);
+  background:linear-gradient(135deg,var(--brand-ice),var(--surface));text-align:left;
+  box-shadow:var(--shadow-xs);transition:box-shadow var(--t-fast);
+}
+.agent-btn:hover{box-shadow:var(--shadow-sm)}
+.agent-btn .spark{width:28px;height:28px;flex:none;border-radius:var(--rounded-sm);background:var(--general-primary);display:grid;place-items:center}
+.agent-btn .spark svg{width:16px;height:16px}
+.agent-btn b{display:block;font-family:var(--font-sans);font-size:var(--text-xs);letter-spacing:-.2px}
+.agent-btn span{font-size:11px;color:var(--general-muted-foreground)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;min-height:44px;padding:0 var(--s3);
+  border-radius:var(--rounded-full);font-family:var(--font-sans);font-weight:600;
+  font-size:var(--text-sm);color:var(--sidebar-foreground);text-align:left;width:100%;
+  transition:background var(--t-fast);
+}
+.nav-item svg{width:17px;height:17px;color:var(--general-muted-foreground);flex:none}
+.nav-item:hover{background:var(--general-muted)}
+.nav-item[aria-current="page"]{background:var(--general-secondary);color:var(--general-primary)}
+.nav-item[aria-current="page"] svg{color:var(--general-primary)}
+.rail-foot{margin-top:auto;font-size:11px;color:var(--general-muted-foreground);padding:0 var(--s3);line-height:1.5}
+
+main{flex:1;min-width:0}
+.canvas{max-width:1120px;margin:0 auto;padding:var(--s8) var(--s8) var(--s16)}
+.page{display:none}
+.page.active{display:block;animation:pagein .3s cubic-bezier(.2,.7,.3,1)}
+@keyframes pagein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- editorial report head ---------- */
+.eyebrow{
+  font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--general-muted-foreground);display:flex;align-items:center;gap:10px;
+}
+.eyebrow .rule{height:1px;background:var(--sidebar-border);flex:0 0 28px}
+.est-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:1px 9px;border-radius:var(--rounded-full);
+  border:1px dashed var(--general-accent);color:var(--general-accent-foreground);
+  background:color-mix(in srgb,var(--general-accent) 12%,var(--surface));
+  font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-family:var(--font-sans);
+}
+.ver-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:1px 9px;border-radius:var(--rounded-full);
+  background:color-mix(in srgb,var(--sentiment-positive) 12%,var(--surface));
+  color:var(--sentiment-positive);font-size:11px;font-weight:700;letter-spacing:.6px;
+  text-transform:uppercase;font-family:var(--font-sans);
+}
+.headline{
+  margin-top:var(--s4);font-family:var(--font-sans);font-weight:700;letter-spacing:-1.2px;
+  font-size:var(--text-4xl);line-height:1.18;max-width:22em;text-wrap:balance;
+}
+.headline .hn{color:var(--general-primary);white-space:nowrap}
+.headline .hs{color:var(--sentiment-positive);white-space:nowrap}
+.headline .hw{color:var(--sentiment-negative)}
+.lede{margin-top:var(--s3);color:var(--general-muted-foreground);font-size:var(--text-base);max-width:62ch}
+.lede b{color:var(--general-foreground)}
+
+/* ---------- KPI strip: quiet ledger row ---------- */
+.kpis{
+  margin-top:var(--s8);display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--general-foreground);
+}
+.kpi{padding:var(--s4) var(--s4) var(--s4) 0;border-right:1px solid var(--hairline)}
+.kpi:last-child{border-right:none}
+.kpi .k-l{font-size:var(--text-xs);color:var(--general-muted-foreground);display:flex;align-items:center;gap:8px}
+.kpi .k-v{display:block;font-family:var(--font-sans);font-weight:800;font-size:var(--text-3xl);letter-spacing:-1px;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .k-s{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.kpi .k-s .pos{color:var(--sentiment-positive);font-weight:600}
+.kpi .k-s .neg{color:var(--sentiment-negative);font-weight:600}
+.kpi.est .k-v{color:var(--general-muted-foreground)}
+
+/* ---------- sections ---------- */
+.sect{margin-top:var(--s12)}
+.sect-h{display:flex;align-items:baseline;gap:var(--s3);border-bottom:1px solid var(--hairline);padding-bottom:var(--s3);margin-bottom:var(--s6)}
+.sect-h .no{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.sect-h h2{font-size:var(--text-xl)}
+.sect-h .note{margin-left:auto;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+
+/* ---------- cards ---------- */
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);box-shadow:var(--shadow-xs)}
+.card.est{border-style:dashed;border-color:var(--sidebar-border)}
+
+/* ---------- spend composition chart ---------- */
+.chartcard{padding:var(--s6)}
+.ch-top{display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s4)}
+.ch-top h3{font-size:var(--text-base)}
+.ch-top .sub{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.legend{display:flex;gap:var(--s4);margin-left:auto;flex-wrap:wrap}
+.lg{display:flex;align-items:center;gap:7px;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.lg i{width:10px;height:10px;border-radius:3px;flex:none}
+.lg .sw-on{background:var(--general-primary)}
+.lg .sw-off{background:var(--general-secondary)}
+.lg .sw-sav{width:14px;height:0;border-top:2.5px solid var(--sentiment-positive);border-radius:0}
+.lg .sw-sav.dash{border-top-style:dashed}
+.ch-wrap{position:relative}
+.ch-plot{position:relative;height:250px}
+.ch-gridline{position:absolute;left:52px;right:0;border-top:1px solid var(--hairline);font-size:11px;color:var(--general-muted-foreground)}
+.ch-gridline span{position:absolute;left:-52px;top:-8px;width:44px;text-align:right;font-variant-numeric:tabular-nums}
+.ch-cols{position:absolute;left:52px;right:0;top:0;bottom:0;display:flex;align-items:flex-end;gap:10px;padding:0 var(--s2)}
+.ch-col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;border-radius:var(--rounded-xs);position:relative}
+.ch-col:hover,.ch-col:focus-visible{background:color-mix(in srgb,var(--general-primary) 5%,transparent)}
+.ch-bar{width:100%;max-width:44px;margin:0 auto;display:flex;flex-direction:column;gap:2px}
+.ch-bar .seg{display:block;min-height:3px;border-radius:2px}
+.ch-bar .seg.off{background:var(--general-secondary);border-top-left-radius:4px;border-top-right-radius:4px}
+.ch-bar .seg.on{background:var(--general-primary);border-bottom-left-radius:2px;border-bottom-right-radius:2px}
+.est-mode .ch-bar .seg.off{background:var(--general-muted);border:1px dashed var(--sidebar-border);border-bottom:none}
+.ch-xrow{display:flex;gap:10px;padding:6px var(--s2) 0 0;margin-left:52px}
+.ch-xrow span{flex:1;text-align:center;font-size:11px;color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.ch-col.dim{opacity:.32}
+/* savings strip — same months, own small scale (no dual axis) */
+.ch-sav{margin-top:var(--s4);margin-left:52px;position:relative}
+.ch-sav .lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--general-muted-foreground);margin-bottom:4px}
+.ch-sav .lbl b{color:var(--sentiment-positive);font-family:var(--font-sans)}
+.ch-sav .lbl b.est{color:var(--general-muted-foreground)}
+.ch-sav svg{display:block;width:100%;height:56px;overflow:visible}
+.ch-tip{
+  position:absolute;z-index:30;pointer-events:none;background:var(--brand-midnight);color:var(--general-primary-foreground);
+  border-radius:var(--rounded-sm);padding:8px 11px;font-size:var(--text-xs);line-height:1.5;box-shadow:var(--shadow-md);
+  transform:translate(-50%,-100%);white-space:nowrap;display:none;
+}
+.ch-tip b{font-family:var(--font-sans)}
+.ch-tip .tip-on{color:var(--brand-cornflower)}
+.ch-tip .tip-sav{color:color-mix(in srgb,var(--sentiment-positive) 60%,var(--general-primary-foreground))}
+.ch-foot{margin-top:var(--s3);font-size:11px;color:var(--general-muted-foreground);border-top:1px solid var(--hairline);padding-top:var(--s2)}
+
+/* ---------- callout tiles ---------- */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+.tile{padding:var(--s5,20px) var(--s6);padding-top:var(--s4);padding-bottom:var(--s4);display:flex;flex-direction:column;gap:6px;min-height:150px}
+.tile .t-k{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;font-family:var(--font-sans);display:flex;align-items:center;gap:7px}
+.tile .t-k.mov{color:var(--general-primary)}
+.tile .t-k.leak{color:var(--sentiment-negative)}
+.tile .t-k.best{color:var(--sentiment-positive)}
+.tile h3{font-size:var(--text-lg)}
+.tile p{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.tile .t-act{margin-top:auto}
+.tile .t-act .linklike{min-height:36px}
+
+/* ---------- overview catalogue strip ---------- */
+.strip{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--s3)}
+.strip-card{
+  text-align:left;padding:var(--s3) var(--s4);border-radius:var(--rounded-lg);
+  background:var(--surface);border:1px solid var(--hairline);box-shadow:var(--shadow-xs);
+  display:flex;flex-direction:column;gap:2px;min-height:112px;transition:box-shadow var(--t-fast),transform var(--t-fast);
+}
+.strip-card:hover{box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+.strip-card .s-n{font-family:var(--font-sans);font-weight:700;font-size:var(--text-xs);letter-spacing:-.2px}
+.strip-card .s-leak{font-family:var(--font-sans);font-weight:800;font-size:var(--text-lg);color:var(--sentiment-negative);font-variant-numeric:tabular-nums}
+.strip-card .s-leak.ok{color:var(--sentiment-positive)}
+.strip-card .s-sub{font-size:11px;color:var(--general-muted-foreground)}
+.strip-card .covbar{margin-top:auto}
+.covbar{height:4px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.covbar i{display:block;height:100%;background:var(--general-primary);border-radius:var(--rounded-full)}
+.covbar.warn i{background:var(--sentiment-negative)}
+
+/* ---------- generic data table ---------- */
+.tablecard{overflow:hidden}
+table.dt{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+.dt th{
+  text-align:left;font-family:var(--font-sans);font-size:11px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--general-muted-foreground);font-weight:700;padding:var(--s3) var(--s4);border-bottom:1px solid var(--sidebar-border);
+  white-space:nowrap;
+}
+.dt td{padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline);vertical-align:middle}
+.dt tbody tr:last-child td{border-bottom:none}
+.dt tbody tr:hover{background:color-mix(in srgb,var(--brand-ice) 55%,transparent)}
+.dt .r{text-align:right}
+.dt th.r{text-align:right}
+.dt .catname{font-family:var(--font-sans);font-weight:700;letter-spacing:-.2px}
+.dt .sub{display:block;font-size:11px;color:var(--general-muted-foreground);font-weight:400}
+.dt tfoot td{font-family:var(--font-sans);font-weight:700;border-top:1px solid var(--general-foreground);border-bottom:none;padding:var(--s3) var(--s4)}
+.trend{font-family:var(--font-mono);font-size:var(--text-xs);white-space:nowrap}
+.trend.up{color:var(--sentiment-negative)}
+.trend.dn{color:var(--sentiment-positive)}
+.trend.flat{color:var(--general-muted-foreground)}
+.leakcell{font-weight:700;color:var(--sentiment-negative)}
+.leakcell.zero{color:var(--sentiment-positive);font-weight:600}
+.fixlink{color:var(--general-primary);font-weight:600;font-size:var(--text-xs);white-space:nowrap;padding:6px 10px;border-radius:var(--rounded-full);min-height:32px}
+.fixlink:hover{background:var(--brand-ice)}
+.minibar{display:inline-flex;align-items:center;gap:8px;min-width:120px}
+.minibar .covbar{flex:1}
+.minibar .pv{font-size:var(--text-xs);color:var(--general-muted-foreground);width:36px;text-align:right}
+
+/* supplier chips */
+.schip{width:30px;height:30px;border-radius:var(--rounded-sm);background:var(--brand-ice);color:var(--general-primary);display:inline-grid;place-items:center;font-family:var(--font-sans);font-weight:700;font-size:11px;flex:none;border:1px solid var(--general-border)}
+.suprow{display:flex;align-items:center;gap:10px}
+
+/* status chips */
+.st{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:var(--rounded-full);font-size:11px;font-weight:700;font-family:var(--font-sans);white-space:nowrap}
+.st-active{background:color-mix(in srgb,var(--sentiment-positive) 11%,var(--surface));color:var(--sentiment-positive)}
+.st-under{background:color-mix(in srgb,var(--sentiment-negative) 11%,var(--surface));color:var(--sentiment-negative)}
+.st-exp{background:color-mix(in srgb,var(--general-accent) 20%,var(--surface));color:var(--general-accent-foreground)}
+.st-rec{background:var(--brand-ice);color:var(--general-primary);border:1px dashed var(--general-border)}
+.st-new{background:var(--general-secondary);color:var(--general-primary)}
+.st-none{background:var(--general-muted);color:var(--general-muted-foreground)}
+
+/* ---------- spending page ---------- */
+.period{display:inline-flex;background:var(--surface);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);padding:3px;gap:2px}
+.period button{min-height:38px;padding:0 var(--s4);border-radius:var(--rounded-full);font-family:var(--font-sans);font-weight:600;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.period button[aria-pressed="true"]{background:var(--brand-midnight);color:var(--general-primary-foreground)}
+.chips{display:flex;gap:var(--s2);flex-wrap:wrap}
+.chip{
+  min-height:36px;padding:0 var(--s4);border-radius:var(--rounded-full);border:1px solid var(--sidebar-border);
+  background:var(--surface);font-size:var(--text-xs);font-weight:600;font-family:var(--font-sans);color:var(--sidebar-foreground);
+}
+.chip:hover{border-color:var(--general-border)}
+.chip[aria-pressed="true"]{background:var(--general-secondary);border-color:var(--general-border);color:var(--general-primary)}
+.sp-controls{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s4)}
+.sp-summary{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.sp-summary b{color:var(--general-foreground);font-family:var(--font-sans)}
+.conc{display:flex;flex-direction:column}
+.conc-row{display:grid;grid-template-columns:200px 1fr 100px 150px;gap:var(--s4);align-items:center;padding:var(--s3) var(--s6);border-bottom:1px solid var(--hairline)}
+.conc-row:last-child{border-bottom:none}
+.conc-bar{height:14px;border-radius:var(--rounded-xs);background:var(--general-muted);overflow:hidden}
+.conc-bar i{display:block;height:100%;border-radius:var(--rounded-xs);background:var(--general-primary)}
+.conc-bar.off i{background:var(--general-secondary);border:1px dashed var(--general-border)}
+.conc-v{font-family:var(--font-sans);font-weight:700;text-align:right;font-variant-numeric:tabular-nums;font-size:var(--text-sm)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}
+
+/* ---------- savings page ---------- */
+.note-eyebrow{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.method{font-size:11px;color:var(--general-muted-foreground);font-style:normal}
+.bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4);padding:var(--s6);border-bottom:1px solid var(--hairline)}
+.bonus-cell .b-l{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.bonus-cell .b-v{display:block;font-family:var(--font-sans);font-weight:800;font-size:var(--text-2xl);letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+.bonus-cell.pend .b-v{color:var(--general-muted-foreground)}
+.valstat{
+  border:1px solid var(--general-foreground);border-radius:var(--rounded-xs);background:var(--surface);
+  padding:var(--s8);max-width:660px;box-shadow:var(--shadow-sm);position:relative;
+}
+.valstat::before{content:"";position:absolute;inset:6px;border:1px solid var(--hairline);pointer-events:none}
+.vs-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s4);border-bottom:2px solid var(--general-foreground);padding-bottom:var(--s4);margin-bottom:var(--s4)}
+.vs-head .vs-t{font-family:var(--font-sans);font-weight:800;letter-spacing:-.5px;font-size:var(--text-xl)}
+.vs-head .vs-m{font-size:var(--text-xs);color:var(--general-muted-foreground);text-align:right;line-height:1.5}
+.vs-line{display:flex;justify-content:space-between;gap:var(--s4);padding:7px 0;border-bottom:1px solid var(--hairline);font-size:var(--text-sm)}
+.vs-line .m{color:var(--general-muted-foreground);font-size:11px}
+.vs-line b{font-variant-numeric:tabular-nums}
+.vs-total{display:flex;justify-content:space-between;padding-top:var(--s3);font-family:var(--font-sans);font-weight:800;font-size:var(--text-lg);border-top:2px solid var(--general-foreground);margin-top:var(--s2)}
+.vs-foot{margin-top:var(--s4);font-size:11px;color:var(--general-muted-foreground);display:flex;justify-content:space-between;gap:var(--s4)}
+.vs-actions{display:flex;gap:var(--s3);margin-top:var(--s4)}
+.locked{position:relative;overflow:hidden;border-radius:var(--rounded-xl)}
+.locked .blurred{filter:blur(3px) saturate(.7);opacity:.55;pointer-events:none;user-select:none}
+.lock-overlay{
+  position:absolute;inset:0;display:grid;place-items:center;
+  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--general-background) 82%,transparent) 45%);
+}
+.lock-card{background:var(--surface);border:1px dashed var(--sidebar-border);border-radius:var(--rounded-xl);box-shadow:var(--shadow-lg);padding:var(--s6);max-width:430px;text-align:center;display:flex;flex-direction:column;gap:var(--s3);align-items:center}
+.lock-card .lockicon{width:44px;height:44px;border-radius:var(--rounded-full);background:var(--general-muted);display:grid;place-items:center;color:var(--general-muted-foreground)}
+.lock-card p{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
+/* ---------- categories treemap ---------- */
+.treemap{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:96px;gap:var(--s3)}
+.tm{
+  border-radius:var(--rounded-lg);border:1px solid var(--hairline);text-align:left;
+  padding:var(--s4);display:flex;flex-direction:column;box-shadow:var(--shadow-xs);
+  transition:box-shadow var(--t-fast),transform var(--t-fast);position:relative;overflow:hidden;
+  background:var(--surface);
+}
+.tm:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.tm .tm-n{font-family:var(--font-sans);font-weight:700;font-size:var(--text-sm);letter-spacing:-.2px;line-height:1.25}
+.tm .tm-spend{font-family:var(--font-sans);font-weight:800;font-size:var(--text-2xl);letter-spacing:-.8px;font-variant-numeric:tabular-nums;margin-top:2px}
+.tm.small .tm-spend{font-size:var(--text-lg)}
+.tm .tm-meta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:var(--s2);font-size:11px;color:var(--general-muted-foreground)}
+.tm .tm-leak{font-weight:700;color:var(--sentiment-negative);font-variant-numeric:tabular-nums}
+.tm .tm-leak.ok{color:var(--sentiment-positive)}
+.tm.est{border-style:dashed;border-color:var(--sidebar-border)}
+.tm-legend{display:flex;align-items:center;gap:var(--s3);font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:var(--s4)}
+.tm-legend .scale{display:flex;height:10px;border-radius:var(--rounded-full);overflow:hidden;width:150px}
+.tm-legend .scale i{flex:1}
+
+/* ---------- category detail drawer ---------- */
+.overlay{position:fixed;inset:0;background:color-mix(in srgb,var(--brand-midnight) 42%,transparent);z-index:80;display:none}
+.overlay.open{display:block}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(520px,92vw);background:var(--surface);
+  z-index:90;box-shadow:var(--shadow-lg);transform:translateX(105%);transition:transform var(--t);
+  display:flex;flex-direction:column;border-left:1px solid var(--sidebar-border);
+}
+.drawer.open{transform:none}
+.drawer-h{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s6);border-bottom:1px solid var(--hairline)}
+.drawer-b{padding:var(--s6);overflow-y:auto;flex:1}
+.iconbtn{width:44px;height:44px;border-radius:var(--rounded-full);display:grid;place-items:center;color:var(--general-muted-foreground);flex:none}
+.iconbtn:hover{background:var(--general-muted)}
+.iconbtn svg{width:18px;height:18px}
+.dstat{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-bottom:var(--s6)}
+.dstat .cell{border:1px solid var(--hairline);border-radius:var(--rounded-md);padding:var(--s3) var(--s4)}
+.dstat .cell.est{border-style:dashed}
+.dstat .c-l{display:block;font-size:11px;color:var(--general-muted-foreground)}
+.dstat .c-v{display:block;font-family:var(--font-sans);font-weight:800;font-size:var(--text-xl);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.dstat .c-v.neg{color:var(--sentiment-negative)}
+.dstat .c-v.pos{color:var(--sentiment-positive)}
+.d-agr{border:1px solid var(--hairline);border-radius:var(--rounded-md);padding:var(--s3) var(--s4);display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s2)}
+.d-agr.dashed{border-style:dashed}
+.d-agr .da-t{flex:1;min-width:0}
+.d-agr .da-t b{font-family:var(--font-sans);font-size:var(--text-sm);display:block}
+.d-agr .da-t span{font-size:11px;color:var(--general-muted-foreground)}
+.d-sect{font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--general-muted-foreground);margin:var(--s6) 0 var(--s3)}
+
+/* ---------- agreements ---------- */
+.util{display:flex;align-items:center;gap:10px;min-width:170px}
+.util .ubar{flex:1;height:8px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.util .ubar i{display:block;height:100%;border-radius:var(--rounded-full);background:var(--general-primary)}
+.util.low .ubar i{background:var(--sentiment-negative)}
+.util .uv{font-size:var(--text-xs);font-weight:700;width:38px;text-align:right;font-variant-numeric:tabular-nums}
+.util .uv.mut{color:var(--general-muted-foreground);font-weight:400}
+tr.flagged td{background:color-mix(in srgb,var(--sentiment-negative) 5%,transparent)}
+tr.flagged td:first-child{box-shadow:inset 3px 0 0 var(--sentiment-negative)}
+.flag-note{font-size:11px;color:var(--sentiment-negative);font-weight:600;display:block;margin-top:2px}
+tr.dashedrow td{background:color-mix(in srgb,var(--brand-ice) 40%,transparent)}
+
+/* ---------- fanny connect banner ---------- */
+.connect-banner{
+  margin-top:var(--s8);border:1px dashed var(--general-border);border-radius:var(--rounded-xl);
+  background:linear-gradient(120deg,var(--brand-ice),var(--surface) 70%);
+  padding:var(--s6);display:flex;align-items:center;gap:var(--s6);flex-wrap:wrap;
+}
+.connect-banner .cb-t{flex:1;min-width:260px}
+.connect-banner h3{letter-spacing:-.4px}
+.connect-banner p{font-size:var(--text-sm);color:var(--general-muted-foreground);margin-top:4px;max-width:52ch}
+.peer-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:var(--rounded-full);background:var(--surface);border:1px solid var(--general-border);font-size:var(--text-xs);color:var(--general-primary);font-weight:600;font-family:var(--font-sans)}
+
+/* ---------- assistant panel ---------- */
+.ap{position:fixed;top:60px;right:0;bottom:0;width:min(400px,92vw);background:var(--surface);border-left:1px solid var(--sidebar-border);z-index:70;transform:translateX(105%);transition:transform var(--t);display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.ap.open{transform:none}
+.ap-h{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s6);border-bottom:1px solid var(--hairline)}
+.ap-h .spark{width:30px;height:30px;border-radius:var(--rounded-sm);background:var(--general-primary);display:grid;place-items:center;flex:none}
+.ap-h .spark svg{width:17px;height:17px}
+.ap-h b{font-family:var(--font-sans);letter-spacing:-.3px}
+.ap-h span{display:block;font-size:11px;color:var(--general-muted-foreground)}
+.ap-b{flex:1;overflow-y:auto;padding:var(--s6);display:flex;flex-direction:column;gap:var(--s4)}
+.msg-q{align-self:flex-end;background:var(--brand-midnight);color:var(--general-primary-foreground);padding:10px 14px;border-radius:var(--rounded-lg);border-bottom-right-radius:var(--rounded-xs);font-size:var(--text-sm);max-width:85%}
+.msg-a{align-self:flex-start;background:var(--general-muted);padding:12px 14px;border-radius:var(--rounded-lg);border-bottom-left-radius:var(--rounded-xs);font-size:var(--text-sm);max-width:92%;line-height:1.55}
+.msg-a b{font-family:var(--font-sans)}
+.msg-a .pos{color:var(--sentiment-positive);font-weight:700}
+.msg-a .neg{color:var(--sentiment-negative);font-weight:700}
+.ap-f{padding:var(--s4) var(--s6);border-top:1px solid var(--hairline)}
+.ap-in{display:flex;gap:var(--s2);align-items:center;background:var(--general-input);border:1px solid var(--sidebar-border);border-radius:var(--rounded-full);padding:5px 5px 5px var(--s4)}
+.ap-in input{flex:1;border:none;background:none;font:inherit;font-size:var(--text-sm);outline:none;min-width:0}
+.ap-in .send{width:36px;height:36px;border-radius:var(--rounded-full);background:var(--general-primary);color:var(--general-primary-foreground);display:grid;place-items:center;flex:none}
+.ap-in .send svg{width:15px;height:15px}
+.ap-hint{font-size:11px;color:var(--general-muted-foreground);margin-top:var(--s2);text-align:center}
+
+/* ---------- modal ---------- */
+.modal-back{position:fixed;inset:0;background:color-mix(in srgb,var(--brand-midnight) 46%,transparent);z-index:100;display:none;place-items:center;padding:var(--s6)}
+.modal-back.open{display:grid}
+.modal{background:var(--surface);border-radius:var(--rounded-xl);box-shadow:var(--shadow-lg);max-width:480px;width:100%;padding:var(--s8);position:relative}
+.modal h3{letter-spacing:-.5px;font-size:var(--text-xl)}
+.modal .m-p{color:var(--general-muted-foreground);font-size:var(--text-sm);margin-top:var(--s2)}
+.m-opts{display:flex;flex-direction:column;gap:var(--s2);margin:var(--s6) 0}
+.m-opt{display:flex;align-items:center;gap:var(--s3);border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);padding:var(--s3) var(--s4);text-align:left;min-height:56px;width:100%;transition:border-color var(--t-fast),background var(--t-fast)}
+.m-opt:hover{border-color:var(--general-primary);background:var(--brand-ice)}
+.m-opt .schip{width:36px;height:36px}
+.m-opt b{display:block;font-family:var(--font-sans);font-size:var(--text-sm)}
+.m-opt span{font-size:11px;color:var(--general-muted-foreground)}
+.modal .close-x{position:absolute;top:var(--s4);right:var(--s4)}
+.m-foot{font-size:11px;color:var(--general-muted-foreground)}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;bottom:var(--s6);left:50%;transform:translate(-50%,20px);opacity:0;
+  background:var(--brand-midnight);color:var(--general-primary-foreground);padding:12px 20px;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);z-index:120;transition:opacity var(--t),transform var(--t);
+  pointer-events:none;box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media print{
+  .topbar,.rail,.ap,.tiles,.sect:not(.print-keep){display:none}
+}
+@media (max-width:1100px){
+  .tiles{grid-template-columns:1fr}
+  .strip{grid-template-columns:repeat(3,1fr)}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .two-col{grid-template-columns:1fr}
+  .treemap{grid-auto-rows:88px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="logo"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 13.5l5 5L20 6.5" stroke="#73abff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Advantage</span>
+  <span class="top-context" id="topContext"><span class="dot"></span>FY 2026 · data through 31 Aug · verified from invoices</span>
+  <span class="spacer"></span>
+  <button class="userbtn" id="userBtn" aria-expanded="false" aria-haspopup="true" aria-label="Account and persona menu">
+    <span class="avatar" id="uAv">BI</span>
+    <span class="utxt"><b id="uName">Bob Iversen</b><span id="uCo">Nordvik Byg A/S</span></span>
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="upop" id="userPop" role="menu" aria-label="Demo persona">
+    <div class="up-sep">Demo as</div>
+    <button class="up-persona" id="pBob" role="menuitem" aria-current="true">
+      <span class="pav">BI</span>
+      <span><b>Bob Iversen</b><span>Nordvik Byg A/S · all data connected</span></span>
+    </button>
+    <button class="up-persona" id="pFanny" role="menuitem" aria-current="false">
+      <span class="pav">FK</span>
+      <span><b>Fanny Kristensen</b><span>Kristensen Elektro ApS · no data yet</span></span>
+    </button>
+    <p class="up-note">Switching re-renders every page with that persona's data — verified for Bob, peer-estimated for Fanny.</p>
+  </div>
+</header>
+
+<div class="appbody">
+  <nav class="rail" aria-label="Main navigation">
+    <button class="agent-btn" id="agentBtn" aria-expanded="false" aria-controls="apPanel">
+      <span class="spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4L12 3z" fill="#fafafa"/></svg></span>
+      <span><b>Saving assistant</b><span>Ask the numbers anything</span></span>
+    </button>
+    <div class="nav" role="list">
+      <button class="nav-item" data-page="overview" aria-current="page" role="listitem">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V9.5L12 4l8 5.5V19a1 1 0 01-1 1h-5v-6h-4v6H5a1 1 0 01-1-1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        Overview</button>
+      <button class="nav-item" data-page="categories" role="listitem">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
+        Categories</button>
+      <button class="nav-item" data-page="agreements" role="listitem">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h8l4 4v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Agreements</button>
+      <button class="nav-item" data-page="savings" role="listitem">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21a9 9 0 110-18 9 9 0 010 18z" stroke="currentColor" stroke-width="1.8"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1 1.7 3 2 3 1 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6.5V8m0 8v1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Savings</button>
+      <button class="nav-item" data-page="spending" role="listitem">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20V10m5.4 10V4m5.3 16v-8m5.3 8V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Spending</button>
+    </div>
+    <p class="rail-foot">Advantage by Visma<br>Procurement, read like a P&amp;L.</p>
+  </nav>
+
+  <main id="main">
+    <div class="canvas">
+
+      <!-- ================= OVERVIEW (static Bob render — JS re-renders on load) ================= -->
+      <section class="page active" id="page-overview" aria-label="Overview">
+        <p class="eyebrow"><span class="rule"></span>Management report · August 2026 <span class="ver-chip">Verified</span></p>
+        <h1 class="headline">August: <span class="hn">kr 1.12M</span> purchased, <span class="hn">64%</span> on agreements, <span class="hs">kr 96K</span> saved — <span class="hw">office supplies still leaking</span>.</h1>
+        <p class="lede">Purchasing ran <b>kr 40K above July</b> on seasonal building-material volume. Agreement coverage is at its best level this year, but three categories still buy at list price.</p>
+
+        <div class="kpis" role="list" aria-label="Key figures year to date">
+          <div class="kpi" role="listitem"><span class="k-l">Purchased, Jan–Aug</span><span class="k-v">kr 9.33M</span><span class="k-s">pace kr 14.2M / year</span></div>
+          <div class="kpi" role="listitem"><span class="k-l">Through agreements</span><span class="k-v">62%</span><span class="k-s">kr 8.8M annualized</span></div>
+          <div class="kpi" role="listitem"><span class="k-l">Savings realized YTD</span><span class="k-v" style="color:var(--sentiment-positive)">kr 1.24M</span><span class="k-s"><span class="pos">verified</span> from invoices</span></div>
+          <div class="kpi" role="listitem"><span class="k-l">Still on the table</span><span class="k-v" style="color:var(--sentiment-negative)">kr 840K</span><span class="k-s"><span class="neg">off-agreement</span> buying, annualized</span></div>
+        </div>
+
+        <div class="sect">
+          <div class="sect-h"><span class="no">01</span><h2>Spend composition, last 12 months</h2><span class="note">kr thousand per month</span></div>
+          <div class="card chartcard" id="ovChart">
+            <div class="ch-top">
+              <h3>Where the money went — and how much of it was covered</h3>
+              <div class="legend" aria-hidden="true">
+                <span class="lg"><i class="sw-on"></i>On agreement</span>
+                <span class="lg"><i class="sw-off"></i>Off agreement</span>
+                <span class="lg"><i class="sw-sav"></i>Verified savings</span>
+              </div>
+            </div>
+            <div class="ch-wrap">
+              <div class="ch-plot">
+                <div class="ch-gridline" style="bottom:0"><span>kr 0</span></div>
+                <div class="ch-gridline" style="bottom:25%"><span>350K</span></div>
+                <div class="ch-gridline" style="bottom:50%"><span>700K</span></div>
+                <div class="ch-gridline" style="bottom:75%"><span>1.05M</span></div>
+                <div class="ch-gridline" style="bottom:100%"><span>1.4M</span></div>
+                <div class="ch-cols">
+                  <div class="ch-col"><div class="ch-bar" style="height:86.4%"><i class="seg off" style="flex:40"></i><i class="seg on" style="flex:60"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:83.9%"><i class="seg off" style="flex:41"></i><i class="seg on" style="flex:59"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:92.1%"><i class="seg off" style="flex:39"></i><i class="seg on" style="flex:61"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:74.3%"><i class="seg off" style="flex:42"></i><i class="seg on" style="flex:58"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:84.3%"><i class="seg off" style="flex:40"></i><i class="seg on" style="flex:60"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:77.9%"><i class="seg off" style="flex:39"></i><i class="seg on" style="flex:61"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:90%"><i class="seg off" style="flex:37"></i><i class="seg on" style="flex:63"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:82.1%"><i class="seg off" style="flex:38"></i><i class="seg on" style="flex:62"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:93.6%"><i class="seg off" style="flex:36"></i><i class="seg on" style="flex:64"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:88.6%"><i class="seg off" style="flex:37"></i><i class="seg on" style="flex:63"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:70%"><i class="seg off" style="flex:39"></i><i class="seg on" style="flex:61"></i></div></div>
+                  <div class="ch-col"><div class="ch-bar" style="height:80%"><i class="seg off" style="flex:36"></i><i class="seg on" style="flex:64"></i></div></div>
+                </div>
+              </div>
+              <div class="ch-xrow"><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span></div>
+              <div class="ch-sav">
+                <div class="lbl"><span>Verified savings, same months (scale 0–120K)</span><b>Aug: kr 96K</b></div>
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+                  <polyline points="50,46 150,50 250,37 350,58 450,48 550,54 650,39 750,50 850,32 950,41 1050,62 1150,24" fill="none" stroke="var(--sentiment-positive)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                </svg>
+              </div>
+            </div>
+            <p class="ch-foot">Basis: 2,341 supplier invoices, matched to agreement terms nightly. Savings verified against supplier list prices.</p>
+          </div>
+        </div>
+
+        <div class="sect">
+          <div class="sect-h"><span class="no">02</span><h2>What moved this month</h2></div>
+          <div class="tiles" id="ovTiles"></div>
+        </div>
+
+        <div class="sect">
+          <div class="sect-h"><span class="no">03</span><h2>Categories, ranked by what leaks</h2><span class="note">annualized off-agreement cost</span></div>
+          <div class="strip" id="ovStrip"></div>
+        </div>
+      </section>
+
+      <!-- other pages render via JS -->
+      <section class="page" id="page-categories" aria-label="Categories"></section>
+      <section class="page" id="page-agreements" aria-label="Agreements"></section>
+      <section class="page" id="page-savings" aria-label="Savings"></section>
+      <section class="page" id="page-spending" aria-label="Spending"></section>
+
+    </div>
+  </main>
+</div>
+
+<!-- assistant -->
+<aside class="ap" id="apPanel" aria-label="Saving assistant" aria-hidden="true">
+  <div class="ap-h">
+    <span class="spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4L12 3z" fill="#fafafa"/></svg></span>
+    <div><b>Saving assistant</b><span>Answers come from your invoice data</span></div>
+    <span class="spacer"></span>
+    <button class="iconbtn" id="apClose" aria-label="Close assistant"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="ap-b" id="apBody">
+    <div class="msg-q">Where am I leaking the most money?</div>
+    <div class="msg-a"><b>Office supplies.</b> You buy kr 620K a year but only 22% goes through an agreement. Lyreco's terms sit <span class="neg">19% below</span> what you pay today — activating them is worth about <span class="pos">kr 118K a year</span>.</div>
+    <div class="msg-q">Why is Ahlsell flagged?</div>
+    <div class="msg-a">You already own Ahlsell terms at 11% below list — but only <span class="neg">44%</span> of your electrical spend flows through them. Routing the rest is worth roughly <span class="pos">kr 160K</span>. No new agreement needed; just change where the orders go.</div>
+    <div class="msg-q">What do I show the bank?</div>
+    <div class="msg-a">Open <b>Savings → Value statement</b>. It lists the <span class="pos">kr 1.24M</span> realized this year per category, each line with its verification method. It prints on one page.</div>
+  </div>
+  <div class="ap-f">
+    <form class="ap-in" id="apForm">
+      <input type="text" placeholder="Ask the saving assistant…" aria-label="Ask the saving assistant">
+      <button class="send" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" fill="none"><path d="M3 20.5L21 12 3 3.5l3.4 8.5L3 20.5z" fill="currentColor"/></svg></button>
+    </form>
+    <p class="ap-hint">Demo — responses are pre-scripted.</p>
+  </div>
+</aside>
+
+<!-- category detail drawer -->
+<div class="overlay" id="drawerBack"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true">
+  <div class="drawer-h">
+    <div style="flex:1" id="drawerHead"><h2 id="drawerTitle">Category</h2></div>
+    <button class="iconbtn" id="drawerClose" aria-label="Close category detail"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="drawer-b" id="drawerBody"></div>
+</aside>
+
+<!-- connect data modal -->
+<div class="modal-back" id="modalBack">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="iconbtn close-x" id="modalClose" aria-label="Close dialog"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <h3 id="modalTitle">Connect your spend data</h3>
+    <p class="m-p">Your invoices already know where the money is going. Connect once — Advantage reads, verifies and keeps the picture current.</p>
+    <div class="m-opts">
+      <button class="m-opt"><span class="schip">Ve</span><span><b>Visma e-conomic</b><span>Recommended · syncs invoices nightly</span></span></button>
+      <button class="m-opt"><span class="schip">BN</span><span><b>Visma Business NXT</b><span>ERP connection · full purchase ledger</span></span></button>
+      <button class="m-opt"><span class="schip">↑</span><span><b>Upload a spend report</b><span>CSV or Excel · takes about two minutes</span></span></button>
+    </div>
+    <p class="m-foot">Read-only access. Nothing is shared with suppliers. Disconnect any time.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =============== data =============== */
+const MONTH_LABELS=['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+
+const BOB={
+  id:'bob',name:'Bob Iversen',co:'Nordvik Byg A/S',verified:true,
+  annualSpend:14200,ytdSpend:9330,agrPct:62,agrSpend:8800,realized:1240,potential:840,
+  bonus:{acc:45,paid:32,pend:13},
+  monthly:[ // [totalK, onAgrPct, verifiedSavingsK]
+    [1210,60,74],[1175,59,70],[1290,61,83],[1040,58,62],[1180,60,72],[1090,61,66],
+    [1260,63,81],[1150,62,70],[1310,64,88],[1240,63,79],[980,61,58],[1120,64,96]
+  ],
+  cats:[
+    {id:'building', n:'Building materials', spend:4600,on:71,saved:380,pot:120,sup:['Stark','Bygma'],state:'active', trend:3,  method:'vs Stark & Bygma list price · 611 invoices'},
+    {id:'tools',    n:'Tools & fasteners',  spend:1900,on:64,saved:210,pot:90, sup:['Hilti','Ahlsell'],state:'active',trend:0, method:'Hilti fleet program vs list · invoice-verified'},
+    {id:'fuel',     n:'Fuel & fleet',       spend:1600,on:78,saved:185,pot:40, sup:['Q8'],state:'active',trend:6,             method:'45 øre/l × 328,000 litres · station receipts'},
+    {id:'electrical',n:'Electrical supplies',spend:1400,on:44,saved:95, pot:160,sup:['Ahlsell'],state:'underused',trend:-2,   method:'vs Ahlsell list price · invoice-verified'},
+    {id:'office',   n:'Office supplies',    spend:620, on:22,saved:30, pot:118,sup:['Lyreco'],state:'opportunity',trend:9,    method:'one-off negotiated discounts · invoice-verified'},
+    {id:'waste',    n:'Waste & recycling',  spend:540, on:0, saved:0,  pot:86, sup:['Norsk Gjenvinning'],state:'newmatch',trend:0,method:'—'},
+    {id:'telecom',  n:'Telecom & IT',       spend:480, on:58,saved:41, pot:22, sup:['Telia'],state:'expiring',trend:0,        method:'vs standard tariff · billing-verified'},
+    {id:'insurance',n:'Insurance',          spend:460, on:100,saved:66,pot:0,  sup:['If'],state:'covered',trend:0,            method:'vs prior-year premium · policy comparison'},
+    {id:'hotels',   n:'Hotels & travel',    spend:390, on:31,saved:12, pot:47, sup:['Scandic'],state:'recommended',trend:4,   method:'corporate vs rack rate · booking-verified'},
+    {id:'workwear', n:'Workwear & safety',  spend:350, on:49,saved:28, pot:39, sup:['Wenaas'],state:'active',trend:-1,        method:'vs Wenaas list price · invoice-verified'}
+  ],
+  suppliers:[
+    {n:'Stark',v:2900,st:'active',note:'Agreement · 9% below list'},
+    {n:'Ahlsell',v:1480,st:'underused',note:'Agreement under-used · 44% routed'},
+    {n:'Bygma',v:1350,st:'active',note:'Agreement · 8% below list'},
+    {n:'Q8',v:1250,st:'active',note:'Agreement · 45 øre/l off pump'},
+    {n:'Hilti',v:1150,st:'active',note:'Fleet program · 14% below list'},
+    {n:'Norsk Gjenvinning',v:540,st:'newmatch',note:'No agreement · new match ready'},
+    {n:'Lyreco',v:480,st:'recommended',note:'No agreement · 19% gap to terms'},
+    {n:'Telia',v:480,st:'expiring',note:'Agreement expires in 60 days'},
+    {n:'41 other suppliers',v:4570,st:'none',note:'Long tail · mostly off agreement'}
+  ]
+};
+
+const FANNY={
+  id:'fanny',name:'Fanny Kristensen',co:'Kristensen Elektro ApS',verified:false,peers:148,
+  annualSpend:6800,ytdSpend:4520,agrPct:0,agrSpend:0,realized:0,potential:610,
+  bonus:{acc:0,paid:0,pend:0},
+  monthly:[
+    [555,0,50],[570,0,51],[610,0,55],[480,0,43],[560,0,50],[540,0,49],
+    [600,0,54],[575,0,52],[620,0,56],[590,0,53],[470,0,42],[585,0,53]
+  ],
+  cats:[
+    {id:'electrical',n:'Electrical supplies',spend:2900,on:0,saved:0,pot:313,sup:['Solar','Ahlsell'],state:'opportunity',trend:0,method:'est. 11–14% vs peer terms'},
+    {id:'tools',     n:'Tools & fasteners',  spend:840, on:0,saved:0,pot:95, sup:['Hilti'],state:'recommended',trend:0,method:'est. 12% fleet program'},
+    {id:'fuel',      n:'Fuel & fleet',       spend:720, on:0,saved:0,pot:62, sup:['Q8'],state:'recommended',trend:0,method:'est. 9% pump discount'},
+    {id:'office',    n:'Office supplies',    spend:310, on:0,saved:0,pot:59, sup:['Lyreco'],state:'firstwin',trend:0,method:'est. 19% — easy first win'},
+    {id:'telecom',   n:'Telecom & IT',       spend:280, on:0,saved:0,pot:42, sup:['Telia'],state:'recommended',trend:0,method:'est. 15% vs standard tariff'},
+    {id:'insurance', n:'Insurance',          spend:240, on:0,saved:0,pot:0,  sup:['If'],state:'recommended',trend:0,method:'quote on request'},
+    {id:'workwear',  n:'Workwear & safety',  spend:210, on:0,saved:0,pot:21, sup:['Wenaas'],state:'recommended',trend:0,method:'est. 10% vs list'},
+    {id:'hotels',    n:'Hotels & travel',    spend:180, on:0,saved:0,pot:18, sup:['Scandic'],state:'recommended',trend:0,method:'est. 12% corporate rate'}
+  ],
+  suppliers:[
+    {n:'Solar',v:1600,st:'none',note:'Peer-estimated volume · no agreement'},
+    {n:'Ahlsell',v:1300,st:'recommended',note:'Terms available · est. 11% below list'},
+    {n:'Hilti',v:840,st:'recommended',note:'Fleet program available · est. 12%'},
+    {n:'Q8',v:720,st:'recommended',note:'Pump discount available · est. 9%'},
+    {n:'Lyreco',v:310,st:'recommended',note:'Easy first win · est. 19%'},
+    {n:'Telia',v:280,st:'recommended',note:'Terms available · est. 15%'},
+    {n:'Other (peer-modelled)',v:1750,st:'none',note:'Structure based on 148 similar firms'}
+  ]
+};
+
+const AGREEMENTS=[
+  {s:'Stark',cat:'Building materials',catId:'building',terms:'avg 9% below list',status:'active',bonus:'1% bonus',util:74},
+  {s:'Bygma',cat:'Building materials',catId:'building',terms:'8% below list',status:'active',bonus:'—',util:66},
+  {s:'Hilti',cat:'Tools & fasteners',catId:'tools',terms:'fleet program · 14% below list',status:'active',bonus:'—',util:81},
+  {s:'Ahlsell',cat:'Electrical + tools',catId:'electrical',terms:'11% below list',status:'underused',bonus:'—',util:44,note:'You already own these terms — routing the rest of your electrical spend is worth kr 160K/yr.'},
+  {s:'Q8',cat:'Fuel & fleet',catId:'fuel',terms:'45 øre/l off pump price',status:'active',bonus:'1% bonus',util:78},
+  {s:'Lyreco',cat:'Office supplies',catId:'office',terms:'19% below list',status:'recommended',bonus:'—',util:null,note:'Not activated. Worth kr 118K/yr at your volume.'},
+  {s:'Norsk Gjenvinning',cat:'Waste & recycling',catId:'waste',terms:'12% below list',status:'newmatch',bonus:'—',util:null,note:'New match on your waste spend — kr 86K/yr.'},
+  {s:'Telia',cat:'Telecom & IT',catId:'telecom',terms:'15% below list',status:'expiring',bonus:'—',util:58,note:'Expires in 60 days. Renewal keeps kr 41K/yr in verified savings.'},
+  {s:'If',cat:'Insurance',catId:'insurance',terms:'fixed fleet terms',status:'active',bonus:'—',util:100},
+  {s:'Scandic',cat:'Hotels & travel',catId:'hotels',terms:'12% corporate rate',status:'recommended',bonus:'—',util:null},
+  {s:'Wenaas',cat:'Workwear & safety',catId:'workwear',terms:'10% below list',status:'active',bonus:'—',util:49},
+  {s:'Ramirent',cat:'Machine rental',catId:null,terms:'13% below list',status:'newmatch',bonus:'—',util:null,note:'No spend category yet — matched on your industry profile.'}
+];
+
+const ST_LABEL={active:'Active',underused:'Under-used',expiring:'Expires 60 d',recommended:'Recommended',newmatch:'New match',none:'No agreement',firstwin:'First win'};
+const ST_CLASS={active:'st-active',underused:'st-under',expiring:'st-exp',recommended:'st-rec',newmatch:'st-new',none:'st-none',firstwin:'st-rec'};
+
+/* =============== helpers =============== */
+let persona=BOB;
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+function kr(k){ // k in thousands
+  if(k>=1000){const m=k/1000;return 'kr '+(m>=10?m.toFixed(1):(Math.round(m*100)/100).toFixed(m*100%10===0? (m*10%10===0?1:1):2).replace(/0$/,'').replace(/\.$/,''))+'M';}
+  return 'kr '+Math.round(k)+'K';
+}
+function krM(k){return 'kr '+(k/1000).toFixed(k>=10000?1:k>=1000?2:2)+'M'}
+function fmt(k){ // smart
+  if(k>=1000){const m=k/1000;let s=m>=10?m.toFixed(1):m.toFixed(2).replace(/0$/,'');return 'kr '+s+'M';}
+  return 'kr '+Math.round(k)+'K';
+}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2600);}
+function estChip(){return persona.verified?'':' <span class="est-chip">est.</span>'}
+function dash(cls){return persona.verified?cls:cls+' est'}
+
+/* =============== chart builder =============== */
+function chartHTML(monthly,opts={}){
+  const max=opts.max|| (persona.verified?1400:700);
+  const savMax=opts.savMax|| (persona.verified?120:70);
+  const est=!persona.verified||opts.est;
+  const grid=[0,.25,.5,.75,1].map(f=>{
+    const v=max*f;const lbl=f===0?'kr 0':(v>=1000?(v/1000)+'M':(v)+'K');
+    return `<div class="ch-gridline" style="bottom:${f*100}%"><span>${lbl}</span></div>`;
+  }).join('');
+  const cols=monthly.map((m,i)=>{
+    const [v,on,sav]=m;const h=(v/max*100).toFixed(1);
+    const offFlex=100-on,onFlex=on;
+    const segs=on>0
+      ?`<i class="seg off" style="flex:${offFlex}"></i><i class="seg on" style="flex:${onFlex}"></i>`
+      :`<i class="seg off" style="flex:100"></i>`;
+    return `<div class="ch-col" tabindex="0" role="img"
+      aria-label="${MONTH_LABELS[i]}: ${fmt(v)} purchased, ${on}% on agreements, ${fmt(sav)} ${est?'estimated':'saved'}"
+      data-i="${i}" data-v="${v}" data-on="${on}" data-sav="${sav}">
+      <div class="ch-bar" style="height:${h}%">${segs}</div></div>`;
+  }).join('');
+  const pts=monthly.map((m,i)=>`${i*100+50},${(120-(m[2]/savMax*112)).toFixed(1)}`).join(' ');
+  const lastSav=monthly[monthly.length-1][2];
+  return `
+    <div class="ch-wrap${est?' est-mode':''}">
+      <div class="ch-plot">${grid}<div class="ch-cols">${cols}</div></div>
+      <div class="ch-xrow">${MONTH_LABELS.map(m=>`<span>${m}</span>`).join('')}</div>
+      <div class="ch-sav">
+        <div class="lbl"><span>${est?'Estimated saving opportunity, same months':'Verified savings, same months'} (scale 0–${savMax}K)</span>
+        <b class="${est?'est':''}">Aug: ${fmt(lastSav)}${est?' est.':''}</b></div>
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+          <polyline points="${pts}" fill="none" stroke="${est?'var(--general-muted-foreground)':'var(--sentiment-positive)'}"
+            stroke-width="2.5" ${est?'stroke-dasharray="6 5"':''} stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
+      <div class="ch-tip" aria-hidden="true"></div>
+    </div>`;
+}
+function wireChart(container,est){
+  const tip=container.querySelector('.ch-tip');if(!tip)return;
+  container.querySelectorAll('.ch-col').forEach(col=>{
+    const show=()=>{
+      const v=+col.dataset.v,on=+col.dataset.on,sav=+col.dataset.sav,i=+col.dataset.i;
+      tip.innerHTML=`<b>${MONTH_LABELS[i]}${i<4?' 25':' 26'}</b> — ${fmt(v)} purchased<br>
+        <span class="tip-on">${on}% on agreements</span> · <span class="tip-sav">${fmt(sav)} ${est?'est. opportunity':'saved'}</span>`;
+      const cr=container.getBoundingClientRect(),r=col.getBoundingClientRect();
+      tip.style.left=(r.left-cr.left+r.width/2)+'px';
+      tip.style.top=(r.top-cr.top-6)+'px';
+      tip.style.display='block';
+    };
+    const hide=()=>tip.style.display='none';
+    col.addEventListener('mouseenter',show);col.addEventListener('mouseleave',hide);
+    col.addEventListener('focus',show);col.addEventListener('blur',hide);
+  });
+}
+function legendHTML(est){
+  return `<div class="legend" aria-hidden="true">
+    <span class="lg"><i class="sw-on"></i>On agreement</span>
+    <span class="lg"><i class="sw-off" ${est?'style="background:var(--general-muted);border:1px dashed var(--sidebar-border)"':''}></i>Off agreement${est?' (est.)':''}</span>
+    <span class="lg"><i class="sw-sav${est?' dash':''}" ${est?'style="border-top-color:var(--general-muted-foreground)"':''}></i>${est?'Est. opportunity':'Verified savings'}</span></div>`;
+}
+
+/* =============== supplier chip =============== */
+function chip(name){
+  const init=name.split(/\s+/).map(w=>w[0]).join('').slice(0,2);
+  return `<span class="schip" aria-hidden="true">${init}</span>`;
+}
+
+/* =============== OVERVIEW =============== */
+function renderOverview(){
+  const p=persona,el=$('#page-overview');
+  if(p.verified){
+    el.innerHTML=`
+    <p class="eyebrow"><span class="rule"></span>Management report · August 2026 <span class="ver-chip">Verified</span></p>
+    <h1 class="headline">August: <span class="hn">kr 1.12M</span> purchased, <span class="hn">64%</span> on agreements, <span class="hs">kr 96K</span> saved — <span class="hw">office supplies still leaking</span>.</h1>
+    <p class="lede">Purchasing ran <b>kr 40K above July</b> on seasonal building-material volume. Agreement coverage is at its best level this year, but three categories still buy at list price.</p>
+    <div class="kpis" role="list" aria-label="Key figures year to date">
+      <div class="kpi" role="listitem"><span class="k-l">Purchased, Jan–Aug</span><span class="k-v">kr 9.33M</span><span class="k-s">pace kr 14.2M / year</span></div>
+      <div class="kpi" role="listitem"><span class="k-l">Through agreements</span><span class="k-v">62%</span><span class="k-s">kr 8.8M annualized</span></div>
+      <div class="kpi" role="listitem"><span class="k-l">Savings realized YTD</span><span class="k-v" style="color:var(--sentiment-positive)">kr 1.24M</span><span class="k-s"><span class="pos">verified</span> from invoices</span></div>
+      <div class="kpi" role="listitem"><span class="k-l">Still on the table</span><span class="k-v" style="color:var(--sentiment-negative)">kr 840K</span><span class="k-s"><span class="neg">off-agreement</span> buying, annualized</span></div>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">01</span><h2>Spend composition, last 12 months</h2><span class="note">kr thousand per month</span></div>
+      <div class="card chartcard" id="ovChartCard">
+        <div class="ch-top"><h3>Where the money went — and how much of it was covered</h3>${legendHTML(false)}</div>
+        ${chartHTML(p.monthly)}
+        <p class="ch-foot">Basis: 2,341 supplier invoices, matched to agreement terms nightly. Savings verified against supplier list prices.</p>
+      </div>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">02</span><h2>What moved this month</h2></div>
+      <div class="tiles" id="ovTiles"></div>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">03</span><h2>Categories, ranked by what leaks</h2><span class="note">annualized off-agreement cost</span></div>
+      <div class="strip" id="ovStrip"></div>
+    </div>`;
+    $('#ovTiles').innerHTML=`
+      <div class="card tile">
+        <span class="t-k mov">Biggest movement</span>
+        <h3>Fuel &amp; fleet, +6% vs July</h3>
+        <p>Diesel volume climbed with two new site starts. 78% already runs through the Q8 agreement, so the increase stays mostly covered.</p>
+        <div class="t-act"><button class="linklike" data-go="spending">See it in Spending <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      </div>
+      <div class="card tile">
+        <span class="t-k leak">Biggest leak</span>
+        <h3>Office supplies at list price</h3>
+        <p>Only 22% on agreement. Lyreco's terms are 19% below what you pay — <b style="color:var(--sentiment-negative)">kr 118K a year</b> walks out this way.</p>
+        <div class="t-act"><button class="linklike" data-cat="office">Fix this <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      </div>
+      <div class="card tile">
+        <span class="t-k best">Best performer</span>
+        <h3>Insurance, fully covered</h3>
+        <p>100% through the If agreement — kr 66K saved YTD against prior-year premium. Nothing leaks here.</p>
+        <div class="t-act"><button class="linklike" data-go="savings">See the audit <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      </div>`;
+  }else{
+    el.innerHTML=`
+    <p class="eyebrow"><span class="rule"></span>Pro-forma report · August 2026 <span class="est-chip">Estimated</span></p>
+    <h1 class="headline">What your August would look like: <span class="hn">~kr 585K</span> purchased, <span class="hw">0%</span> on agreements — about <span class="hs">kr 51K</span> left on the table.</h1>
+    <p class="lede">This is a <b>peer model</b>, not your books: the spend structure of <b>148 electrical contractors your size</b>, priced at your estimated volume. Connect your data and every figure becomes your own.</p>
+    <div style="margin-top:var(--s4)"><span class="peer-chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 14a4 4 0 10-8 0M12 10a3 3 0 100-6 3 3 0 000 6zM20 14a3.5 3.5 0 00-3-3.5M4 14a3.5 3.5 0 013-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> Based on 148 electrical contractors your size</span></div>
+    <div class="kpis" role="list" aria-label="Estimated key figures">
+      <div class="kpi est" role="listitem"><span class="k-l">Est. annual purchasing <span class="est-chip">est.</span></span><span class="k-v">kr 6.8M</span><span class="k-s">peer-modelled volume</span></div>
+      <div class="kpi est" role="listitem"><span class="k-l">Through agreements</span><span class="k-v">0%</span><span class="k-s">no agreements activated yet</span></div>
+      <div class="kpi" role="listitem"><span class="k-l">Savings realized</span><span class="k-v" style="color:var(--general-muted-foreground)">kr 0</span><span class="k-s">unlocks when data is connected</span></div>
+      <div class="kpi est" role="listitem"><span class="k-l">Est. potential <span class="est-chip">est.</span></span><span class="k-v" style="color:var(--sentiment-negative)">kr 610K</span><span class="k-s">per year, at peer terms</span></div>
+    </div>
+    <div class="connect-banner">
+      <div class="cb-t">
+        <h3>Your invoices already know where the money is going.</h3>
+        <p>Connect Visma e-conomic or upload a spend report — the pro-forma below becomes a verified management report within a day.</p>
+      </div>
+      <button class="btn btn-primary" data-connect>Connect spend data</button>
+      <button class="btn btn-secondary" data-connect>Upload a report</button>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">01</span><h2>Estimated spend composition</h2><span class="note">peer-modelled, kr thousand per month</span></div>
+      <div class="card est chartcard" id="ovChartCard">
+        <div class="ch-top"><h3>How a firm like yours spends the year</h3>${legendHTML(true)}</div>
+        ${chartHTML(p.monthly,{est:true})}
+        <p class="ch-foot">Basis: anonymized purchasing patterns from 148 electrical contractors (DK) with 8–25 employees. Your actual months will differ.</p>
+      </div>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">02</span><h2>Where firms like yours win first</h2></div>
+      <div class="tiles" id="ovTiles"></div>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">03</span><h2>Estimated categories, ranked by opportunity</h2><span class="note">annualized, at peer terms</span></div>
+      <div class="strip" id="ovStrip"></div>
+    </div>`;
+    $('#ovTiles').innerHTML=`
+      <div class="card est tile">
+        <span class="t-k leak">Biggest opportunity</span>
+        <h3>Electrical supplies</h3>
+        <p>Peers route this through Solar or Ahlsell terms at 11–14% below list. At your estimated kr 2.9M volume that is <b>~kr 313K a year</b>.</p>
+        <div class="t-act"><button class="linklike" data-cat="electrical">See the estimate <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      </div>
+      <div class="card est tile">
+        <span class="t-k mov">Easiest first win</span>
+        <h3>Office supplies via Lyreco</h3>
+        <p>19% below list, active in a day, no volume commitment. Peers your size save <b>~kr 59K a year</b> here.</p>
+        <div class="t-act"><button class="linklike" data-cat="office">See the estimate <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      </div>
+      <div class="card est tile">
+        <span class="t-k best">Peer benchmark</span>
+        <h3>kr 610K left on the table</h3>
+        <p>Companies like yours realize on average <b>9% of purchasing spend</b> in year one with Advantage agreements.</p>
+        <div class="t-act"><button class="linklike" data-connect>Connect to verify <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      </div>`;
+  }
+  // strip: categories ranked by leakage/potential
+  const ranked=[...persona.cats].sort((a,b)=>b.pot-a.pot).slice(0,6);
+  $('#ovStrip').innerHTML=ranked.map(c=>{
+    const cov=c.on;
+    return `<button class="strip-card${persona.verified?'':' est'}" data-cat="${c.id}" style="${persona.verified?'':'border-style:dashed'}">
+      <span class="s-n">${c.n}</span>
+      <span class="s-leak ${c.pot===0?'ok':''}">${c.pot===0?'kr 0':'−'+fmt(c.pot).replace('kr ','kr ')}</span>
+      <span class="s-sub">${persona.verified?cov+'% on agreement':'est. at peer terms'}</span>
+      <span class="covbar ${cov<40?'warn':''}"><i style="width:${Math.max(cov,2)}%"></i></span>
+    </button>`;
+  }).join('');
+  const cc=$('#ovChartCard');if(cc)wireChart(cc.querySelector('.ch-wrap'),!persona.verified);
+}
+
+/* =============== SPENDING =============== */
+let spFilter='all',spPeriod='ytd';
+function catMonthly(cat){
+  const s=cat.spend/persona.annualSpend;
+  return persona.monthly.map((m,i)=>{
+    const wob=1+0.13*Math.sin(i*1.7+cat.n.length);
+    const v=Math.round(m[0]*s*wob);
+    const on=persona.verified?Math.max(0,Math.min(100,cat.on+Math.round(3*Math.sin(i+cat.n.length)))):0;
+    const sav=Math.round(v*(cat.saved/Math.max(cat.spend,1))*1.4)||Math.round(v*0.08);
+    return [v,on,sav];
+  });
+}
+function renderSpending(){
+  const p=persona,el=$('#page-spending');
+  const isBob=p.verified;
+  const periodTxt={
+    ytd:isBob?'<b>kr 9.33M</b> purchased Jan–Aug · <b>62%</b> through agreements · <b>kr 1.24M</b> saved':'<b>~kr 4.52M</b> est. purchased Jan–Aug · <b>0%</b> through agreements',
+    q:isBob?'<b>kr 2.10M</b> purchased in Q3 so far · <b>63%</b> through agreements · <b>kr 154K</b> saved':'<b>~kr 1.06M</b> est. purchased in Q3 so far',
+    m:isBob?'<b>kr 1.12M</b> purchased in August · <b>64%</b> through agreements · <b>kr 96K</b> saved':'<b>~kr 585K</b> est. purchased in August'
+  };
+  el.innerHTML=`
+    <p class="eyebrow"><span class="rule"></span>Spend analytics ${isBob?'<span class="ver-chip">Verified</span>':'<span class="est-chip">Estimated</span>'}</p>
+    <h1 class="headline">${isBob?'<span class="hn">kr 9.33M</span> purchased so far this year.':'An estimated <span class="hn">kr 6.8M</span> a year flows through your suppliers.'}</h1>
+    <p class="lede">${isBob
+      ?'Every krone below is read from your invoices. The question this page answers: <b>how much of it flows through terms you already own?</b>'
+      :'Modelled from <b>148 electrical contractors your size</b>. Connect your data to replace every estimate with your own ledger.'}</p>
+    ${isBob?'':`<div class="connect-banner" style="margin-top:var(--s6)">
+      <div class="cb-t"><h3>See your real spend here.</h3><p>Two minutes with e-conomic or a CSV upload. Estimates become verified figures overnight.</p></div>
+      <button class="btn btn-primary" data-connect>Connect spend data</button></div>`}
+    <div class="sect">
+      <div class="sect-h"><span class="no">01</span><h2>Monthly trend</h2><span class="note">kr thousand per month</span></div>
+      <div class="card ${isBob?'':'est '}chartcard">
+        <div class="sp-controls">
+          <div class="period" role="group" aria-label="Period">
+            <button data-period="ytd" aria-pressed="${spPeriod==='ytd'}">YTD</button>
+            <button data-period="q" aria-pressed="${spPeriod==='q'}">Q3</button>
+            <button data-period="m" aria-pressed="${spPeriod==='m'}">Aug</button>
+          </div>
+          <p class="sp-summary" id="spSummary">${periodTxt[spPeriod]}</p>
+          ${legendHTML(!isBob)}
+        </div>
+        <div class="chips" role="group" aria-label="Category filter" id="spChips" style="margin-bottom:var(--s4)">
+          <button class="chip" data-f="all" aria-pressed="${spFilter==='all'}">All categories</button>
+          ${p.cats.slice(0,5).map(c=>`<button class="chip" data-f="${c.id}" aria-pressed="${spFilter===c.id}">${c.n}</button>`).join('')}
+        </div>
+        <div id="spChart">${spChartHTML()}</div>
+        <p class="ch-foot">${isBob?'Filtered views are read from invoice lines coded to the category. Dimmed months fall outside the selected period.':'Peer-modelled seasonality. Dimmed months fall outside the selected period.'}</p>
+      </div>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">02</span><h2>Category breakdown</h2><span class="note">last 12 months${isBob?'':' · estimated'}</span></div>
+      <div class="card ${isBob?'':'est '}tablecard">
+        <table class="dt">
+          <thead><tr>
+            <th>Category</th><th class="r">Spend</th><th class="r">Share</th>
+            <th>On agreement</th><th class="r">Trend</th><th class="r">Cost of leakage</th><th></th>
+          </tr></thead>
+          <tbody>
+          ${p.cats.map(c=>{
+            const share=(c.spend/p.annualSpend*100).toFixed(0);
+            const tr=c.trend>0?`<span class="trend up">▲ ${c.trend}%</span>`:c.trend<0?`<span class="trend dn">▼ ${Math.abs(c.trend)}%</span>`:'<span class="trend flat">— 0%</span>';
+            return `<tr>
+              <td><span class="catname">${c.n}</span><span class="sub">${c.sup.join(', ')}</span></td>
+              <td class="r"><b>${fmt(c.spend)}</b>${isBob?'':' <span class="est-chip">est.</span>'}</td>
+              <td class="r">${share}%</td>
+              <td><span class="minibar"><span class="covbar ${c.on<40?'warn':''}"><i style="width:${Math.max(c.on,2)}%"></i></span><span class="pv">${c.on}%</span></span></td>
+              <td class="r">${tr}</td>
+              <td class="r"><span class="leakcell ${c.pot===0?'zero':''}">${c.pot===0?(isBob?'covered':'—'):'−'+fmt(c.pot)+'/yr'}</span></td>
+              <td class="r">${c.pot>0?`<button class="fixlink" data-cat="${c.id}">Fix this →</button>`:''}</td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+          <tfoot><tr>
+            <td>Total</td><td class="r">${fmt(p.annualSpend)}</td><td class="r">100%</td>
+            <td>${p.agrPct}% weighted</td><td></td>
+            <td class="r" style="color:var(--sentiment-negative)">−${fmt(p.potential)}/yr</td><td></td>
+          </tr></tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">03</span><h2>Supplier concentration</h2><span class="note">top suppliers by ${isBob?'invoiced':'estimated'} volume</span></div>
+      <div class="card ${isBob?'':'est '}conc">
+        ${p.suppliers.map(s=>{
+          const pct=(s.v/p.annualSpend*100);
+          const onAgr=['active','underused','expiring'].includes(s.st);
+          return `<div class="conc-row">
+            <span class="suprow">${chip(s.n)}<span style="min-width:0"><b style="font-family:var(--font-sans);font-size:var(--text-sm)">${s.n}</b><span class="sub" style="display:block;font-size:11px;color:var(--general-muted-foreground)">${s.note}</span></span></span>
+            <span class="conc-bar ${onAgr?'':'off'}" role="img" aria-label="${s.n}: ${fmt(s.v)}, ${pct.toFixed(0)} percent of spend"><i style="width:${Math.max(pct,1.5)}%"></i></span>
+            <span class="conc-v">${fmt(s.v)}</span>
+            <span><span class="st ${ST_CLASS[s.st]}">${ST_LABEL[s.st]}</span></span>
+          </div>`;
+        }).join('')}
+      </div>
+      <p class="ch-foot" style="border:none">${isBob
+        ?'Filled bars flow through an agreement; pale bars buy at list price. Your top 5 suppliers carry 57% of total spend — concentration is leverage.'
+        :'Estimated volumes. Filled bars would show agreement flow once your data is connected.'}</p>
+    </div>`;
+  // wire controls
+  el.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{
+    spPeriod=b.dataset.period;renderSpending();
+  }));
+  el.querySelectorAll('#spChips .chip').forEach(b=>b.addEventListener('click',()=>{
+    spFilter=b.dataset.f;renderSpending();
+  }));
+  wireChart(el.querySelector('#spChart .ch-wrap'),!isBob);
+  applyPeriodDim(el);
+}
+function spChartHTML(){
+  const p=persona;
+  let series=p.monthly,max=p.verified?1400:700,savMax=p.verified?120:70;
+  if(spFilter!=='all'){
+    const cat=p.cats.find(c=>c.id===spFilter);
+    if(cat){series=catMonthly(cat);
+      const peak=Math.max(...series.map(m=>m[0]));
+      max=Math.ceil(peak/50)*50*1.15;max=Math.ceil(max/50)*50;
+      savMax=Math.max(10,Math.ceil(Math.max(...series.map(m=>m[2]))/5)*5*1.2|0);
+    }
+  }
+  return chartHTML(series,{max,savMax,est:!p.verified});
+}
+function applyPeriodDim(el){
+  const cols=el.querySelectorAll('#spChart .ch-col');
+  cols.forEach((c,i)=>{
+    let dim=false;
+    if(spPeriod==='ytd')dim=i<4;     // Sep–Dec 2025 outside YTD
+    if(spPeriod==='q')dim=i<10;      // Jul, Aug = Q3 so far
+    if(spPeriod==='m')dim=i<11;      // Aug only
+    c.classList.toggle('dim',dim);
+  });
+}
+
+/* =============== SAVINGS =============== */
+function renderSavings(){
+  const p=persona,el=$('#page-savings');
+  if(p.verified){
+    const rows=p.cats.filter(c=>c.saved>0).map(c=>`
+      <tr>
+        <td><span class="catname">${c.n}</span><span class="sub">${c.sup.join(' · ')}</span></td>
+        <td class="r"><b style="color:var(--sentiment-positive)">${fmt(c.saved)}</b></td>
+        <td><span class="method">${c.method}</span></td>
+      </tr>`).join('');
+    el.innerHTML=`
+      <p class="eyebrow"><span class="rule"></span>Financial note · savings audit <span class="ver-chip">Verified</span></p>
+      <h1 class="headline"><span class="hs">kr 1.24M</span> realized, January–August 2026.</h1>
+      <p class="lede">Stated like a note to the accounts: every line below is traced to invoices and priced against the supplier's list terms. Nothing here is a projection.</p>
+      <div class="sect">
+        <div class="sect-h"><span class="no">Note 1</span><h2>Realized savings by category</h2><span class="note">method stated per line</span></div>
+        <div class="card tablecard">
+          <table class="dt">
+            <thead><tr><th>Category / agreement</th><th class="r">Realized YTD</th><th>Verification method</th></tr></thead>
+            <tbody>${rows}
+              <tr><td><span class="catname">Price-request wins</span><span class="sub">one-off negotiations via Advantage</span></td>
+              <td class="r"><b style="color:var(--sentiment-positive)">kr 193K</b></td>
+              <td><span class="method">negotiated case-by-case · documented per case</span></td></tr>
+            </tbody>
+            <tfoot><tr><td>Total realized</td><td class="r" style="color:var(--sentiment-positive)">kr 1.24M</td><td></td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="sect">
+        <div class="sect-h"><span class="no">Note 2</span><h2>Customer bonus accrual</h2><span class="note">1% of qualifying agreement volume</span></div>
+        <div class="card tablecard">
+          <div class="bonus-grid">
+            <div class="bonus-cell"><span class="b-l">Accumulated 2026</span><span class="b-v">kr 45K</span></div>
+            <div class="bonus-cell"><span class="b-l">Paid out</span><span class="b-v" style="color:var(--sentiment-positive)">kr 32K</span></div>
+            <div class="bonus-cell pend"><span class="b-l">Pending</span><span class="b-v">kr 13K</span></div>
+          </div>
+          <table class="dt">
+            <thead><tr><th>Period</th><th>Basis</th><th class="r">Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Q1 2026</td><td><span class="method">Stark + Q8 qualifying volume kr 1.52M</span></td><td class="r"><b>kr 15.2K</b></td><td><span class="st st-active">Paid 15 Apr</span></td></tr>
+              <tr><td>Q2 2026</td><td><span class="method">Stark + Q8 qualifying volume kr 1.68M</span></td><td class="r"><b>kr 16.8K</b></td><td><span class="st st-active">Paid 15 Jul</span></td></tr>
+              <tr><td>Q3 2026 <span class="sub">accruing</span></td><td><span class="method">volume to date kr 1.30M</span></td><td class="r"><b>kr 13.0K</b></td><td><span class="st st-exp">Pending · est. 15 Oct</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="sect print-keep">
+        <div class="sect-h"><span class="no">Note 3</span><h2>Value statement</h2><span class="note">for internal reporting</span></div>
+        <div class="valstat">
+          <div class="vs-head">
+            <div><span class="note-eyebrow">VALUE STATEMENT · NO-2026-08</span><div class="vs-t">Nordvik Byg A/S</div></div>
+            <div class="vs-m">Period 01.01.2026 – 31.08.2026<br>Basis: 2,341 supplier invoices<br>Issued by Advantage (Visma)</div>
+          </div>
+          ${p.cats.filter(c=>c.saved>0).map(c=>`<div class="vs-line"><span>${c.n} <span class="m">— ${c.method}</span></span><b>${fmt(c.saved)}</b></div>`).join('')}
+          <div class="vs-line"><span>Price-request wins <span class="m">— documented per case</span></span><b>kr 193K</b></div>
+          <div class="vs-total"><span>Realized savings, YTD</span><span style="color:var(--sentiment-positive)">kr 1.24M</span></div>
+          <div class="vs-foot"><span>Customer bonus accrued in addition: kr 45K</span><span>Verified nightly against supplier list prices</span></div>
+        </div>
+        <div class="vs-actions">
+          <button class="btn btn-primary" id="vsExport">Export as PDF</button>
+          <button class="btn btn-secondary" id="vsPrint">Print</button>
+          <button class="btn btn-ghost" data-go="spending">See the spend behind it</button>
+        </div>
+      </div>`;
+    $('#vsExport').addEventListener('click',()=>toast('Value statement exported — check your downloads (demo).'));
+    $('#vsPrint').addEventListener('click',()=>window.print());
+  }else{
+    el.innerHTML=`
+      <p class="eyebrow"><span class="rule"></span>Financial note · savings audit <span class="est-chip">Locked</span></p>
+      <h1 class="headline">Your savings will be stated <span class="hn">like a financial note</span> — once there is data to audit.</h1>
+      <p class="lede">Realized savings are only ever shown when they can be traced to an invoice. Right now there is nothing to verify — the preview below shows what the audit looks like for a firm your size.</p>
+      <div class="sect">
+        <div class="sect-h"><span class="no">Preview</span><h2>What the audit page looks like</h2></div>
+        <div class="locked">
+          <div class="blurred" aria-hidden="true">
+            <div class="card tablecard">
+              <table class="dt">
+                <thead><tr><th>Category / agreement</th><th class="r">Realized YTD</th><th>Verification method</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="catname">Electrical supplies</span><span class="sub">Solar · Ahlsell</span></td><td class="r"><b style="color:var(--sentiment-positive)">kr 208K</b></td><td><span class="method">vs list price, verified from invoices</span></td></tr>
+                  <tr><td><span class="catname">Tools & fasteners</span><span class="sub">Hilti</span></td><td class="r"><b style="color:var(--sentiment-positive)">kr 64K</b></td><td><span class="method">fleet program vs list</span></td></tr>
+                  <tr><td><span class="catname">Fuel & fleet</span><span class="sub">Q8</span></td><td class="r"><b style="color:var(--sentiment-positive)">kr 41K</b></td><td><span class="method">øre/litre × verified litres</span></td></tr>
+                  <tr><td><span class="catname">Office supplies</span><span class="sub">Lyreco</span></td><td class="r"><b style="color:var(--sentiment-positive)">kr 39K</b></td><td><span class="method">vs list price, verified from invoices</span></td></tr>
+                </tbody>
+                <tfoot><tr><td>Total realized</td><td class="r" style="color:var(--sentiment-positive)">kr 352K</td><td></td></tr></tfoot>
+              </table>
+            </div>
+          </div>
+          <div class="lock-overlay">
+            <div class="lock-card">
+              <span class="lockicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.8"/></svg></span>
+              <h3>Savings appear here once your invoices are connected</h3>
+              <p>Companies like yours verify an estimated <b style="color:var(--general-foreground)">kr 610K a year</b>. The first verified line usually lands within a week of connecting.</p>
+              <button class="btn btn-primary" data-connect>Connect spend data</button>
+              <button class="linklike" data-go="categories" style="min-height:36px">See where it would come from</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sect">
+        <div class="sect-h"><span class="no">Note</span><h2>Customer bonus</h2></div>
+        <div class="card est tablecard"><div class="bonus-grid" style="border-bottom:none">
+          <div class="bonus-cell pend"><span class="b-l">Accumulated</span><span class="b-v">kr 0</span></div>
+          <div class="bonus-cell pend"><span class="b-l">Paid out</span><span class="b-v">kr 0</span></div>
+          <div class="bonus-cell"><span class="b-l">Typical for your peer group <span class="est-chip">est.</span></span><span class="b-v" style="font-size:var(--text-xl)">kr 18–25K/yr</span></div>
+        </div></div>
+      </div>`;
+  }
+}
+
+/* =============== CATEGORIES =============== */
+const TM_LAYOUT_BOB={building:'1/1/4/7',tools:'1/7/3/10',electrical:'1/10/3/13',fuel:'3/7/4/13',
+  office:'4/1/5/4',waste:'4/4/5/7',telecom:'4/7/5/10',insurance:'4/10/5/13',
+  hotels:'5/1/6/4',workwear:'5/4/6/7'};
+const TM_LAYOUT_FANNY={electrical:'1/1/3/7',fuel:'1/7/2/13',tools:'2/7/3/10',office:'2/10/3/13',
+  telecom:'3/1/4/4',insurance:'3/4/4/7',workwear:'3/7/4/10',hotels:'3/10/4/13'};
+function renderCategories(){
+  const p=persona,el=$('#page-categories');
+  const layout=p.verified?TM_LAYOUT_BOB:TM_LAYOUT_FANNY;
+  el.innerHTML=`
+    <p class="eyebrow"><span class="rule"></span>Cost structure ${p.verified?'<span class="ver-chip">Verified</span>':'<span class="est-chip">Estimated</span>'}</p>
+    <h1 class="headline">${p.verified?'Ten categories carry the whole <span class="hn">kr 14.2M</span>.':'Eight categories carry an estimated <span class="hn">kr 6.8M</span>.'}</h1>
+    <p class="lede">Card size is share of spend; the warmer the tint, the more of that spend leaks past your agreements. ${p.verified?'Click a category for its agreements and the fix.':'Peer-modelled — click a category to see the estimate behind it.'}</p>
+    <div class="sect">
+      <div class="treemap" role="list">
+        ${p.cats.map(c=>{
+          const ratio=c.pot/Math.max(c.spend,1);
+          const mix=Math.min(Math.round(ratio*120),24);
+          const bg=c.pot===0
+            ?(p.verified?'color-mix(in srgb,var(--sentiment-positive) 8%,var(--surface))':'var(--surface)')
+            :`color-mix(in srgb,var(--sentiment-negative) ${mix}%,var(--surface))`;
+          const area=layout[c.id]||'auto';
+          const small=(c.spend/p.annualSpend)<0.06;
+          return `<button class="tm ${small?'small ':''}${p.verified?'':'est'}" role="listitem" data-cat="${c.id}"
+            style="grid-area:${area};background:${bg}"
+            aria-label="${c.n}: ${fmt(c.spend)} spend, ${c.on}% on agreement, leakage ${fmt(c.pot)} per year">
+            <span class="tm-n">${c.n}</span>
+            <span class="tm-spend">${fmt(c.spend)}${p.verified?'':'<span class="est-chip" style="vertical-align:middle;margin-left:6px">est.</span>'}</span>
+            <span class="tm-meta"><span>${p.verified?c.on+'% covered':(c.sup.join(', '))}</span>
+            <span class="tm-leak ${c.pot===0?'ok':''}">${c.pot===0?(p.verified?'✓ covered':'quote on request'):'−'+fmt(c.pot)+'/yr'}</span></span>
+          </button>`;
+        }).join('')}
+        ${p.verified?`<div class="tm est" style="grid-area:5/7/6/13;justify-content:center;background:var(--general-background);border-style:dashed;box-shadow:none" role="listitem" aria-label="Summary">
+          <span class="tm-n" style="color:var(--general-muted-foreground)">Where the kr 840K leaks</span>
+          <span class="tm-meta" style="margin-top:6px"><span>Electrical, office and waste carry 43% of all leakage.</span>
+          <button class="linklike" data-go="agreements" style="min-height:32px;padding:0">See the instruments →</button></span>
+        </div>`:''}
+      </div>
+      <div class="tm-legend">
+        <span>Leakage intensity</span>
+        <span class="scale" aria-hidden="true">
+          <i style="background:color-mix(in srgb,var(--sentiment-negative) 3%,var(--surface))"></i>
+          <i style="background:color-mix(in srgb,var(--sentiment-negative) 9%,var(--surface))"></i>
+          <i style="background:color-mix(in srgb,var(--sentiment-negative) 16%,var(--surface))"></i>
+          <i style="background:color-mix(in srgb,var(--sentiment-negative) 24%,var(--surface))"></i>
+        </span>
+        <span>low → high share of spend bought at list price</span>
+        <span style="margin-left:auto">${p.verified?'Total leakage −kr 840K/yr':'Total est. opportunity kr 610K/yr'}</span>
+      </div>
+    </div>`;
+}
+
+/* ====== category drawer ====== */
+function openCat(id){
+  const c=persona.cats.find(x=>x.id===id);if(!c)return;
+  const agrs=AGREEMENTS.filter(a=>a.catId===id);
+  $('#drawerHead').innerHTML=`
+    <p class="note-eyebrow" style="margin-bottom:4px">Category detail ${persona.verified?'':'· estimated'}</p>
+    <h2 id="drawerTitle" style="letter-spacing:-.6px">${c.n}</h2>
+    <p style="font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:2px">${c.sup.join(' · ')}</p>`;
+  $('#drawerBody').innerHTML=`
+    <div class="dstat">
+      <div class="cell ${persona.verified?'':'est'}"><span class="c-l">Spend, 12 mo${persona.verified?'':' (est.)'}</span><span class="c-v">${fmt(c.spend)}</span></div>
+      <div class="cell ${persona.verified?'':'est'}"><span class="c-l">On agreement</span><span class="c-v">${c.on}%</span></div>
+      <div class="cell"><span class="c-l">${persona.verified?'Saved YTD':'Realized'}</span><span class="c-v pos">${c.saved>0?fmt(c.saved):'kr 0'}</span></div>
+      <div class="cell ${persona.verified?'':'est'}"><span class="c-l">${persona.verified?'Leaking / yr':'Est. opportunity / yr'}</span><span class="c-v ${c.pot>0?'neg':'pos'}">${c.pot>0?'−'+fmt(c.pot):'—'}</span></div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--general-muted-foreground);margin-bottom:6px"><span>Agreement coverage</span><b style="color:var(--general-foreground)">${c.on}%</b></div>
+      <div class="covbar ${c.on<40?'warn':''}" style="height:8px"><i style="width:${Math.max(c.on,2)}%"></i></div>
+    </div>
+    <p class="d-sect">Agreements in this category</p>
+    ${agrs.length?agrs.map(a=>`
+      <div class="d-agr ${['recommended','newmatch'].includes(a.status)?'dashed':''}">
+        ${chip(a.s)}
+        <span class="da-t"><b>${a.s}</b><span>${a.terms}${a.bonus&&a.bonus!=='—'?' · '+a.bonus:''}</span></span>
+        <span class="st ${ST_CLASS[a.status]}">${ST_LABEL[a.status]}</span>
+      </div>`).join(''):'<p style="font-size:var(--text-sm);color:var(--general-muted-foreground)">No agreement yet — Advantage is matching your profile.</p>'}
+    ${c.method&&c.method!=='—'?`<p class="d-sect">Savings method</p><p style="font-size:var(--text-sm);color:var(--general-muted-foreground)">${c.method}</p>`:''}
+    <p class="d-sect">Next step</p>
+    ${persona.verified?catAction(c):`
+      <p style="font-size:var(--text-sm);color:var(--general-muted-foreground);margin-bottom:var(--s3)">This estimate becomes a verified figure once your invoices are connected.</p>
+      <button class="btn btn-primary" data-connect style="width:100%">Connect spend data</button>`}
+  `;
+  $('#drawerBack').classList.add('open');
+  const d=$('#drawer');d.classList.add('open');d.setAttribute('aria-hidden','false');
+  $('#drawerClose').focus();
+}
+function catAction(c){
+  const map={
+    office:{t:'Activate the Lyreco agreement',d:'19% below your current prices. Active in a day, no volume commitment — worth kr 118K/yr.',b:'Activate agreement'},
+    electrical:{t:'Route more spend through Ahlsell',d:'You already own the terms. Move the remaining 56% of electrical volume — worth kr 160K/yr.',b:'Route spend'},
+    waste:{t:'Activate Norsk Gjenvinning',d:'New match on your waste profile: 12% below list, kr 86K/yr at current volume.',b:'Activate agreement'},
+    telecom:{t:'Renew Telia before it lapses',d:'60 days left. Renewal keeps kr 41K/yr verified savings in place.',b:'Start renewal'},
+    hotels:{t:'Activate the Scandic corporate rate',d:'12% off bookable rates — kr 47K/yr at your travel volume.',b:'Activate agreement'}
+  };
+  const a=map[c.id];
+  if(!a)return `<p style="font-size:var(--text-sm);color:var(--general-muted-foreground)">Coverage is healthy. The assistant watches this category for drift and price changes.</p>`;
+  return `<div class="card" style="padding:var(--s4);border-color:var(--general-border)">
+    <b style="font-family:var(--font-sans);display:block">${a.t}</b>
+    <p style="font-size:var(--text-sm);color:var(--general-muted-foreground);margin:6px 0 var(--s3)">${a.d}</p>
+    <button class="btn btn-primary btn-sm" data-toastact="${a.b}">${a.b}</button>
+    <button class="btn btn-ghost btn-sm" data-go="agreements">See agreement</button>
+  </div>`;
+}
+function closeDrawer(){
+  $('#drawerBack').classList.remove('open');
+  const d=$('#drawer');d.classList.remove('open');d.setAttribute('aria-hidden','true');
+}
+
+/* =============== AGREEMENTS =============== */
+function renderAgreements(){
+  const p=persona,el=$('#page-agreements');
+  const isBob=p.verified;
+  const active=AGREEMENTS.filter(a=>['active','underused','expiring'].includes(a.status)).length;
+  el.innerHTML=`
+    <p class="eyebrow"><span class="rule"></span>Purchasing instruments ${isBob?'<span class="ver-chip">Verified</span>':'<span class="est-chip">Available to you</span>'}</p>
+    <h1 class="headline">${isBob
+      ?`You hold <span class="hn">9 active agreements</span>. Two of them are <span class="hw">running below capacity</span>.`
+      :`<span class="hn">12 negotiated agreements</span> are ready for a firm like yours.`}</h1>
+    <p class="lede">${isBob
+      ?'The CFO reading: these are instruments you already own. Utilization shows how much of the addressable spend actually flows through each one — the cheapest saving is routing, not renegotiating.'
+      :'Pre-negotiated by Advantage across thousands of SMBs. Connect your spend data to see the exact fit — estimates below use your peer group.'}</p>
+    <div class="kpis" style="margin-top:var(--s6);grid-template-columns:repeat(4,1fr)">
+      <div class="kpi ${isBob?'':'est'}"><span class="k-l">Instruments</span><span class="k-v">12</span><span class="k-s">${active} active${isBob?'':' for peers'} · 3 recommended</span></div>
+      <div class="kpi ${isBob?'':'est'}"><span class="k-l">${isBob?'Portfolio utilization':'Typical peer utilization'}</span><span class="k-v">${isBob?'62%':'71%'}</span><span class="k-s">of addressable spend routed</span></div>
+      <div class="kpi ${isBob?'':'est'}"><span class="k-l">${isBob?'Unused headroom':'Est. potential'}</span><span class="k-v" style="color:var(--sentiment-negative)">${isBob?'kr 840K':'kr 610K'}</span><span class="k-s">per year${isBob?'':' · peer terms'}</span></div>
+      <div class="kpi ${isBob?'':'est'}"><span class="k-l">Bonus-bearing</span><span class="k-v">2</span><span class="k-s">Stark, Q8 · 1% of volume</span></div>
+    </div>
+    <div class="sect">
+      <div class="sect-h"><span class="no">01</span><h2>The register</h2><span class="note">${isBob?'utilization = spend routed ÷ addressable spend':'terms as negotiated · fit is estimated'}</span></div>
+      <div class="card ${isBob?'':'est '}tablecard">
+        <table class="dt">
+          <thead><tr><th>Supplier</th><th>Category</th><th>Terms</th><th>Status</th><th>Bonus</th><th>${isBob?'Utilization':'Est. fit for you'}</th><th></th></tr></thead>
+          <tbody>
+          ${AGREEMENTS.map(a=>{
+            const flagged=isBob&&a.status==='underused';
+            const dashed=['recommended','newmatch'].includes(a.status);
+            const util=isBob?a.util:null;
+            const fit=!isBob?({Stark:null,Bygma:null}[a.s]!==undefined?null:undefined):null;
+            let utilCell='';
+            if(isBob){
+              utilCell=util==null
+                ?`<span class="util"><span class="ubar"><i style="width:0"></i></span><span class="uv mut">—</span></span>`
+                :`<span class="util ${util<50?'low':''}"><span class="ubar"><i style="width:${util}%"></i></span><span class="uv">${util}%</span></span>`;
+            }else{
+              const rel=persona.cats.some(c=>a.catId===c.id);
+              utilCell=rel?`<span class="st st-rec">Matches your profile</span>`:`<span class="uv mut" style="font-size:var(--text-xs);color:var(--general-muted-foreground)">outside your categories</span>`;
+            }
+            const act=isBob
+              ?(dashed?`<button class="fixlink" data-toastact="Activate ${a.s}">Activate →</button>`
+                :a.status==='expiring'?`<button class="fixlink" data-toastact="Renew ${a.s}">Renew →</button>`
+                :a.status==='underused'?`<button class="fixlink" data-toastact="Route spend to ${a.s}">Route spend →</button>`:'')
+              :`<button class="fixlink" data-connect>Connect to activate →</button>`;
+            return `<tr class="${flagged?'flagged':''}${dashed?' dashedrow':''}">
+              <td><span class="suprow">${chip(a.s)}<b style="font-family:var(--font-sans)">${a.s}</b></span>
+                ${flagged&&a.note?`<span class="flag-note">${a.note}</span>`:''}</td>
+              <td>${a.cat}${a.catId===null?'<span class="sub">no spend category yet</span>':''}</td>
+              <td><span class="method" style="font-size:var(--text-xs)">${a.terms}</span></td>
+              <td>${isBob?`<span class="st ${ST_CLASS[a.status]}">${ST_LABEL[a.status]}</span>`:`<span class="st st-rec">Available</span>`}</td>
+              <td>${a.bonus==='—'?'<span style="color:var(--general-muted-foreground)">—</span>':'<b>'+a.bonus+'</b>'}</td>
+              <td>${utilCell}</td>
+              <td class="r">${act}</td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${isBob?`<p class="ch-foot" style="border:none">Under-used instruments are the cheapest savings available: the terms are signed, only the routing is missing. Ahlsell alone is worth kr 160K/yr.</p>`:''}
+    </div>`;
+}
+
+/* =============== nav & shell =============== */
+const PAGES={overview:renderOverview,categories:renderCategories,agreements:renderAgreements,savings:renderSavings,spending:renderSpending};
+let current='overview';
+function showPage(id,skipRender){
+  current=id;
+  $$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+id));
+  $$('.nav-item').forEach(n=>{
+    if(n.dataset.page===id)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current');
+  });
+  if(!skipRender)PAGES[id]();
+  window.scrollTo({top:0,behavior:'auto'});
+}
+$$('.nav-item').forEach(n=>n.addEventListener('click',()=>showPage(n.dataset.page)));
+
+function setPersona(p){
+  persona=p;spFilter='all';spPeriod='ytd';
+  $('#uAv').textContent=p.name.split(' ').map(w=>w[0]).join('');
+  $('#uName').textContent=p.name;$('#uCo').textContent=p.co;
+  $('#pBob').setAttribute('aria-current',p===BOB);
+  $('#pFanny').setAttribute('aria-current',p===FANNY);
+  const tc=$('#topContext');
+  if(p.verified){tc.innerHTML='<span class="dot"></span>FY 2026 · data through 31 Aug · verified from invoices';tc.classList.remove('est');}
+  else{tc.innerHTML='<span class="dot"></span>No data connected · figures are peer estimates';tc.classList.add('est');}
+  closeDrawer();
+  PAGES[current]();
+  showPage(current,true);
+  $('#userPop').classList.remove('open');$('#userBtn').setAttribute('aria-expanded','false');
+}
+
+/* user menu */
+$('#userBtn').addEventListener('click',e=>{
+  e.stopPropagation();
+  const open=$('#userPop').classList.toggle('open');
+  $('#userBtn').setAttribute('aria-expanded',open);
+});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#userPop')&&!e.target.closest('#userBtn')){
+    $('#userPop').classList.remove('open');$('#userBtn').setAttribute('aria-expanded','false');
+  }
+});
+$('#pBob').addEventListener('click',()=>setPersona(BOB));
+$('#pFanny').addEventListener('click',()=>setPersona(FANNY));
+
+/* assistant */
+$('#agentBtn').addEventListener('click',()=>{
+  const ap=$('#apPanel');const open=ap.classList.toggle('open');
+  ap.setAttribute('aria-hidden',!open);
+  $('#agentBtn').setAttribute('aria-expanded',open);
+});
+$('#apClose').addEventListener('click',()=>{
+  $('#apPanel').classList.remove('open');$('#apPanel').setAttribute('aria-hidden','true');
+  $('#agentBtn').setAttribute('aria-expanded','false');$('#agentBtn').focus();
+});
+$('#apForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const inp=e.target.querySelector('input');const q=inp.value.trim();if(!q)return;
+  const body=$('#apBody');
+  body.insertAdjacentHTML('beforeend',`<div class="msg-q"></div>`);
+  body.lastElementChild.textContent=q;
+  body.insertAdjacentHTML('beforeend',`<div class="msg-a">In this demo I answer three scripted questions — but in production I'd read the answer straight out of your ${persona.verified?'invoice data':'peer model'}.</div>`);
+  inp.value='';body.scrollTop=body.scrollHeight;
+});
+
+/* drawer */
+$('#drawerClose').addEventListener('click',closeDrawer);
+$('#drawerBack').addEventListener('click',closeDrawer);
+
+/* modal */
+function openModal(){$('#modalBack').classList.add('open');$('#modalClose').focus();}
+function closeModal(){$('#modalBack').classList.remove('open');}
+$('#modalClose').addEventListener('click',closeModal);
+$('#modalBack').addEventListener('click',e=>{if(e.target.id==='modalBack')closeModal();});
+$$('.m-opt').forEach(b=>b.addEventListener('click',()=>{closeModal();toast('Connection flow would start here (demo).');}));
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeDrawer();closeModal();
+    $('#apPanel').classList.remove('open');$('#apPanel').setAttribute('aria-hidden','true');
+    $('#userPop').classList.remove('open');}
+});
+
+/* delegated actions */
+document.addEventListener('click',e=>{
+  const go=e.target.closest('[data-go]');
+  if(go){showPage(go.dataset.go);return;}
+  const cat=e.target.closest('[data-cat]');
+  if(cat){openCat(cat.dataset.cat);return;}
+  const conn=e.target.closest('[data-connect]');
+  if(conn){openModal();return;}
+  const ta=e.target.closest('[data-toastact]');
+  if(ta){toast(ta.dataset.toastact+' — request sent to your Advantage advisor (demo).');return;}
+});
+
+/* boot: re-render overview via generator (static markup is the no-JS fallback) */
+renderOverview();
+</script>
+</body>
+</html>

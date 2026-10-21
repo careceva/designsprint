@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage explorations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fafafa; --surface:#fff; --ink:#0f0f0f; --muted:#5f6068;
+    --hairline:#e7e7ea; --primary:#0071e3; --hover:#f0f7ff;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#0b0d12; --surface:#12151c; --ink:#f2f4f8; --muted:#9aa0ab;
+      --hairline:#262a33; --primary:#6fa2ff; --hover:#172033; color-scheme:dark}
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);
+    font:16px/1.5 "DM Sans",system-ui,-apple-system,sans-serif;
+    -webkit-text-size-adjust:100%;padding:64px 16px 96px}
+  main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+  header{display:flex;flex-direction:column;gap:8px}
+  h1{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  header p{color:var(--muted)}
+  a{color:var(--primary);text-decoration:none}
+  ul{list-style:none;padding:0;background:var(--surface);
+    border:1px solid var(--hairline);border-radius:16px;overflow:hidden}
+  li+li{border-top:1px solid var(--hairline)}
+  li a{display:flex;align-items:center;gap:16px;padding:16px 20px;color:inherit;
+    -webkit-tap-highlight-color:transparent}
+  @media (hover:hover) and (pointer:fine){li a:hover{background:var(--hover)}}
+  li a:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;border-radius:16px}
+  .t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .t b{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .t span{font-size:14px;color:var(--muted)}
+  .go{flex:0 0 auto;color:var(--primary);font-size:14px;font-weight:600;white-space:nowrap}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Explorations</h1>
+    <p>One feature studied off the <a href="../advantage-main.html">main prototype</a>, in versions.</p>
+  </header>
+  <ul>
+    <li><a href="cfo-overview/v1/index.html">
+      <span class="t"><b>CFO overview · v1</b>
+        <span>The purchasing-areas ledger on the Overview, ten directions. Kari's account; rows expand, take a figure or a document, go to Peter</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="finops-overview/v2-stripe-home/finops-overview-v2.html">
+      <span class="t"><b>FinOps overview · v2</b>
+        <span>The Overview as a payments-style home: sidebar, this month, filter chips, six soft cards and the purchasing-areas review. Switch company in the sidebar for Kari's documents-only data</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="finops-overview/v1/finops-overview-v1.html">
+      <span class="t"><b>FinOps overview · v1</b>
+        <span>The Overview as a high-density cost dashboard: KPI strip, stacked months, breakdown table, ledger</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="own-agreement/v1/own-agreement-v1.html">
+      <span class="t"><b>Own agreement · v1</b>
+        <span>The company's own supplier agreements beside the negotiated ones</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="content-feedback/v1/content-feedback-v1.html">
+      <span class="t"><b>Content feedback · v1</b>
+        <span>Copy and content feedback on the agreement and category pages</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="agreement-hero/v1/agreement-hero-v1.html">
+      <span class="t"><b>Agreement hero · v1</b>
+        <span>Agreement page hero: logo, Spending × Discount, reports</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="areas-heroes/v1/areas-heroes-v1.html">
+      <span class="t"><b>Areas heroes · v1</b>
+        <span>Hero treatments for the Areas page</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="calc-charts/v1/calc-charts-v1.html">
+      <span class="t"><b>Calculator charts · v1</b>
+        <span>The Tune calculator as a chart, five approaches</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="sales-analysis/v1/sales-analysis-v1.html">
+      <span class="t"><b>Sales analysis · v1</b>
+        <span>The sales-analysis table integration</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="tune-states/v1/index.html">
+      <span class="t"><b>Tune states · v1</b>
+        <span>Tune calculator states a–d</span></span>
+      <span class="go">Open →</span></a></li>
+    <li><a href="suppliers-filter/v1/suppliers-filter-directions.html">
+      <span class="t"><b>Suppliers filter · v1</b>
+        <span>Filter bar directions for Suppliers and Agreements</span></span>
+      <span class="go">Open →</span></a></li>
+  </ul>
+</main>
+</body>
+</html>

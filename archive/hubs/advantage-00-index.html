@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f5f7">
+<title>Advantage — prototype reference</title>
+<style>
+:root{
+  --white:#ffffff; --canvas:#F4F6F6; --ink:#1d1d1f; --soft:#86868b;
+  --accent:#0071e3; --positive:#00845a;
+  --hair:#0000000f; --hair2:#00000014;
+  --wire:#e8e8ed; --wire2:#dededf; --wire3:#c9c9ce;
+  --r-sm:8px; --r:12px; --r-lg:16px; --r-xl:22px; --r-full:999px;
+  --sh-1:0 1px 2px rgba(0,0,0,.04), 0 4px 14px rgba(0,0,0,.045);
+  --sh-2:0 2px 6px rgba(0,0,0,.05), 0 12px 36px rgba(0,0,0,.07);
+  --sf:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sf);background:var(--canvas);color:var(--ink);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+h1,h2,h3,h4{letter-spacing:-.028em;text-wrap:balance;font-weight:600}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.page{max-width:1180px;margin:0 auto;padding:88px 32px 120px}
+@media(max-width:700px){.page{padding:56px 20px 80px}}
+
+/* ---------- masthead ---------- */
+.mast{text-align:center;max-width:760px;margin:0 auto 88px}
+.kicker{font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--accent);
+  text-transform:uppercase;margin-bottom:20px}
+.mast h1{font-size:56px;line-height:1.05;letter-spacing:-.035em;font-weight:700}
+@media(max-width:700px){.mast h1{font-size:36px}}
+.mast p{margin-top:22px;font-size:19px;color:var(--soft);line-height:1.5}
+.mast p b{color:var(--ink);font-weight:600}
+
+/* ---------- shared content requirements strip ---------- */
+.reqs{background:var(--white);border-radius:var(--r-xl);padding:32px 36px;margin-bottom:96px}
+.reqs h4{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:20px}
+.reqs ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 28px}
+.reqs li{font-size:15px;color:var(--ink);display:flex;gap:10px;align-items:baseline;line-height:1.45}
+.reqs li span{color:var(--accent);font-weight:700;flex:0 0 auto}
+
+
+/* ---------- index-specific components, in the same language ---------- */
+.stats{display:flex;gap:36px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.stats div{text-align:center}
+.stats b{display:block;font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.stats span{font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:36px}
+.toc a{font-size:13.5px;font-weight:600;padding:8px 16px;border-radius:var(--r-full);
+  background:var(--white);color:var(--ink);text-decoration:none}
+.toc a:hover{color:var(--accent)}
+
+.sec{margin-bottom:96px;scroll-margin-top:24px}
+.sec>h2{font-size:34px;line-height:1.14;margin-bottom:8px}
+@media(max-width:700px){.sec>h2{font-size:26px}}
+.sec>.tagline{margin-bottom:28px}
+h3.sh{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+  color:var(--soft);margin:40px 0 14px}
+
+/* card grid (start here) */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.cd{background:var(--white);border-radius:var(--r-xl);padding:28px 30px;
+  display:flex;flex-direction:column;gap:12px}
+.cd .tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.cd h3{font-size:24px;line-height:1.15}
+.cd .fn{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:#a1a1a6}
+.cd p{font-size:15px;color:var(--soft);line-height:1.6}
+.cd .go{margin-top:auto;padding-top:14px}
+.cd .go a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 26px;
+  border-radius:var(--r-full);background:var(--accent);color:#fff;font-size:15px;font-weight:600;text-decoration:none}
+.cd .go a:hover{background:#0064cc}
+
+/* grouped list */
+.group{background:var(--white);border-radius:var(--r-xl);overflow:hidden}
+.group+.group{margin-top:16px}
+.gh{padding:20px 28px 16px;border-bottom:1px solid var(--hair)}
+.gh h4{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--soft)}
+.gh p{font-size:14px;color:var(--soft);margin-top:5px;line-height:1.5}
+.row{display:flex;gap:22px;padding:20px 28px;align-items:flex-start;position:relative}
+.row+.row::before{content:"";position:absolute;top:0;left:28px;right:28px;height:1px;background:var(--hair)}
+.row .m{flex:1;min-width:0}
+.row .nm{font-size:17px;font-weight:600;letter-spacing:-.022em}
+.row .nm a{color:var(--ink);text-decoration:none}
+.row .nm a:hover{color:var(--accent)}
+.row .fn{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;
+  color:#a1a1a6;margin-top:3px;word-break:break-all}
+.row .ds{font-size:15px;color:var(--soft);line-height:1.6;margin-top:8px}
+.row .ds b{color:var(--ink);font-weight:600}
+.row .r{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.row .r a{font-size:14px;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap}
+.chip{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:5px 11px;border-radius:var(--r-full);background:var(--canvas);color:var(--soft);white-space:nowrap}
+.chip.cur{background:#e6f4ec;color:var(--positive)}
+.chip.sup{background:#f2f2f4;color:#a1a1a6}
+.chip.you{background:#fdf1e3;color:#a35c00}
+@media(max-width:640px){
+  .row{flex-direction:column;gap:12px;padding:18px 20px}
+  .row+.row::before{left:20px;right:20px}
+  .row .r{flex-direction:row;align-items:center;align-self:flex-start}
+  .gh{padding:18px 20px 14px}
+}
+
+/* tables */
+.tw{background:var(--white);border-radius:var(--r-xl);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px;min-width:640px}
+th{text-align:left;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--soft);padding:20px 20px 14px;border-bottom:1px solid var(--hair2);white-space:nowrap}
+td{padding:15px 20px;border-bottom:1px solid var(--hair);vertical-align:top;line-height:1.55}
+tr:last-child td{border-bottom:none}
+td.f{font-weight:600;white-space:nowrap}
+td.c{text-align:center;white-space:nowrap;font-weight:600;font-size:14px}
+table.matrix th:not(:first-child){text-align:center}
+table.matrix td:first-child{font-weight:600;min-width:230px}
+.y{color:var(--positive)} .n{color:#c9c9ce} .p{color:#a35c00}
+.legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:16px;font-size:13.5px;color:var(--soft)}
+
+/* plain blocks */
+.bx2{background:var(--white);border-radius:var(--r-xl);padding:32px 36px}
+.bx2+.bx2{margin-top:16px}
+.bx2 h3{font-size:22px;margin-bottom:8px}
+.bx2 h4{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--soft);margin:26px 0 12px}
+.bx2 h4:first-child{margin-top:0}
+.bx2 p{font-size:15px;line-height:1.65}
+.bx2 p+p{margin-top:12px}
+.bx2 ul,.bx2 ol{padding-left:21px;font-size:15px;line-height:1.65}
+.bx2 li+li{margin-top:9px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:9px 18px;font-size:15px;align-items:baseline}
+.kv dt{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+  color:var(--accent);white-space:nowrap}
+.kv dd{color:var(--soft)}
+.kbd{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+  padding:3px 7px;border:1px solid var(--hair2);border-bottom-width:2px;border-radius:6px;
+  background:var(--canvas);color:var(--ink)}
+.warnline{margin-top:18px;padding-left:14px;border-left:2px solid var(--accent);
+  font-size:14.5px;color:var(--soft);line-height:1.6}
+.warnline b{color:var(--ink);font-weight:600}
+.bx2 code,.note code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+  background:var(--canvas);padding:2px 7px;border-radius:6px}
+
+.note{margin-top:64px;padding-top:32px;border-top:1px solid var(--hair2)}
+.note h4{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:14px}
+.note p{font-size:15px;color:var(--soft);line-height:1.65;max-width:80ch}
+.note p+p{margin-top:12px}
+.note b{color:var(--ink);font-weight:600}
+.note code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+  background:var(--white);padding:2px 7px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="mast">
+  <p class="kicker">Advantage Nordic · prototype reference</p>
+  <h1>45 files. What each one does.</h1>
+  <p>Which features each build implements, what is wired and what is only a
+  stub. Two builds are current; everything else is superseded and kept for its reasoning. Every build
+  from v4 onward is a single self-contained HTML file, holds state in memory, and ships two data
+  personas.</p>
+  <nav class="toc">
+    <a href="#current">Current builds</a>
+    <a href="#matrix">Feature matrix</a>
+    <a href="#works">Wired vs stubbed</a>
+    <a href="#routes">Routes &amp; keys</a>
+    <a href="#data">Data</a>
+    <a href="#files">All files</a>
+    <a href="#journey">Journey</a>
+    <a href="#gaps">Open gaps</a>
+  </nav>
+</div>
+
+<!-- CURRENT -->
+<section class="sec" id="current">
+  <h2>Current builds</h2>
+  <p class="tagline">Both implement the same feature set. They differ in navigation model, which is the
+  only thing worth comparing between them.</p>
+  <div class="group">
+    <div class="row">
+      <div class="m">
+        <div class="nm"><a href="../concepts/v8-directions/advantage-v8-bento.html">Bento — tile grid navigation</a></div>
+        <div class="fn">advantage-v8-bento.html</div>
+        <div class="ds">Icon rail plus a 7-tile grid on the overview. Each tile is a link into its
+        section; drill-down animates from the tile's position. Includes a tile <b>reorder mode</b> with
+        keyboard controls and reset. All 7 sections, 3 built agreement pages, 11 category pages,
+        notifications with 6 configurable rules, 6-thread inbox, 16-entry activity feed.</div>
+      </div>
+      <div class="r"><span class="chip cur">Current</span><a href="../concepts/v8-directions/advantage-v8-bento.html">Open →</a></div>
+    </div>
+    <div class="row">
+      <div class="m">
+        <div class="nm"><a href="../concepts/v8-directions/advantage-v8-ledger.html">Ledger — three-pane navigation</a></div>
+        <div class="fn">advantage-v8-ledger.html</div>
+        <div class="ds">Sidebar → list → detail, with persistent selection and no page reload between
+        list and detail. <b>Keyboard driven:</b> arrows move selection, <span class="kbd">↵</span> opens
+        the agreement, <span class="kbd">⌘K</span> filters the list live, sort by gap/spend/coverage/name.
+        The list column changes content by section (categories on overview, threads in inbox). All 14
+        categories are comparable in one view via inline coverage bars. Activity is a 64px strip that
+        expands to 340px over the detail pane instead of taking a fourth column.</div>
+      </div>
+      <div class="r"><span class="chip cur">Current</span><a href="../concepts/v8-directions/advantage-v8-ledger.html">Open →</a></div>
+    </div>
+    <div class="row">
+      <div class="m">
+        <div class="nm"><a href="../concepts/dashboard-layouts/advantage-dashboard-layouts.html">Layout options — 5 navigation models</a></div>
+        <div class="fn">advantage-dashboard-layouts.html</div>
+        <div class="ds">Wireframes and rationale for five ways to structure the overview and get from
+        the total savings figure to one agreement. Not interactive. The two builds above came from
+        options 2 and 3; options 1, 4 and 5 (scroll narrative, single-decision card, spend treemap) are
+        unbuilt.</div>
+      </div>
+      <div class="r"><span class="chip">Spec</span><a href="../concepts/dashboard-layouts/advantage-dashboard-layouts.html">Open →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- MATRIX -->
+<section class="sec" id="matrix">
+  <h2>Feature matrix</h2>
+  <p class="tagline">What each generation of the main line actually implements. Read left to right to see
+  what a generation added — that is the only reason to open an older file.</p>
+  <div class="tw">
+    <table class="matrix">
+      <thead><tr>
+        <th>Feature</th><th>v3</th><th>v4</th><th>v6</th><th>v7</th><th>v8</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>5 core sections (overview · categories · agreements · savings · spending)</td>
+          <td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Two data personas (verified / estimated)</td>
+          <td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Real supplier logos and category icons</td>
+          <td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Confirm → undo on committing actions</td>
+          <td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Empty / loading / error states designed</td>
+          <td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Saved / favourite agreements with a destination</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Activity feed sidebar (dated, expandable, filtered)</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Standalone routed agreement pages</td>
+          <td class="c n">drawer</td><td class="c n">drawer</td><td class="c n">drawer</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Standalone routed category pages</td>
+          <td class="c n">drawer</td><td class="c n">drawer</td><td class="c n">drawer</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>“How to buy on this agreement” (order channel, customer no., contact)</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Structured terms &amp; conditions per agreement</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Documents per agreement (contract, price list, compliance)</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Notification centre (severity, read state, snooze, deep link)</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>User-configurable notification rules + thresholds</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Delivery preferences (channel, digest cadence, quiet hours)</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Messaging inbox with threads and attachments</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Start a thread carrying entity context</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">yes</td><td class="c y">yes</td></tr>
+        <tr><td>Global search over categories / agreements</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c p">1 of 3</td><td class="c p">ledger only</td></tr>
+        <tr><td>Full keyboard navigation of the primary list</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c p">1 of 3</td><td class="c p">ledger only</td></tr>
+        <tr><td>Rules that visibly generate new work items</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c p">today only</td><td class="c n">—</td></tr>
+        <tr><td>Advisor time metered against plan</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c p">today only</td><td class="c y">yes</td></tr>
+        <tr><td>Multi-user, roles, approvals</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td></tr>
+        <tr><td>End-to-end data connection flow</td>
+          <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend">
+    <span><b class="y">yes</b> — implemented</span>
+    <span><b class="p">partial</b> — in some variants only</span>
+    <span><b class="n">—</b> — not present</span>
+    <span><b class="n">drawer</b> — exists, but as a slide-over panel, not a linkable page</span>
+  </div>
+  <p class="warnline"><b>Two rows are worth arguing about.</b> Global search and full keyboard navigation
+  exist only in the Ledger; if you pick Bento, both need building. And <b>rules that generate work
+  items</b> — change the expiry threshold from 90 to 120 days in v7 Today and a real new decision card
+  appears — is the most convincing single mechanic anyone built, and it did not survive into v8. It
+  should.</p>
+</section>
+
+<!-- WORKS -->
+<section class="sec" id="works">
+  <h2>Wired vs stubbed</h2>
+  <p class="tagline">Applies to both current builds. Know this before demoing.</p>
+  <div class="cols">
+    <div class="bx2">
+      <h4>Actually works</h4>
+      <ul>
+        <li>All navigation, routing, browser back, deep links, and middle-click on nav items</li>
+        <li>Persona switch — every figure, state and page re-renders</li>
+        <li>Activate / request offer / approve, with confirmation, success state and undo window</li>
+        <li>Favourite an agreement; it appears in the saved destination</li>
+        <li>Editing a notification rule: threshold, channel, cadence, quiet hours</li>
+        <li>Snooze, mark read, mark all read, severity and unread filters</li>
+        <li>Sending a message — optimistic append, thread state, unread counts</li>
+        <li>Starting a thread from an agreement, carrying its context</li>
+        <li>Activity feed gains a real entry when you act, with filters and counts</li>
+        <li>Card/row view switching, category filters, sort (Ledger)</li>
+        <li>Keyboard: arrows, <span class="kbd">↵</span>, <span class="kbd">⌘K</span>,
+        <span class="kbd">Esc</span>, <span class="kbd">⌘↵</span> to send (Ledger)</li>
+        <li>Tile reorder and reset (Bento)</li>
+      </ul>
+    </div>
+    <div class="bx2">
+      <h4>Stubbed — shows a toast or dialog, does nothing</h4>
+      <ul>
+        <li>Document and price-list downloads</li>
+        <li>File attachment in the composer</li>
+        <li>Forward a thread to a colleague</li>
+        <li>Share / notify my buyers</li>
+        <li>Opening a category guide</li>
+        <li>Punchout to the supplier's ordering system</li>
+        <li>Booking advisor time</li>
+        <li>The data-connection flow (a modal placeholder only)</li>
+      </ul>
+      <h4>Not present at all</h4>
+      <ul>
+        <li>Authentication — the persona switch is the only identity</li>
+        <li>Any backend; nothing persists past a page reload</li>
+        <li>A browsable list of all 112 catalogue agreements (12 are modelled, the rest render generically)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ROUTES -->
+<section class="sec" id="routes">
+  <h2>Routes and keyboard</h2>
+  <div class="cols">
+    <div class="bx2">
+      <h4>Routes (both current builds)</h4>
+      <dl class="kv">
+        <dt>#overview</dt><dd>Main dashboard. Ledger also accepts the section name.</dd>
+        <dt>#categories</dt><dd>All 14 categories</dd>
+        <dt>#category/&lt;id&gt;</dt><dd>One category — office, fuel, electrical built out; others generic</dd>
+        <dt>#agreements</dt><dd>Agreement registry</dd>
+        <dt>#agreement/&lt;id&gt;</dt><dd>One agreement — q8, lyreco, ahlsell built out; others generic</dd>
+        <dt>#savings</dt><dd>Realised savings and bonus</dd>
+        <dt>#spending</dt><dd>Spend by category, on/off agreement</dd>
+        <dt>#notifications</dt><dd>Notification list; rules on a second tab</dd>
+        <dt>#inbox</dt><dd>Thread list</dd>
+        <dt>#inbox/&lt;id&gt;</dt><dd>One thread</dd>
+        <dt>#saved</dt><dd>Favourited agreements (Bento)</dd>
+      </dl>
+    </div>
+    <div class="bx2">
+      <h4>Keyboard — Ledger</h4>
+      <p><span class="kbd">↑</span> <span class="kbd">↓</span> move list selection, detail pane follows
+      with no reload · <span class="kbd">↵</span> open the selected agreement ·
+      <span class="kbd">⌘K</span> focus search, filters live ·
+      <span class="kbd">Esc</span> close the activity overlay ·
+      <span class="kbd">⌘↵</span> send a message</p>
+      <h4>Keyboard — v7 Today</h4>
+      <p><span class="kbd">J</span> <span class="kbd">K</span> move between decision cards ·
+      <span class="kbd">⌘Z</span> undo the last action</p>
+      <h4>Keyboard — Bento</h4>
+      <p>Tab order follows the grid. Reorder mode exposes move-earlier / move-later buttons on each
+      tile, so reordering does not require a pointer.</p>
+      <h4>All builds</h4>
+      <p>Every interactive element is reachable by Tab with a visible focus indicator. Overlays trap
+      focus and return it to the trigger on close.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DATA -->
+<section class="sec" id="data">
+  <h2>The data model</h2>
+  <p class="tagline">Identical across every build from v3 onward, so any two files are directly comparable.</p>
+  <div class="cols">
+    <div class="bx2">
+      <h3>Bob Iversen — verified</h3>
+      <p style="color:var(--soft);font-size:13.5px">Nordvik Byg A/S · construction · data connected</p>
+      <div class="tw" style="border:none;margin-top:12px">
+        <table style="min-width:0">
+          <tbody>
+            <tr><td class="f">Annual purchasing spend</td><td>kr 14.2M</td></tr>
+            <tr><td class="f">Through agreements</td><td>62% — kr 8.8M</td></tr>
+            <tr><td class="f">Realised savings YTD</td><td>kr 1.24M</td></tr>
+            <tr><td class="f">Potential additional</td><td>kr 840K</td></tr>
+            <tr><td class="f">Customer bonus</td><td>kr 45K — 32K paid, 13K pending</td></tr>
+            <tr><td class="f">Agreements</td><td>8 active of 112 in catalogue</td></tr>
+            <tr><td class="f">Categories</td><td>14</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px;font-size:13.5px;color:var(--soft)">Four categories are flagged:
+      electrical (44% coverage, under-used), office supplies (22%, widest gap), waste (0%, new match),
+      telecom (expiring in 60 days).</p>
+    </div>
+    <div class="bx2">
+      <h3>Fanny Kristensen — estimated</h3>
+      <p style="color:var(--soft);font-size:13.5px">Kristensen Elektro ApS · electrical contracting · no data connected</p>
+      <div class="tw" style="border:none;margin-top:12px">
+        <table style="min-width:0">
+          <tbody>
+            <tr><td class="f">Estimated annual spend</td><td>kr 6.8M — peer-based</td></tr>
+            <tr><td class="f">Through agreements</td><td>0%</td></tr>
+            <tr><td class="f">Realised savings</td><td>kr 0</td></tr>
+            <tr><td class="f">Estimated potential</td><td>kr 610K</td></tr>
+            <tr><td class="f">Peer group</td><td>148 comparable firms</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px;font-size:13.5px;color:var(--soft)">Every figure is marked estimated.
+      Realised metrics are locked with a connect-data path. Her notification list, inbox and activity
+      feed are deliberately near-empty with designed empty states rather than invented history — the
+      main thing to check when reviewing any build.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FILES -->
+<section class="sec" id="files">
+  <h2>All files</h2>
+  <p class="tagline">Newest first. <b>Current</b> = use it. <b>Superseded</b> = a later file does everything
+  this one does. <b>Yours</b> = your own file, not from the numbered series.</p>
+
+  <h3 class="sh">v7 — first generation with pages, notifications and inbox</h3>
+  <div class="group">
+    <div class="gh"><h4>Three variants</h4><p>differ in what the overview is for</p></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v7-directions/advantage-v7-4-today.html">Today — work queue overview</a></div>
+      <div class="fn">advantage-v7-4-today.html</div>
+      <div class="ds">Overview is a queue of 6 prepared decisions, each stating what it commits you to,
+      with three commitment levels. <b>Only build where notification rules generate queue items</b> —
+      change the expiry threshold and a new card appears. Also meters advisor time against the plan and
+      separates queue / notifications / inbox explicitly.</div></div>
+      <div class="r"><span class="chip">Unique mechanics</span><a href="../concepts/v7-directions/advantage-v7-4-today.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v7-directions/advantage-v7-1-storefront.html">Storefront — catalogue overview</a></div>
+      <div class="fn">advantage-v7-1-storefront.html</div>
+      <div class="ds">Overview is a browsable catalogue with live search across suppliers, categories and
+      terms, plus a saved shelf as its own destination and a current-vs-proposed comparison on the
+      agreement page.</div></div>
+      <div class="r"><a href="../concepts/v7-directions/advantage-v7-1-storefront.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v7-directions/advantage-v7-3-spine.html">Spine — category board overview</a></div>
+      <div class="fn">advantage-v7-3-spine.html</div>
+      <div class="ds">Overview is a 14-row category board; the agreement registry links back into
+      category context. Adds a percentile scale with quartile marks and a “top quartile would be worth
+      kr 67K” calculation.</div></div>
+      <div class="r"><a href="../concepts/v7-directions/advantage-v7-3-spine.html">Open →</a></div></div>
+  </div>
+
+  <h3 class="sh">v6 — added the activity feed sidebar</h3>
+  <div class="group">
+    <div class="gh"><h4>Five variants</h4><p>detail still opens in drawers; no notifications or inbox</p></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v6-directions/advantage-v6-2-statement.html">Statement — reconciled money view</a></div>
+      <div class="fn">advantage-v6-2-statement.html</div>
+      <div class="ds">Spend in, savings and bonus out, with a <b>reconciliation line that visibly
+      balances</b> (1,240 savings + 45 bonus = 1,285 settled). Savings and spending mirror each other
+      row for row. Not carried forward — the reconciliation line is worth taking into whichever build
+      ships.</div></div>
+      <div class="r"><span class="chip sup">Line ended</span><a href="../concepts/v6-directions/advantage-v6-2-statement.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v6-directions/advantage-v6-5-report.html">Report — monthly management report</a></div>
+      <div class="fn">advantage-v6-5-report.html</div>
+      <div class="ds">Generated narrative headline, month switcher that re-runs the report, chart/table
+      toggle, and a “copy for board report” that outputs paste-ready text. Not carried forward.</div></div>
+      <div class="r"><span class="chip sup">Line ended</span><a href="../concepts/v6-directions/advantage-v6-5-report.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v6-directions/advantage-v6-1-storefront.html">Storefront</a></div>
+      <div class="fn">advantage-v6-1-storefront.html</div></div>
+      <div class="r"><span class="chip sup">Superseded by v7</span><a href="../concepts/v6-directions/advantage-v6-1-storefront.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v6-directions/advantage-v6-3-spine.html">Spine</a></div>
+      <div class="fn">advantage-v6-3-spine.html</div></div>
+      <div class="r"><span class="chip sup">Superseded by v7</span><a href="../concepts/v6-directions/advantage-v6-3-spine.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v6-directions/advantage-v6-4-today.html">Today</a></div>
+      <div class="fn">advantage-v6-4-today.html</div></div>
+      <div class="r"><span class="chip sup">Superseded by v7</span><a href="../concepts/v6-directions/advantage-v6-4-today.html">Open →</a></div></div>
+  </div>
+
+  <h3 class="sh">v4 — real data, real copy, confirm/undo</h3>
+  <div class="group">
+    <div class="gh"><h4>Five variants</h4><p>no activity feed, notifications or inbox</p></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v4-directions/advantage-v4-4-decision-queue.html">Decision queue</a></div>
+      <div class="fn">advantage-v4-4-decision-queue.html</div>
+      <div class="ds">Where the three commitment levels (approve / request offer / ask advisor) and the
+      named advisor with a response-time expectation were first worked out.</div></div>
+      <div class="r"><span class="chip sup">Superseded</span><a href="../concepts/v4-directions/advantage-v4-4-decision-queue.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v4-directions/advantage-v4-2-ledger.html">Ledger</a></div>
+      <div class="fn">advantage-v4-2-ledger.html</div>
+      <div class="ds">Origin of the reconciliation line.</div></div>
+      <div class="r"><span class="chip sup">Superseded</span><a href="../concepts/v4-directions/advantage-v4-2-ledger.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v4-directions/advantage-v4-1-marketplace.html">Marketplace</a></div>
+      <div class="fn">advantage-v4-1-marketplace.html</div></div>
+      <div class="r"><span class="chip sup">Superseded</span><a href="../concepts/v4-directions/advantage-v4-1-marketplace.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v4-directions/advantage-v4-3-category-spine.html">Category spine</a></div>
+      <div class="fn">advantage-v4-3-category-spine.html</div></div>
+      <div class="r"><span class="chip sup">Superseded</span><a href="../concepts/v4-directions/advantage-v4-3-category-spine.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v4-directions/advantage-v4-5-cfo-spend.html">CFO view</a></div>
+      <div class="fn">advantage-v4-5-cfo-spend.html</div></div>
+      <div class="r"><span class="chip sup">Superseded</span><a href="../concepts/v4-directions/advantage-v4-5-cfo-spend.html">Open →</a></div></div>
+  </div>
+
+  <h3 class="sh">v3 — five product definitions</h3>
+  <div class="group">
+    <div class="gh"><h4>Five variants</h4><p>the clearest statement of the five product positions</p></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v3-directions/_advantage-v3-1-marketplace.html">Marketplace</a></div>
+      <div class="fn">_advantage-v3-1-marketplace.html</div></div>
+      <div class="r"><span class="chip you">Renamed by you</span><a href="../concepts/v3-directions/_advantage-v3-1-marketplace.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v3-directions/advantage-v3-2-ledger.html">Ledger</a></div>
+      <div class="fn">advantage-v3-2-ledger.html</div></div>
+      <div class="r"><a href="../concepts/v3-directions/advantage-v3-2-ledger.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v3-directions/advantage-v3-3-category-spine.html">Category spine</a></div>
+      <div class="fn">advantage-v3-3-category-spine.html</div></div>
+      <div class="r"><a href="../concepts/v3-directions/advantage-v3-3-category-spine.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v3-directions/advantage-v3-4-decision-queue.html">Decision queue</a></div>
+      <div class="fn">advantage-v3-4-decision-queue.html</div></div>
+      <div class="r"><a href="../concepts/v3-directions/advantage-v3-4-decision-queue.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v3-directions/advantage-v3-5-cfo-spend.html">CFO view</a></div>
+      <div class="fn">advantage-v3-5-cfo-spend.html</div></div>
+      <div class="r"><a href="../concepts/v3-directions/advantage-v3-5-cfo-spend.html">Open →</a></div></div>
+  </div>
+
+  <h3 class="sh">v2 and earlier</h3>
+  <div class="group">
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-visual-themes/advantage-v2-visual.html">v2 visual — your working prototype</a></div>
+      <div class="fn">advantage-v2-visual.html</div>
+      <div class="ds">Still being edited. Source of three things every later build uses: <b>favourite /
+      saved agreements</b>, the <b>card-style switch</b>, and the <b>persistent activity rail</b>. Also
+      the reference for how agreement copy is worded.</div></div>
+      <div class="r"><span class="chip you">Yours · active</span><a href="../concepts/v2-visual-themes/advantage-v2-visual.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v1-first-prototypes/advantage-onboarding.html">Onboarding — the data connection flow</a></div>
+      <div class="fn">advantage-onboarding.html</div>
+      <div class="ds"><b>The only file where the end-to-end connect flow exists:</b> choose source →
+      analyse → confirm data set → value reveal. Every later build stubs this. Start here if you
+      prototype the connection journey.</div></div>
+      <div class="r"><span class="chip cur">Unique content</span><a href="../concepts/v1-first-prototypes/advantage-onboarding.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v5-advisor/advantage-v5-advisor.html">v5 advisor</a></div>
+      <div class="fn">advantage-v5-advisor.html</div>
+      <div class="ds">Your own advisor-led direction, outside the numbered series — which is why the
+      series has no v5.</div></div>
+      <div class="r"><span class="chip you">Yours</span><a href="../concepts/v5-advisor/advantage-v5-advisor.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v1-first-prototypes/advantage-autopilot.html">Autopilot — assistant behaviour</a></div>
+      <div class="fn">advantage-autopilot.html</div>
+      <div class="ds">Where the saving-assistant behaviour was worked out.</div></div>
+      <div class="r"><span class="chip sup">Archive</span><a href="../concepts/v1-first-prototypes/advantage-autopilot.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-directions/advantage-v2.html">v2 onboarding</a></div>
+      <div class="fn">advantage-v2.html</div></div>
+      <div class="r"><span class="chip sup">Archive</span><a href="../concepts/v2-directions/advantage-v2.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v1-first-prototypes/advantage-prototype.html">First dashboard prototype</a></div>
+      <div class="fn">advantage-prototype.html</div></div>
+      <div class="r"><span class="chip sup">Archive</span><a href="../concepts/v1-first-prototypes/advantage-prototype.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v4-directions/advantage-v4-simple.html">v4 simple</a></div>
+      <div class="fn">advantage-v4-simple.html</div></div>
+      <div class="r"><span class="chip sup">Archive</span><a href="../concepts/v4-directions/advantage-v4-simple.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-directions/advantage-approach-a-diagnostic-ledger.html">Approach A — financial diagnosis</a></div>
+      <div class="fn">advantage-approach-a-diagnostic-ledger.html</div></div>
+      <div class="r"><span class="chip sup">Archive</span><a href="../concepts/v2-directions/advantage-approach-a-diagnostic-ledger.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-directions/advantage-approach-b-savings-pipeline.html">Approach B — savings pipeline</a></div>
+      <div class="fn">advantage-approach-b-savings-pipeline.html</div></div>
+      <div class="r"><span class="chip sup">Archive</span><a href="../concepts/v2-directions/advantage-approach-b-savings-pipeline.html">Open →</a></div></div>
+  </div>
+
+  <div class="group">
+    <div class="gh"><h4>Five v2 alternates</h4><p>each pushes one idea to its limit; three carry your notes</p></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-directions/advantage-v2-alt-1-subtraction.html">Subtraction — one number, one action</a></div>
+      <div class="fn">advantage-v2-alt-1-subtraction.html</div></div>
+      <div class="r"><a href="../concepts/v2-directions/advantage-v2-alt-1-subtraction.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-directions/_(Corrections)advantage-v2-alt-2-trust-machine.html">Trust machine — evidence</a></div>
+      <div class="fn">_(Corrections)advantage-v2-alt-2-trust-machine.html</div></div>
+      <div class="r"><span class="chip you">Your note: corrections</span><a href="../concepts/v2-directions/_(Corrections)advantage-v2-alt-2-trust-machine.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-directions/advantage-v2-alt-3-money-movement.html">Money movement</a></div>
+      <div class="fn">advantage-v2-alt-3-money-movement.html</div></div>
+      <div class="r"><a href="../concepts/v2-directions/advantage-v2-alt-3-money-movement.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-directions/_(Category_bar)advantage-v2-alt-4-collective.html">Collective leverage</a></div>
+      <div class="fn">_(Category_bar)advantage-v2-alt-4-collective.html</div></div>
+      <div class="r"><span class="chip you">Your note: category bar</span><a href="../concepts/v2-directions/_(Category_bar)advantage-v2-alt-4-collective.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../concepts/v2-directions/_(Interrupt)advantage-v2-alt-5-ambient.html">Ambient service</a></div>
+      <div class="fn">_(Interrupt)advantage-v2-alt-5-ambient.html</div></div>
+      <div class="r"><span class="chip you">Your note: interrupt</span><a href="../concepts/v2-directions/_(Interrupt)advantage-v2-alt-5-ambient.html">Open →</a></div></div>
+  </div>
+
+  <h3 class="sh">Research and documentation</h3>
+  <div class="group">
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/customer-journey/journey-map.html">Journey map — 10 stages vs the prototype</a></div>
+      <div class="fn">advantage-ux/journey-map.html</div>
+      <div class="ds">Interactive. Each stage flagged built / partial / missing, with the gaps listed
+      per stage. Persona toggle.</div></div>
+      <div class="r"><span class="chip cur">Read first</span><a href="../../research/customer-journey/journey-map.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/customer-journey/journey.json">journey.json</a></div>
+      <div class="fn">advantage-ux/journey.json</div>
+      <div class="ds">Machine-readable journey spec. Each stage carries the prototype view id and JS
+      hook, so it can drive a guided-tour mode inside a build.</div></div>
+      <div class="r"><a href="../../research/customer-journey/journey.json">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/analysis/gap-analysis.md">Gap analysis</a></div>
+      <div class="fn">advantage-GAP-ANALYSIS.md</div>
+      <div class="ds">Competitor feature inventory and 16 ranked gaps. Summarised below.</div></div>
+      <div class="r"><a href="../../research/analysis/gap-analysis.md">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/customer-journey/executive-summary.md">Executive summary</a></div>
+      <div class="fn">advantage-ux/executive-summary.md</div></div>
+      <div class="r"><a href="../../research/customer-journey/executive-summary.md">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/customer-journey/README.md">UX project README</a></div>
+      <div class="fn">advantage-ux/README.md</div></div>
+      <div class="r"><a href="../../research/customer-journey/README.md">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/maps/pain-map.html">Pain map and interview kit</a></div>
+      <div class="fn">pain-map.html</div></div>
+      <div class="r"><a href="../../research/maps/pain-map.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/interviews/interview-field-kit.html">Interview field kit</a></div>
+      <div class="fn">interview-field-kit.html</div></div>
+      <div class="r"><a href="../../research/interviews/interview-field-kit.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/interviews/sales-rep-interview.html">Sales rep interview</a></div>
+      <div class="fn">sales-rep-interview.html</div></div>
+      <div class="r"><a href="../../research/interviews/sales-rep-interview.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/sprint-plan/sprint-prep-brief.html">Sprint prep brief</a></div>
+      <div class="fn">sprint-prep-brief.html</div></div>
+      <div class="r"><a href="../../research/sprint-plan/sprint-prep-brief.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/maps/discover-opportunity.html">Discover opportunity — group output</a></div>
+      <div class="fn">discover-opportunity.html</div></div>
+      <div class="r"><a href="../../research/maps/discover-opportunity.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/maps/journey-map.html">Journey map — earlier 12-step version</a></div>
+      <div class="fn">journey-map.html</div></div>
+      <div class="r"><span class="chip sup">Superseded</span><a href="../../research/maps/journey-map.html">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/sprint-plan/ai-design-sprint-plan.docx">AI design sprint plan</a></div>
+      <div class="fn">Advantage Nordic - AI design sprint plan.docx</div></div>
+      <div class="r"><a href="../../research/sprint-plan/ai-design-sprint-plan.docx">Open →</a></div></div>
+    <div class="row"><div class="m">
+      <div class="nm"><a href="../../research/sprint-plan/pre-planning-deck.pdf">Sprint pre-planning deck</a></div>
+      <div class="fn">Design sprint pre-planning deck.pdf</div></div>
+      <div class="r"><a href="../../research/sprint-plan/pre-planning-deck.pdf">Open →</a></div></div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section class="sec" id="journey">
+  <h2>Journey coverage</h2>
+  <p class="tagline">The 10 stages the team aligned on, and what the current builds implement for each.
+  It is a loop, not a funnel — stage 10 feeds stages 4–5 on the next visit.</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Stage</th><th>What the user is doing</th><th>Status</th><th>What is missing</th></tr></thead>
+      <tbody>
+        <tr><td class="f">01 Log in</td><td>Arrives from a need, a notification, or for an overview</td>
+          <td class="c p">partial</td><td>No auth; notification deep-links work but there is no real entry from outside</td></tr>
+        <tr><td class="f">02 Connect spend data</td><td>Connects the ERP or uploads a spend report</td>
+          <td class="c n">missing</td><td>Stubbed modal only. Full flow exists solely in <code>advantage-onboarding.html</code></td></tr>
+        <tr><td class="f">03 Understand position</td><td>Reviews agreements, suppliers, spend</td>
+          <td class="c y">built</td><td>—</td></tr>
+        <tr><td class="f">04 See realised &amp; potential value</td><td>Savings dashboard, notifications</td>
+          <td class="c y">built</td><td>—</td></tr>
+        <tr><td class="f">05 Discover opportunity</td><td>Proactive categories and the assistant</td>
+          <td class="c y">built</td><td>Assistant answers are canned</td></tr>
+        <tr><td class="f">06 Review business case</td><td>Savings, spend, recommended agreement, why</td>
+          <td class="c y">built</td><td>—</td></tr>
+        <tr><td class="f">07 Evaluate</td><td>Weighs terms, risk, switching effort</td>
+          <td class="c y">built</td><td>Comparison covers current-vs-proposed only where a second agreement exists</td></tr>
+        <tr><td class="f">08 Decide</td><td>Proceeds, requests an offer, or involves the advisor</td>
+          <td class="c y">built</td><td>No tracking of a requested offer after the fact</td></tr>
+        <tr><td class="f">09 Prove value</td><td>Bonus, plus compliance documentation</td>
+          <td class="c p">partial</td><td>Documents are listed per agreement but downloads are stubs; no export of the value story</td></tr>
+        <tr><td class="f">10 Prioritise next</td><td>Results feed the next recommendation</td>
+          <td class="c p">partial</td><td>Recommendations do not visibly cite realised results</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- GAPS -->
+<section class="sec" id="gaps">
+  <h2>Open gaps, ranked</h2>
+  <p class="tagline">From the competitor inventory: <b>Vinst and Seiva show no evidence of notifications,
+  messaging, document storage, roles and permissions, ordering workflows, or reporting and export.</b>
+  Four of those are now built here. The rest are open.</p>
+  <div class="bx2">
+    <h4>Build next</h4>
+    <ol>
+      <li><b>Multi-user, roles and approvals.</b> Every build assumes one person is the company. No way
+      to invite a colleague, delegate an approval, or attribute an action to a person. Largest
+      structural gap.</li>
+      <li><b>The data connection flow.</b> Stage 02 is stubbed everywhere, and it is the whole conversion
+      path for a new customer. The pieces exist in <code>advantage-onboarding.html</code>.</li>
+      <li><b>Rules that generate work items, everywhere.</b> Built once, in v7 Today. It is the mechanic
+      that makes tomorrow's dashboard non-empty and it is missing from both current builds.</li>
+      <li><b>Off-agreement leakage by site or person.</b> "Who is still buying at list price, and where"
+      is the most actionable question the product never asks.</li>
+      <li><b>Savings methodology and disputes.</b> Every figure claims to be verified from invoices with
+      no explanation of the calculation and no way to challenge it.</li>
+      <li><b>Global search and keyboard navigation in the Bento build.</b> Both exist only in the Ledger.</li>
+    </ol>
+    <h4>Then</h4>
+    <ol>
+      <li><b>Renewal calendar with owners and dates</b> — expiries are currently chips, not scheduled work.</li>
+      <li><b>Bonus settlement detail</b> — accrual basis, payment dates, per-supplier breakdown.</li>
+      <li><b>Post-decision tracking</b> — what happened to the offer I requested.</li>
+      <li><b>Scheduled reporting and export</b> — monthly PDF, CSV, a link for the accountant.</li>
+      <li><b>Nordic language switching</b> (NO / DK / SE) — currently English only.</li>
+      <li><b>Data and security transparency</b> — what is read from the ERP, who can see it.</li>
+      <li><b>Catalogue completeness</b> — 12 of 112 agreements are modelled; the rest render generically.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <p><b>Numbering.</b> The series runs v2 → v3 → v4 → v6 → v7 → v8. There is no v5 in that line because
+  <code>advantage-v5-advisor.html</code> is yours; the series skipped the number rather than overwrite
+  it. Files with <code>_</code> prefixes and parenthetical labels are ones you renamed.</p>
+  <p><b>Verification.</b> Every build from v4 onward was render-checked with zero JS errors and no
+  horizontal overflow at 390, 768 and 1440px, across the overview, an agreement page, a category page,
+  notifications, inbox, and the second persona.</p>
+  <p><b>Two exceptions.</b> <code>advantage-v4-2-ledger.html</code> and
+  <code>advantage-v6-3-spine.html</code> were recovered from working files after their builds were cut
+  off mid-run, so neither got a final review pass. Both render clean but are the two to test hardest.</p>
+</footer>
+
+</div>
+</body>
+</html>

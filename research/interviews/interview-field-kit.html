@@ -1,0 +1,1033 @@
+<title>Interview field kit — run it the same way every time</title>
+<style>
+  :root {
+    --ground: #F2F5F1;
+    --surface: #FBFCFA;
+    --ink: #15211B;
+    --muted: #5B6A61;
+    --faint: #8B9890;
+    --rule: #D3DCD4;
+    --rule-strong: #B4C0B6;
+    --accent: #B8412B;
+    --accent-soft: #F3E2DD;
+    --signal: #2E6B4E;
+    --signal-soft: #DFEDE4;
+    --warn: #8A6008;
+    --warn-soft: #F6EBD2;
+
+    --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #101613; --surface: #171F1A; --ink: #E6EBE5; --muted: #9DAAA1;
+      --faint: #718077; --rule: #2A342D; --rule-strong: #3C4941;
+      --accent: #E8836A; --accent-soft: #35211C; --signal: #6FBE93;
+      --signal-soft: #16301F; --warn: #D8AE5C; --warn-soft: #2E2515;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #101613; --surface: #171F1A; --ink: #E6EBE5; --muted: #9DAAA1;
+    --faint: #718077; --rule: #2A342D; --rule-strong: #3C4941;
+    --accent: #E8836A; --accent-soft: #35211C; --signal: #6FBE93;
+    --signal-soft: #16301F; --warn: #D8AE5C; --warn-soft: #2E2515;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground); color: var(--ink); font-family: var(--body);
+    font-size: 16px; line-height: 1.55; margin: 0; padding: 0 1.5rem 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 58rem; margin: 0 auto; display: flex; flex-direction: column; gap: 4rem; }
+  section { display: flex; flex-direction: column; gap: 1rem; }
+  p, li { max-width: 40em; }
+  p { margin: 0; }
+  strong { font-weight: 650; }
+
+  header.masthead {
+    padding: 4rem 0 2.25rem; display: flex; flex-direction: column; gap: 1.25rem;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--accent); margin: 0;
+  }
+  h1 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(2.2rem, 5.5vw, 3.5rem); line-height: 1.03;
+    letter-spacing: -0.02em; text-wrap: balance; margin: 0; max-width: 15em;
+  }
+  .standfirst {
+    font-family: var(--display); font-size: clamp(1.05rem, 2.3vw, 1.28rem);
+    line-height: 1.45; color: var(--muted); margin: 0; max-width: 34em;
+  }
+  h2 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(1.5rem, 3.2vw, 1.95rem); line-height: 1.15;
+    letter-spacing: -0.015em; text-wrap: balance; margin: 0; max-width: 20em;
+  }
+  h3 { font-family: var(--body); font-weight: 650; font-size: 1rem; margin: 0; }
+
+  .section-label {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--faint); margin: 0 0 -0.3rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+
+  ul.plain { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.45rem; }
+  ul.plain li::marker { color: var(--faint); }
+
+  /* ---- the loop ---- */
+  .loop { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: grid; grid-template-columns: 2.6rem 1fr; gap: 0.4rem 1rem;
+    padding: 1.15rem 0; border-top: 1px solid var(--rule);
+  }
+  .step:first-child { border-top: 1px solid var(--rule-strong); }
+  .step .n {
+    font-family: var(--mono); font-size: 0.75rem; color: var(--accent);
+    padding-top: 0.18rem; font-variant-numeric: tabular-nums;
+  }
+  .step h3 { grid-column: 2; }
+  .step p { grid-column: 2; color: var(--muted); font-size: 0.92rem; }
+  .step .when {
+    grid-column: 2; font-family: var(--mono); font-size: 0.66rem;
+    letter-spacing: 0.09em; text-transform: uppercase; color: var(--faint);
+  }
+
+  /* ---- sheets ---- */
+  .sheet {
+    border: 1px solid var(--rule-strong); background: var(--surface);
+    padding: 1.75rem; display: flex; flex-direction: column; gap: 1.1rem;
+  }
+  .sheet-head {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: baseline;
+    padding-bottom: 0.9rem; border-bottom: 2px solid var(--ink);
+  }
+  .sheet-head .tag {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .sheet-head h3 { font-size: 1.15rem; }
+  .sheet-head .dur {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--faint);
+    margin-left: auto; letter-spacing: 0.06em;
+  }
+
+  .verbatim {
+    font-family: var(--display); font-size: 1.02rem; line-height: 1.45;
+    border-left: 3px solid var(--accent); padding: 0.7rem 0 0.7rem 1rem;
+    max-width: 42em;
+  }
+
+  .qblock { display: flex; flex-direction: column; gap: 0.5rem; }
+  .qblock .qhead {
+    display: flex; gap: 0.75rem; align-items: baseline;
+    border-bottom: 1px solid var(--rule); padding-bottom: 0.35rem;
+  }
+  .qblock .clock {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--faint);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .qblock .qhead h3 { font-size: 0.95rem; }
+  .qblock .core {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-left: auto; white-space: nowrap;
+  }
+  ol.qs { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.45rem; }
+  ol.qs li { font-family: var(--display); font-size: 1rem; line-height: 1.42; max-width: 40em; }
+  ol.qs li::marker { color: var(--faint); font-family: var(--mono); font-size: 0.7rem; }
+  ol.qs .follow {
+    display: block; font-family: var(--body); font-size: 0.83rem;
+    color: var(--muted); margin-top: 0.15rem;
+  }
+
+  /* ---- form fields ---- */
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.9rem 1.5rem; }
+  .field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .field .lab {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  .field .line { border-bottom: 1px solid var(--rule-strong); height: 1.4rem; }
+  .field .box { border: 1px solid var(--rule-strong); height: 4.5rem; }
+  .field.wide { grid-column: 1 / -1; }
+
+  .tally { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tally span {
+    font-family: var(--mono); font-size: 0.7rem; border: 1px solid var(--rule-strong);
+    padding: 0.3rem 0.5rem; color: var(--muted);
+  }
+
+  /* ---- bank ---- */
+  .bank { display: flex; flex-direction: column; gap: 1.5rem; }
+  .cat { display: flex; flex-direction: column; gap: 0.5rem; }
+  .cat .cathead {
+    display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap;
+    border-bottom: 1px solid var(--rule-strong); padding-bottom: 0.35rem;
+  }
+  .cat .cattag {
+    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.11em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .cat .catwhy { color: var(--muted); font-size: 0.86rem; }
+  .cat ul { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .cat li { font-family: var(--display); font-size: 0.98rem; line-height: 1.4; }
+  .cat li::marker { color: var(--faint); }
+
+  .callout {
+    border: 1px solid var(--rule-strong); background: var(--surface);
+    padding: 1.4rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .callout.pick { background: var(--signal-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--signal); }
+  .callout.pick .callout-label { color: var(--signal); }
+  .callout.risk { background: var(--warn-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--warn); }
+  .callout.risk .callout-label { color: var(--warn); }
+  .callout-label {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.11em;
+    text-transform: uppercase; color: var(--accent);
+  }
+
+  footer {
+    border-top: 1px solid var(--rule-strong); padding-top: 1.4rem;
+    color: var(--faint); font-size: 0.82rem; font-family: var(--mono); letter-spacing: 0.03em;
+  }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  @media (max-width: 34rem) {
+    body { padding: 0 1rem 4rem; }
+    .wrap { gap: 3rem; }
+    .sheet { padding: 1.2rem; }
+    .step { grid-template-columns: 2rem 1fr; }
+  }
+
+  @media print {
+    :root {
+      --ground: #fff; --surface: #fff; --ink: #000; --muted: #333;
+      --faint: #666; --rule: #ccc; --rule-strong: #888; --accent: #000;
+      --accent-soft: #eee; --signal: #000; --signal-soft: #f2f2f2;
+      --warn: #000; --warn-soft: #f2f2f2;
+    }
+    body { padding: 0; font-size: 11pt; }
+    .wrap { gap: 1.5rem; max-width: none; }
+    .sheet { break-inside: avoid; page-break-inside: avoid; border-color: #888; }
+    .sheet, section { break-before: auto; }
+    section.newpage { break-before: page; page-break-before: always; }
+    .noprint { display: none; }
+  }
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Product Discovery · Reusable</p>
+  <h1>Interview field kit</h1>
+  <p class="standfirst">A fixed way to run a round of interviews, so that two interviewers, two markets and two months apart still produce results you can compare. Print the sheets, run the loop, keep the question bank. Swap the pain list when the project changes; leave the machinery alone.</p>
+  <div class="scroller noprint">
+    <table>
+      <thead><tr><th>Sheet</th><th>For</th><th>Length</th><th>Succeeds when</th></tr></thead>
+      <tbody>
+        <tr><td class="k">A</td><td>Customer, depth</td><td>45 min</td><td>One purchase reconstructed in real detail</td></tr>
+        <tr><td class="k">B</td><td>Internal witness — sales, support, advisors</td><td>20 min</td><td>Named customers, not patterns</td></tr>
+        <tr><td class="k">B2</td><td>Customer, short form</td><td>20 min</td><td>The walk-through survives; everything else is expendable</td></tr>
+        <tr><td class="k">C / D</td><td>Capture and round summary</td><td>15 / 45 min</td><td>Filled within 30 minutes; round fits on one page</td></tr>
+        <tr><td class="k">E</td><td>The invested expert — already built a solution</td><td>45 min</td><td>Their assumptions listed and credited, not argued with</td></tr>
+        <tr><td class="k">F</td><td>Expert panel, in the sprint room</td><td>20 min each</td><td>Room aligned, wall covered in usable HMW notes</td></tr>
+        <tr><td class="k">G</td><td>Decision-maker — adoption and rollout</td><td>20 min</td><td>You learn whether information has ever caused action</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="noprint" style="font-family:var(--mono);font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--faint)">All sheets are laid out to print · one per interview</p>
+</header>
+
+<section>
+  <p class="section-label">Why fixed</p>
+  <h2>Repeatability is what turns interviews into evidence</h2>
+  <p>Five interviews improvised five different ways give you five anecdotes. The same five run through the same opener, the same core question and the same capture fields give you a comparison — which is the only thing that lets you say "four of five did X" in a room full of people who'd rather trust their instincts.</p>
+  <p>Four things stay identical every single time. Everything else can move.</p>
+  <ul class="plain">
+    <li><strong>The opener</strong> — same words, so the frame and the permission to be blunt are constant.</li>
+    <li><strong>The core question</strong> — one reconstructed real event, every interview, no exceptions. If time runs out, this is the block that survives.</li>
+    <li><strong>The capture sheet</strong> — same fields, filled within 30 minutes, or the round isn't comparable.</li>
+    <li><strong>The pain scoreboard</strong> — every interview moves each tracked pain to confirmed, killed, reshaped or untouched.</li>
+  </ul>
+</section>
+
+<section>
+  <p class="section-label">The loop</p>
+  <h2>How to run a round — six steps, repeat per project</h2>
+  <div class="loop">
+    <div class="step">
+      <p class="n">01</p>
+      <h3>Write down what would change your mind</h3>
+      <p class="when">Half a day · before booking anything</p>
+      <p>List the pains or assumptions you're testing, and for each one write what you'd expect to see if it were false. A round with no falsifiable claim in it is a listening tour — sometimes useful, but don't call it research.</p>
+    </div>
+    <div class="step">
+      <p class="n">02</p>
+      <h3>Recruit against a spec — then do the homework on each one</h3>
+      <p class="when">Two weeks ahead · 20 min per participant</p>
+      <p>Decide the mix before you see who's willing, and always include the awkward segment — the inactive, the churned, the complainer. Then, for each confirmed participant, look up what their account actually shows before the call. That twenty minutes is what lets you open with a fact instead of interrogating them for one.</p>
+    </div>
+    <div class="step">
+      <p class="n">03</p>
+      <h3>Run internal interviews first, customers second</h3>
+      <p class="when">Same week, in that order</p>
+      <p>Sales and support give you the patterns and the promises. Carry those promises into the customer conversations as things to quietly check. Reversing the order wastes the best cross-check you have.</p>
+    </div>
+    <div class="step">
+      <p class="n">04</p>
+      <h3>Interview — never more than three in a day</h3>
+      <p class="when">20 or 45 min each, plus 30 min after · always</p>
+      <p>Back-to-back interviews feel efficient and destroy recall. Sheet C gets filled in the gap, not at the end of the day.</p>
+    </div>
+    <div class="step">
+      <p class="n">05</p>
+      <h3>Debrief inside thirty minutes</h3>
+      <p class="when">Non-negotiable</p>
+      <p>Three surprises, three verbatim quotes, and the scoreboard. Memory of the next interview contaminates the last one faster than anyone believes.</p>
+    </div>
+    <div class="step">
+      <p class="n">06</p>
+      <h3>Close the round on one page</h3>
+      <p class="when">Same day as the last interview</p>
+      <p>Sheet D. Tally the scoreboard, name the new pains nobody predicted, pick five quotes, and write the one sentence you'd say if you had ten seconds. Then write what you'd ask differently next round — that line is how the kit gets better.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Fixed language</p>
+  <h2>The opener — say it the same way every time</h2>
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Customers</p>
+      <h3>Opening</h3>
+    </div>
+    <p class="verbatim">"Thanks for the time. I'm a designer — I'm not selling anything and I didn't build the thing we're going to talk about, so be as blunt as you like; it genuinely helps me more than being polite does.<br><br>There are no wrong answers here. I'm trying to understand how your days actually work, not test what you know about our product. If a question doesn't make sense, say so — that's useful too.<br><br>Is it alright if I record? It's only so I can listen properly instead of typing. It stays internal, and I'll stop any time you ask."</p>
+  </div>
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Internal — sales, support, advisors</p>
+      <h3>Opening</h3>
+    </div>
+    <p class="verbatim">"This isn't a requirements meeting, and nothing you say here turns into a feature request — so you don't need to lobby for anything.<br><br>I'm going to keep asking for specific, named, recent cases rather than general patterns. That's deliberate, not because I doubt the pattern.<br><br>You'll know things nobody in product knows. Some of it will be unflattering about the product, and that's the useful part. Alright if I record?"</p>
+  </div>
+  <div class="callout risk">
+    <p class="callout-label">Words to avoid, both scripts</p>
+    <p>Never name the technology you're planning to build — "AI", "assistant", "automation". It produces enthusiasm or suspicion, and both are noise. Never ask <em>would you use</em>. Never ask <em>what would you want</em>. You are collecting what happened, not what people predict about themselves.</p>
+  </div>
+  <div class="callout risk">
+    <p class="callout-label">The precision rule — the one most scripts break</p>
+    <p><strong>Every question must be answerable from the memory of something that happened.</strong> If it needs a list, a total, or one of your product's category names, it is the wrong instrument and you will get a polite guess.</p>
+    <p>Fails the test: <em>"which of these have you never used?"</em> · <em>"how much did you save?"</em> · <em>"which of your last orders could have gone through us?"</em> Each one asks a person to audit themselves live, in your vocabulary.</p>
+    <p>Three ways out: <strong>look it up beforehand</strong> and use the fact to open a story rather than to open a question; <strong>ask for the shape, not the inventory</strong> ("was there something you set up and didn't carry on with?"); or <strong>make it your homework</strong> — run the analysis against their data afterwards and let the interview supply only the human half.</p>
+  </div>
+  <div class="callout risk">
+    <p class="callout-label">Keep the instruments apart</p>
+    <p>A <strong>discovery interview</strong> asks why something hurts. A <strong>usability test</strong> asks whether a task can be completed. <strong>Data analysis</strong> tells you what actually happened in the account. An <strong>expert panel</strong> (Sheet F) loads a room's heads and generates How Might We notes. Each needs the others and each is ruined by being run inside the other. When a task question sneaks into a discovery script, the conversation moves onto ground you chose, inside the product you already built — which is precisely what the discovery round was meant to escape.</p>
+    <p><strong>The one that catches people out:</strong> the expert panel looks like research and isn't. It runs in front of the team, it asks for opinions on purpose, and it succeeds when the room is aligned and the wall is full of notes. Judge it by that, not by evidential strength — and don't let it stand in for the depth interviews.</p>
+  </div>
+</section>
+
+<section class="newpage">
+  <p class="section-label">Sheet A</p>
+  <h2>Customer interview · 45 minutes</h2>
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Sheet A</p>
+      <h3>Customer</h3>
+      <p class="dur">45 min · 6 blocks</p>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">00–03</p><h3>Open</h3></div>
+      <ol class="qs"><li>Read the opener. Get consent to record.</li></ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">03–08</p><h3>Their world</h3></div>
+      <ol class="qs">
+        <li>"What does the company do, and what's your part in it?"</li>
+        <li>"What sorts of things get ordered here in a normal month?"</li>
+        <li>"Who else orders things? How do you split it?"<span class="follow">Establish early: did they sign up, or inherit it? It reframes everything after.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">08–22</p><h3>The last time</h3><p class="core">Core — never cut</p></div>
+      <ol class="qs">
+        <li>"Think of the last thing you ordered for the company. Walk me through it from the moment you knew you needed it."<span class="follow">Probe: How did you know? What first? Where were you — desk, phone, van? Did you check a price? Who else was involved? How long did it take?</span></li>
+        <li>"Now the last time you ordered from somewhere new. How did you end up choosing them?"</li>
+        <li>"Anything about that you'd have liked to go differently?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">22–32</p><h3>Us, in their life</h3></div>
+      <ol class="qs">
+        <li>"When did you last open it? What made you open it that day?"<span class="follow">"I can't remember" is a real answer. Write it down verbatim.</span></li>
+        <li>"Can you show me? Just do whatever you'd normally do."<span class="follow">No task set by you. Silence; note hesitations and back-clicks. If they say they never use it, don't push them into a demo — that answer is the finding.</span></li>
+        <li>"Was there something you set up and then didn't carry on with?"<span class="follow">Ask for the shape, not an inventory. If you did the homework, name the specific one and open a story with it instead.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">32–42</p><h3>Value and the gap</h3></div>
+      <ol class="qs">
+        <li>"Has anyone ever asked you to justify this? What did you show them?"<span class="follow">An event, not an estimate. Never ask them to total anything up.</span></li>
+        <li>"Does anyone ask you to account for where the company buys from?"</li>
+        <li>"If this disappeared tomorrow, what's the first thing you'd notice?"<span class="follow">The best single question in the kit. Separates felt value from told value.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">optional</p><h3>Observation block — a different instrument</h3><p class="core">Cut this first</p></div>
+      <ol class="qs">
+        <li>"Show me how you'd find [a common everyday item]."<span class="follow">This is a usability task, not a pain question. It tests the thing you already built, on ground you chose. Only run it once the discovery blocks are done, and never at the cost of them.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">42–45</p><h3>Close</h3></div>
+      <ol class="qs">
+        <li>"What haven't I asked about that I should have?"</li>
+        <li>"Is there someone else here who orders things and would see this differently?"</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="newpage">
+  <p class="section-label">Sheet B</p>
+  <h2>Internal interview · 20 minutes</h2>
+  <p>Sales are here as <strong>witnesses to the customer</strong>, not as subjects. Every question is about the people they meet — what those people are trying to do and where it goes wrong. Nothing about pipeline, targets, or how they run their own week.</p>
+  <div class="callout risk">
+    <p class="callout-label">Twenty minutes changes the method</p>
+    <p>You get roughly four usable questions. That means <strong>two things have to happen before the call</strong>, or you'll spend a third of the slot on warm-up:</p>
+    <p><strong>Pre-fill their patch from the CRM</strong> — market, segment, tenure, account count. Never spend live minutes on facts you can look up.</p>
+    <p><strong>Send one line 24 hours ahead:</strong> <em>"Before we talk — think of two customers you know really well, one who's thriving and one who isn't. I'll mostly be asking about them."</em> They'll arrive with examples instead of generalities, which is the whole game at this length.</p>
+  </div>
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Sheet B</p>
+      <h3>Sales, support, advisors — what they know about users</h3>
+      <p class="dur">20 min · 5 blocks</p>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">00–02</p><h3>Frame — short version</h3></div>
+      <ol class="qs">
+        <li>"I want to borrow what you know about the customers — you talk to more of them in a week than I do in a quarter. Nothing here becomes a feature request, so no need to lobby."</li>
+        <li>"I'll keep asking you to name a specific customer. That's not doubt, it's just how I keep it concrete. Alright to record?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">02–06</p><h3>Who the customer actually is</h3></div>
+      <ol class="qs">
+        <li>"Picture the customer you know best. Who are they — what's their job, and what are they trying to get done?"</li>
+        <li>"Who signs, and who in that company actually uses it day to day? Is that the same person?"<span class="follow">The single most useful thing sales can tell you. If they don't know, that itself is a finding — it means nobody is watching the handoff.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">06–12</p><h3>What customers struggle with</h3><p class="core">Core — protect this</p></div>
+      <ol class="qs">
+        <li>"What do customers struggle with most? "<span class="follow">Then immediately, every time: <strong>"Who, most recently? Tell me about them."</strong> This one move is what turns a sales opinion into usable evidence, and it costs three seconds.</span></li>
+        <li>"What do they complain about <em>after</em> they've bought — not during the sale?"<span class="follow">Post-sale complaints are the closest thing sales has to unfiltered user data. Nobody's being polite to close a deal any more.</span></li>
+        <li>"Which customers signed up and then never really got going? What's your read on why?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">12–17</p><h3>The gap</h3><p class="core">Core</p></div>
+      <ol class="qs">
+        <li>"What do customers ask you for that you can't give them a good answer to?"</li>
+        <li>"What do you tell them we'll do, that you slightly hold your breath about?"<span class="follow">Give it silence. Framed as a shared open secret, never as an audit. Whatever they name is an expectation the product isn't meeting.</span></li>
+        <li>"What do customers still want to phone a person about, rather than doing themselves?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">throughout</p><h3>Challenge — the moment they state a want</h3><p class="core">Use as needed</p></div>
+      <ol class="qs">
+        <li>"Which customer bought <em>because</em> of something like that — or walked away for lack of it?"<span class="follow">Always challenge to a named deal, never to the idea. A sales request carries commission with it; a deal doesn't.</span></li>
+        <li>"If we shipped it tomorrow, which deal in your pipeline closes?"</li>
+        <li>"If I told you we're not building it, what actually breaks?"</li>
+        <li>"Is that something customers ask for, or something that would make your job easier? Both are fine — I just need to know which."<span class="follow">Asked without a trace of judgement, people answer this straight, and it separates the two kinds of request instantly.</span></li>
+        <li>"Who else on your team would say the opposite?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">17–20</p><h3>Close and recruit</h3></div>
+      <ol class="qs">
+        <li>"What do you think we in product don't understand about these customers?"<span class="follow">Ask it straight. They've usually been waiting years for someone to ask.</span></li>
+        <li>"Which two customers should I talk to — including one who'd be blunt with me?"</li>
+      </ol>
+    </div>
+  </div>
+  <div class="callout">
+    <p class="callout-label">Swap-ins if you're given 30 minutes</p>
+    <p>In priority order: <strong>"When they say no to us, what are they saying yes to instead?"</strong> (the status quo is usually the real competitor) · <strong>"What's the trigger — what's going on in a company when they're suddenly ready to buy?"</strong> · <strong>"When anything automated has come up with a customer, how did they react?"</strong> · <strong>"If I sat in on your calls for a week, what would surprise me?"</strong></p>
+  </div>
+</section>
+
+<section class="newpage">
+  <p class="section-label">Sheet B2</p>
+  <h2>Customer interview, short form · 20 minutes</h2>
+  <p>For the expert slots inside a sprint day, where you don't get 45 minutes. Same core as Sheet A, with everything else cut — and you should know exactly what you're giving up: you lose the second story, so you get one behaviour with no way to tell whether it's typical. Use the long form for pre-sprint research and this one only when the clock is fixed.</p>
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Sheet B2</p>
+      <h3>Customer — short form</h3>
+      <p class="dur">20 min · 4 blocks</p>
+    </div>
+    <div class="qblock">
+      <div class="qhead"><p class="clock">00–02</p><h3>Frame</h3></div>
+      <ol class="qs"><li>Shortened opener. "No wrong answers, I didn't build it, be blunt." Consent to record.</li></ol>
+    </div>
+    <div class="qblock">
+      <div class="qhead"><p class="clock">02–04</p><h3>Who they are</h3></div>
+      <ol class="qs"><li>"What's your role, and what do you order for the company?"</li></ol>
+    </div>
+    <div class="qblock">
+      <div class="qhead"><p class="clock">04–14</p><h3>The last time</h3><p class="core">Core — never cut</p></div>
+      <ol class="qs">
+        <li>"Think of the last thing you ordered. Walk me through it from the moment you knew you needed it."<span class="follow">Probe: how did you know, what first, where were you, who else, how long. Ten minutes is enough for one story told properly. Do not start a second.</span></li>
+        <li>"Was there something you set up and then didn't carry on with?"</li>
+      </ol>
+    </div>
+    <div class="qblock">
+      <div class="qhead"><p class="clock">14–20</p><h3>Value and close</h3></div>
+      <ol class="qs">
+        <li>"When did you last open it, and what made you?"</li>
+        <li>"If this disappeared tomorrow, what's the first thing you'd notice?"</li>
+        <li>"What haven't I asked that I should have?"</li>
+      </ol>
+    </div>
+  </div>
+  <div class="callout risk">
+    <p class="callout-label">The discipline that makes a 20-minute interview work</p>
+    <p>Short interviews fail by trying to cover the same ground faster. They succeed by covering less ground properly. <strong>Pick one thing to learn and let the rest go</strong> — a single purchase reconstructed in real detail beats six topics skimmed, every time. If you find yourself at minute 14 with the walk-through unfinished, stay in it and drop the closing block.</p>
+  </div>
+</section>
+
+<section class="newpage">
+  <p class="section-label">Sheet G</p>
+  <h2>Decision-maker · adoption and rollout · 20 minutes</h2>
+  <p>For when the challenge is <strong>adoption</strong> — people don't log in, don't use what's been bought, don't extend it — and the only people you can interview are the ones who signed the cheque.</p>
+
+  <div class="callout risk">
+    <p class="callout-label">The trap in this setup, named up front</p>
+    <p>Adoption is <em>our</em> metric. Nobody has ever wanted to log in more. And the people who do the behaviour you're trying to change usually aren't the ones in the room — the decision-maker bought it; someone else was supposed to use it. Interview only decision-makers about a usage problem and you risk asking the person who doesn't do the thing about the thing.</p>
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">The reframe that makes it work</p>
+    <p><strong>The decision-maker isn't the user. They're the distribution channel.</strong> Adoption inside their company is something they can cause, and mostly haven't. So don't ask about their own habits — ask about <em>rollout</em>: who they told, what happened, why it stalled, what would make them push it wider. That is a question only they can answer, and it goes at adoption directly.</p>
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">The question the whole bet rests on</p>
+    <p>A dashboard — or any reporting solution — assumes that <strong>information causes action</strong>. Test that against the past rather than the future:</p>
+    <p class="verbatim" style="margin:0.2rem 0">"When did a number last make you change something about how the company buys?"</p>
+    <p>If they can't name an instance, a better dashboard won't create one. That single answer is worth more than the rest of the interview, and it's the thing most likely to change what gets prototyped.</p>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Sheet G</p>
+      <h3>Decision-maker</h3>
+      <p class="dur">20 min · 5 blocks</p>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">00–02</p><h3>Frame</h3></div>
+      <ol class="qs">
+        <li>"I'm not selling anything and I didn't build it — be blunt."</li>
+        <li>"I'm mostly going to ask what happened after you bought it, rather than what you think of it."</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">02–05</p><h3>Why they bought</h3></div>
+      <ol class="qs">
+        <li>"Take me back to signing up — what was going on in the company that made this worth doing?"<span class="follow">The trigger. It's also the story they'll tell again internally if they ever roll it out further.</span></li>
+        <li>"What did you expect would change?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">05–11</p><h3>The rollout</h3><p class="core">Core</p></div>
+      <ol class="qs">
+        <li>"After you signed — who did you tell, and how?"<span class="follow">Listen for whether this was an announcement, a forward of our email, or nothing at all. "Nothing at all" is extremely common and is the finding.</span></li>
+        <li>"Whose job is it here to make sure people actually buy through the agreements?"<span class="follow">Often nobody's. If adoption is unowned inside the customer, no dashboard we build will own it either.</span></li>
+        <li>"Have you ever chased someone about it? What happened?"</li>
+        <li>"Who else has a login? When did you last hear anything from any of them about it?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">11–16</p><h3>Does information cause action</h3><p class="core">Core</p></div>
+      <ol class="qs">
+        <li>"When did a number last make you change something about how the company buys?"</li>
+        <li>"Where do you look when you want to know what the company is spending?"<span class="follow">Note whether our product is even mentioned. Often it's the accounting system, or a colleague.</span></li>
+        <li>"Who asks you for these numbers, and when?"<span class="follow">If nobody asks, the reporting case is weaker than the boards assume — there's no forcing function.</span></li>
+        <li>"The last time you added a new agreement — what made you?"<span class="follow">The "new agreements" half of the challenge, asked as an event rather than an intention.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">16–19</p><h3>The ceiling</h3></div>
+      <ol class="qs">
+        <li>"What would have to happen for you to push this out to more people, or more categories?"</li>
+        <li>"What's stopped that so far?"<span class="follow">Usually not price. Usually time, internal politics, or having no idea who to send it to.</span></li>
+        <li>"Would you be comfortable with three more people here ordering on the agreements without asking you first?"<span class="follow">The delegation question. If the answer is a flinch, adoption is being throttled deliberately and no amount of engagement design will change it — the work is making delegation feel safe.</span></li>
+        <li>"What are you worried they'd do?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">throughout</p><h3>Challenge — the moment they state a want</h3><p class="core">Use as needed</p></div>
+      <ol class="qs">
+        <li>"You can already do a rough version of that today. Do you?"<span class="follow">The strongest challenge available in this project, because a version of most requests already exists. Ask it with genuine curiosity, not as a gotcha.</span></li>
+        <li>"What would you give up for it — money, time, or control?"<span class="follow">A want with no price attached is free to hold. Attach one and watch what happens.</span></li>
+        <li>"Say we build it and it works perfectly. Walk me through the following Monday. Whose job changes?"</li>
+        <li>"Who here would disagree with you about that? Who'd refuse to use it?"</li>
+        <li>"What's the last new tool this company adopted — how did that go?"<span class="follow">The best adoption predictor you'll get in twenty minutes, and it's about their world rather than ours.</span></li>
+        <li>"Someone else told me the real problem is something quite different. What do you make of that?"<span class="follow">Offer a rival theory sincerely, then watch whether they defend theirs or quietly switch. Both outcomes are informative.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">19–20</p><h3>Close</h3></div>
+      <ol class="qs">
+        <li>"Who here would give me a completely different answer to these questions?"<span class="follow">Your route to the person who actually does the buying. Ask for the name and permission in the same breath.</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">Five rules for challenging without a fight</p>
+    <p>Challenge by making it <strong>concrete</strong>, never by evaluating it · put the doubt <strong>on yourself</strong> ("I might be misunderstanding this…") · ask for the <strong>failure mode</strong>, not the flaw · <strong>never say "but"</strong> · and above all, <strong>make them the critic</strong>: "you know this far better than I do — if we built it and it went wrong, how would it go wrong?" That last one gets you what argument never will, and they stay on your side while it happens.</p>
+  </div>
+
+  <div class="callout risk">
+    <p class="callout-label">Two things not to do</p>
+    <p><strong>Don't show them a dashboard concept and ask whether they'd use it.</strong> You'll get a polite yes from someone who is agreeable by profession, and you'll have learned nothing while feeling like you learned something.</p>
+    <p><strong>Don't ask them to estimate what share of spend runs through agreements.</strong> They don't know, you can look it up, and asking turns the conversation into a test they can fail.</p>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">The one permitted hypothetical</p>
+    <p>Normally you never ask what someone would do. There's a narrow exception for decision-makers, because deciding <em>is</em> the job and they answer it from a well-worn groove: <em>"if you saw that only a fifth of your spend went through the agreements, what would you actually do about it — and who would you have to talk to?"</em></p>
+    <p>Ask it last, after the behavioural questions, and weigh it below them. What you're listening for is not the plan but <strong>whether there's a plausible next action at all</strong> — and how many other people are in it. If the honest answer is "I'd probably mention it to someone eventually", that tells you the dashboard needs to do the chasing, not the reporting.</p>
+  </div>
+</section>
+
+<section class="newpage">
+  <p class="section-label">Sheet F</p>
+  <h2>Ask the Experts · Day 1, in the room · 20 minutes each</h2>
+  <p>The sprint's own format: <em>three experts from the company and/or customers and end-users, asked for their take on the challenge — what's most important, what works well, what should be improved — while the team captures How Might We notes.</em> Run it as specified. But be clear with yourself about what it is.</p>
+
+  <div class="callout risk">
+    <p class="callout-label">This is not a research interview, and shouldn't be judged as one</p>
+    <p>It asks for opinions, in front of an audience, from people who know they're being consulted. Every one of those things is fatal to evidence and <em>useful</em> for its actual purpose, which is to load six people's heads with the same context in ninety minutes and cover a wall in questions worth answering.</p>
+    <p>So it succeeds when the room is aligned and the notes are good. It cannot tell you what customers do — nobody can report that about themselves under those conditions. Keep the Week −1 depth interviews as the thing that produces evidence, and let this be what it is.</p>
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">The cheap upgrade — one anchor after each of the three prompts</p>
+    <p>You can keep the required format exactly as written and still drag it toward reality, by following every opinion with a request for the story behind it. It costs about fifteen seconds each and changes the quality of the notes completely:</p>
+    <p>"What's most important?" → <strong>"who, most recently?"</strong><br>
+       "What works well?" → <strong>"when did you last see that actually work?"</strong><br>
+       "What should be improved?" → <strong>"when did that last cost someone something?"</strong></p>
+    <p>An HMW written from a story is testable on Friday. An HMW written from an opinion is a preference with a question mark on it, and it will win votes on Day 2 anyway because it sounds reasonable.</p>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Sheet F</p>
+      <h3>Expert panel — per expert</h3>
+      <p class="dur">20 min · team captures throughout</p>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">00–02</p><h3>Set up</h3></div>
+      <ol class="qs">
+        <li>Facilitator states the challenge aloud, once, and reminds the team: write notes, don't debate.</li>
+        <li>"We've got twenty minutes and we'd rather hear you than talk. Interrupt us if we're asking the wrong things."</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">02–06</p><h3>Who they are, and how close to it</h3></div>
+      <ol class="qs">
+        <li>"What's your role, and how do you come into contact with this?"</li>
+        <li>"How many of these customers do you speak to in a normal week?"<span class="follow">Calibration for the room. An advisor with forty conversations a week and a manager with two should not carry equal weight, and stating it early saves an argument later.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">06–10</p><h3>What's most important</h3><p class="core">Required</p></div>
+      <ol class="qs">
+        <li>"Given that challenge — what matters most? What can't we get wrong?"</li>
+        <li>"Who, most recently? Tell us about them."<span class="follow">The anchor. Ask it every time, warmly, and move on without comment if they can't produce a case.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">10–13</p><h3>What works well</h3><p class="core">Required</p></div>
+      <ol class="qs">
+        <li>"What already works? What should we be careful not to break?"<span class="follow">The question everybody skips, and the one that protects good things from being redesigned on Day 2 for no reason. Push for it even if the answer comes slowly.</span></li>
+        <li>"When did you last see that work?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">13–17</p><h3>What should be improved</h3><p class="core">Required</p></div>
+      <ol class="qs">
+        <li>"What should be better?"</li>
+        <li>"When did that last cost someone something?"<span class="follow">If they answer in features — and they will — take it one layer down: "what would that let someone do that they can't today?"</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">17–19</p><h3>The room</h3></div>
+      <ol class="qs">
+        <li>Team questions. One each, no speeches.</li>
+        <li>"What do you think we don't understand about these customers?"<span class="follow">Hold this one back as the closer if nobody asks something better.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">19–20</p><h3>Close</h3></div>
+      <ol class="qs">
+        <li>Thank them. Ask if they'd be willing to take a follow-up call — the twenty minutes will have opened something worth an hour.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">Choosing the three</p>
+    <p>Three slots is a scarce resource and the temptation is to spend them internally, because internal people are easy to book. Resist it: <strong>at least two of the three should be customers or end-users.</strong> Internal experts will hand you the same feature lists you already have on the boards — you know this, because you've read them.</p>
+    <p>Balance the three by what they can see: someone who <strong>meets customers in volume</strong> (support, advisor, sales), someone who <strong>is</strong> a customer, and someone who holds <strong>domain or regulatory</strong> knowledge nobody else has. Diversity of vantage point beats seniority every time.</p>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">HMW capture — the mechanics that decide whether this works</p>
+    <ul class="plain">
+      <li><strong>Everyone writes, silently, throughout.</strong> Not just the designer. One idea per note, and every note literally begins "How might we…" — the phrasing does real work; it keeps a complaint from hardening into a verdict.</li>
+      <li><strong>Write from what the expert said, not from your own idea.</strong> The commonest failure is people using the notes to smuggle in the thing they wanted to build before the sprint started.</li>
+      <li><strong>Three to seven notes per expert is healthy.</strong> Thirty means the room is inventing rather than listening.</li>
+      <li><strong>No debating during the interview.</strong> Disagreement goes on a note, not into the air.</li>
+      <li><strong>The rejection test, applied at clustering:</strong> an HMW that names a feature is a solution in disguise. "How might we add a comparison view" fails. "How might we help someone choose between two suppliers they don't know" passes. Ask of each note: does it name a <em>person</em> and a <em>moment</em>, and could you sketch three different answers to it?</li>
+      <li><strong>Afterwards:</strong> cluster, dot-vote, and pin the winning cluster next to the challenge. The map exercise then targets the winner — that's the whole reason this ran before mapping and not after.</li>
+    </ul>
+  </div>
+
+  <div class="callout risk">
+    <p class="callout-label">If one of the three is an invested expert</p>
+    <p>Someone who has already built a prototype will use their twenty minutes to present it, in front of the team, with no one able to stop them without a scene. Head it off <em>before</em> the day: give them a separate 45-minute session earlier in the week (Sheet E), tell them plainly that it's so their work gets the time it deserves rather than being squeezed, and agree in advance what they'll cover in the panel slot. Both of you get a better outcome, and the room doesn't lose a third of its expert time to a demo.</p>
+  </div>
+</section>
+
+<section class="newpage">
+  <p class="section-label">Sheet E</p>
+  <h2>The invested expert · 45 minutes</h2>
+  <p>A specific and recurring case: someone internal who has <strong>already built the solution</strong> — a prototype, a spec, a deck of screens — holds strong opinions about what should happen next, and has executive backing. Domain expert, colleague, often right about a lot of it. The standard witness script fails on them completely.</p>
+
+  <div class="callout risk">
+    <p class="callout-label">Why the normal script fails here</p>
+    <p>Ask someone who has built a solution what customers struggle with, and they will answer with their solution. Not from bad faith — they've already done this thinking, compressed it into artefacts, and the artefact is now how they remember the reasoning. Every question you ask about users comes back as a feature, and both of you leave frustrated.</p>
+    <p>You also cannot argue them out of it, and with executive backing you certainly can't out-authority them. Any attempt reads as a designer defending territory, which is the least persuasive posture available to you.</p>
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">The move — don't fight the prototype, mine it</p>
+    <p>Their prototype is the single densest artefact of what they believe about users. Every screen encodes an assumed problem, an assumed person, and an assumed moment. So make the prototype the stimulus: let them present it, and walk backwards from each feature to the evidence underneath it.</p>
+    <p>They get to do the thing they want to do. You get a complete inventory of assumptions, sorted into evidence-backed and invented — which is exactly what you needed and could not have got by asking directly. And several of their beliefs will turn out to be traceable to real customers, which gives you names.</p>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">Ask for 45 minutes, not 20</p>
+    <p>Say it as the compliment it is: "you've put real work into this, twenty minutes won't do it justice." True, disarming, and it buys the time you need. If you genuinely can't get 45, split it — a 25-minute walk-through now, 20 minutes of customer knowledge later in the week — rather than compressing both into one rushed slot.</p>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Sheet E</p>
+      <h3>Invested expert</h3>
+      <p class="dur">45 min · 6 blocks</p>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">00–03</p><h3>Cede the solution space, out loud</h3><p class="core">Do not skip</p></div>
+      <ol class="qs">
+        <li>"You've thought about this far longer than I have, and I'm not here to redo your work or design a competing thing."</li>
+        <li>"What I want is to be able to <em>defend</em> it. Right now, if someone asks why we're building this, the answer is that you and I think so — and that's not enough to fund it. I want to trace each piece back to a customer, so it stops being an opinion."<span class="follow">This is the whole interview in one sentence. It reframes you from rival to ally, and it's honest: if their ideas are good, evidence is what gets them built.</span></li>
+        <li>"So I'll be pushing you for names and specific customers all the way through. Fair warning."</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">03–15</p><h3>Their floor — timeboxed</h3></div>
+      <ol class="qs">
+        <li>"Show me what you've built. Talk me through it the way you'd show a customer."<span class="follow">Say the time limit up front — "let's take twelve minutes on this, then I want to steal your customer knowledge." Without a stated box this expands to fill the hour and you'll get nothing else.</span></li>
+        <li>Say almost nothing. Take notes on <em>which features they linger on</em> and which they skim — the lingering ones are where their conviction lives, and those are the ones to interrogate first.</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">15–30</p><h3>Backwards from the screens</h3><p class="core">Core — the whole point</p></div>
+      <ol class="qs">
+        <li>"Take me through this one. Which customer's face do you see when you look at this screen?"<span class="follow">The best single question for this interview. It converts a feature into a person, and it's flattering rather than sceptical — you're asking them to remember, not to justify.</span></li>
+        <li>"What were they doing when it went wrong for them?"</li>
+        <li>"Who, most recently? Tell me about them."<span class="follow">Same discipline as any witness interview. Every generalisation gets pulled back to a named case, warmly and without comment when they can't produce one.</span></li>
+        <li>"If you could only ship one of these, which one — and why that one?"<span class="follow">Forces the real theory of the problem out. Whatever they pick is what they actually believe; the rest is scaffolding.</span></li>
+        <li>"Which part of this are you least sure about?"<span class="follow">Everyone has one. Asking gives them a safe, high-status way to be honest, and it is usually the most valuable thirty seconds of the call. Never follow it with "right, so we should cut that."</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">30–38</p><h3>What they know that isn't in the prototype</h3></div>
+      <ol class="qs">
+        <li>"What have you tried before that didn't work?"<span class="follow">The graveyard. Status-safe to answer, and it saves the sprint from re-proposing something that already failed for reasons nobody wrote down.</span></li>
+        <li>"What's the question customers ask you that you don't have a good answer to?"</li>
+        <li>"What has a customer told you that surprised you — that didn't fit what you expected?"<span class="follow">Surprises are the least solution-contaminated memories anyone has. This often produces the round's best material.</span></li>
+        <li>"What do you think the rest of us don't understand about these customers?"</li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">38–43</p><h3>Recruit — including the dissenter</h3></div>
+      <ol class="qs">
+        <li>"Which customers should I talk to?"</li>
+        <li>"And which customer would push back on this? I'd like to talk to them too."<span class="follow">Ask it cheerfully and as a matter of course. If they name someone, you've gained both a good interview and a collaborator in the testing of their own idea — which is the outcome you actually want.</span></li>
+      </ol>
+    </div>
+
+    <div class="qblock">
+      <div class="qhead"><p class="clock">43–45</p><h3>Give them a stake in the truth</h3></div>
+      <ol class="qs">
+        <li>"What would you want to come out of the sprint?"</li>
+        <li>"I'll write up the assumptions in this as a list with your name on it, and we'll check them against what customers say. If they hold, you've got evidence. Want to see the list before I share it?"<span class="follow">Do this and mean it. Someone who co-owns the hypotheses defends the findings; someone whose work was audited behind their back defends the features. It costs you one email.</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="callout risk">
+    <p class="callout-label">Five things not to do</p>
+    <ul class="plain">
+      <li><strong>Don't say "that's a solution, I need the problem."</strong> It's patronising, they've heard it, and it starts the fight you're trying to avoid.</li>
+      <li><strong>Don't bring your own research artefacts into the room.</strong> A competing map on the table turns the conversation into a comparison of two documents.</li>
+      <li><strong>Don't invoke process authority</strong> — the sprint, the method, the facilitators. Someone with executive backing outranks all three, and reaching for them announces that you know it.</li>
+      <li><strong>Don't do this one with an audience.</strong> No spectators means no position to defend, and "I'm least sure about this bit" is unsayable in front of a room.</li>
+      <li><strong>Don't write "unfounded" in the write-up.</strong> Write "no customer evidence on file yet" — factual, unarguable, and it invites them to go and find some.</li>
+    </ul>
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">Afterwards — the write-up that prevents a fight</p>
+    <p>Turn their prototype into an explicit, <strong>credited</strong> list of hypotheses — "what this design assumes about customers", with their name on it — and carry it into the customer interviews alongside your own. Then the confirmations belong to them and the contradictions belong to the data. Nobody has to be wrong in public, and you never have to be the person who said no.</p>
+    <p>If executive backing is part of the picture, treat the executive as a separate <em>stakeholder</em> interview, not an expert one. Different question entirely: not "what do customers need" but "what would make this a success for you, and what would change your mind?" Getting that on record early is worth more than any argument later.</p>
+  </div>
+</section>
+
+<section class="newpage">
+  <p class="section-label">Sheet C</p>
+  <h2>Capture sheet · one per interview, filled within 30 minutes</h2>
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Sheet C</p>
+      <h3>Debrief</h3>
+      <p class="dur">15 min to fill</p>
+    </div>
+    <div class="fields">
+      <div class="field"><p class="lab">Date</p><div class="line"></div></div>
+      <div class="field"><p class="lab">Interviewer</p><div class="line"></div></div>
+      <div class="field"><p class="lab">Participant / role</p><div class="line"></div></div>
+      <div class="field"><p class="lab">Company / size</p><div class="line"></div></div>
+      <div class="field"><p class="lab">Market</p><div class="line"></div></div>
+      <div class="field"><p class="lab">Recording ref</p><div class="line"></div></div>
+      <div class="field wide"><p class="lab">Which person is this? — signer / buyer / both / internal</p><div class="line"></div></div>
+      <div class="field wide"><p class="lab">The last purchase: what, what triggered it, where they were, how long, did an agreement get used</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">Agreements held but never used — which, and their stated reason</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">Three surprises — things I did not expect before this call</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">Three verbatim quotes — their words, not my paraphrase</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">Pain scoreboard — mark each: confirmed / killed / reshaped / untouched</p>
+        <div class="tally">
+          <span>P1 handoff</span><span>P2 proof of value</span><span>P3 discovery</span><span>P4 wants a human</span>
+          <span>P5 friction</span><span>P6 company shape</span><span>P7 compliance</span><span>P8 forgets us</span>
+        </div>
+      </div>
+      <div class="field wide"><p class="lab">New pain — something nobody predicted</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">If I had ten seconds, the sharpest thing I saw was…</p><div class="line"></div></div>
+      <div class="field wide"><p class="lab">Promises to check in later interviews (from internal calls)</p><div class="line"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="newpage">
+  <p class="section-label">Sheet D</p>
+  <h2>Round summary · one page, same day as the last interview</h2>
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="tag">Sheet D</p>
+      <h3>Round close</h3>
+      <p class="dur">45 min to write</p>
+    </div>
+    <div class="fields">
+      <div class="field"><p class="lab">Round / project</p><div class="line"></div></div>
+      <div class="field"><p class="lab">Dates</p><div class="line"></div></div>
+      <div class="field"><p class="lab">Interviews — n, and the mix</p><div class="line"></div></div>
+      <div class="field wide"><p class="lab">Scoreboard tally — how many interviews moved each pain, and which way</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">Pains killed — say so plainly, it's the most valuable output and the easiest to skip</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">New pains nobody predicted</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">Five quotes for the room</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">Promise gaps — what internal says we do, that customers never mentioned</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">What I believed before this round that I no longer believe</p><div class="box"></div></div>
+      <div class="field wide"><p class="lab">What I'd ask differently next round — feeds back into the question bank</p><div class="box"></div></div>
+    </div>
+  </div>
+  <div class="callout pick">
+    <p class="callout-label">The one-page rule</p>
+    <p>Sheet D is the deliverable. Not a slide deck, not a research report — nobody reads either on a sprint Tuesday. One page, five quotes, and the recordings ready in case somebody wants to argue. If you can't fit the round on one page, you haven't finished thinking about it yet.</p>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">The reusable part</p>
+  <h2>Question bank — assemble a script for any future round</h2>
+  <p>Sheets A and B are this project's assembly. The bank below is the stock. For a new topic, take two or three questions from each category, keep the order (context → behaviour → friction → value → social → close), and you have a working script in twenty minutes. Add to it after every round; the last field on Sheet D exists for exactly this.</p>
+  <div class="bank">
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Context</p><p class="catwhy">Who am I actually talking to?</p></div>
+      <ul>
+        <li>"What does the company do, and what's your part in it?"</li>
+        <li>"Walk me through a normal Tuesday."</li>
+        <li>"Who else does this job here? How do you divide it?"</li>
+        <li>"Did you choose this tool, or did you inherit it?"</li>
+        <li>"How long have you been doing it this way?"</li>
+      </ul>
+    </div>
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Behaviour</p><p class="catwhy">What actually happened, not what usually happens</p></div>
+      <ul>
+        <li>"Think of the last time you [did the task]. Walk me through it from the moment you knew you needed to."</li>
+        <li>"Where were you when that happened? What device?"</li>
+        <li>"What did you do first? And then?"</li>
+        <li>"Who else got involved, and at what point?"</li>
+        <li>"When was the last time that went badly?"</li>
+        <li>"Show me — just do what you'd normally do."</li>
+      </ul>
+    </div>
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Friction</p><p class="catwhy">Where the work is harder than it looks</p></div>
+      <ul>
+        <li>"What's the fiddliest part of that?"</li>
+        <li>"Have you got a workaround for anything here?"<span class="follow"></span></li>
+        <li>"What do you put off until you have to?"</li>
+        <li>"Is there anything you've given up trying to do?"</li>
+        <li>"What do you have to remember that the system doesn't remember for you?"</li>
+      </ul>
+    </div>
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Value</p><p class="catwhy">Felt value versus told value</p></div>
+      <ul>
+        <li>"If this disappeared tomorrow, what's the first thing you'd notice?"</li>
+        <li>"Has anyone asked you to justify it? What did you show them?"</li>
+        <li>"How do you know it's working?"</li>
+        <li>"What would have to happen for you to stop using it?"</li>
+      </ul>
+    </div>
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Social</p><p class="catwhy">Who else is in the system — usually the missing half</p></div>
+      <ul>
+        <li>"Who else in the company touches this? Do they know it exists?"</li>
+        <li>"Who did you have to convince?"</li>
+        <li>"When something changes here, how do people find out?"</li>
+        <li>"Who would be annoyed if this changed?"</li>
+      </ul>
+    </div>
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Close</p><p class="catwhy">Two questions that keep paying off</p></div>
+      <ul>
+        <li>"What haven't I asked about that I should have?"</li>
+        <li>"Who else should I be talking to — especially anyone who'd disagree with you?"</li>
+      </ul>
+    </div>
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Repair</p><p class="catwhy">When they pitch a feature at you — and they will</p></div>
+      <ul>
+        <li>"What would that let you do that you can't do today?"</li>
+        <li>"When did that last cost you something?"</li>
+        <li>"What do you do instead, right now?"</li>
+        <li>"Tell me more about that."<span class="follow"></span></li>
+      </ul>
+    </div>
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Challenge · customers</p><p class="catwhy">Testing a stated want without arguing with it</p></div>
+      <ul>
+        <li>"You can already do a rough version of that today. Do you?"<span class="follow"></span></li>
+        <li>"What stops you doing it manually right now?"</li>
+        <li>"What would you give up for it — money, time, or control?"</li>
+        <li>"If it existed exactly as you describe, what would you stop doing?"</li>
+        <li>"Say we build it and it works perfectly. Walk me through the following Monday."</li>
+        <li>"Whose job here changes?"</li>
+        <li>"Who here would disagree with you about this? Who'd refuse to use it?"</li>
+        <li>"What's the last new tool this company adopted — how did that go?"</li>
+        <li>"Someone else told me the real problem is something different. What do you make of that?"</li>
+      </ul>
+    </div>
+    <div class="cat">
+      <div class="cathead"><p class="cattag">Challenge · internal</p><p class="catwhy">Always challenge to a specific deal, never to the idea</p></div>
+      <ul>
+        <li>"Which customer bought <em>because</em> of something like this — or walked for lack of it?"</li>
+        <li>"If we shipped it tomorrow, which deal in your pipeline closes?"</li>
+        <li>"If I told you we're not building it, what actually breaks?"</li>
+        <li>"What would you have to stop saying to customers if we built this?"</li>
+        <li>"Who else on your team would say the opposite?"</li>
+        <li>"What did customers ask for two years ago that we did build — did it move anything?"</li>
+        <li>"Is this something customers ask for, or something that would make your job easier? Both are fine, I just need to know which."</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">Five rules that keep a challenge from becoming an argument</p>
+    <ul class="plain">
+      <li><strong>Challenge by making it concrete, never by evaluating it.</strong> You're not saying "that's wrong", you're saying "walk me further into it" — and the idea either survives the detail or comes apart on its own.</li>
+      <li><strong>Put the doubt on yourself.</strong> "I might be misunderstanding this…" costs nothing and removes any need to defend a position.</li>
+      <li><strong>Ask for the failure mode, not the flaw.</strong> "What would make this not work?" People hunt for problems in their own ideas gladly, when it's framed as expertise rather than criticism.</li>
+      <li><strong>Never say "but".</strong> Use "and", or just stop and ask the next question.</li>
+      <li><strong>Make them the critic.</strong> "You know this far better than I do — if we built it and it went wrong, how would it go wrong?" This gets you what argument never will, and they stay on your side while it happens.</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <p class="callout-label">Six habits, unchanged across every round</p>
+    <ul class="plain">
+      <li>Ask about the last time, never about "usually".</li>
+      <li>Never ask whether they'd use something.</li>
+      <li>"Show me" beats "tell me".</li>
+      <li>Count to five after they finish — the second answer is the true one.</li>
+      <li>Follow the emotion, not the feature.</li>
+      <li>Two "why"s is curiosity; three is an interrogation. Use "tell me more about that".</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  Interview field kit v1 · revise after each round via Sheet D
+</footer>
+
+</div>

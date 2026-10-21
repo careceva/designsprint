@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage — the two moves as review tiles, five versions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap">
+<style>
+/* tokens, copied from own-agreement-v1.html */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;--general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;--general-secondary:#dbe9ff;--general-muted:#f2f2f2;
+  --general-muted-foreground:#6e6e6e;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--surface:#ffffff;--surface-tile:#f5f6f7;--brand-ice:#edf5ff;
+  --sentiment-positive:#009689;
+  --font-sans:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;--text-xl:20px;--text-2xl:24px;
+  --text-3xl:30px;--text-4xl:36px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;--rounded-xl:20px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;--shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+  --hairline:#ececec;--t-fast:.15s ease;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+body{font-family:var(--font-sans);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-weight:600;text-wrap:balance}
+button,input{font-family:inherit;font-size:inherit;color:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);height:44px;padding:0 var(--s6);
+  border:1px solid transparent;cursor:pointer;border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary[disabled]{background:var(--general-muted);color:#a3a3a3;box-shadow:none;cursor:not-allowed}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);font-size:var(--text-sm);font-weight:500}
+.linkbtn:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- gallery ---------- */
+.gal{max-width:1160px;margin:0 auto;padding:var(--s16) var(--s8) var(--s24)}
+.gal-head{max-width:680px;margin-bottom:var(--s16)}
+.gal-head h1{font-size:var(--text-4xl);letter-spacing:-.9px;line-height:1.1;font-weight:700}
+.gal-head p{margin-top:var(--s4);color:var(--general-muted-foreground);font-size:var(--text-lg)}
+.gal-nav{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s6)}
+.gal-nav a{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 var(--s4);border:1px solid var(--hairline);
+  border-radius:var(--rounded-full);background:var(--surface);color:var(--general-foreground);text-decoration:none;font-size:var(--text-sm);font-weight:500}
+.gal-nav a b{color:var(--general-muted-foreground);font-weight:600}
+.gal-nav a:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.gal-list{display:flex;flex-direction:column;gap:var(--s24)}
+.v{display:grid;grid-template-columns:minmax(0,1fr) 540px;gap:var(--s12);align-items:start;scroll-margin-top:var(--s8)}
+.v-label{position:sticky;top:var(--s8)}
+.v-eyebrow{display:block;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.v-name{font-size:var(--text-3xl);letter-spacing:-.6px;line-height:1.15;font-weight:700;margin-top:var(--s2)}
+.v-blurb{margin-top:var(--s3);color:var(--general-muted-foreground);max-width:40ch}
+.v-crit{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--hairline);max-width:40ch}
+.v-crit b{display:block;font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:var(--s2)}
+.v-crit ul{padding-left:18px;color:var(--general-foreground);font-size:var(--text-sm);display:flex;flex-direction:column;gap:6px}
+.v-pick{display:inline-flex;align-items:center;gap:6px;margin-top:var(--s4);padding:4px 10px;border-radius:var(--rounded-full);
+  background:#d9f2ef;color:var(--sentiment-positive);font-size:13px;font-weight:600}
+.v-pick svg{width:12px;height:12px}
+.v-pick.was{background:var(--general-muted);color:var(--general-muted-foreground)}
+@media(max-width:960px){.v{grid-template-columns:1fr}.v-label{position:static}}
+
+/* ---------- the bento cell, as the app draws it ---------- */
+.cell{border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);box-shadow:var(--shadow-xs);padding:var(--s8);
+  display:flex;flex-direction:column;align-items:center;gap:var(--s8)}
+.cell-head{display:flex;flex-direction:column;align-items:center;gap:var(--s3);text-align:center}
+.cell-head h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.4px;line-height:1.25}
+.cell-head p{font-size:var(--text-base);color:var(--general-muted-foreground);max-width:40ch;text-wrap:pretty}
+.fig-est{font-weight:600;color:var(--general-muted-foreground);text-decoration:underline dotted currentColor;text-decoration-thickness:1.5px;text-underline-offset:.16em;text-decoration-skip-ink:none}
+.arc-wrap{display:flex;flex-direction:column;align-items:center;gap:2px}
+.arc{display:block;width:171px;height:93.3px;margin-bottom:-41px}
+.arc line{stroke-width:7;stroke-linecap:round}
+.arc .off{stroke:var(--surface-tile)}
+.arc-n{font-size:var(--text-4xl);font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.arc-n small{font-size:var(--text-2xl)}
+.arc-l{font-size:var(--text-base);letter-spacing:-.04em;color:var(--general-muted-foreground)}
+
+/* ---------- the tiles ---------- */
+.mv-list{display:flex;flex-direction:column;width:100%;list-style:none}
+.mv{border-top:1px solid var(--hairline)}
+.mv summary{list-style:none}
+.mv summary::-webkit-details-marker{display:none}
+.mv-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto 20px;align-items:center;gap:var(--s4);
+  padding:var(--s4) var(--s2);border-radius:var(--rounded-md);cursor:pointer}
+.mv-row:hover{background:var(--surface-tile)}
+.mv-ic{width:48px;height:48px}
+.mv-ic img{display:block;width:100%;height:100%;object-fit:contain}
+.mv-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mv-txt b{font-size:var(--text-base);font-weight:700;line-height:1.3}
+.mv-txt span{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.4}
+.mv-r{display:flex;flex-direction:column;align-items:flex-end;gap:2px;white-space:nowrap}
+.mv-fig{font-size:var(--text-xl);font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.2}
+.mv-st{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
+.mv-st.on{color:var(--general-primary)}
+.mv-chev{width:20px;height:20px;color:var(--general-muted-foreground);transition:transform .18s ease}
+.mv[open] .mv-chev{transform:rotate(180deg)}
+.mv-body{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s1) var(--s2) var(--s6) calc(48px + var(--s4) + var(--s2))}
+.mv-f{display:flex;flex-direction:column;gap:6px}
+.mv-f-h{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3)}
+.mv-f label{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
+.mv-f label i{font-style:normal;font-weight:400}
+.mv-f-h .linkbtn{font-size:var(--text-xs)}
+.mv-field{display:flex;align-items:center;gap:var(--s2);height:44px;padding:0 var(--s4);background:var(--general-input);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);box-shadow:inset 0 1px 2px #0000000a}
+.mv-field:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.mv-field input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:var(--text-base);font-variant-numeric:tabular-nums}
+.mv-field input::placeholder{color:#a3a3a3}
+.mv-field .u{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.mv-field.ro{background:var(--surface-tile);border-color:transparent;box-shadow:none}
+.mv-sent{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--text-sm)}
+.mv-sent svg{width:16px;height:16px;color:var(--sentiment-positive)}
+.mv-help{font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.45}
+.mv-act{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;padding-top:var(--s2)}
+.mv-act .spacer{flex:1}
+.mv-skip{color:var(--general-muted-foreground)}
+.mv-note{font-size:var(--text-xs);color:var(--general-muted-foreground);text-align:right;max-width:18ch;line-height:1.35}
+.mv-drop{display:flex;flex-direction:column;align-items:center;gap:var(--s1);padding:var(--s5) var(--s4);text-align:center;
+  border:1.5px dashed var(--general-border);border-radius:var(--rounded-md);background:var(--brand-ice)}
+.mv-drop svg{width:22px;height:22px;color:var(--general-primary)}
+.mv-drop b{font-size:var(--text-sm);font-weight:600}
+.mv-drop span{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.mv-two{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}
+.mv-stack{display:flex;flex-direction:column;gap:var(--s3)}
+.mv-foot{width:100%;padding-top:var(--s3);font-size:var(--text-xs);color:var(--general-muted-foreground);display:flex;gap:var(--s2);align-items:baseline}
+/* v6: the version-5 row, the whole row a way in */
+.v6 .cell{align-items:stretch}
+.v6 .cell-head{align-items:flex-start;text-align:left;padding:0 var(--s2)}
+.v6 .cell-head p{max-width:none}
+.v6 .mv-list{width:calc(100% - var(--s8));margin:0 auto}
+.v6 .mv-row{grid-template-columns:48px minmax(0,1fr) auto 20px}
+.v6 .mv-fig{font-size:var(--text-2xl)}
+.v6 .mv-txt .fig-est{font-weight:600}
+.v6 .mv-set{font-weight:600;color:var(--general-primary)}
+.v6 .mv-st.done{color:var(--general-foreground)}
+/* v7: status under the name, the two figures stacked with a mark between */
+.v7 .cell{align-items:stretch}
+.v7 .cell-head{align-items:flex-start;text-align:left;padding:0 var(--s2)}
+.v7 .cell-head p{max-width:none}
+.v7 .mv-list{width:calc(100% - var(--s8));margin:0 auto}
+.v7 .mv-row{grid-template-columns:48px minmax(0,1fr) auto 20px}
+.v7 .mv-txt{gap:var(--s1)}
+.v7 .mv-r{gap:var(--s1);text-align:right}
+.v7 .mv-kv{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.v7 .mv-cap{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);line-height:1.3}
+.v7 .mv-fig{font-size:var(--text-xl);line-height:1.2}
+.v7 .mv-fig small{margin-left:4px;font-size:var(--text-xs);font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
+.v7 .mv-set{color:var(--general-primary)}
+.v7 .mv-mark{display:flex;align-items:center;gap:var(--s1);align-self:stretch;margin:2px 0;color:var(--general-muted-foreground)}
+.v7 .mv-mark::before,.v7 .mv-mark::after{content:'';flex:1 1 auto;border-top:1px solid var(--hairline)}
+.v7 .mv-mark svg{width:14px;height:14px}
+.v7 .mv-st.done{color:var(--general-foreground)}
+/* v8: v7 with the arc back, no area mark, captions inline */
+.v8 .mv-list{width:calc(100% - var(--s8));margin:0 auto}
+.v8 .mv-row{grid-template-columns:minmax(0,1fr) auto 20px}
+.v8 .mv-txt{gap:var(--s1)}
+.v8 .mv-r{display:grid;grid-template-columns:auto auto;align-items:baseline;column-gap:var(--s2);row-gap:var(--s1)}
+.v8 .mv-kv{display:contents}
+.v8 .mv-cap{justify-self:start;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
+.v8 .mv-fig{justify-self:end;font-size:var(--text-xl);line-height:1.2}
+.v8 .mv-fig small{margin-left:4px;font-size:var(--text-xs);font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
+.v8 .mv-set{color:var(--general-primary)}
+.v8 .mv-mark{grid-column:1 / -1;display:flex;align-items:center;gap:var(--s1);margin:2px 0;color:var(--general-muted-foreground)}
+.v8 .mv-mark::before,.v8 .mv-mark::after{content:'';flex:1 1 auto;border-top:1px solid var(--hairline)}
+.v8 .mv-mark svg{width:14px;height:14px}
+.v8 .mv-st.done{color:var(--general-foreground)}
+/* v1: every tile open, no accordion */
+.v1 .mv-row{cursor:default}
+.v1 .mv-row:hover{background:none}
+/* v3: a visible cta in the collapsed row */
+.v3 .mv-row{grid-template-columns:48px minmax(0,1fr) auto auto}
+/* v4: compact rows, nothing opens */
+.v4 .mv-row{grid-template-columns:48px minmax(0,1fr) auto auto;cursor:default}
+.v4 .mv-row:hover{background:none}
+.steps{display:flex;gap:var(--s2);align-items:center;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.steps b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:var(--rounded-full);background:var(--general-muted);font-weight:700;font-size:11px}
+.steps b.on{background:var(--general-primary);color:#fff}
+</style>
+</head>
+<body>
+<main class="gal">
+  <header class="gal-head">
+    <h1>The two moves, as review tiles</h1>
+    <p>The Overview's "Two moves worth…" card, redrawn so each tile carries a status and an action, and holds the review content: the company's spend, a document, the current supplier, and the way to Peter. Eight versions, each correcting the one before. Version 8 is what is built into the exploration: after version 5 the direction changed — the typing moves to the spend page, and the row carries spent, saved and the status.</p>
+    <nav class="gal-nav">
+      <a href="#v1"><b>1</b> Everything, every tile</a>
+      <a href="#v2"><b>2</b> One at a time, as drawn</a>
+      <a href="#v3"><b>3</b> One field</a>
+      <a href="#v4"><b>4</b> Row and sheet</a>
+      <a href="#v5"><b>5</b> One open, one primary</a>
+      <a href="#v6"><b>6</b> Version 5's row, no form</a>
+      <a href="#v7"><b>7</b> Status under the name, figures stacked</a>
+      <a href="#v8"><b>8</b> Arc back, no mark, captions inline</a>
+    </nav>
+  </header>
+
+  <div class="gal-list">
+
+    <!-- ============ V1 ============ -->
+    <section class="v v1" id="v1">
+      <div class="v-label">
+        <span class="v-eyebrow">Version 1</span>
+        <h2 class="v-name">Everything, in every tile</h2>
+        <p class="v-blurb">The screenshot's form, pasted into both tiles at once: benchmark sentence, spend field, drop box, supplier, Not relevant, Save, Send for review.</p>
+        <div class="v-crit"><b>What's wrong</b><ul>
+          <li>Two forms stacked make the card twice the height of its neighbour.</li>
+          <li>Two ways to give one number (type it, drop it), both equally loud.</li>
+          <li>Save and Send look the same weight; the user has to work out the difference.</li>
+          <li>Seven lines of explanation for two fields.</li>
+        </ul></div>
+      </div>
+      <div class="cell">
+        <div class="cell-head"><h2>Two moves worth <span class="fig-est">342K–463K</span>&nbsp;kr. a year</h2>
+          <p>What companies like yours save in these two areas — an estimate until you connect your data.</p></div>
+        <div class="arc-wrap" data-arc="46"></div>
+        <ul class="mv-list">
+          <li><details class="mv" open><summary><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-office-supplies-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Office supplies</b><span>The widest discount gap in your peer group</span></span>
+              <span class="mv-r"><span class="mv-fig">19%</span><span class="mv-st">Not reviewed</span></span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></summary>
+            <div class="mv-body">
+              <p class="mv-help">Companies like yours typically spend 180–260K kr. a year here.</p>
+              <div class="mv-two">
+                <div class="mv-stack">
+                  <div class="mv-f"><label>Your annual spend</label>
+                    <div class="mv-field"><input placeholder="0"><span class="u">kr. / year</span></div>
+                    <span class="mv-help">Excluding VAT, last 12 months. A rough figure is fine.</span></div>
+                  <div class="mv-f"><label>Current supplier <i>(optional)</i></label>
+                    <div class="mv-field"><input placeholder="Who do you buy from?"></div></div>
+                </div>
+                <div class="mv-stack">
+                  <label class="mv-f">Or let your documents do it</label>
+                  <div class="mv-drop"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V5M7.5 9.5L12 5l4.5 4.5M5 16v3h14v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <b>Drop invoices, contracts or reports</b><span>PDF, Excel or CSV</span></div>
+                  <span class="mv-help">Invoices fill in spend. Contracts add renewal dates.<br>Used only for your map. Never shared with suppliers.</span>
+                </div>
+              </div>
+              <div class="mv-act"><button class="linkbtn mv-skip">Not relevant to us</button><span class="spacer"></span>
+                <span class="mv-note">Peter compares and replies here within two working days</span>
+                <button class="btn btn-secondary btn-sm">Save</button><button class="btn btn-primary btn-sm">Send for review</button></div>
+            </div></details></li>
+          <li><details class="mv" open><summary><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-tools-workwear-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Tools &amp; workwear</b><span>The next best entry point for companies your size</span></span>
+              <span class="mv-r"><span class="mv-fig">11%</span><span class="mv-st">Not reviewed</span></span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></summary>
+            <div class="mv-body">
+              <p class="mv-help">Companies like yours typically spend 570–770K kr. a year here.</p>
+              <div class="mv-two">
+                <div class="mv-stack">
+                  <div class="mv-f"><label>Your annual spend</label>
+                    <div class="mv-field"><input placeholder="0"><span class="u">kr. / year</span></div>
+                    <span class="mv-help">Excluding VAT, last 12 months. A rough figure is fine.</span></div>
+                  <div class="mv-f"><label>Current supplier <i>(optional)</i></label>
+                    <div class="mv-field"><input placeholder="Who do you buy from?"></div></div>
+                </div>
+                <div class="mv-stack">
+                  <label class="mv-f">Or let your documents do it</label>
+                  <div class="mv-drop"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V5M7.5 9.5L12 5l4.5 4.5M5 16v3h14v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <b>Drop invoices, contracts or reports</b><span>PDF, Excel or CSV</span></div>
+                  <span class="mv-help">Invoices fill in spend. Contracts add renewal dates.<br>Used only for your map. Never shared with suppliers.</span>
+                </div>
+              </div>
+              <div class="mv-act"><button class="linkbtn mv-skip">Not relevant to us</button><span class="spacer"></span>
+                <span class="mv-note">Peter compares and replies here within two working days</span>
+                <button class="btn btn-secondary btn-sm">Save</button><button class="btn btn-primary btn-sm">Send for review</button></div>
+            </div></details></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ V2 ============ -->
+    <section class="v v2" id="v2">
+      <div class="v-label">
+        <span class="v-eyebrow">Version 2</span>
+        <h2 class="v-name">One at a time, as drawn</h2>
+        <p class="v-blurb">The screenshot's accordion. Collapsed rows carry name, benchmark and status; the open one carries the form. Only one opens.</p>
+        <div class="v-crit"><b>What's wrong</b><ul>
+          <li>Height is solved. The open row still asks for the same number twice.</li>
+          <li>"Reviewing" labels the open state as if it were a status. Open is not a status.</li>
+          <li>Save vs Send is still unresolved; the promise about Peter sits before anyone asked.</li>
+        </ul></div>
+      </div>
+      <div class="cell">
+        <div class="cell-head"><h2>Two moves worth <span class="fig-est">342K–463K</span>&nbsp;kr. a year</h2>
+          <p>What companies like yours save in these two areas — an estimate until you connect your data.</p></div>
+        <div class="arc-wrap" data-arc="46"></div>
+        <ul class="mv-list">
+          <li><details class="mv" name="v2" open><summary><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-office-supplies-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Office supplies</b><span>Companies like yours spend 180–260K kr. a year</span></span>
+              <span class="mv-r"><span class="mv-fig">19%</span><span class="mv-st on">Reviewing</span></span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></summary>
+            <div class="mv-body">
+              <div class="mv-f"><label>Your annual spend</label>
+                <div class="mv-field"><input placeholder="0"><span class="u">kr. / year</span></div>
+                <span class="mv-help">Excluding VAT, last 12 months. A rough figure is fine.</span></div>
+              <div class="mv-drop"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V5M7.5 9.5L12 5l4.5 4.5M5 16v3h14v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <b>Or drop invoices, contracts or reports</b><span>PDF, Excel or CSV · used only for your figures</span></div>
+              <div class="mv-f"><label>Current supplier <i>(optional)</i></label>
+                <div class="mv-field"><input placeholder="Who do you buy from?"></div></div>
+              <div class="mv-act"><button class="linkbtn mv-skip">Not relevant to us</button><span class="spacer"></span>
+                <span class="mv-note">Peter replies within two working days</span>
+                <button class="btn btn-secondary btn-sm">Save</button><button class="btn btn-primary btn-sm">Send for review</button></div>
+            </div></details></li>
+          <li><details class="mv" name="v2"><summary><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-tools-workwear-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Tools &amp; workwear</b><span>Companies like yours spend 570–770K kr. a year</span></span>
+              <span class="mv-r"><span class="mv-fig">11%</span><span class="mv-st">Not reviewed</span></span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></summary>
+            <div class="mv-body">
+              <div class="mv-f"><label>Your annual spend</label>
+                <div class="mv-field"><input placeholder="0"><span class="u">kr. / year</span></div>
+                <span class="mv-help">Excluding VAT, last 12 months. A rough figure is fine.</span></div>
+              <div class="mv-drop"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V5M7.5 9.5L12 5l4.5 4.5M5 16v3h14v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <b>Or drop invoices, contracts or reports</b><span>PDF, Excel or CSV · used only for your figures</span></div>
+              <div class="mv-f"><label>Current supplier <i>(optional)</i></label>
+                <div class="mv-field"><input placeholder="Who do you buy from?"></div></div>
+              <div class="mv-act"><button class="linkbtn mv-skip">Not relevant to us</button><span class="spacer"></span>
+                <span class="mv-note">Peter replies within two working days</span>
+                <button class="btn btn-secondary btn-sm">Save</button><button class="btn btn-primary btn-sm">Send for review</button></div>
+            </div></details></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ V3 ============ -->
+    <section class="v v3" id="v3">
+      <div class="v-label">
+        <span class="v-eyebrow">Version 3</span>
+        <h2 class="v-name">One field</h2>
+        <p class="v-blurb">Cut to the bone: a visible "Add your spend" on the collapsed row, one field when open, the field itself is the drop target, one button. Typing saves on its own.</p>
+        <div class="v-crit"><b>What's wrong</b><ul>
+          <li>Autosave is invisible. "Saved" appears and nobody pressed anything.</li>
+          <li>Peter gets a number with no supplier to compare it against.</li>
+          <li>Dropping a file on a text field is something nobody tries.</li>
+          <li>Two actions live on the row (open, and the CTA) and they do the same thing.</li>
+        </ul></div>
+      </div>
+      <div class="cell">
+        <div class="cell-head"><h2>Two moves worth <span class="fig-est">342K–463K</span>&nbsp;kr. a year</h2>
+          <p>An estimate from companies like yours, until you add your spend.</p></div>
+        <div class="arc-wrap" data-arc="46"></div>
+        <ul class="mv-list">
+          <li><details class="mv" name="v3" open><summary><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-office-supplies-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Office supplies</b><span>19% under list price · Not reviewed</span></span>
+              <button class="btn btn-secondary btn-sm">Add your spend</button>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></summary>
+            <div class="mv-body">
+              <div class="mv-f"><label>Your spend a year</label>
+                <div class="mv-field"><input placeholder="180.000–260.000"><span class="u">kr.</span></div>
+                <span class="mv-help">Companies your size: 180–260K kr. Or drop an invoice on the field.</span></div>
+              <div class="mv-act"><button class="linkbtn mv-skip">Not relevant</button><span class="spacer"></span>
+                <button class="btn btn-primary btn-sm">Send to Peter</button></div>
+            </div></details></li>
+          <li><details class="mv" name="v3"><summary><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-tools-workwear-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Tools &amp; workwear</b><span>11% under list price · Saved</span></span>
+              <button class="btn btn-secondary btn-sm">Edit</button>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></summary>
+            <div class="mv-body">
+              <div class="mv-f"><label>Your spend a year</label>
+                <div class="mv-field"><input value="620.000"><span class="u">kr.</span></div>
+                <span class="mv-help">Companies your size: 570–770K kr. Or drop an invoice on the field.</span></div>
+              <div class="mv-act"><button class="linkbtn mv-skip">Not relevant</button><span class="spacer"></span>
+                <button class="btn btn-primary btn-sm">Send to Peter</button></div>
+            </div></details></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ V4 ============ -->
+    <section class="v v4" id="v4">
+      <div class="v-label">
+        <span class="v-eyebrow">Version 4</span>
+        <h2 class="v-name">Row and sheet</h2>
+        <p class="v-blurb">The tiles stay rows: name, benchmark, status, a Review button. The form opens in the app's dialog, with room for the drop box and a two-step send.</p>
+        <div class="v-crit"><b>What's wrong</b><ul>
+          <li>The tile no longer holds the content; the brief said it should.</li>
+          <li>A dialog for two fields. The status change happens off-screen and the user comes back to a row that looks the same.</li>
+          <li>The card becomes a list of links again, which is what it was.</li>
+        </ul></div>
+      </div>
+      <div class="cell">
+        <div class="cell-head"><h2>Two moves worth <span class="fig-est">342K–463K</span>&nbsp;kr. a year</h2>
+          <p>An estimate from companies like yours, until you add your spend.</p></div>
+        <div class="arc-wrap" data-arc="46"></div>
+        <ul class="mv-list">
+          <li><div class="mv"><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-office-supplies-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Office supplies</b><span>Companies your size spend 180–260K kr. a year</span></span>
+              <span class="mv-r"><span class="mv-fig">19%</span><span class="mv-st">Not reviewed</span></span>
+              <button class="btn btn-primary btn-sm">Review</button>
+            </div></div></li>
+          <li><div class="mv"><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-tools-workwear-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Tools &amp; workwear</b><span>Sent 2 Oct · your spend and supplier</span></span>
+              <span class="mv-r"><span class="mv-fig">11%</span><span class="mv-st on">With Peter</span></span>
+              <button class="btn btn-secondary btn-sm">Open</button>
+            </div></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ V5 ============ -->
+    <section class="v v5" id="v5">
+      <div class="v-label">
+        <span class="v-eyebrow">Version 5</span>
+        <h2 class="v-name">One open, one primary</h2>
+        <p class="v-blurb">An accordion, so one form is ever visible. Collapsed: mark, name, the benchmark spend, the rate, the status. Open: a spend field with "Add an invoice instead" beside its label (the whole tile also takes a dropped file), the supplier, and an action row where Send to Peter is the one primary. Save keeps a figure without involving anyone; Not relevant swaps the move for the next area, with Undo at the card's foot.</p>
+        <span class="v-pick was">Built, then superseded by 6</span>
+        <div class="v-crit"><b>What changed from 1–4</b><ul>
+          <li>One number, one field. The document is a way to fill it, not a second input.</li>
+          <li>Status is a fact, not a mode: Not reviewed, Saved, With Peter. The promise ("replies within two working days") appears where the Send button was, once it is true.</li>
+          <li>After Save the tile prints her figure and the saving at her spend, in the app's estimate ink, and the whole page follows (the tune model).</li>
+          <li>Three lines of help in total.</li>
+        </ul></div>
+      </div>
+      <div class="cell">
+        <div class="cell-head"><h2>Two moves worth <span class="fig-est">342K–463K</span>&nbsp;kr. a year</h2>
+          <p>An estimate from companies like yours, until you add your spend.</p></div>
+        <div class="arc-wrap" data-arc="46"></div>
+        <ul class="mv-list">
+          <li><details class="mv" name="v5" open><summary><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-office-supplies-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Office supplies</b><span>Companies your size spend 180–260K kr. a year</span></span>
+              <span class="mv-r"><span class="mv-fig">19%</span><span class="mv-st">Not reviewed</span></span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></summary>
+            <div class="mv-body">
+              <div class="mv-f"><div class="mv-f-h"><label>Your spend a year</label><button class="linkbtn">Add an invoice instead</button></div>
+                <div class="mv-field"><input placeholder="0"><span class="u">kr.</span></div>
+                <span class="mv-help">Excluding VAT. A rough figure is fine.</span></div>
+              <div class="mv-f"><label>Current supplier <i>(optional)</i></label>
+                <div class="mv-field"><input placeholder="Who you buy from"></div></div>
+              <div class="mv-act"><button class="linkbtn mv-skip">Not relevant</button><span class="spacer"></span>
+                <button class="btn btn-secondary btn-sm">Save</button><button class="btn btn-primary btn-sm">Send to Peter</button></div>
+            </div></details></li>
+          <li><details class="mv" name="v5"><summary><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-tools-workwear-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Tools &amp; workwear</b><span>Your spend 620.000 kr. a year · Hilti</span></span>
+              <span class="mv-r"><span class="mv-fig fig-est">+58K–79K</span><span class="mv-st on">With Peter</span></span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></summary>
+            <div class="mv-body">
+              <div class="mv-f"><div class="mv-f-h"><label>Your spend a year</label><button class="linkbtn">Add an invoice instead</button></div>
+                <div class="mv-field ro"><input value="620.000" readonly><span class="u">kr.</span></div>
+                <span class="mv-help">Excluding VAT. A rough figure is fine.</span></div>
+              <div class="mv-f"><label>Current supplier <i>(optional)</i></label>
+                <div class="mv-field ro"><input value="Hilti" readonly></div></div>
+              <div class="mv-act"><span class="mv-sent"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Sent today · Peter replies within two working days</span><span class="spacer"></span>
+                <button class="linkbtn mv-skip">Withdraw</button></div>
+            </div></details></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ V6 ============ -->
+    <section class="v v6" id="v6">
+      <div class="v-label">
+        <span class="v-eyebrow">Version 6</span>
+        <h2 class="v-name">Version 5's row, no form</h2>
+        <p class="v-blurb">The direction after version 5: the row stays, the typing moves to the spend page. Name with the spend under it, the saving and the status on the right, a chevron as the only mark — the whole row is the way in.</p>
+        <span class="v-pick was">Built, then superseded by 7</span>
+        <div class="v-crit"><b>What changed from 5</b><ul>
+          <li>Nothing opens in place; the row goes to the spend page. No Save, no Send, no "With Peter".</li>
+          <li>Status is Not reviewed or Reviewed. The spend line prints her figure in the slider's blue once she has set it.</li>
+          <li>The title is the sum of the two savings; the arc went — its figure divided every area's saving by two areas' spend.</li>
+        </ul></div>
+      </div>
+      <div class="cell">
+        <div class="cell-head"><h2>Two moves worth <span class="fig-est">95K–129K</span>&nbsp;kr. a year</h2>
+          <p>An estimate from companies like yours, until you add your spend.</p></div>
+        <ul class="mv-list">
+          <li><div class="mv"><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-office-supplies-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Office supplies</b><span>Spending <span class="fig-est">174K–236K</span> kr.</span></span>
+              <span class="mv-r"><span class="mv-fig fig-est">+33K–45K</span><span class="mv-st">Not reviewed</span></span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></div></li>
+          <li><div class="mv"><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-tools-workwear-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Tools &amp; workwear</b><span>Spending <span class="mv-set">1.100.000</span> kr. · Hilti</span></span>
+              <span class="mv-r"><span class="mv-fig fig-est">+96K–149K</span><span class="mv-st done">Reviewed</span></span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ V7 ============ -->
+    <section class="v v7" id="v7">
+      <div class="v-label">
+        <span class="v-eyebrow">Version 7</span>
+        <h2 class="v-name">Status under the name, figures stacked</h2>
+        <p class="v-blurb">The status becomes the label under the area, since that is what is not reviewed. The two figures stack on the right under their captions, Spent then Saved, with a hairline and a small arrow between them: the second comes from the first.</p>
+        <span class="v-pick was">Built, then superseded by 8</span>
+        <div class="v-crit"><b>What changed from 6</b><ul>
+          <li>Every figure has its caption; nothing on the row is a bare number.</li>
+          <li>The status sits with the thing it describes, the area.</li>
+          <li>The supplier, once given, follows the status: "Reviewed · Hilti".</li>
+        </ul></div>
+      </div>
+      <div class="cell">
+        <div class="cell-head"><h2>Two moves worth <span class="fig-est">95K–129K</span>&nbsp;kr. a year</h2>
+          <p>An estimate from companies like yours, until you add your spend.</p></div>
+        <ul class="mv-list">
+          <li><div class="mv"><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-office-supplies-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Office supplies</b><span class="mv-st">Not reviewed</span></span>
+              <span class="mv-r">
+                <span class="mv-kv"><span class="mv-cap">Spent</span><span class="mv-fig"><span class="fig-est">174K–236K</span><small>kr.</small></span></span>
+                <span class="mv-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="mv-kv"><span class="mv-cap">Saved</span><span class="mv-fig"><span class="fig-est">+33K–45K</span><small>kr.</small></span></span>
+              </span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></div></li>
+          <li><div class="mv"><div class="mv-row">
+              <span class="mv-ic"><img src="../../../assets/advantage-3d-icons-two-colour/svg/advantage-icon-tools-workwear-ultramarine.svg" alt=""></span>
+              <span class="mv-txt"><b>Tools &amp; workwear</b><span class="mv-st done">Reviewed · Hilti</span></span>
+              <span class="mv-r">
+                <span class="mv-kv"><span class="mv-cap">Spent</span><span class="mv-fig"><span class="mv-set">1.100.000</span><small>kr.</small></span></span>
+                <span class="mv-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="mv-kv"><span class="mv-cap">Saved</span><span class="mv-fig"><span class="fig-est">+96K–149K</span><small>kr.</small></span></span>
+              </span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ V8 ============ -->
+    <section class="v v8" id="v8">
+      <div class="v-label">
+        <span class="v-eyebrow">Version 8</span>
+        <h2 class="v-name">Arc back, no mark, captions inline</h2>
+        <p class="v-blurb">Version 7's row under the designed hero: the arc returns, now reading the two moves' saving over the two areas' spend. The area's 3D mark goes, and each caption sits on the figure's line.</p>
+        <span class="v-pick"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg> Built into the exploration</span>
+      </div>
+      <div class="cell">
+        <div class="cell-head"><h2>Two moves worth <span class="fig-est">95K–129K</span>&nbsp;kr. a year</h2>
+          <p>An estimate from companies like yours, until you add your spend.</p></div>
+        <div class="arc-wrap" data-arc="13"></div>
+        <ul class="mv-list">
+          <li><div class="mv"><div class="mv-row">
+              <span class="mv-txt"><b>Office supplies</b><span class="mv-st">Not reviewed</span></span>
+              <span class="mv-r">
+                <span class="mv-kv"><span class="mv-cap">Spent</span><span class="mv-fig"><span class="fig-est">174K–236K</span><small>kr.</small></span></span>
+                <span class="mv-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="mv-kv"><span class="mv-cap">Saved</span><span class="mv-fig"><span class="fig-est">+33K–45K</span><small>kr.</small></span></span>
+              </span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></div></li>
+          <li><div class="mv"><div class="mv-row">
+              <span class="mv-txt"><b>Tools &amp; workwear</b><span class="mv-st done">Reviewed · Hilti</span></span>
+              <span class="mv-r">
+                <span class="mv-kv"><span class="mv-cap">Spent</span><span class="mv-fig"><span class="mv-set">1.100.000</span><small>kr.</small></span></span>
+                <span class="mv-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="mv-kv"><span class="mv-cap">Saved</span><span class="mv-fig"><span class="fig-est">+96K–149K</span><small>kr.</small></span></span>
+              </span>
+              <svg class="mv-chev" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div></div></li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+</main>
+<script>
+/* the app's arc: 21 round-capped segments on one radius */
+document.querySelectorAll('[data-arc]').forEach((el, k) => {
+  const pct = +el.dataset.arc, N = 21, CX = 85.5, CY = 90, R1 = 66, R2 = 86, n = Math.round(pct / 100 * N), gid = 'g' + k;
+  const segs = Array.from({length:N}, (_, i) => {
+    const t = Math.PI - (i + .5) * Math.PI / N, c = Math.cos(t), s = Math.sin(t);
+    return `<line x1="${(CX + R1 * c).toFixed(2)}" y1="${(CY - R1 * s).toFixed(2)}" x2="${(CX + R2 * c).toFixed(2)}" y2="${(CY - R2 * s).toFixed(2)}" ${i < n ? `stroke="url(#${gid})"` : 'class="off"'}/>`;
+  }).join('');
+  el.innerHTML = `<svg class="arc" viewBox="0 0 171 93.3023" aria-hidden="true"><defs><linearGradient id="${gid}" x1="24.38" y1="24.38" x2="8.63" y2="93.3" gradientUnits="userSpaceOnUse"><stop stop-color="#BED8C3"/><stop offset="1" stop-color="#1b64dc"/></linearGradient></defs>${segs}</svg>
+    <p class="arc-n">+${pct}<small>%</small></p><p class="arc-l">Off what you still pay list price for</p>`;
+});
+/* v1 never collapses */
+document.querySelectorAll('.v1 details').forEach(d => d.addEventListener('toggle', () => { if(!d.open) d.open = true; }));
+</script>
+</body>
+</html>

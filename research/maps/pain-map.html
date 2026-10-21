@@ -1,0 +1,709 @@
+<title>Pain map & interview kit — Seiva / Advantage Nordic</title>
+<style>
+  :root {
+    --ground: #F2F5F1;
+    --surface: #FBFCFA;
+    --ink: #15211B;
+    --muted: #5B6A61;
+    --faint: #8B9890;
+    --rule: #D3DCD4;
+    --rule-strong: #B4C0B6;
+    --accent: #B8412B;
+    --accent-soft: #F3E2DD;
+    --signal: #2E6B4E;
+    --signal-soft: #DFEDE4;
+    --warn: #8A6008;
+    --warn-soft: #F6EBD2;
+
+    --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #101613;
+      --surface: #171F1A;
+      --ink: #E6EBE5;
+      --muted: #9DAAA1;
+      --faint: #718077;
+      --rule: #2A342D;
+      --rule-strong: #3C4941;
+      --accent: #E8836A;
+      --accent-soft: #35211C;
+      --signal: #6FBE93;
+      --signal-soft: #16301F;
+      --warn: #D8AE5C;
+      --warn-soft: #2E2515;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #101613;
+    --surface: #171F1A;
+    --ink: #E6EBE5;
+    --muted: #9DAAA1;
+    --faint: #718077;
+    --rule: #2A342D;
+    --rule-strong: #3C4941;
+    --accent: #E8836A;
+    --accent-soft: #35211C;
+    --signal: #6FBE93;
+    --signal-soft: #16301F;
+    --warn: #D8AE5C;
+    --warn-soft: #2E2515;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16.5px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 1.5rem 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 60rem; margin: 0 auto; display: flex; flex-direction: column; gap: 4.5rem; }
+  section { display: flex; flex-direction: column; gap: 1.1rem; }
+  p, li { max-width: 40em; }
+  p { margin: 0; }
+  strong { font-weight: 650; }
+
+  header.masthead {
+    padding: 4.5rem 0 2.5rem;
+    display: flex; flex-direction: column; gap: 1.5rem;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--accent); margin: 0;
+  }
+
+  h1 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(2.4rem, 6vw, 3.9rem); line-height: 1.02;
+    letter-spacing: -0.02em; text-wrap: balance; margin: 0; max-width: 16em;
+  }
+
+  .standfirst {
+    font-family: var(--display); font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+    line-height: 1.45; color: var(--muted); margin: 0; max-width: 34em;
+  }
+
+  h2 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.15;
+    letter-spacing: -0.015em; text-wrap: balance; margin: 0; max-width: 20em;
+  }
+
+  h3 { font-family: var(--body); font-weight: 650; font-size: 1.02rem; margin: 0; text-wrap: balance; }
+
+  .section-label {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--faint); margin: 0 0 -0.35rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+
+  ul.plain { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  ul.plain li::marker { color: var(--faint); }
+
+  .callout {
+    border: 1px solid var(--rule-strong); background: var(--surface);
+    padding: 1.5rem 1.6rem; display: flex; flex-direction: column; gap: 0.8rem;
+  }
+  .callout.risk { background: var(--warn-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--warn); }
+  .callout.risk .callout-label { color: var(--warn); }
+  .callout.pick { background: var(--signal-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--signal); }
+  .callout.pick .callout-label { color: var(--signal); }
+  .callout-label {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.11em;
+    text-transform: uppercase; color: var(--accent);
+  }
+
+  .scroller { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 32rem; font-size: 0.92rem; }
+  th {
+    text-align: left; font-family: var(--mono); font-weight: 400; font-size: 0.66rem;
+    letter-spacing: 0.11em; text-transform: uppercase; color: var(--faint);
+    padding: 0 0.9rem 0.6rem 0; border-bottom: 1px solid var(--rule-strong); vertical-align: bottom;
+  }
+  td { padding: 0.75rem 0.9rem 0.75rem 0; border-bottom: 1px solid var(--rule); vertical-align: top; line-height: 1.45; }
+  tr:last-child td { border-bottom: none; }
+  th:last-child, td:last-child { padding-right: 0; }
+  td.k { font-weight: 600; width: 26%; }
+
+  /* ---- personas ---- */
+  .people { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .person { background: var(--surface); padding: 1.4rem 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  .person .role { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.11em; text-transform: uppercase; color: var(--accent); }
+  .person p { font-size: 0.92rem; max-width: none; }
+  .person .cares { color: var(--muted); }
+
+  /* ---- pain cards ---- */
+  .pains { display: flex; flex-direction: column; gap: 0; }
+  .pain {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 0.75rem 1rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .pain:first-child { border-top: 1px solid var(--rule-strong); }
+  .pain .id {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--accent);
+    padding-top: 0.35rem; font-variant-numeric: tabular-nums;
+  }
+  .pain .voice {
+    font-family: var(--display); font-size: 1.24rem; line-height: 1.35;
+    max-width: 24em; margin: 0; text-wrap: balance;
+  }
+  .pain .meta, .pain .behind, .pain .probe { grid-column: 2; }
+  .pain .meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; align-items: baseline; }
+  .pain .meta span {
+    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  .pain .meta b { color: var(--ink); font-weight: 400; }
+  .ev { border-radius: 2px; padding: 0.08rem 0.4rem; }
+  .ev-strong { background: var(--signal-soft); color: var(--signal) !important; }
+  .ev-medium { background: var(--accent-soft); color: var(--accent) !important; }
+  .ev-thin { background: var(--warn-soft); color: var(--warn) !important; }
+  .pain .behind { color: var(--muted); font-size: 0.92rem; max-width: 42em; }
+  .pain .behind em { font-style: normal; color: var(--ink); }
+  .pain .probe {
+    background: var(--surface); border-left: 3px solid var(--accent);
+    padding: 0.8rem 1.1rem; font-size: 0.94rem; max-width: 42em;
+  }
+  .pain .probe b {
+    font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.11em;
+    text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.3rem;
+  }
+
+  /* ---- script ---- */
+  .script { display: flex; flex-direction: column; gap: 0; }
+  .block {
+    display: grid; grid-template-columns: 5.5rem 1fr; gap: 0.6rem 1.2rem;
+    padding: 1.5rem 0; border-top: 1px solid var(--rule);
+  }
+  .block:first-child { border-top: 1px solid var(--rule-strong); }
+  .block .clock {
+    font-family: var(--mono); font-size: 0.78rem; font-variant-numeric: tabular-nums;
+    color: var(--faint); padding-top: 0.2rem; white-space: nowrap;
+  }
+  .block h3 { grid-column: 2; }
+  .block .purpose, .block .qs { grid-column: 2; }
+  .block .purpose { color: var(--muted); font-size: 0.92rem; max-width: 42em; }
+  .qs { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.55rem; max-width: 42em; }
+  .qs li { font-family: var(--display); font-size: 1.02rem; line-height: 1.4; max-width: none; }
+  .qs li::marker { color: var(--faint); }
+  .qs li .follow {
+    display: block; font-family: var(--body); font-size: 0.85rem;
+    color: var(--muted); margin-top: 0.2rem;
+  }
+  .star { color: var(--accent); font-family: var(--body); font-size: 0.7rem; vertical-align: 3px; }
+
+  footer {
+    border-top: 1px solid var(--rule-strong); padding-top: 1.5rem;
+    color: var(--faint); font-size: 0.85rem; font-family: var(--mono); letter-spacing: 0.03em;
+  }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  @media (max-width: 34rem) {
+    body { padding: 0 1.1rem 4rem; }
+    .wrap { gap: 3.5rem; }
+    .pain { grid-template-columns: 2.2rem 1fr; }
+    .block { grid-template-columns: 1fr; }
+    .block h3, .block .purpose, .block .qs { grid-column: 1; }
+  }
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Product Discovery · Sprint 2 · Working document</p>
+  <h1>Pain map &amp; interview kit</h1>
+  <p class="standfirst">Eight candidate pains reconstructed from what Sweden and Norway actually said, and two interview instruments to find out which are real — one for customers, one for salespeople. Nothing here is a finding yet. It's a list of things to try to disprove.</p>
+  <div class="callout" style="margin-top:0.5rem">
+    <p class="callout-label">Known constraint · AI is decided</p>
+    <p>The AI direction is settled at C level. That's not a reason to skip this research — it's a reason to change its question. We are no longer asking <em>whether</em> AI, we're asking <strong>where AI earns its place</strong>: which pain is severe enough that an automated intervention is welcome rather than another thing to dismiss. A sprint that picks the wrong pain will build AI nobody uses, and that fails just as expensively as building the wrong thing. See <a href="#ai">what this changes</a>.</p>
+  </div>
+</header>
+
+<section>
+  <p class="section-label">Diagnosis</p>
+  <h2>Two markets, two exercises, and not one sentence about a person struggling</h2>
+  <p>The Norwegian frame holds roughly 150 raw items condensed to 20 key features across 8 categories. Sweden's affinity map holds 28 features across 7 themes. Both are careful, both are well organised, and both answer the same question: <em>what could we build?</em></p>
+  <p>Read either one looking for a moment where somebody wanted to do something and couldn't, and you'll find nothing. "Live Agreement Usage Dashboard" is a solution. "Netflix-style layout" is a solution. Even the sharpest item on either board — Sweden's <em>"Active agreements without spend — contact buyer option"</em> — states the solution and only implies the problem underneath it, which is the interesting part: <strong>customers are signing agreements they then never buy from.</strong></p>
+  <p>That's not a failure of either exercise. Feature lists are what you get when you ask people what they want, and both rooms did what was asked. But it does mean the pain map can't be extracted from these boards. It has to be <em>reconstructed</em> — by taking each cluster of feature requests and asking what would have to be true about someone's day for them to ask for that. Then going and checking.</p>
+  <div class="callout risk">
+    <p class="callout-label">Strip this out before Day 1</p>
+    <p>Norwegian category 6 (Admin/Editor Tools) and parts of category 5 — drag-and-drop content management, SEO and meta editing, supplier portal access, customer group management, search configuration — are <strong>our</strong> needs, not customers'. That's roughly 12 items of internal tooling sitting inside what's being treated as market feedback. They're legitimate work; they just aren't pains, and if they stay on the board someone will vote for them on Day 2. Move them to a separate parking list with a name on it.</p>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Before the pains</p>
+  <h2>There are three different people in these lists, and they're being treated as one</h2>
+  <p>Almost every contradiction between the two boards dissolves once you separate the actors. "Show me benchmarking against similar companies" and "let me reorder the same box of gloves in ten seconds" are not competing priorities — they're two different people who have never met.</p>
+  <div class="people">
+    <div class="person">
+      <p class="role">The Signer</p>
+      <p>Owner, CFO, finance lead. Bought the service. Will decide whether to keep paying for it.</p>
+      <p class="cares">Wants proof. Every savings dashboard, benchmark, cashback overview and "estimated savings" feature on both boards is written for this person — and they may log in twice a year.</p>
+    </div>
+    <div class="person">
+      <p class="role">The Buyer</p>
+      <p>Office manager, site foreman, workshop lead, the owner's partner. Orders the actual things. Often never asked for any of this.</p>
+      <p class="cares">Wants the thing to arrive, today, without a new login. Almost nothing on either board is written for them, which is suspicious given they're the only ones who can move spend onto agreements.</p>
+    </div>
+    <div class="person">
+      <p class="role">Us</p>
+      <p>Editors, advisors, sales, support inside Visma.</p>
+      <p class="cares">Wants tooling. Present throughout the Norwegian list. Belongs on a roadmap, not on a pain map.</p>
+    </div>
+  </div>
+  <p>The single most useful thing you can establish in the interviews: <strong>in this company, are the Signer and the Buyer the same person?</strong> In a five-person firm they usually are. At forty people they never are — and the gap between them may be the whole problem.</p>
+</section>
+
+<section>
+  <p class="section-label">The pain map</p>
+  <h2>Eight candidate pains, ranked by how much evidence actually exists</h2>
+  <p>Each one is stated in the user's voice, tagged with who feels it, and paired with the question that could kill it. Evidence ratings describe how strongly the two boards point at it — not how true it is. <strong>Watch for the danger pattern:</strong> thin evidence with many proposed features means a lot of people have solved a problem nobody has confirmed.</p>
+
+  <div class="pains">
+
+    <div class="pain">
+      <p class="id">P1</p>
+      <p class="voice">"We joined, and then nothing really changed."</p>
+      <p class="meta">
+        <span>Who · <b>Signer → Buyer handoff</b></span>
+        <span>Markets · <b>SE + NO</b></span>
+        <span class="ev ev-strong">Evidence: strong</span>
+      </p>
+      <p class="behind">Behind: <em>Active vs. Inactive Agreements</em> (NO), <em>Active agreements without spend — contact buyer option</em> (SE), <em>Agreement Activation</em> (NO 8), <em>Quick path from potential to activation</em> (SE 7), <em>Integrated Agreement Activation</em>, onboarding walk-throughs, both markets' notification wishes.</p>
+      <p class="probe"><b>Probe</b>Look up which agreements sit unused <em>before</em> the call, then open a story with it: "I saw you set up the workwear one back in March — what was going on around then?" If you have no data, ask for the shape rather than the inventory: "Was there something you set up here that just didn't carry on?" Then, separately: "Who else in the company orders things — do they know this exists?"</p>
+    </div>
+
+    <div class="pain">
+      <p class="id">P2</p>
+      <p class="voice">"I can't prove to anyone that this is worth the money."</p>
+      <p class="meta">
+        <span>Who · <b>Signer</b></span>
+        <span>Markets · <b>SE + NO</b></span>
+        <span class="ev ev-strong">Evidence: strong</span>
+      </p>
+      <p class="behind">Behind: the entire Dashboard &amp; Savings category (NO 1) and Savings Intelligence theme (SE 2) — realised savings, savings calculator, cashback per supplier, peer comparison, benchmarking against similar companies, estimated savings prompts. The most heavily requested area on both boards by a wide margin.</p>
+      <p class="probe"><b>Probe</b>"Has anyone ever asked you to justify this subscription? What did you show them?" and "How would you know if you saved money last year — where would you look first?" If they hesitate, that hesitation is the finding.</p>
+    </div>
+
+    <div class="pain">
+      <p class="id">P3</p>
+      <p class="voice">"I don't know what we've got, so I order from who I always order from."</p>
+      <p class="meta">
+        <span>Who · <b>Buyer</b></span>
+        <span>Markets · <b>SE + NO</b></span>
+        <span class="ev ev-strong">Evidence: strong</span>
+      </p>
+      <p class="behind">Behind: <em>Agreement Discovery &amp; Comparison</em>, <em>Category Navigation &amp; Smart Filtering</em>, <em>Recommendations &amp; Popular Agreements</em>, favourites, Netflix-style homepage (NO); <em>Recommended suppliers and categories</em>, <em>Simple customer journey</em>, <em>Within a few clicks you are on top of everything</em> (SE).</p>
+      <p class="probe"><b>Probe</b>Never ask them to audit their own ordering — they can't, and the attempt turns the interview into a quiz. Ask for the last <em>new</em> supplier instead: "The last time you ordered from somewhere you hadn't used before — how did you end up choosing them?" Whether an agreement existed for it is <strong>your</strong> homework, done afterwards against their spend data. The finding is the gap between the two, and only one side of it comes from the interview.</p>
+    </div>
+
+    <div class="pain">
+      <p class="id">P4</p>
+      <p class="voice">"I'd rather talk to a person than click through a system."</p>
+      <p class="meta">
+        <span>Who · <b>Buyer + Signer</b></span>
+        <span>Markets · <b>SE + NO</b></span>
+        <span class="ev ev-medium">Evidence: medium</span>
+      </p>
+      <p class="behind">Behind: <em>Advisor Chat &amp; Contact Tools</em>, <em>Supplier Messaging Interface</em>, <em>Multi-supplier Quote Requests</em> (NO 3 and 4); <em>Talk to sales, not only AI</em>, <em>easy to talk to human when needed</em> (SE 1). Both markets, independently, asked for a human.</p>
+      <p class="probe"><b>Probe</b>"When did you last contact anyone here — advisor, supplier, support? What were you trying to do, and why didn't you just do it yourself?" <strong>This pain sits directly across from the sprint's AI premise. Do not soften it if it shows up.</strong></p>
+    </div>
+
+    <div class="pain">
+      <p class="id">P5</p>
+      <p class="voice">"Buying through you is more work than buying the way I already do."</p>
+      <p class="meta">
+        <span>Who · <b>Buyer</b></span>
+        <span>Markets · <b>SE + NO</b></span>
+        <span class="ev ev-medium">Evidence: medium</span>
+      </p>
+      <p class="behind">Behind: <em>Online Store &amp; ERP Integration</em>, <em>Procurement Shopping Interface</em>, <em>Document Access</em>, travel codes (NO 4); <em>Nice upfront ERP integration possibility</em>, onboarding with integrations (SE 3).</p>
+      <p class="probe"><b>Probe</b>"Walk me through the last order, step by step, from the moment you knew you needed it." Count the steps yourself. Then: "What would you have had to do differently to get the agreement price?" If the honest answer is "log in somewhere first", that is the friction, and no notification survives it.</p>
+    </div>
+
+    <div class="pain">
+      <p class="id">P6</p>
+      <p class="voice">"The portal doesn't match the shape my company is actually in."</p>
+      <p class="meta">
+        <span>Who · <b>Signer, larger SMBs</b></span>
+        <span>Markets · <b>NO-heavy</b></span>
+        <span class="ev ev-medium">Evidence: medium</span>
+      </p>
+      <p class="behind">Behind: <em>Multi-company Agreement Support</em>, <em>Parent/Child Company Visibility</em>, usage by location, team-specific filters, role-based access, multi-company account switching — all Norwegian, and a strong enough cluster that it's either a real market difference or one very vocal customer with subsidiaries. Worth knowing which.</p>
+      <p class="probe"><b>Probe</b>"How many sites or companies do you buy for? Who else has a login, and what can they see?" Check against account data before the interview so you know whether you're talking to a group or a single entity.</p>
+    </div>
+
+    <div class="pain">
+      <p class="id">P7</p>
+      <p class="voice">"I have to document our suppliers, and I can't."</p>
+      <p class="meta">
+        <span>Who · <b>Signer / compliance</b></span>
+        <span>Markets · <b>NO only</b></span>
+        <span class="ev ev-medium">Evidence: medium</span>
+      </p>
+      <p class="behind">Behind: <em>Supplier Certifications &amp; Transparency Docs</em>, Transparency Act compliance documents, <em>Green &amp; Sustainable Agreement Highlighting</em> (NO). Åpenhetsloven is Norwegian law with real reporting duties, which makes this the only pain on the board with a legal deadline behind it rather than a preference.</p>
+      <p class="probe"><b>Probe</b>"Does anyone ask you to document where you buy from? Who, how often, and what do you send them?" A genuinely different wedge — it isn't a savings story at all, and it may be the strongest reason a Norwegian customer would log in unprompted.</p>
+    </div>
+
+    <div class="pain">
+      <p class="id">P8</p>
+      <p class="voice">"I forget you exist until the invoice reminds me."</p>
+      <p class="meta">
+        <span>Who · <b>Buyer</b></span>
+        <span>Markets · <b>SE + NO</b></span>
+        <span class="ev ev-thin">Evidence: thin, many features</span>
+      </p>
+      <p class="behind">Behind: <em>New &amp; Expiring Agreement Notifications</em> (NO 2); <em>"Action required" banner</em>, <em>trigger email with CTA</em>, <em>notifications on a channel the CFO prefers</em>, <em>adjustment of the level of "sound" from the system</em> (SE 4). Six proposed solutions, no observed behaviour.</p>
+      <p class="probe"><b>Probe</b>"When did you last open the portal, and what made you open it that day?" Then the hard one: "What else was in your inbox that morning, and what did you do with it?"<br><strong>This is the sprint's premise and it has the thinnest support on either board.</strong> That doesn't make it wrong — it makes it the thing most worth checking before three days of prototyping rest on it.</p>
+    </div>
+
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">What the shape of this map is telling you</p>
+    <p>The three strongest pains — P1, P2, P3 — all describe the same underlying failure from different angles: <strong>the service is bought once, at the top of the company, and then never reaches the people whose ordering habits it was supposed to change.</strong> The Signer can't see value because the Buyer never changed behaviour; the Buyer never changed behaviour because nobody ever handed them the agreements.</p>
+    <p>If the interviews confirm that, it reframes the sprint. The question stops being "how do we make the portal smarter" and becomes "how does an agreement reach the hands of the person who buys" — which is a distribution problem, and may well have an answer that is neither AI nor a dashboard.</p>
+  </div>
+</section>
+
+<section id="hmw">
+  <p class="section-label">From pains to questions</p>
+  <h2>One How Might We per pain — provisional, and deliberately so</h2>
+  <p>These are drafts written from reconstructed assumptions, not findings. Their job right now is to <strong>test the pain map</strong>: a pain that won't phrase into a decent HMW usually isn't sharp enough yet, and you can see that below in P6 and P8. Their second job is to give you something strong in your pocket when the facilitators run the HMW exercise on Day 1 — arriving with drafts beats generating from scratch in a room. <strong>Every one of them should be rewritten after the interviews.</strong> If they survive unchanged, the research didn't do its job.</p>
+
+  <div class="callout">
+    <p class="callout-label">Altitude — the thing most HMWs get wrong</p>
+    <p><strong>Too high:</strong> "How might we make procurement easier for SMBs?" No traction — everything is an answer, so nothing is.</p>
+    <p><strong>Too low:</strong> "How might we use AI to suggest deals in the dashboard?" That's a solution wearing a question mark. It hands the room a conclusion and calls it a brief.</p>
+    <p><strong>Right:</strong> names a <em>person</em>, a <em>moment</em>, and the <em>change</em> — and stops before naming the mechanism. If you can't sketch three genuinely different answers to it, the altitude is wrong.</p>
+  </div>
+
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Pain</th><th>How might we…</th></tr></thead>
+      <tbody>
+        <tr><td class="k">P1 · Handoff</td><td>…get an agreement into the hands of the person who actually places the orders, without the person who signed having to teach them?</td></tr>
+        <tr><td class="k">P2 · Proof of value</td><td>…let the person paying for this see what they got for it, without having to go looking for it?</td></tr>
+        <tr><td class="k">P3 · Discovery</td><td>…make the right agreement obvious at the moment someone is choosing a supplier, without them having to know the catalogue?</td></tr>
+        <tr><td class="k">P4 · Wants a human</td><td>…give someone the confidence of talking to a person, at the speed of a system?</td></tr>
+        <tr><td class="k">P5 · Friction</td><td>…make buying through an agreement the path of least resistance rather than a detour?</td></tr>
+        <tr><td class="k">P6 · Company shape</td><td>…let a company with several sites see and steer what all of them are buying?<br><span style="color:var(--muted);font-size:0.86rem">Weak — reads as a feature request because the pain underneath it isn't yet articulated. A sign P6 needs a real interview before it earns sprint time.</span></td></tr>
+        <tr><td class="k">P7 · Compliance</td><td>…turn supplier documentation from something you chase into a by-product of buying?</td></tr>
+        <tr><td class="k">P8 · Forgetting us</td><td>…reach the buyer at the moment they're deciding, instead of hoping they come to us?<br><span style="color:var(--muted);font-size:0.86rem">Note what happens when you phrase it properly: it stops being about notifications and becomes about <em>reach</em>. Which is a much bigger, more interesting question than the six notification features on the boards.</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout pick">
+    <p class="callout-label">Where they converge — the candidate sprint HMW</p>
+    <p>Three of the strongest — P1, P3 and P8 — collapse into one question once they're phrased as HMWs. All three are about the same missing thing: the agreement never reaches the person choosing, at the time they're choosing. If the interviews hold that up, this is the sentence I'd want on the wall:</p>
+    <p class="verbatim" style="font-family:var(--display);font-size:1.2rem;line-height:1.4;border-left:3px solid var(--accent);padding:0.7rem 0 0.7rem 1rem;margin-top:0.3rem">How might we put the right agreement in front of the person doing the buying, at the moment they choose a supplier — without them having to know it exists?</p>
+    <p>It also happens to be where an automated system genuinely earns its place, which matters given the direction is fixed: answering it well requires knowing what a company buys, anticipating what's coming, and reaching outside the portal to a person who may never log in. That's a real job for AI rather than AI looking for one — and it's a far stronger brief than "suggest deals in the dashboard."</p>
+  </div>
+
+  <div class="callout risk">
+    <p class="callout-label">How to use these on Day 1</p>
+    <p>Don't table them at the start. Facilitators run HMW generation <em>after</em> the expert interviews on purpose — putting polished statements on the wall beforehand anchors the room to your framing and suppresses the notes everyone else is writing. Hold them, contribute yours into the same pile as everyone else's during clustering, and let them compete on merit. If they're good, they'll survive; if the interviews produced something sharper, you want the sharper one to win.</p>
+  </div>
+</section>
+
+<section id="ai">
+  <p class="section-label">The constraint</p>
+  <h2>AI is decided. Here's what that actually changes — and what it doesn't.</h2>
+  <p>Worth being precise about this, because "the direction is set" gets used to shut down more than it should. A fixed <em>mechanism</em> is a normal design constraint. Every project has them: we build on the web, we use the design system, we ship in Q3. What it doesn't fix is <strong>which problem the mechanism is pointed at</strong>, and that's the entire question this research answers.</p>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Settled</th><th>Still genuinely open — this is the sprint</th></tr></thead>
+      <tbody>
+        <tr><td class="k">We're building AI into the product.</td><td>Which of P1–P8 it's aimed at. Getting this wrong is the expensive failure mode: AI pointed at a problem nobody has, shipped and ignored.</td></tr>
+        <tr><td class="k">There will be some form of automated intelligence.</td><td>Where it intervenes — in the portal, in email, in the ERP, at the supplier's checkout, in the hands of a person who isn't the account holder.</td></tr>
+        <tr><td class="k">It's a strategic priority.</td><td>Whether it acts on the user's behalf, suggests and waits, or quietly hands work to a human advisor. These are radically different products.</td></tr>
+        <tr><td class="k">The investment is approved.</td><td>Who it's for. The Signer and the Buyer need almost opposite things from it.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout risk">
+    <p class="callout-label">Don't bury P4</p>
+    <p>Both markets independently asked for a <em>human</em> — advisor chat, supplier messaging, "talk to sales, not only AI". With the AI direction now fixed there'll be a pull to treat that as noise. It isn't; it's a design constraint arriving early and cheap. The most likely successful shape here is <strong>AI that does the tedious work and hands off cleanly to a person at the moment of judgement</strong> — which is a better product than either alone, and you can only design it if you keep asking about the human handoff in every interview. Keep the P4 questions in the script exactly as written.</p>
+  </div>
+  <p>One practical consequence for the interviews: <strong>don't say the word "AI" to customers.</strong> It invites either enthusiasm or suspicion, and both are worthless as data. Ask what they do and where it hurts. You'll learn far more about where automation is welcome from someone describing a task they resent than from anyone reacting to the word.</p>
+</section>
+
+<section id="prep">
+  <p class="section-label">Going first</p>
+  <h2>You may be the one interviewing. Two decisions before you book anything.</h2>
+  <div class="callout">
+    <p class="callout-label">Language</p>
+    <p>These are Norwegian SMB customers. If you don't run the interview in Norwegian, you will read second-language hesitation as confusion and hedging as doubt, and you'll be wrong. Options in order of preference: a Norwegian-speaking colleague moderates while you observe and own the analysis; or you moderate in English with a bilingual colleague in the room to catch what's underneath; or you moderate in English alone and treat everything about tone and hesitancy as unreliable. The third option still beats not doing the interviews — just know what you've given up.</p>
+  </div>
+  <div class="callout">
+    <p class="callout-label">Who you're allowed to talk to</p>
+    <p>Get the recruiting question settled early: can you contact customers directly, or does it route through account managers? If it routes through account managers, you will be handed happy customers, and happy customers confirm what you already believe. Push specifically for the two low-activity accounts and the one who never activated — and be ready for someone to be uncomfortable with that. Say plainly that you're not there to sell or to save the account, and mean it.</p>
+  </div>
+</section>
+
+<section id="rules">
+  <p class="section-label">Rules of the room</p>
+  <h2>Six habits that separate a useful interview from a pleasant chat</h2>
+  <ul class="plain">
+    <li><strong>Ask about the last time, never about "usually".</strong> "Usually" produces a tidy story about how someone thinks they work. "The last time" produces what actually happened, including the parts that don't reflect well on anyone.</li>
+    <li><strong>Never ask whether they'd use something.</strong> "Would you use a feature that…" is worth nothing. Nobody can predict their own behaviour, and everyone is polite. Ask what they did.</li>
+    <li><strong>"Show me" beats "tell me".</strong> Screen share where you can. What people do and what they report doing come apart almost immediately, and the gap is where the design work lives.</li>
+    <li><strong>Count to five after they finish.</strong> The first answer is the socially rehearsed one. The second answer, the one that arrives in the silence, is usually the true one. This feels unbearable and it works.</li>
+    <li><strong>Follow the emotion, not the feature.</strong> Irritation, embarrassment, a small laugh, "well, to be honest…" — every one of those is a marker. Stop and dig there, even if it's off-script.</li>
+    <li><strong>Use "tell me more about that" instead of a third "why".</strong> Two whys is curiosity. Three is an interrogation, and people start defending rather than describing.</li>
+  </ul>
+  <div class="callout risk">
+    <p class="callout-label">The rule that keeps this honest — precision is brought, not asked</p>
+    <p>It's easy to write a script that says "find the pain" and then quietly asks people to audit their own account. <em>"Which agreements have you never used?"</em> · <em>"Which of your last five orders could have gone through us?"</em> · <em>"How much did you save?"</em> — all three demand an inventory nobody carries in their head, and all three force the person to think in our categories rather than their own day. You get a guess, delivered apologetically, and you've taught them the interview is a test.</p>
+    <p><strong>Test every question against this: could they answer it from the memory of something that happened?</strong> If it needs a list, a total, or a category name, it's the wrong instrument. Three ways out, in order of preference:</p>
+    <ul class="plain">
+      <li><strong>Look it up beforehand.</strong> You have the transaction data. Arrive knowing which agreement went quiet in March, then use it to open a story: <em>"I saw the workwear one stopped after March — what was going on around then?"</em> Same precision, and it costs them nothing.</li>
+      <li><strong>Ask for the shape instead of the inventory.</strong> Not "which agreements", but "was there something you set up and didn't carry on with?" People remember the abandoning, not the list.</li>
+      <li><strong>Make it your homework, not theirs.</strong> Whether their last new supplier had an agreement available is an analysis you run afterwards. Ask them how they chose; work out the gap yourself.</li>
+    </ul>
+  </div>
+  <div class="callout risk">
+    <p class="callout-label">And keep the instruments apart</p>
+    <p>Three different jobs kept sliding into one script: a <strong>discovery interview</strong> (why does this hurt?), a <strong>usability test</strong> (can you complete this task?), and <strong>data analysis</strong> (what does the account actually show?). Each needs the others, and each is ruined by being run inside the other. "Show me how you'd find a deal on office chairs" is a perfectly good usability task and a terrible pain question — it tests the portal you already have, on ground you already chose, in a conversation that was supposed to start outside the product. It's back in the kit as an optional observation block, clearly labelled, and it is the first thing to cut when time is short.</p>
+  </div>
+  <div class="callout risk">
+    <p class="callout-label">The specific trap in this project</p>
+    <p>These customers have already been asked for feedback once, and they answered in features. They'll do it again — they'll open with "you should add a comparison view." Don't write it down as a requirement and don't argue with it. Take it one layer down, every time, with two questions:</p>
+    <p><strong>"What would that let you do that you can't do today?"</strong> and then <strong>"When did that last cost you something?"</strong></p>
+    <p>If they can name the moment, you've found a pain. If they can't, you've found an idea — perfectly nice, but not evidence, and it goes on a different list.</p>
+  </div>
+</section>
+
+<section id="customer-script">
+  <p class="section-label">The script</p>
+  <h2>45 minutes, five blocks</h2>
+  <p>Keep this on one page beside you, not on screen. The timings are a shape, not a schedule — if block three is going somewhere, stay in block three and cut block five.</p>
+
+  <div class="script">
+    <div class="block">
+      <p class="clock">00:00 – 03:00</p>
+      <h3>Set the frame</h3>
+      <p class="purpose">Consent to record, and lower the stakes fast.</p>
+      <ul class="qs">
+        <li>"I'm a designer, not a salesperson, and I didn't build the thing we're going to talk about — so be as blunt as you like."</li>
+        <li>"There are no wrong answers. I'm trying to understand your day, not test your knowledge."</li>
+        <li>"Is it OK if I record? It's only so I don't have to write while you talk."</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">03:00 – 08:00</p>
+      <h3>Their world</h3>
+      <p class="purpose">Establish which of the three people you're actually sitting with.</p>
+      <ul class="qs">
+        <li>"What does the company do, and what's your part in it?"</li>
+        <li>"What sorts of things get ordered here in a normal month?"</li>
+        <li>"Who else orders things? How do you divide it up?"<span class="follow">Listen for whether they signed up or inherited it. That single fact reframes everything after it.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">08:00 – 22:00</p>
+      <h3>The last time <span class="star">★ the core of the interview</span></h3>
+      <p class="purpose">One concrete purchase, reconstructed minute by minute. If you only get through this block, the interview was still worth doing.</p>
+      <ul class="qs">
+        <li>"Think of the last thing you ordered for the company. Walk me through it from the moment you knew you needed it."<span class="follow">Probe relentlessly: How did you know? What did you do first? Where were you — desk, phone, van? Did you check a price anywhere? Who else was involved? How long did the whole thing take?</span></li>
+        <li>"Now the last time you ordered from somewhere <em>new</em> — a supplier you hadn't used before. How did you end up choosing them?"<span class="follow">This is where P3 lives. New-supplier decisions are where an agreement could have changed the outcome and usually didn't.</span></li>
+        <li>"Was there anything about that you'd have liked to go differently?"</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">22:00 – 32:00</p>
+      <h3>Us, in their life</h3>
+      <p class="purpose">Still about events, not inventory. Nothing here asks them to recall a list or think in our categories.</p>
+      <ul class="qs">
+        <li>"When did you last open it? What made you open it that day?"<span class="follow">Tests P8 directly. "I can't remember" is a real and important answer — write it down verbatim.</span></li>
+        <li>"Can you show me? Just do whatever you'd normally do."<span class="follow">Open-ended, no task set by you. Silence while they navigate; note every hesitation, back-click, and re-scan of the same area. If they say "I never really use it", don't push them into a demo — that answer <em>is</em> the finding.</span></li>
+        <li>"Was there something here you set up and then didn't carry on with?"<span class="follow">P1. The shape, not the inventory. If you've done the homework you can name the specific one — "I saw the workwear agreement went quiet after March, what happened around then?" — which opens a story instead of demanding recall.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">32:00 – 42:00</p>
+      <h3>Value, and the gap</h3>
+      <p class="purpose">Find out whether the value is felt, proven, or merely assumed.</p>
+      <ul class="qs">
+        <li>"Has anyone ever asked you to justify this? What did you show them?"<span class="follow">P2. An event, not an estimate.</span></li>
+        <li>"Does anyone ask you to account for where the company buys from?"<span class="follow">P7, and it doubles as the compliance probe in Norway. If the answer is yes, slow right down.</span></li>
+        <li>"If this disappeared tomorrow, what's the first thing you'd notice?"<span class="follow">The best single question in the script. It separates value people feel from value they've been told about, and the answer is often uncomfortably small.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">42:00 – 45:00</p>
+      <h3>Close</h3>
+      <p class="purpose">Two questions that keep paying off.</p>
+      <ul class="qs">
+        <li>"What haven't I asked about that I should have?"</li>
+        <li>"Is there someone else here who orders things, who'd see this differently from you?"<span class="follow">This is how you reach the Buyer when you've been given the Signer.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">The second instrument</p>
+  <h2>Salespeople: a biased sensor, pointed somewhere the customer interviews can't reach</h2>
+  <p>Two interview types, one map. It's worth being clear about what each one is <em>for</em>, because the most common way this goes wrong is treating salespeople as cheaper, more available customers. They aren't proxies. They're a different instrument with a different range.</p>
+  <div class="scroller">
+    <table>
+      <thead><tr><th></th><th>Customers give you</th><th>Salespeople give you</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Sees</td><td>What actually happens when someone needs to buy something. Behaviour, in detail, once.</td><td>Patterns across two hundred conversations. The objection that keeps recurring. What stalls a deal.</td></tr>
+        <tr><td class="k">Blind to</td><td>Everything outside their own company. They can't tell you what's typical.</td><td>What the customer does after signature. They meet people in buying mode, not in working mode.</td></tr>
+        <tr><td class="k">Role in this research</td><td>The subject. You're studying their behaviour.</td><td><strong>Witnesses, not subjects.</strong> You're borrowing what they've seen across hundreds of customers — not studying how they sell.</td></tr>
+        <tr><td class="k">Best question</td><td>"Walk me through the last time."</td><td>"What do you tell customers we'll do, that you slightly hold your breath about?"</td></tr>
+        <tr><td class="k">Systematic bias</td><td>Tidies up their own story; underreports workarounds they're mildly embarrassed by.</td><td>Overweights price, recency, and lost deals. Remembers the loud ones. Wants a roadmap out of you.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout pick">
+    <p class="callout-label">The analytical trick — where the real pain hides</p>
+    <p>Sales tells you what was <strong>promised</strong>. Customers tell you what's actually <strong>used</strong>. The gap between those two is the most reliable pain-detector you have in this project, and it doesn't require either party to articulate a problem. When a salesperson says "I always tell them the coach will help them get set up" and no customer mentions a coach, you've found something neither of them would have told you directly.</p>
+    <p>So run at least two sales interviews <em>before</em> the customer ones, and carry their promises into the customer conversations as things to quietly check.</p>
+  </div>
+  <div class="callout risk">
+    <p class="callout-label">Two things never to ask a salesperson</p>
+    <p><strong>"What should we build?"</strong> — you'll get their last three lost deals as a roadmap. Sincere, specific, and shaped entirely by their commission.</p>
+    <p><strong>"What do customers want?"</strong> — you'll get feature language, same as the boards you already have. Ask instead what customers <em>ask for that they can't answer</em>, and what customers <em>do</em> after signing.</p>
+  </div>
+</section>
+
+<section id="sales-script">
+  <p class="section-label">Sales script</p>
+  <h2>The battery — 20 minutes, five blocks</h2>
+  <p>Sales are here as <strong>witnesses to the customer</strong>. Every question is about the people they meet — what those people are trying to do and where it breaks — not about how they sell or how their week works. Your one job during the call is to keep dragging them from generalisation back to a named customer. Every time they say "customers usually…", ask <strong>"who, most recently?"</strong></p>
+  <div class="callout risk">
+    <p class="callout-label">Twenty minutes means two things happen before the call</p>
+    <p><strong>Pre-fill their patch from the CRM</strong> — market, segment, tenure, account count. Never spend live minutes on facts you can look up; at this length that's a sixth of the interview.</p>
+    <p><strong>Send one line 24 hours ahead:</strong> <em>"Before we talk — think of two customers you know really well, one who's thriving and one who isn't. I'll mostly be asking about them."</em> They arrive with examples rather than generalities, which is the whole game at this length.</p>
+  </div>
+
+  <div class="script">
+    <div class="block">
+      <p class="clock">00:00 – 02:00</p>
+      <h3>Frame it, and disarm the pitch reflex</h3>
+      <p class="purpose">They'll assume you're either evaluating them or taking requirements. Kill both in the first minute — at this length you can't afford a slow start.</p>
+      <ul class="qs">
+        <li>"I want to borrow what you know about the customers. You talk to more of them in a week than I do in a quarter."</li>
+        <li>"Nothing here becomes a feature request, so you don't need to lobby for anything. And I'll keep asking you to name a specific customer — that's not doubt, it's just how I keep it concrete."</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">02:00 – 06:00</p>
+      <h3>Who the customer actually is</h3>
+      <p class="purpose">Establish which of the three people they're describing, before anything else they say can be misread.</p>
+      <ul class="qs">
+        <li>"Picture the customer you know best. Who are they — what's their job, and what are they trying to get done?"</li>
+        <li>"Who signs, and who in that company actually uses it day to day? Same person or not?"<span class="follow">The single most valuable thing sales can tell you, and it targets P1 directly. If they don't know the answer, that <em>is</em> the finding — it means nobody is watching the handoff.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">06:00 – 12:00</p>
+      <h3>What customers struggle with <span class="star">★ protect this block</span></h3>
+      <p class="purpose">The heart of it. Six minutes, and every general answer gets pulled back to a named case.</p>
+      <ul class="qs">
+        <li>"What do customers struggle with most?"<span class="follow">Then, every single time: <strong>"Who, most recently? Tell me about them."</strong> That one move is what turns a sales opinion into usable evidence, and it costs three seconds.</span></li>
+        <li>"What do they complain about <em>after</em> they've bought — not during the sale?"<span class="follow">Post-sale complaints are the closest thing sales has to unfiltered user data. Nobody's being polite to close a deal any more.</span></li>
+        <li>"Which customers signed up and then never really got going? What's your read on why?"<span class="follow">P1 again, from the other side. If they can name three off the top of their head, that's your customer interview shortlist — ask for the names now, while it's live.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">12:00 – 17:00</p>
+      <h3>The gap <span class="star">★</span></h3>
+      <p class="purpose">Where a salesperson tells you something no dashboard will. Warm tone, and make clear you're not auditing them.</p>
+      <ul class="qs">
+        <li>"What do customers ask you for that you can't give them a good answer to?"</li>
+        <li>"What do you tell them we'll do, that you slightly hold your breath about?"<span class="follow">Every salesperson has one. Give it silence and it comes. Whatever they name is an expectation the product isn't meeting — and it arrives with no defensiveness because you framed it as a shared open secret rather than a failing.</span></li>
+        <li>"What do customers still want to phone a person about, rather than doing it themselves?"<span class="follow">P4, from the other side. Especially worth having on record now that the AI direction is fixed.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <p class="clock">17:00 – 20:00</p>
+      <h3>Close, and recruit</h3>
+      <p class="purpose">Sales are your route to the customers you actually need — including the ones nobody will offer you.</p>
+      <ul class="qs">
+        <li>"What do you think we in product don't understand about these customers?"<span class="follow">Ask it straight. They've usually been waiting years for someone to ask, and the answer is often the best thirty seconds of the call.</span></li>
+        <li>"Which two customers should I talk to — including one who'd be blunt with me?"<span class="follow">Say plainly you're not there to sell or to rescue the account. And be genuinely willing to accept a no: burning one rep's trust costs you the whole channel.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">Swap-ins if you're given thirty minutes</p>
+    <p>In priority order: <strong>"When they say no to us, what are they saying yes to instead?"</strong> — status quo is usually the real competitor and it never appears on a battlecard · <strong>"What's going on inside a company when they're suddenly ready to buy?"</strong> — the trigger is the moment the product is genuinely wanted · <strong>"When anything automated has come up with a customer, how did they react?"</strong> · <strong>"If I sat in on your calls for a week, what would surprise me?"</strong></p>
+  </div>
+
+  <div class="callout risk">
+    <p class="callout-label">What twenty minutes costs you</p>
+    <p>Worth naming so nobody is surprised later. You lose the deal walk-throughs — the closed one and the lost one — which is where the buying <em>trigger</em> and the real objection behind "too expensive" live. You'll get sales' summarised view of those instead of a reconstruction, and summaries are where bias concentrates.</p>
+    <p>Two mitigations: run <strong>four sales interviews rather than three</strong>, since each one is thinner and patterns need more repetitions to show up; and pull <strong>lost-deal reasons from the CRM</strong> beforehand so you can spend the live minutes on what the CRM can't tell you.</p>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">Coverage — who to run this on</p>
+    <p><strong>Four to five salespeople, minimum one per market</strong> — a number up from three because twenty-minute interviews are thinner and patterns need more repetitions before you can trust them. Deliberately mix: one long-tenured (knows the history and the graveyard of past attempts), one recent joiner (still notices what's odd, hasn't yet learned to work around it), and one from each of NO and SE so you can tell a market difference from a personal style. At twenty minutes each, five of these cost you a single afternoon.</p>
+    <p>And one addition: <strong>run this on customer support or an advisor too.</strong> They're arguably the better sensor — they hear from customers <em>after</em> the sale, when there's nothing to gain by being polite, and they see the same failure fifty times. Roughly the same battery, with blocks 3 and 4 swapped for "what are the five things people contact you about most, and which one do you dread?"</p>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">After each one</p>
+  <h2>Capture, and the thirty-minute rule</h2>
+  <ul class="plain">
+    <li><strong>Record with consent; don't take heavy notes yourself.</strong> One line per notable moment with a timestamp is plenty. You cannot listen properly and transcribe at the same time, and listening is the job.</li>
+    <li><strong>Write a one-page debrief within thirty minutes of hanging up</strong> — before the next interview, always. Top three surprises, three verbatim quotes, and which of P1–P8 moved. Memory of interview two contaminates interview one faster than anyone expects.</li>
+    <li><strong>Track each pain as confirmed, killed, reshaped, or new</strong> — and mark <em>which instrument</em> moved it. A pain that both a salesperson and a customer independently point at is close to a fact. One that only sales sees is a hypothesis about customers, held by people who meet them in buying mode. The "new" column matters most of all: a pain nobody on either board predicted is the single most valuable thing you can carry into Day 1.</li>
+    <li><strong>Keep a running list of promises.</strong> Every "I always tell them that…" from a sales interview goes on it, and every one gets quietly checked in the customer conversations. The unkept promises are your shortest route to a real pain.</li>
+    <li><strong>Keep the verbatim quotes.</strong> On Day 1, one sentence in a customer's own words will outweigh an hour of internal debate. Have five ready.</li>
+  </ul>
+  <div class="callout pick">
+    <p class="callout-label">What you walk into Day 1 holding</p>
+    <p>One page. The pain map above with each pain marked confirmed, killed, or reshaped; the new pains nobody predicted; five verbatim quotes; and one sentence naming the sharpest thing you saw. Not a research report — nobody reads a research report on a sprint Tuesday. One page, and the recordings ready in case someone wants to argue.</p>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Open</p>
+  <h2>Three things I'd want to check before you run these</h2>
+  <ul class="plain">
+    <li><strong>Is the Norwegian frame customer feedback, or internal?</strong> The presence of editor tooling, SEO settings and supplier portal access suggests at least part of it came from internal stakeholders rather than customers. That changes how much weight P6 and the admin cluster deserve. If you know the split, tell me and I'll re-weight the map.</li>
+    <li><strong>Is there Swedish market feedback in the same shape?</strong> I've worked from the affinity map for SE. If there's a Vinst-equivalent Swedish frame, comparing them properly would tell us which pains are Nordic and which are local — and that's a genuinely different sprint scope.</li>
+    <li><strong>Can you pull spend data on each interviewee beforehand?</strong> Knowing which agreements someone has and never uses <em>before</em> you speak to them turns a vague question into a specific one: "you added Staples in March and haven't ordered since — what happened?" That's the single highest-yield thing you can do to prepare.</li>
+  </ul>
+</section>
+
+<footer>
+  Working document · pain map v1 · to be revised after the interviews
+</footer>
+
+</div>

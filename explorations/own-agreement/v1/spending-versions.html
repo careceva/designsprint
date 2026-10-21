@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advantage — the spending page, five versions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap">
+<style>
+/* tokens, copied from own-agreement-v1.html */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;--general-primary:#1b64dc;
+  --general-primary-foreground:#fafafa;--general-secondary:#dbe9ff;--general-muted:#f2f2f2;
+  --general-muted-foreground:#6e6e6e;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--surface:#ffffff;--surface-tile:#f5f6f7;--brand-ice:#edf5ff;
+  --sentiment-positive:#009689;--sentiment-positive-ink:#007c71;--sentiment-positive-ink-on-tint:#00796e;
+  --sentiment-negative-ink-on-tint:#c43b00;
+  --font-sans:"DM Sans","DM Sans Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;--text-xl:20px;--text-2xl:24px;
+  --text-3xl:30px;--text-4xl:36px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;--rounded-xl:20px;--rounded-2xl:25px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;--shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;--s24:96px;
+  --hairline:#ececec;--card-stroke:#e7e7ea;--t-fast:.15s ease;--hx-ease:cubic-bezier(.23,1,.32,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+body{font-family:var(--font-sans);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-weight:600;text-wrap:balance}
+button,input{font-family:inherit;font-size:inherit;color:inherit}
+::selection{background:var(--general-secondary)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);height:44px;padding:0 var(--s6);
+  border:1px solid transparent;cursor:pointer;border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),border-color var(--t-fast)}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover{background:#1553bb}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover{background:var(--brand-ice);border-color:var(--general-border)}
+.btn-sm{height:36px;padding:0 var(--s4);font-size:var(--text-xs)}
+.btn:focus-visible,.linkbtn:focus-visible,.seg button:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;color:var(--general-primary);font-size:var(--text-sm);font-weight:500}
+.linkbtn:hover{text-decoration:underline;text-underline-offset:3px}
+.seg{display:inline-flex;gap:2px;padding:3px;border-radius:var(--rounded-full);background:var(--general-muted)}
+.seg button{height:32px;padding:0 var(--s4);border:none;border-radius:var(--rounded-full);background:none;cursor:pointer;
+  font-size:13px;font-weight:600;color:var(--general-muted-foreground);transition:background var(--t-fast),color var(--t-fast)}
+.seg button:hover{color:var(--general-foreground)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--general-foreground);box-shadow:var(--shadow-xs)}
+/* the period: outlined track, flat fill, 36px outer — the Reports page's control */
+.rp-per.seg{padding:2px;background:none;box-shadow:inset 0 0 0 1px var(--sidebar-border)}
+.rp-per.seg button{padding:0 var(--s3);font-size:var(--text-xs)}
+.rp-per.seg button[aria-pressed="true"]{background:var(--general-muted);box-shadow:none}
+.fig-est{font-weight:500;color:var(--general-muted-foreground);text-decoration:underline dotted currentColor;
+  text-decoration-thickness:1.5px;text-underline-offset:.16em;text-decoration-skip-ink:none}
+.fig-doc{color:var(--general-primary)}
+.cat-art{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-select:none}
+
+/* ---------- gallery ---------- */
+.gal{max-width:1264px;margin:0 auto;padding:var(--s16) var(--s8) var(--s24)}
+.gal-head{max-width:760px;margin-bottom:var(--s8)}
+.gal-head h1{font-size:var(--text-4xl);letter-spacing:-.9px;line-height:1.1;font-weight:700}
+.gal-head p{margin-top:var(--s4);color:var(--general-muted-foreground);font-size:var(--text-lg)}
+.gal-head ul{margin-top:var(--s4);padding-left:18px;color:var(--general-muted-foreground);font-size:var(--text-base);display:flex;flex-direction:column;gap:4px}
+.gal-head ul b{color:var(--general-foreground);font-weight:600}
+.gal-nav{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s6)}
+.gal-nav a{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 var(--s4);border:1px solid var(--hairline);
+  border-radius:var(--rounded-full);background:var(--surface);color:var(--general-foreground);text-decoration:none;font-size:var(--text-sm);font-weight:500}
+.gal-nav a b{color:var(--general-muted-foreground);font-weight:600}
+.gal-nav a:hover{border-color:var(--general-border);background:var(--brand-ice)}
+.gal-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:var(--s3) var(--s6);flex-wrap:wrap;
+  padding:var(--s3) 0;margin-bottom:var(--s12);background:#fafafae8;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--hairline)}
+.gal-bar .lbl{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
+.gal-bar .grp{display:flex;align-items:center;gap:var(--s3)}
+.gal-list{display:flex;flex-direction:column;gap:var(--s24)}
+.v{display:flex;flex-direction:column;gap:var(--s8);scroll-margin-top:80px}
+.v-label{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s8);align-items:start}
+.v-eyebrow{display:block;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.v-name{font-size:var(--text-3xl);letter-spacing:-.6px;line-height:1.15;font-weight:700;margin-top:var(--s2)}
+.v-blurb{margin-top:var(--s3);color:var(--general-muted-foreground);max-width:52ch}
+.v-crit b{display:block;font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--general-muted-foreground);margin-bottom:var(--s2)}
+.v-crit ul{padding-left:18px;font-size:var(--text-sm);display:flex;flex-direction:column;gap:6px;max-width:56ch}
+.v-pick{display:inline-flex;align-items:center;gap:6px;margin-top:var(--s4);padding:4px 10px;border-radius:var(--rounded-full);
+  background:#d9f2ef;color:var(--sentiment-positive-ink-on-tint);font-size:13px;font-weight:600}
+.v-pick svg{width:12px;height:12px}
+@media(max-width:860px){.v-label{grid-template-columns:1fr}}
+
+/* ---------- the screen: the app's canvas and .page ---------- */
+.screen{border:1px solid var(--hairline);border-radius:var(--rounded-2xl);background:var(--surface);box-shadow:var(--shadow-sm);
+  overflow:hidden;container-type:inline-size;container-name:screen}
+.page{width:100%;max-width:1200px;margin:0 auto;padding:var(--s8) var(--s8) var(--s16);display:flex;flex-direction:column;gap:var(--s16)}
+@media(max-width:760px){.page{padding:var(--s6) var(--s4) var(--s12)}}
+
+/* ---------- the top row: the way back, the period, the full report ---------- */
+.rp-top{display:flex;flex-direction:column;gap:var(--s4)}
+.rp-ctl{display:flex;align-items:center;gap:var(--s3) var(--s4);flex-wrap:wrap}
+.rp-ctl-sp{flex:1 1 auto}
+.dr-back{display:inline-flex;align-items:center;gap:var(--s2);min-height:36px;padding:0 var(--s3) 0 var(--s2);margin-left:calc(var(--s2) * -1);
+  border:1px solid transparent;border-radius:var(--rounded-full);background:none;cursor:pointer;
+  font-size:var(--text-sm);font-weight:600;color:var(--general-muted-foreground);transition:background var(--t-fast),color var(--t-fast)}
+.dr-back:hover{background:var(--general-muted);color:var(--general-foreground)}
+.dr-back svg{width:16px;height:16px}
+
+/* ---------- the Ring card, as Areas, Reports and Agreements draw it ---------- */
+.hx{position:relative;display:grid;min-width:0}
+.hx>*{min-width:0}
+.hy{grid-template-columns:minmax(0,1.12fr) 1px minmax(0,1fr);grid-template-rows:auto auto;column-gap:var(--s12);row-gap:var(--s12);
+  padding:var(--s12) var(--s8);overflow:hidden;isolation:isolate;min-height:408px;
+  border:1px solid #ffffffe8;border-radius:var(--rounded-2xl);background:linear-gradient(160deg,#fdfeff 0%,#f6f8fd 100%);
+  box-shadow:0 1px 2px #0b00ab0d,0 8px 28px -10px #1b3c8c1f,0 22px 52px -30px #1b64dc38,inset 0 1px 0 #ffffff}
+.hy>*:not(.hy-field){position:relative;z-index:1}
+.hy-field{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='44'%3E%3Cg fill='%231b64dc'%3E%3Ccircle cx='6' cy='30' r='1.5'/%3E%3Ccircle cx='24' cy='22' r='1.5'/%3E%3Ccircle cx='42' cy='25' r='1.5'/%3E%3Ccircle cx='60' cy='13' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-image:radial-gradient(circle 220px at var(--mx,50%) var(--my,50%),#000 0%,#000000c4 34%,#00000059 68%,transparent 100%);
+  mask-image:radial-gradient(circle 220px at var(--mx,50%) var(--my,50%),#000 0%,#000000c4 34%,#00000059 68%,transparent 100%);
+  transition:opacity .2s ease}
+@media (hover:hover) and (pointer:fine){.hy:hover .hy-field{opacity:.5}}
+@media not ((hover:hover) and (pointer:fine)){.hy-field{display:none}}
+@media (prefers-reduced-motion:reduce){.hy-field{display:none}}
+.hy-vr{grid-column:2;grid-row:1/-1;width:1px;margin-block:calc(-1 * var(--s6));background:rgb(27 100 220/.14)}
+.hy-hr{grid-column:1;grid-row:2;align-self:start;height:1px;margin-top:calc(var(--s12) / -2);background:rgb(27 100 220/.12)}
+.hy h1{max-width:15ch;font-size:clamp(34px,3.6vw,48px);font-weight:700;letter-spacing:-.025em;line-height:1.06;color:var(--general-foreground)}
+.hy-k{font-size:var(--text-xs);font-weight:500;color:var(--general-muted-foreground)}
+.hy-t2{grid-column:1;grid-row:1;align-self:end;display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3)}
+.hy-eye{font-size:var(--text-sm);font-weight:500;color:var(--general-muted-foreground)}
+.hy-figs{grid-column:1;grid-row:2;align-self:start;display:flex;flex-wrap:wrap;gap:var(--s4) var(--s8)}
+.hy-f2{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s1)}
+.hy-fig2{font-size:clamp(22px,2.2vw,28px);font-weight:600;line-height:1.1;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.hy-fig2 small{margin-left:var(--s1);font-size:var(--text-sm);font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
+.hy .fig-est{font-weight:inherit}
+.hy-side{grid-column:3;grid-row:1/-1;align-self:center;display:flex;flex-direction:column;min-width:0;gap:var(--s3)}
+.hy-cap{font-size:var(--text-sm);color:var(--general-muted-foreground);text-wrap:pretty}
+/* the band: where the money went, in two states — the Agreements card's bar */
+.sp-bar{display:flex;gap:3px;height:20px}
+.sp-bar i{min-width:7px;border-radius:5px;background:var(--k);transform-origin:left center;
+  animation:spSeg 620ms var(--hx-ease) backwards;animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes spSeg{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){.sp-bar i{animation:none}}
+.sp-key{list-style:none;display:flex;flex-direction:column;margin:var(--s1) calc(-1 * var(--s3)) 0}
+.sp-key li{display:flex;align-items:center;gap:var(--s3);min-height:40px;padding:0 var(--s3);font-size:var(--text-sm);font-weight:500}
+.sp-key li::before{content:"";flex:0 0 auto;width:10px;height:10px;border-radius:3px;background:var(--k)}
+.sp-key span{flex:1 1 auto;min-width:0}
+.sp-key em{font-style:normal;font-weight:600;color:var(--general-muted-foreground);font-variant-numeric:tabular-nums;white-space:nowrap}
+/* somebody else's median is drawn quieter than money of your own */
+.hy.est .sp-bar i{opacity:.45}
+@container screen (max-width:780px){
+  .hy{grid-template-columns:minmax(0,1fr);min-height:0;padding:var(--s8) var(--s6);row-gap:var(--s8)}
+  .hy-vr{display:none}
+  .hy-hr{grid-row:auto;margin-top:0}
+  .hy-t2,.hy-figs,.hy-side{grid-column:1;grid-row:auto}
+}
+
+/* ---------- section heading, the shared .ar-head ---------- */
+.sec{display:flex;flex-direction:column;min-width:0}
+.ar-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s6)}
+.ar-head h2{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.5px}
+.ar-head p{margin-top:var(--s2);font-size:var(--text-sm);line-height:1.5;color:var(--general-muted-foreground);max-width:58ch}
+.ar-head .sum{font-size:var(--text-sm);color:var(--general-muted-foreground);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ar-head .sum b{color:var(--general-foreground);font-weight:600}
+.empty{padding:var(--s4) var(--s5);border:1px dashed var(--sidebar-border);border-radius:var(--rounded-lg);
+  font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
+/* ---------- status vocabulary: one rule for every list ---------- */
+.tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:var(--rounded-full);font-size:12px;font-weight:650;white-space:nowrap;
+  background:var(--general-muted);color:var(--general-muted-foreground)}
+.tag.on{background:#d9f2ef;color:var(--sentiment-positive-ink-on-tint)}
+.tag.idle{background:#ffe9dd;color:var(--sentiment-negative-ink-on-tint)}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);white-space:nowrap}
+.st::before{content:'';width:6px;height:6px;border-radius:var(--rounded-full);background:currentColor;opacity:.55}
+.st.saved{color:var(--general-foreground)}
+.st.on{color:var(--general-primary)}
+.st.saved::before,.st.on::before{opacity:1}
+
+/* ---------- the ledger rows the page has today (.dr-grp) ---------- */
+.dr-drill{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.dr-grp{border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);overflow:hidden}
+.dr-grp[open]{border-color:var(--card-stroke);box-shadow:var(--shadow-xs)}
+.dr-grp summary{list-style:none}
+.dr-grp summary::-webkit-details-marker{display:none}
+.dr-grp-h{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:var(--s2) var(--s4);
+  padding:var(--s4) var(--s5);cursor:pointer;transition:background var(--t-fast)}
+.dr-grp-h:hover{background:var(--general-muted)}
+.dr-grp summary:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px;border-radius:var(--rounded-lg)}
+.dr-grp-ic{width:34px;height:34px}
+.dr-grp-n{min-width:0;font-size:16px;font-weight:650;letter-spacing:-.2px}
+.dr-grp-n em{font-style:normal;display:block;margin-top:1px;font-size:13px;font-weight:500;color:var(--general-muted-foreground)}
+.dr-grp-v{font-size:16px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dr-grp-x{display:grid;place-items:center;width:26px;height:26px;border-radius:var(--rounded-full);color:var(--general-muted-foreground);
+  transition:transform var(--t-fast),background var(--t-fast)}
+.dr-grp-x svg{width:16px;height:16px}
+.dr-grp[open] .dr-grp-x{transform:rotate(180deg);background:var(--general-muted)}
+.rp-track{grid-column:1 / -1;display:flex;gap:2px;height:8px;border-radius:4px;background:var(--general-muted);overflow:hidden}
+.rp-track i{display:block;height:100%;min-width:2px;transform-origin:left center;animation:rpGrow .62s cubic-bezier(.22,.9,.24,1) both;animation-delay:calc(var(--i,0) * 42ms)}
+@keyframes rpGrow{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){.rp-track i{animation:none}}
+.rp-track i.cov{background:var(--general-primary)}
+.rp-track i.rest{background:var(--general-muted-foreground);opacity:.26}
+.dr-grp-b{padding:0 var(--s5) var(--s5)}
+.dr-sub{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.dr-ags{list-style:none;display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s3)}
+.dr-ag{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:var(--s3);font-size:var(--text-sm)}
+.rp-key{display:flex;gap:var(--s6);flex-wrap:wrap;margin-top:var(--s4);font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.rp-key span{display:inline-flex;align-items:center;gap:7px}
+.rp-key i{width:10px;height:10px;border-radius:var(--rounded-full)}
+.rp-key i.cov{background:var(--general-primary)}
+.rp-key i.rest{background:var(--general-muted-foreground);opacity:.32}
+
+/* ---------- the review tile (the Overview's .mv, version 5) ---------- */
+.rv-list{list-style:none;display:flex;flex-direction:column;border-top:1px solid var(--hairline)}
+.rv{border-bottom:1px solid var(--hairline)}
+.rv summary{list-style:none}
+.rv summary::-webkit-details-marker{display:none}
+.rv summary:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px;border-radius:var(--rounded-md)}
+.rv-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto 20px;align-items:center;gap:var(--s4);padding:var(--s4) var(--s2);
+  border-radius:var(--rounded-md);cursor:pointer}
+.rv-row:hover{background:var(--surface-tile)}
+.rv-ic{width:48px;height:48px}
+.rv-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rv-txt b{font-size:var(--text-base);font-weight:700;line-height:1.3}
+.rv-txt span{font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.4}
+.rv-r{display:flex;flex-direction:column;align-items:flex-end;gap:2px;white-space:nowrap}
+.rv-fig{font-size:var(--text-xl);font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.2}
+.rv-fig .fig-est{font-weight:600}
+.rv-fig small{font-size:var(--text-xs);font-weight:500;letter-spacing:0;color:var(--general-muted-foreground);margin-left:4px}
+.rv-chev{width:20px;height:20px;color:var(--general-muted-foreground);transition:transform .18s ease}
+.rv[open] .rv-chev{transform:rotate(180deg)}
+.rv-body{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s1) var(--s2) var(--s6) calc(48px + var(--s4) + var(--s2))}
+.rv.compact .rv-row{grid-template-columns:36px minmax(0,1fr) auto 20px;padding:var(--s3) var(--s2)}
+.rv.compact .rv-ic{width:36px;height:36px}
+.rv.compact .rv-body{padding-left:calc(36px + var(--s4) + var(--s2))}
+/* the form, as built on the Overview */
+.mv-f{display:flex;flex-direction:column;gap:6px;max-width:440px}
+.mv-f-h{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3)}
+.mv-f label{font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground)}
+.mv-f label i{font-style:normal;font-weight:400}
+.mv-f-h .linkbtn{font-size:var(--text-xs)}
+.mv-field{display:flex;align-items:center;gap:var(--s2);height:44px;padding:0 var(--s4);background:var(--general-input);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-md);box-shadow:inset 0 1px 2px #0000000a}
+.mv-field:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.mv-field input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:var(--text-base);font-variant-numeric:tabular-nums;caret-color:var(--general-primary)}
+.mv-field input::placeholder{color:#8f8f8f}
+.mv-field .u{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.mv-field.ro{background:var(--surface-tile);border-color:transparent;box-shadow:none}
+.mv-help{font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.45;display:inline-flex;align-items:center;gap:5px}
+.mv-help svg{width:14px;height:14px;color:var(--general-primary)}
+.mv-act{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;padding-top:var(--s2)}
+.mv-act .spacer{flex:1}
+.mv-skip{color:var(--general-muted-foreground)}
+.mv-sent{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--text-sm)}
+.mv-sent svg{width:16px;height:16px;color:var(--sentiment-positive)}
+
+/* ---------- the table ---------- */
+.tb{border:1px solid var(--hairline);border-radius:var(--rounded-lg);background:var(--surface);overflow:hidden}
+.tb-head{display:grid;grid-template-columns:var(--cols);gap:var(--s4);padding:var(--s3) var(--s5);
+  font-size:var(--text-xs);font-weight:600;color:var(--general-muted-foreground);border-bottom:1px solid var(--hairline)}
+.tb-head .r,.tb-row .r,.tb-foot .r{text-align:right}
+.tb details{border-top:1px solid var(--hairline)}
+.tb details:first-of-type,.tb>.tb-row:first-of-type{border-top:0}
+.tb>.tb-row{border-top:1px solid var(--hairline)}
+.tb summary{list-style:none}
+.tb summary::-webkit-details-marker{display:none}
+.tb summary:focus-visible{outline:2px solid var(--general-primary);outline-offset:-2px}
+.tb-row{display:grid;grid-template-columns:var(--cols);align-items:center;gap:var(--s4);min-height:60px;padding:var(--s3) var(--s5);
+  transition:background var(--t-fast)}
+summary .tb-row{cursor:pointer}
+summary .tb-row:hover{background:var(--surface-tile)}
+.tb-area{display:flex;align-items:center;gap:var(--s3);min-width:0}
+.tb-ic{flex:0 0 auto;width:28px;height:28px}
+.tb-name{min-width:0}
+.tb-name b{display:block;font-size:var(--text-base);font-weight:600;letter-spacing:-.1px;line-height:1.3}
+.tb-name span{display:block;font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.4}
+.tb-num{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.tb-num small{font-weight:500;color:var(--general-muted-foreground)}
+.tb-num .none{color:var(--general-muted-foreground);font-weight:500}
+.tb-x{display:grid;place-items:center;width:24px;height:24px;color:var(--general-muted-foreground);transition:transform .18s ease}
+.tb-x svg{width:16px;height:16px}
+.tb details[open] .tb-x{transform:rotate(180deg)}
+.tb-body{display:flex;flex-direction:column;gap:var(--s4);padding:var(--s1) var(--s5) var(--s6) calc(var(--s5) + 28px + var(--s3))}
+.tb-foot{display:grid;grid-template-columns:var(--cols);gap:var(--s4);padding:var(--s3) var(--s5);min-height:52px;align-items:center;
+  border-top:1px solid var(--hairline);background:var(--surface-tile);font-weight:600;font-variant-numeric:tabular-nums}
+.tb-foot .l{color:var(--general-muted-foreground);font-weight:500}
+.tb-foot .l b{color:var(--general-foreground);font-weight:600}
+
+
+/* ---------- v4: ledger and a panel ---------- */
+.two{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:var(--s8);align-items:start}
+.panel{position:sticky;top:var(--s6);border:1px solid var(--card-stroke);border-radius:var(--rounded-lg);background:var(--surface);
+  box-shadow:var(--shadow-xs);padding:var(--s5) var(--s5) var(--s2)}
+.panel .ar-head{margin-bottom:var(--s3)}
+.panel .ar-head h2{font-size:var(--text-lg)}
+.panel .rv-list{border-top:0}
+.panel .rv:last-child{border-bottom:0}
+.two.one{grid-template-columns:minmax(0,1fr)}
+.two.one .panel{position:static}
+@container screen (max-width:1000px){.two{grid-template-columns:1fr}.panel{position:static}}
+
+/* ---------- v5: cards (the Areas card, .ar-card) ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--s4)}
+.cd{position:relative;display:flex;flex-direction:column;gap:var(--s2);padding:var(--s5);border:1px solid var(--card-stroke);
+  border-radius:var(--rounded-lg);background:var(--surface);box-shadow:var(--shadow-xs)}
+.cd .tag,.cd .st{position:absolute;top:var(--s5);right:var(--s5)}
+.cd-ic{width:76px;height:56px}
+.cd-ic .cat-art{width:76px;height:76px;margin:-10px 0 0 -6px}
+.cd-n{margin-top:var(--s3);font-size:var(--text-lg);font-weight:700;letter-spacing:-.3px;line-height:1.25}
+.cd-m{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.cd-fig{display:flex;align-items:baseline;gap:var(--s2);margin-top:var(--s3);font-size:var(--text-2xl);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
+.cd-fig .fig-est{font-weight:600}
+.cd-fig small{font-size:var(--text-sm);font-weight:500;letter-spacing:0;color:var(--general-muted-foreground)}
+.cd-act{display:flex;justify-content:flex-end;margin-top:var(--s3);padding-top:var(--s4);border-top:1px solid var(--hairline)}
+.cd.open{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:var(--s4) var(--s8)}
+.cd.open .cd-left{display:flex;flex-direction:column;gap:var(--s2)}
+.cd.open .cd-form{display:flex;flex-direction:column;gap:var(--s4);padding-top:var(--s2)}
+@container screen (max-width:760px){.cd.open{grid-template-columns:1fr}}
+
+/* ---------- the journey's own pieces ---------- */
+.fig-actual{color:var(--sentiment-positive-ink)}
+.sep{color:var(--general-muted-foreground);font-weight:400}
+.leads{display:flex;gap:var(--s8);flex-wrap:wrap;justify-content:flex-end}
+.lead{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.lead b{font-size:var(--text-2xl);font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap}
+.lead b .fig-est{font-weight:600}
+.lead b small{font-size:var(--text-sm);font-weight:500;letter-spacing:0;color:var(--general-muted-foreground);margin-left:4px}
+.lead .none{color:var(--general-muted-foreground);font-weight:500}
+.tb.tb-a{--cols:minmax(0,1fr) 190px 170px}
+.tb.tb-b,.tb.tb-c{--cols:minmax(0,1fr) 190px 170px 170px 24px}
+.tb-foot .r{white-space:nowrap}
+.tb-foot .fig-actual{font-weight:700}
+.tb-foot+.tb-foot{border-top:1px solid var(--hairline)}
+.tb-foot .c-save .fig-est,.tb-num .fig-est{font-weight:600}
+/* the spend cell as the input: the band is the placeholder, a read figure the value */
+.tb-in{display:flex;align-items:center;gap:6px;height:38px;padding:0 var(--s3);background:var(--general-input);
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-sm);box-shadow:inset 0 1px 2px #0000000a;transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.tb-in:hover{border-color:#c9c9c9}
+.tb-in:focus-within{border-color:var(--general-primary);box-shadow:0 0 0 3px #1b64dc26}
+.tb-in input{flex:1;width:100%;min-width:0;border:0;outline:0;background:none;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;caret-color:var(--general-primary)}
+.tb-in input::placeholder{color:var(--general-muted-foreground);font-weight:500;text-decoration:underline dotted currentColor;text-decoration-thickness:1.5px;text-underline-offset:.16em}
+.tb-in .u{font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.tb-in.ro{background:var(--surface-tile);border-color:transparent;box-shadow:none}
+.tb-row.skip .tb-area,.tb-row.skip .tb-num{opacity:.45}
+.tb-st{display:inline-flex;align-items:center;gap:var(--s2);min-height:36px}
+.tb-st .linkbtn{font-size:var(--text-xs)}
+.seam{display:flex;align-items:baseline;gap:var(--s3);padding:var(--s3) var(--s5);background:var(--surface-tile);
+  border-top:1px solid var(--hairline);font-size:var(--text-sm);font-weight:600}
+.seam em{font-style:normal;font-weight:400;color:var(--general-muted-foreground)}
+@container screen (max-width:900px){
+  .tb.tb-a{--cols:minmax(0,1fr) 150px 130px}
+  .tb.tb-b,.tb.tb-c{--cols:minmax(0,1fr) 150px 150px 24px}
+  .tb .c-st{display:none}
+}
+@container screen (max-width:620px){
+  .tb.tb-a{--cols:minmax(0,1fr) 130px}
+  .tb.tb-b,.tb.tb-c{--cols:minmax(0,1fr) 150px 24px}
+  .tb .c-save{display:none}
+}
+</style>
+</head>
+<body>
+<main class="gal">
+  <header class="gal-head">
+    <h1>The spending page, as a journey</h1>
+    <p>The hero from the first round stays. The body is now two acts: what you spend and save today, in the areas where an agreement is landing, then what you spend elsewhere and what the negotiated rate would save there. Type a figure in act two and the saving beside it, and the act's total, follow at once.</p>
+    <ul>
+      <li><b>Act one is verified.</b> What ran through each agreement, read off the invoice, and what it saved, in green. Its total is the hero's "Through an agreement" figure. No share of an area is shown, because for a documents-only account we do not know the area.</li>
+      <li><b>Act two is a projection.</b> A figure we read prints exact, in blue; the industry median prints as a band; a figure you type prints as a band too, because a typed spend is a tune, never a verified figure.</li>
+      <li><b>Not reviewed</b> turns into Save the moment a row's figure changes; Saved, With Peter and Not relevant follow from the row's actions. Not relevant drops the area from the total, with Undo.</li>
+    </ul>
+    <nav class="gal-nav">
+      <a href="#v1"><b>1</b> Open the row</a>
+      <a href="#v2"><b>2</b> Type in the row</a>
+      <a href="#v3"><b>3</b> One table</a>
+    </nav>
+  </header>
+
+  <div class="gal-bar">
+    <div class="grp"><span class="lbl">Signed in as</span>
+      <div class="seg" role="group" aria-label="Persona">
+        <button type="button" data-pk="bob" aria-pressed="false">Bob</button>
+        <button type="button" data-pk="kari" aria-pressed="true">Kari</button>
+        <button type="button" data-pk="fanny" aria-pressed="false">Fanny</button>
+      </div></div>
+    <div class="grp"><span class="lbl">State</span>
+      <div class="seg" role="group" aria-label="State">
+        <button type="button" data-after="0" aria-pressed="true">Nothing reviewed</button>
+        <button type="button" data-after="1" aria-pressed="false">After a review</button>
+      </div></div>
+  </div>
+
+  <div class="gal-list">
+
+    <section class="v" id="v1">
+      <div class="v-label">
+        <div>
+          <span class="v-eyebrow">Version 1</span>
+          <h2 class="v-name">Open the row</h2>
+          <p class="v-blurb">Two tables. Today: area, what ran through the agreement, saved. Elsewhere: area, spend, what you could save, status. A row in the second table opens to the form from the Overview; the spend field is in the form, and every keystroke moves the saving on the row above it and the total in the heading.</p>
+        </div>
+        <div class="v-crit"><b>What to weigh</b><ul>
+          <li>The number you are correcting sits on the row, and you type its replacement one level down. The eye travels.</li>
+          <li>The closed table is calm: no inputs until you ask for one.</li>
+          <li>Save and Send to review live in the open row, where the supplier is.</li>
+        </ul></div>
+      </div>
+      <div class="screen"><div class="page" data-v="1"></div></div>
+    </section>
+
+    <section class="v" id="v2">
+      <div class="v-label">
+        <div>
+          <span class="v-eyebrow">Version 2</span>
+          <h2 class="v-name">Type in the row</h2>
+          <p class="v-blurb">The same two tables, but in the second one the spend cell is the input. The industry band is its placeholder, a figure we read is its value, and the saving beside it recomputes as you type. Changing a figure turns the status into Save. The row still opens, for the supplier and Send to review.</p>
+          <span class="v-pick"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg> Recommended</span>
+        </div>
+        <div class="v-crit"><b>Why this one</b><ul>
+          <li>The estimate is the thing you edit. One keystroke and the saving moves, which is the behaviour you asked for, with nothing to open first.</li>
+          <li>Save appears exactly where the change happened and the status answers it.</li>
+          <li>Fanny's page carries eight inputs, which reads as a form; her bands as placeholders keep it quiet until she types.</li>
+        </ul></div>
+      </div>
+      <div class="screen"><div class="page" data-v="2"></div></div>
+    </section>
+
+    <section class="v" id="v3">
+      <div class="v-label">
+        <div>
+          <span class="v-eyebrow">Version 3</span>
+          <h2 class="v-name">One table</h2>
+          <p class="v-blurb">The journey in one frame. Today's rows first, a seam, then the rest with inputs in the spend cell. One set of columns for both: spend, saved or could save, status. The foot has two lines, today and elsewhere, so the two totals meet.</p>
+        </div>
+        <div class="v-crit"><b>What to weigh</b><ul>
+          <li>"Spend" and "Saved" change meaning across the seam: read and realised above it, estimated and projected below.</li>
+          <li>One frame, one scroll, and the two totals sit together at the foot.</li>
+          <li>The seam is the only thing keeping verified green away from estimated bands.</li>
+        </ul></div>
+      </div>
+      <div class="screen"><div class="page" data-v="3"></div></div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+"use strict";
+/* ---------- the data, copied from own-agreement-v1.html ---------- */
+const ROWS_BOB = [
+  {id:'mat', n:'Building materials', sup:18, inv:424, amt:2132300, rate:9, top:'Stark Byggecenter · Bygma · Ahlsell', agr:[
+    {n:'Buildor Erhverv', covers:465000, save:37200}, {n:'Stark Byggecenter', covers:870000, save:78400, req:true},
+    {n:'Bygma Framework', covers:2040000, save:183900}, {n:'Ahlsell Nordic', covers:1281900, save:119400}]},
+  {id:'tool', n:'Tools & workwear', sup:11, inv:178, amt:664800, rate:11, top:'Hilti · Gerdmans · Procurator Workwear', agr:[
+    {n:'Hilti Erhverv', covers:284000, save:31200, req:true}, {n:'Gerdmans Nordic', covers:671400, save:73800},
+    {n:'Procurator Workwear', covers:471000, save:51900}]},
+  {id:'fuel', n:'Fuel & transport', sup:5, inv:223, amt:530700, rate:8, top:'Q8 · Preem · OK', agr:[
+    {n:'Q8 Fuel Card', covers:423700, save:33900, req:true}, {n:'Preem Business', covers:107000, save:8600}]},
+  {id:'off', n:'Office supplies', sup:5, inv:62, amt:205000, rate:19, top:'Lyreco · Office Depot · Staples', agr:[
+    {n:'Lyreco Erhverv', covers:132000, save:24800, req:true}, {n:'Office Depot', covers:73000, save:14100}]},
+  {id:'rent', n:'Machine & equipment rental', sup:6, inv:112, amt:500000, rate:6, top:'Avis · Leasify Udlejning', agr:[
+    {n:'Leasify Udlejning', covers:62000, save:3700}, {n:'Avis Erhverv', covers:285000, save:17100, req:true},
+    {n:'Peugeot Professional', covers:153000, save:9200}]},
+  {id:'frg', n:'Freight & delivery', sup:6, inv:122, amt:328800, rate:8, top:'DSV · PostNord · Bring Fragt', agr:[
+    {n:'DSV Road', covers:191000, save:15300}, {n:'PostNord Erhverv', covers:81300, save:6500}, {n:'Bring Fragt', covers:56500, save:4500}]},
+  {id:'tel', n:'Telecom & IT', sup:4, inv:100, amt:290400, rate:5, top:'Hallon Erhverv · NetOnNet', agr:[
+    {n:'Hallon Erhverv', covers:266500, save:13300}, {n:'NetOnNet IT', covers:23900, save:1200}]},
+  {id:'site', n:'Site services & waste', sup:4, inv:63, amt:168000, rate:4, top:'Rentokil Erhverv · Fortum Recycling', agr:[
+    {n:'Fortum Recycling', covers:40000, save:1600}, {n:'Rentokil Erhverv', covers:128000, save:5100}]}
+];
+const ROWS_KARI = [
+  {id:'mat', n:'Building materials', sup:9, inv:1, amt:980000, rate:9, top:'Ahlsell · Bygma · Buildor', agr:[
+    {n:'Ahlsell Nordic', covers:312000, save:28100, req:true}, {n:'Bygma Framework', covers:795000, save:71700},
+    {n:'Buildor Erhverv', covers:420000, save:37800}, {n:'Stark Byggecenter', covers:354000, save:31800}]},
+  {id:'tool', n:'Tools & workwear', sup:6, inv:14, amt:296000, rate:11, top:'Hilti · Gerdmans · Procurator Workwear', agr:[
+    {n:'Hilti Erhverv', covers:118000, save:13000}, {n:'Gerdmans Nordic', covers:288000, save:31800}, {n:'Procurator Workwear', covers:162000, save:17700}]},
+  {id:'fuel', n:'Fuel & transport', sup:3, inv:1, amt:310000, rate:8, top:'Preem · Q8', agr:[
+    {n:'Preem Business', covers:186000, save:14900, req:true}, {n:'Q8 Fuel Card', covers:68000, save:5400}]},
+  {id:'off', n:'Office supplies', sup:3, inv:1, amt:118000, rate:19, top:'Lyreco · Office Depot', agr:[
+    {n:'Lyreco Erhverv', covers:74000, save:14100, req:true}, {n:'Office Depot', covers:31000, save:5900}]},
+  {id:'rent', n:'Machine & equipment rental', sup:4, inv:0, amt:290000, rate:6, top:'Avis · Peugeot', agr:[
+    {n:'Leasify Udlejning', covers:48000, save:2900}, {n:'Avis Erhverv', covers:150000, save:9000}, {n:'Peugeot Professional', covers:62000, save:3700}]},
+  {id:'frg', n:'Freight & delivery', sup:4, inv:0, amt:215000, rate:8, top:'DSV · PostNord', agr:[
+    {n:'DSV Road', covers:120000, save:9600}, {n:'PostNord Erhverv', covers:44000, save:3500}, {n:'Bring Fragt', covers:30000, save:2400}]},
+  {id:'tel', n:'Telecom & IT', sup:3, inv:6, amt:210000, rate:5, top:'Hallon · NetOnNet', agr:[
+    {n:'Hallon Erhverv', covers:158000, save:7900}, {n:'NetOnNet IT', covers:41000, save:2100}]},
+  {id:'site', n:'Site services & waste', sup:3, inv:0, amt:105000, rate:4, top:'Fortum Recycling · Rentokil Erhverv', agr:[
+    {n:'Fortum Recycling', covers:36000, save:1400}, {n:'Rentokil Erhverv', covers:58000, save:2300}]}
+];
+/* who is signed in. landing = the agreements in use whose invoices are flowing
+   (AG_STAGE_BY / AG_DORMANT_SET in the exploration); Bob's Hilti and Lyreco are
+   live and idle, Avis is requested. Kari's exact areas are the ones a document
+   gives lines for (inv > 0). Fanny reads the median of her peer group: Bob's
+   rows at the medium-size multiplier, 72% of the in-use areas through an agreement. */
+const KARI_DOC = {mat:'the Ahlsell invoice, 14 Aug 2026', off:'the Lyreco invoice, 22 Aug 2026',
+  fuel:'the Preem invoice, 31 Aug 2026', tool:'the Q2 2026 spend export', tel:'the Q2 2026 spend export'};
+/* an invoice tells us what went through that one agreement, not what the area
+   costs; only the Q2 export gives a whole area */
+const KARI_FULL = new Set(['tool', 'tel']);
+const PERSONAS = {
+  bob:  {first:'Bob', rows:ROWS_BOB, exact:() => true,
+         landing:new Set(['Stark Byggecenter', 'Q8 Fuel Card']), dormant:new Set(['Hilti Erhverv', 'Lyreco Erhverv']), pending:new Set(['Avis Erhverv']),
+         doc:r => `Visma.net · ${fmt(r.inv)} invoices`, src:'Read from Visma.net · 1.284 invoices', srcShort:'Visma.net',
+         after:{frg:{st:'sent', typed:328800, sup:'DSV'}, tel:{st:'saved', typed:290400, sup:'Hallon Erhverv'}}},
+  kari: {first:'Kari', rows:ROWS_KARI, exact:r => KARI_FULL.has(r.id),
+         landing:new Set(['Ahlsell Nordic', 'Preem Business', 'Lyreco Erhverv']), dormant:new Set(), pending:new Set(),
+         doc:r => KARI_DOC[r.id], src:'Read from 4 documents · 5 of 8 areas', srcShort:'your 4 documents',
+         after:{rent:{st:'saved', typed:300000, sup:'Avis'}, frg:{st:'sent', typed:200000, sup:'DSV'}}},
+  fanny:{first:'Fanny', rows:ROWS_BOB, peer:true, exact:() => false,
+         landing:new Set(), dormant:new Set(), pending:new Set(), peerInUse:['mat', 'tool', 'fuel', 'off', 'rent', 'frg'],
+         src:'Median of 148 electrical contracting companies, 10–49 employees, in your region.',
+         after:{off:{st:'saved', typed:190000, sup:'Lyreco'}, tool:{st:'sent', typed:620000, sup:'Hilti'}}}
+};
+const PER = {
+  '12m':{n:'Last 12 months', f:1},
+  'ytd':{n:'Year to date', get f(){ const now = new Date(); return Math.min(1, (now - new Date(now.getFullYear(), 0, 1)) / (365 * 864e5)); }},
+  'q':  {n:'Last 3 months', f:.25}
+};
+const ART = {mat:'building-materials', tool:'tools-workwear', fuel:'fuel-transport', off:'office-supplies',
+  rent:'machine-equipment', frg:'freight-delivery', tel:'telecom-it', site:'site-services'};
+const art = (id, sm) => `<img class="cat-art" src="../../../assets/advantage-3d-icons-two-colour/${sm ? 'svg-small' : 'svg'}/advantage-icon-${ART[id]}-ultramarine${sm ? '-small' : ''}.svg" alt="" draggable="false">`;
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* ---------- formatting, as the app formats ---------- */
+const nf = new Intl.NumberFormat('da-DK');
+const fmt = n => nf.format(Math.round(n));
+const fmtCompact = n => { const a = Math.abs(n);
+  if(a >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '').replace('.', ',') + 'M';
+  if(a >= 1e3) return Math.round(n / 1e3) + 'K';
+  return fmt(n); };
+const EST = .15;
+const estRange = n => `${fmtCompact(n * (1 - EST))}–${fmtCompact(n * (1 + EST))}`;
+const est = n => `<span class="fig-est">${estRange(n)}</span>`;
+const pct = (v, t) => t > 0 ? Math.round(v / t * 100) : 0;
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+const first = s => s.split('·')[0].trim();
+const parseNum = s => { const d = String(s).replace(/[^\d]/g, ''); return d ? +d : null; };
+const NONE = '<span class="none">—</span>';
+
+const IC = {
+  back:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  go:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  tick:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  doc:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.5 12.5l6.2-6.2a3.2 3.2 0 014.5 4.5l-7.4 7.4a5 5 0 01-7.1-7.1L11.6 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+
+/* ---------- state ----------
+   REV is what the person has done to an area on this page: the figure they typed
+   (annual, as typed), the supplier, and the status. One store for every version,
+   so a figure typed in one is the figure the others show. */
+let pk = 'kari', per = '12m', after = false, REV = {};
+const f = () => PER[per].f;
+const seed = () => { const P = PERSONAS[pk]; REV = {}; if(after) Object.entries(P.after).forEach(([k, v]) => REV[k] = {...v}); };
+
+/* ---------- the model: one reading of the rows, every version draws from it ---------- */
+function model(){
+  const P = PERSONAS[pk];
+  const areas = P.rows.map(r => {
+    const on = P.peer ? [] : r.agr.filter(a => a.req);
+    const landing = on.filter(a => P.landing.has(a.n));
+    const exact = P.exact(r);
+    const spend = Math.round(r.amt * f());
+    const thru = Math.round(landing.reduce((s, a) => s + a.covers, 0) * f());
+    const saved = Math.round(landing.reduce((s, a) => s + a.save, 0) * f());
+    const kind = landing.length ? 'thru' : on.length ? 'idle' : 'open';
+    const idleA = on[0];
+    const idleLine = idleA ? (P.dormant.has(idleA.n) ? `${idleA.n} live, nothing bought through it`
+      : `${idleA.n} requested, no invoice at the new rate yet`) : '';
+    const open = P.peer ? r.agr : r.agr.filter(a => !a.req);
+    return {id:r.id, art:r.id, n:r.n, rate:r.rate, amt:r.amt, amtThru:landing.reduce((s, a) => s + a.covers, 0),
+      inv:Math.round(r.inv * f()), top:r.top, sup:first(r.top),
+      exact, spend, thru, saved, kind, onName:landing.map(a => a.n).join(' and '), idleLine, openN:open.length,
+      pot:Math.round(spend * r.rate / 100), doc:P.doc ? P.doc(r) : ''};
+  });
+  /* what we KNOW of an area: the whole of it when a ledger or an export covers it,
+     otherwise only what ran through the agreement — an invoice says nothing
+     about the rest of the area */
+  let spend, thru;
+  if(P.peer){
+    spend = areas.reduce((s, a) => s + a.spend, 0);
+    thru = Math.round(areas.filter(a => P.peerInUse.includes(a.id)).reduce((s, a) => s + a.spend, 0) * .72);
+  } else {
+    spend = areas.reduce((s, a) => s + (a.exact ? a.spend : a.thru), 0);
+    thru = areas.reduce((s, a) => s + a.thru, 0);
+  }
+  const today = areas.filter(a => a.kind === 'thru').sort((a, b) => b.thru - a.thru);
+  /* elsewhere: every area with no agreement landing, plus — where a ledger shows
+     it — the part of a landing area that went past its agreement */
+  const rest = [];
+  areas.forEach(a => {
+    if(a.kind !== 'thru'){ rest.push(a); return; }
+    const left = a.spend - a.thru;
+    if(a.exact && left > 0) rest.push({...a, id:a.id + '-rest', kind:'open', isRest:true, sub:`Outside ${a.onName}`,
+      spend:left, thru:0, saved:0, amt:a.amt - a.amtThru, amtThru:0, pot:Math.round(left * a.rate / 100)});
+  });
+  rest.sort((a, b) => (b.exact - a.exact) || (b.spend - a.spend));
+  return {P, areas, spend, thru, off:Math.max(0, spend - thru), peer:!!P.peer, today, rest,
+    saved:today.reduce((s, a) => s + a.saved, 0)};
+}
+function span(){
+  const now = new Date(), y = now.getFullYear(), mo = now.getMonth();
+  const n = per === 'ytd' ? mo + 1 : per === 'q' ? 3 : 12;
+  const a = new Date(y, mo - (n - 1), 1);
+  return a.getFullYear() === y ? `${MON[a.getMonth()]} – ${MON[mo]} ${y}` : `${MON[a.getMonth()]} ${a.getFullYear()} – ${MON[mo]} ${y}`;
+}
+const money = (n, band) => band ? est(n) : fmt(n);
+
+/* ---------- what the person did to a row ---------- */
+const rev = a => REV[a.id] || {st:'none'};
+const typedOf = a => { const t = rev(a); return t.typed != null ? Math.round(t.typed * f()) : null; };
+const dirty = a => { const t = rev(a); return t.typed != null && t.st !== 'saved' && t.st !== 'sent' && !(a.exact && t.typed === a.amt); };
+/* the saving a row shows: read off a document in blue, a median or a typed spend
+   as a band, nothing for an area marked not relevant */
+function saveOf(a){
+  const t = rev(a);
+  if(t.st === 'skip') return {kind:'none', v:0};
+  const ty = typedOf(a);
+  if(ty != null) return {kind:'est', v:Math.round(ty * a.rate / 100)};
+  return {kind:a.exact ? 'doc' : 'est', v:a.pot};
+}
+const saveHTML = s => s.kind === 'none' ? NONE : s.kind === 'doc' ? `<span class="fig-doc">+${fmt(s.v)}</span>` : `<span class="fig-est">+${estRange(s.v)}</span>`;
+/* a sum with two kinds in it prints as both, each in its own ink, never blended */
+const mixed = (exact, estv, plus, exCls) => [exact ? `<span class="${exCls}">${plus ? '+' : ''}${fmt(exact)}</span>` : '',
+  estv ? `<span class="fig-est">${plus ? '+' : ''}${estRange(estv)}</span>` : ''].filter(Boolean).join(' <span class="sep">·</span> ') || NONE;
+function restTotals(m){
+  const t = {doc:0, est:0, sp:0, spEst:0, n:0};
+  m.rest.forEach(a => {
+    if(rev(a).st === 'skip') return;
+    t.n++;
+    const s = saveOf(a); if(s.kind === 'doc') t.doc += s.v; else t.est += s.v;
+    const ty = typedOf(a);
+    if(ty != null) t.spEst += ty; else if(a.exact) t.sp += a.spend; else t.spEst += a.spend;
+  });
+  return t;
+}
+const spendText = a => { const ty = typedOf(a); return ty != null ? `<span class="fig-est">${fmt(ty)}</span>` : a.exact ? fmt(a.spend) : est(a.spend); };
+const spendInput = a => { const t = rev(a), ty = typedOf(a), ro = t.st === 'sent' || a.kind === 'idle';
+  return `<span class="tb-in${ro ? ' ro' : ''}"><input data-live="${a.id}" value="${ty != null ? fmt(t.typed) : a.exact ? fmt(a.amt) : ''}"
+    placeholder="${a.exact ? '' : estRange(a.amt)}"${ro ? ' readonly' : ''} inputmode="numeric" aria-label="${esc(a.n)}: your spend a year, kr."><span class="u">kr.</span></span>`; };
+/* the status cell: a fact, until a changed figure turns it into the one thing to do */
+function stCell(a){
+  const t = rev(a);
+  if(a.kind === 'thru') return `<span class="tag on">Through Advantage</span>`;
+  if(a.kind === 'idle') return `<span class="tag idle">${a.idleLine.includes('requested') ? 'In progress' : 'Not being used'}</span>`;
+  if(t.st === 'skip') return `<span class="tb-st"><span class="st">Not relevant</span><button type="button" class="linkbtn" data-act="undo" data-id="${a.id}">Undo</button></span>`;
+  if(t.st === 'sent') return `<span class="st on">With Peter</span>`;
+  if(dirty(a)) return `<span class="tb-st"><button type="button" class="btn btn-secondary btn-sm" data-act="save" data-id="${a.id}">Save</button></span>`;
+  if(t.st === 'saved') return `<span class="st saved">Saved</span>`;
+  return `<span class="st">Not reviewed</span>`;
+}
+const subOf = a => { const t = rev(a);
+  if(a.kind === 'thru') return a.onName;
+  if(a.kind === 'idle') return a.idleLine;
+  if(t.st === 'saved' || t.st === 'sent') return `Your spend ${fmt(t.typed != null ? t.typed : a.amt)} kr.${t.sup ? ' · ' + esc(t.sup) : ''}`;
+  if(a.isRest) return a.sub;
+  return a.exact ? a.sup : `${a.openN} agreement${a.openN === 1 ? '' : 's'} · ${a.rate}% average saving`; };
+
+/* ---------- the top row and the card (kept from the first round) ---------- */
+function topHTML(){
+  return `
+    <div class="rp-ctl">
+      <button type="button" class="dr-back">${IC.back}Back to overview</button>
+      <span class="rp-ctl-sp"></span>
+      <div class="seg rp-per" role="group" aria-label="Period">
+        ${Object.entries(PER).map(([k, v]) => `<button type="button" data-per="${k}" aria-pressed="${per === k}">${v.n}</button>`).join('')}
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm">See the full report${IC.go}</button>
+    </div>`;
+}
+function heroHTML(m){
+  const b = m.peer;
+  return `
+    <header class="hx hy${b ? ' est' : ''}" data-field>
+      <span class="hy-field" data-field-layer aria-hidden="true"></span>
+      <div class="hy-t2">
+        <span class="hy-eye">${PER[per].n} · ${span()}</span>
+        <h1>${b ? 'Where a company like yours spends' : 'Where your money goes'}</h1>
+      </div>
+      <i class="hy-vr" aria-hidden="true"></i>
+      <i class="hy-hr" aria-hidden="true"></i>
+      <div class="hy-figs">
+        <div class="hy-f2"><span class="hy-k">${b ? 'Companies your size buy' : 'Everything you bought'}</span>
+          <b class="hy-fig2">${money(m.spend, b)}<small> kr.</small></b></div>
+        <div class="hy-f2"><span class="hy-k">Outside your agreements · ${pct(m.off, m.spend)}%</span>
+          <b class="hy-fig2">${money(m.off, b)}<small> kr.</small></b></div>
+      </div>
+      <div class="hy-side">
+        <span class="hy-k">Where the money went</span>
+        <div class="sp-bar" aria-hidden="true">
+          <i style="flex:${m.thru} 0 0;--i:0;--k:var(--general-primary)"></i>
+          <i style="flex:${m.off} 0 0;--i:1;--k:rgb(110 110 110/.3)"></i>
+        </div>
+        <ul class="sp-key">
+          <li style="--k:var(--general-primary)"><span>Through an agreement</span><em>${money(m.thru, b)} kr.</em></li>
+          <li style="--k:rgb(110 110 110/.3)"><span>Outside your agreements</span><em>${money(m.off, b)} kr.</em></li>
+        </ul>
+        <p class="hy-cap">${m.P.src}</p>
+      </div>
+    </header>`;
+}
+const head = (h2, p, right) => `
+  <div class="ar-head"><div><h2>${h2}</h2>${p ? `<p>${p}</p>` : ''}</div>${right || ''}</div>`;
+const leadSaved = m => `<div class="lead"><span class="hy-k">Saved</span><b>${m.today.length ? `<span class="fig-actual">${fmt(m.saved)}</span><small>kr.</small>` : '<span class="none">Nothing yet</span>'}</b></div>`;
+const leadCould = (m, t) => `<div class="lead"><span class="hy-k">Could save</span><b data-tot="save">${mixed(t.doc, t.est, true, 'fig-doc')}<small>kr.</small></b></div>`;
+
+/* ---------- the form, as built on the Overview (version 5) ---------- */
+function formHTML(a, withSpend){
+  const t = rev(a), sent = t.st === 'sent';
+  const sup = t.sup != null ? t.sup : a.exact ? a.sup : '';
+  const canSave = typedOf(a) != null || a.exact;
+  return `
+    <div class="tb-body">
+      ${withSpend ? `<div class="mv-f">
+        <div class="mv-f-h"><label>Your spend a year</label>${a.exact || sent ? '' : '<button type="button" class="linkbtn">Add an invoice instead</button>'}</div>
+        <div class="mv-field${sent ? ' ro' : ''}"><input data-live="${a.id}" value="${t.typed != null ? fmt(t.typed) : a.exact ? fmt(a.amt) : ''}" placeholder="0"${sent ? ' readonly' : ''} inputmode="numeric" aria-label="Your spend a year, kr."><span class="u">kr.</span></div>
+        <span class="mv-help">${a.exact ? `${IC.doc}Read from ${esc(a.doc)}` : 'Excluding VAT. A rough figure is fine.'}</span>
+      </div>` : a.exact ? `<span class="mv-help">${IC.doc}Spend read from ${esc(a.doc)}</span>` : ''}
+      <div class="mv-f">
+        <label>Current supplier <i>(optional)</i></label>
+        <div class="mv-field${sent ? ' ro' : ''}"><input data-sup="${a.id}" value="${esc(sup)}" placeholder="Who you buy from"${sent ? ' readonly' : ''} aria-label="Current supplier"></div>
+      </div>
+      <div class="mv-act">${sent
+        ? `<span class="mv-sent">${IC.tick}Sent today · Peter replies within two working days</span><span class="spacer"></span><button type="button" class="linkbtn mv-skip" data-act="withdraw" data-id="${a.id}">Withdraw</button>`
+        : `<button type="button" class="linkbtn mv-skip" data-act="skip" data-id="${a.id}">Not relevant</button><span class="spacer"></span>
+           <button type="button" class="btn btn-secondary btn-sm" data-act="save" data-id="${a.id}"${canSave ? '' : ' disabled'}>Save</button>
+           <button type="button" class="btn btn-primary btn-sm" data-act="send" data-id="${a.id}"${canSave ? '' : ' disabled'}>Send to review</button>`}
+      </div>
+    </div>`;
+}
+
+/* ---------- the rows ---------- */
+const areaCell = a => `<span class="tb-area"><span class="tb-ic" aria-hidden="true">${art(a.art, true)}</span>
+  <span class="tb-name"><b>${a.n}</b><span>${subOf(a)}</span></span></span>`;
+
+/* act one: today. The spend is what ran through the agreement — the one figure an
+   invoice actually gives — and the saving it earned. No status column: every row
+   here is through an agreement, which the sub-line names. */
+function todayTable(m){
+  if(!m.today.length) return `<p class="empty">Nothing runs through an agreement yet.</p>`;
+  return `<div class="tb tb-a">
+    <div class="tb-head"><span>Area</span><span class="r">Spend</span><span class="r">Saved</span></div>
+    ${m.today.map(a => `<div class="tb-row">${areaCell(a)}<span class="tb-num r">${fmt(a.thru)}</span>
+      <span class="tb-num r"><span class="fig-actual">${fmt(a.saved)}</span></span></div>`).join('')}
+    <div class="tb-foot"><span class="l">Total · <b>${m.today.length} area${m.today.length === 1 ? '' : 's'}</b></span><span class="r">${fmt(m.thru)}</span>
+      <span class="r"><span class="fig-actual">${fmt(m.saved)}</span></span></div>
+  </div>`;
+}
+/* act two: elsewhere. `inline` puts the input in the spend cell; otherwise the row opens to the form with the field in it. */
+function restRow(a, i, inline, one, openFirst){
+  const t = rev(a), opens = a.kind === 'open', skip = t.st === 'skip';
+  const cells = `${areaCell(a)}
+    <span class="tb-num r"${inline ? '' : ` data-spend="${a.id}"`}>${inline && opens ? spendInput(a) : spendText(a)}</span>
+    <span class="tb-num r c-save" data-save="${a.id}">${saveHTML(saveOf(a))}</span>
+    <span class="c-st" data-st="${a.id}">${stCell(a)}</span>
+    <span class="tb-x" aria-hidden="true">${opens ? IC.chev : ''}</span>`;
+  return opens
+    ? `<details name="${one ? 'one' : 'rest'}"${openFirst && i === 0 ? ' open' : ''}><summary><div class="tb-row${skip ? ' skip' : ''}">${cells}</div></summary>${formHTML(a, !inline)}</details>`
+    : `<div class="tb-row">${cells}</div>`;
+}
+function restFoot(m, t, label){
+  return `<div class="tb-foot"><span class="l">${label} · <b>${t.n} area${t.n === 1 ? '' : 's'}</b></span>
+    <span class="r" data-tot="spend">${mixed(t.sp, t.spEst, false, '')}</span>
+    <span class="r c-save" data-tot="save">${mixed(t.doc, t.est, true, 'fig-doc')}</span><span class="c-st"></span><span></span></div>`;
+}
+function restTable(m, inline, openFirst){
+  const t = restTotals(m);
+  return `<div class="tb tb-b">
+    <div class="tb-head"><span>Area</span><span class="r">Spend</span><span class="r">Could save</span><span class="c-st">Status</span><span></span></div>
+    ${m.rest.map((a, i) => restRow(a, i, inline, false, openFirst)).join('')}
+    ${restFoot(m, t, 'Total')}
+  </div>`;
+}
+const restP = m => m.peer ? 'Industry medians. Add your spend and the saving follows.'
+  : m.rest.some(a => !a.exact) ? 'Figures without a document are the industry median. Add yours and the saving follows.'
+  : `Read from ${m.P.srcShort}.`;
+const restH2 = () => 'Not reviewed areas';
+
+/* ---------- the three versions ---------- */
+const V = {
+  1: m => `
+    <section class="sec">${head('What you spend and save today', m.today.length ? `Read from ${m.P.srcShort}.` : '', leadSaved(m))}${todayTable(m)}</section>
+    <section class="sec">${head(restH2(m), restP(m), leadCould(m, restTotals(m)))}${restTable(m, false, true)}</section>`,
+  2: m => `
+    <section class="sec">${head('What you spend and save today', m.today.length ? `Read from ${m.P.srcShort}.` : '', leadSaved(m))}${todayTable(m)}</section>
+    <section class="sec">${head(restH2(m), restP(m), leadCould(m, restTotals(m)))}${restTable(m, true, true)}</section>`,
+  3: m => {
+    const t = restTotals(m);
+    return `
+    <section class="sec">${head('What you spend and save', restP(m), `<div class="leads">${leadSaved(m)}${leadCould(m, t)}</div>`)}
+      <div class="tb tb-c">
+        <div class="tb-head"><span>Area</span><span class="r">Spend</span><span class="r">Saved · could save</span><span class="c-st">Status</span><span></span></div>
+        ${m.today.map(a => `<div class="tb-row">${areaCell(a)}<span class="tb-num r">${fmt(a.thru)}</span>
+          <span class="tb-num r c-save"><span class="fig-actual">${fmt(a.saved)}</span></span><span class="c-st">${stCell(a)}</span><span></span></div>`).join('')}
+        <div class="seam">${restH2(m)}<em>${m.rest.length}</em></div>
+        ${m.rest.map((a, i) => restRow(a, i, true, true, true)).join('')}
+        ${m.today.length ? `<div class="tb-foot"><span class="l">Today · <b>${m.today.length} area${m.today.length === 1 ? '' : 's'}</b></span><span class="r">${fmt(m.thru)}</span>
+          <span class="r c-save"><span class="fig-actual">${fmt(m.saved)}</span></span><span class="c-st"></span><span></span></div>` : ''}
+        ${restFoot(m, t, 'Not reviewed')}
+      </div>
+    </section>`;
+  }
+};
+
+function render(){
+  const m = model();
+  document.querySelectorAll('.page[data-v]').forEach(pg => {
+    pg.innerHTML = `<div class="rp-top">${topHTML()}${heroHTML(m)}</div>${V[pg.dataset.v](m)}`;
+    fieldWire(pg.querySelector('[data-field]'));
+  });
+  document.querySelectorAll('[data-pk]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pk === pk)));
+  document.querySelectorAll('[data-after]').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.after === '1') === after)));
+}
+/* a keystroke moves the row's saving, its status and the act's totals, in every
+   version at once, without rebuilding anything the person is typing in */
+function live(id){
+  const m = model(), a = m.areas.find(x => x.id === id);
+  if(!a) return;
+  document.querySelectorAll(`[data-save="${id}"]`).forEach(el => el.innerHTML = saveHTML(saveOf(a)));
+  document.querySelectorAll(`[data-st="${id}"]`).forEach(el => el.innerHTML = stCell(a));
+  document.querySelectorAll(`[data-spend="${id}"]`).forEach(el => el.innerHTML = spendText(a));
+  document.querySelectorAll(`input[data-live="${id}"]`).forEach(inp => {
+    if(inp === document.activeElement) return;
+    const t = rev(a); inp.value = t.typed != null ? fmt(t.typed) : a.exact ? fmt(a.amt) : '';
+  });
+  const t = restTotals(m);
+  document.querySelectorAll('[data-tot="save"]').forEach(el => el.innerHTML = mixed(t.doc, t.est, true, 'fig-doc') + (el.closest('.lead') ? '<small>kr.</small>' : ''));
+  document.querySelectorAll('[data-tot="spend"]').forEach(el => el.innerHTML = mixed(t.sp, t.spEst, false, ''));
+}
+/* the card's texture follows the pointer, as on the other pages */
+function fieldWire(mast){
+  if(!mast || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  const layer = mast.querySelector('[data-field-layer]');
+  let raf = 0, x = 0, y = 0;
+  mast.addEventListener('pointermove', e => {
+    if(e.pointerType !== 'mouse') return;
+    const r = mast.getBoundingClientRect(); x = e.clientX - r.left; y = e.clientY - r.top;
+    if(raf) return;
+    raf = requestAnimationFrame(() => { raf = 0; layer.style.setProperty('--mx', `${x}px`); layer.style.setProperty('--my', `${y}px`); });
+  });
+}
+document.addEventListener('input', e => {
+  const inp = e.target.closest('input[data-live]'); if(!inp) return;
+  const id = inp.dataset.live, v = parseNum(inp.value);
+  REV[id] = {...(REV[id] || {st:'none'})};
+  if(v == null) delete REV[id].typed; else REV[id].typed = v;
+  live(id);
+});
+document.addEventListener('change', e => {
+  const inp = e.target.closest('input[data-live]'); if(!inp) return;
+  const v = parseNum(inp.value); if(v != null) inp.value = fmt(v);
+});
+document.addEventListener('click', e => {
+  const p = e.target.closest('[data-per]'); if(p){ per = p.dataset.per; render(); return; }
+  const k = e.target.closest('[data-pk]'); if(k){ pk = k.dataset.pk; seed(); render(); return; }
+  const af = e.target.closest('[data-after]'); if(af){ after = af.dataset.after === '1'; seed(); render(); return; }
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const id = b.dataset.id, t = REV[id] || {st:'none'};
+  const supIn = b.closest('details') ? b.closest('details').querySelector(`input[data-sup="${id}"]`) : null;
+  const sup = supIn ? supIn.value.trim() : t.sup;
+  if(b.dataset.act === 'save')      REV[id] = {...t, st:'saved', sup};
+  else if(b.dataset.act === 'send') REV[id] = {...t, st:'sent', sup};
+  else if(b.dataset.act === 'skip') REV[id] = {...t, st:'skip'};
+  else if(b.dataset.act === 'withdraw') REV[id] = {...t, st:t.typed != null ? 'saved' : 'none'};
+  else if(b.dataset.act === 'undo') delete REV[id];
+  render();
+});
+seed(); render();
+</script>
+</body>
+</html>

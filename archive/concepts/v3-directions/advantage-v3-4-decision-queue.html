@@ -1,0 +1,1396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Advantage — The Decision Queue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&family=DM+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Advantage v3.4 — THE DECISION QUEUE
+   Stance: browsing is optional; deciding is the job.
+   Semantic tokens only — no raw hex in components (state tints declared here).
+   ========================================================================== */
+:root{
+  --general-background:#fafafa;--general-foreground:#0f0f0f;
+  --general-primary:#1b64dc;--general-primary-foreground:#fafafa;
+  --general-secondary:#dbe9ff;--general-secondary-foreground:#1c1c1c;
+  --general-muted:#f2f2f2;--general-muted-foreground:#707070;
+  --general-accent:#ff9b3d;--general-accent-foreground:#1c1c1c;
+  --general-destructive:#dc2626;--general-border:#bdd7ff;--general-input:#ffffff;
+  --sidebar-border:#e0e0e0;--sidebar-foreground:#1c1c1c;
+  --sentiment-positive:#009689;--sentiment-negative:#f54a00;
+  --surface:#ffffff;--brand-midnight:#000a45;--brand-ice:#edf5ff;--brand-cornflower:#73abff;
+  --font-sans:"Rethink Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  --text-xs:13px;--text-sm:14px;--text-base:16px;--text-lg:18px;
+  --text-xl:20px;--text-2xl:24px;--text-3xl:30px;--text-4xl:36px;--text-5xl:48px;
+  --rounded-xs:4px;--rounded-sm:8px;--rounded-md:12px;--rounded-lg:16px;
+  --rounded-xl:20px;--rounded-2xl:25px;--rounded-full:9999px;
+  --shadow-xs:0 1px 2px 0 #0000000d;
+  --shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+  --shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;
+  --shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;--s12:48px;--s16:64px;
+  --hairline:#ececec;
+  --t-fast:.15s ease;--t:.28s cubic-bezier(.2,.7,.3,1);
+  /* semantic state tints (derived, declared once) */
+  --tint-warn-bg:#fff2e0;--tint-warn-fg:#a35c00;
+  --tint-good-bg:#d9f2ef;
+  --tint-new-bg:#edf5ff;
+  --tint-est-fg:#8a5a00;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{font-family:var(--font-body);background:var(--general-background);color:var(--general-foreground);
+  font-size:var(--text-base);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-family:var(--font-sans);font-weight:600;text-wrap:balance}
+h1{font-size:var(--text-3xl);letter-spacing:-1.2px;line-height:1.12}
+h2{font-size:var(--text-xl);letter-spacing:-.7px;line-height:1.2}
+h3{font-size:var(--text-lg);letter-spacing:-.3px}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--general-muted-foreground)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--general-primary);outline-offset:2px;border-radius:var(--rounded-xs)}
+[tabindex="-1"]:focus-visible{outline:none}
+::selection{background:var(--general-secondary)}
+button{font-family:inherit;font-size:inherit;color:inherit}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:44px;min-height:44px;padding:0 var(--s6);border:1px solid transparent;cursor:pointer;
+  border-radius:var(--rounded-full);font-size:var(--text-sm);font-weight:500;white-space:nowrap;
+  transition:background-color var(--t-fast),color var(--t-fast),border-color var(--t-fast),
+             box-shadow var(--t-fast),transform .1s ease}
+.btn:active{transform:translateY(1px)}
+.btn svg{width:15px;height:15px;flex:0 0 auto}
+.btn-primary{background:var(--general-primary);color:var(--general-primary-foreground);
+  box-shadow:0 1px 2px #1b64dc40,inset 0 1px 0 #ffffff26}
+.btn-primary:hover{background:#1553bb}
+.btn-secondary{background:var(--surface);border-color:var(--sidebar-border);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover{background:var(--brand-ice);border-color:var(--general-border)}
+.btn-ghost{background:transparent;color:var(--general-primary);padding:0 var(--s4)}
+.btn-ghost:hover{background:var(--brand-ice)}
+.btn-quiet{background:transparent;color:var(--general-muted-foreground);padding:0 var(--s4)}
+.btn-quiet:hover{background:var(--general-muted);color:var(--general-foreground)}
+.btn-compact{padding:0 var(--s4);font-size:var(--text-xs)}
+.linkbtn{background:none;border:none;padding:var(--s2) var(--s1);cursor:pointer;color:var(--general-primary);
+  font-size:var(--text-xs);font-weight:600;border-radius:var(--rounded-xs);min-height:32px}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--rounded-full);
+  font-size:12px;font-weight:600;letter-spacing:.01em;line-height:1.5;white-space:nowrap}
+.chip-new{background:var(--general-primary);color:var(--general-primary-foreground)}
+.chip-soft{background:var(--general-muted);color:var(--general-muted-foreground)}
+.chip-warn{background:var(--tint-warn-bg);color:var(--tint-warn-fg)}
+.chip-good{background:var(--tint-good-bg);color:var(--sentiment-positive)}
+.chip-est{background:var(--surface);color:var(--tint-est-fg);border:1px dashed var(--general-accent)}
+.chip-ice{background:var(--brand-ice);color:var(--general-primary)}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
+.sidebar{position:sticky;top:0;align-self:start;height:100vh;display:flex;flex-direction:column;
+  background:var(--surface);border-right:1px solid var(--sidebar-border);padding:var(--s6) var(--s4)}
+.logo{display:flex;align-items:center;gap:var(--s2);padding:var(--s1) var(--s3) var(--s6);
+  font-family:var(--font-sans);font-weight:800;letter-spacing:-.5px;font-size:var(--text-lg);color:var(--brand-midnight)}
+.logo svg{width:22px;height:22px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:var(--s3);min-height:44px;padding:0 var(--s3);
+  border-radius:var(--rounded-md);color:var(--sidebar-foreground);text-decoration:none;
+  font-size:var(--text-sm);font-weight:500;transition:background-color var(--t-fast)}
+.nav a:hover{background:var(--general-muted)}
+.nav a[aria-current="page"]{background:var(--brand-ice);color:var(--general-primary);font-weight:600}
+.nav a svg{width:17px;height:17px;flex:0 0 auto;opacity:.75}
+.nav a[aria-current="page"] svg{opacity:1}
+.nav .grow{flex:1}
+.navbadge{min-width:22px;height:22px;padding:0 7px;border-radius:var(--rounded-full);
+  display:inline-grid;place-items:center;background:var(--general-primary);color:var(--general-primary-foreground);
+  font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.navbadge.zero{background:var(--general-muted);color:var(--general-muted-foreground)}
+.navbadge.soft{background:var(--tint-warn-bg);color:var(--tint-warn-fg)}
+.sidefoot{margin-top:auto;display:flex;flex-direction:column;gap:var(--s3)}
+.assist-launch{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:48px;padding:var(--s2) var(--s3);
+  border:1px solid var(--general-border);border-radius:var(--rounded-lg);background:var(--brand-ice);
+  cursor:pointer;text-align:left;transition:box-shadow var(--t-fast),transform var(--t-fast)}
+.assist-launch:hover{box-shadow:var(--shadow-sm)}
+.assist-launch .spark{width:30px;height:30px;flex:0 0 auto;border-radius:var(--rounded-full);
+  display:grid;place-items:center;background:var(--general-primary);color:var(--general-primary-foreground)}
+.assist-launch .spark svg{width:15px;height:15px}
+.assist-launch b{display:block;font-size:var(--text-xs);font-weight:700}
+.assist-launch span{display:block;font-size:11px;color:var(--general-muted-foreground);line-height:1.35}
+.sidefoot .fine{font-size:11px;color:var(--general-muted-foreground);padding:0 var(--s3) var(--s1);line-height:1.5}
+
+/* ---------- topbar ---------- */
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:30;height:64px;display:flex;align-items:center;gap:var(--s4);
+  padding:0 var(--s8);background:#fafafae6;backdrop-filter:blur(12px) saturate(160%);
+  border-bottom:1px solid var(--hairline)}
+.crumb{font-size:var(--text-sm);color:var(--general-muted-foreground)}
+.crumb b{color:var(--general-foreground);font-weight:600}
+.topbar .spacer{flex:1}
+.weekpill{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:var(--rounded-full);
+  background:var(--surface);border:1px solid var(--hairline);box-shadow:var(--shadow-xs);
+  font-size:var(--text-xs);color:var(--general-muted-foreground);white-space:nowrap}
+.weekpill i{width:7px;height:7px;border-radius:var(--rounded-full);background:var(--general-accent)}
+.weekpill b{color:var(--general-foreground);font-weight:700}
+.acct{position:relative}
+.acct-btn{display:flex;align-items:center;gap:var(--s2);min-height:44px;padding:var(--s1) var(--s2) var(--s1) var(--s1);
+  border:1px solid transparent;border-radius:var(--rounded-full);background:transparent;cursor:pointer;
+  transition:background-color var(--t-fast)}
+.acct-btn:hover{background:var(--general-muted)}
+.av{width:34px;height:34px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--brand-midnight);color:var(--general-primary-foreground);font-family:var(--font-sans);
+  font-size:12px;font-weight:700;letter-spacing:.02em}
+.acct-btn .who{text-align:left;line-height:1.2}
+.acct-btn .who b{display:block;font-size:var(--text-xs);font-weight:600}
+.acct-btn .who span{display:block;font-size:11px;color:var(--general-muted-foreground)}
+.acct-btn>svg{width:14px;height:14px;color:var(--general-muted-foreground)}
+.acct-menu{position:absolute;right:0;top:calc(100% + 6px);width:280px;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-lg);box-shadow:var(--shadow-lg);
+  padding:var(--s2);display:none;z-index:40}
+.acct-menu.open{display:block}
+.acct-menu .mlabel{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--general-muted-foreground);padding:var(--s2) var(--s3) var(--s1)}
+.pswitch{display:flex;align-items:center;gap:var(--s3);width:100%;min-height:52px;padding:var(--s2) var(--s3);
+  border:none;background:none;border-radius:var(--rounded-md);cursor:pointer;text-align:left;
+  transition:background-color var(--t-fast)}
+.pswitch:hover{background:var(--brand-ice)}
+.pswitch .av{width:36px;height:36px}
+.pswitch .av.alt{background:var(--brand-ice);color:var(--general-primary)}
+.pswitch b{display:block;font-size:var(--text-sm);font-weight:600}
+.pswitch span{display:block;font-size:12px;color:var(--general-muted-foreground)}
+.pswitch .tick{margin-left:auto;width:16px;height:16px;color:var(--sentiment-positive)}
+
+/* ---------- page frame ---------- */
+.page{width:100%;max-width:1180px;margin:0 auto;padding:var(--s8) var(--s8) var(--s16)}
+.pg{display:none}
+.pg.on{display:block;animation:pgin var(--t) both}
+@keyframes pgin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pagehead{margin-bottom:var(--s6)}
+.pagehead .lede{margin-top:var(--s2);font-size:var(--text-sm);color:var(--general-muted-foreground);max-width:64ch}
+
+/* ---------- KPI bar ---------- */
+.kpibar{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-xl);box-shadow:var(--shadow-xs);
+  margin-bottom:var(--s6);overflow:hidden}
+.kpi{padding:var(--s4) var(--s6);border-left:1px solid var(--hairline);min-width:0}
+.kpi:first-child{border-left:none}
+.kpi .k{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--general-muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .v{margin-top:2px;font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:700;
+  letter-spacing:-.7px;font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi .v.pos{color:var(--sentiment-positive)}
+.kpi .sub{font-size:11px;color:var(--general-muted-foreground);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .v .estmark{font-size:12px;font-weight:600;color:var(--tint-est-fg);vertical-align:super;margin-left:3px}
+.kpi.est .v{color:var(--general-foreground)}
+
+/* ---------- overview layout ---------- */
+.ovgrid{display:grid;grid-template-columns:minmax(0,1fr) 312px;gap:var(--s6);align-items:start}
+.queuehead{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s4)}
+.queuehead h2{font-size:var(--text-xl)}
+.queuehead .qcount{font-family:var(--font-sans);font-weight:700;color:var(--general-muted-foreground);
+  font-variant-numeric:tabular-nums}
+.queuehead .right{margin-left:auto;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+
+/* ---------- decision cards ---------- */
+.queue{display:flex;flex-direction:column;gap:var(--s4)}
+.dcard{position:relative;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-xl);box-shadow:var(--shadow-sm);padding:var(--s6);
+  transition:box-shadow var(--t),border-color var(--t)}
+.dcard:hover{box-shadow:var(--shadow-md)}
+.dcard.est{border-style:dashed;border-color:var(--general-accent);box-shadow:var(--shadow-xs)}
+.dcard.hero{border-color:var(--general-border)}
+.dcard-top{display:flex;align-items:flex-start;gap:var(--s4)}
+.suplogo{width:44px;height:44px;flex:0 0 auto;border-radius:var(--rounded-md);display:grid;place-items:center;
+  background:var(--brand-ice);color:var(--general-primary);font-family:var(--font-sans);
+  font-weight:700;font-size:var(--text-sm);letter-spacing:.02em}
+.suplogo.mid{background:var(--brand-midnight);color:var(--general-primary-foreground)}
+.dcard-mid{flex:1 1 auto;min-width:0}
+.dcard-meta{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s2);margin-bottom:var(--s2)}
+.dcard h3{font-size:var(--text-lg);letter-spacing:-.4px;line-height:1.3}
+.dcard .ask{margin-top:3px;font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.5}
+.dcard .why{margin-top:var(--s3);display:flex;gap:var(--s2);font-size:var(--text-xs);
+  color:var(--general-muted-foreground);line-height:1.55;padding:var(--s2) var(--s3);
+  background:var(--general-background);border-radius:var(--rounded-sm)}
+.dcard .why svg{width:14px;height:14px;flex:0 0 auto;margin-top:2px;color:var(--brand-cornflower)}
+.dcard .why b{color:var(--general-foreground);font-weight:600}
+.dnum{flex:0 0 auto;text-align:right}
+.dnum .amt{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:700;letter-spacing:-.8px;
+  font-variant-numeric:tabular-nums;color:var(--sentiment-positive);line-height:1.1}
+.dnum .amt.neutral{color:var(--general-foreground)}
+.dnum .lbl{font-size:11px;color:var(--general-muted-foreground);margin-top:2px}
+.est .dnum .amt{color:var(--general-foreground)}
+.dcard-actions{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s4);
+  padding-top:var(--s4);border-top:1px solid var(--hairline)}
+.est .dcard-actions{border-top-style:dashed;border-top-color:var(--general-border)}
+.dcard-actions .push{margin-left:auto}
+/* leave animation */
+.dcard.leaving{overflow:hidden}
+@media (prefers-reduced-motion:no-preference){
+  .dcard.leaving{transition:opacity .24s ease,transform .24s ease,max-height .3s cubic-bezier(.2,.7,.3,1),
+    margin-bottom .3s cubic-bezier(.2,.7,.3,1),padding-top .3s cubic-bezier(.2,.7,.3,1),
+    padding-bottom .3s cubic-bezier(.2,.7,.3,1),border-width .3s ease;
+    opacity:0;transform:translateX(28px) scale(.985)}
+}
+@media (prefers-reduced-motion:reduce){
+  .pg.on{animation:none}
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}
+
+/* ---------- decided strip ---------- */
+.decided{margin-top:var(--s8)}
+.decided h2{display:flex;align-items:baseline;gap:var(--s2);font-size:var(--text-base);letter-spacing:-.3px}
+.decided h2 .cnt{font-size:var(--text-sm);color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.decided-list{margin-top:var(--s3);display:flex;flex-direction:column;gap:var(--s2)}
+.drow{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s4);min-height:52px;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-lg)}
+.drow.entering{animation:drowin var(--t) both}
+@keyframes drowin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.drow .suplogo{width:32px;height:32px;font-size:12px;border-radius:var(--rounded-sm)}
+.drow .t{flex:1 1 auto;min-width:0;font-size:var(--text-sm);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drow .when{font-size:11px;color:var(--general-muted-foreground);white-space:nowrap}
+.decided-empty{margin-top:var(--s3);padding:var(--s6);border:1px dashed var(--sidebar-border);
+  border-radius:var(--rounded-lg);text-align:center;font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
+/* ---------- right rail ---------- */
+.rail{display:flex;flex-direction:column;gap:var(--s4)}
+.railcard{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);padding:var(--s4) var(--s4) var(--s4)}
+.railcard h3{font-size:var(--text-xs);font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--general-muted-foreground)}
+.railnum{margin-top:var(--s2);font-family:var(--font-sans);font-size:var(--text-3xl);font-weight:700;
+  letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.05}
+.railnum.pos{color:var(--sentiment-positive)}
+.railsub{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:2px}
+.railchart{margin-top:var(--s3)}
+.railchart svg{display:block;width:100%;height:auto}
+.splitbar{margin-top:var(--s3);height:8px;border-radius:var(--rounded-full);background:var(--general-muted);
+  overflow:hidden;display:flex}
+.splitbar i{display:block;height:100%;background:var(--general-primary)}
+.splitlegend{display:flex;justify-content:space-between;font-size:11px;color:var(--general-muted-foreground);margin-top:var(--s2)}
+.railcard .rowlink{display:flex;justify-content:space-between;align-items:center;gap:var(--s2);
+  font-size:var(--text-xs);padding:var(--s2) 0;border-top:1px solid var(--hairline)}
+.railcard .rowlink:first-of-type{border-top:none}
+.raillock{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s3);
+  background:var(--general-background);border-radius:var(--rounded-md);border:1px dashed var(--sidebar-border);
+  font-size:var(--text-xs);color:var(--general-muted-foreground);line-height:1.5;margin-top:var(--s3)}
+.raillock svg{width:15px;height:15px;flex:0 0 auto;margin-top:1px}
+
+/* ---------- categories ---------- */
+.catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--s4)}
+.catcard{display:flex;flex-direction:column;gap:var(--s3);text-align:left;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--rounded-xl);box-shadow:var(--shadow-xs);
+  padding:var(--s4) var(--s6);cursor:pointer;transition:box-shadow var(--t),transform var(--t),border-color var(--t)}
+.catcard:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--general-border)}
+.catcard.est{border-style:dashed;border-color:var(--general-accent)}
+.catcard .toprow{display:flex;align-items:center;justify-content:space-between;gap:var(--s2)}
+.opencount{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:var(--rounded-full);
+  font-size:12px;font-weight:700;background:var(--general-primary);color:var(--general-primary-foreground)}
+.opencount.zero{background:var(--tint-good-bg);color:var(--sentiment-positive)}
+.opencount.est{background:var(--surface);color:var(--tint-est-fg);border:1px dashed var(--general-accent)}
+.catcard h3{font-size:var(--text-base);letter-spacing:-.3px}
+.catstats{display:flex;gap:var(--s6);font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.catstats b{display:block;font-family:var(--font-sans);font-size:var(--text-base);font-weight:700;
+  letter-spacing:-.3px;color:var(--general-foreground);font-variant-numeric:tabular-nums;white-space:nowrap}
+.catstats b.pos{color:var(--sentiment-positive)}
+.catsups{display:flex;align-items:center;gap:var(--s2);font-size:11px;color:var(--general-muted-foreground);margin-top:auto}
+.minichip{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;background:var(--brand-ice);
+  color:var(--general-primary);font-family:var(--font-sans);font-size:10px;font-weight:700}
+.catbar{height:6px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.catbar i{display:block;height:100%;background:var(--general-primary);border-radius:var(--rounded-full)}
+.catbar.est i{background:repeating-linear-gradient(90deg,var(--brand-cornflower) 0 6px,transparent 6px 10px)}
+
+/* category detail */
+.backlink{display:inline-flex;align-items:center;gap:6px;min-height:44px;background:none;border:none;cursor:pointer;
+  color:var(--general-primary);font-size:var(--text-sm);font-weight:600;padding:0 var(--s2) 0 0;border-radius:var(--rounded-xs)}
+.backlink svg{width:15px;height:15px}
+.detailhead{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);margin:var(--s3) 0 var(--s6)}
+.statrow{display:flex;gap:var(--s8);flex-wrap:wrap}
+.stat .k{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.stat .v{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:700;letter-spacing:-.7px;
+  font-variant-numeric:tabular-nums}
+.stat .v.pos{color:var(--sentiment-positive)}
+.sect{margin-top:var(--s8)}
+.sect>h2{font-size:var(--text-base);letter-spacing:-.3px;margin-bottom:var(--s3)}
+
+/* ---------- agreements ---------- */
+.agrgroup{margin-bottom:var(--s8)}
+.agrgroup>header{display:flex;align-items:baseline;gap:var(--s2);margin-bottom:var(--s3)}
+.agrgroup>header h2{font-size:var(--text-base)}
+.agrgroup>header .cnt{font-size:var(--text-sm);color:var(--general-muted-foreground);font-variant-numeric:tabular-nums}
+.agrlist{display:flex;flex-direction:column;gap:var(--s2)}
+.agrrow{display:flex;align-items:center;gap:var(--s4);background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-lg);padding:var(--s3) var(--s4);min-height:64px;flex-wrap:wrap}
+.agrrow.attn{border-color:var(--general-border);box-shadow:var(--shadow-xs)}
+.agrrow.est{border-style:dashed;border-color:var(--general-accent)}
+.agrrow .nm{min-width:0;flex:1 1 180px}
+.agrrow .nm b{display:block;font-size:var(--text-sm);font-weight:600}
+.agrrow .nm span{display:block;font-size:12px;color:var(--general-muted-foreground)}
+.agrrow .terms{flex:1 1 160px;font-size:var(--text-xs);color:var(--general-muted-foreground)}
+.agrrow .terms b{color:var(--general-foreground);font-weight:600}
+.agract{display:flex;gap:var(--s2);flex-wrap:wrap;margin-left:auto}
+.agract .btn{height:38px;min-height:38px;padding:0 var(--s4);font-size:var(--text-xs)}
+.groupempty{padding:var(--s4) var(--s6);border:1px dashed var(--sidebar-border);border-radius:var(--rounded-lg);
+  font-size:var(--text-sm);color:var(--general-muted-foreground)}
+
+/* ---------- savings ---------- */
+.savhero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:var(--s4);margin-bottom:var(--s6)}
+.savcard{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);padding:var(--s6)}
+.savcard .k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.savcard .big{font-family:var(--font-sans);font-size:var(--text-4xl);font-weight:800;letter-spacing:-1.4px;
+  font-variant-numeric:tabular-nums;margin-top:var(--s2);line-height:1.05}
+.savcard .big.pos{color:var(--sentiment-positive)}
+.savcard .note{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-top:var(--s2);line-height:1.5}
+.bonusrow{display:flex;gap:var(--s6);margin-top:var(--s4)}
+.bonusrow .stat .v{font-size:var(--text-xl)}
+.paidgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--s4)}
+.paidcard{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);padding:var(--s4) var(--s6);display:flex;flex-direction:column;gap:var(--s2)}
+.paidcard .toprow{display:flex;align-items:center;gap:var(--s3)}
+.paidcard .decided-chip{margin-left:auto}
+.paidcard h3{font-size:var(--text-sm)}
+.paidcard .amt{font-family:var(--font-sans);font-size:var(--text-2xl);font-weight:700;letter-spacing:-.8px;
+  color:var(--sentiment-positive);font-variant-numeric:tabular-nums}
+.paidcard .amt.neutral{color:var(--general-foreground)}
+.paidcard .src{font-size:12px;color:var(--general-muted-foreground);line-height:1.5}
+.paidcard.fresh{border-style:dashed;border-color:var(--general-border)}
+/* timeline */
+.timeline{position:relative;margin-top:var(--s4);padding-left:26px}
+.timeline::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;
+  background:var(--hairline);border-radius:2px}
+.tl{position:relative;padding:var(--s2) 0 var(--s4)}
+.tl::before{content:"";position:absolute;left:-24px;top:14px;width:12px;height:12px;
+  border-radius:var(--rounded-full);background:var(--surface);border:3px solid var(--general-primary)}
+.tl.good::before{border-color:var(--sentiment-positive)}
+.tl.pending::before{border-color:var(--brand-cornflower);border-style:dashed}
+.tl .when{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--general-muted-foreground)}
+.tl .what{font-size:var(--text-sm);margin-top:2px}
+.tl .what b{font-weight:600}
+.tl .out{font-size:var(--text-xs);color:var(--sentiment-positive);font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+.tl .out.wait{color:var(--general-muted-foreground);font-weight:500}
+
+/* ---------- spending ---------- */
+.spendgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:var(--s4);margin-bottom:var(--s6)}
+.chartcard{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--rounded-xl);
+  box-shadow:var(--shadow-xs);padding:var(--s6)}
+.chartcard h3{font-size:var(--text-sm);margin-bottom:var(--s1)}
+.chartcard .sub{font-size:var(--text-xs);color:var(--general-muted-foreground);margin-bottom:var(--s4)}
+.chartcard svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:var(--s4);font-size:11px;color:var(--general-muted-foreground);margin-top:var(--s3);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.spendtable{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:var(--rounded-xl);overflow:hidden;box-shadow:var(--shadow-xs);font-size:var(--text-sm)}
+.spendtable-wrap{border:1px solid var(--hairline);border-radius:var(--rounded-xl);overflow:hidden;
+  box-shadow:var(--shadow-xs);background:var(--surface)}
+.spendtable-wrap table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+.spendtable-wrap th{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--general-muted-foreground);text-align:left;padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--hairline);background:var(--general-background)}
+.spendtable-wrap td{padding:var(--s3) var(--s4);border-bottom:1px solid var(--hairline);vertical-align:middle}
+.spendtable-wrap tr:last-child td{border-bottom:none}
+.spendtable-wrap td.r,.spendtable-wrap th.r{text-align:right;font-variant-numeric:tabular-nums}
+.leak{color:var(--sentiment-negative);font-weight:600}
+.leak.small{color:var(--general-muted-foreground);font-weight:400}
+.tinybar{width:120px;height:6px;border-radius:var(--rounded-full);background:var(--general-muted);overflow:hidden}
+.tinybar i{display:block;height:100%;background:var(--general-primary)}
+
+/* ---------- assistant panel ---------- */
+.scrim{position:fixed;inset:0;background:#0f0f0f4d;z-index:60;opacity:0;pointer-events:none;transition:opacity var(--t)}
+.scrim.on{opacity:1;pointer-events:auto}
+.assistant{position:fixed;top:0;right:0;bottom:0;width:400px;max-width:92vw;background:var(--surface);
+  z-index:70;box-shadow:var(--shadow-lg);border-left:1px solid var(--hairline);
+  transform:translateX(102%);transition:transform var(--t);display:flex;flex-direction:column}
+.assistant.on{transform:none}
+.assistant header{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s6);
+  border-bottom:1px solid var(--hairline)}
+.assistant header .spark{width:34px;height:34px;border-radius:var(--rounded-full);display:grid;place-items:center;
+  background:var(--general-primary);color:var(--general-primary-foreground)}
+.assistant header .spark svg{width:16px;height:16px}
+.assistant header b{font-family:var(--font-sans);font-size:var(--text-base);letter-spacing:-.3px}
+.assistant header span{display:block;font-size:11px;color:var(--general-muted-foreground)}
+.iconbtn{margin-left:auto;width:44px;height:44px;display:grid;place-items:center;border:none;background:none;
+  cursor:pointer;border-radius:var(--rounded-full);color:var(--general-muted-foreground)}
+.iconbtn:hover{background:var(--general-muted);color:var(--general-foreground)}
+.iconbtn svg{width:18px;height:18px}
+.assistant .chat{flex:1;overflow-y:auto;padding:var(--s6);display:flex;flex-direction:column;gap:var(--s4)}
+.msg{max-width:88%;padding:var(--s3) var(--s4);border-radius:var(--rounded-lg);font-size:var(--text-sm);line-height:1.55}
+.msg.q{align-self:flex-end;background:var(--general-secondary);color:var(--general-secondary-foreground);
+  border-bottom-right-radius:var(--rounded-xs)}
+.msg.a{align-self:flex-start;background:var(--general-muted);border-bottom-left-radius:var(--rounded-xs)}
+.msg.a b{font-weight:600}
+.assistant .suggest{padding:var(--s3) var(--s6) var(--s6);border-top:1px solid var(--hairline);
+  display:flex;flex-direction:column;gap:var(--s2)}
+.assistant .suggest .cap{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--general-muted-foreground);margin-bottom:2px}
+.qbtn{display:block;width:100%;text-align:left;min-height:44px;padding:var(--s2) var(--s4);
+  border:1px solid var(--sidebar-border);background:var(--surface);border-radius:var(--rounded-full);
+  cursor:pointer;font-size:var(--text-xs);transition:background-color var(--t-fast),border-color var(--t-fast)}
+.qbtn:hover{background:var(--brand-ice);border-color:var(--general-border)}
+
+/* ---------- connect modal ---------- */
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:var(--s6)}
+.modal.on{display:grid}
+.modal .box{position:relative;z-index:81;width:520px;max-width:100%;background:var(--surface);
+  border-radius:var(--rounded-xl);box-shadow:var(--shadow-lg);padding:var(--s8)}
+.modal .box h2{letter-spacing:-.6px}
+.modal .box .lede{font-size:var(--text-sm);color:var(--general-muted-foreground);margin-top:var(--s2);line-height:1.55}
+.erps{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin:var(--s6) 0}
+.erp{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);min-height:56px;
+  border:1px solid var(--sidebar-border);border-radius:var(--rounded-lg);background:var(--surface);
+  cursor:pointer;text-align:left;font-size:var(--text-sm);font-weight:500;transition:border-color var(--t-fast),background-color var(--t-fast)}
+.erp:hover{background:var(--brand-ice)}
+.erp[aria-pressed="true"]{border-color:var(--general-primary);background:var(--brand-ice);box-shadow:0 0 0 1px var(--general-primary)}
+.erp .minichip{width:30px;height:30px}
+.modal .actions{display:flex;gap:var(--s3);justify-content:flex-end;margin-top:var(--s4)}
+.modal .fine{font-size:11px;color:var(--general-muted-foreground);margin-top:var(--s4);line-height:1.5}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);z-index:90;
+  background:var(--brand-midnight);color:var(--general-primary-foreground);font-size:var(--text-sm);
+  padding:var(--s3) var(--s6);border-radius:var(--rounded-full);box-shadow:var(--shadow-lg);
+  opacity:0;pointer-events:none;transition:opacity var(--t),transform var(--t);max-width:88vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- responsive ---------- */
+@media(max-width:1080px){
+  .ovgrid{grid-template-columns:1fr}
+  .rail{flex-direction:row;flex-wrap:wrap}
+  .railcard{flex:1 1 260px}
+  .kpibar{grid-template-columns:repeat(3,1fr)}
+  .kpi{border-top:1px solid var(--hairline)}
+  .savhero,.spendgrid{grid-template-columns:1fr}
+}
+@media(max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;flex-direction:row;align-items:center;
+    padding:var(--s2);z-index:50;border-right:none;border-top:1px solid var(--sidebar-border)}
+  .logo,.sidefoot .fine{display:none}
+  .nav{flex-direction:row;flex:1}
+  .nav a{flex-direction:column;gap:2px;font-size:10px;padding:var(--s1);flex:1;justify-content:center}
+  .sidefoot{margin:0}
+  .assist-launch span{display:none}
+  .page{padding:var(--s4) var(--s4) 120px}
+  .topbar{padding:0 var(--s4)}
+  .weekpill{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="logo" aria-label="Advantage">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="6" fill="var(--brand-midnight)"/>
+        <path d="M7 12.6l3.2 3.2L17 9" stroke="var(--brand-cornflower)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Advantage
+    </div>
+    <nav class="nav" aria-label="Main">
+      <a href="#overview" data-nav="overview" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        Overview <span class="grow"></span><span class="navbadge" id="badgeOverview">6</span>
+      </a>
+      <a href="#categories" data-nav="categories">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+        Categories
+      </a>
+      <a href="#agreements" data-nav="agreements">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 3h8l4 4v14H4V7z"/><path d="M8 13h8M8 17h5"/></svg>
+        Agreements <span class="grow"></span><span class="navbadge soft" id="badgeAgreements">6</span>
+      </a>
+      <a href="#savings" data-nav="savings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 17l5-5 4 3 7-8"/><path d="M15 7h5v5"/></svg>
+        Savings
+      </a>
+      <a href="#spending" data-nav="spending">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg>
+        Spending
+      </a>
+    </nav>
+    <div class="sidefoot">
+      <button class="assist-launch" id="assistLaunch" aria-haspopup="dialog" aria-expanded="false">
+        <span class="spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></span>
+        <span><b>Saving assistant</b><span>Ask about any decision</span></span>
+      </button>
+      <p class="fine">Advantage by Visma · Prepared decisions, verified terms.</p>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <header class="topbar">
+      <span class="crumb" id="crumb"><b>Overview</b> · Decision queue</span>
+      <span class="spacer"></span>
+      <span class="weekpill" id="weekpill"><i aria-hidden="true"></i><span>This week: <b>4 new findings</b></span></span>
+      <div class="acct">
+        <button class="acct-btn" id="acctBtn" aria-haspopup="menu" aria-expanded="false">
+          <span class="av" id="acctAv">BI</span>
+          <span class="who"><b id="acctName">Bob Iversen</b><span id="acctCo">Nordvik Byg A/S</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="acct-menu" id="acctMenu" role="menu" aria-label="Account">
+          <div class="mlabel">Signed in as</div>
+          <button class="pswitch" role="menuitem" data-persona="bob">
+            <span class="av">BI</span>
+            <span><b>Bob Iversen</b><span>Nordvik Byg A/S · verified data</span></span>
+            <svg class="tick" id="tickBob" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+          </button>
+          <button class="pswitch" role="menuitem" data-persona="fanny">
+            <span class="av alt">FK</span>
+            <span><b>Fanny Kristensen</b><span>Kristensen Elektro ApS · estimated</span></span>
+            <svg class="tick" id="tickFanny" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="display:none" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <!-- ============ OVERVIEW (static Bob render — page works before JS) ============ -->
+      <section class="pg on" id="pg-overview" aria-labelledby="ovh">
+        <div class="pagehead">
+          <h1 id="ovh">Good morning, Bob. 6 decisions are ready.</h1>
+          <p class="lede">Ten minutes is enough — every card below is prepared with verified terms and your own invoice data. Approve it, ask for an offer, or hand it to an advisor.</p>
+        </div>
+
+        <div class="kpibar" role="group" aria-label="Key figures">
+          <div class="kpi"><div class="k">Annual spend</div><div class="v num">kr 14.2M</div><div class="sub">last 12 months</div></div>
+          <div class="kpi"><div class="k">Through agreements</div><div class="v num">62%</div><div class="sub">kr 8.8M covered</div></div>
+          <div class="kpi"><div class="k">Realized YTD</div><div class="v num pos">kr 1.24M</div><div class="sub">verified savings</div></div>
+          <div class="kpi"><div class="k">Still on the table</div><div class="v num">kr 840K</div><div class="sub">in your queue below</div></div>
+          <div class="kpi"><div class="k">Bonus accrued</div><div class="v num">kr 45K</div><div class="sub">kr 32K paid · 13K pending</div></div>
+        </div>
+
+        <div class="ovgrid">
+          <div>
+            <div class="queuehead">
+              <h2>Decision queue</h2><span class="qcount num">6 open</span>
+              <span class="right">prioritized for you · 4 new this week</span>
+            </div>
+            <div class="queue" id="queueList">
+              <!-- Static Bob queue; JS re-renders this identically on load -->
+              <article class="dcard hero">
+                <div class="dcard-top">
+                  <span class="suplogo">LY</span>
+                  <div class="dcard-mid">
+                    <div class="dcard-meta"><span class="chip chip-new">New this week</span><span class="chip chip-warn">Top opportunity</span><span class="chip chip-soft">Office supplies</span></div>
+                    <h3>Activate the Lyreco office agreement</h3>
+                    <p class="ask">Terms are pre-negotiated and ready — approving activates them for your next order. No volume commitment.</p>
+                  </div>
+                  <div class="dnum"><div class="amt num">kr 118K/yr</div><div class="lbl">verified saving</div></div>
+                </div>
+                <p class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.5M12 11v5"/></svg><span>Why now: you buy <b>kr 620K</b> of office supplies a year, 78% of it at list price — Lyreco's terms are <b>19% below</b> what you paid last quarter.</span></p>
+                <div class="dcard-actions">
+                  <button class="btn btn-primary btn-compact">Approve</button>
+                  <button class="btn btn-secondary btn-compact">Request offer</button>
+                  <button class="btn btn-ghost btn-compact">Ask advisor</button>
+                  <button class="btn btn-quiet btn-compact push">Snooze</button>
+                </div>
+              </article>
+            </div>
+
+            <div class="decided" id="decidedWrap">
+              <h2>Decided <span class="cnt num" id="decidedCnt">· 0 this session</span></h2>
+              <div class="decided-list" id="decidedList"></div>
+              <div class="decided-empty" id="decidedEmpty">Nothing decided yet today — the queue above is waiting.</div>
+            </div>
+          </div>
+
+          <aside class="rail" id="railBox" aria-label="Summary">
+            <div class="railcard">
+              <h3>Realized savings YTD</h3>
+              <div class="railnum pos num">kr 1.24M</div>
+              <div class="railsub">Aug so far: kr 70K on agreement purchases</div>
+              <div class="railchart" aria-hidden="true">
+                <svg viewBox="0 0 272 56">
+                  <rect x="4" y="26" width="26" height="30" rx="4" fill="var(--tint-good-bg)"/>
+                  <rect x="38" y="28" width="26" height="28" rx="4" fill="var(--tint-good-bg)"/>
+                  <rect x="72" y="21" width="26" height="35" rx="4" fill="var(--tint-good-bg)"/>
+                  <rect x="106" y="24" width="26" height="32" rx="4" fill="var(--tint-good-bg)"/>
+                  <rect x="140" y="16" width="26" height="40" rx="4" fill="var(--sentiment-positive)"/>
+                  <rect x="174" y="18" width="26" height="38" rx="4" fill="var(--tint-good-bg)"/>
+                  <rect x="208" y="31" width="26" height="25" rx="4" fill="var(--tint-good-bg)"/>
+                  <rect x="242" y="25" width="26" height="31" rx="4" fill="var(--tint-good-bg)"/>
+                </svg>
+              </div>
+            </div>
+            <div class="railcard">
+              <h3>Spend coverage</h3>
+              <div class="railnum num">62%</div>
+              <div class="railsub">of kr 14.2M runs through agreements</div>
+              <div class="splitbar" role="img" aria-label="62 percent of spend on agreements"><i style="width:62%"></i></div>
+              <div class="splitlegend"><span>kr 8.8M on agreement</span><span>kr 5.4M off</span></div>
+            </div>
+            <div class="railcard">
+              <h3>If you clear the queue</h3>
+              <div class="railnum num">kr 453K/yr</div>
+              <div class="railsub">unlocked by the 6 open decisions</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Other pages render via JS -->
+      <section class="pg" id="pg-categories" aria-label="Categories"></section>
+      <section class="pg" id="pg-catdetail" aria-label="Category detail"></section>
+      <section class="pg" id="pg-agreements" aria-label="Agreements"></section>
+      <section class="pg" id="pg-savings" aria-label="Savings"></section>
+      <section class="pg" id="pg-spending" aria-label="Spending"></section>
+    </main>
+  </div>
+</div>
+
+<!-- ============ ASSISTANT ============ -->
+<div class="scrim" id="scrim"></div>
+<aside class="assistant" id="assistant" role="dialog" aria-modal="true" aria-label="Saving assistant" aria-hidden="true">
+  <header>
+    <span class="spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></span>
+    <span><b>Saving assistant</b><span id="assistSub">Knows your agreements and invoices</span></span>
+    <button class="iconbtn" id="assistClose" aria-label="Close assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </header>
+  <div class="chat" id="chatLog" aria-live="polite"></div>
+  <div class="suggest" id="chatSuggest"><div class="cap">Ask about your queue</div></div>
+</aside>
+
+<!-- ============ CONNECT MODAL (Fanny) ============ -->
+<div class="modal" id="connectModal" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+  <div class="scrim on" style="position:absolute;inset:0" data-closemodal></div>
+  <div class="box">
+    <h2 id="cmTitle">Connect your spend data</h2>
+    <p class="lede">Your invoices already know where the money is going. Connect your accounting system and every estimate on this page becomes a verified figure — usually within a day.</p>
+    <div class="erps" role="group" aria-label="Choose a source">
+      <button class="erp" data-erp="e-conomic" aria-pressed="false"><span class="minichip">EC</span> e-conomic</button>
+      <button class="erp" data-erp="Visma eAccounting" aria-pressed="false"><span class="minichip">VE</span> Visma eAccounting</button>
+      <button class="erp" data-erp="Uniconta" aria-pressed="false"><span class="minichip">UN</span> Uniconta</button>
+      <button class="erp" data-erp="Spend report (CSV)" aria-pressed="false"><span class="minichip">CSV</span> Upload spend report</button>
+    </div>
+    <div class="actions">
+      <button class="btn btn-secondary" data-closemodal>Not now</button>
+      <button class="btn btn-primary" id="connectConfirm">Send connection request</button>
+    </div>
+    <p class="fine">Read-only access to supplier invoices. Nothing is shared with suppliers, and you can disconnect any time.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   THE DECISION QUEUE — in-memory state only, no storage.
+   ========================================================================= */
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const reduceMotion=()=>window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* ---------- data ---------- */
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"];
+const SPEND_M=[1180,1090,1260,1150,1310,1240,980,1120];          // kr K
+const SAVE_M=[66,61,78,71,89,84,55,70];                          // ≈8–11% of agreement spend
+
+const CATS_BOB=[
+ {id:"building",name:"Building materials",spend:4600,pct:71,real:380,pot:120,sups:[["ST","Stark"],["BY","Bygma"]],state:"Active"},
+ {id:"tools",name:"Tools & fasteners",spend:1900,pct:64,real:210,pot:90,sups:[["HI","Hilti"],["AH","Ahlsell"]],state:"Active"},
+ {id:"fuel",name:"Fuel & fleet",spend:1600,pct:78,real:185,pot:40,sups:[["Q8","Q8"]],state:"Active"},
+ {id:"electrical",name:"Electrical supplies",spend:1400,pct:44,real:95,pot:160,sups:[["AH","Ahlsell"]],state:"Under-used"},
+ {id:"office",name:"Office supplies",spend:620,pct:22,real:30,pot:118,sups:[["LY","Lyreco"]],state:"Top opportunity"},
+ {id:"waste",name:"Waste & recycling",spend:540,pct:0,real:0,pot:86,sups:[["NG","Norsk Gjenvinning"]],state:"New match"},
+ {id:"telecom",name:"Telecom & IT",spend:480,pct:58,real:41,pot:22,sups:[["TE","Telia"]],state:"Expiring"},
+ {id:"insurance",name:"Insurance",spend:460,pct:100,real:66,pot:0,sups:[["IF","If"]],state:"Fully covered"},
+ {id:"hotels",name:"Hotels & travel",spend:390,pct:31,real:12,pot:47,sups:[["SC","Scandic"]],state:"Recommended"},
+ {id:"workwear",name:"Workwear & safety",spend:350,pct:49,real:28,pot:39,sups:[["WE","Wenaas"]],state:"Active"},
+];
+const CATS_FAN=[
+ {id:"electrical",name:"Electrical supplies",spend:2900,pct:0,real:0,pot:365,sups:[["SO","Solar"],["AH","Ahlsell"]],state:"est. 11–14% saving",est:true},
+ {id:"tools",name:"Tools & fasteners",spend:840,pct:0,real:0,pot:101,sups:[["HI","Hilti"]],state:"est. 12% saving",est:true},
+ {id:"fuel",name:"Fuel & fleet",spend:720,pct:0,real:0,pot:65,sups:[["Q8","Q8"]],state:"est. 9% saving",est:true},
+ {id:"office",name:"Office supplies",spend:310,pct:0,real:0,pot:59,sups:[["LY","Lyreco"]],state:"Easy first win",est:true},
+ {id:"telecom",name:"Telecom & IT",spend:280,pct:0,real:0,pot:42,sups:[["TE","Telia"]],state:"est. 15% saving",est:true},
+ {id:"insurance",name:"Insurance",spend:240,pct:0,real:0,pot:0,sups:[["IF","If"]],state:"Peer estimate",est:true},
+ {id:"workwear",name:"Workwear & safety",spend:210,pct:0,real:0,pot:21,sups:[["WE","Wenaas"]],state:"Peer estimate",est:true},
+ {id:"hotels",name:"Hotels & travel",spend:180,pct:0,real:0,pot:22,sups:[["SC","Scandic"]],state:"Peer estimate",est:true},
+];
+
+const AGR_BOB=[
+ {sup:"Stark",ini:"ST",cat:"Building materials",catId:"building",terms:"Avg 9% below list",status:"active",extra:"1% customer bonus"},
+ {sup:"Bygma",ini:"BY",cat:"Building materials",catId:"building",terms:"8% below list",status:"active"},
+ {sup:"Hilti",ini:"HI",cat:"Tools & fasteners",catId:"tools",terms:"Fleet program · 14% below list",status:"active"},
+ {sup:"Ahlsell",ini:"AH",cat:"Electrical + tools",catId:"electrical",terms:"11% below list",status:"active",dec:"d4",extra:"under-used — 44% coverage"},
+ {sup:"Q8",ini:"Q8",cat:"Fuel & fleet",catId:"fuel",terms:"45 øre/l off pump price",status:"active",extra:"1% customer bonus"},
+ {sup:"Lyreco",ini:"LY",cat:"Office supplies",catId:"office",terms:"19% below list",status:"recommended",dec:"d1"},
+ {sup:"Norsk Gjenvinning",ini:"NG",cat:"Waste & recycling",catId:"waste",terms:"12% below your current rates",status:"new",dec:"d3"},
+ {sup:"Telia",ini:"TE",cat:"Telecom & IT",catId:"telecom",terms:"15% below list",status:"active",dec:"d2",extra:"expires in 60 days"},
+ {sup:"If",ini:"IF",cat:"Insurance",catId:"insurance",terms:"Fixed fleet terms",status:"active"},
+ {sup:"Scandic",ini:"SC",cat:"Hotels & travel",catId:"hotels",terms:"12% corporate rate",status:"recommended",dec:"d6"},
+ {sup:"Wenaas",ini:"WE",cat:"Workwear & safety",catId:"workwear",terms:"10% below list",status:"active"},
+ {sup:"Ramirent",ini:"RA",cat:"Machine rental",terms:"13% below market",status:"new",dec:"d5"},
+];
+const AGR_FAN=[
+ {sup:"Solar",ini:"SO",cat:"Electrical supplies",catId:"electrical",terms:"est. 11% below list",status:"recommended",dec:"f2",est:true},
+ {sup:"Ahlsell",ini:"AH",cat:"Electrical supplies",catId:"electrical",terms:"est. 14% below list",status:"recommended",dec:"f2",est:true},
+ {sup:"Lyreco",ini:"LY",cat:"Office supplies",catId:"office",terms:"est. 19% below list",status:"recommended",dec:"f1",est:true},
+ {sup:"Hilti",ini:"HI",cat:"Tools & fasteners",catId:"tools",terms:"est. fleet program · 12%",status:"recommended",dec:"f3",est:true},
+ {sup:"Q8",ini:"Q8",cat:"Fuel & fleet",catId:"fuel",terms:"est. 9% off pump price",status:"recommended",dec:"f4",est:true},
+ {sup:"Telia",ini:"TE",cat:"Telecom & IT",catId:"telecom",terms:"est. 15% below list",status:"recommended",est:true},
+ {sup:"If",ini:"IF",cat:"Insurance",catId:"insurance",terms:"peer terms available",status:"recommended",est:true},
+ {sup:"Wenaas",ini:"WE",cat:"Workwear & safety",catId:"workwear",terms:"est. 10% below list",status:"recommended",est:true},
+ {sup:"Scandic",ini:"SC",cat:"Hotels & travel",catId:"hotels",terms:"est. 12% corporate rate",status:"recommended",est:true},
+];
+
+const DEC_BOB=[
+ {id:"d1",ini:"LY",sup:"Lyreco",catId:"office",isNew:true,hero:true,val:118,tag:["chip-warn","Top opportunity"],catLbl:"Office supplies",
+  title:"Activate the Lyreco office agreement",
+  ask:"Terms are pre-negotiated and ready — approving activates them for your next order. No volume commitment.",
+  amt:"kr 118K/yr",amtLbl:"verified saving",
+  why:"Why now: you buy <b>kr 620K</b> of office supplies a year, 78% of it at list price — Lyreco's terms are <b>19% below</b> what you paid last quarter."},
+ {id:"d4",ini:"AH",sup:"Ahlsell",catId:"electrical",isNew:true,val:160,tag:["chip-warn","Under-used agreement"],catLbl:"Electrical supplies",
+  title:"Move kr 780K of Solar spend to Ahlsell terms",
+  ask:"Your Ahlsell agreement is already active — approve and we prepare the switch list for your two biggest projects.",
+  amt:"kr 160K/yr",amtLbl:"verified saving",
+  why:"Why now: electrical is only <b>44% on agreement</b>. The kr 780K you route past Ahlsell is priced ~11% above the terms you already hold."},
+ {id:"d3",ini:"NG",sup:"Norsk Gjenvinning",catId:"waste",isNew:true,val:86,tag:["chip-ice","New match"],catLbl:"Waste & recycling",
+  title:"New match: Norsk Gjenvinning",
+  ask:"First agreement for this category. Request an offer to see container pricing for your three sites.",
+  amt:"kr 86K",amtLbl:"potential /yr",
+  why:"Why relevant: <b>kr 540K</b> waste & recycling spend and 0% of it on agreement — matched rates are <b>12% below</b> your current invoices."},
+ {id:"d2",ini:"TE",sup:"Telia",catId:"telecom",isNew:true,val:22,tag:["chip-warn","Expires in 60 days"],catLbl:"Telecom & IT",
+  title:"Telia expires in 60 days — renew or switch",
+  ask:"Approve to renew on current terms, or request competing offers — that usually takes 2–3 weeks.",
+  amt:"kr 22K/yr",amtLbl:"at stake",
+  why:"Why now: if the agreement lapses, 34 subscriptions fall back to standard pricing — about <b>15% more</b> for the same service."},
+ {id:"d6",ini:"SC",sup:"Scandic",catId:"hotels",val:47,tag:["chip-ice","Recommended"],catLbl:"Hotels & travel",
+  title:"Scandic corporate rate available",
+  ask:"The 12% corporate rate applies from the first booking. Approve to activate for everyone who travels.",
+  amt:"kr 47K",amtLbl:"potential /yr",
+  why:"Why relevant: <b>kr 390K</b> hotel spend, only 31% on any agreement. Your team booked 61 nights at rack rate last quarter."},
+ {id:"d5",ini:"RA",sup:"Ramirent",val:20,tag:["chip-ice","New match"],catLbl:"Machine rental",
+  title:"New match: Ramirent machine rental",
+  ask:"No rental spend registered yet — worth a decision before the next project needs a lift or a hoist.",
+  amt:"13% below",amtLbl:"market rates",neutral:true,
+  why:"Why relevant: peers your size rent for <b>kr 300–500K/yr</b>. Deciding now means the terms are in place the day you need them."},
+];
+const DEC_FAN=[
+ {id:"f0",ini:"KE",mid:true,sup:"Kristensen Elektro",isNew:true,hero:true,connect:true,tag:["chip-new","Start here"],catLbl:"Data",
+  title:"Decision #1: connect your spend data",
+  ask:"Your invoices already know where the money is going. Connect e-conomic or upload a spend report — estimates below become verified figures within a day.",
+  amt:"kr 610K",amtLbl:"est. potential unlocked",neutral:true,
+  why:"Why first: 148 electrical contractors your size save on average <b>9–12%</b> once Advantage can read real invoices instead of estimating."},
+ {id:"f1",ini:"LY",sup:"Lyreco",catId:"office",isNew:true,est:true,tag:["chip-est","est."," chip-good","Easy first win"],catLbl:"Office supplies",
+  title:"Activate the Lyreco office agreement",
+  ask:"You can decide this before connecting data — the terms are the same for every member.",
+  amt:"kr 59K/yr",amtLbl:"est. saving",
+  why:"Why relevant: companies like yours spend ~<b>kr 310K/yr</b> on office supplies. Lyreco's member terms are <b>19% below</b> list."},
+ {id:"f2",ini:"SO",sup:"Solar · Ahlsell",catId:"electrical",isNew:true,est:true,tag:["chip-est","est."],catLbl:"Electrical supplies",
+  title:"Electrical supplies: get member terms from Solar or Ahlsell",
+  ask:"Your biggest estimated category. Request offers from both and compare — no commitment.",
+  amt:"kr 320–410K",amtLbl:"est. /yr (11–14%)",
+  why:"Why relevant: peers spend ~<b>kr 2.9M/yr</b> here. Even the low end of the estimate is your single largest saving."},
+ {id:"f3",ini:"HI",sup:"Hilti",catId:"tools",est:true,tag:["chip-est","est."],catLbl:"Tools & fasteners",
+  title:"Hilti fleet program for tools",
+  ask:"Swap ownership for a fleet subscription — repairs and theft cover included.",
+  amt:"kr 101K/yr",amtLbl:"est. saving (12%)",
+  why:"Why relevant: peer companies your size put ~<b>kr 840K/yr</b> through tools & fasteners."},
+ {id:"f4",ini:"Q8",sup:"Q8",catId:"fuel",est:true,tag:["chip-est","est."],catLbl:"Fuel & fleet",
+  title:"Q8 fuel card for the vans",
+  ask:"One card per vehicle, discount at the pump, one monthly invoice.",
+  amt:"kr 65K/yr",amtLbl:"est. saving (9%)",
+  why:"Why relevant: ~<b>kr 720K/yr</b> estimated fuel spend across a fleet like yours (est. 9% off pump)."},
+];
+
+const PAID_BOB=[
+ {ini:"ST",sup:"Stark + Bygma",dec:"Approved building-materials agreements",when:"Decided Mar 2024",amt:"kr 380K",note:"9% avg below list on kr 3.3M of purchases YTD"},
+ {ini:"HI",sup:"Hilti",dec:"Approved fleet program",when:"Decided Feb 2024",amt:"kr 210K",note:"14% vs. owning — 128 tools on subscription"},
+ {ini:"Q8",sup:"Q8",dec:"Approved fuel cards",when:"Decided Jan 2024",amt:"kr 185K",note:"45 øre/l off pump across 23 vehicles"},
+ {ini:"AH",sup:"Ahlsell",dec:"Approved electrical terms",when:"Decided Apr 2024",amt:"kr 95K",note:"11% below list — more waiting in your queue"},
+ {ini:"IF",sup:"If",dec:"Renewed fleet insurance",when:"Decided Nov 2024",amt:"kr 66K",note:"fixed terms, premium held flat two years"},
+ {ini:"TE",sup:"Telia",dec:"Approved telecom agreement",when:"Decided Aug 2023",amt:"kr 41K",note:"15% below list — renewal now in your queue"},
+];
+const TIMELINE_BOB=[
+ {when:"Aug 2025",what:"<b>4 new findings</b> queued — Lyreco, Ahlsell shift, Norsk Gjenvinning, Telia renewal",out:"kr 386K/yr awaiting your decision",wait:true},
+ {when:"Apr 2025",what:"Approved <b>Ahlsell</b> electrical terms",out:"→ kr 95K realized so far",cls:"good"},
+ {when:"Nov 2024",what:"Renewed <b>If</b> fleet insurance after advisor review",out:"→ kr 66K vs. market offer",cls:"good"},
+ {when:"Mar 2024",what:"Approved <b>Stark + Bygma</b> building-materials agreements",out:"→ kr 380K realized YTD",cls:"good"},
+ {when:"Feb 2024",what:"Approved <b>Hilti</b> fleet program",out:"→ kr 210K realized YTD",cls:"good"},
+ {when:"Jan 2024",what:"Approved <b>Q8</b> fuel cards",out:"→ kr 185K realized YTD",cls:"good"},
+];
+
+const QA={
+ bob:[
+  {q:"Where is the fastest saving right now?",a:"Office supplies. You buy kr 620K a year at close to list price — approving the <b>Lyreco</b> agreement moves that to 19% below list, worth about <b>kr 118K/yr</b>. It's the top card in your queue and takes one click."},
+  {q:"What happens if I ignore the Telia expiry?",a:"After 60 days the agreement lapses and your 34 subscriptions fall back to standard pricing — roughly <b>kr 22K/yr more</b> for the same service. Renewing keeps current terms instantly; requesting competing offers takes 2–3 weeks, so deciding this week keeps both options open."},
+  {q:"How is my bonus calculated?",a:"Two of your suppliers pay a loyalty bonus: <b>Stark</b> and <b>Q8</b>, each 1% of your purchases through the agreement. You've accrued <b>kr 45K</b> — kr 32K already paid out, kr 13K pending in the October settlement."},
+ ],
+ fanny:[
+  {q:"What can you see without my data?",a:"We estimate from <b>148 electrical contractors</b> your size: about kr 6.8M yearly purchasing and <b>kr 610K</b> in likely savings. Connect your ERP (decision #1 in your queue) and the estimates become verified figures within a day."},
+  {q:"What's the easiest first win?",a:"Office supplies. Member terms with <b>Lyreco</b> are 19% below list — about <b>kr 59K/yr</b> for a company like yours. You can approve it before connecting any data; the terms are the same for every member."},
+  {q:"Is my data shared with suppliers?",a:"No. Advantage reads supplier invoices only, and only to find savings. Suppliers never see your figures — they only hear from us if <b>you</b> request an offer."},
+ ]
+};
+
+/* ---------- state (in-memory only) ---------- */
+const S={
+  persona:"bob",
+  page:"overview",
+  cat:null,
+  queue:{bob:DEC_BOB.map(d=>d.id),fanny:DEC_FAN.map(d=>d.id)},
+  decided:{bob:[],fanny:[]},   // {id, action, label}
+  erp:null,
+};
+const P={
+ bob:{name:"Bob Iversen",co:"Nordvik Byg A/S",av:"BI",cats:CATS_BOB,agrs:AGR_BOB,decs:DEC_BOB},
+ fanny:{name:"Fanny Kristensen",co:"Kristensen Elektro ApS",av:"FK",cats:CATS_FAN,agrs:AGR_FAN,decs:DEC_FAN},
+};
+const decById=id=>P[S.persona].decs.find(d=>d.id===id);
+const isOpen=id=>S.queue[S.persona].includes(id);
+const decidedInfo=id=>S.decided[S.persona].find(x=>x.id===id);
+
+const ACTION_LABEL={approve:"Approved",offer:"Offer requested",advisor:"Sent to advisor",snooze:"Snoozed · back Monday",connect:"Connection requested"};
+
+/* ---------- helpers ---------- */
+function fmtSpend(k){return k>=1000?("kr "+(k/1000).toFixed(1).replace(/\.0$/,"")+"M"):("kr "+k+"K");}
+function catOpenDecs(catId){return S.queue[S.persona].map(decById).filter(d=>d&&d.catId===catId);}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast._h);toast._h=setTimeout(()=>t.classList.remove("on"),2600);}
+
+/* ---------- decision card markup ---------- */
+function chipHTML(d){
+  let out="";
+  if(d.isNew)out+='<span class="chip chip-new">New this week</span>';
+  if(d.tag){for(let i=0;i<d.tag.length;i+=2)out+=`<span class="chip ${d.tag[i].trim()}">${d.tag[i+1]}</span>`;}
+  if(d.catLbl)out+=`<span class="chip chip-soft">${esc(d.catLbl)}</span>`;
+  return out;
+}
+function cardHTML(d){
+  const est=d.est?" est":"", hero=d.hero?" hero":"";
+  const primary=d.connect
+    ?'<button class="btn btn-primary btn-compact" data-act="connectopen">Connect data</button>'
+    :'<button class="btn btn-primary btn-compact" data-act="approve">Approve</button>';
+  const secondary=d.connect
+    ?'<button class="btn btn-secondary btn-compact" data-act="offer">Upload spend report</button>'
+    :'<button class="btn btn-secondary btn-compact" data-act="offer">Request offer</button>';
+  return `<article class="dcard${hero}${est}" data-dec="${d.id}">
+    <div class="dcard-top">
+      <span class="suplogo${d.mid?" mid":""}">${d.ini}</span>
+      <div class="dcard-mid">
+        <div class="dcard-meta">${chipHTML(d)}</div>
+        <h3>${esc(d.title)}</h3>
+        <p class="ask">${esc(d.ask)}</p>
+      </div>
+      <div class="dnum"><div class="amt num${d.neutral?" neutral":""}">${esc(d.amt)}</div><div class="lbl">${esc(d.amtLbl)}</div></div>
+    </div>
+    <p class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v.5M12 11v5"/></svg><span>${d.why}</span></p>
+    <div class="dcard-actions">
+      ${primary}${secondary}
+      <button class="btn btn-ghost btn-compact" data-act="advisor">Ask advisor</button>
+      <button class="btn btn-quiet btn-compact push" data-act="snooze"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Snooze</button>
+    </div>
+  </article>`;
+}
+function inlineActionsHTML(decId){
+  return `<div class="agract" data-dec="${decId}">
+    <button class="btn btn-primary" data-act="approve">Approve</button>
+    <button class="btn btn-secondary" data-act="offer">Request offer</button>
+    <button class="btn btn-ghost" data-act="advisor">Ask advisor</button>
+  </div>`;
+}
+
+/* ---------- OVERVIEW ---------- */
+function kpiHTML(){
+  if(S.persona==="bob")return `
+   <div class="kpi"><div class="k">Annual spend</div><div class="v num">kr 14.2M</div><div class="sub">last 12 months</div></div>
+   <div class="kpi"><div class="k">Through agreements</div><div class="v num">62%</div><div class="sub">kr 8.8M covered</div></div>
+   <div class="kpi"><div class="k">Realized YTD</div><div class="v num pos">kr 1.24M</div><div class="sub">verified savings</div></div>
+   <div class="kpi"><div class="k">Still on the table</div><div class="v num">kr 840K</div><div class="sub">in your queue below</div></div>
+   <div class="kpi"><div class="k">Bonus accrued</div><div class="v num">kr 45K</div><div class="sub">kr 32K paid · 13K pending</div></div>`;
+  return `
+   <div class="kpi est"><div class="k">Est. annual spend</div><div class="v num">kr 6.8M<span class="estmark">est.</span></div><div class="sub">peer-based estimate</div></div>
+   <div class="kpi"><div class="k">Through agreements</div><div class="v num">0%</div><div class="sub">no agreements yet</div></div>
+   <div class="kpi"><div class="k">Realized</div><div class="v num">kr 0</div><div class="sub">unlocks after connecting</div></div>
+   <div class="kpi est"><div class="k">Est. potential</div><div class="v num">kr 610K<span class="estmark">est.</span></div><div class="sub">148 peers like you</div></div>
+   <div class="kpi"><div class="k">Bonus</div><div class="v num">kr 0</div><div class="sub">starts with first agreement</div></div>`;
+}
+function railHTML(){
+  if(S.persona==="bob"){
+    const open=S.queue.bob.length;
+    const unlock=S.queue.bob.map(decById).reduce((s,d)=>s+(d.val||0),0);
+    const max=Math.max(...SAVE_M);
+    const bars=SAVE_M.map((v,i)=>{const h=Math.round(v/max*40),y=56-h,x=4+i*34;
+      return `<rect x="${x}" y="${y}" width="26" height="${h}" rx="4" fill="${i===4?"var(--sentiment-positive)":"var(--tint-good-bg)"}"/>`;}).join("");
+    return `
+    <div class="railcard">
+      <h3>Realized savings YTD</h3>
+      <div class="railnum pos num">kr 1.24M</div>
+      <div class="railsub">Aug so far: kr 70K on agreement purchases</div>
+      <div class="railchart" aria-hidden="true"><svg viewBox="0 0 272 56">${bars}</svg></div>
+    </div>
+    <div class="railcard">
+      <h3>Spend coverage</h3>
+      <div class="railnum num">62%</div>
+      <div class="railsub">of kr 14.2M runs through agreements</div>
+      <div class="splitbar" role="img" aria-label="62 percent of spend on agreements"><i style="width:62%"></i></div>
+      <div class="splitlegend"><span>kr 8.8M on agreement</span><span>kr 5.4M off</span></div>
+    </div>
+    <div class="railcard">
+      <h3>If you clear the queue</h3>
+      <div class="railnum num">${open?`kr ${unlock}K/yr`:"Done ✓"}</div>
+      <div class="railsub">${open?`unlocked by the ${open} open decision${open===1?"":"s"}`:"every prepared saving is in motion"}</div>
+    </div>`;
+  }
+  return `
+  <div class="railcard">
+    <h3>Peer benchmark</h3>
+    <div class="railnum num">9–12%</div>
+    <div class="railsub">average saving across 148 electrical contractors your size</div>
+    <div class="raillock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><span>Your own savings chart unlocks when spend data is connected — decision #1 in your queue.</span></div>
+  </div>
+  <div class="railcard">
+    <h3>Est. spend coverage</h3>
+    <div class="railnum num">0%</div>
+    <div class="railsub">of est. kr 6.8M through agreements</div>
+    <div class="splitbar" role="img" aria-label="0 percent of spend on agreements"><i style="width:0%"></i></div>
+    <div class="splitlegend"><span>kr 0 on agreement</span><span>est. kr 6.8M off</span></div>
+  </div>`;
+}
+function renderOverview(){
+  const open=S.queue[S.persona], decs=open.map(decById);
+  const decided=S.decided[S.persona];
+  const bob=S.persona==="bob";
+  const newCount=decs.filter(d=>d.isNew).length;
+  const head=bob
+    ?`<h1 id="ovh">Good morning, Bob. ${open.length===0?"Queue cleared — nice work.":open.length+" decision"+(open.length===1?" is":"s are")+" ready."}</h1>
+      <p class="lede">Ten minutes is enough — every card below is prepared with verified terms and your own invoice data. Approve it, ask for an offer, or hand it to an advisor.</p>`
+    :`<h1 id="ovh">Welcome, Fanny. Your queue is ready — ${open.length} prepared decision${open.length===1?"":"s"}.</h1>
+      <p class="lede">No browsing needed. Everything below is estimated from 148 companies like Kristensen Elektro — decision #1 turns estimates into your real numbers.</p>`;
+  const queueCards=decs.map(cardHTML).join("")||`<div class="decided-empty">Queue cleared. New findings land here — usually a few each week.</div>`;
+  const decidedRows=decided.map(x=>{
+    const d=decById(x.id);
+    return `<div class="drow entering"><span class="suplogo${d.mid?" mid":""}">${d.ini}</span>
+      <span class="t">${esc(d.title)}</span>
+      <span class="chip ${x.action==="snooze"?"chip-soft":x.action==="approve"?"chip-good":"chip-ice"}">${ACTION_LABEL[x.action]}</span>
+      <span class="when">just now</span>
+      <button class="linkbtn" data-undo="${d.id}">Undo</button></div>`;
+  }).join("");
+  const emptyDecided=bob?"Nothing decided yet today — the queue above is waiting.":"Your first decision is waiting just above.";
+  $("#pg-overview").innerHTML=`
+    <div class="pagehead">${head}</div>
+    <div class="kpibar" role="group" aria-label="Key figures">${kpiHTML()}</div>
+    <div class="ovgrid">
+      <div>
+        <div class="queuehead"><h2>Decision queue</h2><span class="qcount num">${open.length} open</span>
+          <span class="right">${bob?`prioritized for you · ${newCount} new this week`:"start at the top — #1 unlocks the rest"}</span></div>
+        <div class="queue" id="queueList">${queueCards}</div>
+        <div class="decided" id="decidedWrap">
+          <h2>Decided <span class="cnt num" id="decidedCnt">· ${decided.length} this session</span></h2>
+          <div class="decided-list" id="decidedList">${decidedRows}</div>
+          ${decided.length?"":`<div class="decided-empty" id="decidedEmpty">${emptyDecided}</div>`}
+        </div>
+      </div>
+      <aside class="rail" id="railBox" aria-label="Summary">${railHTML()}</aside>
+    </div>`;
+}
+
+/* ---------- CATEGORIES ---------- */
+function renderCategories(){
+  const bob=S.persona==="bob";
+  const cards=P[S.persona].cats.map(c=>{
+    const open=catOpenDecs(c.id).length;
+    const badge=open
+      ?`<span class="opencount${c.est?" est":""}">${open} open decision${open===1?"":"s"}</span>`
+      :`<span class="opencount zero">Nothing to do here ✓</span>`;
+    const pot=c.pot?`<span>Potential<b class="${c.est?"":"num"}">${c.est?"est. ":""}kr ${c.pot}K</b></span>`:`<span>Potential<b class="num">—</b></span>`;
+    const real=bob?`<span>Realized<b class="pos num">${c.real?`kr ${c.real}K`:"kr 0"}</b></span>`:"";
+    return `<button class="catcard${c.est?" est":""}" data-cat="${c.id}">
+      <div class="toprow">${badge}<span class="chip chip-soft">${esc(c.state)}</span></div>
+      <h3>${esc(c.name)}</h3>
+      <div class="catstats">
+        <span>Spend<b class="num">${c.est?"est. ":""}${fmtSpend(c.spend)}</b></span>
+        <span>On agreement<b class="num">${c.pct}%</b></span>
+        ${real}${pot}
+      </div>
+      <div class="catbar${c.est?" est":""}" aria-hidden="true"><i style="width:${c.pct}%"></i></div>
+      <div class="catsups">${c.sups.map(s=>`<span class="minichip">${s[0]}</span>`).join("")}<span>${c.sups.map(s=>s[1]).join(" · ")}</span></div>
+    </button>`;
+  }).join("");
+  const totOpen=S.queue[S.persona].map(decById).filter(d=>d.catId).length;
+  $("#pg-categories").innerHTML=`
+    <div class="pagehead"><h1>Categories</h1>
+      <p class="lede">${bob
+        ?`Reference material — the queue already covers what needs you. ${totOpen} open decision${totOpen===1?"":"s"} sit inside the categories below.`
+        :`Estimated from your peer group of 148 electrical contractors. Figures marked <span class="chip chip-est">est.</span> become verified when your data is connected.`}</p></div>
+    <div class="catgrid">${cards}</div>`;
+}
+function renderCatDetail(){
+  const c=P[S.persona].cats.find(x=>x.id===S.cat);
+  if(!c){S.page="categories";renderPage();return;}
+  const bob=S.persona==="bob";
+  const opens=catOpenDecs(c.id);
+  const agrs=P[S.persona].agrs.filter(a=>a.catId===c.id);
+  const openHTML=opens.length
+    ?`<div class="sect"><h2>Open decisions in ${esc(c.name)}</h2><div class="queue">${opens.map(cardHTML).join("")}</div></div>`
+    :`<div class="sect"><h2>Open decisions</h2><div class="groupempty">Nothing to do here ✓ — this category is handled. New findings will appear in your queue.</div></div>`;
+  const agrHTML=agrs.length?agrs.map(a=>agrRowHTML(a,false)).join(""):`<div class="groupempty">No agreements linked to this category yet.</div>`;
+  const offK=Math.round(c.spend*(100-c.pct)/100);
+  $("#pg-catdetail").innerHTML=`
+    <button class="backlink" data-goto="categories"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>All categories</button>
+    <div class="detailhead">
+      <div><h1>${esc(c.name)}</h1><p class="lede" style="margin-top:var(--s2);font-size:var(--text-sm);color:var(--general-muted-foreground)">${esc(c.sups.map(s=>s[1]).join(" · "))} · ${esc(c.state)}</p></div>
+      <div class="statrow">
+        <div class="stat"><div class="k">${c.est?"Est. spend":"Spend /yr"}</div><div class="v num">${fmtSpend(c.spend)}</div></div>
+        <div class="stat"><div class="k">On agreement</div><div class="v num">${c.pct}%</div></div>
+        ${bob?`<div class="stat"><div class="k">Realized YTD</div><div class="v pos num">kr ${c.real}K</div></div>`:""}
+        <div class="stat"><div class="k">${c.est?"Est. potential":"Potential"}</div><div class="v num">${c.pot?`kr ${c.pot}K`:"—"}</div></div>
+      </div>
+    </div>
+    ${c.pct<100&&offK>0?`<div class="raillock" style="max-width:640px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v.5M12 11v5"/></svg><span>${c.est?"est. ":""}<b>${fmtSpend(offK)}</b> of this category runs off agreement${opens.length?" — that's what the open decision"+(opens.length===1?"":"s")+" below fix"+(opens.length===1?"es":""):""}.</span></div>`:""}
+    ${openHTML}
+    <div class="sect"><h2>Agreements in this category</h2><div class="agrlist">${agrHTML}</div></div>`;
+}
+
+/* ---------- AGREEMENTS ---------- */
+function agrStatusChip(a){
+  const info=a.dec?decidedInfo(a.dec):null;
+  if(a.dec&&isOpen(a.dec)){
+    if(a.status==="new")return '<span class="chip chip-ice">New match</span>';
+    if(a.status==="recommended")return '<span class="chip chip-ice">Recommended</span>';
+    return `<span class="chip chip-warn">${a.extra&&a.extra.indexOf("expires")>-1?"Expires in 60 days":"Under-used"}</span>`;
+  }
+  if(info){
+    if(info.action==="approve")return '<span class="chip chip-good">Approved today</span>';
+    if(info.action==="snooze")return '<span class="chip chip-soft">Snoozed</span>';
+    if(info.action==="connect")return '<span class="chip chip-ice">Connection requested</span>';
+    return `<span class="chip chip-ice">${ACTION_LABEL[info.action]}</span>`;
+  }
+  if(a.status==="active")return '<span class="chip chip-good">Active</span>';
+  if(a.est)return '<span class="chip chip-est">est.</span>';
+  return '<span class="chip chip-ice">Recommended</span>';
+}
+function agrRowHTML(a,withActions){
+  const open=a.dec&&isOpen(a.dec);
+  const act=withActions&&open?inlineActionsHTML(a.dec):"";
+  return `<div class="agrrow${open?" attn":""}${a.est?" est":""}">
+    <span class="suplogo">${a.ini}</span>
+    <span class="nm"><b>${esc(a.sup)}</b><span>${esc(a.cat)}</span></span>
+    <span class="terms"><b>${esc(a.terms)}</b>${a.extra?` · ${esc(a.extra)}`:""}${a.bonusNote?` · ${esc(a.bonusNote)}`:""}</span>
+    ${agrStatusChip(a)}
+    ${act}
+  </div>`;
+}
+function renderAgreements(){
+  const bob=S.persona==="bob";
+  const agrs=P[S.persona].agrs;
+  const needs=agrs.filter(a=>a.dec&&isOpen(a.dec));
+  const active=agrs.filter(a=>!(a.dec&&isOpen(a.dec))&&(a.status==="active"||(a.dec&&decidedInfo(a.dec)&&decidedInfo(a.dec).action==="approve")));
+  const rest=agrs.filter(a=>!needs.includes(a)&&!active.includes(a));
+  const g=(title,arr,withAct,empty)=>`
+    <div class="agrgroup"><header><h2>${title}</h2><span class="cnt num">· ${arr.length}</span></header>
+    ${arr.length?`<div class="agrlist">${arr.map(a=>agrRowHTML(a,withAct)).join("")}</div>`:`<div class="groupempty">${empty}</div>`}</div>`;
+  $("#pg-agreements").innerHTML=`
+    <div class="pagehead"><h1>Agreements</h1>
+      <p class="lede">${bob?"Your registry, grouped by what needs you. The same three buttons work here as in the queue.":"No active agreements yet — every row below is a member agreement you can decide on. Estimates verify once your data is connected."}</p></div>
+    ${g("Needs a decision",needs,true,"Nothing needs you right now ✓")}
+    ${g("Active & healthy",active,false,bob?"—":"Your approved agreements will live here.")}
+    ${g(bob?"Recommended & snoozed":"Recommended (est.)",rest,false,"—")}`;
+}
+
+/* ---------- SAVINGS ---------- */
+function renderSavings(){
+  const bob=S.persona==="bob";
+  if(!bob){
+    $("#pg-savings").innerHTML=`
+      <div class="pagehead"><h1>Savings</h1><p class="lede">Savings here are decisions that paid off. Yours starts with decision #1.</p></div>
+      <div class="savhero">
+        <div class="savcard"><div class="k">Realized savings</div><div class="big num">kr 0</div>
+          <div class="note">Nothing realized yet — that's expected. Companies like yours (148 peers) realize on average <b>kr 45K in the first quarter</b> after their first approved agreement.</div>
+          <div style="margin-top:var(--s4)"><button class="btn btn-primary" data-act-global="connectopen">Connect spend data</button></div></div>
+        <div class="savcard"><div class="k">Est. potential /yr</div><div class="big num">kr 610K<span class="estmark" style="font-size:14px;color:var(--tint-est-fg);vertical-align:super"> est.</span></div>
+          <div class="note">Peer-based estimate. Your verified number appears within a day of connecting e-conomic or uploading a spend report.</div></div>
+      </div>
+      <div class="sect"><h2>Decisions that will pay off first</h2>
+        <div class="paidgrid">
+          <div class="paidcard fresh"><div class="toprow"><span class="suplogo">LY</span><span class="chip chip-est decided-chip">est.</span></div>
+            <h3>Approve Lyreco office terms</h3><div class="amt neutral num">kr 59K/yr</div><div class="src">Easy first win — decidable today, before any data is connected.</div></div>
+          <div class="paidcard fresh"><div class="toprow"><span class="suplogo">SO</span><span class="chip chip-est decided-chip">est.</span></div>
+            <h3>Electrical member terms</h3><div class="amt neutral num">kr 320–410K/yr</div><div class="src">Your largest estimated category (kr 2.9M) — request offers from Solar and Ahlsell.</div></div>
+          <div class="paidcard fresh"><div class="toprow"><span class="suplogo mid">KE</span><span class="chip chip-new decided-chip">Start here</span></div>
+            <h3>Connect your spend data</h3><div class="amt neutral num">kr 610K est.</div><div class="src">Turns every estimate on this page into a verified figure.</div></div>
+        </div></div>`;
+    return;
+  }
+  const fresh=S.decided.bob.filter(x=>x.action==="approve").map(x=>{
+    const d=decById(x.id);
+    return `<div class="paidcard fresh"><div class="toprow"><span class="suplogo">${d.ini}</span><span class="chip chip-good decided-chip">Approved today</span></div>
+      <h3>${esc(d.title)}</h3><div class="amt num">${esc(d.amt)}</div><div class="src">Tracking starts with your next invoice — first realized figures land here within a month.</div></div>`;
+  }).join("");
+  const paid=PAID_BOB.map(p=>`
+    <div class="paidcard"><div class="toprow"><span class="suplogo">${p.ini}</span><span class="chip chip-good decided-chip">Paid off</span></div>
+      <h3>${esc(p.dec)}</h3><div class="amt num">${p.amt} <span class="muted" style="font-size:12px;font-weight:400">YTD</span></div>
+      <div class="src">${esc(p.sup)} · ${esc(p.when)} · ${esc(p.note)}</div></div>`).join("");
+  const tl=TIMELINE_BOB.map(t=>`<div class="tl ${t.cls||"pending"}"><div class="when">${t.when}</div><div class="what">${t.what}</div><div class="out${t.wait?" wait":""}">${t.out}</div></div>`).join("");
+  $("#pg-savings").innerHTML=`
+    <div class="pagehead"><h1>Savings — decisions that paid off</h1>
+      <p class="lede">Every krone below traces back to a decision you made in the queue. The fastest way to grow this page is to keep the queue short.</p></div>
+    <div class="savhero">
+      <div class="savcard"><div class="k">Realized savings YTD</div><div class="big pos num">kr 1.24M</div>
+        <div class="note">Verified against invoices across 9 categories — about <b>8.7%</b> of what you put through agreements.</div></div>
+      <div class="savcard"><div class="k">Customer bonus</div><div class="big num">kr 45K</div>
+        <div class="bonusrow">
+          <div class="stat"><div class="k">Paid out</div><div class="v pos num">kr 32K</div></div>
+          <div class="stat"><div class="k">Pending Oct</div><div class="v num">kr 13K</div></div>
+        </div>
+        <div class="note">1% loyalty bonus from Stark and Q8 on agreement purchases.</div></div>
+    </div>
+    <div class="sect"><h2>Decisions that paid off</h2><div class="paidgrid">${fresh}${paid}</div></div>
+    <div class="sect"><h2>Decision → outcome</h2><div class="timeline">${tl}</div></div>`;
+}
+
+/* ---------- SPENDING ---------- */
+function spendChartSVG(est){
+  const W=560,H=190,pad=30,bw=44,gap=20,max=1400;
+  let bars="";
+  SPEND_M.forEach((v,i)=>{
+    const x=pad+i*(bw+gap);
+    const h=Math.round(v/max*130), y=160-h;
+    const onH=est?0:Math.round(h*0.62);
+    bars+=`<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="6" fill="var(--general-muted)"${est?' stroke="var(--brand-cornflower)" stroke-dasharray="4 4"':''}/>`;
+    if(!est)bars+=`<rect x="${x}" y="${160-onH}" width="${bw}" height="${onH}" rx="6" fill="var(--general-primary)"/>`;
+    bars+=`<text x="${x+bw/2}" y="178" text-anchor="middle" font-size="11" fill="var(--general-muted-foreground)" font-family="var(--font-body)">${MONTHS[i]}</text>`;
+    bars+=`<text x="${x+bw/2}" y="${y-6}" text-anchor="middle" font-size="10" fill="var(--general-muted-foreground)" font-family="var(--font-body)" font-variant="tabular-nums">${(v/1000).toFixed(1)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly purchasing spend">${bars}</svg>`;
+}
+function renderSpending(){
+  const bob=S.persona==="bob";
+  const cats=P[S.persona].cats;
+  const rows=cats.map(c=>{
+    const offK=Math.round(c.spend*(100-c.pct)/100);
+    const opens=catOpenDecs(c.id);
+    let flag;
+    if(opens.length)flag=`<button class="linkbtn" data-goto="overview">In your queue →</button>`;
+    else if(c.pct>=90)flag=`<span class="chip chip-good">Covered ✓</span>`;
+    else if(offK>=300)flag=`<span class="chip chip-warn">Watching</span>`;
+    else flag=`<span class="chip chip-soft">OK</span>`;
+    return `<tr>
+      <td><b>${esc(c.name)}</b></td>
+      <td class="r num">${bob?"":"est. "}${fmtSpend(c.spend)}</td>
+      <td><div class="tinybar" role="img" aria-label="${c.pct}% on agreement"><i style="width:${c.pct}%"></i></div></td>
+      <td class="r num">${c.pct}%</td>
+      <td class="r num ${offK>=300?"leak":"leak small"}">${offK?((bob?"":"est. ")+fmtSpend(offK)):"kr 0"}</td>
+      <td>${flag}</td></tr>`;
+  }).join("");
+  let watch;
+  if(bob){
+    const queued=cats.filter(c=>catOpenDecs(c.id).length).map(c=>`<b>${fmtSpend(Math.round(c.spend*(100-c.pct)/100))}</b> in ${c.name}`);
+    watch=`Off-agreement spend is your watchlist — big leaks become queued decisions.${queued.length?` Right now ${queued.slice(0,2).join(" and ")} ${queued.length===1?"is":"are"} already in your queue.`:" Right now every flagged leak has been decided — new ones will queue up as invoices land."}`;
+  }else{
+    watch=`All figures are peer estimates until your data is connected. The moment invoices land, off-agreement leaks become prepared decisions in your queue.`;
+  }
+  $("#pg-spending").innerHTML=`
+    <div class="pagehead"><h1>Spending — the watchlist</h1><p class="lede">${watch}</p></div>
+    <div class="spendgrid">
+      <div class="chartcard"><h3>Monthly purchasing spend</h3><div class="sub">${bob?"kr M per month · blue = through agreements":"est. kr M per month, peer-modelled — dashed = estimated"}</div>
+        ${spendChartSVG(!bob)}
+        <div class="legend">${bob?'<span><i style="background:var(--general-primary)"></i>Through agreements</span><span><i style="background:var(--general-muted)"></i>Off agreement</span>':'<span><i style="background:var(--general-muted);outline:1px dashed var(--brand-cornflower)"></i>Estimated total</span>'}</div></div>
+      <div class="chartcard"><h3>${bob?"Where the leaks are":"Unlock your real numbers"}</h3>
+        ${bob?`<div class="sub">Off-agreement spend by category, last 12 months</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+            ${[["Building materials",1334],["Electrical supplies",784],["Tools & fasteners",684],["Office supplies",484],["Waste & recycling",540]].map(x=>`
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>${x[0]}</span><b class="num">${fmtSpend(x[1])}</b></div>
+            <div class="tinybar" style="width:100%"><i style="width:${Math.round(x[1]/1334*100)}%;background:var(--sentiment-negative)"></i></div></div>`).join("")}
+          </div>`
+        :`<div class="sub">Peer models are good — invoices are better.</div>
+          <p style="font-size:var(--text-sm);color:var(--general-muted-foreground);line-height:1.6;margin:var(--s2) 0 var(--s4)">Connect e-conomic or upload a spend report and this page redraws with your actual monthly spend, category by category.</p>
+          <button class="btn btn-primary" data-act-global="connectopen">Connect spend data</button>`}</div>
+    </div>
+    <div class="spendtable-wrap"><table aria-label="Spend by category">
+      <thead><tr><th>Category</th><th class="r">Spend /yr</th><th>On agreement</th><th class="r">%</th><th class="r">Off agreement</th><th>Status</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+}
+
+/* ---------- navigation & shell ---------- */
+const CRUMB={overview:"<b>Overview</b> · Decision queue",categories:"<b>Categories</b> · Reference",catdetail:"<b>Categories</b> · Detail",agreements:"<b>Agreements</b> · Registry",savings:"<b>Savings</b> · Decisions that paid off",spending:"<b>Spending</b> · Watchlist"};
+function renderBadges(){
+  const open=S.queue[S.persona].length;
+  const b=$("#badgeOverview");b.textContent=open;b.classList.toggle("zero",open===0);
+  const needs=P[S.persona].agrs.filter(a=>a.dec&&isOpen(a.dec)).length;
+  const b2=$("#badgeAgreements");b2.textContent=needs;b2.classList.toggle("zero",needs===0);
+  const newCount=S.queue[S.persona].map(decById).filter(d=>d.isNew).length;
+  $("#weekpill").innerHTML=`<i aria-hidden="true"></i><span>This week: <b>${newCount} new finding${newCount===1?"":"s"}</b></span>`;
+}
+function renderPage(){
+  $$(".pg").forEach(p=>p.classList.remove("on"));
+  const el=$("#pg-"+S.page);
+  ({overview:renderOverview,categories:renderCategories,catdetail:renderCatDetail,
+    agreements:renderAgreements,savings:renderSavings,spending:renderSpending})[S.page]();
+  el.classList.add("on");
+  $("#crumb").innerHTML=CRUMB[S.page];
+  const navKey=S.page==="catdetail"?"categories":S.page;
+  $$(".nav a").forEach(a=>{
+    if(a.dataset.nav===navKey)a.setAttribute("aria-current","page");
+    else a.removeAttribute("aria-current");
+  });
+  renderBadges();
+}
+function goto(page,cat){
+  S.page=page;if(cat!==undefined)S.cat=cat;
+  renderPage();window.scrollTo({top:0,behavior:reduceMotion()?"auto":"smooth"});
+}
+
+/* ---------- deciding ---------- */
+function commitDecision(id,action){
+  const q=S.queue[S.persona];const idx=q.indexOf(id);
+  if(idx<0)return;
+  q.splice(idx,1);
+  S.decided[S.persona].unshift({id,action,idx});
+  const d=decById(id);
+  const verb={approve:"Approved",offer:"Offer requested for",advisor:"Advisor will call about",snooze:"Snoozed",connect:"Connection request sent for"}[action];
+  toast(`${verb} ${d.sup} — moved to Decided`);
+  renderPage();
+}
+function decide(id,action){
+  const card=document.querySelector(`.dcard[data-dec="${id}"]`);
+  if(card&&!reduceMotion()){
+    card.style.maxHeight=card.scrollHeight+"px";
+    // force reflow, then collapse
+    void card.offsetHeight;
+    card.classList.add("leaving");
+    card.style.maxHeight="0px";card.style.paddingTop="0px";card.style.paddingBottom="0px";
+    card.style.marginBottom=card.parentElement&&card.parentElement.classList.contains("queue")?"-16px":"0px";
+    card.style.borderWidth="0px";
+    card.addEventListener("transitionend",function h(e){
+      if(e.propertyName!=="max-height")return;
+      card.removeEventListener("transitionend",h);
+      commitDecision(id,action);
+    });
+    // safety net if transitionend never fires
+    setTimeout(()=>{if(S.queue[S.persona].includes(id))commitDecision(id,action);},450);
+  }else{
+    commitDecision(id,action);
+  }
+}
+function undoDecision(id){
+  const list=S.decided[S.persona];
+  const i=list.findIndex(x=>x.id===id);
+  if(i<0)return;
+  const [item]=list.splice(i,1);
+  const q=S.queue[S.persona];
+  q.splice(Math.min(item.idx,q.length),0,id);
+  toast("Back in the queue");
+  renderPage();
+}
+
+/* ---------- assistant ---------- */
+let qaStep=0;
+function assistOpen(){
+  $("#assistant").classList.add("on");$("#assistant").setAttribute("aria-hidden","false");
+  $("#scrim").classList.add("on");
+  $("#assistLaunch").setAttribute("aria-expanded","true");
+  renderAssist();$("#assistClose").focus();
+}
+function assistClose(){
+  $("#assistant").classList.remove("on");$("#assistant").setAttribute("aria-hidden","true");
+  $("#scrim").classList.remove("on");
+  $("#assistLaunch").setAttribute("aria-expanded","false");
+  $("#assistLaunch").focus();
+}
+function renderAssist(){
+  const qa=QA[S.persona];
+  const log=$("#chatLog");
+  let html=`<div class="msg a">Hi ${S.persona==="bob"?"Bob":"Fanny"} — I can explain any card in your queue, or the numbers behind it. Try a question below.</div>`;
+  for(let i=0;i<qaStep&&i<qa.length;i++){
+    html+=`<div class="msg q">${esc(qa[i].q)}</div><div class="msg a">${qa[i].a}</div>`;
+  }
+  log.innerHTML=html;log.scrollTop=log.scrollHeight;
+  const sug=$("#chatSuggest");
+  let s=`<div class="cap">Ask about your queue</div>`;
+  qa.forEach((x,i)=>{if(i>=qaStep)s+=`<button class="qbtn" data-qa="${i}">${esc(x.q)}</button>`;});
+  if(qaStep>=qa.length)s+=`<div class="groupempty" style="border:none;padding:var(--s2) 0">That's the prepared answers in this prototype — an advisor picks up anything else.</div>`;
+  sug.innerHTML=s;
+}
+
+/* ---------- connect modal ---------- */
+function connectOpen(){
+  $("#connectModal").classList.add("on");
+  const first=$("#connectModal .erp");if(first)first.focus();
+}
+function connectClose(){$("#connectModal").classList.remove("on");}
+
+/* ---------- persona ---------- */
+function setPersona(p){
+  S.persona=p;qaStep=0;S.cat=null;
+  const per=P[p];
+  $("#acctAv").textContent=per.av;$("#acctName").textContent=per.name;$("#acctCo").textContent=per.co;
+  $("#tickBob").style.display=p==="bob"?"":"none";
+  $("#tickFanny").style.display=p==="fanny"?"":"none";
+  $("#assistSub").textContent=p==="bob"?"Knows your agreements and invoices":"Working from your peer group (148 companies)";
+  if(S.page==="catdetail")S.page="categories";
+  renderPage();
+  $("#acctMenu").classList.remove("open");$("#acctBtn").setAttribute("aria-expanded","false");
+}
+
+/* ---------- events (delegated) ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target;
+  const actBtn=t.closest("[data-act]");
+  if(actBtn){
+    const holder=actBtn.closest("[data-dec]");
+    const id=holder&&holder.dataset.dec;
+    const act=actBtn.dataset.act;
+    if(act==="connectopen"){connectOpen();return;}
+    if(id){decide(id,act);return;}
+  }
+  const g=t.closest("[data-act-global]");
+  if(g){if(g.dataset.actGlobal==="connectopen")connectOpen();return;}
+  const undo=t.closest("[data-undo]");
+  if(undo){undoDecision(undo.dataset.undo);return;}
+  const cat=t.closest("[data-cat]");
+  if(cat){goto("catdetail",cat.dataset.cat);return;}
+  const go=t.closest("[data-goto]");
+  if(go){goto(go.dataset.goto);return;}
+  const nav=t.closest(".nav a");
+  if(nav){e.preventDefault();goto(nav.dataset.nav);return;}
+  if(t.closest("#assistLaunch")){assistOpen();return;}
+  if(t.closest("#assistClose")){assistClose();return;}
+  if(t.id==="scrim"){assistClose();return;}
+  const qb=t.closest("[data-qa]");
+  if(qb){qaStep=Number(qb.dataset.qa)+1;renderAssist();return;}
+  const erp=t.closest(".erp");
+  if(erp){
+    $$(".erp").forEach(b=>b.setAttribute("aria-pressed",b===erp?"true":"false"));
+    S.erp=erp.dataset.erp;return;
+  }
+  if(t.closest("#connectConfirm")){
+    connectClose();
+    if(S.persona==="fanny"&&isOpen("f0"))decide("f0","connect");
+    else toast(`Connection request sent${S.erp?" — "+S.erp:""}. We'll email when data lands.`);
+    return;
+  }
+  if(t.closest("[data-closemodal]")){connectClose();return;}
+  if(t.closest("#acctBtn")){
+    const m=$("#acctMenu");const open=m.classList.toggle("open");
+    $("#acctBtn").setAttribute("aria-expanded",String(open));return;
+  }
+  const ps=t.closest(".pswitch");
+  if(ps){setPersona(ps.dataset.persona);return;}
+  if(!t.closest(".acct")){$("#acctMenu").classList.remove("open");$("#acctBtn").setAttribute("aria-expanded","false");}
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    if($("#connectModal").classList.contains("on"))connectClose();
+    else if($("#assistant").classList.contains("on"))assistClose();
+    else{$("#acctMenu").classList.remove("open");$("#acctBtn").setAttribute("aria-expanded","false");}
+  }
+});
+
+/* ---------- boot ---------- */
+renderPage();
+</script>
+</body>
+</html>
